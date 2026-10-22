@@ -19,7 +19,6 @@ package io.getstream.chat.android.ai.compose.ui.component
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -38,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
@@ -67,6 +67,7 @@ import kotlinx.coroutines.launch
  * @param actions What else the person can do with the reply.
  * @param modifier Modifier to be applied to the row.
  * @param colors The palette of the buttons.
+ * @param icons The icons of the buttons.
  */
 @Composable
 public fun AIReplyActionsRow(
@@ -74,33 +75,34 @@ public fun AIReplyActionsRow(
     actions: AIReplyActions,
     modifier: Modifier = Modifier,
     colors: AIReplyActionsColors = AIReplyActionsDefaults.colors(),
+    icons: AIReplyActionsIcons = AIReplyActionsDefaults.icons(),
 ) {
     val context = LocalContext.current
     val tint = colors.icon
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        CopyButton(text = text, tint = tint)
+        CopyButton(text = text, tint = tint, icons = icons)
         ActionButton(
-            icon = R.drawable.stream_ai_compose_ic_share,
+            icon = icons.share,
             description = stringResource(R.string.stream_ai_compose_conversation_share),
             tint = tint,
             onClick = { shareText(context, text) },
         )
         actions.onRegenerate?.let { onRegenerate ->
             ActionButton(
-                icon = R.drawable.stream_ai_compose_ic_regenerate,
+                icon = icons.regenerate,
                 description = stringResource(R.string.stream_ai_compose_conversation_regenerate),
                 tint = tint,
                 onClick = onRegenerate,
             )
         }
         actions.onRate?.let { onRate ->
-            RateButtons(rating = actions.rating, onRate = onRate, tint = tint)
+            RateButtons(rating = actions.rating, onRate = onRate, tint = tint, icons = icons)
         }
     }
 }
 
 @Composable
-private fun CopyButton(text: String, tint: Color) {
+private fun CopyButton(text: String, tint: Color, icons: AIReplyActionsIcons) {
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
     var isCopied by remember { mutableStateOf(false) }
@@ -113,7 +115,7 @@ private fun CopyButton(text: String, tint: Color) {
         }
     }
     ActionButton(
-        icon = if (isCopied) R.drawable.stream_ai_compose_ic_check else R.drawable.stream_ai_compose_ic_copy,
+        icon = if (isCopied) icons.copied else icons.copy,
         description = if (isCopied) {
             stringResource(R.string.stream_ai_compose_conversation_copied)
         } else {
@@ -129,26 +131,23 @@ private fun CopyButton(text: String, tint: Color) {
 }
 
 @Composable
-private fun RateButtons(rating: AIMessageRating?, onRate: (AIMessageRating?) -> Unit, tint: Color) {
+private fun RateButtons(
+    rating: AIMessageRating?,
+    onRate: (AIMessageRating?) -> Unit,
+    tint: Color,
+    icons: AIReplyActionsIcons,
+) {
     val positive = rating == AIMessageRating.Positive
     val negative = rating == AIMessageRating.Negative
     ActionButton(
-        icon = if (positive) {
-            R.drawable.stream_ai_compose_ic_thumb_up_filled
-        } else {
-            R.drawable.stream_ai_compose_ic_thumb_up
-        },
+        icon = if (positive) icons.ratedPositive else icons.ratePositive,
         description = stringResource(R.string.stream_ai_compose_conversation_rate_positive),
         tint = tint,
         selected = positive,
         onClick = { onRate(if (positive) null else AIMessageRating.Positive) },
     )
     ActionButton(
-        icon = if (negative) {
-            R.drawable.stream_ai_compose_ic_thumb_down_filled
-        } else {
-            R.drawable.stream_ai_compose_ic_thumb_down
-        },
+        icon = if (negative) icons.ratedNegative else icons.rateNegative,
         description = stringResource(R.string.stream_ai_compose_conversation_rate_negative),
         tint = tint,
         selected = negative,
@@ -158,7 +157,7 @@ private fun RateButtons(rating: AIMessageRating?, onRate: (AIMessageRating?) -> 
 
 @Composable
 private fun ActionButton(
-    @DrawableRes icon: Int,
+    icon: Painter,
     description: String,
     tint: Color,
     onClick: () -> Unit,
@@ -170,7 +169,7 @@ private fun ActionButton(
         colors = IconButtonDefaults.iconButtonColors(contentColor = tint),
     ) {
         Icon(
-            painter = painterResource(icon),
+            painter = icon,
             contentDescription = description,
             modifier = Modifier.size(IconSize),
         )
@@ -198,6 +197,30 @@ public data class AIReplyActionsColors(
     val icon: Color,
 )
 
+/**
+ * The icons of [AIReplyActionsRow].
+ *
+ * @param copy Icon of the button that copies the reply.
+ * @param copied Icon that replaces [copy] for a moment once the reply is copied.
+ * @param share Icon of the button that shares the reply.
+ * @param regenerate Icon of the button that asks for the reply again.
+ * @param ratePositive Icon of the thumbs up while the reply isn't rated so.
+ * @param ratedPositive Icon of the thumbs up once the reply is rated so.
+ * @param rateNegative Icon of the thumbs down while the reply isn't rated so.
+ * @param ratedNegative Icon of the thumbs down once the reply is rated so.
+ */
+@Immutable
+public data class AIReplyActionsIcons(
+    val copy: Painter,
+    val copied: Painter,
+    val share: Painter,
+    val regenerate: Painter,
+    val ratePositive: Painter,
+    val ratedPositive: Painter,
+    val rateNegative: Painter,
+    val ratedNegative: Painter,
+)
+
 /** Defaults of [AIReplyActionsRow]. */
 public object AIReplyActionsDefaults {
 
@@ -210,6 +233,40 @@ public object AIReplyActionsDefaults {
     public fun colors(
         icon: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     ): AIReplyActionsColors = AIReplyActionsColors(icon = icon)
+
+    /**
+     * The default icons.
+     *
+     * @param copy Icon of the button that copies the reply.
+     * @param copied Icon that replaces [copy] for a moment once the reply is copied.
+     * @param share Icon of the button that shares the reply.
+     * @param regenerate Icon of the button that asks for the reply again.
+     * @param ratePositive Icon of the thumbs up while the reply isn't rated so.
+     * @param ratedPositive Icon of the thumbs up once the reply is rated so.
+     * @param rateNegative Icon of the thumbs down while the reply isn't rated so.
+     * @param ratedNegative Icon of the thumbs down once the reply is rated so.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun icons(
+        copy: Painter = painterResource(R.drawable.stream_ai_compose_ic_copy),
+        copied: Painter = painterResource(R.drawable.stream_ai_compose_ic_check),
+        share: Painter = painterResource(R.drawable.stream_ai_compose_ic_share),
+        regenerate: Painter = painterResource(R.drawable.stream_ai_compose_ic_regenerate),
+        ratePositive: Painter = painterResource(R.drawable.stream_ai_compose_ic_thumb_up),
+        ratedPositive: Painter = painterResource(R.drawable.stream_ai_compose_ic_thumb_up_filled),
+        rateNegative: Painter = painterResource(R.drawable.stream_ai_compose_ic_thumb_down),
+        ratedNegative: Painter = painterResource(R.drawable.stream_ai_compose_ic_thumb_down_filled),
+    ): AIReplyActionsIcons = AIReplyActionsIcons(
+        copy = copy,
+        copied = copied,
+        share = share,
+        regenerate = regenerate,
+        ratePositive = ratePositive,
+        ratedPositive = ratedPositive,
+        rateNegative = rateNegative,
+        ratedNegative = ratedNegative,
+    )
 }
 
 @Composable

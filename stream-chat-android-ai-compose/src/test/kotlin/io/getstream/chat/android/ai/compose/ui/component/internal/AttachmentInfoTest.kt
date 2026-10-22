@@ -28,9 +28,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -94,9 +92,70 @@ internal class AttachmentInfoTest {
 
     @Test
     fun `an image file shows an image icon`() {
-        assertTrue(AIMessageAttachment.file("file:///tmp/photo.jpg".toUri()).looksLikeImage())
-        assertTrue(AIMessageAttachment.file(upload, mimeType = "image/png").looksLikeImage())
-        assertFalse(AIMessageAttachment.file(pdf).looksLikeImage())
+        assertEquals(AttachmentFileType.Image, AIMessageAttachment.file("file:///tmp/photo.jpg".toUri()).fileType())
+        assertEquals(AttachmentFileType.Image, AIMessageAttachment.file(upload, mimeType = "image/png").fileType())
+        assertEquals(AttachmentFileType.Pdf, AIMessageAttachment.file(pdf).fileType())
+    }
+
+    @Test
+    fun `the icon follows the media type`() {
+        val expected = mapOf(
+            "application/pdf" to AttachmentFileType.Pdf,
+            "image/heic" to AttachmentFileType.Image,
+            "audio/mpeg" to AttachmentFileType.Audio,
+            "audio/ogg; codecs=opus" to AttachmentFileType.Audio,
+            "video/mp4" to AttachmentFileType.Video,
+            "application/zip" to AttachmentFileType.Archive,
+            "application/vnd.rar" to AttachmentFileType.Archive,
+            "application/x-7z-compressed" to AttachmentFileType.Archive,
+            "application/gzip" to AttachmentFileType.Archive,
+            "APPLICATION/X-TAR" to AttachmentFileType.Archive,
+            "text/plain" to AttachmentFileType.File,
+            "application/octet-stream" to AttachmentFileType.File,
+        )
+        expected.forEach { (mimeType, type) ->
+            assertEquals(mimeType, type, AIMessageAttachment.file(upload, mimeType = mimeType).fileType())
+        }
+    }
+
+    @Test
+    fun `the media type wins over the extension`() {
+        val attachment = AIMessageAttachment.file(pdf, name = "Recording.pdf", mimeType = "audio/mp4")
+        assertEquals(AttachmentFileType.Audio, attachment.fileType())
+    }
+
+    @Test
+    fun `without a media type the icon follows the extension`() {
+        shadowOf(MimeTypeMap.getSingleton()).apply {
+            addExtensionMimeTypMapping("mp3", "audio/mpeg")
+            addExtensionMimeTypMapping("mov", "video/quicktime")
+        }
+        val expected = mapOf(
+            "Notes.PDF" to AttachmentFileType.Pdf,
+            "Photo.jpg" to AttachmentFileType.Image,
+            "Song.mp3" to AttachmentFileType.Audio,
+            "Clip.mov" to AttachmentFileType.Video,
+            "Backup.zip" to AttachmentFileType.Archive,
+            "Backup.rar" to AttachmentFileType.Archive,
+            "Backup.7z" to AttachmentFileType.Archive,
+            "Backup.tar" to AttachmentFileType.Archive,
+            "Backup.tar.gz" to AttachmentFileType.Archive,
+            "Notes.docx" to AttachmentFileType.File,
+        )
+        expected.forEach { (name, type) ->
+            assertEquals(name, type, AIMessageAttachment.file(upload, name = name).fileType())
+        }
+        assertEquals(
+            "the extension of the uri without a name",
+            AttachmentFileType.Archive,
+            AIMessageAttachment.file("https://example.com/files/photos.zip".toUri()).fileType(),
+        )
+    }
+
+    @Test
+    fun `without a media type or extension the icon follows the kind`() {
+        assertEquals(AttachmentFileType.Image, AIMessageAttachment.image(upload).fileType())
+        assertEquals(AttachmentFileType.File, AIMessageAttachment.file(upload).fileType())
     }
 
     @Test

@@ -21,9 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import io.getstream.chat.android.ai.compose.ui.component.internal.AttachmentImage
 import io.getstream.chat.android.ai.compose.ui.component.internal.FileAttachmentCard
@@ -46,7 +49,9 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.FileAttachment
  * @param nameTextStyle The style of a file's name.
  * @param detailsTextStyle The style of a file's type and size.
  * @param colors The palette of the attachment.
+ * @param icons The icons of the types of file.
  */
+@Suppress("LongParameterList")
 @Composable
 public fun AIMessageAttachmentItem(
     attachment: AIMessageAttachment,
@@ -55,6 +60,7 @@ public fun AIMessageAttachmentItem(
     nameTextStyle: TextStyle = MaterialTheme.typography.labelLarge,
     detailsTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
     colors: AIMessageAttachmentColors = AIMessageAttachmentDefaults.colors(),
+    icons: AIMessageAttachmentIcons = AIMessageAttachmentDefaults.icons(),
 ) {
     val isImage = attachment.kind == AIMessageAttachment.Kind.Image
     if (isImage && (attachment.bitmap != null || attachment.uri != null)) {
@@ -65,6 +71,7 @@ public fun AIMessageAttachmentItem(
             nameTextStyle = nameTextStyle,
             detailsTextStyle = detailsTextStyle,
             colors = colors,
+            icons = icons,
             modifier = modifier,
         )
     }
@@ -90,6 +97,27 @@ public data class AIMessageAttachmentColors(
     val icon: Color,
     val name: Color,
     val details: Color,
+)
+
+/**
+ * The icons of [AIMessageAttachmentItem], one for each type of file. A file's type comes from its
+ * media type, else from the extension of its name or URI.
+ *
+ * @param file Icon of a file of a type without one of its own.
+ * @param pdf Icon of a PDF.
+ * @param image Icon of an image shown as a file, such as one without a URI or bitmap.
+ * @param audio Icon of an audio file.
+ * @param video Icon of a video.
+ * @param archive Icon of an archive, such as a ZIP, RAR, 7z, TAR or GZIP file.
+ */
+@Immutable
+public data class AIMessageAttachmentIcons(
+    val file: Painter,
+    val pdf: Painter,
+    val image: Painter,
+    val audio: Painter,
+    val video: Painter,
+    val archive: Painter,
 )
 
 /** Defaults of [AIMessageAttachmentItem]. */
@@ -125,5 +153,33 @@ public object AIMessageAttachmentDefaults {
         icon = icon,
         name = name,
         details = details,
+    )
+
+    /**
+     * The default icons.
+     *
+     * @param file Icon of a file of a type without one of its own.
+     * @param pdf Icon of a PDF.
+     * @param image Icon of an image shown as a file.
+     * @param audio Icon of an audio file.
+     * @param video Icon of a video.
+     * @param archive Icon of an archive.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun icons(
+        file: Painter = painterResource(R.drawable.stream_ai_compose_ic_conversation_file),
+        pdf: Painter = painterResource(R.drawable.stream_ai_compose_ic_attachment_pdf),
+        image: Painter = painterResource(R.drawable.stream_ai_compose_ic_image_placeholder),
+        audio: Painter = painterResource(R.drawable.stream_ai_compose_ic_attachment_audio),
+        video: Painter = painterResource(R.drawable.stream_ai_compose_ic_attachment_video),
+        archive: Painter = painterResource(R.drawable.stream_ai_compose_ic_attachment_archive),
+    ): AIMessageAttachmentIcons = AIMessageAttachmentIcons(
+        file = file,
+        pdf = pdf,
+        image = image,
+        audio = audio,
+        video = video,
+        archive = archive,
     )
 }

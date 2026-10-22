@@ -26,10 +26,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.addPathNodes
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
@@ -40,6 +37,7 @@ import io.getstream.chat.android.ai.compose.ui.component.AIConversationColors
 internal fun ScrollToLatestButton(
     onClick: () -> Unit,
     colors: AIConversationColors,
+    icon: Painter,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.minimumInteractiveComponentSize(), contentAlignment = Alignment.Center) {
@@ -54,7 +52,7 @@ internal fun ScrollToLatestButton(
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    imageVector = ArrowDown,
+                    painter = icon,
                     contentDescription = stringResource(R.string.stream_ai_compose_conversation_scroll_to_latest),
                     modifier = Modifier.size(20.dp),
                 )
@@ -62,14 +60,3 @@ internal fun ScrollToLatestButton(
         }
     }
 }
-
-private val ArrowDown: ImageVector = ImageVector.Builder(
-    name = "ArrowDown",
-    defaultWidth = 24.dp,
-    defaultHeight = 24.dp,
-    viewportWidth = 24f,
-    viewportHeight = 24f,
-).addPath(
-    pathData = addPathNodes("M20,12l-1.41,-1.41L13,16.17V4h-2v12.17l-5.58,-5.59L4,12l8,8 8,-8z"),
-    fill = SolidColor(Color.Black),
-).build()

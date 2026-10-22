@@ -64,12 +64,66 @@ internal fun AIMessageAttachment.resolvedMimeType(): String? =
     mimeType?.takeIf { it.isNotEmpty() }
         ?: pathExtension()?.let { MimeTypeMap.getSingleton().getMimeTypeFromExtension(it.lowercase(Locale.ROOT)) }
 
-/** Whether an attachment is an image, by its kind or its media type, to pick its file icon. */
-internal fun AIMessageAttachment.looksLikeImage(): Boolean =
-    kind == AIMessageAttachment.Kind.Image || resolvedMimeType()?.startsWith("image/") == true
+/** The types of file that have an icon of their own. */
+internal enum class AttachmentFileType { File, Pdf, Image, Audio, Video, Archive }
+
+/**
+ * An attachment's type of file, to pick its icon: from its media type, else its extension, else
+ * its kind. A type without an icon of its own is a plain [AttachmentFileType.File].
+ */
+internal fun AIMessageAttachment.fileType(): AttachmentFileType {
+    val declared = mimeType?.takeIf { it.isNotEmpty() }
+    if (declared != null) return fileTypeOfMimeType(declared)
+    val extension = pathExtension()?.lowercase(Locale.ROOT)
+    val fromExtension = extension?.let { ext ->
+        ExtensionFileTypes[ext] ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)?.let(::fileTypeOfMimeType)
+    }
+    return when {
+        fromExtension != null -> fromExtension
+        kind == AIMessageAttachment.Kind.Image -> AttachmentFileType.Image
+        else -> AttachmentFileType.File
+    }
+}
+
+private fun fileTypeOfMimeType(mimeType: String): AttachmentFileType {
+    val type = mimeType.substringBefore(';').trim().lowercase(Locale.ROOT)
+    return when {
+        type == "application/pdf" -> AttachmentFileType.Pdf
+        type.startsWith("image/") -> AttachmentFileType.Image
+        type.startsWith("audio/") -> AttachmentFileType.Audio
+        type.startsWith("video/") -> AttachmentFileType.Video
+        type in ArchiveMimeTypes -> AttachmentFileType.Archive
+        else -> AttachmentFileType.File
+    }
+}
+
+private val ArchiveMimeTypes = setOf(
+    "application/zip",
+    "application/x-zip-compressed",
+    "application/vnd.rar",
+    "application/x-rar-compressed",
+    "application/x-7z-compressed",
+    "application/x-tar",
+    "application/gzip",
+    "application/x-gzip",
+    "application/x-bzip",
+    "application/x-bzip2",
+    "application/x-xz",
+    "application/x-compress",
+    "application/x-compressed",
+    "application/zstd",
+    "application/x-zstd",
+)
+
+/** Extensions the platform's map of media types may not know, by the type of file they are. */
+private val ExtensionFileTypes: Map<String, AttachmentFileType> = buildMap {
+    put("pdf", AttachmentFileType.Pdf)
+    listOf("zip", "rar", "7z", "tar", "gz", "tgz", "bz2", "tbz2", "xz", "txz", "zst")
+        .forEach { put(it, AttachmentFileType.Archive) }
+}
 
 /** The extension of its name, else of the file its URI ends in. */
-private fun AIMessageAttachment.pathExtension(): String? =
+internal fun AIMessageAttachment.pathExtension(): String? =
     listOfNotNull(name, fileName())
         .map { it.substringAfterLast('.', missingDelimiterValue = "") }
         .firstOrNull { it.isNotEmpty() && !it.contains('/') }

@@ -55,8 +55,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIConversationScroll
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIMessageTurn
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIThinkingClock
@@ -114,6 +117,7 @@ import kotlinx.coroutines.launch
  * @param emptyContent What the list shows while there are no messages, centered in it.
  * @param colors The palette of the list's own views: the button that brings the end back into view,
  * and the spinner while older messages load.
+ * @param icons The icons of the list's own views.
  * @param messageContent The view of a message.
  */
 @Suppress("LongMethod", "LongParameterList")
@@ -128,6 +132,7 @@ public fun <T> AIConversation(
     footer: @Composable () -> Unit = {},
     emptyContent: @Composable () -> Unit = {},
     colors: AIConversationColors = AIConversationDefaults.colors(),
+    icons: AIConversationIcons = AIConversationDefaults.icons(),
     messageContent: @Composable (T) -> Unit,
 ) {
     // The first message keeps starting a turn as older messages arrive above it, so the turns on
@@ -217,6 +222,7 @@ public fun <T> AIConversation(
             ScrollToLatestButton(
                 onClick = { scope.launch { listState.scrollToEnd(animated = true) } },
                 colors = colors,
+                icon = icons.scrollToLatest,
             )
         }
     }
@@ -237,6 +243,16 @@ public data class AIConversationColors(
     val scrollButtonBorder: Color,
     val scrollButtonIcon: Color,
     val loadingIndicator: Color,
+)
+
+/**
+ * The icons of [AIConversation]'s own views.
+ *
+ * @param scrollToLatest Icon of the button that brings the end of the conversation back into view.
+ */
+@Immutable
+public data class AIConversationIcons(
+    val scrollToLatest: Painter,
 )
 
 /** Defaults of [AIConversation]. */
@@ -263,6 +279,17 @@ public object AIConversationDefaults {
         scrollButtonIcon = scrollButtonIcon,
         loadingIndicator = loadingIndicator,
     )
+
+    /**
+     * The default icons.
+     *
+     * @param scrollToLatest Icon of the button that brings the end of the conversation back into
+     * view.
+     */
+    @Composable
+    public fun icons(
+        scrollToLatest: Painter = painterResource(R.drawable.stream_ai_compose_ic_arrow_down),
+    ): AIConversationIcons = AIConversationIcons(scrollToLatest = scrollToLatest)
 }
 
 /**

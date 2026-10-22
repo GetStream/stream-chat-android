@@ -44,12 +44,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import io.getstream.chat.android.ai.compose.ui.component.AIMessageAttachmentColors
+import io.getstream.chat.android.ai.compose.ui.component.AIMessageAttachmentIcons
 
 private val ImageShape = RoundedCornerShape(16.dp)
 private val CardShape = RoundedCornerShape(16.dp)
@@ -138,6 +139,7 @@ internal fun FileAttachmentCard(
     nameTextStyle: TextStyle,
     detailsTextStyle: TextStyle,
     colors: AIMessageAttachmentColors,
+    icons: AIMessageAttachmentIcons,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -165,7 +167,7 @@ internal fun FileAttachmentCard(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FileTypeIcon(isImage = attachment.looksLikeImage(), colors = colors)
+        FileTypeIcon(icon = icons.of(attachment.fileType()), colors = colors)
         Column(modifier = Modifier.weight(1f, fill = false)) {
             Text(
                 text = name,
@@ -188,7 +190,7 @@ internal fun FileAttachmentCard(
 }
 
 @Composable
-private fun FileTypeIcon(isImage: Boolean, colors: AIMessageAttachmentColors) {
+private fun FileTypeIcon(icon: Painter, colors: AIMessageAttachmentColors) {
     Box(
         modifier = Modifier
             .size(36.dp)
@@ -196,18 +198,22 @@ private fun FileTypeIcon(isImage: Boolean, colors: AIMessageAttachmentColors) {
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(
-                if (isImage) {
-                    R.drawable.stream_ai_compose_ic_image_placeholder
-                } else {
-                    R.drawable.stream_ai_compose_ic_conversation_file
-                },
-            ),
+            painter = icon,
             contentDescription = null,
             tint = colors.icon,
             modifier = Modifier.size(20.dp),
         )
     }
+}
+
+/** The icon of a type of file. */
+private fun AIMessageAttachmentIcons.of(type: AttachmentFileType): Painter = when (type) {
+    AttachmentFileType.File -> file
+    AttachmentFileType.Pdf -> pdf
+    AttachmentFileType.Image -> image
+    AttachmentFileType.Audio -> audio
+    AttachmentFileType.Video -> video
+    AttachmentFileType.Archive -> archive
 }
 
 @Composable
