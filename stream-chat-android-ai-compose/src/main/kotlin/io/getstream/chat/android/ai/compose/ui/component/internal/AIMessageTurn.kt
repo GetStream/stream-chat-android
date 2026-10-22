@@ -27,19 +27,23 @@ internal data class AIMessageTurn<T>(val id: Any, val messages: List<T>)
 
 /**
  * Groups [messages], oldest first, into turns: each message the person sent starts one, and every
- * other message joins the turn before it. The first message starts a turn whoever sent it.
+ * other message joins the turn before it. The first message starts a turn whoever sent it, and so
+ * does each message whose key is in [turnStarts], such as one that was first before older messages
+ * arrived above it.
  */
 internal fun <T> messageTurns(
     messages: List<T>,
     key: (T) -> Any,
     isFromUser: (T) -> Boolean,
+    turnStarts: Set<Any> = emptySet(),
 ): List<AIMessageTurn<T>> {
     val turns = mutableListOf<AIMessageTurn<T>>()
     var current: MutableList<T>? = null
     for (message in messages) {
-        if (current == null || isFromUser(message)) {
+        val messageKey = key(message)
+        if (current == null || isFromUser(message) || messageKey in turnStarts) {
             current = mutableListOf(message)
-            turns += AIMessageTurn(id = key(message), messages = current)
+            turns += AIMessageTurn(id = messageKey, messages = current)
         } else {
             current += message
         }

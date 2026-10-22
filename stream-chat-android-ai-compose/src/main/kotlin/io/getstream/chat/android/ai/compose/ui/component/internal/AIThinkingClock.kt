@@ -17,6 +17,8 @@
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
 import android.os.SystemClock
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import io.getstream.chat.android.ai.compose.ui.component.StreamingReasoningDefaults
 import kotlin.math.max
 
@@ -131,6 +133,35 @@ internal class AIThinkingClock(val now: () -> Long = SystemClock::elapsedRealtim
 
     companion object {
         /**
+         * Saves the turns' times, so a conversation shown again, such as after a rotation, counts
+         * from when each turn started thinking. The turns' keys must be saveable in a Bundle.
+         */
+        val Saver: Saver<AIThinkingClock, Any> = listSaver(
+            save = { clock ->
+                clock.turns.flatMap { (key, turn) ->
+                    with(turn) {
+                        listOf(key, start, end, firstStep, firstStepStreamed) +
+                            listOf(firstStepDuration, firstStepShown, hadReplies)
+                    }
+                }
+            },
+            restore = { saved ->
+                AIThinkingClock().apply {
+                    saved.chunked(SAVED_FIELDS).forEach { fields ->
+                        turns[fields[0]!!] = Turn(start = fields[1] as Long).apply {
+                            end = fields[2] as Long?
+                            firstStep = fields[3] as String?
+                            firstStepStreamed = fields[4] as Boolean
+                            firstStepDuration = fields[5] as Double?
+                            firstStepShown = fields[6] as Long?
+                            hadReplies = fields[7] as Boolean
+                        }
+                    }
+                }
+            },
+        )
+
+        /**
          * How soon after a turn stops thinking its first step has to arrive, done, to open and show
          * its reasoning: it came with the reply that ended the thinking.
          */
@@ -143,5 +174,6 @@ internal class AIThinkingClock(val now: () -> Long = SystemClock::elapsedRealtim
         const val FINISHED_REASONING_SHOWN_MILLIS: Long = 1600
 
         private const val MILLIS_PER_SECOND = 1000.0
+        private const val SAVED_FIELDS = 8
     }
 }

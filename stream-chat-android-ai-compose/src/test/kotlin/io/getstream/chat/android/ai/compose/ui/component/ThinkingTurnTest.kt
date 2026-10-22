@@ -173,6 +173,21 @@ internal class ThinkingTurnTest {
         assertEquals("Expanded", openState)
     }
 
+    @Test
+    fun `a different step shown in its place starts afresh`() {
+        rule.mainClock.autoAdvance = true
+        var part by mutableStateOf(step(id = "r1", durationMs = 2000))
+        show(inTurn = false) { StreamingReasoning(part = part) }
+        header.performClick()
+        rule.waitForIdle()
+        assertEquals("Expanded", openState)
+
+        part = step(id = "r2", durationMs = 3000)
+        rule.waitForIdle()
+
+        assertEquals("Collapsed", openState)
+    }
+
     private companion object {
         const val Turn = "q1"
     }

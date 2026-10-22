@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
+import androidx.compose.runtime.saveable.SaverScope
 import io.getstream.chat.android.ai.compose.ui.component.StreamingReasoningDefaults
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -195,6 +196,22 @@ internal class AIThinkingClockTest {
         assertTrue("it keeps showing while it arrives", at(8500).showsFirstStep(turn))
 
         assertFalse(at(30_000).showsFirstStep(turn))
+    }
+
+    @Test
+    fun `a saved clock is restored with its turns' times`() {
+        val turn = thinkingTurn()
+        clock.isFirstStep("r1", turn)
+        at(8000).update(turn, isThinking = false, hasReplies = true)
+        assertEquals(8.0, clock.durationOfFirstStep(turn, ownSeconds = null))
+
+        val saved = with(AIThinkingClock.Saver) { SaverScope { true }.save(clock) }
+        val restored = AIThinkingClock.Saver.restore(saved!!)!!
+
+        assertEquals(Asked, restored.startedAt(turn))
+        assertTrue(restored.isFirstStep("r1", turn))
+        assertFalse(restored.isFirstStep("r2", turn))
+        assertEquals(8.0, restored.durationOfFirstStep(turn, ownSeconds = null))
     }
 
     private companion object {
