@@ -31,7 +31,7 @@ public const val forbiddenWord: String = "wth"
 /**
  * @param apiVersion The API version the mock serves, "v1" or "v2": its fixtures and its websocket.
  */
-public class MockServer(testName: String, apiVersion: String = "v1") {
+public class MockServer(testName: String, apiVersion: String = "v2") {
     public val url: String
     private val driverUrl: String = "http://10.0.2.2:4567"
     private val okHttp: OkHttpClient = OkHttpClient()

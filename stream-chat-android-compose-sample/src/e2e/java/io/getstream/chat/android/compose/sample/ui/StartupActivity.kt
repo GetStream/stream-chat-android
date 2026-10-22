@@ -49,7 +49,7 @@ class StartupActivity : AppCompatActivity() {
                     context = applicationContext,
                     apiKey = PredefinedUserCredentials.API_KEY,
                     baseUrl = baseUrl,
-                    useV2WebSocket = intent.getBooleanExtra("USE_V2_WEBSOCKET", false),
+                    useV2WebSocket = intent.getBooleanExtra("USE_V2_WEBSOCKET", true),
                 )
                 customSettings().isComposerLinkPreviewEnabled = true
             }
