@@ -25,6 +25,8 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
 import io.getstream.chat.android.ui.common.state.mentions.MentionListState
+import io.getstream.chat.android.ui.common.utils.extensions.awaitConnectedUser
+import io.getstream.chat.android.ui.common.utils.extensions.userSessionEnds
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -35,9 +37,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -75,12 +76,19 @@ public class MentionListController(
 
     init {
         loadRequests.onStart { emit(Unit) } // Triggers the initial load
-            .flatMapLatest { flowOf(searchMentions()) }
-            .onEach { result ->
-                when (result) {
+            // A new load, or the reset when a user session ends, cancels the previous result's handling too.
+            .mapLatest {
+                when (val result = searchMentions()) {
                     is Result.Success -> onSuccessResult(result.value)
                     is Result.Failure -> onFailureResult(result.value)
                 }
+            }
+            .launchIn(scope)
+        chatClient.clientState.userSessionEnds()
+            .onEach {
+                // Drops the previous user's mentions and loads the next user's once they're connected.
+                _state.value = MentionListState()
+                loadRequests.tryEmit(Unit)
             }
             .launchIn(scope)
     }
@@ -125,7 +133,9 @@ public class MentionListController(
     }
 
     private suspend fun searchMentions(): Result<SearchMessagesResult> {
-        val currentUser = requireNotNull(chatClient.getCurrentUser())
+        // A user who is still connecting, e.g. right after a switch, can't search yet.
+        val currentUser = chatClient.clientState.awaitConnectedUser()
+            ?: return Result.Failure(Error.GenericError("No user is connected"))
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
         val messageFilter = Filters.contains("mentioned_users.id", currentUser.id)
         val currentState = _state.value
