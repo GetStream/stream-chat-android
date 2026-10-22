@@ -53,4 +53,6 @@
     <string name="stream_ai_compose_voice_state_listening">Listening</string>
     <string name="stream_ai_compose_voice_state_thinking">Thinking</string>
     <string name="stream_ai_compose_voice_state_speaking">Speaking</string>
+
+    <string name="stream_ai_compose_conversation_scroll_to_latest">Scroll to latest</string>
 </resources>

@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
+import kotlinx.coroutines.delay
 import kotlin.math.max
 
 /**
@@ -58,10 +59,24 @@ internal class ReasoningFoldState(
     private var thinkingSince = SystemClock.elapsedRealtime()
     private var lastThinking = isThinking
 
-    /** The reader tapped the header. */
-    fun toggle() {
-        choice = !open
-        open = !open
+    /**
+     * The reader tapped the header. It flips what they see: reasoning that is open before any of
+     * it arrives shows nothing, so [expanded] says whether it showed.
+     */
+    fun toggle(expanded: Boolean = open) {
+        choice = !expanded
+        open = !expanded
+    }
+
+    /**
+     * Opens finished reasoning that arrived with the answer, which the model sent none of while it
+     * thought, then folds it after a moment, unless the reader chose or the model thinks again.
+     */
+    suspend fun showFinished() {
+        if (choice != null) return
+        open = true
+        delay(AIThinkingClock.FINISHED_REASONING_SHOWN_MILLIS)
+        if (choice == null && !lastThinking) open = false
     }
 
     /** Whether the footnote shows: only once the reader opened finished reasoning, or it opens by default. */
