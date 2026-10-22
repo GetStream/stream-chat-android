@@ -141,6 +141,9 @@ internal class SyncManager(
             logger.e(throwable) { "[uncaughtCoroutineException] throwable: $throwable, context: $context" }
         }
 
+    // Outside syncScope, whose children a DisconnectedEvent cancels: the socket emits one while it connects.
+    private val rescueScope = scope
+
     private val entitiesRetryMutex = Mutex()
     private val isFirstConnect = AtomicBoolean(true)
 
@@ -159,6 +162,7 @@ internal class SyncManager(
         val isDisposed = eventsDisposable?.isDisposed ?: true
         if (!isDisposed) return
         eventsDisposable = chatClient.subscribe(::onEvent)
+        rescueScope.launch { rescueEntitiesStuckInProgress() }
     }
 
     override fun stop() {
@@ -526,6 +530,35 @@ internal class SyncManager(
         }
     } catch (e: Throwable) {
         logger.e(e) { "[retryFailedEntities] failed: $e" }
+    }
+
+    /**
+     * Hands channels, messages and reactions left [SyncStatus.IN_PROGRESS] by an earlier session back
+     * to the retry flow. Their request died with that session, so no result will ever settle them.
+     */
+    private suspend fun rescueEntitiesStuckInProgress() = try {
+        entitiesRetryMutex.withLock {
+            val cids = repos.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS)
+            logger.d { "[rescueEntitiesStuckInProgress] cids.size: ${cids.size}" }
+            cids.forEach { cid ->
+                val channel = repos.selectChannel(cid) ?: return@forEach
+                repos.insertChannel(channel.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+            }
+            val messageIds = repos.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)
+            logger.d { "[rescueEntitiesStuckInProgress] messageIds.size: ${messageIds.size}" }
+            messageIds.forEach { id ->
+                val message = repos.selectMessage(id) ?: return@forEach
+                repos.insertMessage(message.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+            }
+            val reactionIds = repos.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)
+            logger.d { "[rescueEntitiesStuckInProgress] reactionIds.size: ${reactionIds.size}" }
+            reactionIds.forEach { id ->
+                val reaction = repos.selectReactionById(id) ?: return@forEach
+                repos.insertReaction(reaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+            }
+        }
+    } catch (e: Throwable) {
+        logger.e(e) { "[rescueEntitiesStuckInProgress] failed: $e" }
     }
 
     /**

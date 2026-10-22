@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 /**
@@ -102,6 +103,11 @@ public interface ChannelRepository {
      * Read which channel cids need sync.
      */
     public suspend fun selectChannelCidsBySyncNeeded(limit: Int = NO_LIMIT): List<String>
+
+    /**
+     * Read the cids of the channels with the given [syncStatus].
+     */
+    public suspend fun selectChannelCidsBySyncStatus(syncStatus: SyncStatus): List<String>
 
     /**
      * Read which channels need sync.
