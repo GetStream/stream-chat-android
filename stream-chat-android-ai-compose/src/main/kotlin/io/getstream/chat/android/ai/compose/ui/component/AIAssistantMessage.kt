@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import io.getstream.chat.android.ai.compose.parts.AIMessagePart
 import io.getstream.chat.android.ai.compose.parts.AIReasoningPart
 import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAIThinkingTurn
 import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWriting
+import io.getstream.chat.android.ai.compose.ui.component.internal.RichText
 import kotlinx.coroutines.delay
 
 /**
@@ -73,6 +75,7 @@ public fun AIAssistantMessage(
     // Whether the answer is shown as still being written, which is what types it out. A fast
     // reply's text can arrive in the same update that finishes it, and only what arrives while
     // the answer is being written is typed, so it stays written a moment after the reply ends.
+    // The answer counts as written until all of it shows.
     var writing by remember { mutableStateOf(isGenerating) }
     LaunchedEffect(isGenerating) {
         if (isGenerating) {
@@ -82,22 +85,6 @@ public fun AIAssistantMessage(
             writing = false
         }
     }
-    // In a conversation, the answer waits for the reasoning above it to show and fold first.
-    val turn = LocalAIThinkingTurn.current
-    val answerStartsAt = turn?.clock?.answerStartsAt(turn.turn)
-    var held by remember(answerStartsAt) {
-        mutableStateOf(answerStartsAt != null && answerStartsAt > turn.clock.now())
-    }
-    LaunchedEffect(answerStartsAt) {
-        if (held && answerStartsAt != null) {
-            delay(answerStartsAt - turn.clock.now())
-            held = false
-        }
-    }
-    val answerWriting = isGenerating || writing || held
-    val reportWriting = LocalAnswerWriting.current
-    LaunchedEffect(answerWriting, reportWriting) { reportWriting(answerWriting) }
-
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
@@ -113,8 +100,34 @@ public fun AIAssistantMessage(
                 }
             }
         }
+        // In a conversation, the answer waits for the reasoning above it to show and fold first.
+        // This is read after the steps, since a first step that arrives with the answer is what
+        // sets when the answer starts.
+        val turn = LocalAIThinkingTurn.current
+        val answerStartsAt = turn?.clock?.answerStartsAt(turn.turn)
+        var held by remember(answerStartsAt) {
+            mutableStateOf(answerStartsAt != null && answerStartsAt > turn.clock.now())
+        }
+        LaunchedEffect(answerStartsAt) {
+            if (held && answerStartsAt != null) {
+                delay(answerStartsAt - turn.clock.now())
+                held = false
+            }
+        }
+        val animate = writing || held
+        // What of the answer shows so far. It starts as the text does, so an answer shown at once
+        // isn't taken for one still being typed.
+        var shown by remember { mutableStateOf(if (animate) "" else text) }
+        val typing = text.isNotEmpty() && shown.length < text.length
+        val answerWriting = isGenerating || writing || held || typing
+        val reportWriting = LocalAnswerWriting.current
+        LaunchedEffect(answerWriting, reportWriting) { reportWriting(answerWriting) }
         if (text.isNotEmpty()) {
-            StreamingText(text = if (held) "" else text, animate = writing || answerStartsAt != null)
+            // A held answer types out once it is let go, and one made again after that shows at once.
+            StreamingText(text = if (held) "" else text, animate = animate) { displayedText ->
+                SideEffect { shown = displayedText }
+                RichText(text = displayedText)
+            }
         }
         val factory = LocalChatAiComponentFactory.current
         attachments.forEach { attachment ->
