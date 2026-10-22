@@ -441,6 +441,7 @@ internal class DomainMapping(
             disabled = disabled,
             createdAt = createdAt,
             updatedAt = updatedAt,
+            lastMessageAt = lastMessageAt,
             team = team.orEmpty(),
             extraData = custom.withDeclared("disabled" to disabled)
                 .mapNotNull { (key, value) -> value?.let { key to it } }

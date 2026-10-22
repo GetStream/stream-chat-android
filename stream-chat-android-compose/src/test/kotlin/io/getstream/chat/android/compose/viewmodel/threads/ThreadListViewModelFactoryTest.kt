@@ -19,12 +19,13 @@ package io.getstream.chat.android.compose.viewmodel.threads
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
-import kotlinx.coroutines.test.TestScope
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.InitializationState
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.jupiter.api.assertInstanceOf
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
@@ -55,9 +56,12 @@ internal class ThreadListViewModelFactoryTest {
 
     private class Fixture {
 
+        private val mockClientState: ClientState = mock {
+            on { user } doReturn MutableStateFlow(null)
+            on { initializationState } doReturn MutableStateFlow(InitializationState.NOT_INITIALIZED)
+        }
         private val mockChatClient: ChatClient = mock {
-            on { clientState } doReturn mock()
-            on { inheritScope(any()) } doReturn TestScope()
+            on { clientState } doReturn mockClientState
         }
 
         fun get() = ThreadsViewModelFactory(

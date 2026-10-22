@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.internal.state.event.handler.internal.ut
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.internal.state.utils.internal.mergePartialUpdate
+import io.getstream.chat.android.client.internal.state.utils.internal.unhidesChannel
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
@@ -151,10 +152,7 @@ internal class ChannelEventHandlerImpl(
                 }
                 // Update channel read state for the current user
                 state.updateCurrentUserRead(event.createdAt, enrichedMessage)
-                // Update hidden state if the message is not shadowed
-                if (!enrichedMessage.shadowed) {
-                    state.setHidden(false)
-                }
+                unhideFor(enrichedMessage)
                 // Update message count
                 event.channelMessageCount?.let(state::setMessageCount)
                 // Update last message at
@@ -177,10 +175,7 @@ internal class ChannelEventHandlerImpl(
             is NotificationMessageNewEvent -> {
                 // Update channel read state
                 state.updateCurrentUserRead(event.createdAt, event.message)
-                // Update hidden state if the message is not shadowed
-                if (!event.message.shadowed) {
-                    state.setHidden(false)
-                }
+                unhideFor(event.message)
                 // Update last message at
                 state.updateLastMessageAt(event.message)
                 // Insert the message into the appropriate message list
@@ -238,10 +233,7 @@ internal class ChannelEventHandlerImpl(
             is NotificationThreadMessageNewEvent -> {
                 // Handle only if thread reply was sent to channel as well
                 if (event.message.showInChannel) {
-                    // Update hidden state if the message is not shadowed
-                    if (!event.message.shadowed) {
-                        state.setHidden(false)
-                    }
+                    unhideFor(event.message)
                     // Insert the message into the appropriate message list
                     if (state.insideSearch.value) {
                         state.upsertCachedMessage(event.message)
@@ -390,6 +382,13 @@ internal class ChannelEventHandlerImpl(
             is ReminderUpdatedEvent -> updateReminder(event.messageId, event.reminder)
             is ReminderDeletedEvent -> deleteReminder(event.messageId)
             else -> Unit // Ignore other events
+        }
+    }
+
+    /** Shows the channel again when the new [message] makes the server show it. */
+    private fun unhideFor(message: Message) {
+        if (message.unhidesChannel(state.channelData.value.blocked, globalState.blockedUserIds.value)) {
+            state.setHidden(false)
         }
     }
 

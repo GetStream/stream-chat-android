@@ -25,13 +25,11 @@ import io.getstream.chat.android.models.ContainsFilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldNotBeNull
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
@@ -46,8 +44,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 internal class QueryChannelsImplRepositoryTest {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private lateinit var dao: QueryChannelsDao
     private lateinit var sut: DatabaseQueryChannelsRepository

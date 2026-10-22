@@ -30,12 +30,11 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -43,6 +42,7 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.mock
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -50,8 +50,11 @@ import java.util.concurrent.TimeUnit
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class QueryChannelsMutableStateTest {
 
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
+    private companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private val filter = Filters.eq("type", "messaging")
     private val sort = QuerySortByField.descByName<Channel>("last_message_at")

@@ -40,13 +40,13 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
@@ -59,8 +59,6 @@ import java.util.Date
 
 internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
     private val channelId = randomString()
     private val currentUser = User(id = CURRENT_USER_ID)
     private val userFlow = MutableStateFlow(currentUser)
@@ -126,7 +124,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
                 userStartWatchingEvent.createdAt,
                 userStartWatchingEvent.message,
             )
-            verify(channelStateLogic).setHidden(false)
+            verify(channelStateLogic).unhideFor(userStartWatchingEvent.message)
         }
 
     // Message update
@@ -359,6 +357,10 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     }
 
     private companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
         private const val CURRENT_USER_ID = "currentUserId"
     }
 }

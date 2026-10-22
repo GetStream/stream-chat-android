@@ -1296,6 +1296,7 @@ internal class LogicRegistryTest {
             createdAt = recent,
             lastMessageAt = recent,
             hidden = false,
+            disabled = false,
             extraData = emptyMap(),
             read = listOf(randomChannelUserRead(user = user, unreadMessages = 1)),
         )

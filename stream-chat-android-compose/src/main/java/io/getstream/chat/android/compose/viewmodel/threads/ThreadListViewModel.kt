@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
  * @param controller The [ThreadListController] handling the business logic and the state management for the threads
  * list.
  */
-public class ThreadListViewModel(private val controller: ThreadListController) : ViewModel() {
+public class ThreadListViewModel(private val controller: ThreadListController) : ViewModel(controller) {
 
     /**
      * The current thread list state.

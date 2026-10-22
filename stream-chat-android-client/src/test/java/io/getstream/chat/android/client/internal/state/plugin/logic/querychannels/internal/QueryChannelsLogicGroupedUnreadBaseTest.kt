@@ -26,14 +26,12 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -51,9 +49,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 internal class QueryChannelsLogicGroupedUnreadBaseTest {
-
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
 
     private val client: ChatClient = mock()
     private val queryChannelsStateLogic: QueryChannelsStateLogic = mock()
@@ -215,6 +210,7 @@ internal class QueryChannelsLogicGroupedUnreadBaseTest {
 
     private fun channelWithUnread(user: User, unreadMessages: Int) = randomChannel(
         hidden = false,
+        disabled = false,
         read = listOf(randomChannelUserRead(user = user, unreadMessages = unreadMessages)),
     )
 

@@ -25,12 +25,10 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.coInvoking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldThrow
-import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argThat
@@ -40,8 +38,6 @@ import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
 internal class ReactionRepositoryTest {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private lateinit var reactionDao: ReactionDao
     private lateinit var currentUser: User

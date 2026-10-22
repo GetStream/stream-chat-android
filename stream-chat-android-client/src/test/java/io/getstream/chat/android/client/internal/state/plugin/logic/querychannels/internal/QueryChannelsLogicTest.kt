@@ -32,11 +32,9 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -49,9 +47,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 internal class QueryChannelsLogicTest {
-
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
 
     private lateinit var filter: FilterObject
     private lateinit var sort: QuerySortByField<Channel>
@@ -590,6 +585,29 @@ internal class QueryChannelsLogicTest {
         whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(request)
 
         assertEquals(request, logic.currentRequest())
+    }
+
+    @Test
+    fun `addChannelFromEvent tracks a channel with active state`() = runTest {
+        val channel = randomChannel()
+        whenever(queryChannelsStateLogic.isActiveChannel(channel.cid)) doReturn true
+
+        logic.addChannelFromEvent(channel)
+
+        verify(queryChannelsStateLogic).trackChannel(channel)
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+    }
+
+    @Test
+    fun `addChannelFromEvent adds and stores a channel without active state`() = runTest {
+        val channel = randomChannel()
+        whenever(queryChannelsStateLogic.isActiveChannel(channel.cid)) doReturn false
+
+        logic.addChannelFromEvent(channel)
+
+        verify(queryChannelsStateLogic).addChannelsState(listOf(channel))
+        verify(queryChannelsDatabaseLogic).insertQueryChannels(queryChannelsSpec)
+        verify(queryChannelsStateLogic, never()).trackChannel(any())
     }
 
     // endregion
