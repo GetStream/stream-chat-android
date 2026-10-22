@@ -54,6 +54,9 @@ internal data class ChannelPartialUpdateResponse(
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),
 
+    @Json(name = "last_message_at")
+    internal val lastMessageAt: java.util.Date? = null,
+
     @Json(name = "team")
     internal val team: String? = null,
 )

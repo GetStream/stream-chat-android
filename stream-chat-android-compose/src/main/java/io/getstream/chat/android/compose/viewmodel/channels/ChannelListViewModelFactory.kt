@@ -34,6 +34,12 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * Builds the factory that contains all the dependencies required for the Channels Screen.
  * It currently provides the [ChannelListViewModel] using those dependencies.
  *
+ * A [ChannelListViewModel] serves one user at a time: when the user disconnects or another user connects, it drops
+ * the loaded channels and reloads once the next user is connected. The default filter follows the connected user.
+ * A filter that contains a user id doesn't: set the next user's filter with [ChannelListViewModel.setFilters] before
+ * the list reloads, for example when `clientState.user` changes. Predefined filter values can't be changed, so a
+ * different user needs a new view model.
+ *
  * @param chatClient The client used to fetch data.
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.

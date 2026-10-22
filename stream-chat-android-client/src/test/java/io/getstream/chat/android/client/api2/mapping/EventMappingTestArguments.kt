@@ -577,6 +577,7 @@ internal object EventMappingTestArguments {
             type = CHANNEL_TYPE,
             updatedAt = DATE,
             custom = mapOf("name" to "Channel name", "image" to "image.png", "group" to "current"),
+            lastMessageAt = DATE,
             team = "team1",
         ),
     )
@@ -1353,6 +1354,7 @@ internal object EventMappingTestArguments {
             disabled = true,
             createdAt = DATE,
             updatedAt = DATE,
+            lastMessageAt = DATE,
             team = "team1",
             extraData = mapOf("group" to "current", "disabled" to true),
         ),

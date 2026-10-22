@@ -622,6 +622,7 @@ internal object EventArguments {
             frozen = true,
             createdAt = date,
             updatedAt = date,
+            lastMessageAt = date,
             team = "team1",
             extraData = mutableMapOf("group" to "current", "disabled" to false),
         ),

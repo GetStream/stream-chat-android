@@ -49,6 +49,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
@@ -59,13 +60,16 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
+import io.getstream.chat.android.ui.common.utils.extensions.userSessionEnds
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.toUnitCall
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,6 +84,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -417,6 +422,11 @@ public class ChannelListViewModel internal constructor(
     private var lastNextQuery: QueryChannelsRequest? = null
 
     /**
+     * Whether the filter is the default one, built from the connected user, rather than one the app provided.
+     */
+    private var followsDefaultFilter = mode is QueryMode.Standard && mode.initialFilter == null
+
+    /**
      * Emits the effective query input to react to. Standard mode reacts to filter/sort changes
      * (via [queryConfigFlow]) in addition to search and refresh; Predefined and Grouped modes
      * have server-owned filter/sort, so they only react to search and refresh.
@@ -434,15 +444,29 @@ public class ChannelListViewModel internal constructor(
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
-        if (mode is QueryMode.Standard && mode.initialFilter == null) {
+        if (followsDefaultFilter) {
             viewModelScope.launch {
                 val filter = defaultChannelsFilter().first()
-                this@ChannelListViewModel.filterFlow.value = filter
+                if (followsDefaultFilter) this@ChannelListViewModel.filterFlow.value = filter
             }
         }
 
         viewModelScope.launch {
             init()
+        }
+
+        viewModelScope.launch {
+            chatClient.clientState.userSessionEnds().collectLatest {
+                clearUserState()
+                // Reload once the next user is ready; their queries and searches are built from scratch.
+                chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
+                if (followsDefaultFilter) {
+                    // The default filter is built from the current user, and setting it reloads.
+                    filterFlow.value = defaultChannelsFilter().first()
+                } else {
+                    refresh()
+                }
+            }
         }
     }
 
@@ -451,7 +475,7 @@ public class ChannelListViewModel internal constructor(
      */
     public fun refresh() {
         logger.d { "[refresh] no args" }
-        refreshFlow.value = System.currentTimeMillis()
+        refreshFlow.update { it + 1 }
     }
 
     /**
@@ -484,6 +508,8 @@ public class ChannelListViewModel internal constructor(
      * Has no effect on view models constructed for a predefined-filter query (predefined identity is
      * fixed at construction) or for a grouped query (the group's filter is server-owned).
      *
+     * After a user disconnects, setting the next user's filter before they finish connecting makes the reload use it.
+     *
      * @param newFilters The new filters to be used as a baseline for filtering channels.
      */
     public fun setFilters(newFilters: FilterObject) {
@@ -498,6 +524,7 @@ public class ChannelListViewModel internal constructor(
             }
             is QueryMode.Standard -> Unit
         }
+        followsDefaultFilter = false
         this.filterFlow.tryEmit(value = newFilters)
     }
 
@@ -909,12 +936,12 @@ public class ChannelListViewModel internal constructor(
      * given [searchQuery] (via [buildQueryChannelsRequest]) and starts collecting from it.
      */
     private fun observeQueryChannels(searchQuery: String) =
-        observeQueryChannelsInternal(tag = "observeQueryChannels") {
+        observeQueryChannelsInternal(tag = "observeQueryChannels") { scope ->
             val request = buildQueryChannelsRequest(searchQuery) ?: return@observeQueryChannelsInternal null
             chatClient.queryChannelsAsState(
                 request = request,
                 chatEventHandlerFactory = chatEventHandlerFactory,
-                coroutineScope = chListScope,
+                coroutineScope = scope,
             )
         }
 
@@ -924,23 +951,41 @@ public class ChannelListViewModel internal constructor(
      * `queryGroupedChannels` responses routed through the listener.
      */
     private fun observeGroupedChannels(groupKey: String) =
-        observeQueryChannelsInternal(tag = "observeGroupedChannels") {
+        observeQueryChannelsInternal(tag = "observeGroupedChannels") { scope ->
             chatClient.initGroupedQueryChannelsAsState(
                 identifier = QueryChannelsIdentifier.Grouped(groupKey),
                 chatEventHandlerFactory = chatEventHandlerFactory,
-                coroutineScope = chListScope,
+                coroutineScope = scope,
             )
         }
+
+    /**
+     * Drops the channels, search results and selection loaded for the previous user, and stops their queries.
+     */
+    private fun clearUserState() {
+        logger.d { "[clearUserState] no args" }
+        chListScope.coroutineContext.cancelChildren()
+        searchScope.coroutineContext.cancelChildren()
+        queryChannelsState = MutableStateFlow(null)
+        // The default filter names the previous user, so nothing may query with it until it's rebuilt.
+        if (followsDefaultFilter) filterFlow.value = null
+        searchMessageState.value = null
+        lastNextQuery = null
+        dismissChannelAction()
+        channelsState = ChannelsState(searchQuery = _searchQuery.value)
+    }
 
     /**
      * Shared implementation for observing a [QueryChannelsState] from a [createState] producer.
      */
     private fun observeQueryChannelsInternal(
         tag: String,
-        createState: () -> StateFlow<QueryChannelsState?>?,
+        createState: (CoroutineScope) -> StateFlow<QueryChannelsState?>?,
     ) = runCatching {
         queryChannelDebouncer.submitSuspendable {
-            queryChannelsState = createState() ?: return@submitSuspendable
+            // Ends with this observation, so a replaced query stops instead of re-running for later users.
+            val observationScope = CoroutineScope(currentCoroutineContext())
+            queryChannelsState = createState(observationScope) ?: return@submitSuspendable
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
                 combine(
                     queryChannelsState.channelsStateData,

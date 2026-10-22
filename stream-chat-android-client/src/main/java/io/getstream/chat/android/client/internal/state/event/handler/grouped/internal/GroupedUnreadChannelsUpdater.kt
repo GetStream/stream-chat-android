@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.UserId
@@ -171,7 +170,7 @@ internal class GroupedUnreadChannelsUpdater(
     private fun hadUnreadFor(cid: String, oldChannel: Channel): Boolean = when {
         cid in hadUnreadOverride -> hadUnreadOverride.getValue(cid)
         markAllReadApplied -> false
-        else -> oldChannel.currentUserUnreadCount(currentUserId) > 0
+        else -> oldChannel.isUnreadInGroupFor(currentUserId)
     }
 
     private fun rotateBatchIfNeeded(batchId: Int) {

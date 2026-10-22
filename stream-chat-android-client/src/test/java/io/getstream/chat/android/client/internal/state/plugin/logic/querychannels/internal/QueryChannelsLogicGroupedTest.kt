@@ -33,16 +33,16 @@ import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -54,9 +54,6 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 internal class QueryChannelsLogicGroupedTest {
-
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
 
     private lateinit var client: ChatClient
     private lateinit var queryChannelsStateLogic: QueryChannelsStateLogic
@@ -856,6 +853,10 @@ internal class QueryChannelsLogicGroupedTest {
     // endregion
 
     private companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
         private const val GROUP_KEY = "test-group"
     }
 }

@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.utils.internal
 import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.LEGACY_CHANNEL_EXTRA_DATA_KEYS
+import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 
@@ -30,7 +31,7 @@ private val serverFieldsInExtraData = LEGACY_CHANNEL_EXTRA_DATA_KEYS + GENERATED
 
 /**
  * Applies the fields carried by [NotificationChannelPartialUpdatedEvent.channel] to this channel and keeps all
- * the others, such as members, reads and [Channel.lastMessageAt].
+ * the others, such as members and reads. [Channel.lastMessageAt] takes the later of the local and the event value.
  */
 internal fun Channel.mergePartialUpdate(partial: Channel): Channel = copy(
     name = partial.name,
@@ -40,12 +41,13 @@ internal fun Channel.mergePartialUpdate(partial: Channel): Channel = copy(
     team = partial.team,
     createdAt = partial.createdAt,
     updatedAt = partial.updatedAt,
+    lastMessageAt = max(lastMessageAt, partial.lastMessageAt),
     extraData = mergePartialExtraData(current = extraData, partial = partial.extraData),
 )
 
 /**
  * Applies the fields carried by [NotificationChannelPartialUpdatedEvent.channel] to this channel data and keeps
- * all the others.
+ * all the others. [ChannelData.lastMessageAt] takes the later of the local and the event value.
  */
 internal fun ChannelData.mergePartialUpdate(partial: Channel): ChannelData = copy(
     name = partial.name,
@@ -55,6 +57,7 @@ internal fun ChannelData.mergePartialUpdate(partial: Channel): ChannelData = cop
     team = partial.team,
     createdAt = partial.createdAt,
     updatedAt = partial.updatedAt,
+    lastMessageAt = max(lastMessageAt, partial.lastMessageAt),
     extraData = mergePartialExtraData(current = extraData, partial = partial.extraData),
 )
 

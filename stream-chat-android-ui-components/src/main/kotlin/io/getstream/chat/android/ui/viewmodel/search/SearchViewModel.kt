@@ -25,6 +25,8 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.utils.extensions.awaitConnectedUser
+import io.getstream.chat.android.ui.common.utils.extensions.userSessionEnds
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -66,6 +68,13 @@ public class SearchViewModel(
 
     private val logger by taggedLogger("Chat:SearchViewModel")
 
+    init {
+        scope.launch {
+            // Drops the previous user's results; the search runs again once the next user is ready.
+            chatClient.clientState.userSessionEnds().collect { setQuery(_state.value!!.query) }
+        }
+    }
+
     /**
      * Changes the current query state. An empty search query
      */
@@ -99,8 +108,6 @@ public class SearchViewModel(
      * is already in progress.
      */
     public fun loadMore() {
-        job?.cancel()
-
         val currentState = _state.value!!
         if (currentState.canLoadMore && !currentState.isLoading && !currentState.isLoadingMore) {
             _state.value = currentState.copy(isLoadingMore = true)
@@ -174,7 +181,9 @@ public class SearchViewModel(
      */
     private suspend fun searchMessages(query: String, next: String?): Result<SearchMessagesResult> {
         logger.d { "Searching for \"$query\" with next: $next" }
-        val currentUser = requireNotNull(chatClient.clientState.user.value)
+        // A user who is still connecting, e.g. right after a switch, can't search yet.
+        val currentUser = chatClient.clientState.awaitConnectedUser()
+            ?: return Result.Failure(Error.GenericError("No user is connected"))
         return chatClient
             .searchMessages(
                 channelFilter = Filters.`in`("members", listOf(currentUser.id)),
