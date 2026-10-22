@@ -55,4 +55,12 @@
     <string name="stream_ai_compose_voice_state_speaking">Speaking</string>
 
     <string name="stream_ai_compose_conversation_scroll_to_latest">Scroll to latest</string>
+    <string name="stream_ai_compose_conversation_attachment_image">Image</string>
+    <string name="stream_ai_compose_conversation_attachment_file">File</string>
+    <string name="stream_ai_compose_conversation_attachment_details">%1$s · %2$s</string>
+    <string name="stream_ai_compose_conversation_attachment_open">Open</string>
+    <string name="stream_ai_compose_conversation_attachment_cannot_open">No app can open this file</string>
+    <string name="stream_ai_compose_conversation_message_actions">Message actions</string>
+    <string name="stream_ai_compose_conversation_message_edit">Edit</string>
+    <string name="stream_ai_compose_conversation_copy">Copy</string>
 </resources>
