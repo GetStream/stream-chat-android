@@ -105,7 +105,8 @@ internal fun openAttachment(context: Context, attachment: AIMessageAttachment) {
     }
 }
 
-private tailrec fun Context.findActivity(): Activity? = when (this) {
+/** The activity this context belongs to, or null when it belongs to none. */
+internal tailrec fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()
     else -> null
