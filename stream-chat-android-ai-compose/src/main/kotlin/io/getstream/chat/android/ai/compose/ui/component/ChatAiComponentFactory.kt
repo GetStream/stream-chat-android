@@ -194,6 +194,7 @@ public interface ChatAiComponentFactory {
     @Suppress("EmptyFunctionBlock")
     @Composable
     public fun AIConversationReplyActions(params: AIConversationReplyActionsParams) {
+        // No actions unless the app chooses some, such as with AIReplyActionsRow.
     }
 
     /**
