@@ -123,6 +123,27 @@ internal class AIPendingMessageTrackerTest {
     }
 
     @Test
+    fun `when the copy arrives with the pending message it takes over the pending row`() {
+        val before = listOf(question("q1"), answer("a1"))
+        tracker.entries(before, pending = null)
+
+        val messages = before + question("q2")
+
+        assertEquals(listOf("q1", "a1", "pending"), ids(messages, pending))
+        assertEquals(listOf("q1", "a1", "pending"), ids(messages, pending))
+    }
+
+    @Test
+    fun `a message sent again with the same text waits for its own copy`() {
+        val before = listOf(question("q1", text = "Plan a trip"), answer("a1"))
+        tracker.entries(before, pending = null)
+
+        assertEquals(listOf("q1", "a1", "pending"), ids(before, pending))
+        assertEquals(listOf("q1", "a1", "pending"), ids(before + question("q2", text = "Plan a trip"), pending))
+        assertEquals("q2", tracker.entries(before + question("q2", text = "Plan a trip"), pending)[2].message?.id)
+    }
+
+    @Test
     fun `when the copy has the pending message's id it takes over wherever it lands`() {
         val identified = AIPendingMessage(id = "q1", text = "Plan a trip")
         tracker.entries(emptyList(), identified)

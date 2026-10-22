@@ -57,9 +57,13 @@ internal data class AIConversationEntry(
 internal class AIPendingMessageTracker {
 
     // The person's messages each pending message's copy cannot be, by the pending message's id:
-    // those there were when it was first seen, and those that arrived since without being its
-    // copy, such as older ones.
+    // those there were in the update before it was first seen, and those that arrived since
+    // without being its copy, such as older ones.
     private val seen = mutableMapOf<String, Set<String>>()
+
+    // The person's messages in the last update, which a pending message first seen next to its
+    // copy was sent after.
+    private var lastSent: Set<String>? = null
 
     // The pending message each copy took over, by the copy's id.
     private val copies = linkedMapOf<String, AIPendingMessage>()
@@ -77,10 +81,10 @@ internal class AIPendingMessageTracker {
         // A copy that arrives in the update that stops passing its pending message still takes
         // over its row. Only then: a message sent later is not the copy of one that failed.
         val awaited = pending ?: lastPending
+        val sent = messages.filter { it.role == AIMessageRole.User }
+        val ids = sent.mapTo(LinkedHashSet()) { it.id }
         if (awaited != null) {
-            val sent = messages.filter { it.role == AIMessageRole.User }
-            val ids = sent.mapTo(LinkedHashSet()) { it.id }
-            val known = seen[awaited.id] ?: ids
+            val known = seen[awaited.id] ?: lastSent ?: ids
             val matched = copies.entries.firstOrNull { it.value.id == awaited.id && it.key in ids }?.key
             val copy = matched ?: copyOf(awaited, sent, known)
             if (copy != null) {
@@ -91,6 +95,7 @@ internal class AIPendingMessageTracker {
             }
         }
         lastPending = pending
+        lastSent = ids
         val entries = messages.filterNot { it.showsNothing }.mapTo(mutableListOf()) { message ->
             val taken = copies[message.id]
             AIConversationEntry(
