@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
@@ -664,7 +665,7 @@ internal interface ChatApi {
     fun og(url: String): Call<Attachment>
 
     @CheckResult
-    fun getSyncHistory(channelIds: List<String>, lastSyncAt: String, watch: Boolean): Call<List<ChatEvent>>
+    fun getSyncHistory(channelIds: List<String>, lastSyncAt: String, watch: Boolean): Call<SyncedEvents>
 
     @CheckResult
     fun downloadFile(fileUrl: String): Call<ResponseBody>

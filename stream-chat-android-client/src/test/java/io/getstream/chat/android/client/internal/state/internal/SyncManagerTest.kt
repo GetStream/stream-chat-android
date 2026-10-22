@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.querychannel
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.internal.state.sync.internal.sameInstant
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -234,7 +235,7 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
         whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
         whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(
-            Result.Success(listOf(mockedChatEvent)),
+            Result.Success(listOf(mockedChatEvent)).synced(),
         )
         val connectingEvent = ConnectedEvent(
             type = "type",
@@ -252,6 +253,46 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `A sync counts every channel as synced when no event was skipped`() = runTest(testDispatcher) {
+        assertEquals(setOf("messaging:a", "messaging:b"), syncedCidsAfterSkipping(emptySet(), false))
+    }
+
+    @Test
+    fun `A sync leaves the channels of skipped events out of the synced ones`() = runTest(testDispatcher) {
+        assertEquals(setOf("messaging:a"), syncedCidsAfterSkipping(setOf("messaging:b"), false))
+    }
+
+    @Test
+    fun `A sync counts no channel as synced when a skipped event's channel is unknown`() = runTest(testDispatcher) {
+        assertEquals(emptySet<String>(), syncedCidsAfterSkipping(setOf("messaging:b"), true))
+    }
+
+    private suspend fun TestScope.syncedCidsAfterSkipping(
+        skippedCids: Set<String>,
+        hasSkippedWithoutCid: Boolean,
+    ): Set<String> {
+        val createdAt = localDate()
+        whenever(repositoryFacade.selectMessages(any())) doReturn listOf(randomMessage())
+        whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectSyncState(any())) doReturn SyncState(
+            userId = randomString(),
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = "2026-10-14T11:13:25.61465Z",
+            markedAllReadAt = createdAt,
+        )
+        val event: ChatEvent = mock {
+            on(it.createdAt) doReturn createdAt
+            on(it.rawCreatedAt) doReturn "2026-10-14T11:13:26.000000000Z"
+        }
+        val synced = SyncedEvents(listOf(event), skippedCids, hasSkippedWithoutCid)
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
+            TestCall(Result.Success(synced))
+
+        return buildSyncManager().performSync(cids = listOf("messaging:a", "messaging:b")).syncedCids
+    }
+
+    @Test
     fun `test initial syncing when rawLastSyncedAt is null`() = runTest(testDispatcher) {
         /* Given */
         val createdAt = Date()
@@ -263,10 +304,10 @@ internal class SyncManagerTest {
         }
 
         whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(
-            Result.Success(listOf(mockedChatEvent)),
+            Result.Success(listOf(mockedChatEvent)).synced(),
         )
         whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(
-            Result.Success(listOf(mockedChatEvent)),
+            Result.Success(listOf(mockedChatEvent)).synced(),
         )
 
         val syncManager = buildSyncManager()
@@ -289,7 +330,7 @@ internal class SyncManagerTest {
         val expectedCids = cids.take(100)
 
         whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(
-            Result.Success(emptyList()),
+            Result.Success(emptyList<ChatEvent>()).synced(),
         )
 
         val syncManager = buildSyncManager()
@@ -388,8 +429,8 @@ internal class SyncManagerTest {
         _syncState.value = null
         whenever(repositoryFacade.selectSyncState(any())) doReturn null
         whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
-            TestCall(Result.Failure(error))
-        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(Result.Failure(error))
+            TestCall(Result.Failure(error).synced())
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(Result.Failure(error).synced())
         givenWatchedChannels(cids = setOf(watchedChannel.cid), foundChannels = listOf(watchedChannel))
 
         val syncManager = buildSyncManager()
@@ -619,8 +660,9 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectSyncState(any())) doReturn _syncState.value
         val events = listOf(markAllRead, filler, filler)
         whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
-            TestCall(Result.Success(events))
-        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(Result.Success(events))
+            TestCall(Result.Success(events).synced())
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn
+            TestCall(Result.Success(events).synced())
         givenWatchedChannels(cids = emptySet(), foundChannels = emptyList())
 
         val syncManager = buildSyncManager(eventReplayMaxCount = 2)
@@ -658,8 +700,9 @@ internal class SyncManagerTest {
             }
         }
         whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
-            TestCall(Result.Success(events))
-        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(Result.Success(events))
+            TestCall(Result.Success(events).synced())
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn
+            TestCall(Result.Success(events).synced())
         return events
     }
 
@@ -783,8 +826,8 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectMessages(any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
         whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
-        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(result)
-        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(result)
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(result.synced())
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(result.synced())
         // The timestamp only advances once the watched-channels fallback succeeded, so the client
         // has to be able to run it. The failure and offline cases are covered separately.
         whenever(clientState.isOnline) doReturn true
@@ -1066,7 +1109,7 @@ internal class SyncManagerTest {
 
             whenever(repositoryFacade.selectSyncState(user.id)) doReturn testSyncState
             whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(
-                Result.Success(listOf(mockedChatEvent)),
+                Result.Success(listOf(mockedChatEvent)).synced(),
             )
             whenever(clientState.isOnline) doReturn true
 
@@ -1102,7 +1145,7 @@ internal class SyncManagerTest {
             )
             whenever(repositoryFacade.selectSyncState(user.id)) doReturn syncState
             whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
-                TestCall(Result.Success(emptyList()))
+                TestCall(Result.Success(emptyList<ChatEvent>()).synced())
             whenever(clientState.isOnline) doReturn true
 
             val foundChannelId = ChannelId.fromTypeAndId("messaging", "found")!!
@@ -2165,8 +2208,8 @@ internal class SyncManagerTest {
     }
 
     private fun stubSyncHistory(result: Result<List<ChatEvent>>) {
-        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(result)
-        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(result)
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(result.synced())
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(result.synced())
     }
 
     /** The arguments of each sync request, whichever last sync date variant it used. */
@@ -2226,3 +2269,5 @@ internal class SyncManagerTest {
         )
     }
 }
+
+private fun Result<List<ChatEvent>>.synced(): Result<SyncedEvents> = map { SyncedEvents(it) }

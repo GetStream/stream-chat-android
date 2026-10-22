@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.parser.EventArguments
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.RetroError
@@ -42,6 +43,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUnreadCounts
 import io.getstream.result.call.Call
+import io.getstream.result.call.map
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -550,7 +552,7 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
     internal inner class Fixture {
 
         fun givenGetSyncHistoryResult(result: Call<List<ChatEvent>>) = apply {
-            whenever(api.getSyncHistory(any(), any(), any())).thenReturn(result)
+            whenever(api.getSyncHistory(any(), any(), any())).thenReturn(result.map { SyncedEvents(it) })
         }
 
         fun givenSearchMessagesResult(result: Call<SearchMessagesResult>) = apply {

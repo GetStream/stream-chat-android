@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
@@ -1706,7 +1707,7 @@ constructor(
         ).readOffMain(UNREADABLE_SENT_EVENT) { v2EventParser.parseSentEvent(it.string()) }
     }
 
-    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String, watch: Boolean): Call<List<ChatEvent>> {
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String, watch: Boolean): Call<SyncedEvents> {
         val cursor = ExactDate.parseOrNull(lastSyncAt)
             ?: return ErrorCall(coroutineScope, Error.GenericError("Unreadable last_sync_at: $lastSyncAt"))
         val lazySyncHistoryCall = {
