@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasScrollToIndexAction
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
@@ -59,19 +61,22 @@ internal class AIConversationLayoutTest {
     private var loadOlderMessages: (suspend () -> Unit)? by mutableStateOf(null)
 
     private fun setContent() {
-        rule.setContent {
-            Box(modifier = Modifier.size(width = 300.dp, height = ListHeight)) {
-                AIConversation(
-                    messages = messages,
-                    key = Message::id,
-                    isFromUser = Message::isFromUser,
-                    isThinking = isThinking,
-                    loadOlderMessages = loadOlderMessages,
-                    footer = { Text("footer") },
-                    emptyContent = { Text("How can I help?") },
-                ) { message ->
-                    Text(text = message.id, modifier = Modifier.height(message.height))
-                }
+        rule.setContent { Conversation() }
+    }
+
+    @Composable
+    private fun Conversation() {
+        Box(modifier = Modifier.size(width = 300.dp, height = ListHeight)) {
+            AIConversation(
+                messages = messages,
+                key = Message::id,
+                isFromUser = Message::isFromUser,
+                isThinking = isThinking,
+                loadOlderMessages = loadOlderMessages,
+                footer = { Text("footer") },
+                emptyContent = { Text("How can I help?") },
+            ) { message ->
+                Text(text = message.id, modifier = Modifier.height(message.height))
             }
         }
     }
@@ -202,6 +207,48 @@ internal class AIConversationLayoutTest {
 
         assertNear(0.dp, top("q2"))
         rule.onAllNodesWithContentDescription(ScrollToLatest).assertCountEquals(0)
+    }
+
+    @Test
+    fun `older messages arriving above a reply that was first keep it in place`() {
+        loadOlderMessages = {}
+        messages = listOf(reply("r1"), question("q2"), reply("a2"))
+        setContent()
+        scrollToStart()
+        val shown = top("r1")
+
+        messages = listOf(question("q1")) + messages
+        rule.waitForIdle()
+
+        assertNear(shown, top("r1"))
+    }
+
+    @Test
+    fun `older messages arriving above a latest turn with no question leave the list where it is`() {
+        loadOlderMessages = {}
+        messages = listOf(reply("r1"), reply("r2"))
+        setContent()
+        scrollToStart()
+        val shown = top("r1")
+
+        messages = listOf(question("q1")) + messages
+        rule.waitForIdle()
+
+        assertNear(shown, top("r1"))
+    }
+
+    @Test
+    fun `a restored list stays where the reader left it`() {
+        messages = listOf(question("q1"), reply("a1"), question("q2"), reply("a2"))
+        val restoration = StateRestorationTester(rule)
+        restoration.setContent { Conversation() }
+        scrollToStart()
+        val shown = top("q1")
+
+        restoration.emulateSavedInstanceStateRestore()
+        rule.waitForIdle()
+
+        assertNear(shown, top("q1"))
     }
 
     private fun top(text: String, substring: Boolean): Dp =

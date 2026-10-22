@@ -23,7 +23,8 @@ import java.util.UUID
  * it at once, and its copy takes over its row when it arrives.
  *
  * @param id The message's id once it arrives, when you know it. Its copy is then found by it rather
- * than by where it lands.
+ * than by where it lands. Pass it when you can: by where it lands, a copy that arrived before the
+ * conversation first showed this message is not found.
  * @param text What the person wrote.
  * @param attachments What they sent with it, such as the photos and files they picked.
  */

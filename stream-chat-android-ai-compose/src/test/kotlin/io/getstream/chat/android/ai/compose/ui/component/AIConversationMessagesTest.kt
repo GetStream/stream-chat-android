@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -92,6 +93,21 @@ internal class AIConversationMessagesTest {
 
         rule.onAllNodesWithText("What is the weather?").assertCountEquals(1)
         rule.onNodeWithText("Thinking", substring = true, useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun `messages added to a list changed in place show`() {
+        val list = mutableStateListOf<AIMessage>(Message("m1", AIMessageRole.User, "Hi"))
+        rule.setContent {
+            Box(modifier = Modifier.size(width = 300.dp, height = 600.dp)) {
+                AIConversation(messages = list)
+            }
+        }
+
+        list += Message("m2", AIMessageRole.Assistant, "Hello")
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Hello").assertExists()
     }
 
     @Test

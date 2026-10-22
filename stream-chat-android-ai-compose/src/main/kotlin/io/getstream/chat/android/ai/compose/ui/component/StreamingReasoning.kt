@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -291,17 +292,20 @@ public fun StreamingReasoning(
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     colors: StreamingReasoningColors = StreamingReasoningDefaults.colors(),
 ) {
-    ReasoningView(
-        text = text ?: part.preview ?: part.summary.orEmpty(),
-        isThinking = part.isStreaming,
-        modifier = modifier,
-        durationSeconds = part.durationSeconds,
-        summary = part.summary,
-        footnote = footnote,
-        textStyle = textStyle,
-        colors = colors,
-        stepId = part.id,
-    )
+    // A different step shown in its place starts afresh rather than with this one's state.
+    key(part.id) {
+        ReasoningView(
+            text = text ?: part.preview ?: part.summary.orEmpty(),
+            isThinking = part.isStreaming,
+            modifier = modifier,
+            durationSeconds = part.durationSeconds,
+            summary = part.summary,
+            footnote = footnote,
+            textStyle = textStyle,
+            colors = colors,
+            stepId = part.id,
+        )
+    }
 }
 
 /**
