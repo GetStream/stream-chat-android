@@ -97,6 +97,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 import java.util.concurrent.atomic.AtomicReference
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -374,6 +375,51 @@ internal class EventHandlerSequentialTest {
         mutableGlobalState.channelMutes.value `should be equal to` expectedChannelMutes
         mutableGlobalState.blockedUserIds.value `should be equal to` expectedBlockedUserIds
     }
+
+    @Test
+    fun `When handling ChannelTruncatedEvent, Messages before the channel's truncatedAt are deleted from local storage`() =
+        runTest {
+            // given
+            val truncatedAt = Date(1_000)
+            val event = randomChannelTruncatedEvent(
+                createdAt = Date(1_020),
+                channel = randomChannel(truncatedAt = truncatedAt),
+            )
+            val repos: RepositoryFacade = mock()
+            whenever(repos.selectMessages(any())) doReturn emptyList()
+            whenever(repos.selectChannels(any())) doReturn emptyList()
+            whenever(repos.selectThreads(any())) doReturn emptyList()
+            val handler = Fixture()
+                .withRepositoryFacade(repos)
+                .get(this)
+            // when
+            handler.handleEvents(event)
+            // then
+            verify(repos).deleteChannelMessagesBefore(event.cid, truncatedAt)
+        }
+
+    @Test
+    fun `When handling NotificationChannelTruncatedEvent, Messages before the channel's truncatedAt are deleted from local storage`() =
+        runTest {
+            // given
+            val truncatedAt = Date(1_000)
+            val event = randomNotificationChannelTruncatedEvent(
+                createdAt = Date(1_020),
+                channel = randomChannel(truncatedAt = truncatedAt),
+            )
+            val repos: RepositoryFacade = mock()
+            whenever(repos.selectMessages(any())) doReturn emptyList()
+            whenever(repos.selectChannels(any())) doReturn emptyList()
+            whenever(repos.selectThreads(any())) doReturn emptyList()
+            whenever(repos.selectChannel(event.cid)) doReturn event.channel
+            val handler = Fixture()
+                .withRepositoryFacade(repos)
+                .get(this)
+            // when
+            handler.handleEvents(event)
+            // then
+            verify(repos).deleteChannelMessagesBefore(event.cid, truncatedAt)
+        }
 
     @Test
     fun `When handling DraftMessageDeletedEvent, The draft should be deleted from local storage`() = runTest {

@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
+import io.getstream.chat.android.client.extensions.internal.survivesTruncationAt
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -540,23 +541,28 @@ internal class ChannelStateImpl(
      * Removes all messages created before the specified date.
      *
      * @param date The cutoff date; messages created before this date will be removed.
-     * @param systemMessage An optional system message to upsert after removal.
      */
-    fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
+    fun removeMessagesBefore(date: Date) {
+        retainMessages(systemMessage = null) { it.wasCreatedAfter(date) }
+    }
+
+    /**
+     * Removes the messages a truncation at [truncatedAt] removed on the server.
+     *
+     * @param truncatedAt The channel's truncation date.
+     * @param systemMessage The truncation's system message, upserted after removal.
+     */
+    fun removeTruncatedMessages(truncatedAt: Date, systemMessage: Message?) {
+        retainMessages(systemMessage) { it.survivesTruncationAt(truncatedAt) }
+    }
+
+    private fun retainMessages(systemMessage: Message?, keep: (Message) -> Boolean) {
         _messages.update { current ->
-            if (current.all { it.wasCreatedAfter(date) }) {
-                current
-            } else {
-                current.filter { it.wasCreatedAfter(date) }
-            }
+            if (current.all(keep)) current else current.filter(keep)
         }
-        moveOldestFetchedMessageIf { !it.wasCreatedAfter(date) }
-        _cachedLatestMessages.update { current ->
-            current.filter { message -> message.wasCreatedAfter(date) }
-        }
-        _pinnedMessages.update { current ->
-            current.filter { message -> message.wasCreatedAfter(date) }
-        }
+        moveOldestFetchedMessageIf { !keep(it) }
+        _cachedLatestMessages.update { current -> current.filter(keep) }
+        _pinnedMessages.update { current -> current.filter(keep) }
         systemMessage?.let(::upsertMessage)
     }
 

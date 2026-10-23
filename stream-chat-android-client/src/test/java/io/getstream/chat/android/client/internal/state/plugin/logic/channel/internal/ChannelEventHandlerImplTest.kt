@@ -104,7 +104,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
-import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -934,7 +933,7 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state).setHidden(true)
-        verify(state, never()).removeMessagesBefore(any(), anyOrNull())
+        verify(state, never()).removeMessagesBefore(any())
     }
 
     @Test
@@ -953,7 +952,7 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state).deleteChannel(event.createdAt)
-        verify(state, never()).removeMessagesBefore(any(), anyOrNull())
+        verify(state, never()).removeMessagesBefore(any())
     }
 
     @Test
@@ -963,11 +962,12 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state).deleteChannel(event.createdAt)
-        verify(state, never()).removeMessagesBefore(any(), anyOrNull())
+        verify(state, never()).removeMessagesBefore(any())
     }
 
     @Test
     fun `When ChannelTruncatedEvent is handled, Then messages are removed with system message and channel data is updated`() {
+        val truncatedAt = randomDate()
         val systemMessage = randomMessage()
         val event = ChannelTruncatedEvent(
             type = EventType.CHANNEL_TRUNCATED,
@@ -978,23 +978,33 @@ internal class ChannelEventHandlerImplTest {
             channelId = randomString(),
             user = randomUser(),
             message = systemMessage,
-            channel = randomChannel(),
+            channel = randomChannel(truncatedAt = truncatedAt),
         )
 
         handler.handle(event)
 
-        verify(state).removeMessagesBefore(event.createdAt, systemMessage)
+        verify(state).removeTruncatedMessages(truncatedAt, systemMessage)
         verify(state).updateChannelData(event)
     }
 
     @Test
     fun `When NotificationChannelTruncatedEvent is handled, Then messages are removed and channel data is updated`() {
-        val event = randomNotificationChannelTruncatedEvent(cid = cid)
+        val truncatedAt = randomDate()
+        val event = randomNotificationChannelTruncatedEvent(cid = cid, channel = randomChannel(truncatedAt = truncatedAt))
 
         handler.handle(event)
 
-        verify(state).removeMessagesBefore(event.createdAt)
+        verify(state).removeTruncatedMessages(truncatedAt, systemMessage = null)
         verify(state).updateChannelData(event)
+    }
+
+    @Test
+    fun `When a truncated event's channel has no truncatedAt, Then messages are removed before the event date`() {
+        val event = randomNotificationChannelTruncatedEvent(cid = cid, channel = randomChannel(truncatedAt = null))
+
+        handler.handle(event)
+
+        verify(state).removeTruncatedMessages(event.createdAt, systemMessage = null)
     }
 
     // endregion

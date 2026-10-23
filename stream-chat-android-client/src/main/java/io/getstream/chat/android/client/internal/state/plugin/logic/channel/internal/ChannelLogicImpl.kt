@@ -252,7 +252,7 @@ internal class ChannelLogicImpl(
     }
 
     override fun removeMessagesBefore(date: Date) {
-        state.removeMessagesBefore(date, systemMessage = null)
+        state.removeMessagesBefore(date)
     }
 
     override fun setPushPreference(preference: PushPreference) {

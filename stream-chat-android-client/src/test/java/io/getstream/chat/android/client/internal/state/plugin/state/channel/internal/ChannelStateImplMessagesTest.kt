@@ -339,26 +339,64 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
             val message3 = createMessage(3, timestamp = 3000)
             channelState.setMessages(listOf(message1, message2, message3))
             // when
-            channelState.removeMessagesBefore(Date(2500), systemMessage = null)
+            channelState.removeMessagesBefore(Date(2500))
             // then
             assertEquals(1, channelState.messages.value.size)
             assertEquals("message_3", channelState.messages.value.first().id)
         }
 
         @Test
-        fun `removeMessagesBefore should add system message after removal`() = runTest {
+        fun `removeTruncatedMessages should compare the server creation date, not the local one`() = runTest {
+            // given
+            val beforeOnServer = createMessage(1, timestamp = 1000).copy(createdLocallyAt = Date(3000))
+            val after = createMessage(2, timestamp = 3000)
+            channelState.setMessages(listOf(beforeOnServer, after))
+            // when
+            channelState.removeTruncatedMessages(Date(2000), systemMessage = null)
+            // then
+            assertEquals(listOf("message_2"), channelState.messages.value.map { it.id })
+        }
+
+        @Test
+        fun `removeTruncatedMessages should keep a message created exactly at the truncation date`() = runTest {
             // given
             val message1 = createMessage(1, timestamp = 1000)
             val message2 = createMessage(2, timestamp = 2000)
             channelState.setMessages(listOf(message1, message2))
             // when
-            val systemMessage = createMessage(99, timestamp = 2500, text = "System message")
-            channelState.removeMessagesBefore(Date(1500), systemMessage = systemMessage)
+            channelState.removeTruncatedMessages(Date(2000), systemMessage = null)
             // then
-            assertEquals(2, channelState.messages.value.size)
-            assertTrue(channelState.messages.value.any { it.id == "message_2" })
-            assertTrue(channelState.messages.value.any { it.id == "message_99" })
+            assertEquals(listOf("message_2"), channelState.messages.value.map { it.id })
         }
+
+        @Test
+        fun `removeTruncatedMessages should keep messages the server has not created yet`() = runTest {
+            // given
+            val sent = createMessage(1, timestamp = 1000)
+            val pending = createMessage(2, timestamp = 1500).copy(createdAt = null, createdLocallyAt = Date(1500))
+            channelState.setMessages(listOf(sent, pending))
+            // when
+            channelState.removeTruncatedMessages(Date(2000), systemMessage = null)
+            // then
+            assertEquals(listOf("message_2"), channelState.messages.value.map { it.id })
+        }
+
+        @Test
+        fun `removeTruncatedMessages should add the system message and filter cached and pinned messages`() =
+            runTest {
+                // given
+                val old = createMessage(1, timestamp = 1000, pinned = true, pinnedAt = Date(1000))
+                channelState.setMessages(listOf(old))
+                channelState.addPinnedMessage(old)
+                channelState.cacheLatestMessages()
+                val systemMessage = createMessage(99, timestamp = 2000, text = "System message")
+                // when
+                channelState.removeTruncatedMessages(Date(2000), systemMessage = systemMessage)
+                // then
+                assertEquals(listOf("message_99"), channelState.messages.value.map { it.id })
+                assertTrue(channelState.pinnedMessages.value.isEmpty())
+                assertTrue(channelState.toChannel().cachedLatestMessages.none { it.id == "message_1" })
+            }
 
         @Test
         fun `removeMessagesBefore should not change state if all messages are after date`() = runTest {
@@ -366,7 +404,7 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
             val messages = createMessages(3, startIndex = 1, baseTimestamp = 5000)
             channelState.setMessages(messages)
             // when
-            channelState.removeMessagesBefore(Date(1000), systemMessage = null)
+            channelState.removeMessagesBefore(Date(1000))
             // then
             assertEquals(3, channelState.messages.value.size)
         }
@@ -381,7 +419,7 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
             channelState.cacheLatestMessages()
             channelState.setMessages(emptyList()) // Clear main messages to test cached
             // when
-            channelState.removeMessagesBefore(Date(2500), systemMessage = null)
+            channelState.removeMessagesBefore(Date(2500))
             // then
             val cachedMessages = channelState.toChannel().cachedLatestMessages
             assertEquals(1, cachedMessages.size)
@@ -398,7 +436,7 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
             channelState.addPinnedMessage(pinnedMessage2)
             channelState.addPinnedMessage(pinnedMessage3)
             // when
-            channelState.removeMessagesBefore(Date(2500), systemMessage = null)
+            channelState.removeMessagesBefore(Date(2500))
             // then
             assertEquals(1, channelState.pinnedMessages.value.size)
             assertEquals("message_3", channelState.pinnedMessages.value.first().id)
