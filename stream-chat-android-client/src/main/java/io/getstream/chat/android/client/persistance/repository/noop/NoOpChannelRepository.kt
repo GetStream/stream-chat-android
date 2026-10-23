@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 /**
@@ -37,6 +38,7 @@ internal object NoOpChannelRepository : ChannelRepository {
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = emptyList()
     override suspend fun selectChannel(cid: String): Channel? = null
     override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> = emptyList()
+    override suspend fun selectChannelCidsBySyncStatus(syncStatus: SyncStatus): List<String> = emptyList()
     override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> = emptyList()
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) { /* No-Op */ }
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) { /* No-Op */ }

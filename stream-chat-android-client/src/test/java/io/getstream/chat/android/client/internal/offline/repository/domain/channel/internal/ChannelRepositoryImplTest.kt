@@ -18,11 +18,13 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.chan
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.MockChatClientBuilder
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomDraftMessageOrNull
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runTest
@@ -201,6 +203,14 @@ internal class ChannelRepositoryImplTest {
         val persisted = captor.firstValue
         assertEquals(0, persisted.reads[currentUser.id]?.unreadMessages)
         assertEquals(7, persisted.reads[otherUser.id]?.unreadMessages)
+    }
+
+    @Test
+    fun `selectChannelCidsBySyncStatus selects the cids with the given status`() = runTest {
+        val cids = listOf(randomString(), randomString())
+        whenever(channelDao.selectCidsBySyncNeeded(syncStatus = SyncStatus.IN_PROGRESS)) doReturn cids
+
+        assertEquals(cids, channelRepository.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS))
     }
 
     @Test

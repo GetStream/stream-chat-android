@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -259,6 +260,13 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> {
         return channelDao.selectCidsBySyncNeeded(limit = limit)
+    }
+
+    /**
+     * Read the cids of the channels with the given [syncStatus].
+     */
+    override suspend fun selectChannelCidsBySyncStatus(syncStatus: SyncStatus): List<String> {
+        return channelDao.selectCidsBySyncNeeded(syncStatus = syncStatus)
     }
 
     /**
