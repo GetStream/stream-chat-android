@@ -1044,7 +1044,7 @@ public class ChannelListViewModel internal constructor(
      * case the caller should skip the request — the next emission of [filterFlow] will re-trigger.
      *
      * In Predefined mode with an active channel search, falls back to a Standard request whose filter is
-     * just [searchChannelFilter] (the predefined filter is server-owned and cannot be combined locally).
+     * just [channelSearchFilter] (the predefined filter is server-owned and cannot be combined locally).
      */
     private fun buildQueryChannelsRequest(searchQuery: String): QueryChannelsRequest? = when (val mode = mode) {
         is QueryMode.Standard -> {
@@ -1059,7 +1059,7 @@ public class ChannelListViewModel internal constructor(
         }
         is QueryMode.Predefined -> if (searchQuery.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
             QueryChannelsRequest(
-                filter = optimizedChannelSearchFilter(searchQuery),
+                filter = channelSearchFilter(searchQuery),
                 limit = channelLimit,
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
@@ -1076,7 +1076,7 @@ public class ChannelListViewModel internal constructor(
         }
         // When in Grouped mode, this is reached only when search is active
         is QueryMode.Grouped -> QueryChannelsRequest(
-            filter = optimizedChannelSearchFilter(searchQuery),
+            filter = channelSearchFilter(searchQuery),
             limit = channelLimit,
             messageLimit = messageLimit,
             memberLimit = memberLimit,
@@ -1087,8 +1087,8 @@ public class ChannelListViewModel internal constructor(
      * Creates a filter that is used to query channels.
      *
      * If the [searchQuery] is shorter than 3 characters, then returns the original [filter] provided by the user.
-     * Otherwise, returns a wrapped [filter] that also checks that the channel name match the
-     * [searchQuery].
+     * Otherwise, returns a wrapped [filter] that also checks that the channel name matches the
+     * [searchQuery] and that the current user is a member of the channel.
      *
      * @param filter The filter that was passed by the user.
      * @param searchQuery The search query used to filter the channels.
@@ -1267,19 +1267,7 @@ public class ChannelListViewModel internal constructor(
     private fun defaultChannelsFilter(): Flow<FilterObject> =
         chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
 
-    @Deprecated(
-        message = "Avoid using this search query as `member.user.name` is an expensive operation. " +
-            "In the future, we should migrate to use optimizedChannelSearchFilter.",
-        replaceWith = ReplaceWith("optimizedChannelSearchFilter(searchQuery)"),
-    )
-    private fun channelSearchFilter(searchQuery: String): FilterObject {
-        return Filters.or(
-            Filters.autocomplete("member.user.name", searchQuery),
-            Filters.autocomplete("name", searchQuery),
-        )
-    }
-
-    private fun optimizedChannelSearchFilter(text: String): FilterObject =
+    private fun channelSearchFilter(text: String): FilterObject =
         Filters.and(
             Filters.autocomplete("name", text),
             Filters.`in`("members", user.value?.id.orEmpty()),

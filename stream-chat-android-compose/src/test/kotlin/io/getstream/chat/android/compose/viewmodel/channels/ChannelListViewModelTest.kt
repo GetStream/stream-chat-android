@@ -49,7 +49,6 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
-import io.getstream.chat.android.models.OrFilterObject
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
@@ -837,7 +836,7 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
-    fun `Given channel list When setting search query Should query channels with the name matching the filter`() =
+    fun `Given channel list When setting search query Should query channels by name and membership within the base filter`() =
         runTest {
             val chatClient: ChatClient = mock()
             val viewModel = Fixture(chatClient)
@@ -855,11 +854,7 @@ internal class ChannelListViewModelTest {
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(2)).queryChannels(captor.capture())
-            val andFilterObject = captor.secondValue.filter as AndFilterObject
-            val orFilterObject = andFilterObject.filterObjects.last() as OrFilterObject
-            val autoCompleteFilterObject = orFilterObject.filterObjects.last() as AutocompleteFilterObject
-            assertEquals("name", autoCompleteFilterObject.fieldName)
-            assertEquals("Search query", autoCompleteFilterObject.value)
+            assertEquals(searchFilter("Search query"), captor.secondValue.filter)
         }
 
     @Test
@@ -885,11 +880,7 @@ internal class ChannelListViewModelTest {
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(2)).queryChannels(captor.capture())
-            val andFilterObject = captor.secondValue.filter as AndFilterObject
-            val orFilterObject = andFilterObject.filterObjects.last() as OrFilterObject
-            val autoCompleteFilterObject = orFilterObject.filterObjects.last() as AutocompleteFilterObject
-            assertEquals("name", autoCompleteFilterObject.fieldName)
-            assertEquals("Search query", autoCompleteFilterObject.value)
+            assertEquals(searchFilter("Search query"), captor.secondValue.filter)
         }
 
     @Test
@@ -2099,6 +2090,15 @@ internal class ChannelListViewModelTest {
             Filters.`in`("members", currentUserId),
         )
         private val querySort = QuerySortByField.descByName<Channel>("lastUpdated")
+
+        private fun searchFilter(query: String) = Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.`in`("members", currentUserId),
+            Filters.and(
+                Filters.autocomplete("name", query),
+                Filters.`in`("members", currentUserId),
+            ),
+        )
 
         private val currentUser = User(id = "currentUser")
         private val otherUser = User(id = "otherUser")
