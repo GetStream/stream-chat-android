@@ -1171,7 +1171,7 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
-    fun `Given messageSearchSort is set When searching messages Should pass the sort to searchMessages`() =
+    fun `Given the deprecated messageSearchSort is set When searching messages Should pass the sort to searchMessages`() =
         runTest {
             val chatClient: ChatClient = mock()
             val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
@@ -1850,7 +1850,7 @@ internal class ChannelListViewModelTest {
             offset = anyOrNull(),
             limit = anyOrNull(),
             next = anyOrNull(),
-            sort = anyOrNull(),
+            sort = eq(RecordingSearchOptions.messageSort),
         )
         val expectedParams = ChannelListSearchOptions.MessageSearchParams(
             query = "hello",
@@ -1994,11 +1994,17 @@ internal class ChannelListViewModelTest {
             return messageFilter
         }
 
+        override fun messageSort(params: MessageSearchParams): QuerySorter<Message> {
+            messageParams += params
+            return messageSort
+        }
+
         companion object {
             val channelFilter = Filters.autocomplete("member.user.name", "custom")
             val channelSort = QuerySortByField.ascByName<Channel>("name")
             val messageChannelFilter = Filters.eq("type", "team")
             val messageFilter = Filters.eq("pinned", true)
+            val messageSort = QuerySortByField.descByName<Message>("created_at")
         }
     }
 
@@ -2360,7 +2366,6 @@ internal class ChannelListViewModelTest {
                     groupKey = groupKey,
                     searchDebounceMs = searchDebounceMs,
                     draftMessagesEnabled = false,
-                    messageSearchSort = messageSearchSort,
                     globalState = MutableStateFlow(globalState),
                     searchOptions = searchOptions,
                 )
@@ -2373,10 +2378,22 @@ internal class ChannelListViewModelTest {
                     searchDebounceMs = searchDebounceMs,
                     draftMessagesEnabled = false,
                     chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                    messageSearchSort = messageSearchSort,
                     globalState = MutableStateFlow(globalState),
                     searchOptions = searchOptions,
                 )
+
+                messageSearchSort != null ->
+                    @Suppress("DEPRECATION")
+                    ChannelListViewModel(
+                        chatClient = chatClient,
+                        initialSort = initialSort,
+                        initialFilters = initialFilters,
+                        searchDebounceMs = searchDebounceMs,
+                        draftMessagesEnabled = false,
+                        chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                        messageSearchSort = messageSearchSort,
+                        globalState = MutableStateFlow(globalState),
+                    )
 
                 else -> ChannelListViewModel(
                     chatClient = chatClient,
@@ -2385,7 +2402,6 @@ internal class ChannelListViewModelTest {
                     searchDebounceMs = searchDebounceMs,
                     draftMessagesEnabled = false,
                     chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                    messageSearchSort = messageSearchSort,
                     globalState = MutableStateFlow(globalState),
                     searchOptions = searchOptions,
                 )

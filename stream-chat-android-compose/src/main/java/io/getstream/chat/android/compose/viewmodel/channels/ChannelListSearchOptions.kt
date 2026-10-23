@@ -20,6 +20,7 @@ import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -94,6 +95,16 @@ public open class ChannelListSearchOptions {
      */
     public open fun messageFilter(params: MessageSearchParams): FilterObject =
         Filters.autocomplete("text", params.query)
+
+    /**
+     * Returns the sort of the message search results.
+     *
+     * By default, it is `null`, so the server-side default is used.
+     *
+     * @param params The current message search.
+     * @return The sort sent with the message search, or `null` to use the server-side default.
+     */
+    public open fun messageSort(params: MessageSearchParams): QuerySorter<Message>? = null
 
     /**
      * The state of a channel search.

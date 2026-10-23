@@ -102,7 +102,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
  * are debounced for at least 500ms.
  * @param draftMessagesEnabled If the draft message feature is enabled.
- * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
+ * @param messageSearchSort Sorting for message search results, used when [searchOptions] returns no message sort.
  * @param globalState A flow emitting the current [GlobalState].
  * @param searchOptions Builds the filters and sort used to search channels and messages.
  */
@@ -154,7 +154,6 @@ public class ChannelListViewModel internal constructor(
      * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
      * are debounced for at least 500ms.
      * @param draftMessagesEnabled If the draft message feature is enabled.
-     * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
      * @param searchOptions Builds the filters and sort used to search channels and messages.
      */
@@ -168,7 +167,6 @@ public class ChannelListViewModel internal constructor(
         chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
         searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
         draftMessagesEnabled: Boolean = true,
-        messageSearchSort: QuerySorter<Message>? = null,
         globalState: Flow<GlobalState> = chatClient.globalStateFlow,
         searchOptions: ChannelListSearchOptions = ChannelListSearchOptions(),
     ) : this(
@@ -180,7 +178,110 @@ public class ChannelListViewModel internal constructor(
         chatEventHandlerFactory = chatEventHandlerFactory,
         searchDebounceMs = searchDebounceMs,
         draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = null,
+        globalState = globalState,
+        searchOptions = searchOptions,
+    )
+
+    /**
+     * Creates a view model that queries channels by an explicit filter and sort.
+     *
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
+     * @param initialSort The initial sort used for [Channel]s. Can be changed at runtime via [setQuerySort].
+     * @param initialFilters The data filter. When `null`, a default filter scoped to "messaging" channels the current
+     * user is a member of is used. Can be changed at runtime via [setFilters].
+     * @param channelLimit How many channels we fetch per page.
+     * @param memberLimit How many members are fetched for each channel item when loading channels.
+     * When `null`, the server-side default is used.
+     * @param messageLimit How many messages are fetched for each channel item when loading channels.
+     * When `null`, the server-side default is used.
+     * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
+     * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
+     * are debounced for at least 500ms.
+     * @param draftMessagesEnabled If the draft message feature is enabled.
+     * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
+     * @param globalState A flow emitting the current [GlobalState].
+     */
+    @Deprecated(
+        message = "Set the message search sort by overriding ChannelListSearchOptions.messageSort, " +
+            "and use the constructor without messageSearchSort.",
+    )
+    public constructor(
+        chatClient: ChatClient,
+        initialSort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+        initialFilters: FilterObject? = null,
+        channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>?,
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Standard(initialFilter = initialFilters, initialSort = initialSort),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        searchDebounceMs = searchDebounceMs,
+        draftMessagesEnabled = draftMessagesEnabled,
         messageSearchSort = messageSearchSort,
+        globalState = globalState,
+        searchOptions = ChannelListSearchOptions(),
+    )
+
+    /**
+     * Creates a view model that queries channels using a predefined filter resolved by the server.
+     *
+     * The filter and sort are identified by [predefinedFilterName] and resolved server-side;
+     * [filterValues] and [sortValues] interpolate into the predefined template. [setFilters] and
+     * [setQuerySort] do not affect a view model created this way.
+     *
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
+     * @param predefinedFilterName The name of the predefined filter registered on the backend.
+     * @param filterValues Optional values interpolated into the predefined filter template.
+     * @param sortValues Optional values interpolated into the predefined sort template.
+     * @param channelLimit How many channels we fetch per page.
+     * @param memberLimit How many members are fetched for each channel item when loading channels.
+     * When `null`, the server-side default is used.
+     * @param messageLimit How many messages are fetched for each channel item when loading channels.
+     * When `null`, the server-side default is used.
+     * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
+     * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
+     * are debounced for at least 500ms.
+     * @param draftMessagesEnabled If the draft message feature is enabled.
+     * @param globalState A flow emitting the current [GlobalState].
+     * @param searchOptions Builds the filters and sort used to search channels and messages.
+     */
+    public constructor(
+        chatClient: ChatClient,
+        predefinedFilterName: String,
+        filterValues: Map<String, Any>? = null,
+        sortValues: Map<String, Any>? = null,
+        channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+        draftMessagesEnabled: Boolean = true,
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+        searchOptions: ChannelListSearchOptions = ChannelListSearchOptions(),
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Predefined(
+            name = predefinedFilterName,
+            filterValues = filterValues,
+            sortValues = sortValues,
+        ),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        searchDebounceMs = searchDebounceMs,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = null,
         globalState = globalState,
         searchOptions = searchOptions,
     )
@@ -207,8 +308,11 @@ public class ChannelListViewModel internal constructor(
      * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
-     * @param searchOptions Builds the filters and sort used to search channels and messages.
      */
+    @Deprecated(
+        message = "Set the message search sort by overriding ChannelListSearchOptions.messageSort, " +
+            "and use the constructor without messageSearchSort.",
+    )
     public constructor(
         chatClient: ChatClient,
         predefinedFilterName: String,
@@ -220,9 +324,8 @@ public class ChannelListViewModel internal constructor(
         chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
         searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
         draftMessagesEnabled: Boolean = true,
-        messageSearchSort: QuerySorter<Message>? = null,
+        messageSearchSort: QuerySorter<Message>?,
         globalState: Flow<GlobalState> = chatClient.globalStateFlow,
-        searchOptions: ChannelListSearchOptions = ChannelListSearchOptions(),
     ) : this(
         chatClient = chatClient,
         mode = QueryMode.Predefined(
@@ -237,6 +340,45 @@ public class ChannelListViewModel internal constructor(
         searchDebounceMs = searchDebounceMs,
         draftMessagesEnabled = draftMessagesEnabled,
         messageSearchSort = messageSearchSort,
+        globalState = globalState,
+        searchOptions = ChannelListSearchOptions(),
+    )
+
+    /**
+     * Grouped channel list constructor. Subscribes to the state identified by [groupKey] without
+     * issuing a remote call; the state is populated externally by `queryGroupedChannels` responses.
+     *
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
+     * Contact & Support.**
+     *
+     * @param groupKey The name of the channels group.
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
+     * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
+     * are debounced for at least 500ms.
+     * @param draftMessagesEnabled If the draft message feature is enabled.
+     * @param globalState A flow emitting the current [GlobalState].
+     * @param searchOptions Builds the filters and sort used to search channels and messages.
+     */
+    public constructor(
+        groupKey: String,
+        chatClient: ChatClient = ChatClient.instance(),
+        searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+        draftMessagesEnabled: Boolean = true,
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+        searchOptions: ChannelListSearchOptions = ChannelListSearchOptions(),
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Grouped(groupKey),
+        channelLimit = DEFAULT_CHANNEL_LIMIT,
+        memberLimit = null,
+        messageLimit = null,
+        chatEventHandlerFactory = groupAwareChatEventHandlerFactory(
+            groupKey = groupKey,
+            clientState = chatClient.clientState,
+        ),
+        searchDebounceMs = searchDebounceMs,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = null,
         globalState = globalState,
         searchOptions = searchOptions,
     )
@@ -255,16 +397,18 @@ public class ChannelListViewModel internal constructor(
      * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
-     * @param searchOptions Builds the filters and sort used to search channels and messages.
      */
+    @Deprecated(
+        message = "Set the message search sort by overriding ChannelListSearchOptions.messageSort, " +
+            "and use the constructor without messageSearchSort.",
+    )
     public constructor(
         groupKey: String,
         chatClient: ChatClient = ChatClient.instance(),
         searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
         draftMessagesEnabled: Boolean = true,
-        messageSearchSort: QuerySorter<Message>? = null,
+        messageSearchSort: QuerySorter<Message>?,
         globalState: Flow<GlobalState> = chatClient.globalStateFlow,
-        searchOptions: ChannelListSearchOptions = ChannelListSearchOptions(),
     ) : this(
         chatClient = chatClient,
         mode = QueryMode.Grouped(groupKey),
@@ -279,7 +423,7 @@ public class ChannelListViewModel internal constructor(
         draftMessagesEnabled = draftMessagesEnabled,
         messageSearchSort = messageSearchSort,
         globalState = globalState,
-        searchOptions = searchOptions,
+        searchOptions = ChannelListSearchOptions(),
     )
 
     private val logger by taggedLogger("Chat:ChannelListVM")
@@ -911,14 +1055,15 @@ public class ChannelListViewModel internal constructor(
     ): SearchMessageState {
         val limit = channelLimit
         val next = currentState.next
+        val sort = searchOptions.messageSort(params) ?: messageSearchSort
         logger.v {
-            "[searchMessages] #$src; query: '${currentState.query}', sort: $messageSearchSort, next: $next, " +
+            "[searchMessages] #$src; query: '${currentState.query}', sort: $sort, next: $next, " +
                 "limit: $limit"
         }
         val result = chatClient.searchMessages(
             channelFilter = channelFilter,
             messageFilter = searchOptions.messageFilter(params),
-            sort = messageSearchSort,
+            sort = sort,
             limit = limit,
             next = next,
         ).await()

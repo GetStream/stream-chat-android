@@ -115,6 +115,13 @@ internal class ChannelListSearchOptionsTest {
         assertEquals(Filters.autocomplete("text", query), filter)
     }
 
+    @Test
+    fun `When building the message sort Should use the server-side default`() {
+        val sort = options.messageSort(messageParams(listFilter = null))
+
+        assertNull(sort)
+    }
+
     private fun nameAndMembership() = Filters.and(
         Filters.autocomplete("name", query),
         Filters.`in`("members", currentUser.id),
