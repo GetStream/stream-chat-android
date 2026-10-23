@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.errors
 
 import io.getstream.result.Error
 
+private const val HTTP_NOT_FOUND = 404
+
 /**
  * Checks whether this error is the backend rejection of a message whose id already exists.
  *
@@ -31,3 +33,13 @@ internal fun Error.isDuplicateMessageError(): Boolean =
         serverErrorCode == ChatErrorCode.VALIDATION_ERROR.code &&
         message.contains("a message with ID") &&
         message.contains("already exists")
+
+/**
+ * Checks whether this error is the backend rejection of a delete for a message that is already deleted or does
+ * not exist.
+ *
+ * Either way the message is gone from the backend, which is what the delete asked for, so callers should treat the
+ * delete as successful instead of retrying it.
+ */
+internal fun Error.isMessageGoneError(): Boolean =
+    this is Error.NetworkError && statusCode == HTTP_NOT_FOUND

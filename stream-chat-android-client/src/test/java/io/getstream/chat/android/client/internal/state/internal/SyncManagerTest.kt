@@ -73,8 +73,10 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -94,6 +96,7 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.mockingDetails
 import org.mockito.kotlin.never
@@ -821,16 +824,31 @@ internal class SyncManagerTest {
 
     @Test
     fun `start should hand messages stuck in progress back to the retry flow`() = runTest(testDispatcher) {
-        val message = localRandomMessage().copy(syncStatus = SyncStatus.IN_PROGRESS)
-        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doReturn listOf(message.id)
-        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val messageId = randomString()
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doReturn listOf(messageId)
         whenever(chatClient.subscribe(any())).thenReturn(mock())
 
         val sut = buildSyncManager()
         sut.start()
 
-        verify(repositoryFacade).insertMessage(message.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+        verify(repositoryFacade).updateMessageSyncStatus(messageId, SyncStatus.SYNC_NEEDED)
     }
+
+    @Test
+    fun `start should complete the deletes past the sync threshold before handing messages back`() =
+        runTest(testDispatcher) {
+            whenever(chatClient.subscribe(any())).thenReturn(mock())
+            advanceTimeBy(10_000)
+            val startedAt = currentTime
+
+            val sut = buildSyncManager(syncMaxThreshold = TimeDuration.seconds(5))
+            sut.start()
+
+            inOrder(repositoryFacade) {
+                verify(repositoryFacade).markDeletesInProgressAsCompleted(Date(startedAt - 5_000))
+                verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)
+            }
+        }
 
     @Test
     fun `start should hand reactions stuck in progress back to the retry flow`() = runTest(testDispatcher) {
@@ -850,7 +868,6 @@ internal class SyncManagerTest {
     fun `start should skip entities in progress that are gone before the rescue reads them`() =
         runTest(testDispatcher) {
             whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS)) doReturn listOf(randomCID())
-            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doReturn listOf(randomString())
             whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)) doReturn listOf(1)
             whenever(chatClient.subscribe(any())).thenReturn(mock())
 
@@ -858,7 +875,6 @@ internal class SyncManagerTest {
             sut.start()
 
             verify(repositoryFacade, never()).insertChannel(any())
-            verify(repositoryFacade, never()).insertMessage(any())
             verify(repositoryFacade, never()).insertReaction(any())
         }
 
@@ -867,9 +883,8 @@ internal class SyncManagerTest {
         runTest(testDispatcher) {
             whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS))
                 .thenThrow(IllegalStateException("database closed"))
-            val message = localRandomMessage().copy(syncStatus = SyncStatus.IN_PROGRESS)
-            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doReturn listOf(message.id)
-            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            val messageId = randomString()
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doReturn listOf(messageId)
             val reactionRowId = 1
             val reaction = randomReaction(syncStatus = SyncStatus.IN_PROGRESS)
             whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)) doReturn
@@ -881,19 +896,18 @@ internal class SyncManagerTest {
             sut.start()
 
             verify(chatClient).subscribe(any())
-            verify(repositoryFacade).insertMessage(message.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+            verify(repositoryFacade).updateMessageSyncStatus(messageId, SyncStatus.SYNC_NEEDED)
             verify(repositoryFacade).insertReaction(reaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))
         }
 
     @Test
     fun `a disconnect while connecting should not cancel the rescue of messages in progress`() =
         runTest(testDispatcher) {
-            val message = localRandomMessage().copy(syncStatus = SyncStatus.IN_PROGRESS)
+            val messageId = randomString()
             whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doSuspendableAnswer {
                 delay(100)
-                listOf(message.id)
+                listOf(messageId)
             }
-            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
             whenever(chatClient.subscribe(any())).thenReturn(mock())
 
             val sut = buildSyncManager()
@@ -901,8 +915,24 @@ internal class SyncManagerTest {
             sut.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
             advanceTimeBy(200)
 
-            verify(repositoryFacade).insertMessage(message.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+            verify(repositoryFacade).updateMessageSyncStatus(messageId, SyncStatus.SYNC_NEEDED)
         }
+
+    @Test
+    fun `the rescue of entities in progress should stop when its scope is cancelled`() = runTest(testDispatcher) {
+        whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS)) doSuspendableAnswer {
+            delay(100)
+            emptyList()
+        }
+        whenever(chatClient.subscribe(any())).thenReturn(mock())
+
+        val sut = buildSyncManager()
+        sut.start()
+        backgroundScope.coroutineContext.job.cancelChildren()
+        advanceTimeBy(200)
+
+        verify(repositoryFacade, never()).selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)
+    }
 
     @Test
     fun `start should not rescue entities in progress when already started`() = runTest(testDispatcher) {

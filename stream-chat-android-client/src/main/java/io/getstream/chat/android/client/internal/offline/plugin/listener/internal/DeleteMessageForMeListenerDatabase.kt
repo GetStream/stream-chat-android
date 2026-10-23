@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.isMessageGoneError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageForMeListener
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -54,17 +55,17 @@ internal class DeleteMessageForMeListenerDatabase(
                 messageRepository.insertMessage(
                     result.value.copy(syncStatus = SyncStatus.COMPLETED),
                 )
+                // The copy stored on request blocks later inserts of this message, so the status goes alone.
+                messageRepository.updateMessageSyncStatus(messageId, SyncStatus.COMPLETED)
             }
 
             is Result.Failure -> {
-                messageRepository.selectMessage(messageId)?.let { message ->
-                    val updatedMessage = message.copy(
-                        deletedForMe = true,
-                        syncStatus = SyncStatus.SYNC_NEEDED,
-                    )
-
-                    messageRepository.insertMessage(updatedMessage)
+                val syncStatus = if (result.value.isMessageGoneError()) {
+                    SyncStatus.COMPLETED
+                } else {
+                    SyncStatus.SYNC_NEEDED
                 }
+                messageRepository.updateMessageSyncStatus(messageId, syncStatus)
             }
         }
     }

@@ -175,6 +175,18 @@ internal class DeleteMessageListenerStateTest {
     }
 
     @Test
+    fun `when the message is already gone, the message should be updated as completed after request`() = runTest {
+        val testMessage = randomMessage(cid = randomCID(), syncStatus = SyncStatus.IN_PROGRESS)
+        whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(threadsLogic.getMessage(any())) doReturn testMessage
+
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(Error.NetworkError(message = "message has been deleted", serverErrorCode = 16, statusCode = 404)))
+
+        verify(channelLogic).upsertMessage(argThat { syncStatus == SyncStatus.COMPLETED })
+        verify(threadsLogic).upsertMessage(argThat { syncStatus == SyncStatus.COMPLETED })
+    }
+
+    @Test
     fun `onMessageDeletePrecondition when message not found locally should return Success`() = runTest {
         whenever(logicRegistry.getMessageById(any())) doReturn null
 

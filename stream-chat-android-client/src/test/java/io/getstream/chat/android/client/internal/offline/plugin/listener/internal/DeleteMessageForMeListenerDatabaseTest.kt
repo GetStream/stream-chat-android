@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -74,7 +75,7 @@ internal class DeleteMessageForMeListenerDatabaseTest {
     }
 
     @Test
-    fun `on result success, should insert message`() = runTest {
+    fun `on result success, should insert message and set its status`() = runTest {
         val message = randomMessage()
         val fixture = Fixture()
         val sut = fixture.get()
@@ -83,30 +84,30 @@ internal class DeleteMessageForMeListenerDatabaseTest {
 
         val updatedMessage = message.copy(syncStatus = SyncStatus.COMPLETED)
         fixture.verifyInsertMessage(updatedMessage)
+        fixture.verifySyncStatusUpdated(message.id, SyncStatus.COMPLETED)
     }
 
     @Test
-    fun `on result failure, when message found, should insert message`() = runTest {
-        val message = randomMessage()
-        val fixture = Fixture()
-            .givenSelectMessage(message)
-        val sut = fixture.get()
-
-        sut.onDeleteMessageForMeResult(message.id, Result.Failure(mock()))
-
-        val updatedMessage = message.copy(deletedForMe = true, syncStatus = SyncStatus.SYNC_NEEDED)
-        fixture.verifyInsertMessage(updatedMessage)
-    }
-
-    @Test
-    fun `on result failure, when message not found, should never insert`() = runTest {
+    fun `on result failure, should set the status to sync needed without inserting`() = runTest {
         val message = randomMessage()
         val fixture = Fixture()
         val sut = fixture.get()
 
         sut.onDeleteMessageForMeResult(message.id, Result.Failure(mock()))
 
+        fixture.verifySyncStatusUpdated(message.id, SyncStatus.SYNC_NEEDED)
         fixture.verifyNeverInserted()
+    }
+
+    @Test
+    fun `on result failure, when the message is already gone, should set the status to completed`() = runTest {
+        val message = randomMessage()
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        sut.onDeleteMessageForMeResult(message.id, Result.Failure(Error.NetworkError(message = "message has been deleted", serverErrorCode = 16, statusCode = 404)))
+
+        fixture.verifySyncStatusUpdated(message.id, SyncStatus.COMPLETED)
     }
 
     private class Fixture {
@@ -124,6 +125,10 @@ internal class DeleteMessageForMeListenerDatabaseTest {
 
         fun verifyInsertMessage(message: Message) = apply {
             verifyBlocking(messageRepository) { insertMessage(message) }
+        }
+
+        fun verifySyncStatusUpdated(messageId: String, syncStatus: SyncStatus) = apply {
+            verifyBlocking(messageRepository) { updateMessageSyncStatus(messageId, syncStatus) }
         }
 
         fun verifyNeverInserted() = apply {
