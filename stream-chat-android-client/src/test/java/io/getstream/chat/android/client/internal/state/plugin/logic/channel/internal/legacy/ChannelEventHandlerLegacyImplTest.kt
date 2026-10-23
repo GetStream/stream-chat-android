@@ -96,7 +96,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
-import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -597,7 +596,7 @@ internal class ChannelEventHandlerLegacyImplTest {
         handler.handle(event)
 
         verify(stateLogic).setHidden(true)
-        verify(stateLogic, never()).removeMessagesBefore(any(), anyOrNull())
+        verify(stateLogic, never()).removeMessagesBefore(any())
     }
 
     @Test
@@ -616,7 +615,7 @@ internal class ChannelEventHandlerLegacyImplTest {
         handler.handle(event)
 
         verify(stateLogic).deleteChannel(event.createdAt)
-        verify(stateLogic, never()).removeMessagesBefore(any(), anyOrNull())
+        verify(stateLogic, never()).removeMessagesBefore(any())
     }
 
     @Test
@@ -626,11 +625,12 @@ internal class ChannelEventHandlerLegacyImplTest {
         handler.handle(event)
 
         verify(stateLogic).deleteChannel(event.createdAt)
-        verify(stateLogic, never()).removeMessagesBefore(any(), anyOrNull())
+        verify(stateLogic, never()).removeMessagesBefore(any())
     }
 
     @Test
     fun `When ChannelTruncatedEvent is handled, Then messages are removed with system message`() {
+        val truncatedAt = randomDate()
         val systemMessage = randomMessage()
         val event = ChannelTruncatedEvent(
             type = EventType.CHANNEL_TRUNCATED,
@@ -641,21 +641,22 @@ internal class ChannelEventHandlerLegacyImplTest {
             channelId = randomString(),
             user = randomUser(),
             message = systemMessage,
-            channel = randomChannel(),
+            channel = randomChannel(truncatedAt = truncatedAt),
         )
 
         handler.handle(event)
 
-        verify(stateLogic).removeMessagesBefore(event.createdAt, systemMessage)
+        verify(stateLogic).removeTruncatedMessages(truncatedAt, systemMessage)
     }
 
     @Test
     fun `When NotificationChannelTruncatedEvent is handled, Then messages are removed`() {
-        val event = randomNotificationChannelTruncatedEvent(cid = cid)
+        val truncatedAt = randomDate()
+        val event = randomNotificationChannelTruncatedEvent(cid = cid, channel = randomChannel(truncatedAt = truncatedAt))
 
         handler.handle(event)
 
-        verify(stateLogic).removeMessagesBefore(event.createdAt)
+        verify(stateLogic).removeTruncatedMessages(truncatedAt)
     }
 
     // Typing events tests

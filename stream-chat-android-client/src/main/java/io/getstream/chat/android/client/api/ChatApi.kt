@@ -508,6 +508,8 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         systemMessage: Message?,
+        hardDelete: Boolean,
+        skipPush: Boolean,
     ): Call<Channel>
 
     @CheckResult

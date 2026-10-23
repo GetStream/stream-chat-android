@@ -102,6 +102,19 @@ internal class MessageWriteRequestAdapterTest {
         parser.toJson(TruncateChannelRequest()).shouldEqualJson("""{"member_ids": []}""")
     }
 
+    @Test
+    fun `Serialize a hard truncate channel request that skips push`() {
+        val request = TruncateChannelRequest(hardDelete = true, skipPush = true)
+
+        parser.toJson(request).shouldEqualJson(
+            """{
+                "hard_delete": true,
+                "skip_push": true,
+                "member_ids": []
+            }""",
+        )
+    }
+
     private companion object {
         private val MESSAGE_JSON =
             ParserFactory.createMoshiChatParser().toJson(upstreamMessageWithoutExtraData)

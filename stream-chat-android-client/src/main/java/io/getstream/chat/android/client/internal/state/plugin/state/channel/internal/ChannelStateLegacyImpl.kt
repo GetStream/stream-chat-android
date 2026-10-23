@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
+import io.getstream.chat.android.client.extensions.internal.survivesTruncationAt
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -687,8 +688,20 @@ internal class ChannelStateLegacyImpl(
 
     fun removeMessagesBefore(date: Date) {
         logger.d { "[removeMessagesBefore] date: $date" }
-        _messages?.apply { value = value.filter { it.value.wasCreatedAfter(date) } }
-        setPinned { pinned -> pinned.filter { it.value.wasCreatedAfter(date) } }
+        retainMessages { it.wasCreatedAfter(date) }
+    }
+
+    /** Removes the messages a truncation at [truncatedAt] removed on the server, including the cached latest page. */
+    fun removeTruncatedMessages(truncatedAt: Date) {
+        logger.d { "[removeTruncatedMessages] truncatedAt: $truncatedAt" }
+        val keep: (Message) -> Boolean = { it.survivesTruncationAt(truncatedAt) }
+        retainMessages(keep)
+        cachedLatestMessages.value = cachedLatestMessages.value.filterValues(keep)
+    }
+
+    private fun retainMessages(keep: (Message) -> Boolean) {
+        _messages?.apply { value = value.filterValues(keep) }
+        setPinned { pinned -> pinned.filterValues(keep) }
     }
 
     /** Advances [_lastSentThreadReplyDate] with [date], never moving it backwards. */

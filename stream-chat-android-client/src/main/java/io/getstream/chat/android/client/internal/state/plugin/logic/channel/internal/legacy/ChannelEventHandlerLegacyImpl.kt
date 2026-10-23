@@ -69,6 +69,7 @@ import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
+import io.getstream.chat.android.client.extensions.internal.truncatedBefore
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelEventHandler
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
@@ -225,11 +226,11 @@ internal class ChannelEventHandlerLegacyImpl(
             is ChannelDeletedEvent -> stateLogic.deleteChannel(event.createdAt)
             is NotificationChannelDeletedEvent -> stateLogic.deleteChannel(event.createdAt)
             is ChannelTruncatedEvent -> {
-                stateLogic.removeMessagesBefore(event.createdAt, event.message)
+                stateLogic.removeTruncatedMessages(event.truncatedBefore, event.message)
                 stateLogic.updateChannelData(event)
             }
             is NotificationChannelTruncatedEvent -> {
-                stateLogic.removeMessagesBefore(event.createdAt)
+                stateLogic.removeTruncatedMessages(event.truncatedBefore)
                 stateLogic.updateChannelData(event)
             }
             // Typing events

@@ -3759,20 +3759,28 @@ internal constructor(
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      * @param systemMessage The system message that will be shown in the channel.
+     * @param hardDelete If true, the messages are deleted instead of hidden. Requires the permission to
+     * delete the channel.
+     * @param skipPush If true, no push notification is sent for the system message.
      *
      * @return Executable async [Call] which completes with [Result] having data equal to the truncated channel
      * if the channel was successfully truncated.
      */
     @CheckResult
+    @JvmOverloads
     public fun truncateChannel(
         channelType: String,
         channelId: String,
         systemMessage: Message? = null,
+        hardDelete: Boolean = false,
+        skipPush: Boolean = false,
     ): Call<Channel> {
         return api.truncateChannel(
             channelType = channelType,
             channelId = channelId,
             systemMessage = systemMessage,
+            hardDelete = hardDelete,
+            skipPush = skipPush,
         )
     }
 

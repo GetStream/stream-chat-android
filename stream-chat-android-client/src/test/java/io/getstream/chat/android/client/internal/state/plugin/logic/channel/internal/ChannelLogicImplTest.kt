@@ -918,7 +918,7 @@ internal class ChannelLogicImplTest {
         // When
         sut.removeMessagesBefore(date)
         // Then
-        verify(stateImpl).removeMessagesBefore(date, systemMessage = null)
+        verify(stateImpl).removeMessagesBefore(date)
     }
 
     // endregion

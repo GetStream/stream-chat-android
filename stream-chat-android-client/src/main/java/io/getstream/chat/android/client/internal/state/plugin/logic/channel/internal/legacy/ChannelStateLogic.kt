@@ -476,10 +476,19 @@ internal class ChannelStateLogic(
      * Removes messages before a certain date
      *
      * @param date all messages will be removed before this date.
-     * @param systemMessage the system message to be added to inform the user.
      */
-    fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
+    fun removeMessagesBefore(date: Date) {
         mutableState.removeMessagesBefore(date)
+    }
+
+    /**
+     * Removes the messages a truncation at [truncatedAt] removed on the server.
+     *
+     * @param truncatedAt The channel's truncation date.
+     * @param systemMessage The truncation's system message, added after removal.
+     */
+    fun removeTruncatedMessages(truncatedAt: Date, systemMessage: Message? = null) {
+        mutableState.removeTruncatedMessages(truncatedAt)
         systemMessage?.let(mutableState::upsertMessage)
     }
 

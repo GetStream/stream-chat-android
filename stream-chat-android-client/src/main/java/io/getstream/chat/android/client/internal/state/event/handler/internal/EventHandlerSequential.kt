@@ -98,6 +98,7 @@ import io.getstream.chat.android.client.extensions.internal.removeMember
 import io.getstream.chat.android.client.extensions.internal.removeMembership
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
+import io.getstream.chat.android.client.extensions.internal.truncatedBefore
 import io.getstream.chat.android.client.extensions.internal.updateMember
 import io.getstream.chat.android.client.extensions.internal.updateMemberBanned
 import io.getstream.chat.android.client.extensions.internal.updateMembership
@@ -926,10 +927,10 @@ internal class EventHandlerSequential(
         for (event in events) {
             when (event) {
                 is NotificationChannelTruncatedEvent -> {
-                    repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    repos.deleteChannelMessagesBefore(event.cid, event.truncatedBefore)
                 }
                 is ChannelTruncatedEvent -> {
-                    repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    repos.deleteChannelMessagesBefore(event.cid, event.truncatedBefore)
                 }
                 is ChannelDeletedEvent -> {
                     repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
