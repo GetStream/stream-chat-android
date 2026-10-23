@@ -863,17 +863,27 @@ internal class SyncManagerTest {
         }
 
     @Test
-    fun `start should still subscribe when the rescue of entities in progress fails`() = runTest(testDispatcher) {
-        whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS))
-            .thenThrow(IllegalStateException("database closed"))
-        whenever(chatClient.subscribe(any())).thenReturn(mock())
+    fun `a failed rescue of channels in progress should not stop the rescue of messages and reactions`() =
+        runTest(testDispatcher) {
+            whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS))
+                .thenThrow(IllegalStateException("database closed"))
+            val message = localRandomMessage().copy(syncStatus = SyncStatus.IN_PROGRESS)
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doReturn listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            val reactionRowId = 1
+            val reaction = randomReaction(syncStatus = SyncStatus.IN_PROGRESS)
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)) doReturn
+                listOf(reactionRowId)
+            whenever(repositoryFacade.selectReactionById(reactionRowId)) doReturn reaction
+            whenever(chatClient.subscribe(any())).thenReturn(mock())
 
-        val sut = buildSyncManager()
-        sut.start()
+            val sut = buildSyncManager()
+            sut.start()
 
-        verify(chatClient).subscribe(any())
-        verify(repositoryFacade, never()).insertChannel(any())
-    }
+            verify(chatClient).subscribe(any())
+            verify(repositoryFacade).insertMessage(message.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+            verify(repositoryFacade).insertReaction(reaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+        }
 
     @Test
     fun `a disconnect while connecting should not cancel the rescue of messages in progress`() =

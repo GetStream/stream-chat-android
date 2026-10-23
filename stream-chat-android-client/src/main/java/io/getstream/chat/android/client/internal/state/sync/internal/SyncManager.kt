@@ -536,20 +536,25 @@ internal class SyncManager(
      * Hands channels, messages and reactions left [SyncStatus.IN_PROGRESS] by an earlier session back
      * to the retry flow. Their request died with that session, so no result will ever settle them.
      */
-    private suspend fun rescueEntitiesStuckInProgress() = try {
-        entitiesRetryMutex.withLock {
+    private suspend fun rescueEntitiesStuckInProgress() = entitiesRetryMutex.withLock {
+        // Each type on its own, so a failure in one does not leave the others stuck.
+        rescueStuckInProgress("channels") {
             val cids = repos.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS)
             logger.d { "[rescueEntitiesStuckInProgress] cids.size: ${cids.size}" }
             cids.forEach { cid ->
                 val channel = repos.selectChannel(cid) ?: return@forEach
                 repos.insertChannel(channel.copy(syncStatus = SyncStatus.SYNC_NEEDED))
             }
+        }
+        rescueStuckInProgress("messages") {
             val messageIds = repos.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)
             logger.d { "[rescueEntitiesStuckInProgress] messageIds.size: ${messageIds.size}" }
             messageIds.forEach { id ->
                 val message = repos.selectMessage(id) ?: return@forEach
                 repos.insertMessage(message.copy(syncStatus = SyncStatus.SYNC_NEEDED))
             }
+        }
+        rescueStuckInProgress("reactions") {
             val reactionIds = repos.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)
             logger.d { "[rescueEntitiesStuckInProgress] reactionIds.size: ${reactionIds.size}" }
             reactionIds.forEach { id ->
@@ -557,8 +562,12 @@ internal class SyncManager(
                 repos.insertReaction(reaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))
             }
         }
+    }
+
+    private suspend fun rescueStuckInProgress(entities: String, rescue: suspend () -> Unit) = try {
+        rescue()
     } catch (e: Throwable) {
-        logger.e(e) { "[rescueEntitiesStuckInProgress] failed: $e" }
+        logger.e(e) { "[rescueEntitiesStuckInProgress] failed for $entities: $e" }
     }
 
     /**
