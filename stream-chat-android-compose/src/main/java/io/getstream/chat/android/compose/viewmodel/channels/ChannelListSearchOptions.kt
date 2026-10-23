@@ -30,8 +30,10 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * Extend this class and override the functions you want to change. Each default implementation returns the
  * filter or sort the view model uses when no options are provided.
  *
- * The functions are called on the main thread every time a search request is built, including when the next page
- * is loaded, so they must return quickly and must not block.
+ * The functions are called on the main thread when a search request is built, so they must return quickly and must
+ * not block. They are called again for the next page of a message search, and for the next page of a channel search
+ * in a channel list created with a filter. In a channel list that uses a predefined filter or a channel group, the
+ * next page of a channel search reuses the filter and sort of the first page.
  */
 public open class ChannelListSearchOptions {
 
