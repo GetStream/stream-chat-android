@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.tests
 import io.getstream.chat.android.compose.robots.assertChannelCount
 import io.getstream.chat.android.compose.robots.assertChannelWithName
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
@@ -55,6 +56,26 @@ class ChannelSearchTests : StreamTestCase() {
             userRobot
                 .assertChannelCount(1)
                 .assertChannelWithName(channelName)
+        }
+    }
+
+    @AllureId("12487")
+    @Test
+    fun test_userSearchesForMemberName_noChannelIsFound() {
+        step("GIVEN channels and a direct message channel with the participant exist") {
+            backendRobot.generateChannels(channelsCount = 3, withDirectMessageChannel = true)
+        }
+        step("AND user logs in") {
+            userRobot
+                .login()
+                .waitForChannelListToLoad()
+                .assertChannelCount(4)
+        }
+        step("WHEN user searches for the participant's name") {
+            userRobot.search(ParticipantRobot.name.substringBefore(" "))
+        }
+        step("THEN no channel is shown, because the default search matches channel names only") {
+            userRobot.assertChannelCount(0)
         }
     }
 }

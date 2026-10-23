@@ -1171,7 +1171,7 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
-    fun `Given messageSearchSort is set When searching messages Should pass the sort to searchMessages`() =
+    fun `Given the deprecated messageSearchSort is set When searching messages Should pass the sort to searchMessages`() =
         runTest {
             val chatClient: ChatClient = mock()
             val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
@@ -1697,6 +1697,402 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
+    fun `Given search options When searching channels Should query with their filter and sort`() = runTest {
+        val chatClient: ChatClient = mock()
+        val searchOptions = RecordingSearchOptions()
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+            .givenSearchOptions(searchOptions)
+            .get(this)
+
+        viewModel.setSearchQuery(SearchQuery.Channels("Search query"))
+        advanceUntilIdle()
+
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, times(2)).queryChannels(captor.capture())
+        assertEquals(RecordingSearchOptions.channelFilter, captor.secondValue.filter)
+        assertEquals(RecordingSearchOptions.channelSort, captor.secondValue.querySort)
+        val expectedParams = ChannelListSearchOptions.ChannelSearchParams(
+            query = "Search query",
+            currentUser = User(id = currentUserId),
+            listFilter = queryFilter,
+            listSort = querySort,
+        )
+        assertEquals(expectedParams, searchOptions.channelParams.last())
+    }
+
+    @Test
+    fun `Given search options When the channel search query is too short Should not use them`() = runTest {
+        val chatClient: ChatClient = mock()
+        val searchOptions = RecordingSearchOptions()
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+            .givenSearchOptions(searchOptions)
+            .get(this)
+
+        viewModel.setSearchQuery(SearchQuery.Channels("Se"))
+        advanceUntilIdle()
+
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, times(2)).queryChannels(captor.capture())
+        assertEquals(queryFilter, captor.secondValue.filter)
+        assertEquals(querySort, captor.secondValue.querySort)
+        assertTrue(searchOptions.channelParams.isEmpty())
+    }
+
+    @Test
+    fun `Given search options and an active channel search When loading more Should query with their filter and sort`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val searchOptions = RecordingSearchOptions()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    nextPageRequest = QueryChannelsRequest(filter = queryFilter, offset = 30, limit = 30),
+                )
+                .givenChannelMutes()
+                .givenIsOffline(false)
+                .givenSearchOptions(searchOptions)
+                .get(this)
+            viewModel.setSearchQuery(SearchQuery.Channels("Search query"))
+            advanceUntilIdle()
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(3)).queryChannels(captor.capture())
+            assertEquals(RecordingSearchOptions.channelFilter, captor.thirdValue.filter)
+            assertEquals(RecordingSearchOptions.channelSort, captor.thirdValue.querySort)
+            assertEquals(30, captor.thirdValue.offset)
+        }
+
+    @Test
+    fun `Given predefined filter and search options When searching channels Should pass no list filter or sort`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val searchOptions = RecordingSearchOptions()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenPredefined(name = "vip_filter")
+                .givenSearchOptions(searchOptions)
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Channels("Search query"))
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            assertNull(captor.secondValue.predefinedFilter)
+            assertEquals(RecordingSearchOptions.channelFilter, captor.secondValue.filter)
+            assertEquals(RecordingSearchOptions.channelSort, captor.secondValue.querySort)
+            val params = searchOptions.channelParams.last()
+            assertNull(params.listFilter)
+            assertNull(params.listSort)
+        }
+
+    @Test
+    fun `Given grouped view model and search options When searching channels Should pass no list filter or sort`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val searchOptions = RecordingSearchOptions()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenSearchOptions(searchOptions)
+                .get(this, groupKey = "team-a")
+
+            viewModel.setSearchQuery(SearchQuery.Channels("Search query"))
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient).queryChannels(captor.capture())
+            assertEquals(RecordingSearchOptions.channelFilter, captor.firstValue.filter)
+            assertEquals(RecordingSearchOptions.channelSort, captor.firstValue.querySort)
+            val params = searchOptions.channelParams.last()
+            assertNull(params.listFilter)
+            assertNull(params.listSort)
+        }
+
+    @Test
+    fun `Given search options When searching messages Should search with their filters`() = runTest {
+        val chatClient: ChatClient = mock()
+        val searchOptions = RecordingSearchOptions()
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+            .givenSearchMessagesResult(SearchMessagesResult())
+            .givenRepositorySelectChannels()
+            .givenSearchOptions(searchOptions)
+            .get(this)
+
+        viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+        advanceUntilIdle()
+
+        verify(chatClient).searchMessages(
+            channelFilter = eq(RecordingSearchOptions.messageChannelFilter),
+            messageFilter = eq(RecordingSearchOptions.messageFilter),
+            offset = anyOrNull(),
+            limit = anyOrNull(),
+            next = anyOrNull(),
+            sort = eq(RecordingSearchOptions.messageSort),
+        )
+        val expectedParams = ChannelListSearchOptions.MessageSearchParams(
+            query = "hello",
+            currentUser = User(id = currentUserId),
+            listFilter = queryFilter,
+        )
+        assertEquals(listOf(expectedParams), searchOptions.messageParams.distinct())
+    }
+
+    @Test
+    fun `Given search options and no initial filter When searching messages Should pass the default filter`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val searchOptions = RecordingSearchOptions()
+            val viewModel = Fixture(chatClient, initialFilters = null)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .givenSearchOptions(searchOptions)
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            val expectedFilter = Filters.defaultChannelListFilter(User(id = currentUserId))
+            assertEquals(expectedFilter, searchOptions.messageParams.last().listFilter)
+        }
+
+    @Test
+    fun `Given predefined filter and search options When searching messages Should pass no list filter`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val searchOptions = RecordingSearchOptions()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenPredefined(name = "vip_filter")
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .givenSearchOptions(searchOptions)
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            verify(chatClient).searchMessages(
+                channelFilter = eq(RecordingSearchOptions.messageChannelFilter),
+                messageFilter = eq(RecordingSearchOptions.messageFilter),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = anyOrNull(),
+            )
+            assertNull(searchOptions.messageParams.last().listFilter)
+        }
+
+    @Test
+    fun `Given search options that skip the message search When searching messages Should not search`() = runTest {
+        val chatClient: ChatClient = mock()
+        val searchOptions = RecordingSearchOptions(skipMessageSearch = true)
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+            .givenSearchOptions(searchOptions)
+            .get(this)
+
+        viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+        advanceUntilIdle()
+
+        verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+    }
+
+    @Test
+    fun `Given search options and message search results When loading more Should search with their filters`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val searchOptions = RecordingSearchOptions()
+            val firstPage = SearchMessagesResult(
+                messages = listOf(randomMessage(cid = "messaging:channel1")),
+                next = "cursor_page2",
+            )
+            whenever(
+                chatClient.searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
+            ).doReturn(firstPage.asCall(), SearchMessagesResult().asCall())
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenRepositorySelectChannels(listOf(channel1))
+                .givenSearchOptions(searchOptions)
+                .get(this)
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            verify(chatClient, times(2)).searchMessages(
+                channelFilter = eq(RecordingSearchOptions.messageChannelFilter),
+                messageFilter = eq(RecordingSearchOptions.messageFilter),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = anyOrNull(),
+            )
+            assertTrue(searchOptions.messageParams.all { it.query == "hello" })
+        }
+
+    @Test
+    fun `Given predefined filter and the deprecated messageSearchSort When searching messages Should pass the sort`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenPredefined(name = "vip_filter")
+                .givenMessageSearchSort(messageSearchSort)
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = eq(messageSearchSort),
+            )
+        }
+
+    @Test
+    fun `Given grouped view model and the deprecated messageSearchSort When searching messages Should pass the sort`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenMessageSearchSort(messageSearchSort)
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this, groupKey = "team-a")
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = eq(messageSearchSort),
+            )
+        }
+
+    @Test
+    fun `Given search options that skip the next message page When loading more Should not search again`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val searchOptions = RecordingSearchOptions()
+            val firstPage = SearchMessagesResult(
+                messages = listOf(randomMessage(cid = "messaging:channel1")),
+                next = "cursor_page2",
+            )
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenSearchMessagesResult(firstPage)
+                .givenRepositorySelectChannels(listOf(channel1))
+                .givenSearchOptions(searchOptions)
+                .get(this)
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+            searchOptions.skipMessageSearch = true
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            verify(chatClient, times(1)).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        }
+
+    /** Returns fixed filters and sort, and records the params it is called with. */
+    private class RecordingSearchOptions(
+        var skipMessageSearch: Boolean = false,
+    ) : ChannelListSearchOptions() {
+        val channelParams = mutableListOf<ChannelSearchParams>()
+        val messageParams = mutableListOf<MessageSearchParams>()
+
+        override fun channelFilter(params: ChannelSearchParams): FilterObject {
+            channelParams += params
+            return channelFilter
+        }
+
+        override fun channelSort(params: ChannelSearchParams): QuerySorter<Channel> {
+            channelParams += params
+            return channelSort
+        }
+
+        override fun messageChannelFilter(params: MessageSearchParams): FilterObject? {
+            messageParams += params
+            return messageChannelFilter.takeUnless { skipMessageSearch }
+        }
+
+        override fun messageFilter(params: MessageSearchParams): FilterObject {
+            messageParams += params
+            return messageFilter
+        }
+
+        override fun messageSort(params: MessageSearchParams): QuerySorter<Message> {
+            messageParams += params
+            return messageSort
+        }
+
+        companion object {
+            val channelFilter = Filters.autocomplete("member.user.name", "custom")
+            val channelSort = QuerySortByField.ascByName<Channel>("name")
+            val messageChannelFilter = Filters.eq("type", "team")
+            val messageFilter = Filters.eq("pinned", true)
+            val messageSort = QuerySortByField.descByName<Message>("created_at")
+        }
+    }
+
+    @Test
     fun `Given a channel action fails When muting Should emit an action error event`() = runTest {
         val chatClient: ChatClient = mock()
         whenever(chatClient.muteChannel(any(), any(), eq(null)))
@@ -1890,6 +2286,7 @@ internal class ChannelListViewModelTest {
         private var predefinedFilterValues: Map<String, Any>? = null
         private var predefinedSortValues: Map<String, Any>? = null
         private var searchDebounceMs: Long = ChannelListViewModel.SEARCH_DEBOUNCE_MS
+        private var searchOptions: ChannelListSearchOptions = ChannelListSearchOptions()
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -2004,6 +2401,10 @@ internal class ChannelListViewModelTest {
             this.searchDebounceMs = searchDebounceMs
         }
 
+        fun givenSearchOptions(searchOptions: ChannelListSearchOptions) = apply {
+            this.searchOptions = searchOptions
+        }
+
         fun givenSearchMessagesResult(result: SearchMessagesResult) = apply {
             whenever(
                 chatClient.searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
@@ -2044,40 +2445,85 @@ internal class ChannelListViewModelTest {
         fun get(testScope: TestScope, groupKey: String? = null): ChannelListViewModel {
             val name = predefinedFilterName
             val channelListViewModel = when {
-                groupKey != null -> ChannelListViewModel(
-                    chatClient = chatClient,
-                    groupKey = groupKey,
-                    searchDebounceMs = searchDebounceMs,
-                    draftMessagesEnabled = false,
-                    messageSearchSort = messageSearchSort,
-                    globalState = MutableStateFlow(globalState),
-                )
-
-                name != null -> ChannelListViewModel(
-                    chatClient = chatClient,
-                    predefinedFilterName = name,
-                    filterValues = predefinedFilterValues,
-                    sortValues = predefinedSortValues,
-                    searchDebounceMs = searchDebounceMs,
-                    draftMessagesEnabled = false,
-                    chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                    messageSearchSort = messageSearchSort,
-                    globalState = MutableStateFlow(globalState),
-                )
-
-                else -> ChannelListViewModel(
-                    chatClient = chatClient,
-                    initialSort = initialSort,
-                    initialFilters = initialFilters,
-                    searchDebounceMs = searchDebounceMs,
-                    draftMessagesEnabled = false,
-                    chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                    messageSearchSort = messageSearchSort,
-                    globalState = MutableStateFlow(globalState),
-                )
+                groupKey != null -> groupedViewModel(groupKey)
+                name != null -> predefinedViewModel(name)
+                else -> standardViewModel()
             }
             testScope.advanceUntilIdle()
             return channelListViewModel
+        }
+
+        private fun groupedViewModel(groupKey: String): ChannelListViewModel = if (messageSearchSort != null) {
+            @Suppress("DEPRECATION")
+            ChannelListViewModel(
+                chatClient = chatClient,
+                groupKey = groupKey,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                messageSearchSort = messageSearchSort,
+                globalState = MutableStateFlow(globalState),
+            )
+        } else {
+            ChannelListViewModel(
+                chatClient = chatClient,
+                groupKey = groupKey,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                globalState = MutableStateFlow(globalState),
+                searchOptions = searchOptions,
+            )
+        }
+
+        private fun predefinedViewModel(name: String): ChannelListViewModel = if (messageSearchSort != null) {
+            @Suppress("DEPRECATION")
+            ChannelListViewModel(
+                chatClient = chatClient,
+                predefinedFilterName = name,
+                filterValues = predefinedFilterValues,
+                sortValues = predefinedSortValues,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                messageSearchSort = messageSearchSort,
+                globalState = MutableStateFlow(globalState),
+            )
+        } else {
+            ChannelListViewModel(
+                chatClient = chatClient,
+                predefinedFilterName = name,
+                filterValues = predefinedFilterValues,
+                sortValues = predefinedSortValues,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                globalState = MutableStateFlow(globalState),
+                searchOptions = searchOptions,
+            )
+        }
+
+        private fun standardViewModel(): ChannelListViewModel = if (messageSearchSort != null) {
+            @Suppress("DEPRECATION")
+            ChannelListViewModel(
+                chatClient = chatClient,
+                initialSort = initialSort,
+                initialFilters = initialFilters,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                messageSearchSort = messageSearchSort,
+                globalState = MutableStateFlow(globalState),
+            )
+        } else {
+            ChannelListViewModel(
+                chatClient = chatClient,
+                initialSort = initialSort,
+                initialFilters = initialFilters,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                globalState = MutableStateFlow(globalState),
+                searchOptions = searchOptions,
+            )
         }
     }
 

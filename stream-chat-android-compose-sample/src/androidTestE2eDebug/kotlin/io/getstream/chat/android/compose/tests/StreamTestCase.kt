@@ -46,6 +46,9 @@ abstract class StreamTestCase {
 
     /** Makes the channel list header search for channels instead of messages. */
     open var useChannelSearch = false
+
+    /** Makes the channel search also match channels by the name of a member. */
+    open var useMemberNameSearch = false
     val userRobot = UserRobot()
     lateinit var backendRobot: BackendRobot
     lateinit var participantRobot: ParticipantRobot
@@ -105,6 +108,7 @@ abstract class StreamTestCase {
             it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             it.putExtra("InitTestActivity", initTestActivity())
             it.putExtra("CHANNEL_SEARCH", useChannelSearch)
+            it.putExtra("MEMBER_NAME_SEARCH", useMemberNameSearch)
             if (useMockServer) {
                 it.putExtra("BASE_URL", mockServer.url)
                 it.putExtra("USE_V2_WEBSOCKET", apiVersion == "v2")
