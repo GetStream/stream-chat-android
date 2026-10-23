@@ -254,8 +254,11 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun switchUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Ljava/lang/Long;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public static synthetic fun switchUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/Long;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun translate (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
-	public static synthetic fun truncateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Z)Lio/getstream/result/call/Call;
+	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ZZ)Lio/getstream/result/call/Call;
+	public static synthetic fun truncateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ZZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun unarchiveChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unbanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unblockUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
@@ -1174,7 +1177,9 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun subscribeForSingle (Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun truncate ()Lio/getstream/result/call/Call;
 	public final fun truncate (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
-	public static synthetic fun truncate$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun truncate (Lio/getstream/chat/android/models/Message;Z)Lio/getstream/result/call/Call;
+	public final fun truncate (Lio/getstream/chat/android/models/Message;ZZ)Lio/getstream/result/call/Call;
+	public static synthetic fun truncate$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/models/Message;ZZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun unarchive ()Lio/getstream/result/call/Call;
 	public final fun unbanUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unmute ()Lio/getstream/result/call/Call;

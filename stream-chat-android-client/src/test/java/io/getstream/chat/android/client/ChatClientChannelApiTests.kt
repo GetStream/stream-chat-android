@@ -478,14 +478,30 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val channelType = randomString()
         val channelId = randomString()
         val systemMessage = randomMessage()
+        val hardDelete = randomBoolean()
+        val skipPush = randomBoolean()
         val response = randomChannel()
         val sut = Fixture()
             .givenTruncateChannelResult(RetroSuccess(response).toRetrofitCall())
             .get()
         // when
-        val result = sut.truncateChannel(channelType, channelId, systemMessage).await()
+        val result = sut.truncateChannel(channelType, channelId, systemMessage, hardDelete, skipPush).await()
         // then
         verifySuccess(result, response)
+        verify(api).truncateChannel(channelType, channelId, systemMessage, hardDelete, skipPush)
+    }
+
+    @Test
+    fun truncateChannelDefaultsToSoftTruncateWithPush() = runTest {
+        val channelType = randomString()
+        val channelId = randomString()
+        val sut = Fixture()
+            .givenTruncateChannelResult(RetroSuccess(randomChannel()).toRetrofitCall())
+            .get()
+        // when
+        sut.truncateChannel(channelType, channelId).await()
+        // then
+        verify(api).truncateChannel(channelType, channelId, null, hardDelete = false, skipPush = false)
     }
 
     @Test
@@ -1694,7 +1710,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         }
 
         fun givenTruncateChannelResult(result: Call<Channel>) = apply {
-            whenever(api.truncateChannel(any(), any(), any())).thenReturn(result)
+            whenever(api.truncateChannel(any(), any(), anyOrNull(), any(), any())).thenReturn(result)
         }
 
         fun givenUpdateChannelResult(result: Call<Channel>) = apply {

@@ -938,6 +938,18 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                         }
                     }
                 }
+
+                // Or delete the messages instead of hiding them, without a push for the system message.
+                channelClient.truncate(systemMessage = message, hardDelete = true, skipPush = true).enqueue { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            // Channel is truncated
+                        }
+                        is Result.Failure -> {
+                            // Handler error
+                        }
+                    }
+                }
             }
         }
 

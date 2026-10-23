@@ -1130,11 +1130,19 @@ constructor(
         channelType: String,
         channelId: String,
         systemMessage: Message?,
+        hardDelete: Boolean,
+        skipPush: Boolean,
     ): Call<Channel> {
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
-            body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toMessageRequest()) },
+            body = with(dtoMapping) {
+                TruncateChannelRequest(
+                    hardDelete = hardDelete,
+                    skipPush = skipPush,
+                    message = systemMessage?.toMessageRequest(),
+                )
+            },
         ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 

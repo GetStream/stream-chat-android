@@ -1473,10 +1473,20 @@ internal class MoshiChatApiTest {
         val channelType = randomString()
         val channelId = randomString()
         val systemMessage = randomMessage()
-        val result = sut.truncateChannel(channelType, channelId, systemMessage).await()
+        val hardDelete = randomBoolean()
+        val skipPush = randomBoolean()
+        val result = sut.truncateChannel(channelType, channelId, systemMessage, hardDelete, skipPush).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).truncateChannel(eq(channelType), eq(channelId), any())
+        verify(api, times(1)).truncateChannel(
+            eq(channelType),
+            eq(channelId),
+            check {
+                it.hardDelete `should be equal to` hardDelete
+                it.skipPush `should be equal to` skipPush
+                it.message?.id `should be equal to` systemMessage.id
+            },
+        )
     }
 
     @ParameterizedTest

@@ -864,6 +864,15 @@ public class Channels {
                     // Handle error
                 }
             });
+
+            // Or with message parameter.
+            Message message = new Message.Builder()
+                    .withText("Dear Everyone. The channel has been truncated.")
+                    .build();
+            channelClient.truncate(message).enqueue(result -> { /* Result handling */ });
+
+            // Or delete the messages instead of hiding them, without a push for the system message.
+            channelClient.truncate(message, true, true).enqueue(result -> { /* Result handling */ });
         }
     }
 

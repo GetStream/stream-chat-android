@@ -1085,12 +1085,12 @@ internal class ChannelClientTest {
         val systemMessage = mock<Message>()
         val channel = mock<Channel>()
         val successCall = RetroSuccess(channel).toRetrofitCall()
-        whenever(chatClient.truncateChannel(any(), any(), any())).thenReturn(successCall)
+        whenever(chatClient.truncateChannel(any(), any(), any(), any(), any())).thenReturn(successCall)
         // when
         val result = channelClient.truncate(systemMessage).await()
         // then
         verifySuccess(result, channel)
-        verify(chatClient).truncateChannel(channelType, channelId, systemMessage)
+        verify(chatClient).truncateChannel(channelType, channelId, systemMessage, false, false)
     }
 
     @Test
@@ -1099,12 +1099,25 @@ internal class ChannelClientTest {
         val systemMessage = mock<Message>()
         val errorCode = positiveRandomInt()
         val errorCall = RetroError<Channel>(errorCode).toRetrofitCall()
-        whenever(chatClient.truncateChannel(any(), any(), any())).thenReturn(errorCall)
+        whenever(chatClient.truncateChannel(any(), any(), any(), any(), any())).thenReturn(errorCall)
         // when
         val result = channelClient.truncate(systemMessage).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(chatClient).truncateChannel(channelType, channelId, systemMessage)
+        verify(chatClient).truncateChannel(channelType, channelId, systemMessage, false, false)
+    }
+
+    @Test
+    fun `truncate should pass hardDelete and skipPush to ChatClient`() = runTest {
+        // given
+        val channel = mock<Channel>()
+        val successCall = RetroSuccess(channel).toRetrofitCall()
+        whenever(chatClient.truncateChannel(any(), any(), anyOrNull(), any(), any())).thenReturn(successCall)
+        // when
+        val result = channelClient.truncate(hardDelete = true, skipPush = true).await()
+        // then
+        verifySuccess(result, channel)
+        verify(chatClient).truncateChannel(channelType, channelId, null, true, true)
     }
 
     @Test
@@ -1112,12 +1125,12 @@ internal class ChannelClientTest {
         // given
         val channel = mock<Channel>()
         val successCall = RetroSuccess(channel).toRetrofitCall()
-        whenever(chatClient.truncateChannel(any(), any(), anyOrNull())).thenReturn(successCall)
+        whenever(chatClient.truncateChannel(any(), any(), anyOrNull(), any(), any())).thenReturn(successCall)
         // when
         val result = channelClient.truncate().await()
         // then
         verifySuccess(result, channel)
-        verify(chatClient).truncateChannel(channelType, channelId, null)
+        verify(chatClient).truncateChannel(channelType, channelId, null, false, false)
     }
 
     @Test
@@ -1125,12 +1138,12 @@ internal class ChannelClientTest {
         // given
         val errorCode = positiveRandomInt()
         val errorCall = RetroError<Channel>(errorCode).toRetrofitCall()
-        whenever(chatClient.truncateChannel(any(), any(), anyOrNull())).thenReturn(errorCall)
+        whenever(chatClient.truncateChannel(any(), any(), anyOrNull(), any(), any())).thenReturn(errorCall)
         // when
         val result = channelClient.truncate().await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(chatClient).truncateChannel(channelType, channelId, null)
+        verify(chatClient).truncateChannel(channelType, channelId, null, false, false)
     }
 
     @Test
