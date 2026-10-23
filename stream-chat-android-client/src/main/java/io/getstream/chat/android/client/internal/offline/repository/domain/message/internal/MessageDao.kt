@@ -22,11 +22,25 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal.CHANNEL_ENTITY_TABLE_NAME
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.REACTION_ENTITY_TABLE_NAME
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
+
+/**
+ * Keeps the messages the channel's truncation did not remove: those the server created at or after the channel's
+ * `truncatedAt`, and those it has not created yet. A channel never truncated has no `truncatedAt` and keeps them all.
+ */
+private const val NOT_TRUNCATED_IN_CHANNEL =
+    "(createdAt IS NULL OR createdAt >= IFNULL(" +
+        "(SELECT c.truncatedAt FROM $CHANNEL_ENTITY_TABLE_NAME c WHERE c.cid = :cid), 0))"
+
+/** [NOT_TRUNCATED_IN_CHANNEL] for rows of any channel, each checked against its own channel's `truncatedAt`. */
+private const val NOT_TRUNCATED =
+    "(createdAt IS NULL OR createdAt >= IFNULL(" +
+        "(SELECT c.truncatedAt FROM $CHANNEL_ENTITY_TABLE_NAME c WHERE c.cid = $MESSAGE_ENTITY_TABLE_NAME.cid), 0))"
 
 @Dao
 @Suppress("TooManyFunctions")
@@ -125,6 +139,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
+            "AND $NOT_TRUNCATED_IN_CHANNEL " +
             "AND (createdAt > :dateFilter OR createdLocallyAt > :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
@@ -141,6 +156,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
+            "AND $NOT_TRUNCATED_IN_CHANNEL " +
             "AND (createdAt >= :dateFilter OR createdLocallyAt >= :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
@@ -157,6 +173,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
+            "AND $NOT_TRUNCATED_IN_CHANNEL " +
             "AND (createdAt < :dateFilter OR createdLocallyAt < :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
@@ -173,6 +190,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
+            "AND $NOT_TRUNCATED_IN_CHANNEL " +
             "AND (createdAt <= :dateFilter OR createdLocallyAt <= :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
@@ -189,6 +207,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
+            "AND $NOT_TRUNCATED_IN_CHANNEL " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
@@ -199,7 +218,8 @@ internal interface MessageDao {
 
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
-            "WHERE parentId = :messageId OR id = :messageId " +
+            "WHERE (parentId = :messageId OR id = :messageId) " +
+            "AND $NOT_TRUNCATED " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
@@ -285,6 +305,7 @@ internal interface MessageDao {
         "SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
             "AND (syncStatus IN (:syncStatuses) OR type IN (:types) OR createdAt IS NULL) " +
+            "AND $NOT_TRUNCATED_IN_CHANNEL " +
             "ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC",
     )
     @Transaction

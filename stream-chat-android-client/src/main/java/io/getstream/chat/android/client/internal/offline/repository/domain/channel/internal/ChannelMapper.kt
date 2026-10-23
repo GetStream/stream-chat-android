@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.chan
 
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.lastMessage
+import io.getstream.chat.android.client.extensions.internal.survivesTruncationAt
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.toEntity
@@ -93,7 +94,9 @@ internal suspend fun ChannelEntity.toModel(
     truncatedAt = truncatedAt,
     members = members.values.map { it.toModel(getUser) },
     memberCount = memberCount,
-    messages = listOfNotNull(lastMessageId?.let { getMessage(it) }),
+    messages = listOfNotNull(
+        lastMessageId?.let { getMessage(it) }?.takeIf { truncatedAt == null || it.survivesTruncationAt(truncatedAt) },
+    ),
     read = reads.values.map { it.toModel(getUser) },
     createdBy = getUser(createdByUserId),
     watchers = watcherIds.map { getUser(it) },

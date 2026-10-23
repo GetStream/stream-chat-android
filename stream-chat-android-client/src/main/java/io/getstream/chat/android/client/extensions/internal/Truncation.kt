@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import java.util.Date
 
@@ -39,3 +40,11 @@ internal val NotificationChannelTruncatedEvent.truncatedBefore: Date
  * does, because the local one follows the device clock; a message the server has not created yet is kept.
  */
 internal fun Message.survivesTruncationAt(truncatedAt: Date): Boolean = createdAt?.before(truncatedAt) != true
+
+/** The channel without the messages, pinned ones included, its truncation removed. */
+internal fun Channel.withoutTruncatedMessages(): Channel = truncatedAt?.let { cutoff ->
+    copy(
+        messages = messages.filter { it.survivesTruncationAt(cutoff) },
+        pinnedMessages = pinnedMessages.filter { it.survivesTruncationAt(cutoff) },
+    )
+} ?: this
