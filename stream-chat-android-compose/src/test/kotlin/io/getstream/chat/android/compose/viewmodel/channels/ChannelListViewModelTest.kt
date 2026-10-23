@@ -2445,78 +2445,85 @@ internal class ChannelListViewModelTest {
         fun get(testScope: TestScope, groupKey: String? = null): ChannelListViewModel {
             val name = predefinedFilterName
             val channelListViewModel = when {
-                groupKey != null && messageSearchSort != null ->
-                    @Suppress("DEPRECATION")
-                    ChannelListViewModel(
-                        chatClient = chatClient,
-                        groupKey = groupKey,
-                        searchDebounceMs = searchDebounceMs,
-                        draftMessagesEnabled = false,
-                        messageSearchSort = messageSearchSort,
-                        globalState = MutableStateFlow(globalState),
-                    )
-
-                groupKey != null -> ChannelListViewModel(
-                    chatClient = chatClient,
-                    groupKey = groupKey,
-                    searchDebounceMs = searchDebounceMs,
-                    draftMessagesEnabled = false,
-                    globalState = MutableStateFlow(globalState),
-                    searchOptions = searchOptions,
-                )
-
-                name != null && messageSearchSort != null ->
-                    @Suppress("DEPRECATION")
-                    ChannelListViewModel(
-                        chatClient = chatClient,
-                        predefinedFilterName = name,
-                        filterValues = predefinedFilterValues,
-                        sortValues = predefinedSortValues,
-                        searchDebounceMs = searchDebounceMs,
-                        draftMessagesEnabled = false,
-                        chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                        messageSearchSort = messageSearchSort,
-                        globalState = MutableStateFlow(globalState),
-                    )
-
-                name != null -> ChannelListViewModel(
-                    chatClient = chatClient,
-                    predefinedFilterName = name,
-                    filterValues = predefinedFilterValues,
-                    sortValues = predefinedSortValues,
-                    searchDebounceMs = searchDebounceMs,
-                    draftMessagesEnabled = false,
-                    chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                    globalState = MutableStateFlow(globalState),
-                    searchOptions = searchOptions,
-                )
-
-                messageSearchSort != null ->
-                    @Suppress("DEPRECATION")
-                    ChannelListViewModel(
-                        chatClient = chatClient,
-                        initialSort = initialSort,
-                        initialFilters = initialFilters,
-                        searchDebounceMs = searchDebounceMs,
-                        draftMessagesEnabled = false,
-                        chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                        messageSearchSort = messageSearchSort,
-                        globalState = MutableStateFlow(globalState),
-                    )
-
-                else -> ChannelListViewModel(
-                    chatClient = chatClient,
-                    initialSort = initialSort,
-                    initialFilters = initialFilters,
-                    searchDebounceMs = searchDebounceMs,
-                    draftMessagesEnabled = false,
-                    chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
-                    globalState = MutableStateFlow(globalState),
-                    searchOptions = searchOptions,
-                )
+                groupKey != null -> groupedViewModel(groupKey)
+                name != null -> predefinedViewModel(name)
+                else -> standardViewModel()
             }
             testScope.advanceUntilIdle()
             return channelListViewModel
+        }
+
+        private fun groupedViewModel(groupKey: String): ChannelListViewModel = if (messageSearchSort != null) {
+            @Suppress("DEPRECATION")
+            ChannelListViewModel(
+                chatClient = chatClient,
+                groupKey = groupKey,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                messageSearchSort = messageSearchSort,
+                globalState = MutableStateFlow(globalState),
+            )
+        } else {
+            ChannelListViewModel(
+                chatClient = chatClient,
+                groupKey = groupKey,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                globalState = MutableStateFlow(globalState),
+                searchOptions = searchOptions,
+            )
+        }
+
+        private fun predefinedViewModel(name: String): ChannelListViewModel = if (messageSearchSort != null) {
+            @Suppress("DEPRECATION")
+            ChannelListViewModel(
+                chatClient = chatClient,
+                predefinedFilterName = name,
+                filterValues = predefinedFilterValues,
+                sortValues = predefinedSortValues,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                messageSearchSort = messageSearchSort,
+                globalState = MutableStateFlow(globalState),
+            )
+        } else {
+            ChannelListViewModel(
+                chatClient = chatClient,
+                predefinedFilterName = name,
+                filterValues = predefinedFilterValues,
+                sortValues = predefinedSortValues,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                globalState = MutableStateFlow(globalState),
+                searchOptions = searchOptions,
+            )
+        }
+
+        private fun standardViewModel(): ChannelListViewModel = if (messageSearchSort != null) {
+            @Suppress("DEPRECATION")
+            ChannelListViewModel(
+                chatClient = chatClient,
+                initialSort = initialSort,
+                initialFilters = initialFilters,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                messageSearchSort = messageSearchSort,
+                globalState = MutableStateFlow(globalState),
+            )
+        } else {
+            ChannelListViewModel(
+                chatClient = chatClient,
+                initialSort = initialSort,
+                initialFilters = initialFilters,
+                searchDebounceMs = searchDebounceMs,
+                draftMessagesEnabled = false,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                globalState = MutableStateFlow(globalState),
+                searchOptions = searchOptions,
+            )
         }
     }
 
