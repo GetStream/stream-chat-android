@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.viewmodel.channels
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
@@ -50,14 +52,39 @@ internal class ChannelListViewModelFactoryTest {
         )
     }
 
+    @Test
+    fun `create should return an instance for every constructor`() {
+        val chatClient = Fixture().chatClient
+        val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
+        val factories = listOf(
+            ChannelListViewModelFactory(chatClient = chatClient, searchOptions = ChannelListSearchOptions()),
+            ChannelListViewModelFactory(chatClient = chatClient, predefinedFilterName = "filter"),
+            ChannelListViewModelFactory(groupKey = "group", chatClient = chatClient),
+            @Suppress("DEPRECATION")
+            ChannelListViewModelFactory(chatClient = chatClient, messageSearchSort = messageSearchSort),
+            @Suppress("DEPRECATION")
+            ChannelListViewModelFactory(
+                chatClient = chatClient,
+                predefinedFilterName = "filter",
+                messageSearchSort = messageSearchSort,
+            ),
+            @Suppress("DEPRECATION")
+            ChannelListViewModelFactory(groupKey = "group", chatClient = chatClient, messageSearchSort = messageSearchSort),
+        )
+
+        factories.forEach { factory ->
+            assertInstanceOf<ChannelListViewModel>(factory.create(ChannelListViewModel::class.java))
+        }
+    }
+
     private class Fixture {
-        private val mockChatClient = mock<ChatClient> {
+        val chatClient = mock<ChatClient> {
             on { clientState } doReturn mock()
         }
 
         fun get(): ChannelListViewModelFactory {
             return ChannelListViewModelFactory(
-                chatClient = mockChatClient,
+                chatClient = chatClient,
             )
         }
     }

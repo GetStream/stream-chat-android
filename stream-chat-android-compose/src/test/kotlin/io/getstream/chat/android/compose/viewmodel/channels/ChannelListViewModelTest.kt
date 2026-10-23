@@ -1967,9 +1967,93 @@ internal class ChannelListViewModelTest {
             assertTrue(searchOptions.messageParams.all { it.query == "hello" })
         }
 
+    @Test
+    fun `Given predefined filter and the deprecated messageSearchSort When searching messages Should pass the sort`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenPredefined(name = "vip_filter")
+                .givenMessageSearchSort(messageSearchSort)
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = eq(messageSearchSort),
+            )
+        }
+
+    @Test
+    fun `Given grouped view model and the deprecated messageSearchSort When searching messages Should pass the sort`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messageSearchSort = QuerySortByField.descByName<Message>("created_at")
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenMessageSearchSort(messageSearchSort)
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this, groupKey = "team-a")
+
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+
+            verify(chatClient).searchMessages(
+                channelFilter = any(),
+                messageFilter = any(),
+                offset = anyOrNull(),
+                limit = anyOrNull(),
+                next = anyOrNull(),
+                sort = eq(messageSearchSort),
+            )
+        }
+
+    @Test
+    fun `Given search options that skip the next message page When loading more Should not search again`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val searchOptions = RecordingSearchOptions()
+            val firstPage = SearchMessagesResult(
+                messages = listOf(randomMessage(cid = "messaging:channel1")),
+                next = "cursor_page2",
+            )
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenSearchMessagesResult(firstPage)
+                .givenRepositorySelectChannels(listOf(channel1))
+                .givenSearchOptions(searchOptions)
+                .get(this)
+            viewModel.setSearchQuery(SearchQuery.Messages("hello"))
+            advanceUntilIdle()
+            searchOptions.skipMessageSearch = true
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            verify(chatClient, times(1)).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        }
+
     /** Returns fixed filters and sort, and records the params it is called with. */
     private class RecordingSearchOptions(
-        private val skipMessageSearch: Boolean = false,
+        var skipMessageSearch: Boolean = false,
     ) : ChannelListSearchOptions() {
         val channelParams = mutableListOf<ChannelSearchParams>()
         val messageParams = mutableListOf<MessageSearchParams>()
@@ -2361,6 +2445,17 @@ internal class ChannelListViewModelTest {
         fun get(testScope: TestScope, groupKey: String? = null): ChannelListViewModel {
             val name = predefinedFilterName
             val channelListViewModel = when {
+                groupKey != null && messageSearchSort != null ->
+                    @Suppress("DEPRECATION")
+                    ChannelListViewModel(
+                        chatClient = chatClient,
+                        groupKey = groupKey,
+                        searchDebounceMs = searchDebounceMs,
+                        draftMessagesEnabled = false,
+                        messageSearchSort = messageSearchSort,
+                        globalState = MutableStateFlow(globalState),
+                    )
+
                 groupKey != null -> ChannelListViewModel(
                     chatClient = chatClient,
                     groupKey = groupKey,
@@ -2369,6 +2464,20 @@ internal class ChannelListViewModelTest {
                     globalState = MutableStateFlow(globalState),
                     searchOptions = searchOptions,
                 )
+
+                name != null && messageSearchSort != null ->
+                    @Suppress("DEPRECATION")
+                    ChannelListViewModel(
+                        chatClient = chatClient,
+                        predefinedFilterName = name,
+                        filterValues = predefinedFilterValues,
+                        sortValues = predefinedSortValues,
+                        searchDebounceMs = searchDebounceMs,
+                        draftMessagesEnabled = false,
+                        chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                        messageSearchSort = messageSearchSort,
+                        globalState = MutableStateFlow(globalState),
+                    )
 
                 name != null -> ChannelListViewModel(
                     chatClient = chatClient,
