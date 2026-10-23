@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.sample.feature.channel.list
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.data.CustomSettings
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListSearchOptions
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 
@@ -30,10 +32,17 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
  * to make the feature testable. Otherwise, the predefined server-side filter is used, which resolves
  * to: messaging channels the current user is a member of, without a draft, sorted by "pinned_at" and
  * "last_updated" descending.
+ *
+ * When member name search is enabled, the channel search also matches channels by the name of a member.
  */
 fun sampleChannelListViewModelFactory(settings: CustomSettings): ChannelListViewModelFactory {
     val chatClient = ChatClient.instance()
     val currentUserId = chatClient.getCurrentUser()?.id.orEmpty()
+    val searchOptions = if (settings.isMemberNameSearchEnabled) {
+        MemberNameSearchOptions()
+    } else {
+        ChannelListSearchOptions()
+    }
     return if (settings.isLocalUnreadCountEnabled) {
         ChannelListViewModelFactory(
             chatClient = chatClient,
@@ -44,6 +53,7 @@ fun sampleChannelListViewModelFactory(settings: CustomSettings): ChannelListView
                 Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
+            searchOptions = searchOptions,
         )
     } else {
         ChannelListViewModelFactory(
@@ -54,6 +64,24 @@ fun sampleChannelListViewModelFactory(settings: CustomSettings): ChannelListView
                 "user_id" to currentUserId,
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
+            searchOptions = searchOptions,
         )
+    }
+}
+
+/**
+ * Searches channels by their name or by the name of one of their members, among the channels the current user is a
+ * member of.
+ */
+private class MemberNameSearchOptions : ChannelListSearchOptions() {
+    override fun channelFilter(params: ChannelSearchParams): FilterObject {
+        val searchFilter = Filters.and(
+            Filters.or(
+                Filters.autocomplete("name", params.query),
+                Filters.autocomplete("member.user.name", params.query),
+            ),
+            Filters.`in`("members", listOfNotNull(params.currentUser?.id)),
+        )
+        return params.listFilter?.let { Filters.and(it, searchFilter) } ?: searchFilter
     }
 }

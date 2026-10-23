@@ -49,6 +49,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  * @param draftMessagesEnabled If the draft message feature is enabled.
  * @param messageSearchSort Optional sorting for message search results. When `null`, the server-side default is used.
+ * @param searchOptions Builds the filters and sort used to search channels and messages.
  */
 @Suppress("LongParameterList")
 public class ChannelListViewModelFactory internal constructor(
@@ -60,6 +61,7 @@ public class ChannelListViewModelFactory internal constructor(
     private val chatEventHandlerFactory: ChatEventHandlerFactory,
     private val draftMessagesEnabled: Boolean,
     private val messageSearchSort: QuerySorter<Message>?,
+    private val searchOptions: ChannelListSearchOptions,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -80,6 +82,7 @@ public class ChannelListViewModelFactory internal constructor(
         chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
         draftMessagesEnabled: Boolean = true,
         messageSearchSort: QuerySorter<Message>? = null,
+        searchOptions: ChannelListSearchOptions = ChannelListSearchOptions(),
     ) : this(
         chatClient = chatClient,
         mode = QueryMode.Standard(initialFilter = filters, initialSort = querySort),
@@ -89,6 +92,7 @@ public class ChannelListViewModelFactory internal constructor(
         chatEventHandlerFactory = chatEventHandlerFactory,
         draftMessagesEnabled = draftMessagesEnabled,
         messageSearchSort = messageSearchSort,
+        searchOptions = searchOptions,
     )
 
     /**
@@ -111,6 +115,7 @@ public class ChannelListViewModelFactory internal constructor(
         chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
         draftMessagesEnabled: Boolean = true,
         messageSearchSort: QuerySorter<Message>? = null,
+        searchOptions: ChannelListSearchOptions = ChannelListSearchOptions(),
     ) : this(
         chatClient = chatClient,
         mode = QueryMode.Predefined(
@@ -124,6 +129,7 @@ public class ChannelListViewModelFactory internal constructor(
         chatEventHandlerFactory = chatEventHandlerFactory,
         draftMessagesEnabled = draftMessagesEnabled,
         messageSearchSort = messageSearchSort,
+        searchOptions = searchOptions,
     )
 
     /**
@@ -137,12 +143,14 @@ public class ChannelListViewModelFactory internal constructor(
      * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Optional sorting for message search results.
+     * @param searchOptions Builds the filters and sort used to search channels and messages.
      */
     public constructor(
         groupKey: String,
         chatClient: ChatClient = ChatClient.instance(),
         draftMessagesEnabled: Boolean = true,
         messageSearchSort: QuerySorter<Message>? = null,
+        searchOptions: ChannelListSearchOptions = ChannelListSearchOptions(),
     ) : this(
         chatClient = chatClient,
         mode = QueryMode.Grouped(groupKey),
@@ -155,6 +163,7 @@ public class ChannelListViewModelFactory internal constructor(
         ),
         draftMessagesEnabled = draftMessagesEnabled,
         messageSearchSort = messageSearchSort,
+        searchOptions = searchOptions,
     )
 
     /**
@@ -176,6 +185,7 @@ public class ChannelListViewModelFactory internal constructor(
             draftMessagesEnabled = draftMessagesEnabled,
             messageSearchSort = messageSearchSort,
             globalState = chatClient.globalStateFlow,
+            searchOptions = searchOptions,
         ) as T
     }
 }

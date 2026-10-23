@@ -149,6 +149,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var isChannelSearchEnabled by remember {
                         mutableStateOf(settings.isChannelSearchEnabled)
                     }
+                    var isMemberNameSearchEnabled by remember {
+                        mutableStateOf(settings.isMemberNameSearchEnabled)
+                    }
                     var isMarkdownEnabled by remember {
                         mutableStateOf(settings.isMarkdownEnabled)
                     }
@@ -234,6 +237,15 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isChannelSearchEnabled = it
                                 settings.isChannelSearchEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_member_name_search_label),
+                            description = stringResource(R.string.custom_login_flag_member_name_search_description),
+                            value = isMemberNameSearchEnabled,
+                            onValueChange = {
+                                isMemberNameSearchEnabled = it
+                                settings.isMemberNameSearchEnabled = it
                             },
                         ),
                         FeatureFlag(

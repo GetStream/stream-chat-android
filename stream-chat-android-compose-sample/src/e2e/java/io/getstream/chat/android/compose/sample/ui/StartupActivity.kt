@@ -60,6 +60,9 @@ class StartupActivity : AppCompatActivity() {
             if (intent.hasExtra("CHANNEL_SEARCH")) {
                 customSettings().isChannelSearchEnabled = intent.getBooleanExtra("CHANNEL_SEARCH", false)
             }
+            if (intent.hasExtra("MEMBER_NAME_SEARCH")) {
+                customSettings().isMemberNameSearchEnabled = intent.getBooleanExtra("MEMBER_NAME_SEARCH", false)
+            }
 
             val initTestActivity = intent.getSerializableExtra("InitTestActivity") as? InitTestActivity
             if (initTestActivity != null) {
