@@ -79,7 +79,8 @@ import io.getstream.chat.android.ui.common.utils.extensions.displayedText
  * delegate here so the a11y wiring is implemented once.
  *
  * @param poll The poll the option belongs to (drives the role via [Poll.enforceUniqueVote] and
- * [Poll.maxVotesAllowed], and cast/remove gating via [Poll.maxVotesAllowed] and [Poll.closed]).
+ * [Poll.maxVotesAllowed], and cast/remove gating via [Poll.enforceUniqueVote], [Poll.maxVotesAllowed] and
+ * [Poll.closed]).
  * @param option The option rendered by this row.
  * @param voteCount Number of votes the option has received.
  * @param totalVoteCount Total votes across all options, used to compute the progress fill.
