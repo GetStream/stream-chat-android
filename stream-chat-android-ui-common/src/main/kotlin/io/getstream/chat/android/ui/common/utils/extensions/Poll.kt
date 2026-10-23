@@ -27,9 +27,12 @@ import kotlin.math.min
 
 /**
  * Returns true if the current user can cast another vote on this poll.
+ *
+ * Always true when [Poll.enforceUniqueVote] is set, since a new vote replaces the current one.
  */
 @InternalStreamChatApi
 public fun Poll.canCastVote(): Boolean {
+    if (enforceUniqueVote) return true
     val limit = maxVotesAllowed ?: return true
     return ownVotes.size < limit
 }

@@ -137,7 +137,25 @@ internal class PollExtensionsTest {
 
     @Test
     fun `canCastVote should return false when ownVotes size has reached maxVotesAllowed`() {
-        val poll = randomPoll(maxVotesAllowed = 2, ownVotes = listOf(randomVote(), randomVote()))
+        val poll = randomPoll(
+            enforceUniqueVote = false,
+            maxVotesAllowed = 2,
+            ownVotes = listOf(randomVote(), randomVote()),
+        )
+
+        assertFalse(poll.canCastVote())
+    }
+
+    @Test
+    fun `canCastVote should return true when enforceUniqueVote is set and the user already voted`() {
+        val poll = randomPoll(enforceUniqueVote = true, maxVotesAllowed = 1, ownVotes = listOf(randomVote()))
+
+        assertTrue(poll.canCastVote())
+    }
+
+    @Test
+    fun `canCastVote should return false when maxVotesAllowed is 1 without enforceUniqueVote and the user already voted`() {
+        val poll = randomPoll(enforceUniqueVote = false, maxVotesAllowed = 1, ownVotes = listOf(randomVote()))
 
         assertFalse(poll.canCastVote())
     }

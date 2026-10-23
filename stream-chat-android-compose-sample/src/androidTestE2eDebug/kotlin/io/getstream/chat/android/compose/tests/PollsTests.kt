@@ -88,6 +88,29 @@ class PollsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12452")
+    @Test
+    fun test_voteMovesToAnotherOption_whenUserVotesForAnotherOptionInSingleAnswerPoll() {
+        step("GIVEN user creates a single answer poll and votes") {
+            userRobot
+                .login()
+                .openChannel()
+                .createPoll(question, options)
+                .castPollVote(firstOption)
+                .assertPollOption(firstOption, isChecked = true)
+        }
+        step("WHEN user votes for another option") {
+            userRobot.castPollVote(secondOption)
+        }
+        step("THEN the vote moves to the other option") {
+            userRobot
+                .assertPollOption(secondOption, isChecked = true)
+                .assertPollOptionVoteCount(secondOption, count = 1)
+                .assertPollOption(firstOption, isChecked = false)
+                .assertPollOptionVoteCount(firstOption, count = 0)
+        }
+    }
+
     @AllureId("11790")
     @Test
     fun test_participantVoteIsShownInPollResults_whenParticipantVotesInPoll() {
