@@ -141,6 +141,28 @@ internal class ChannelMapperTest {
     }
 
     @Test
+    fun `toModel should drop a last message created before the channel truncation`() = runTest {
+        MockChatClientBuilder().build()
+        val lastMessage = randomMessage(createdAt = Date(1_000))
+        val entity = randomChannelEntity(lastMessageId = lastMessage.id, truncatedAt = Date(2_000))
+
+        val channel = entity.toModel(getUser = { randomUser(id = it) }, getMessage = { lastMessage }, getDraftMessage = { null })
+
+        assertEquals(emptyList<Message>(), channel.messages)
+    }
+
+    @Test
+    fun `toModel should keep a last message created at or after the channel truncation`() = runTest {
+        MockChatClientBuilder().build()
+        val lastMessage = randomMessage(createdAt = Date(2_000))
+        val entity = randomChannelEntity(lastMessageId = lastMessage.id, truncatedAt = Date(2_000))
+
+        val channel = entity.toModel(getUser = { randomUser(id = it) }, getMessage = { lastMessage }, getDraftMessage = { null })
+
+        assertEquals(listOf(lastMessage.id), channel.messages.map { it.id })
+    }
+
+    @Test
     @Suppress("LongMethod")
     fun `Should map ChannelEntity to Channel correctly`() = runTest {
         // Instantiate ChatClient so that getCurrentUser() doesn't fail
@@ -155,6 +177,8 @@ internal class ChannelMapperTest {
         val draftMessage = randomDraftMessage()
 
         val channelEntity = randomChannelEntity(
+            // A random truncation date would randomly drop the last message, which this test is not about
+            truncatedAt = null,
             createdByUserId = createdByUser.id,
             watcherIds = watchers.map { it.id },
             members = members.map { it.toEntity() }.associateBy { it.userId }.toMutableMap(),

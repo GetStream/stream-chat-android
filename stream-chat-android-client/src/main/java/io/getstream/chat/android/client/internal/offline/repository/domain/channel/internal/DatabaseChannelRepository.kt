@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.chan
 import android.util.LruCache
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.withoutTruncatedMessages
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toModel
@@ -76,6 +77,7 @@ internal class DatabaseChannelRepository(
         val channelsToInsert = cacheMutex.withLock {
             val updatedChannels = channels
                 .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
+                .map { it.withoutTruncatedMessages() }
                 .map { if (it.isReadTrackedLocally()) it.preserveLocallyTrackedReads(storedReadsByCid[it.cid]) else it }
                 // Cleared before the comparison below, as the cached copies hold no live locations.
                 .map { it.copy(activeLiveLocations = emptyList()) }
@@ -354,6 +356,7 @@ internal class DatabaseChannelRepository(
         return copy(
             messages = messages,
             hiddenMessagesBefore = hideMessagesBefore,
+            truncatedAt = listOfNotNull(truncatedAt, cachedChannel.truncatedAt).maxOrNull(),
             members = members,
             read = read,
         ).syncUnreadCountWithReads()

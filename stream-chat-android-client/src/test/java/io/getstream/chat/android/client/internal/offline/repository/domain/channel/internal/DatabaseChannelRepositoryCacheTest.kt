@@ -36,6 +36,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.Date
 
 // Robolectric provides a working android.util.LruCache, which backs the channel cache.
 @RunWith(RobolectricTestRunner::class)
@@ -59,6 +60,32 @@ internal class DatabaseChannelRepositoryCacheTest {
         { null },
         "current-user",
     )
+
+    @Test
+    fun `inserting a truncated channel drops the cached messages created before the truncation`() = testScope.runTest {
+        val old = randomMessage(createdAt = Date(1_000))
+        val kept = randomMessage(createdAt = Date(3_000))
+        val cached = randomChannel(messages = listOf(old, kept), truncatedAt = null, hiddenMessagesBefore = null)
+        sut.insertChannel(cached)
+
+        sut.insertChannel(cached.copy(messages = emptyList(), truncatedAt = Date(2_000)))
+
+        assertEquals(listOf(kept.id), sut.selectChannel(cached.cid)?.messages?.map { it.id })
+    }
+
+    @Test
+    fun `inserting a channel without truncatedAt keeps the cached truncation and its filter`() = testScope.runTest {
+        val truncatedAt = Date(2_000)
+        val cached = randomChannel(messages = emptyList(), truncatedAt = truncatedAt, hiddenMessagesBefore = null)
+        sut.insertChannel(cached)
+
+        val old = randomMessage(createdAt = Date(1_000))
+        sut.insertChannel(cached.copy(messages = listOf(old), truncatedAt = null))
+
+        val selected = sut.selectChannel(cached.cid)
+        assertEquals(truncatedAt, selected?.truncatedAt)
+        assertEquals(emptyList<String>(), selected?.messages?.map { it.id })
+    }
 
     @Test
     fun `selectChannel does not return the live locations of an inserted channel`() = testScope.runTest {
