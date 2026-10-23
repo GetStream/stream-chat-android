@@ -61,6 +61,26 @@ internal object JsonParsingUtils {
         return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextLong()
     }
 
+    /**
+     * Checks that the next value has the [expected] kind, as the generated v2 models require. A JSON null is consumed
+     * and gives false when [nullable], for a property the generated model declares nullable, and otherwise fails, as
+     * the generated adapter fails on a null for a non-null property even when it has a default. A value of another kind
+     * fails too. True means the value is there to read.
+     */
+    fun expectV2(reader: JsonReader, expected: JsonReader.Token, nullable: Boolean): Boolean {
+        val token = reader.peek()
+        if (token == JsonReader.Token.NULL && nullable) {
+            reader.nextNull<Nothing>()
+            return false
+        }
+        if (token != expected) throw JsonDataException("Expected $expected but was $token at path ${reader.path}")
+        return true
+    }
+
+    /** Reads a JSON object as a map, or null for a JSON null or a non-object value. */
+    @Suppress("UNCHECKED_CAST")
+    fun readJsonObject(reader: JsonReader): Map<String, Any?>? = reader.readJsonValue() as? Map<String, Any?>
+
     /** Accumulates a key-value pair into an extra data map, lazily creating it if needed. */
     fun accumulateExtraData(
         key: String,

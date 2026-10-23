@@ -19,18 +19,25 @@ package io.getstream.chat.android.client.parser2.direct
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import java.util.Date
 
+/**
+ * Reads a reaction straight into its domain model. Without [v2Mapping] it reads the v1 shape, custom data at the root.
+ * With it, the v2 shape: custom data under `custom`, mapped by [v2Mapping] as the generated v2 path maps it.
+ */
 internal class ReactionAdapter(
     private val userAdapter: JsonAdapter<User>,
     private val dateAdapter: JsonAdapter<Date>,
+    private val v2Mapping: DomainMapping? = null,
 ) : JsonAdapter<Reaction>() {
 
     @Suppress("LongMethod")
     override fun fromJson(reader: JsonReader): Reaction? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
+        if (v2Mapping != null) return readV2(reader, v2Mapping)
 
         reader.beginObject()
 
@@ -77,7 +84,75 @@ internal class ReactionAdapter(
             updatedAt = updatedAt,
             user = user,
             emojiCode = emojiCode,
-            extraData = extraData?.toMap() ?: emptyMap(),
+            extraData = extraData?.toMap().orEmpty(),
+        )
+    }
+
+    /** Reads the v2 shape, matching keys with [V2_KEYS] so no key string is allocated, as the generated adapters do. */
+    @Suppress("MagicNumber")
+    private fun readV2(reader: JsonReader, mapping: DomainMapping): Reaction {
+        reader.beginObject()
+        var messageId: String? = null
+        var type: String? = null
+        var score: Int? = null
+        var userId: String? = null
+        var createdAt: Date? = null
+        var updatedAt: Date? = null
+        var user: User? = null
+        var custom: Map<String, Any?>? = null
+
+        while (reader.hasNext()) {
+            when (reader.selectName(V2_KEYS)) {
+                0 -> messageId = reader.nextString()
+                1 -> type = reader.nextString()
+                2 -> score = reader.nextInt()
+                3 -> userId = reader.nextString()
+                4 -> createdAt = dateAdapter.fromJson(reader)
+                5 -> updatedAt = dateAdapter.fromJson(reader)
+                6 -> user = userAdapter.fromJson(reader)
+                7 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
+                    custom = JsonParsingUtils.readJsonObject(reader)
+                }
+                else -> {
+                    reader.skipName()
+                    reader.skipValue()
+                }
+            }
+        }
+        reader.endObject()
+
+        JsonParsingUtils.requireField(messageId, "message_id", reader)
+        JsonParsingUtils.requireField(type, "type", reader)
+        JsonParsingUtils.requireField(score, "score", reader)
+        JsonParsingUtils.requireField(userId, "user_id", reader)
+        JsonParsingUtils.requireField(createdAt, "created_at", reader)
+        JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
+        JsonParsingUtils.requireField(user, "user", reader)
+
+        val stored = custom.orEmpty()
+        return Reaction(
+            messageId = messageId,
+            type = type,
+            score = score,
+            userId = userId,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            user = user,
+            emojiCode = mapping.reactionEmojiCode(stored),
+            extraData = mapping.reactionExtraData(stored),
+        )
+    }
+
+    private companion object {
+        private val V2_KEYS = JsonReader.Options.of(
+            "message_id",
+            "type",
+            "score",
+            "user_id",
+            "created_at",
+            "updated_at",
+            "user",
+            "custom",
         )
     }
 

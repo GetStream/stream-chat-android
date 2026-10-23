@@ -26,11 +26,13 @@ import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser2.adapters.generatedEventAdapter
 import io.getstream.chat.android.client.parser2.adapters.generatedEventAdapters
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.ConnectedEvent
@@ -45,7 +47,10 @@ import okio.Buffer
  * so they are read straight into the generated models with [Serializer.moshi]: a generic map would turn the dates into
  * doubles. [domainMapping] is the v2 mapping, which gives every object the `extraData` the v1 parser gives it.
  */
-internal class V2EventParser(private val domainMapping: DomainMapping) {
+internal class V2EventParser(
+    private val domainMapping: DomainMapping,
+    private val directEventParser: DirectEventParser? = null,
+) {
 
     private val logger by taggedLogger("Chat:V2EventParser")
 
@@ -81,6 +86,8 @@ internal class V2EventParser(private val domainMapping: DomainMapping) {
             logger.v { "[parse] ignored: $type" }
             return null
         }
+        // The fast path, when enabled; it returns null for a frame it can't read, which the generated path then reads.
+        if (type == EventType.MESSAGE_NEW) directEventParser?.parse(raw, type)?.let { return it.enrichedFast() }
         val adapter = when (type) {
             CONNECTION_OK -> connectedEventAdapter
             EventType.HEALTH_CHECK -> healthEventAdapter
@@ -92,6 +99,16 @@ internal class V2EventParser(private val domainMapping: DomainMapping) {
         val dto = adapter.fromJson(raw) ?: throw JsonDataException("Null event: $type")
         return with(eventMapping) { dto.toDomain() }.enrichIfNeeded()
     }
+
+    /**
+     * [enrichIfNeeded] copies the event and its message chain to set the event's cid. A fast-path `message.new` already
+     * carries it throughout, so the copies, which the fast path exists to avoid, are skipped.
+     */
+    private fun ChatEvent.enrichedFast(): ChatEvent =
+        if (this is NewMessageEvent && message.hasCidThroughout(cid)) this else enrichIfNeeded()
+
+    private fun Message.hasCidThroughout(cid: String): Boolean =
+        this.cid == cid && (replyTo?.hasCidThroughout(cid) ?: true)
 
     private fun readHead(raw: String): Head {
         var type: String? = null

@@ -85,7 +85,7 @@ import io.getstream.chat.android.models.TimeDuration
  * event types are parsed directly into domain models, bypassing the DTO intermediate layer; unsupported event types
  * fall back to the default DTO-based parser, so behavior is preserved for events the fast path does not yet handle.
  * Currently supported event types: `message.new`. Disabled by default. The set of supported event types may grow over
- * time. It applies to the v1 websocket only and has no effect on the v2 one the SDK connects through.
+ * time.
  *
  * @param cacheConfig Configuration for the SDK's user-configurable on-disk caches. By default all caches are off. See
  * [StreamCacheConfig] for the available cache types and their options.
