@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.isMessageGoneError
+import io.getstream.chat.android.client.errors.deleteFailureSyncStatus
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
@@ -93,12 +93,7 @@ internal class DeleteMessageListenerDatabase(
                 messageRepository.updateMessageSyncStatus(originalMessageId, SyncStatus.COMPLETED)
             }
             is Result.Failure -> {
-                val syncStatus = if (result.value.isMessageGoneError()) {
-                    SyncStatus.COMPLETED
-                } else {
-                    SyncStatus.SYNC_NEEDED
-                }
-                messageRepository.updateMessageSyncStatus(originalMessageId, syncStatus)
+                messageRepository.updateMessageSyncStatus(originalMessageId, result.value.deleteFailureSyncStatus())
             }
         }
     }

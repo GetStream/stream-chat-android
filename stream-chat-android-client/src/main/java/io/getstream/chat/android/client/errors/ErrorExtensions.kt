@@ -16,9 +16,11 @@
 
 package io.getstream.chat.android.client.errors
 
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
 
-private const val HTTP_NOT_FOUND = 404
+/** The backend error code of a request for a resource that does not exist. */
+private const val DOES_NOT_EXIST_ERROR_CODE = 16
 
 /**
  * Checks whether this error is the backend rejection of a message whose id already exists.
@@ -42,4 +44,11 @@ internal fun Error.isDuplicateMessageError(): Boolean =
  * delete as successful instead of retrying it.
  */
 internal fun Error.isMessageGoneError(): Boolean =
-    this is Error.NetworkError && statusCode == HTTP_NOT_FOUND
+    this is Error.NetworkError && isStatusNotFound() && serverErrorCode == DOES_NOT_EXIST_ERROR_CODE
+
+/**
+ * The [SyncStatus] of a delete that failed with this error: [SyncStatus.COMPLETED] when the message is already gone,
+ * else [SyncStatus.SYNC_NEEDED] so the delete is retried.
+ */
+internal fun Error.deleteFailureSyncStatus(): SyncStatus =
+    if (isMessageGoneError()) SyncStatus.COMPLETED else SyncStatus.SYNC_NEEDED

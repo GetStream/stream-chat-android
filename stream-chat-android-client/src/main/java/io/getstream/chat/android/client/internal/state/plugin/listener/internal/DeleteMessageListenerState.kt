@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.state.GlobalState
-import io.getstream.chat.android.client.errors.isMessageGoneError
+import io.getstream.chat.android.client.errors.deleteFailureSyncStatus
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
@@ -95,11 +95,7 @@ internal class DeleteMessageListenerState(
                     ?.getMessage(originalMessageId)
                     ?.let { originalMessage ->
                         val failureMessage = originalMessage.copy(
-                            syncStatus = if (result.value.isMessageGoneError()) {
-                                SyncStatus.COMPLETED
-                            } else {
-                                SyncStatus.SYNC_NEEDED
-                            },
+                            syncStatus = result.value.deleteFailureSyncStatus(),
                             updatedLocallyAt = Date(),
                         )
 
