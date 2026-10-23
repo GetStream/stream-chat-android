@@ -21,6 +21,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.uitests.app.login.LoginActivity
 import io.getstream.chat.android.uitests.ui.util.CoroutineTaskExecutorRule
 import io.getstream.chat.android.uitests.util.readFileContents
@@ -62,10 +63,13 @@ internal abstract class BaseUiTest {
         ChatClient.instance().disconnect(flushPersistence = false).execute()
     }
 
+    @OptIn(InternalStreamChatApi::class)
     private fun setupStreamSdk() {
         ChatClient.Builder("hrwwzsgrzapv", context)
             .baseUrl(mockWebServer.url("/").toString())
             .logLevel(ChatLogLevel.ALL)
+            // The mock socket below serves v1 frames on the v1 endpoint.
+            .useV2WebSocket(false)
             .build()
     }
 

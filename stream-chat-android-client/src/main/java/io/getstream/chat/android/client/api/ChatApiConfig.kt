@@ -38,7 +38,8 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
  * When `true`, supported event types are parsed directly into domain models, bypassing the DTO
  * intermediate layer; unsupported event types fall back to the default DTO-based parser.
  * Currently supported event types: `message.new`. Disabled by default.
- * @param useV2WebSocket Connects the websocket through the v2 endpoint instead of v1. Disabled by default.
+ * @param useV2WebSocket Connects the websocket through the v2 endpoint, or through v1 when disabled. Enabled by
+ * default.
  */
 @Suppress("LongParameterList")
 internal class ChatApiConfig @JvmOverloads constructor(
@@ -52,7 +53,7 @@ internal class ChatApiConfig @JvmOverloads constructor(
     val debugRequests: Boolean,
     val notificationConfig: NotificationConfig,
     val fastEventParsing: Boolean = false,
-    val useV2WebSocket: Boolean = false,
+    val useV2WebSocket: Boolean = true,
 ) {
     var isAnonymous: Boolean = false
 }

@@ -48,21 +48,26 @@ import okio.Buffer
 internal class V2EventParser(private val domainMapping: DomainMapping) {
 
     private val logger by taggedLogger("Chat:V2EventParser")
-    private val moshi = Serializer.moshi
-    private val eventMapping = EventMapping(domainMapping)
 
-    private val generatedAdapters = generatedEventAdapters(moshi)
-    private val connectedEventAdapter = generatedEventAdapter<ConnectedEvent>(moshi) { emptyMap() }
-    private val healthEventAdapter = generatedEventAdapter<HealthCheckEvent>(moshi) { emptyMap() }
-    private val notificationMarkReadEventAdapter = generatedEventAdapter<NotificationMarkReadEvent>(moshi) {
-        mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
+    // Built on the first frame, not with the client: the generated adapters are many.
+    private val moshi by lazy { Serializer.moshi }
+    private val eventMapping by lazy { EventMapping(domainMapping) }
+
+    private val generatedAdapters by lazy { generatedEventAdapters(moshi) }
+    private val connectedEventAdapter by lazy { generatedEventAdapter<ConnectedEvent>(moshi) { emptyMap() } }
+    private val healthEventAdapter by lazy { generatedEventAdapter<HealthCheckEvent>(moshi) { emptyMap() } }
+    private val notificationMarkReadEventAdapter by lazy {
+        generatedEventAdapter<NotificationMarkReadEvent>(moshi) {
+            mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
+        }
     }
-    private val markAllReadEventAdapter =
+    private val markAllReadEventAdapter by lazy {
         generatedEventAdapter<NotificationMarkReadEvent>(moshi) { mapOf("user" to user) }
-    private val connectionErrorAdapter = moshi.adapter(V2ConnectionErrorEvent::class.java)
-    private val exactDateAdapter = moshi.adapter(ExactDate::class.java)
-    private val userAdapter = moshi.adapter(UserResponseCommonFields::class.java)
-    private val valueAdapter = moshi.adapter(Any::class.java)
+    }
+    private val connectionErrorAdapter by lazy { moshi.adapter(V2ConnectionErrorEvent::class.java) }
+    private val exactDateAdapter by lazy { moshi.adapter(ExactDate::class.java) }
+    private val userAdapter by lazy { moshi.adapter(UserResponseCommonFields::class.java) }
+    private val valueAdapter by lazy { moshi.adapter(Any::class.java) }
 
     /**
      * Parses [raw] into its domain event, or returns null for a frame the SDK ignores.
