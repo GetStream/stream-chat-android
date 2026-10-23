@@ -62,9 +62,10 @@ internal object JsonParsingUtils {
     }
 
     /**
-     * Checks that the next value has the [expected] kind, as the generated v2 models require: a JSON null is consumed
-     * and gives false when [nullable] (the generated models read a null collection as empty), and fails otherwise, like
-     * a value of another kind. True means the value is there to read.
+     * Checks that the next value has the [expected] kind, as the generated v2 models require. A JSON null is consumed
+     * and gives false when [nullable], for a property the generated model declares nullable, and otherwise fails, as
+     * the generated adapter fails on a null for a non-null property even when it has a default. A value of another kind
+     * fails too. True means the value is there to read.
      */
     fun expectV2(reader: JsonReader, expected: JsonReader.Token, nullable: Boolean): Boolean {
         val token = reader.peek()

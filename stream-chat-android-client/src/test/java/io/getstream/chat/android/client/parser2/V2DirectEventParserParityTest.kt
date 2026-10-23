@@ -259,6 +259,10 @@ internal class V2DirectEventParserParityTest {
 
         private fun Map<String, Any?>.toJson(): String = Serializer.moshi.adapter(Any::class.java).toJson(this)
 
+        /** [toJson] keeping null entries, which it drops. */
+        private fun Map<String, Any?>.toJsonWithNulls(): String =
+            Serializer.moshi.adapter(Any::class.java).serializeNulls().toJson(this)
+
         @JvmStatic
         fun frames() = listOf(
             arrayOf("minimal", event().toJson()),
@@ -282,15 +286,22 @@ internal class V2DirectEventParserParityTest {
                     ),
                 ).toJson(),
             ),
-            // The generated models read a null collection or map as empty.
-            arrayOf("message custom null", event(message = message() + ("custom" to null)).toJson()),
-            arrayOf("message attachments null", event(message = message() + ("attachments" to null)).toJson()),
+            // Nulls for the collections and maps the generated models declare nullable.
             arrayOf(
-                "message user teams null",
-                event(message = message() + ("user" to user("luke") + ("teams" to null))).toJson(),
+                "nullable collections null",
+                event(
+                    message = message() + mapOf(
+                        "i18n" to null,
+                        "mentioned_group_ids" to null,
+                        "mentioned_roles" to null,
+                        "reaction_groups" to null,
+                        "thread_participants" to null,
+                        "user" to user("luke") + ("teams_role" to null),
+                    ),
+                    channel = mapOf("channel_custom" to null),
+                    extra = mapOf("grouped_unread_channels" to null),
+                ).toJsonWithNulls(),
             ),
-            arrayOf("event user custom null", event(user = user(ME) + ("custom" to null)).toJson()),
-            arrayOf("event custom null", (event() + ("custom" to null)).toJson()),
             arrayOf(
                 "message user with stored declared values",
                 event(
@@ -319,6 +330,22 @@ internal class V2DirectEventParserParityTest {
 
         @JvmStatic
         fun rejectedFrames() = listOf(
+            // The generated adapters fail on a null for a non-null property, even one with a default.
+            arrayOf("message custom null", event(message = message() + ("custom" to null)).toJsonWithNulls()),
+            arrayOf(
+                "message attachments null",
+                event(message = message() + ("attachments" to null)).toJsonWithNulls(),
+            ),
+            arrayOf(
+                "message reaction counts null",
+                event(message = message() + ("reaction_counts" to null)).toJsonWithNulls(),
+            ),
+            arrayOf(
+                "message user teams null",
+                event(message = message() + ("user" to user("luke") + ("teams" to null))).toJsonWithNulls(),
+            ),
+            arrayOf("event user custom null", event(user = user(ME) + ("custom" to null)).toJsonWithNulls()),
+            arrayOf("event custom null", (event() + ("custom" to null)).toJsonWithNulls()),
             arrayOf("message without pinned", event(message = message() - "pinned").toJson()),
             arrayOf(
                 "message user without language",

@@ -157,7 +157,7 @@ internal class AttachmentAdapter(
                 10 -> type = JsonParsingUtils.readNullableString(reader)
                 11 -> originalHeight = JsonParsingUtils.readNullableInt(reader)
                 12 -> originalWidth = JsonParsingUtils.readNullableInt(reader)
-                13 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                13 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
                     custom = JsonParsingUtils.readJsonObject(reader)
                 }
                 14 -> actions = actionsAdapter.fromJson(reader)

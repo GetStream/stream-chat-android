@@ -110,7 +110,7 @@ internal class ReactionAdapter(
                 4 -> createdAt = dateAdapter.fromJson(reader)
                 5 -> updatedAt = dateAdapter.fromJson(reader)
                 6 -> user = userAdapter.fromJson(reader)
-                7 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                7 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
                     custom = JsonParsingUtils.readJsonObject(reader)
                 }
                 else -> {

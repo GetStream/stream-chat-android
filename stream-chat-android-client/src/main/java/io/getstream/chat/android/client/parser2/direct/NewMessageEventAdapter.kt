@@ -208,7 +208,7 @@ internal class NewMessageEventAdapter(
                     groupedUnreadChannels = JsonParsingUtils.parseIntMap(reader)
                 }
                 // Not mapped, but the generated model rejects a non-object.
-                12 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                12 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
                     reader.skipValue()
                 }
                 else -> {

@@ -362,7 +362,7 @@ internal class MessageAdapter(
 
         while (reader.hasNext()) {
             when (reader.selectName(V2_KEYS)) {
-                0 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                0 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = false)) {
                     attachments = JsonParsingUtils.parseList(reader, attachmentAdapter)
                 }
                 1 -> cid = reader.nextString()
@@ -374,10 +374,10 @@ internal class MessageAdapter(
                     i18n = JsonParsingUtils.parseStringMap(reader)
                 }
                 7 -> id = reader.nextString()
-                8 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                8 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = false)) {
                     latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 }
-                9 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                9 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = false)) {
                     mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
                 }
                 10 -> mentionedHere = reader.nextBoolean()
@@ -389,7 +389,7 @@ internal class MessageAdapter(
                 14 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
                     mentionedRoles = JsonParsingUtils.parseStringList(reader)
                 }
-                15 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                15 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = false)) {
                     ownReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 }
                 16 -> parentId = JsonParsingUtils.readNullableString(reader)
@@ -400,10 +400,10 @@ internal class MessageAdapter(
                 21 -> pinnedBy = userAdapter.fromJson(reader)
                 22 -> quotedMessage = fromJson(reader, fallbackChannelInfo)
                 23 -> quotedMessageId = JsonParsingUtils.readNullableString(reader)
-                24 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                24 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
                     reactionCounts = JsonParsingUtils.parseIntMap(reader)
                 }
-                25 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                25 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
                     reactionScores = JsonParsingUtils.parseIntMap(reader)
                 }
                 26 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
@@ -432,10 +432,10 @@ internal class MessageAdapter(
                 45 -> imageLabels = imageLabelsAdapter.fromJson(reader)
                 46 -> mml = JsonParsingUtils.readNullableString(reader)
                 47 -> pollId = JsonParsingUtils.readNullableString(reader)
-                48 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                48 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = false)) {
                     restrictedVisibility = JsonParsingUtils.parseStringList(reader)
                 }
-                49 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                49 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
                     custom = JsonParsingUtils.readJsonObject(reader)
                 }
                 else -> {
