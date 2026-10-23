@@ -97,8 +97,7 @@ internal class FakeChatSocket private constructor(
             var webSocketListener: WebSocketListener? = null
             val parser: ChatParser = mock()
             val eventParser: V2EventParser = mock()
-            val protocol = V2SocketProtocol(authFrame = "{}", eventParser = eventParser)
-            val streamWebSocket = StreamWebSocket(parser, protocol) {
+            val streamWebSocket = StreamWebSocket(parser, eventParser, authFrame = "{}") {
                 webSocketListener = it
                 mock()
             }
