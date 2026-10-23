@@ -41,6 +41,10 @@ internal val NotificationChannelTruncatedEvent.truncatedBefore: Date
  */
 internal fun Message.survivesTruncationAt(truncatedAt: Date): Boolean = createdAt?.before(truncatedAt) != true
 
-/** The channel without the messages its truncation removed. */
-internal fun Channel.withoutTruncatedMessages(): Channel =
-    truncatedAt?.let { cutoff -> copy(messages = messages.filter { it.survivesTruncationAt(cutoff) }) } ?: this
+/** The channel without the messages, pinned ones included, its truncation removed. */
+internal fun Channel.withoutTruncatedMessages(): Channel = truncatedAt?.let { cutoff ->
+    copy(
+        messages = messages.filter { it.survivesTruncationAt(cutoff) },
+        pinnedMessages = pinnedMessages.filter { it.survivesTruncationAt(cutoff) },
+    )
+} ?: this

@@ -66,11 +66,14 @@ internal class DatabaseChannelRepositoryCacheTest {
         val old = randomMessage(createdAt = Date(1_000))
         val kept = randomMessage(createdAt = Date(3_000))
         val cached = randomChannel(messages = listOf(old, kept), truncatedAt = null, hiddenMessagesBefore = null)
+            .copy(pinnedMessages = listOf(old, kept))
         sut.insertChannel(cached)
 
         sut.insertChannel(cached.copy(messages = emptyList(), truncatedAt = Date(2_000)))
 
-        assertEquals(listOf(kept.id), sut.selectChannel(cached.cid)?.messages?.map { it.id })
+        val selected = sut.selectChannel(cached.cid)
+        assertEquals(listOf(kept.id), selected?.messages?.map { it.id })
+        assertEquals(listOf(kept.id), selected?.pinnedMessages?.map { it.id })
     }
 
     @Test
