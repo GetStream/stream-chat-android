@@ -34,6 +34,7 @@ import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.QueryChannelsRequest
 import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
@@ -42,6 +43,7 @@ import io.getstream.chat.android.network.models.UpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
+import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -179,4 +181,15 @@ internal interface ChannelApi {
     fun markDelivered(
         @Body request: MarkDeliveredRequest,
     ): RetrofitCall<Response>
+
+    /**
+     * Sends an event to the channel. The body is returned raw: its `event` is read by the v2 event parser, so its
+     * unix-nanosecond dates aren't read as numbers on the way.
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/event")
+    fun sendEvent(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Body request: SendEventRequest,
+    ): RetrofitCall<ResponseBody>
 }

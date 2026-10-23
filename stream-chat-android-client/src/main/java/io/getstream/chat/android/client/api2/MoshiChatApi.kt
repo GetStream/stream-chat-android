@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2
 
+import io.getstream.chat.android.client.EVENT_PARENT_ID_KEY
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
@@ -28,7 +29,6 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.endpoint.ChannelV1Api
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
 import io.getstream.chat.android.client.api2.endpoint.DraftApi
@@ -64,11 +64,13 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
+import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -197,6 +199,7 @@ import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
@@ -218,7 +221,7 @@ constructor(
     private val messageApi: MessageApi,
     private val draftApi: DraftApi,
     private val channelApi: ChannelApi,
-    private val channelV1Api: ChannelV1Api,
+    private val v2EventParser: V2EventParser,
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
     private val moderationV1Api: ModerationV1Api,
@@ -1689,14 +1692,21 @@ constructor(
     ): Call<ChatEvent> = with(eventMapping) {
         val custom = extraData.entries.associate { (key, value) -> key.toString() to value }
 
-        return channelV1Api.sendEvent(
+        // The endpoint reads a thread's parent, which typing events carry, only from the declared field.
+        val parentId = custom[EVENT_PARENT_ID_KEY] as? String
+        return channelApi.sendEvent(
             channelType = channelType,
             channelId = channelId,
             request = SendEventRequest(
-                event = EventRequest(type = eventType, custom = custom),
+                event = EventRequest(
+                    type = eventType,
+                    parentId = parentId,
+                    custom = if (parentId != null) custom - EVENT_PARENT_ID_KEY else custom,
+                ),
             ),
-        ).map { response ->
-            response.event.toDomain()
+        ).flatMap { body ->
+            // Off the main thread the response callback runs on.
+            CoroutineCall(coroutineScope) { withContext(DispatcherProvider.IO) { body.toSentEvent() } }
         }
     }
 
@@ -2111,6 +2121,14 @@ constructor(
         }
     }
 
+    private fun ResponseBody.toSentEvent(): Result<ChatEvent> = runCatching { v2EventParser.parseSentEvent(string()) }
+        .fold(
+            onSuccess = { event ->
+                event?.let { Result.Success(it) } ?: Result.Failure(Error.GenericError(UNREADABLE_SENT_EVENT))
+            },
+            onFailure = { Result.Failure(Error.ThrowableError(UNREADABLE_SENT_EVENT, it)) },
+        )
+
     private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
         flatMap { domainMapping.transform(it) }
 
@@ -2132,5 +2150,6 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
 // A thread always has a parent message and a last message date, so a thread missing either cannot be mapped.
 private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"
 private const val MISSING_MESSAGE = "The response carried no message"
+private const val UNREADABLE_SENT_EVENT = "The sent event's response couldn't be read"
 
 private const val MISSING_CHANNEL_IN_STATE = "A channel state in the response carried no channel"
