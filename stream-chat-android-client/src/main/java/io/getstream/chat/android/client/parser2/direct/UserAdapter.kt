@@ -19,26 +19,29 @@ package io.getstream.chat.android.client.parser2.direct
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.USER_DEVICES_CUSTOM_KEY
-import io.getstream.chat.android.client.api2.mapping.V2UserCustom
+import io.getstream.chat.android.client.api2.mapping.USER_HIDDEN_CUSTOM_KEYS
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserTransformer
 import java.util.Date
 
 /**
- * Reads a user straight into its domain model. Without [v2Custom] it reads the v1 shape, custom data at the root. With
- * it, the v2 shape: custom data under `custom`, mapped by [v2Custom] as the generated v2 path maps it.
+ * Reads a user straight into its domain model. Without [v2Mapping] it reads the v1 shape, custom data at the root. With
+ * it, the v2 shape: custom data under `custom`, mapped by [v2Mapping] as the generated v2 path maps it, with
+ * [v2HiddenKeys] the declared fields of the kind of user read.
  */
 internal class UserAdapter(
     private val dateAdapter: JsonAdapter<Date>,
     private val userTransformer: UserTransformer,
-    private val v2Custom: V2UserCustom? = null,
+    private val v2Mapping: DomainMapping? = null,
+    private val v2HiddenKeys: Set<String> = USER_HIDDEN_CUSTOM_KEYS,
 ) : JsonAdapter<User>() {
 
     @Suppress("LongMethod")
     override fun fromJson(reader: JsonReader): User? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (v2Custom != null) return readV2(reader, v2Custom)
+        if (v2Mapping != null) return readV2(reader, v2Mapping)
 
         reader.beginObject()
 
@@ -111,7 +114,7 @@ internal class UserAdapter(
 
     /** Reads the v2 shape, matching keys with [V2_KEYS] so no key string is allocated, as the generated adapters do. */
     @Suppress("LongMethod", "CyclomaticComplexMethod", "MagicNumber")
-    private fun readV2(reader: JsonReader, custom: V2UserCustom): User {
+    private fun readV2(reader: JsonReader, mapping: DomainMapping): User {
         reader.beginObject()
         var id: String? = null
         var name: String? = null
@@ -194,7 +197,7 @@ internal class UserAdapter(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds.orEmpty(),
             avgResponseTime = avgResponseTime,
-            extraData = custom.extraData(stored, deletedAt, revokeTokensIssuedBefore),
+            extraData = mapping.userExtraData(stored, v2HiddenKeys, deletedAt, revokeTokensIssuedBefore),
         ).let(userTransformer::transform)
     }
 

@@ -21,6 +21,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.EVENT_USER_HIDDEN_CUSTOM_KEYS
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
@@ -77,12 +78,12 @@ internal class DirectEventParser(
     // region Composed adapters
 
     private val userAdapter by lazy {
-        UserAdapter(dateAdapter, userTransformer, v2Mapping?.userCustom)
+        UserAdapter(dateAdapter, userTransformer, v2Mapping)
     }
 
     // v2 maps the custom data of the user an event carries differently from the users of its message.
     private val eventUserAdapter by lazy {
-        v2Mapping?.let { UserAdapter(dateAdapter, userTransformer, it.eventUserCustom) } ?: userAdapter
+        v2Mapping?.let { UserAdapter(dateAdapter, userTransformer, it, EVENT_USER_HIDDEN_CUSTOM_KEYS) } ?: userAdapter
     }
     private val userGroupMemberAdapter by lazy { UserGroupMemberAdapter(dateAdapter) }
     private val userGroupAdapter by lazy { UserGroupAdapter(userGroupMemberAdapter, dateAdapter) }

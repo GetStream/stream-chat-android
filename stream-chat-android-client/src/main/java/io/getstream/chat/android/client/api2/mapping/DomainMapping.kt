@@ -882,34 +882,23 @@ internal class DomainMapping(
         teamsRole = teamsRole.orEmpty(),
         blockedUserIds = blockedUserIds,
         avgResponseTime = avgResponseTime?.toLong(),
-        extraData = eventUserCustom.extraData(custom, deletedAt, revokeTokensIssuedBefore),
+        extraData = userExtraData(custom, EVENT_USER_HIDDEN_CUSTOM_KEYS, deletedAt, revokeTokensIssuedBefore),
     )
 
-    /** The custom data mapping of the users events carry ([UserResponseCommonFields], [UserResponsePrivacyFields]). */
-    internal val eventUserCustom: V2UserCustom = object : V2UserCustom {
-        override fun extraData(
-            custom: Map<String, Any?>,
-            deletedAt: Date?,
-            revokeTokensIssuedBefore: Date?,
-        ): Map<String, Any> = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
-            EVENT_USER_HIDDEN_CUSTOM_KEYS,
-            "deleted_at" to deletedAt,
-            "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
-        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap()
-    }
-
-    /** The custom data mapping of [UserResponse], the user messages and reactions carry. */
-    internal val userCustom: V2UserCustom = object : V2UserCustom {
-        override fun extraData(
-            custom: Map<String, Any?>,
-            deletedAt: Date?,
-            revokeTokensIssuedBefore: Date?,
-        ): Map<String, Any> = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
-            USER_HIDDEN_CUSTOM_KEYS,
-            "deleted_at" to deletedAt,
-            "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
-        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
-    }
+    /**
+     * The [User.extraData] of a v2 user: its [custom] data with the declared fields v1 also kept there.
+     * [hiddenKeys] are the declared fields of that kind of user, whose stored values the custom data hides.
+     */
+    internal fun userExtraData(
+        custom: Map<String, Any?>,
+        hiddenKeys: Set<String>,
+        deletedAt: Date?,
+        revokeTokensIssuedBefore: Date?,
+    ): Map<String, Any> = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
+        hiddenKeys,
+        "deleted_at" to deletedAt,
+        "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
+    ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
 
     /**
      * Transforms [FullUserResponse] to [User].
@@ -1054,7 +1043,7 @@ internal class DomainMapping(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = userCustom.extraData(custom, deletedAt, revokeTokensIssuedBefore),
+            extraData = userExtraData(custom, USER_HIDDEN_CUSTOM_KEYS, deletedAt, revokeTokensIssuedBefore),
         ).let(userTransformer::transform)
 
     /**

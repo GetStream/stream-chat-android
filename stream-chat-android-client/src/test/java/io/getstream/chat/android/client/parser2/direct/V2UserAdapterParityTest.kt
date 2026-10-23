@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.parser2.direct
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.EVENT_USER_HIDDEN_CUSTOM_KEYS
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -43,7 +44,7 @@ internal class V2UserAdapterParityTest {
         hidesStoredDeclaredCustom = true,
     )
     private val dateAdapter = Moshi.Builder().add(IsoDateAdapter()).build().adapter(Date::class.java)
-    private val direct = UserAdapter(dateAdapter, NoOpUserTransformer, domainMapping.eventUserCustom)
+    private val direct = UserAdapter(dateAdapter, NoOpUserTransformer, domainMapping, EVENT_USER_HIDDEN_CUSTOM_KEYS)
     private val generated = Serializer.moshi.adapter(UserResponseCommonFields::class.java)
 
     private fun viaGenerated(json: String): User =
