@@ -58,6 +58,15 @@ internal class V2DirectEventParserParityTest {
     }
 
     @Test
+    fun `The event user's extra data is mutable on both paths`() {
+        val frame = event(user = user(ME, custom = emptyMap())).toJson()
+
+        listOf(direct.parse(frame), generated.parse(frame)).forEach { event ->
+            ((event as NewMessageEvent).user.extraData is MutableMap<*, *>) shouldBeEqualTo true
+        }
+    }
+
+    @Test
     fun `With the fast path set, the v2 parser reads message_new through it`() {
         val tagging = DirectEventParser({ ME }, { it.copy(text = "fast path") }, NoOpUserTransformer, mapping)
 
@@ -298,10 +307,20 @@ internal class V2DirectEventParserParityTest {
                         "thread_participants" to null,
                         "user" to user("luke") + ("teams_role" to null),
                     ),
+                    user = user(ME) + ("teams_role" to null),
                     channel = mapOf("channel_custom" to null),
                     extra = mapOf("grouped_unread_channels" to null),
                 ).toJsonWithNulls(),
             ),
+            // The generated models default an absent non-null collection or map to empty.
+            arrayOf("message custom absent", event(message = message() - "custom").toJson()),
+            arrayOf("message attachments absent", event(message = message() - "attachments").toJson()),
+            arrayOf(
+                "message user teams absent",
+                event(message = message() + ("user" to user("luke") - "teams")).toJson(),
+            ),
+            arrayOf("event user custom absent", event(user = user(ME) - "custom").toJson()),
+            arrayOf("event custom absent", (event() - "custom").toJson()),
             arrayOf(
                 "message user with stored declared values",
                 event(

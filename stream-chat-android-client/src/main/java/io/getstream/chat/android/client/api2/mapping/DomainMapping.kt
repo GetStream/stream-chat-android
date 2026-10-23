@@ -898,7 +898,7 @@ internal class DomainMapping(
         hiddenKeys,
         "deleted_at" to deletedAt,
         "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
-    ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+    ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap()
 
     /**
      * Transforms [FullUserResponse] to [User].
