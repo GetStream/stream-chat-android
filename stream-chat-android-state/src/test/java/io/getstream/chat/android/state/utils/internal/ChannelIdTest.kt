@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.utils.internal
 
+import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be null`
 import org.junit.jupiter.api.Test
@@ -56,7 +57,22 @@ internal class ChannelIdTest {
         ChannelId.fromTypeAndId("messaging:foo", "123").`should be null`()
     }
 
+    @ParameterizedTest
+    @MethodSource("offlineDistinctMemberIds")
+    fun `fromTypeAndId accepts the id generated for a distinct channel created offline`(memberIds: List<String>) {
+        val channelId = generateChannelIdIfNeeded(channelId = "", memberIds = memberIds)
+
+        ChannelId.fromTypeAndId("messaging", channelId)?.id `should be equal to` channelId
+    }
+
     companion object {
+
+        @JvmStatic
+        fun offlineDistinctMemberIds() = listOf(
+            listOf("alice"),
+            listOf("alice", "bob"),
+            listOf("alice@example.com", "bob.smith", "carol jones"),
+        )
 
         @JvmStatic
         fun validCids() = listOf(

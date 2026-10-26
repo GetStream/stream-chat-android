@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.state
 
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
@@ -305,6 +306,17 @@ internal class StateRegistryTest {
 
         assertSame(first, second)
         assertTrue(stateRegistry.isActiveChannel(messaging123))
+    }
+
+    @Test
+    fun `channel created offline as distinct returns the cached ChannelState`() {
+        val channelId = generateChannelIdIfNeeded(channelId = "", memberIds = listOf("alice", "bob"))
+
+        val first = stateRegistry.channel("messaging", channelId)
+        val second = stateRegistry.channel("messaging", channelId)
+
+        assertSame(first, second)
+        assertTrue(stateRegistry.isActiveChannel(ChannelId.fromTypeAndId("messaging", channelId)!!))
     }
 
     @Test
