@@ -187,6 +187,18 @@ public class RepositoryFacade private constructor(
         messageRepository.deleteChannelMessages(cid)
     }
 
+    /**
+     * Replaces the local placeholder channel [placeholderCid] with the server's [serverCid], keeping the messages
+     * written to it. They are re-inserted under [serverCid] rather than deleted: both writes are asynchronous, and a
+     * read between them would find neither copy.
+     */
+    internal suspend fun replacePlaceholderChannel(placeholderCid: String, serverCid: String) {
+        val messages = messageRepository.selectLocalOnlyMessagesForChannel(placeholderCid)
+        messageRepository.insertMessages(messages.map { it.copy(cid = serverCid) })
+        threadsRepository.deleteChannelThreads(placeholderCid)
+        channelsRepository.deleteChannel(placeholderCid)
+    }
+
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
         channelsRepository.setHiddenForChannel(cid, hidden, hideMessagesBefore)
         messageRepository.evictMessages()

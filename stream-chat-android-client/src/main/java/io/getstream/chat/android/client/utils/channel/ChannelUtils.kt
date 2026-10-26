@@ -24,8 +24,8 @@ import java.util.Date
 /**
  * Generates the channel id based on the member ids if provided [channelId] is empty.
  * Member-based id should only be used for creating distinct channels.
- * Created member-based id might differ from the one created by the server if the channel already exists
- * and was created with different members order.
+ * It is a local placeholder: the server names distinct channels differently, so it must never be sent as an id.
+ * Member ids are sorted, so the same members always give the same placeholder.
  *
  * @param channelId The channel id. ie 123.
  * @param memberIds The list of members' ids.
@@ -35,7 +35,7 @@ import java.util.Date
 @InternalStreamChatApi
 public fun generateChannelIdIfNeeded(channelId: String, memberIds: List<String>): String {
     return channelId.ifBlank {
-        memberIds.joinToString(prefix = "!members-")
+        memberIds.sorted().joinToString(prefix = "!members-")
     }
 }
 

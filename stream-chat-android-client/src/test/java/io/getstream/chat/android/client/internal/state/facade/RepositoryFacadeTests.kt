@@ -39,9 +39,11 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -301,5 +303,20 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         verify(configs).insertChannelConfigs(expectedChannelsConfig)
         verify(channels).insertChannels(expectedChannels)
         verify(messages).insertMessages(expectedMessages)
+    }
+
+    @Test
+    fun `replacing a placeholder channel re-inserts its local-only messages under the server cid`() = runTest {
+        val placeholderCid = "messaging:!members-a, b"
+        val serverCid = "messaging:!members-hash"
+        val pendingMessage = randomMessage(cid = placeholderCid)
+        whenever(messages.selectLocalOnlyMessagesForChannel(placeholderCid)) doReturn listOf(pendingMessage)
+
+        sut.replacePlaceholderChannel(placeholderCid, serverCid)
+
+        verify(messages).insertMessages(listOf(pendingMessage.copy(cid = serverCid)))
+        verify(messages, never()).deleteChannelMessages(any())
+        verify(threadsRepository).deleteChannelThreads(placeholderCid)
+        verify(channels).deleteChannel(placeholderCid)
     }
 }

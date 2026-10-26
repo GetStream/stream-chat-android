@@ -160,7 +160,7 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).deleteChannel("$channelType:$channelId")
+            verify(repos).replacePlaceholderChannel("$channelType:$channelId", result.value.cid)
         }
 
     @Test

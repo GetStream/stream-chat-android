@@ -40,6 +40,11 @@ internal class ChannelUtilsTests {
     }
 
     @Test
+    fun `should generate the same member-based channelId whatever the members order`() {
+        generateChannelIdIfNeeded("", listOf("user2", "user1")) shouldBeEqualTo "!members-user1, user2"
+    }
+
+    @Test
     fun `should generate member-based channelId with single member if provided channelId is blank`() {
         val channelId = ""
         val memberIds = listOf("user1")

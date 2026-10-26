@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomConnectedEvent
@@ -64,6 +65,7 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomLocation
+import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
@@ -2172,7 +2174,67 @@ internal class SyncManagerTest {
         deletedForMe = false,
     )
 
+    @Test
+    fun `retrying a placeholder lets the server resolve the channel and leaves the replacement to the create`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+            whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+            whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
+                TestCall(Result.Success(randomChannel(id = "!members-${randomString()}", type = "messaging")))
+
+            buildSyncManager().onEvent(healthEvent())
+
+            verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
+            verify(repositoryFacade, never()).replacePlaceholderChannel(any(), any())
+        }
+
+    @Test
+    fun `retrying an unsorted placeholder replaces it with the server channel`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-b, a")
+        val serverChannel = randomChannel(id = "!members-${randomString()}", type = "messaging")
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+        whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+        whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(serverChannel))
+
+        buildSyncManager().onEvent(healthEvent())
+
+        verify(repositoryFacade).replacePlaceholderChannel(placeholder.cid, serverChannel.cid)
+    }
+
+    @Test
+    fun `retrying a channel with a regular id sends that id`() = runTest(testDispatcher) {
+        val channel = randomChannel(type = "messaging", createdAt = localDate(), syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+        whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+        whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(channel))
+
+        buildSyncManager().onEvent(healthEvent())
+
+        verify(chatClient).createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())
+        verify(repositoryFacade, never()).deleteChannel(channel.cid)
+    }
+
     private fun TestScope.localDate() = Date(currentTime)
+
+    private fun TestScope.placeholderChannel(id: String) = randomChannel(
+        id = id,
+        type = "messaging",
+        members = listOf(randomMember(user = randomUser(id = "a")), randomMember(user = randomUser(id = "b"))),
+        createdAt = localDate(),
+        syncStatus = SyncStatus.SYNC_NEEDED,
+    )
+
+    private fun TestScope.healthEvent() = localDate().let { createdAt ->
+        HealthEvent(
+            type = EventType.HEALTH_CHECK,
+            createdAt = createdAt,
+            rawCreatedAt = streamDateFormatter.format(createdAt),
+            connectionId = randomString(),
+        )
+    }
 
     private fun TestScope.buildSyncManager(
         isAutomaticSyncOnReconnectEnabled: Boolean = true,

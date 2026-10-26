@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
+import io.getstream.chat.android.client.extensions.isAnonymousChannelId
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.ReconnectGroupQueries
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -40,6 +41,7 @@ import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.sync.stringify
+import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -919,11 +921,15 @@ internal class SyncManager(
                     },
                     extraData = channel.extraData,
                 )
-                chatClient.createChannel(
-                    channel.type,
-                    channel.id,
-                    params,
-                ).await()
+                // A member-based id may be a local placeholder the server rejects; let the server resolve it
+                val channelId = if (channel.id.isAnonymousChannelId()) "" else channel.id
+                chatClient.createChannel(channel.type, channelId, params).await().onSuccessSuspend { created ->
+                    // The create replaces the placeholder it regenerates from the members, which may not be this one
+                    val regeneratedCid = "${channel.type}:${generateChannelIdIfNeeded("", params.memberIds)}"
+                    if (created.cid != cid && cid != regeneratedCid) {
+                        repos.replacePlaceholderChannel(cid, created.cid)
+                    }
+                }
             }
             logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }
         }

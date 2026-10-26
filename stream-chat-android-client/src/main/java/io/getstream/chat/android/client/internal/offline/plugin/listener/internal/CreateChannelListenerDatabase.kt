@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.query.CreateChannelParams
@@ -38,12 +38,12 @@ import java.util.Date
  * for the current user or not.
  *
  * @param clientState [ClientState]
- * @param channelRepository [ChannelRepository] to cache intermediate data and final result of channels.
+ * @param channelRepository [RepositoryFacade] to cache intermediate data and final result of channels.
  * @param userRepository [UserRepository] Requests users from database.
  */
 internal class CreateChannelListenerDatabase(
     private val clientState: ClientState,
-    private val channelRepository: ChannelRepository,
+    private val channelRepository: RepositoryFacade,
     private val userRepository: UserRepository,
 ) : CreateChannelListener {
 
@@ -121,7 +121,7 @@ internal class CreateChannelListenerDatabase(
 
                 // Generated if might differ from the actual one. This might happen when the channel already exists.
                 if (channel.cid != generatedCid) {
-                    channelRepository.deleteChannel(generatedCid)
+                    channelRepository.replacePlaceholderChannel(generatedCid, channel.cid)
                 }
                 channelRepository.insertChannel(channel)
             }
