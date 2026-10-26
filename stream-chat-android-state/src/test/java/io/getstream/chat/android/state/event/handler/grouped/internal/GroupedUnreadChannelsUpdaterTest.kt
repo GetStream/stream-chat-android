@@ -36,6 +36,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.utils.internal.ChannelId
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
@@ -183,7 +184,7 @@ internal class GroupedUnreadChannelsUpdaterTest {
 
     @Test
     fun `ChannelUpdatedEvent for inactive channel returns current map unchanged`() {
-        whenever(stateRegistry.isActiveChannel(CHANNEL_TYPE, CHANNEL_ID)) doReturn false
+        whenever(stateRegistry.isActiveChannel(ChannelId.fromTypeAndId(CHANNEL_TYPE, CHANNEL_ID)!!)) doReturn false
         val current = mapOf("a" to 5)
         val newChannel = channel(group = "b")
 
@@ -528,8 +529,9 @@ internal class GroupedUnreadChannelsUpdaterTest {
         val channelMutableState: ChannelMutableState = mock {
             on { toChannel() } doReturn cached
         }
-        whenever(stateRegistry.isActiveChannel(CHANNEL_TYPE, CHANNEL_ID)) doReturn true
-        whenever(stateRegistry.mutableChannel(CHANNEL_TYPE, CHANNEL_ID)) doReturn channelMutableState
+        val cachedChannelId = ChannelId.fromTypeAndId(CHANNEL_TYPE, CHANNEL_ID)!!
+        whenever(stateRegistry.isActiveChannel(cachedChannelId)) doReturn true
+        whenever(stateRegistry.channel(cachedChannelId)) doReturn channelMutableState
     }
 
     private fun channel(group: String?): Channel = randomChannel(

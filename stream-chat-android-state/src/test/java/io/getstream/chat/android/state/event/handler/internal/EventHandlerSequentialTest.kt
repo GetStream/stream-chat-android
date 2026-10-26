@@ -68,6 +68,7 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.utils.internal.ChannelId
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -931,8 +932,9 @@ internal class EventHandlerSequentialTest {
                 mock {
                     on { toChannel() } doReturn cached
                 }
-            whenever(stateRegistry.isActiveChannel(channelType, channelId)) doReturn true
-            whenever(stateRegistry.mutableChannel(channelType, channelId)) doReturn channelMutableState
+            val cachedChannelId = ChannelId.fromTypeAndId(channelType, channelId)!!
+            whenever(stateRegistry.isActiveChannel(cachedChannelId)) doReturn true
+            whenever(stateRegistry.channel(cachedChannelId)) doReturn channelMutableState
         }
 
         fun get(scope: CoroutineScope) = EventHandlerSequential(

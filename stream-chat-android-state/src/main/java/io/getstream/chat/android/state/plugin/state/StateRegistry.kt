@@ -38,6 +38,7 @@ import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsS
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
+import io.getstream.chat.android.state.utils.internal.ChannelId
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -57,7 +58,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param scope A scope for new coroutines.
  * @param messageLimitConfig Configuration for message limits.
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 public class StateRegistry(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
@@ -72,7 +73,7 @@ public class StateRegistry(
 
     private val queryChannels: ConcurrentHashMap<QueryChannelsIdentifier, QueryChannelsMutableState> =
         ConcurrentHashMap()
-    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
+    private val channels: ConcurrentHashMap<ChannelId, ChannelMutableState> = ConcurrentHashMap()
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
@@ -107,7 +108,10 @@ public class StateRegistry(
     }
 
     /**
-     * Returns [ChannelState] that represents a state of particular channel.
+     * Returns the [ChannelState] for the given channel.
+     *
+     * A malformed cid yields a fresh, non-cached state so callers still get a non-null object, but
+     * the registry won't track it and the state will never receive updates.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
@@ -116,30 +120,31 @@ public class StateRegistry(
      */
     public fun channel(channelType: String, channelId: String): ChannelState = mutableChannel(channelType, channelId)
 
+    /** Returns the cached [ChannelState] for an already-validated [ChannelId]. */
+    internal fun channel(channelId: ChannelId): ChannelState = mutableChannel(channelId)
+
     /**
-     * Returns [ChannelMutableState] that represents a state of particular channel.
+     * Returns the [ChannelMutableState] for the given channel. A malformed cid yields a fresh, non-cached state.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      *
-     * @return [ChannelState] object.
+     * @return [ChannelMutableState] object.
      */
     internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
-        return channels.getOrPut(channelType to channelId) {
-            val baseMessageLimit = messageLimitConfig.channelMessageLimits
-                .find { it.channelType == channelType }
-                ?.baseLimit
-            ChannelMutableState(
-                channelType = channelType,
-                channelId = channelId,
-                userFlow = userStateFlow,
-                latestUsers = latestUsers,
-                activeLiveLocations = activeLiveLocations,
-                baseMessageLimit = baseMessageLimit,
-                now = now,
-            )
+        val id = ChannelId.fromTypeAndId(channelType, channelId)
+        if (id == null) {
+            logger.w { "[mutableChannel] rejected malformed cid: $channelType:$channelId" }
+            return buildChannelState(channelType, channelId)
         }
+        return mutableChannel(id)
     }
+
+    /** Returns the cached [ChannelMutableState] for an already-validated [ChannelId]. */
+    internal fun mutableChannel(channelId: ChannelId): ChannelMutableState =
+        channels.getOrPut(channelId) {
+            buildChannelState(channelId.type, channelId.id)
+        }
 
     internal fun markChannelAsRead(channelType: String, channelId: String): Boolean =
         mutableChannel(channelType = channelType, channelId = channelId).markChannelAsRead()
@@ -148,13 +153,25 @@ public class StateRegistry(
      * Checks if the channel is already present in the state.
      * Should be used to prevent creating [ChannelState] objects without populated data.
      *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     *
      * @return true if the channel is active.
      */
-    internal fun isActiveChannel(channelType: String, channelId: String): Boolean {
-        return channels.containsKey(channelType to channelId)
+    internal fun isActiveChannel(channelId: ChannelId): Boolean {
+        return channels.containsKey(channelId)
+    }
+
+    private fun buildChannelState(channelType: String, channelId: String): ChannelMutableState {
+        val baseMessageLimit = messageLimitConfig.channelMessageLimits
+            .find { it.channelType == channelType }
+            ?.baseLimit
+        return ChannelMutableState(
+            channelType = channelType,
+            channelId = channelId,
+            userFlow = userStateFlow,
+            latestUsers = latestUsers,
+            activeLiveLocations = activeLiveLocations,
+            baseMessageLimit = baseMessageLimit,
+            now = now,
+        )
     }
 
     /**
@@ -201,7 +218,7 @@ public class StateRegistry(
         ThreadMutableState(messageId, scope)
     }
 
-    internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
+    internal fun getActiveChannelStates(): Map<ChannelId, ChannelState> = channels.toMap()
 
     /**
      * Tracks a channel that was watched via [io.getstream.chat.android.state.extensions.watchChannelAsState].
@@ -258,7 +275,8 @@ public class StateRegistry(
     }
 
     private fun removeChanel(channelType: String, channelId: String) {
-        val removed = channels.remove(channelType to channelId)?.also {
+        val id = ChannelId.fromTypeAndId(channelType, channelId) ?: return
+        val removed = channels.remove(id)?.also {
             it.destroy()
         }
         logger.i { "[removeChanel] removed channel($channelType, $channelId): $removed" }

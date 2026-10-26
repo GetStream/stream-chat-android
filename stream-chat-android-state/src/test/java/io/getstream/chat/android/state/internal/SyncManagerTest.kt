@@ -64,6 +64,7 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.sync.internal.SyncManager
+import io.getstream.chat.android.state.utils.internal.ChannelId
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
@@ -589,6 +590,61 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `on reconnect, recoverable active channels found by the server get updated and missing ones get watched`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val syncState = SyncState(
+                userId = user.id,
+                activeChannelIds = emptyList(),
+                lastSyncedAt = createdAt,
+                rawLastSyncedAt = rawCreatedAt,
+                markedAllReadAt = createdAt,
+            )
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn syncState
+            whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
+                TestCall(Result.Success(emptyList()))
+            whenever(clientState.isOnline) doReturn true
+
+            val foundChannelId = ChannelId.fromTypeAndId("messaging", "found")!!
+            val missingChannelId = ChannelId.fromTypeAndId("messaging", "missing")!!
+            val foundChannelState: ChannelState = mock { on(it.recoveryNeeded) doReturn true }
+            val missingChannelState: ChannelState = mock { on(it.recoveryNeeded) doReturn true }
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
+                foundChannelId to foundChannelState,
+                missingChannelId to missingChannelState,
+            )
+
+            val foundChannel = randomChannel(type = "messaging", id = "found")
+            whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = listOf(foundChannel), predefinedFilter = null)),
+            )
+
+            val foundLogic: ChannelLogic = mock()
+            val missingLogic: ChannelLogic = mock {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(foundChannel)
+            }
+            whenever(logicRegistry.channel(foundChannelId)) doReturn foundLogic
+            whenever(logicRegistry.channel(missingChannelId)) doReturn missingLogic
+
+            val syncManager = buildSyncManager(isAutomaticSyncOnReconnectEnabled = true)
+
+            syncManager.onEvent(
+                ConnectedEvent(
+                    type = "type",
+                    createdAt = createdAt,
+                    rawCreatedAt = rawCreatedAt,
+                    connectionId = randomString(),
+                    me = user,
+                ),
+            )
+
+            verify(foundLogic).updateDataForChannel(foundChannel, foundChannel.messages.size)
+            verify(repositoryFacade).storeStateForChannels(listOf(foundChannel))
+            verify(missingLogic).watch(userPresence = true)
+        }
+
+    @Test
     fun `when isAutomaticSyncOnReconnectEnabled is false, getSyncHistory should not be called on connected event`() =
         runTest(testDispatcher) {
             /* Given */
@@ -807,7 +863,7 @@ internal class SyncManagerTest {
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery, standardQuery)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
-            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
+            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyMap()
             whenever(
                 chatClient.queryGroupedChannelsInternal(
                     limit = anyOrNull(),
@@ -849,7 +905,7 @@ internal class SyncManagerTest {
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(standardQuery)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
-            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
+            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyMap()
             whenever(clientState.isOnline) doReturn true
             whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
 
@@ -907,8 +963,14 @@ internal class SyncManagerTest {
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery, standardQuery)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
-            whenever(stateRegistry.getActiveChannelStates()) doReturn
-                listOf(groupedActiveState, standardActiveState, activeOnlyState)
+            val groupedActiveChannelId = ChannelId.fromCid(groupedChannel.cid)!!
+            val standardActiveChannelId = ChannelId.fromCid(standardChannel.cid)!!
+            val activeOnlyChannelId = ChannelId.fromCid(activeOnlyCid)!!
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
+                groupedActiveChannelId to groupedActiveState,
+                standardActiveChannelId to standardActiveState,
+                activeOnlyChannelId to activeOnlyState,
+            )
             whenever(stateRegistry.getTrackedWatchedChannels()) doReturn emptySet()
             whenever(
                 chatClient.queryGroupedChannelsInternal(
@@ -989,7 +1051,12 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery, standardQuery)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(logicRegistry.channel(any(), any())) doReturn rewatchedLogic
-            whenever(stateRegistry.getActiveChannelStates()) doReturn listOf(watchedState, activeOnlyState)
+            val watchedChannelId = ChannelId.fromCid(watchedCid)!!
+            val activeOnlyChannelId = ChannelId.fromCid(activeOnlyCid)!!
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
+                watchedChannelId to watchedState,
+                activeOnlyChannelId to activeOnlyState,
+            )
             whenever(stateRegistry.getTrackedWatchedChannels()) doReturn setOf(watchedCid)
             whenever(
                 chatClient.queryGroupedChannelsInternal(
@@ -1038,7 +1105,12 @@ internal class SyncManagerTest {
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn emptyList()
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
-            whenever(stateRegistry.getActiveChannelStates()) doReturn listOf(activeStateA, activeStateB)
+            val channelIdA = ChannelId.fromCid(cidA)!!
+            val channelIdB = ChannelId.fromCid(cidB)!!
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
+                channelIdA to activeStateA,
+                channelIdB to activeStateB,
+            )
             whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
                 Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
             )
@@ -1080,7 +1152,7 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn emptyList()
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(logicRegistry.channel(any(), any())) doReturn mock<ChannelLogic>()
-            whenever(stateRegistry.getActiveChannelStates()) doReturn listOf(activeState)
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(ChannelId.fromCid(channel.cid)!! to activeState)
             whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
                 Result.Success(QueryChannelsResult(channels = listOf(channel), predefinedFilter = null)),
             )

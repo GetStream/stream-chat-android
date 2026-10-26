@@ -27,11 +27,11 @@ import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.utils.internal.ChannelId
 
 /**
  * Single contract for evolving the per-group unread-channel counts map exposed via
@@ -184,9 +184,9 @@ internal class GroupedUnreadChannelsUpdater(
     }
 
     private fun cachedChannel(cid: String): Channel? {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        return if (stateRegistry.isActiveChannel(channelType, channelId)) {
-            stateRegistry.mutableChannel(channelType, channelId).toChannel()
+        val channelId = ChannelId.fromCid(cid) ?: return null
+        return if (stateRegistry.isActiveChannel(channelId)) {
+            stateRegistry.channel(channelId).toChannel()
         } else {
             null
         }
