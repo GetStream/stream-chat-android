@@ -1191,6 +1191,93 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `on reconnect, active channels are queried in batches of 30 up to 100 cids`() = runTest(testDispatcher) {
+        val channelIds = (1..120).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+            Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+        )
+        val missingLogic: ChannelLogic = mock {
+            onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel())
+        }
+        whenever(logicRegistry.channel(any<ChannelId>())) doReturn missingLogic
+
+        reconnectWithActiveChannels(channelIds)
+
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient, times(4)).queryChannelsInternal(capture())
+            val requestedCids = allValues.map { (it.filter as InFilterObject).values }
+            assertEquals(listOf(30, 30, 30, 10), requestedCids.map { it.size })
+            assertEquals(listOf(30, 30, 30, 10), allValues.map { it.limit })
+            assertEquals(channelIds.take(100).map(ChannelId::cid).toSet(), requestedCids.flatten().toSet())
+        }
+    }
+
+    @Test
+    fun `on reconnect, a failed batch stops the refresh and watches the open channels not refreshed`() =
+        runTest(testDispatcher) {
+            val channelIds = (1..70).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+            val refreshedOpenId = channelIds[0]
+            val failedOpenId = channelIds[30]
+            val failedClosedId = channelIds[31]
+            val skippedOpenId = channelIds[60]
+            val firstBatchChannels = channelIds.take(30).map { randomChannel(type = it.type, id = it.id) }
+            whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())).thenReturn(
+                TestCall(Result.Success(QueryChannelsResult(channels = firstBatchChannels, predefinedFilter = null))),
+                TestCall(Result.Failure(Error.GenericError("rejected"))),
+            )
+            val logics = listOf(refreshedOpenId, failedOpenId, failedClosedId, skippedOpenId)
+                .associateWith { id ->
+                    mock<ChannelLogic> {
+                        onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel(id = id.id))
+                    }
+                }
+            logics.forEach { (id, logic) -> whenever(logicRegistry.channel(id)) doReturn logic }
+
+            reconnectWithActiveChannels(
+                channelIds = channelIds,
+                openCids = setOf(refreshedOpenId.cid, failedOpenId.cid, skippedOpenId.cid),
+            )
+
+            verify(chatClient, times(2)).queryChannelsInternal(any<QueryChannelsRequest>())
+            verify(logics.getValue(failedOpenId)).watch(userPresence = true)
+            verify(logics.getValue(skippedOpenId)).watch(userPresence = true)
+            verify(logics.getValue(refreshedOpenId), never()).watch(any(), any())
+            verify(logics.getValue(failedClosedId), never()).watch(any(), any())
+        }
+
+    /** Connects again with [channelIds] as recoverable active channel states, and no channel queries. */
+    private suspend fun TestScope.reconnectWithActiveChannels(
+        channelIds: List<ChannelId>,
+        openCids: Set<String> = emptySet(),
+    ) {
+        val createdAt = localDate()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        whenever(repositoryFacade.selectSyncState(user.id)) doReturn SyncState(
+            userId = user.id,
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
+            TestCall(Result.Success(emptyList<ChatEvent>()).synced())
+        whenever(clientState.isOnline) doReturn true
+        val recoverableState: ChannelState = mock { on(it.recoveryNeeded) doReturn true }
+        whenever(stateRegistry.getActiveChannelStates()) doReturn channelIds.associateWith { recoverableState }
+        whenever(stateRegistry.getTrackedWatchedChannels()) doReturn openCids
+
+        buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(
+            ConnectedEvent(
+                type = "type",
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt,
+                connectionId = randomString(),
+                me = user,
+            ),
+        )
+    }
+
+    @Test
     fun `when isAutomaticSyncOnReconnectEnabled is false, getSyncHistory should not be called on connected event`() =
         runTest(testDispatcher) {
             /* Given */
