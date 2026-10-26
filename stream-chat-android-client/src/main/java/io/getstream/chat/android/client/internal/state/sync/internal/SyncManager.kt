@@ -777,11 +777,12 @@ internal class SyncManager(
 
     /**
      * Refreshes up to [ACTIVE_CHANNELS_MAX_CIDS] active channels that [cidsToExclude] does not cover, in
-     * `queryChannels` batches of [QUERY_CHANNELS_MAX_LIMIT]. Channels a successful batch does not
+     * `queryChannels` batches of [QUERY_CHANNELS_MAX_LIMIT]. Open channels, see
+     * [StateRegistry.getTrackedWatchedChannels], are picked first. Channels a successful batch does not
      * return are watched one by one.
      *
-     * Stops at the first failed batch and watches only the open channels among those not refreshed
-     * yet, see [StateRegistry.getTrackedWatchedChannels].
+     * Stops at the first failed batch, whatever the error, and watches only the open channels among
+     * those not refreshed yet.
      */
     private suspend fun updateActiveChannels(
         recoverAll: Boolean,
@@ -791,9 +792,11 @@ internal class SyncManager(
         logger.d {
             "[updateActiveChannels] recoverAll: $recoverAll, online: $online, cidsToExclude.size: ${cidsToExclude.size}"
         }
+        val openCids = stateRegistry.getTrackedWatchedChannels()
         val missingChannelIds: List<ChannelId> = stateRegistry.getActiveChannelStates()
             .filter { (id, state) -> (state.recoveryNeeded || recoverAll) && id.cid !in cidsToExclude }
             .keys
+            .sortedBy { it.cid !in openCids }
             .take(ACTIVE_CHANNELS_MAX_CIDS)
 
         logger.v { "[updateActiveChannels] missingCids.size: ${missingChannelIds.size}" }
@@ -812,8 +815,9 @@ internal class SyncManager(
                 is Result.Success -> updateActiveChannelsBatch(batch, result.value.channels)
                 is Result.Failure -> {
                     logger.e { "[updateActiveChannels] request failed: ${result.value}" }
-                    // The remaining batches share the filter shape of the failed one, so they would fail too.
-                    rewatchOpenChannels(batches.drop(index).flatten())
+                    // Stops for every error: a rejected filter would reject the remaining batches too, as they
+                    // share its shape, and the open channels are covered by the watches below.
+                    rewatchOpenChannels(batches.drop(index).flatten(), openCids)
                     return
                 }
             }
@@ -839,8 +843,7 @@ internal class SyncManager(
         }
     }
 
-    private suspend fun rewatchOpenChannels(channelIds: List<ChannelId>) {
-        val openCids = stateRegistry.getTrackedWatchedChannels()
+    private suspend fun rewatchOpenChannels(channelIds: List<ChannelId>, openCids: Set<String>) {
         val openChannelIds = channelIds.filter { it.cid in openCids }
         logger.d { "[rewatchOpenChannels] openChannelIds.size: ${openChannelIds.size}" }
         openChannelIds.forEach { id ->
