@@ -359,20 +359,14 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `A sync response of whose events none can be read fails`() {
+    fun `A sync response of whose events none can be read skips them all`() {
         val unreadable = Frame(Wire.V2).event("channel.hidden", "cid" to CID)
         val body = mapOf("events" to listOf(unreadable, unreadable)).toJson()
 
-        assertThrows<JsonDataException> { sync(body) }
-    }
+        val synced = v2Parser.parseSyncEvents(Buffer().writeUtf8(body))
 
-    @Test
-    fun `A synced event the SDK ignores counts as read next to one that can't be`() {
-        val feeds = Frame(Wire.V2).event("feeds.feed.created", "fid" to "user:filip")
-        val unreadable = Frame(Wire.V2).event("channel.hidden", "cid" to CID)
-        val body = mapOf("events" to listOf(feeds, unreadable)).toJson()
-
-        sync(body).shouldBeEmpty()
+        synced.events.shouldBeEmpty()
+        synced.skippedCids shouldBeEqualTo setOf(CID)
     }
 
     @Test

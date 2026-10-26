@@ -126,20 +126,16 @@ internal class V2EventParser(
     /**
      * Parses the events a `/sync` response replays, each as the socket delivers it, leaving out those the SDK
      * ignores. An event that fails to parse is skipped and the rest are replayed: failing the response would keep the
-     * sync cursor where it is, so every later sync would ask for the same events and fail on the same one. A response
-     * whose envelope can't be read, or of whose events none can be read, still fails.
+     * sync cursor where it is, so every later sync would ask for the same events and fail on the same one. That holds
+     * when none of them can be read too. A response whose envelope can't be read still fails.
      */
     fun parseSyncEvents(body: BufferedSource): SyncedEvents {
         val parsed = mutableListOf<ChatEvent>()
         val skipped = mutableListOf<SkippedEvent>()
-        var read = 0
-        forEachSyncEvent(body) { raw -> if (parseSyncEvent(raw, parsed, skipped)) read++ }
+        forEachSyncEvent(body) { raw -> parseSyncEvent(raw, parsed, skipped) }
         if (skipped.isNotEmpty()) {
-            val cause = skipped.first().cause
-            // With nothing read, the failure is likely not one event's, and the cursor must not move past them all.
-            if (read == 0) throw JsonDataException("None of the ${skipped.size} synced events could be read", cause)
             val events = skipped.map { "${it.type}@${it.cid}" }
-            logger.e(cause) { "[parseSyncEvents] skipped ${skipped.size} event(s): $events" }
+            logger.e(skipped.first().cause) { "[parseSyncEvents] skipped ${skipped.size} event(s): $events" }
         }
         return SyncedEvents(
             events = parsed,
@@ -170,14 +166,14 @@ internal class V2EventParser(
      * [skipped] instead.
      */
     @Suppress("TooGenericExceptionCaught")
-    private fun parseSyncEvent(raw: String, parsed: MutableList<ChatEvent>, skipped: MutableList<SkippedEvent>) = try {
-        parse(raw)?.let(parsed::add)
-        true
-    } catch (e: Exception) {
-        // Any failure to read one event skips it; an Error, such as running out of memory, still fails the sync.
-        val head = runCatching { readTypeAndCid(raw) }.getOrNull()
-        skipped += SkippedEvent(head?.first ?: "unknown", head?.second, e)
-        false
+    private fun parseSyncEvent(raw: String, parsed: MutableList<ChatEvent>, skipped: MutableList<SkippedEvent>) {
+        try {
+            parse(raw)?.let(parsed::add)
+        } catch (e: Exception) {
+            // Any failure to read one event skips it; an Error, such as running out of memory, still fails the sync.
+            val head = runCatching { readTypeAndCid(raw) }.getOrNull()
+            skipped += SkippedEvent(head?.first ?: "unknown", head?.second, e)
+        }
     }
 
     private class SkippedEvent(val type: String, val cid: String?, val cause: Exception)
