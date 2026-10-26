@@ -37,10 +37,10 @@ internal fun Error.isDuplicateMessageError(): Boolean =
         message.contains("already exists")
 
 /**
- * Checks whether this error is the backend rejection of a delete for a message that is already deleted or does
- * not exist.
+ * Checks whether this error is the backend rejection of a delete whose target no longer exists for the current
+ * user: the message is already deleted or does not exist, the channel was deleted, or the user left it.
  *
- * Either way the message is gone from the backend, which is what the delete asked for, so callers should treat the
+ * Either way the message is gone for the user, which is what the delete asked for, so callers should treat the
  * delete as successful instead of retrying it.
  */
 internal fun Error.isMessageGoneError(): Boolean =
