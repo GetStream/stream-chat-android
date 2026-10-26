@@ -36,9 +36,10 @@ import io.getstream.chat.android.ai.compose.parts.AIMessagePart
  *
  * Each step shows through [AIMessagePartItem]: reasoning, tool calls, and a neutral placeholder
  * for kinds this SDK doesn't know. With an [AIToolApprover], a call waiting for this person's
- * approval shows its question under it. To show some steps your own way, such as reasoning you
- * stream separately or a kind of your own, use the overload that takes content and fall back to
- * [AIMessagePartItem] for the rest.
+ * approval shows its question under it, and with its [AIToolAuthorizer], a call waiting for them to
+ * sign in shows the sign-in, through [ChatAiComponentFactory.AIToolAuthorizationContent]. To show
+ * some steps your own way, such as reasoning you stream separately or a kind of your own, use the
+ * overload that takes content and fall back to [AIMessagePartItem] for the rest.
  *
  * @param parts The reply's steps, from [AIMessagePart.parts].
  * @param modifier The modifier to apply to the list.
@@ -107,8 +108,9 @@ public fun AIMessageParts(
 }
 
 /**
- * One step of a reply: a round of reasoning with its preview, a tool call (with its question, when
- * it waits for the approver), or a neutral placeholder for a step this SDK doesn't know.
+ * One step of a reply: a round of reasoning with its preview, a tool call (with its question or its
+ * sign-in, when it waits for the approver), or a neutral placeholder for a step this SDK doesn't
+ * know. The sign-in shows through [ChatAiComponentFactory.AIToolAuthorizationContent].
  *
  * @param part The step.
  * @param modifier The modifier to apply to the step.
@@ -150,6 +152,7 @@ public fun AIMessagePartItem(
                         colors = toolApprovalColors,
                     )
                 }
+                AIToolAuthorizationPrompt(call = call, approver = approver)
             }
         }
         else -> UnsupportedPart(textStyle = textStyle, colors = toolCallColors, modifier = modifier)

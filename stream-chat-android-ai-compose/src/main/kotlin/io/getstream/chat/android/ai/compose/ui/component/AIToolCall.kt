@@ -197,6 +197,11 @@ private fun toolCallStatus(part: AIToolCallPart): ToolCallStatus = if (part.isDe
 private fun statusOf(status: AIToolCallPart.Status): ToolCallStatus = when (status) {
     AIToolCallPart.Status.AwaitingApproval ->
         ToolCallStatus(stringResource(R.string.stream_ai_compose_tool_call_awaiting_approval), shownAsDetail = true)
+    AIToolCallPart.Status.AwaitingAuthorization ->
+        ToolCallStatus(
+            stringResource(R.string.stream_ai_compose_tool_call_awaiting_authorization),
+            shownAsDetail = true,
+        )
     AIToolCallPart.Status.AwaitingClient ->
         ToolCallStatus(stringResource(R.string.stream_ai_compose_tool_call_awaiting_client), shownAsDetail = true)
     AIToolCallPart.Status.Failed ->
@@ -216,6 +221,13 @@ private fun ToolCallIcon(part: AIToolCallPart, colors: AIToolCallColors, descrip
             R.drawable.stream_ai_compose_ic_hand,
             colors.accent,
             15.dp,
+            description,
+            Modifier.shimmer(true, colors.title),
+        )
+        AIToolCallPart.Status.AwaitingAuthorization -> StatusIcon(
+            R.drawable.stream_ai_compose_ic_key,
+            colors.accent,
+            16.dp,
             description,
             Modifier.shimmer(true, colors.title),
         )

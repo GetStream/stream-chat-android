@@ -46,14 +46,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.parts.AIToolApproval
+import io.getstream.chat.android.ai.compose.parts.AIToolAuthorization
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
- * The person answering tool calls' questions on this device, and how their answer reaches your
- * backend, which holds each call until it gets one.
+ * The person answering tool calls' questions and sign-ins on this device, and how their answer
+ * reaches your backend, which holds each call until it gets one.
  *
  * The approver keeps where each answer is, so create it where it outlives the screen, such as a
  * ViewModel. It is confined to the main thread: pass a [scope] that runs on it, such as a
@@ -63,6 +64,8 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param clientId This install, matched against a client tool call's `target_client_id`. Use
  * `AIClientIdentity.installId`.
  * @param scope Where answers are sent.
+ * @param authorizer How this person signs in when a call waits for their account at a provider.
+ * Without one, no sign-in is offered here.
  * @param decide Sends the answer. Your backend checks it is this person's (and this install's, for
  * a client tool), then updates the call's step; until then the question stays, with its buttons
  * disabled. A thrown exception lets the person answer again.
@@ -71,10 +74,20 @@ public class AIToolApprover(
     public val userId: String,
     public val clientId: String,
     private val scope: CoroutineScope,
+    public val authorizer: AIToolAuthorizer? = null,
     decide: suspend (call: AIToolCallPart, allowed: Boolean) -> Unit,
 ) {
     private val send = decide
     private val states = mutableStateMapOf<String, AIToolApprovalState>()
+    private val authorizationStates = mutableStateMapOf<String, AIToolAuthorizationState>()
+
+    @Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        userId: String,
+        clientId: String,
+        scope: CoroutineScope,
+        decide: suspend (call: AIToolCallPart, allowed: Boolean) -> Unit,
+    ) : this(userId = userId, clientId = clientId, scope = scope, authorizer = null, decide = decide)
 
     /** Where the person's answer to [call] is. */
     internal fun state(call: AIToolCallPart): AIToolApprovalState = states[call.id] ?: AIToolApprovalState()
@@ -91,6 +104,64 @@ public class AIToolApprover(
                 throw cancellation
             } catch (_: Exception) {
                 states[call.id] = AIToolApprovalState(failed = true)
+            }
+        }
+    }
+
+    /**
+     * The sign-in this person is asked for on [call] here: one the call waits for them to finish,
+     * of a kind this device opens, and only when they can sign in on it.
+     */
+    internal fun signIn(call: AIToolCallPart): AIToolAuthorization? {
+        val authorization = call.authorization
+        return authorization.takeIf {
+            authorizer != null && call.isAwaitingAuthorization(userId) && it?.kind == AIToolAuthorization.Kind.OAuth
+        }
+    }
+
+    /** Where the person's sign-in for [call] is. */
+    internal fun authorizationState(call: AIToolCallPart): AIToolAuthorizationState =
+        authorizationStates[call.id] ?: AIToolAuthorizationState()
+
+    /**
+     * Hands [call]'s sign-in page to the [authorizer], once at a time. Until the person comes back,
+     * the card says it is connecting.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    internal fun connect(call: AIToolCallPart) {
+        val authorizer = authorizer ?: return
+        val authorization = signIn(call) ?: return
+        if (authorizationState(call).isBusy) return
+        val connecting = AIToolAuthorizationState(isConnecting = true)
+        authorizationStates[call.id] = connecting
+        scope.launch {
+            val next = try {
+                // Connected, your backend's change to the step hides the card. Until then it
+                // says it is connecting.
+                AIToolAuthorizationState().takeUnless { authorizer.connect(call, authorization.launchUrl) }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (_: Exception) {
+                AIToolAuthorizationState(connectFailed = true)
+            }
+            // A "not now" sent meanwhile stays.
+            if (next != null && authorizationStates[call.id] == connecting) authorizationStates[call.id] = next
+        }
+    }
+
+    /** Sends the person's "not now" for [call], one at a time. A failed send can be answered again. */
+    @Suppress("TooGenericExceptionCaught")
+    internal fun declineAuthorization(call: AIToolCallPart) {
+        val authorizer = authorizer ?: return
+        if (authorizationState(call).isDeclining) return
+        authorizationStates[call.id] = AIToolAuthorizationState(isDeclining = true)
+        scope.launch {
+            try {
+                authorizer.decline(call)
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (_: Exception) {
+                authorizationStates[call.id] = AIToolAuthorizationState(declineFailed = true)
             }
         }
     }

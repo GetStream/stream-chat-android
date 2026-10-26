@@ -51,7 +51,7 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWri
  * @param isThinking Whether the agent is answering the latest message and its reply shows nothing
  * yet. The list also knows it is while [pendingMessage] waits, and while the latest reply is being
  * written but shows nothing.
- * @param approver Who answers tool calls' questions on this device, to ask them.
+ * @param approver Who answers tool calls' questions and sign-ins on this device, to ask them.
  * @param loadOlderMessages Loads the messages before the first one, which the list asks for as the
  * person scrolls to its start. It shows a spinner meanwhile, and what is on screen stays in place
  * as they arrive. Pass null once there are none left.
