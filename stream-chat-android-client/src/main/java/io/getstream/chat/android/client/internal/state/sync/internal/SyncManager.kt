@@ -1159,13 +1159,6 @@ internal class SyncManager(
     }
 
     /**
-     * Outcome of [performSync].
-     *
-     * @param syncedCids The cids whose events since a known last sync date were received and replayed. A grouped list
-     * keeps its loaded pages after a reconnect only when they are all here.
-     * @param refreshedCids The cids refreshed with `queryChannels` because the events could not be replayed.
-     */
-    /**
      * The channels whose events the sync replayed in full. A skipped event's update is lost, so its channel is left
      * out, and when the channel of one isn't known, none is.
      */
@@ -1182,6 +1175,13 @@ internal class SyncManager(
         }
     }
 
+    /**
+     * Outcome of [performSync].
+     *
+     * @param syncedCids The cids whose events since a known last sync date were received and replayed. A grouped list
+     * keeps its loaded pages after a reconnect only when they are all here.
+     * @param refreshedCids The cids refreshed with `queryChannels` because the events could not be replayed.
+     */
     internal data class SyncOutcome(
         val syncedCids: Set<String> = emptySet(),
         val refreshedCids: Set<String> = emptySet(),
