@@ -286,6 +286,14 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun updateMessageSyncStatus(messageId: String, syncStatus: SyncStatus) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun markDeletesInProgressAsCompleted(deletedBefore: Date) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
         TODO("Not yet implemented")
     }

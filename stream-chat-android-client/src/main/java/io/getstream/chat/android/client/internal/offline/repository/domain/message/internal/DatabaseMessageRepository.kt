@@ -262,6 +262,22 @@ internal class DatabaseMessageRepository(
         return messageDao.selectIdsBySyncStatus(syncStatus)
     }
 
+    // Bypasses deletedMessageIds, which drops every insert of a deleted message, the outcome of its own deletion too.
+    override suspend fun updateMessageSyncStatus(messageId: String, syncStatus: SyncStatus) {
+        dbMutex.withLock { messageDao.updateSyncStatus(messageId, syncStatus) }
+        messageCache[messageId]?.let { messageCache.put(messageId, it.copy(syncStatus = syncStatus)) }
+    }
+
+    override suspend fun markDeletesInProgressAsCompleted(deletedBefore: Date) {
+        dbMutex.withLock {
+            messageDao.replaceSyncStatusOfDeletes(SyncStatus.IN_PROGRESS, SyncStatus.COMPLETED, deletedBefore)
+        }
+        messageCache.snapshot().values
+            .filter { it.syncStatus == SyncStatus.IN_PROGRESS }
+            .filter { it.deletedForMe || it.deletedAt?.before(deletedBefore) == true }
+            .forEach { messageCache.put(it.id, it.copy(syncStatus = SyncStatus.COMPLETED)) }
+    }
+
     /**
      * Selects all message of a [SyncStatus]
      *

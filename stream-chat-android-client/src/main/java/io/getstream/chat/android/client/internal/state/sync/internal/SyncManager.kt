@@ -62,6 +62,7 @@ import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
 import io.getstream.result.onSuccessSuspend
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -550,12 +551,13 @@ internal class SyncManager(
             }
         }
         rescueStuckInProgress("messages") {
+            // An old delete left in progress almost always reached the backend and lost only its result, and the
+            // retry would just remove it locally. A delete for the current user has no local date to tell its age.
+            repos.markDeletesInProgressAsCompleted(deletedBefore = Date(now() - syncMaxThreshold.millis))
             val messageIds = repos.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)
             logger.d { "[rescueEntitiesStuckInProgress] messageIds.size: ${messageIds.size}" }
-            messageIds.forEach { id ->
-                val message = repos.selectMessage(id) ?: return@forEach
-                repos.insertMessage(message.copy(syncStatus = SyncStatus.SYNC_NEEDED))
-            }
+            // Status only, since every insert of a deleted message is dropped
+            messageIds.forEach { id -> repos.updateMessageSyncStatus(id, SyncStatus.SYNC_NEEDED) }
         }
         rescueStuckInProgress("reactions") {
             val reactionIds = repos.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)
@@ -569,6 +571,8 @@ internal class SyncManager(
 
     private suspend fun rescueStuckInProgress(entities: String, rescue: suspend () -> Unit) = try {
         rescue()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Throwable) {
         logger.e(e) { "[rescueEntitiesStuckInProgress] failed for $entities: $e" }
     }

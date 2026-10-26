@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.errors
 
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest
@@ -30,7 +31,27 @@ internal class ErrorExtensionsTest {
         error.isDuplicateMessageError() shouldBeEqualTo expected
     }
 
+    @ParameterizedTest
+    @MethodSource("messageGoneErrorArguments")
+    fun `deleteFailureSyncStatus should complete the delete only when the message is gone`(
+        error: Error,
+        expected: SyncStatus,
+    ) {
+        error.deleteFailureSyncStatus() shouldBeEqualTo expected
+    }
+
     companion object {
+        @JvmStatic
+        fun messageGoneErrorArguments() = listOf(
+            Arguments.of(Error.NetworkError("message with id m1 has been deleted", 16, 404), SyncStatus.COMPLETED),
+            Arguments.of(Error.NetworkError("message with id m1 doesn't exist", 16, 404), SyncStatus.COMPLETED),
+            // A 404 without the backend's code, e.g. from a proxy
+            Arguments.of(Error.NetworkError("Not Found", -1, 404), SyncStatus.SYNC_NEEDED),
+            Arguments.of(Error.NetworkError("permission denied", 17, 403), SyncStatus.SYNC_NEEDED),
+            Arguments.of(Error.NetworkError("internal error", -1, 500), SyncStatus.SYNC_NEEDED),
+            Arguments.of(Error.GenericError("message has been deleted"), SyncStatus.SYNC_NEEDED),
+        )
+
         @JvmStatic
         fun duplicateMessageErrorArguments() = listOf(
             Arguments.of(alreadyExistsError(), true),

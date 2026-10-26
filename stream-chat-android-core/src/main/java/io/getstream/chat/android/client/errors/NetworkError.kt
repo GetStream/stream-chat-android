@@ -20,6 +20,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.result.Error
 
 private const val HTTP_BAD_REQUEST = 400
+private const val HTTP_NOT_FOUND = 404
 
 /**
  * Checks if the [Error.NetworkError] was caused by a bad request (HTTP 400).
@@ -27,6 +28,14 @@ private const val HTTP_BAD_REQUEST = 400
 @InternalStreamChatApi
 public fun Error.NetworkError.isStatusBadRequest(): Boolean {
     return statusCode == HTTP_BAD_REQUEST
+}
+
+/**
+ * Checks if the [Error.NetworkError] was caused by a missing resource (HTTP 404).
+ */
+@InternalStreamChatApi
+public fun Error.NetworkError.isStatusNotFound(): Boolean {
+    return statusCode == HTTP_NOT_FOUND
 }
 
 /**

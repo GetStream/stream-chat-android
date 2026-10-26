@@ -37,6 +37,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -105,7 +106,7 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Success(testMessage))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Success(testMessage))
 
         verify(messageRepository).insertMessage(
             argThat { message ->
@@ -113,6 +114,7 @@ internal class DeleteMessageListenerDatabaseTest {
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
         )
+        verify(messageRepository).updateMessageSyncStatus(testMessage.id, SyncStatus.COMPLETED)
     }
 
     @Test
@@ -125,14 +127,19 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Failure(Error.GenericError("")))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(Error.GenericError("")))
 
-        verify(messageRepository).insertMessage(
-            argThat { message ->
-                // The same ID, but not the status was correctly updated
-                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            },
-        )
+        verify(messageRepository).updateMessageSyncStatus(testMessage.id, SyncStatus.SYNC_NEEDED)
+        verify(messageRepository, never()).insertMessage(any())
+    }
+
+    @Test
+    fun `when the message is already gone, the delete should be updated as completed`() = runTest {
+        val testMessage = randomMessage(cid = randomCID(), syncStatus = SyncStatus.IN_PROGRESS)
+
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(Error.NetworkError(message = "message has been deleted", serverErrorCode = 16, statusCode = 404)))
+
+        verify(messageRepository).updateMessageSyncStatus(testMessage.id, SyncStatus.COMPLETED)
     }
 
     @Test

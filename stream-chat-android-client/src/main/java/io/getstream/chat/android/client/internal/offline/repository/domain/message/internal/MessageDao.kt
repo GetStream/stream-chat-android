@@ -56,8 +56,8 @@ internal interface MessageDao {
 
     /**
      * Drops the reactions whose stored row waits for a retry, so a server copy of the message saved before the retry
-     * cannot overwrite (and lose) an offline reaction change. IN_PROGRESS rows are not retried, so the server copy
-     * still wins for them.
+     * cannot overwrite (and lose) an offline reaction change. An IN_PROGRESS row's request is still in flight, so the
+     * server copy still wins for it.
      */
     @Transaction
     suspend fun withoutPendingReactions(reactions: List<ReactionEntity>): List<ReactionEntity> {
@@ -286,6 +286,19 @@ internal interface MessageDao {
 
     @Query("UPDATE $MESSAGE_ENTITY_TABLE_NAME SET member = :member WHERE cid = :cid AND userId = :userId")
     suspend fun updateMemberByCidAndUserId(cid: String, userId: String, member: MemberInfoEntity?)
+
+    @Query("UPDATE $MESSAGE_ENTITY_TABLE_NAME SET syncStatus = :syncStatus WHERE id = :id")
+    suspend fun updateSyncStatus(id: String, syncStatus: SyncStatus)
+
+    /**
+     * Moves the messages in [from] that were deleted before [deletedBefore], or deleted for the current user, to [to].
+     */
+    @Query(
+        "UPDATE $MESSAGE_ENTITY_TABLE_NAME SET syncStatus = :to " +
+            "WHERE syncStatus = :from " +
+            "AND (deletedForMe = 1 OR (deletedAt IS NOT NULL AND deletedAt < :deletedBefore))",
+    )
+    suspend fun replaceSyncStatusOfDeletes(from: SyncStatus, to: SyncStatus, deletedBefore: Date)
 
     @Query(
         "SELECT id FROM $MESSAGE_ENTITY_TABLE_NAME " +

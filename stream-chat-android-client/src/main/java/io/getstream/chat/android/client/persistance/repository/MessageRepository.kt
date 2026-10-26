@@ -155,6 +155,17 @@ public interface MessageRepository {
     public suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String>
 
     /**
+     * Sets the [SyncStatus] of the stored message with [messageId], leaving the rest of it as it is.
+     */
+    public suspend fun updateMessageSyncStatus(messageId: String, syncStatus: SyncStatus)
+
+    /**
+     * Moves the messages in [SyncStatus.IN_PROGRESS] that were deleted before [deletedBefore], or deleted for the
+     * current user, to [SyncStatus.COMPLETED].
+     */
+    public suspend fun markDeletesInProgressAsCompleted(deletedBefore: Date)
+
+    /**
      * Selects all message of a [SyncStatus]
      *
      * @param syncStatus [SyncStatus]
