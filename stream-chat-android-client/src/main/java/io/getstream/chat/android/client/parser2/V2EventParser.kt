@@ -162,8 +162,7 @@ internal class V2EventParser(
     }
 
     /**
-     * Reads [raw] into [parsed], unless the SDK ignores it, and returns true; an event that can't be read is added to
-     * [skipped] instead.
+     * Reads [raw] into [parsed], unless the SDK ignores it; an event that can't be read is added to [skipped] instead.
      */
     @Suppress("TooGenericExceptionCaught")
     private fun parseSyncEvent(raw: String, parsed: MutableList<ChatEvent>, skipped: MutableList<SkippedEvent>) {
