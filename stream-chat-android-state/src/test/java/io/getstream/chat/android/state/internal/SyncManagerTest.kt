@@ -1051,6 +1051,7 @@ internal class SyncManagerTest {
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery, standardQuery)
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
             whenever(logicRegistry.channel(any(), any())) doReturn rewatchedLogic
+            whenever(logicRegistry.channel(any<ChannelId>())) doReturn rewatchedLogic
             val watchedChannelId = ChannelId.fromCid(watchedCid)!!
             val activeOnlyChannelId = ChannelId.fromCid(activeOnlyCid)!!
             whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
@@ -1151,7 +1152,9 @@ internal class SyncManagerTest {
 
             whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn emptyList()
             whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
-            whenever(logicRegistry.channel(any(), any())) doReturn mock<ChannelLogic>()
+            val channelLogic: ChannelLogic = mock()
+            whenever(logicRegistry.channel(any(), any())) doReturn channelLogic
+            whenever(logicRegistry.channel(any<ChannelId>())) doReturn channelLogic
             whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(ChannelId.fromCid(channel.cid)!! to activeState)
             whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
                 Result.Success(QueryChannelsResult(channels = listOf(channel), predefinedFilter = null)),
@@ -1166,6 +1169,7 @@ internal class SyncManagerTest {
             delay(100)
 
             verify(mutableGlobalState).updateChannelDrafts(listOf(channel))
+            verify(channelLogic).updateDataForChannel(channel, channel.messages.size)
         }
 
     @Test
