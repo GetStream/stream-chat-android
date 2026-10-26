@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
-import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.parser2.GetMessageResponseParityTest
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -651,8 +650,12 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun getSyncHistoryInput() = listOf(
-        Arguments.of(RetroSuccess(SyncHistoryResponse(emptyList())).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<SyncHistoryResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(SYNCED_EVENTS.toResponseBody()).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroSuccess("{}".toResponseBody()).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroSuccess(SYNCED_UNREADABLE_EVENT.toResponseBody()).toRetrofitCall(), Result.Success::class),
+        // A body whose envelope can't be read fails the whole sync.
+        Arguments.of(RetroSuccess("""{"events": {}}""".toResponseBody()).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<ResponseBody>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic

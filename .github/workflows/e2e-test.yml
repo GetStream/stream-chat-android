@@ -23,11 +23,11 @@ on:
       api_version:
         description: 'API version the mock serves and the app connects with'
         type: choice
-        options: [v1, v2]
-        default: v1
+        options: [v2, v1]
+        default: v2
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.api_version || 'v1' }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.api_version || 'v2' }}
   cancel-in-progress: true
 
 env:
@@ -108,7 +108,7 @@ jobs:
           profile: pixel
           arch : x86_64
           emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
-          script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }} mock_server_branch:${{ inputs.mock_server_branch }} api_version:${{ inputs.api_version || 'v1' }} ${{ inputs.test_class && format('test_class:{0}', inputs.test_class) || '' }}
+          script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }} mock_server_branch:${{ inputs.mock_server_branch }} api_version:${{ inputs.api_version || 'v2' }} ${{ inputs.test_class && format('test_class:{0}', inputs.test_class) || '' }}
       - name: Allure TestOps Upload
         if: ${{ env.LAUNCH_ID != '' && (success() || failure()) }}
         run: bundle exec fastlane allure_upload

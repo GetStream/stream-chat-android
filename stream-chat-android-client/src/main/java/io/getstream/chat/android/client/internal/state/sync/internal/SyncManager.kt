@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.internal.state.plugin.listener.internal.
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -80,6 +81,8 @@ import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 private const val QUERIES_TO_RETRY = 3
 private const val SYNC_MAX_CIDS = 100
@@ -369,7 +372,6 @@ internal class SyncManager(
             return SyncOutcome()
         }
         val cappedCids = cids.take(SYNC_MAX_CIDS)
-        val syncedCids = if (syncState?.lastSyncedAt == null) emptySet() else cappedCids.toSet()
         val result = if (rawLastSyncAt != null) {
             chatClient.getSyncHistoryInternal(cappedCids, rawLastSyncAt, watch).await()
         } else {
@@ -386,8 +388,9 @@ internal class SyncManager(
             logger.e { "[performSync] failed($result)" }
             return SyncOutcome()
         }
-        val sortedEvents = result.value.sortedBy { it.createdAt }
+        val sortedEvents = result.value.events.sortedBy { it.createdAt }
         logger.v { "[performSync] succeed; events.size: ${sortedEvents.size}" }
+        val syncedCids = syncedCids(cappedCids, result.value, hasCursor = syncState?.lastSyncedAt != null)
 
         if (sortedEvents.size > eventReplayMaxCount) {
             return SyncOutcome(refreshedCids = skipEventReplay(sortedEvents, cappedCids))
@@ -407,7 +410,7 @@ internal class SyncManager(
             logger.w { "[performSync] rejected (no events to emit)" }
             return SyncOutcome(syncedCids = syncedCids)
         }
-        if (rawLastSyncAt == rawLatestEventDate) {
+        if (sameInstant(rawLastSyncAt, rawLatestEventDate)) {
             logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
             return SyncOutcome(syncedCids = syncedCids)
         }
@@ -1123,7 +1126,7 @@ internal class SyncManager(
      *
      * @return True if the error is related to too many events to sync, false otherwise.
      */
-    private fun Result<List<ChatEvent>>.isTooManyEventsToSyncError(): Boolean {
+    private fun Result<SyncedEvents>.isTooManyEventsToSyncError(): Boolean {
         val error = errorOrNull()
         return error is Error.NetworkError &&
             error.isStatusBadRequest() &&
@@ -1156,6 +1159,23 @@ internal class SyncManager(
     }
 
     /**
+     * The channels whose events the sync replayed in full. A skipped event's update is lost, so its channel is left
+     * out, and when the channel of one isn't known, none is.
+     */
+    private fun syncedCids(cids: List<String>, synced: SyncedEvents, hasCursor: Boolean): Set<String> {
+        if (synced.hasSkippedWithoutCid || synced.skippedCids.isNotEmpty()) {
+            logger.w {
+                "[syncedCids] not synced in full: ${synced.skippedCids}" +
+                    if (synced.hasSkippedWithoutCid) ", and a skipped event of an unknown channel" else ""
+            }
+        }
+        return when {
+            !hasCursor || synced.hasSkippedWithoutCid -> emptySet()
+            else -> cids.toSet() - synced.skippedCids
+        }
+    }
+
+    /**
      * Outcome of [performSync].
      *
      * @param syncedCids The cids whose events since a known last sync date were received and replayed. A grouped list
@@ -1180,4 +1200,16 @@ internal class SyncManager(
     ) {
         val isSuccess: Boolean get() = error == null
     }
+}
+
+/**
+ * Whether two raw ISO dates name the same instant. The fraction can be written with its trailing zeros trimmed, as the
+ * v1 encoding does, or with all nine digits, as the v2 one does, so they are compared as parsed instants. Dates that
+ * don't parse are compared as written.
+ */
+@OptIn(ExperimentalTime::class)
+internal fun sameInstant(raw: String?, other: String?): Boolean {
+    val instant = raw?.let(Instant::parseOrNull)
+    val otherInstant = other?.let(Instant::parseOrNull)
+    return if (instant != null && otherInstant != null) instant == otherInstant else raw == other
 }
