@@ -809,7 +809,7 @@ internal class SyncManager(
                 filter = Filters.`in`("cid", batch.map(ChannelId::cid)),
                 offset = 0,
                 limit = batch.size,
-            )
+            ).apply { presence = userPresence }
             logger.v { "[updateActiveChannels] request: $request" }
             when (val result = chatClient.queryChannelsInternal(request).await()) {
                 is Result.Success -> updateActiveChannelsBatch(batch, result.value.channels)

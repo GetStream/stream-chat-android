@@ -1208,6 +1208,7 @@ internal class SyncManagerTest {
             val requestedCids = allValues.map { (it.filter as InFilterObject).values }
             assertEquals(listOf(30, 30, 30, 10), requestedCids.map { it.size })
             assertEquals(listOf(30, 30, 30, 10), allValues.map { it.limit })
+            assertEquals(listOf(true, true, true, true), allValues.map { it.presence })
             assertEquals(channelIds.take(100).map(ChannelId::cid).toSet(), requestedCids.flatten().toSet())
         }
     }
