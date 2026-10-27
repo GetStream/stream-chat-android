@@ -188,13 +188,12 @@ public class RepositoryFacade private constructor(
     }
 
     /**
-     * Replaces the local placeholder channel [placeholderCid] with the server's [serverCid], keeping the messages
-     * and the draft written to it. The messages are re-inserted under [serverCid] rather than deleted: both writes are
-     * asynchronous, and a read between them would find neither copy. The placeholder's draft replaces any draft of
-     * [serverCid], since it is the one written last.
+     * Replaces the local placeholder channel [placeholderCid] with the server's [serverCid]: its local-only messages
+     * and its draft move to [serverCid], replacing any draft there, and the placeholder channel is removed.
      */
     internal suspend fun replacePlaceholderChannel(placeholderCid: String, serverCid: String) {
         val messages = messageRepository.selectLocalOnlyMessagesForChannel(placeholderCid)
+        // Re-inserted rather than deleted: both writes are async, and a read between them would find neither copy
         messageRepository.insertMessages(messages.map { it.copy(cid = serverCid) })
         messageRepository.selectDraftMessagesByCid(placeholderCid)?.let { draft ->
             messageRepository.deleteDraftMessage(serverCid, parentId = null)
