@@ -23,9 +23,13 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.messa
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.PollDao
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ReplyMessageDao
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -239,4 +243,39 @@ internal class MessageRepositoryTests {
         verify(messageDao).deleteAllDrafts()
         verify(replyMessageDao).deleteAll()
     }
+
+    @Test
+    fun `selectLocalOnlyMessagesForChannel includes messages not yet written to the database`() = runTest {
+        val repository = localOnlyRepository()
+        val cid = randomCID()
+        val unwritten = randomMessage(cid = cid, createdAt = null, deletedAt = null, deletedForMe = false, syncStatus = SyncStatus.SYNC_NEEDED)
+        val otherChannel = randomMessage(createdAt = null, deletedAt = null, deletedForMe = false, syncStatus = SyncStatus.SYNC_NEEDED)
+        val synced = randomMessage(cid = cid, deletedAt = null, deletedForMe = false, syncStatus = SyncStatus.COMPLETED)
+        whenever(messageDao.selectBySyncStatusOrTypeForChannel(any(), any(), any())) doReturn emptyList()
+        repository.insertMessages(listOf(unwritten, otherChannel, synced))
+
+        assertEquals(listOf(unwritten), repository.selectLocalOnlyMessagesForChannel(cid))
+    }
+
+    @Test
+    fun `selectLocalOnlyMessagesForChannel drops stored messages whose cached copy is no longer local-only`() = runTest {
+        val repository = localOnlyRepository()
+        val cid = randomCID()
+        val sent = randomMessage(cid = cid, deletedAt = null, deletedForMe = false, syncStatus = SyncStatus.COMPLETED, type = "regular")
+        whenever(messageDao.selectBySyncStatusOrTypeForChannel(any(), any(), any())) doReturn
+            listOf(randomMessageEntity(id = sent.id, cid = cid, syncStatus = SyncStatus.SYNC_NEEDED))
+        repository.insertMessages(listOf(sent))
+
+        assertEquals(emptyList<Message>(), repository.selectLocalOnlyMessagesForChannel(cid))
+    }
+
+    private fun TestScope.localOnlyRepository() = DatabaseMessageRepository(
+        this,
+        messageDao,
+        replyMessageDao,
+        pollDao,
+        ::randomUser,
+        randomUser(id = "currentUserId"),
+        emptySet(),
+    )
 }

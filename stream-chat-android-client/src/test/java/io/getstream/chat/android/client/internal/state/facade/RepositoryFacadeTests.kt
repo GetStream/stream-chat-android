@@ -29,6 +29,7 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomConfig
+import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPendingMessage
@@ -43,6 +44,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -318,5 +320,20 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         verify(messages, never()).deleteChannelMessages(any())
         verify(threadsRepository).deleteChannelThreads(placeholderCid)
         verify(channels).deleteChannel(placeholderCid)
+    }
+
+    @Test
+    fun `replacing a placeholder channel moves its draft to the server cid`() = runTest {
+        val placeholderCid = "messaging:!members-a, b"
+        val serverCid = "messaging:!members-hash"
+        val draft = randomDraftMessage(cid = placeholderCid, parentId = null)
+        whenever(messages.selectLocalOnlyMessagesForChannel(placeholderCid)) doReturn emptyList()
+        whenever(messages.selectDraftMessagesByCid(placeholderCid)) doReturn draft
+
+        sut.replacePlaceholderChannel(placeholderCid, serverCid)
+
+        val order = inOrder(messages)
+        order.verify(messages).deleteDraftMessage(serverCid, null)
+        order.verify(messages).insertDraftMessage(draft.copy(cid = serverCid))
     }
 }
