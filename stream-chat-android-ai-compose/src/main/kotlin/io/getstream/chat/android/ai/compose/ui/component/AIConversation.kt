@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIConversationScroll
@@ -192,6 +193,7 @@ public fun <T> AIConversation(
     val layoutDirection = LocalLayoutDirection.current
     val top = contentPadding.calculateTopPadding()
     val bottom = contentPadding.calculateBottomPadding()
+    KeepsEndOnPaddingChange(listState, lastTurn?.id, top, bottom)
 
     BoxWithConstraints(modifier = modifier) {
         // The height of the list that nothing covers.
@@ -422,6 +424,33 @@ private fun ScrollsOnNewLastTurn(listState: LazyListState, turns: List<AIMessage
 }
 
 /**
+ * Keeps the end of the conversation in view when the padding changes while it was: a composer
+ * floating over the list is often measured a frame after the list opens at its end, and it grows
+ * and shrinks with its draft. The list keeps its first visible item in place by itself, which
+ * would leave the end under the new padding, or short of it.
+ *
+ * Only a list that showed its very end follows it. A person who scrolled up stays where they are,
+ * and so does a turn the person just sent, at the top with the list's spacing still below it.
+ */
+@Composable
+private fun KeepsEndOnPaddingChange(listState: LazyListState, lastTurnId: Any?, top: Dp, bottom: Dp) {
+    val padding = remember { PaddingSeen(top, bottom) }
+    val scope = rememberCoroutineScope()
+    // Runs before the list measures with the new padding, while its layout still has the old one.
+    SideEffect {
+        if (padding.top == top && padding.bottom == bottom) return@SideEffect
+        padding.top = top
+        padding.bottom = bottom
+        val info = listState.layoutInfo
+        // A layout of other turns is one a new last turn scrolls away from.
+        val showsLastTurn = lastTurnId != null && info.visibleItemsInfo.lastOrNull()?.key == lastTurnId
+        if (showsLastTurn && info.distanceToEnd() <= AtEndTolerancePx) {
+            scope.launch { listState.scrollToEnd(animated = false) }
+        }
+    }
+}
+
+/**
  * Calls [loadOlderMessages] once the spinner has stayed in view a moment, rather than for the
  * frame a list that opens at its end can show its start, and again whenever the first turn
  * changes while it is in view.
@@ -459,6 +488,9 @@ private fun LoadsOlderMessages(
     }
 }
 
+/** The padding the list was last composed with. */
+private class PaddingSeen(var top: Dp, var bottom: Dp)
+
 /** What was above the turns when the list last laid them out. */
 private class AboveTurns(var firstTurnId: Any?, var loadsOlder: Boolean)
 
@@ -475,3 +507,6 @@ private const val TurnContentType = "io.getstream.chat.android.ai.compose.AIConv
 
 private const val LoadOlderDelayMillis = 300L
 private val EndSlack = 24.dp
+
+// How far from its end a list still shows it, for the rounding of a scroll.
+private const val AtEndTolerancePx = 1

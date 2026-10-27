@@ -18,14 +18,19 @@ package io.getstream.chat.android.ai.compose.ui.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasScrollToIndexAction
@@ -66,8 +71,26 @@ internal class AIConversationLayoutTest {
         rule.setContent { Conversation() }
     }
 
+    /** A composer floating over the list, its height passed as padding once it is laid out. */
+    private fun setContentWithFloatingComposer(height: () -> Dp) {
+        rule.setContent {
+            var composerHeight by remember { mutableStateOf(0.dp) }
+            val density = LocalDensity.current
+            Box(modifier = Modifier.size(width = 300.dp, height = ListHeight)) {
+                Conversation(contentPadding = PaddingValues(bottom = composerHeight))
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(height())
+                        .onSizeChanged { composerHeight = with(density) { it.height.toDp() } },
+                )
+            }
+        }
+    }
+
     @Composable
-    private fun Conversation() {
+    private fun Conversation(contentPadding: PaddingValues = this.contentPadding) {
         Box(modifier = Modifier.size(width = 300.dp, height = ListHeight)) {
             AIConversation(
                 messages = messages,
@@ -338,6 +361,71 @@ internal class AIConversationLayoutTest {
         scrollToStart()
         rule.mainClock.advanceTimeBy(LoadDelayMillis)
         assertEquals(1, loads)
+    }
+
+    @Test
+    fun `with a floating composer measured after the first frame, a long reply opens at its end`() {
+        messages = listOf(question("q1"), reply("a1", height = ListHeight * 2))
+        setContentWithFloatingComposer { ComposerHeight }
+
+        assertNear(ListHeight - ComposerHeight - EndSpacing, bottom("footer"))
+        rule.onAllNodesWithContentDescription(ScrollToLatest).assertCountEquals(0)
+    }
+
+    @Test
+    fun `with padding, the end stays in view as the bottom padding grows and shrinks`() {
+        var composerHeight by mutableStateOf(ComposerHeight)
+        messages = listOf(question("q1"), reply("a1", height = ListHeight * 2))
+        setContentWithFloatingComposer { composerHeight }
+
+        composerHeight = ComposerHeight * 2
+        rule.waitForIdle()
+        assertNear(ListHeight - ComposerHeight * 2 - EndSpacing, bottom("footer"))
+        rule.onAllNodesWithContentDescription(ScrollToLatest).assertCountEquals(0)
+
+        composerHeight = ComposerHeight
+        rule.waitForIdle()
+        assertNear(ListHeight - ComposerHeight - EndSpacing, bottom("footer"))
+        rule.onAllNodesWithContentDescription(ScrollToLatest).assertCountEquals(0)
+    }
+
+    @Test
+    fun `with padding, a person who scrolled up stays where they are as the padding changes`() {
+        contentPadding = PaddingValues(bottom = ComposerHeight)
+        messages = listOf(question("q1"), reply("a1"), question("q2"), reply("a2", height = ListHeight * 2))
+        setContent()
+        scrollToStart()
+        val shown = top("q1")
+
+        contentPadding = PaddingValues(bottom = ComposerHeight * 2)
+        rule.waitForIdle()
+        assertNear(shown, top("q1"))
+
+        contentPadding = PaddingValues()
+        rule.waitForIdle()
+        assertNear(shown, top("q1"))
+        rule.onNodeWithContentDescription(ScrollToLatest).assertExists()
+    }
+
+    @Test
+    fun `with padding, a question the person sends stays at the top as the padding changes`() {
+        contentPadding = PaddingValues(bottom = ComposerHeight * 2)
+        messages = listOf(question("q1"), reply("a1"))
+        setContent()
+
+        // The composer shrinks back as the question is sent, in the same frame.
+        messages = messages + question("q2")
+        contentPadding = PaddingValues(bottom = ComposerHeight)
+        rule.waitForIdle()
+        assertNear(TurnTopPadding, top("q2"))
+
+        contentPadding = PaddingValues(bottom = ComposerHeight * 2)
+        rule.waitForIdle()
+        assertNear(TurnTopPadding, top("q2"))
+
+        contentPadding = PaddingValues(bottom = ComposerHeight)
+        rule.waitForIdle()
+        assertNear(TurnTopPadding, top("q2"))
     }
 
     private fun bottom(text: String): Dp = rule.onNodeWithText(text).getUnclippedBoundsInRoot().bottom
