@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.ReconnectGroupQueries
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
@@ -158,24 +157,13 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `when a health check event happens, a request to retry failed entities should happen`() =
+    fun `when the connection is established, a request to retry failed entities should happen`() =
         runTest(testDispatcher) {
             /* Given */
-            val createdAt = Date()
-            val rawCreatedAt = streamDateFormatter.format(createdAt)
-
             val syncManager = buildSyncManager()
 
             /* When */
-
-            syncManager.onEvent(
-                HealthEvent(
-                    type = "type",
-                    createdAt = createdAt,
-                    rawCreatedAt = rawCreatedAt,
-                    connectionId = randomString(),
-                ),
-            )
+            syncManager.onEvent(randomConnectedEvent())
 
             /* Then */
             verify(repositoryFacade).selectChannelCidsBySyncNeeded()
@@ -744,14 +732,7 @@ internal class SyncManagerTest {
 
         /* When */
         delay(7_000)
-        syncManager.onEvent(
-            HealthEvent(
-                type = "type",
-                createdAt = Date(currentTime),
-                rawCreatedAt = streamDateFormatter.format(Date(currentTime)),
-                connectionId = randomString(),
-            ),
-        )
+        syncManager.onEvent(randomConnectedEvent())
 
         /* Then */
         verify(repositoryFacade).deleteChannelMessage(message1)
@@ -781,18 +762,11 @@ internal class SyncManagerTest {
 
         /* When */
         delay(7_000)
-        syncManager.onEvent(
-            HealthEvent(
-                type = "type",
-                createdAt = Date(currentTime),
-                rawCreatedAt = streamDateFormatter.format(Date(currentTime)),
-                connectionId = randomString(),
-            ),
-        )
+        syncManager.onEvent(randomConnectedEvent())
 
         /* Then */
         verify(repositoryFacade).deleteReaction(reaction1)
-        verify(repositoryFacade).deleteReaction(reaction1)
+        verify(repositoryFacade).deleteReaction(reaction2)
 
         verify(chatClient, never()).sendReaction(any(), any(), any(), any())
         verify(chatClient, never()).deleteReaction(any(), any(), any())

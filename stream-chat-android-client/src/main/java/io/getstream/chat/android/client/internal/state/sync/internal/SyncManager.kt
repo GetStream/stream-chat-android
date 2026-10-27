@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
@@ -114,8 +113,8 @@ private const val QUERY_CHANNELS_MAX_LIMIT = 30
 private const val SYNC_MAX_AGE_DAYS = 30
 
 /**
- * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
- * when connection is reestablished or when a health check event happens.
+ * This class is responsible to sync messages, reactions and channel data. It tries to sync them, if necessary,
+ * when the connection is established.
  */
 @Suppress("LongParameterList", "TooManyFunctions", "TooGenericExceptionCaught", "LargeClass")
 internal class SyncManager(
@@ -246,11 +245,6 @@ internal class SyncManager(
                 logger.i { "[onEvent] DisconnectedEvent received" }
                 onConnectionLost()
                 syncScope.coroutineContext.job.cancelChildren()
-            }
-
-            is HealthEvent -> syncScope.launch {
-                logger.v { "[onEvent] HealthEvent received" }
-                retryFailedEntities()
             }
 
             is MarkAllReadEvent -> syncScope.launch {
