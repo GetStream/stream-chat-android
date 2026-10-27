@@ -22,8 +22,12 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class AIToolAuthorizerTest {
@@ -67,12 +71,116 @@ internal class AIToolAuthorizerTest {
     }
 
     @Test
-    fun `a connected sign-in keeps connecting until the step changes`() {
-        val approver = approver(AIToolAuthorizer(connect = { _, _ -> true }, decline = {}))
+    fun `a connected sign-in keeps connecting for a while, then offers Connect again if the step stays`() {
+        var opens = 0
+        val approver = approver(
+            AIToolAuthorizer(
+                connect = { _, _ ->
+                    opens++
+                    true
+                },
+                decline = {},
+            ),
+        )
 
         approver.connect(call)
-
+        scope.advanceTimeBy(CONNECTED_SETTLE_MILLIS - 1)
         assertEquals(AIToolAuthorizationState(isConnecting = true), approver.authorizationState(call))
+
+        scope.advanceTimeBy(1)
+        scope.runCurrent()
+        assertEquals(AIToolAuthorizationState(), approver.authorizationState(call))
+        approver.connect(call)
+        assertEquals(2, opens)
+    }
+
+    @Test
+    fun `a sign-in issued again on the same step starts over`() {
+        val returned = CompletableDeferred<Boolean>()
+        val opened = mutableListOf<String>()
+        val approver = approver(
+            AIToolAuthorizer(
+                connect = { _, url ->
+                    opened += url
+                    if (opened.size == 1) returned.await() else true
+                },
+                decline = {},
+            ),
+        )
+        val reissued = call.copy(authorization = call.authorization!!.copy(handoffToken = "tok_-2"))
+
+        approver.connect(call)
+        assertEquals(AIToolAuthorizationState(), approver.authorizationState(reissued))
+
+        approver.connect(reissued)
+        returned.complete(false)
+
+        assertEquals(
+            listOf(
+                "https://router.example/launch/a1#handoff_token=tok_-1",
+                "https://router.example/launch/a1#handoff_token=tok_-2",
+            ),
+            opened,
+        )
+        assertEquals(AIToolAuthorizationState(isConnecting = true), approver.authorizationState(reissued))
+    }
+
+    @Test
+    fun `a failed not now while the sign-in is open keeps it the only one open`() {
+        val returned = CompletableDeferred<Boolean>()
+        var opens = 0
+        val approver = approver(
+            AIToolAuthorizer(
+                connect = { _, _ ->
+                    opens++
+                    returned.await()
+                },
+                decline = { error("offline") },
+            ),
+        )
+
+        approver.connect(call)
+        approver.declineAuthorization(call)
+        assertEquals(
+            AIToolAuthorizationState(isConnecting = true, declineFailed = true),
+            approver.authorizationState(call),
+        )
+        assertFalse(approver.authorizationState(call).canConnect)
+
+        approver.connect(call)
+        assertEquals(1, opens)
+
+        returned.complete(false)
+        assertEquals(AIToolAuthorizationState(declineFailed = true), approver.authorizationState(call))
+        approver.connect(call)
+        assertEquals(2, opens)
+    }
+
+    @Test
+    fun `an expired sign-in is no longer offered`() {
+        var opens = 0
+        val approver = approver(
+            AIToolAuthorizer(
+                connect = { _, _ ->
+                    opens++
+                    false
+                },
+                decline = {},
+            ),
+        )
+        val expired = call.copy(authorization = call.authorization!!.copy(expiresAt = Date(0)))
+        val later = call.copy(
+            authorization = call.authorization!!.copy(expiresAt = Date(System.currentTimeMillis() + 60_000)),
+        )
+
+        approver.connect(expired)
+        assertEquals(0, opens)
+        assertEquals(AIToolAuthorizationState(isExpired = true), approver.authorizationState(expired))
+        assertFalse(approver.authorizationState(expired).canConnect)
+
+        approver.connect(later)
+        assertEquals(1, opens)
+        assertEquals(AIToolAuthorizationState(), approver.authorizationState(later))
     }
 
     @Test

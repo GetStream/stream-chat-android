@@ -35,6 +35,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.parts.AIToolAuthorization
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
+import kotlinx.coroutines.delay
 
 /**
  * How the person signs in on this device when a tool call waits for their account at a provider,
@@ -67,8 +70,9 @@ import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
  *
  * @param connect Opens the sign-in page, the call's [AIToolAuthorization.launchUrl], and returns
  * once the person is back: `true` when the page came back saying the account is connected, which
- * keeps the card connecting until the call's step changes, or `false` when they came back without
- * connecting, which lets them connect again. Return `false` as soon as the person is back when your
+ * keeps the card connecting while your backend changes the call's step (and offers Connect again
+ * if, after a while, it hasn't), or `false` when they came back without connecting, which lets them
+ * connect again. Return `false` as soon as the person is back when your
  * app can't tell. A thrown exception says the page couldn't be opened, and the person can try
  * again.
  * @param decline Tells your backend the person won't sign in now. Your backend ends the call, which
@@ -85,20 +89,27 @@ public class AIToolAuthorizer(
 /**
  * Where the person's sign-in is.
  *
- * @param isConnecting The sign-in is open, or done and the call's step hasn't changed yet.
+ * @param isConnecting The sign-in is open, or came back connected a moment ago and the call's step
+ * hasn't changed yet.
  * @param isDeclining Their "not now" is on its way, or arrived and the call's step hasn't changed
  * yet.
  * @param connectFailed The sign-in couldn't be opened, and the person can try again.
  * @param declineFailed Their "not now" couldn't be sent, and the person can answer again.
+ * @param isExpired The sign-in is past its [AIToolAuthorization.expiresAt], so Connect is no longer
+ * offered.
  */
 public data class AIToolAuthorizationState(
     val isConnecting: Boolean = false,
     val isDeclining: Boolean = false,
     val connectFailed: Boolean = false,
     val declineFailed: Boolean = false,
+    val isExpired: Boolean = false,
 ) {
-    /** Whether an answer is under way, so the buttons wait. */
+    /** Whether an answer is under way, so Connect waits. */
     public val isBusy: Boolean get() = isConnecting || isDeclining
+
+    /** Whether Connect is offered: no answer is under way and the sign-in hasn't expired. */
+    public val canConnect: Boolean get() = !isBusy && !isExpired
 }
 
 /**
@@ -107,7 +118,8 @@ public data class AIToolAuthorizationState(
  * hands the sign-in page to the approver's [AIToolAuthorizer], which opens it. Once the provider
  * has answered, your backend updates the step and the call goes on. It shows only to that person,
  * only while the call waits, and only with an [AIToolAuthorizer], so it can sit under every tool
- * call:
+ * call. Once the sign-in's [AIToolAuthorization.expiresAt] passes, it says so and stops offering
+ * Connect:
  *
  * ```
  * AIToolCall(part = call)
@@ -161,10 +173,17 @@ public fun AIToolAuthorizationPrompt(
     },
 ) {
     val authorization = approver.signIn(call) ?: return
+    // Shows the sign-in again when it expires, so it stops offering Connect.
+    val expired by produceState(initialValue = authorization.isExpired(), authorization.expiresAt) {
+        val expiresAt = authorization.expiresAt ?: return@produceState
+        delay((expiresAt.time - System.currentTimeMillis()).coerceAtLeast(0L))
+        value = true
+    }
+    val state = approver.authorizationState(call)
     Box(modifier = modifier) {
         content(
             authorization,
-            approver.authorizationState(call),
+            if (expired && !state.isExpired) state.copy(isConnecting = false, isExpired = true) else state,
             { approver.connect(call) },
             { approver.declineAuthorization(call) },
         )
@@ -177,7 +196,8 @@ public fun AIToolAuthorizationPrompt(
  *
  * @param authorization The sign-in.
  * @param state Where the person's answer is. Connect waits while the sign-in is open or a "not now"
- * is sent; Not now stays, so a sign-in that never comes back leaves the person a way out.
+ * is sent, and goes once the sign-in expires; Not now stays, so a sign-in that never comes back
+ * leaves the person a way out.
  * @param connect Opens the sign-in.
  * @param decline Sends the person's "not now".
  * @param modifier The modifier to apply to the card.
@@ -218,6 +238,13 @@ public fun AIToolAuthorizationCard(
         authorizationFailure(state)?.let { failure ->
             Text(text = failure, style = MaterialTheme.typography.labelSmall, color = colors.failure)
         }
+        if (state.isExpired) {
+            Text(
+                text = stringResource(R.string.stream_ai_compose_tool_authorization_expired),
+                style = MaterialTheme.typography.labelSmall,
+                color = colors.message,
+            )
+        }
     }
 }
 
@@ -243,7 +270,7 @@ private fun AuthorizationButtons(
     ) {
         Button(
             onClick = connect,
-            enabled = !state.isBusy,
+            enabled = state.canConnect,
             colors = ButtonDefaults.buttonColors(containerColor = colors.accent),
             contentPadding = AUTHORIZATION_BUTTON_PADDING,
         ) {

@@ -70,6 +70,11 @@ internal class AIToolAuthorizationCardTest : PaparazziTest {
     }
 
     @Test
+    fun expired() {
+        card(AIToolAuthorizationState(isExpired = true))
+    }
+
+    @Test
     fun not_opened() {
         card(AIToolAuthorizationState(connectFailed = true), authorization.copy(message = null))
     }

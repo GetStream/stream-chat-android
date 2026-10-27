@@ -39,6 +39,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -87,6 +88,47 @@ internal class AIToolAuthorizationPromptTest {
 
         returned.complete(false)
         rule.onNodeWithText("Connect").assertIsEnabled()
+    }
+
+    @Test
+    fun `an expired sign-in says so and offers only not now`() {
+        var opens = 0
+        val approver = approver(
+            AIToolAuthorizer(
+                connect = { _, _ ->
+                    opens++
+                    true
+                },
+                decline = {},
+            ),
+        )
+        val expired = call.copy(authorization = call.authorization!!.copy(expiresAt = Date(0)))
+        rule.setContent { AIToolAuthorizationPrompt(call = expired, approver = approver) }
+
+        rule.onNodeWithText("This sign-in expired.").assertExists()
+        rule.onNodeWithText("Connect").assertIsNotEnabled()
+        rule.onNodeWithText("Not now").assertIsEnabled()
+        rule.runOnIdle { assertEquals(0, opens) }
+    }
+
+    @Test
+    fun `not now can be tapped while the sign-in is open`() {
+        val returned = CompletableDeferred<Boolean>()
+        val declined = mutableListOf<String>()
+        val approver = approver(
+            AIToolAuthorizer(
+                connect = { _, _ -> returned.await() },
+                decline = { call -> declined += call.id },
+            ),
+        )
+        rule.setContent { AIToolAuthorizationPrompt(call = call, approver = approver) }
+
+        rule.onNodeWithText("Connect").performClick()
+        rule.onNodeWithText("Not now").performClick()
+
+        rule.onNodeWithText("Connecting…").assertIsNotEnabled()
+        rule.onNodeWithText("Not now").assertIsNotEnabled()
+        rule.runOnIdle { assertEquals(listOf("call-1"), declined) }
     }
 
     @Test

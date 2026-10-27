@@ -51,6 +51,7 @@
     <string name="stream_ai_compose_tool_authorization_connect">Connect</string>
     <string name="stream_ai_compose_tool_authorization_connecting">Connecting…</string>
     <string name="stream_ai_compose_tool_authorization_decline">Not now</string>
+    <string name="stream_ai_compose_tool_authorization_expired">This sign-in expired.</string>
     <string name="stream_ai_compose_tool_authorization_not_opened">The sign-in couldn\'t be opened. Try again.</string>
     <string name="stream_ai_compose_voice_agent">Voice agent</string>
     <string name="stream_ai_compose_voice_state_idle">Ready</string>

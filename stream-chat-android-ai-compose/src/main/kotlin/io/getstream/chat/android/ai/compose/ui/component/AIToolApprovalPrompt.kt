@@ -49,6 +49,7 @@ import io.getstream.chat.android.ai.compose.parts.AIToolApproval
 import io.getstream.chat.android.ai.compose.parts.AIToolAuthorization
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -79,7 +80,7 @@ public class AIToolApprover(
 ) {
     private val send = decide
     private val states = mutableStateMapOf<String, AIToolApprovalState>()
-    private val authorizationStates = mutableStateMapOf<String, AIToolAuthorizationState>()
+    private val signIns = mutableStateMapOf<String, SignInEntry>()
 
     /**
      * An approver that answers tool calls' questions here, without offering sign-ins.
@@ -126,53 +127,116 @@ public class AIToolApprover(
         }
     }
 
-    /** Where the person's sign-in for [call] is. */
-    internal fun authorizationState(call: AIToolCallPart): AIToolAuthorizationState =
-        authorizationStates[call.id] ?: AIToolAuthorizationState()
+    /**
+     * Where the person's sign-in for [call] is. It is kept for the sign-in it was given for, so a
+     * sign-in your backend issues again on the same step starts over, and one past its expiry says
+     * so.
+     */
+    internal fun authorizationState(call: AIToolCallPart): AIToolAuthorizationState {
+        val authorization = call.authorization ?: return AIToolAuthorizationState()
+        val state = signInEntry(call.id, authorization)?.state ?: AIToolAuthorizationState()
+        return if (authorization.isExpired()) {
+            AIToolAuthorizationState(isExpired = true, isDeclining = state.isDeclining, declineFailed = state.declineFailed)
+        } else {
+            state
+        }
+    }
 
     /**
-     * Hands [call]'s sign-in page to the [authorizer], once at a time. Until the person comes back,
-     * the card says it is connecting.
+     * Hands [call]'s sign-in page to the [authorizer], one at a time. Until the person comes back,
+     * the card says it is connecting; once they come back connected, it keeps saying so for a
+     * while, as your backend updates the step, then offers Connect again if the step hasn't changed.
      */
     @Suppress("TooGenericExceptionCaught")
     internal fun connect(call: AIToolCallPart) {
         val authorizer = authorizer ?: return
         val authorization = signIn(call) ?: return
-        if (authorizationState(call).isBusy) return
-        val connecting = AIToolAuthorizationState(isConnecting = true)
-        authorizationStates[call.id] = connecting
+        val current = authorizationState(call)
+        if (current.isConnecting || current.isDeclining || current.isExpired) return
+        val attempt = Any()
+        signIns[call.id] = SignInEntry(
+            authorization = authorization,
+            state = current.copy(isConnecting = true, connectFailed = false),
+            attempt = attempt,
+        )
         scope.launch {
-            val next = try {
-                // Connected, your backend's change to the step hides the card. Until then it
-                // says it is connecting.
-                AIToolAuthorizationState().takeUnless { authorizer.connect(call, authorization.launchUrl) }
+            val connected = try {
+                authorizer.connect(call, authorization.launchUrl)
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Exception) {
-                AIToolAuthorizationState(connectFailed = true)
+                null
             }
-            // A "not now" sent meanwhile stays.
-            if (next != null && authorizationStates[call.id] == connecting) authorizationStates[call.id] = next
+            if (connected == true) {
+                // Your backend's change to the step hides the card. Until then it says connecting.
+                delay(CONNECTED_SETTLE_MILLIS)
+            }
+            updateSignIn(call.id, attempt) { state ->
+                state.copy(isConnecting = false, connectFailed = connected == null)
+            }
         }
     }
 
-    /** Sends the person's "not now" for [call], one at a time. A failed send can be answered again. */
+    /**
+     * Sends the person's "not now" for [call], one at a time, even while the sign-in is open, so a
+     * page that never comes back leaves them a way out. A failed send can be answered again, and
+     * leaves an open sign-in as it is.
+     */
     @Suppress("TooGenericExceptionCaught")
     internal fun declineAuthorization(call: AIToolCallPart) {
         val authorizer = authorizer ?: return
-        if (authorizationState(call).isDeclining) return
-        authorizationStates[call.id] = AIToolAuthorizationState(isDeclining = true)
+        val authorization = signIn(call) ?: return
+        val entry = signInEntry(call.id, authorization)
+        val current = authorizationState(call)
+        if (current.isDeclining) return
+        signIns[call.id] = SignInEntry(
+            authorization = authorization,
+            state = (entry?.state ?: AIToolAuthorizationState()).copy(isDeclining = true, declineFailed = false),
+            attempt = entry?.attempt,
+        )
         scope.launch {
             try {
                 authorizer.decline(call)
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Exception) {
-                authorizationStates[call.id] = AIToolAuthorizationState(declineFailed = true)
+                val failed = signInEntry(call.id, authorization) ?: return@launch
+                signIns[call.id] = failed.copy(state = failed.state.copy(isDeclining = false, declineFailed = true))
             }
         }
     }
+
+    private fun signInEntry(callId: String, authorization: AIToolAuthorization): SignInEntry? =
+        signIns[callId]?.takeIf { it.authorization.isSameSignIn(authorization) }
+
+    /** Applies the end of a connect, unless the sign-in started over or another connect took its place. */
+    private fun updateSignIn(callId: String, attempt: Any, update: (AIToolAuthorizationState) -> AIToolAuthorizationState) {
+        val entry = signIns[callId]?.takeIf { it.attempt === attempt } ?: return
+        signIns[callId] = entry.copy(state = update(entry.state), attempt = null)
+    }
+
+    /**
+     * Where the person's sign-in for one call is, for the sign-in it was given for.
+     *
+     * @param attempt The connect under way, compared by identity, so only it ends it.
+     */
+    private data class SignInEntry(
+        val authorization: AIToolAuthorization,
+        val state: AIToolAuthorizationState,
+        val attempt: Any? = null,
+    )
 }
+
+/** Whether [other] is the same sign-in, not one your backend issued again with a new page or token. */
+private fun AIToolAuthorization.isSameSignIn(other: AIToolAuthorization): Boolean =
+    url == other.url && handoffToken == other.handoffToken
+
+/** Whether the sign-in is past its expiry. */
+internal fun AIToolAuthorization.isExpired(now: Long = System.currentTimeMillis()): Boolean =
+    expiresAt?.let { now >= it.time } ?: false
+
+/** How long a sign-in that came back connected keeps saying so while your backend updates the step. */
+internal const val CONNECTED_SETTLE_MILLIS: Long = 30_000L
 
 /**
  * Where the person's answer to a question is.
