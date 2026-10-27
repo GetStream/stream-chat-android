@@ -100,9 +100,9 @@ private const val SYNC_MAX_CIDS = 100
 private const val SYNC_EVENT_REPLAY_MAX_COUNT = 250
 
 /**
- * Page size of the `queryChannels` fallback. The API caps `queryChannels` at 30 channels per
- * request, so watched cids are refreshed in chunks of this size rather than in [SYNC_MAX_CIDS]
- * batches like `/sync` is.
+ * Page size of the `queryChannels` requests that refresh channels by cid. The API caps
+ * `queryChannels` at 30 channels per request, so cids are refreshed in chunks of this size rather
+ * than in [SYNC_MAX_CIDS] batches like `/sync` is.
  */
 private const val QUERY_CHANNELS_MAX_LIMIT = 30
 
@@ -772,6 +772,12 @@ internal class SyncManager(
         }
     }
 
+    /**
+     * Refreshes up to [QUERY_CHANNELS_MAX_LIMIT] active channels that [cidsToExclude] does not cover, with
+     * one `queryChannels` request. Open channels, see [StateRegistry.getTrackedWatchedChannels], are picked
+     * first. Channels the response does not return are watched one by one. If the request fails, only the
+     * open channels among them are watched.
+     */
     private suspend fun updateActiveChannels(
         recoverAll: Boolean,
         cidsToExclude: Set<String>,
@@ -780,44 +786,57 @@ internal class SyncManager(
         logger.d {
             "[updateActiveChannels] recoverAll: $recoverAll, online: $online, cidsToExclude.size: ${cidsToExclude.size}"
         }
+        val openCids = stateRegistry.getTrackedWatchedChannels()
         val missingChannelIds: List<ChannelId> = stateRegistry.getActiveChannelStates()
             .filter { (id, state) -> (state.recoveryNeeded || recoverAll) && id.cid !in cidsToExclude }
             .keys
-            .take(n = 30)
+            .sortedBy { it.cid !in openCids }
+            .take(QUERY_CHANNELS_MAX_LIMIT)
 
         logger.v { "[updateActiveChannels] missingCids.size: ${missingChannelIds.size}" }
         if (missingChannelIds.isEmpty() || !online) {
             return
         }
-        val missingCids = missingChannelIds.map(ChannelId::cid)
-        val filter = Filters.`in`("cid", missingCids)
-        val request = QueryChannelsRequest(filter, offset = 0, limit = 30)
+        val request = QueryChannelsRequest(
+            filter = Filters.`in`("cid", missingChannelIds.map(ChannelId::cid)),
+            offset = 0,
+            limit = missingChannelIds.size,
+        ).apply { presence = userPresence }
         logger.v { "[updateActiveChannels] request: $request" }
-        chatClient.queryChannelsInternal(request)
-            .await()
-            .onError {
-                logger.e { "[updateActiveChannels] request failed: $it" }
+        when (val result = chatClient.queryChannelsInternal(request).await()) {
+            is Result.Success -> updateFoundActiveChannels(missingChannelIds, result.value.channels)
+            is Result.Failure -> {
+                logger.e { "[updateActiveChannels] request failed: ${result.value}" }
+                rewatchOpenChannels(missingChannelIds, openCids)
             }
-            .onSuccessSuspend { queryResult ->
-                val foundChannels = queryResult.channels
-                logger.v { "[updateActiveChannels] request completed; foundChannels.size: ${foundChannels.size}" }
+        }
+    }
 
-                foundChannels.forEach { channel ->
-                    ChannelId.fromTypeAndId(channel.type, channel.id)
-                        ?.let(logicRegistry::channel)
-                        ?.updateDataForChannel(channel, channel.messages.size)
-                }
-                mutableGlobalState.updateChannelDrafts(foundChannels)
-                repos.storeStateForChannels(foundChannels)
-                val foundCids = foundChannels.mapTo(mutableSetOf(), Channel::cid)
-                val stillMissingChannelIds = missingChannelIds.filterNot { it.cid in foundCids }
-                logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingChannelIds.size}" }
+    private suspend fun updateFoundActiveChannels(requestedIds: List<ChannelId>, foundChannels: List<Channel>) {
+        logger.v { "[updateActiveChannels] request completed; foundChannels.size: ${foundChannels.size}" }
+        foundChannels.forEach { channel ->
+            ChannelId.fromTypeAndId(channel.type, channel.id)
+                ?.let(logicRegistry::channel)
+                ?.updateDataForChannel(channel, channel.messages.size)
+        }
+        mutableGlobalState.updateChannelDrafts(foundChannels)
+        repos.storeStateForChannels(foundChannels)
+        val foundCids = foundChannels.mapTo(mutableSetOf(), Channel::cid)
+        val stillMissingChannelIds = requestedIds.filterNot { it.cid in foundCids }
+        logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingChannelIds.size}" }
 
-                // create channels that are not present on the API
-                stillMissingChannelIds.forEach { id ->
-                    logicRegistry.channel(id).watch(userPresence = userPresence)
-                }
-            }
+        // create channels that are not present on the API
+        stillMissingChannelIds.forEach { id ->
+            logicRegistry.channel(id).watch(userPresence = userPresence)
+        }
+    }
+
+    private suspend fun rewatchOpenChannels(channelIds: List<ChannelId>, openCids: Set<String>) {
+        val openChannelIds = channelIds.filter { it.cid in openCids }
+        logger.d { "[rewatchOpenChannels] openChannelIds.size: ${openChannelIds.size}" }
+        openChannelIds.forEach { id ->
+            logicRegistry.channel(id).watch(userPresence = userPresence)
+        }
     }
 
     /**

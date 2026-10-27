@@ -1193,6 +1193,127 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `on reconnect, up to 30 active channels are queried in one request with presence`() = runTest(testDispatcher) {
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds)) }
+        stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds)
+
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient, times(1)).queryChannelsInternal(capture())
+            assertEquals(channelIds.take(30).map(ChannelId::cid).toSet(), (firstValue.filter as InFilterObject).values)
+            assertEquals(30, firstValue.limit)
+            assertEquals(true, firstValue.presence)
+        }
+    }
+
+    @Test
+    fun `on reconnect, open active channels are queried first, also past the cap`() = runTest(testDispatcher) {
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        val openId = channelIds.last()
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds)) }
+        stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds, openCids = setOf(openId.cid))
+
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient, times(1)).queryChannelsInternal(capture())
+            assertEquals(
+                (listOf(openId) + channelIds.take(29)).map(ChannelId::cid).toSet(),
+                (firstValue.filter as InFilterObject).values,
+            )
+        }
+    }
+
+    @Test
+    fun `on reconnect, only the active channels the server does not return are watched`() = runTest(testDispatcher) {
+        val channelIds = (1..20).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds.take(10))) }
+        val logics = stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds)
+
+        channelIds.take(10).forEach { verify(logics.getValue(it.cid), never()).watch(any(), any()) }
+        channelIds.drop(10).forEach { verify(logics.getValue(it.cid)).watch(userPresence = true) }
+    }
+
+    @Test
+    fun `on reconnect, a failed request watches only the open channels it asked for`() = runTest(testDispatcher) {
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        val openIds = listOf(channelIds[4], channelIds[34])
+        answerQueryWith { Result.Failure(Error.GenericError("rejected")) }
+        val logics = stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds, openCids = openIds.map(ChannelId::cid).toSet())
+
+        verify(chatClient, times(1)).queryChannelsInternal(any<QueryChannelsRequest>())
+        channelIds.forEach { id ->
+            if (id in openIds) {
+                verify(logics.getValue(id.cid)).watch(userPresence = true)
+            } else {
+                verify(logics.getValue(id.cid), never()).watch(any(), any())
+            }
+        }
+    }
+
+    /** Answers `queryChannels` with [respond], given the channel ids the request asks for. */
+    private fun answerQueryWith(respond: (List<ChannelId>) -> Result<List<Channel>>) {
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())).thenAnswer { invocation ->
+            val request = invocation.getArgument<QueryChannelsRequest>(0)
+            val requestedIds = (request.filter as InFilterObject).values
+                .map { cid -> ChannelId.fromCid(cid as String)!! }
+            TestCall(respond(requestedIds).map { QueryChannelsResult(it, predefinedFilter = null) })
+        }
+    }
+
+    private fun channelsFor(ids: List<ChannelId>): List<Channel> = ids.map { randomChannel(type = it.type, id = it.id) }
+
+    /** Stubs one [ChannelLogic] per id in [channelIds] and returns them by cid. */
+    private fun stubChannelLogics(channelIds: List<ChannelId>): Map<String, ChannelLogic> {
+        val logics = channelIds.associate { id ->
+            id.cid to mock<ChannelLogic> {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel(id = id.id))
+            }
+        }
+        // The value class reaches Mockito unboxed, as its cid.
+        whenever(logicRegistry.channel(any<ChannelId>())).thenAnswer { logics.getValue(it.arguments[0] as String) }
+        return logics
+    }
+
+    /** Connects again with [channelIds] as recoverable active channel states, and no channel queries. */
+    private suspend fun TestScope.reconnectWithActiveChannels(
+        channelIds: List<ChannelId>,
+        openCids: Set<String> = emptySet(),
+    ) {
+        val createdAt = localDate()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        whenever(repositoryFacade.selectSyncState(user.id)) doReturn SyncState(
+            userId = user.id,
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
+            TestCall(Result.Success(emptyList<ChatEvent>()).synced())
+        whenever(clientState.isOnline) doReturn true
+        val recoverableState: ChannelState = mock { on(it.recoveryNeeded) doReturn true }
+        whenever(stateRegistry.getActiveChannelStates()) doReturn channelIds.associateWith { recoverableState }
+        whenever(stateRegistry.getTrackedWatchedChannels()) doReturn openCids
+
+        buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(
+            ConnectedEvent(
+                type = "type",
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt,
+                connectionId = randomString(),
+                me = user,
+            ),
+        )
+    }
+
+    @Test
     fun `when isAutomaticSyncOnReconnectEnabled is false, getSyncHistory should not be called on connected event`() =
         runTest(testDispatcher) {
             /* Given */
