@@ -16,7 +16,11 @@
 
 package io.getstream.chat.android.ai.compose.parts
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import io.getstream.chat.android.ai.compose.ui.component.AIToolApprovalColors
 import io.getstream.chat.android.ai.compose.ui.component.AIToolApprover
+import io.getstream.chat.android.ai.compose.ui.component.AIToolAuthorizationContentParams
 import io.getstream.chat.android.ai.compose.ui.component.AIToolAuthorizationState
 import io.getstream.chat.android.ai.compose.ui.component.AIToolAuthorizer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -223,4 +227,43 @@ internal class AIToolAuthorizationTest {
 
     private fun approver(userId: String, authorizer: AIToolAuthorizer?) =
         AIToolApprover(userId, "android-1", TestScope(UnconfinedTestDispatcher()), authorizer) { _, _ -> }
+
+    @Test
+    fun `the handoff token stays out of what is printed`() {
+        val authorization = AIToolAuthorization(
+            provider = "linear",
+            title = "Connect Linear",
+            url = "https://router.example/launch/a1",
+            handoffToken = "tok_secret",
+        )
+        val call = AIToolCallPart(
+            id = "call-1",
+            name = "linear__list_tools",
+            status = AIToolCallPart.Status.AwaitingAuthorization,
+            authorization = authorization,
+        )
+        val params = AIToolAuthorizationContentParams(
+            call = call,
+            authorization = authorization,
+            state = AIToolAuthorizationState(),
+            connect = {},
+            decline = {},
+            textStyle = TextStyle.Default,
+            colors = AIToolApprovalColors(
+                title = Color.Black,
+                message = Color.Black,
+                background = Color.White,
+                border = Color.Black,
+                accent = Color.Black,
+                failure = Color.Black,
+            ),
+        )
+
+        listOf(authorization.toString(), call.toString(), params.toString()).forEach { printed ->
+            assertFalse(printed, "tok_secret" in printed)
+            assertTrue(printed, "handoffToken=<redacted>" in printed)
+            assertTrue(printed, "url=https://router.example/launch/a1," in printed)
+        }
+        assertTrue("handoffToken=null" in authorization.copy(handoffToken = null).toString())
+    }
 }

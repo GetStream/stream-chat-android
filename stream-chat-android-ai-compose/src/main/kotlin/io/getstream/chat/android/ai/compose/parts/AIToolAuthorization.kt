@@ -55,6 +55,14 @@ public data class AIToolAuthorization(
     val status: Status? = null,
 ) {
 
+    /**
+     * The sign-in with its [handoffToken] masked, so logging it, or a part that carries it, doesn't
+     * leak a live token.
+     */
+    override fun toString(): String = "AIToolAuthorization(kind=$kind, provider=$provider, " +
+        "providerName=$providerName, title=$title, message=$message, url=$url, " +
+        "handoffToken=${handoffToken?.let { "<redacted>" }}, expiresAt=$expiresAt, status=$status)"
+
     /** The page to open in a browser, which is [url] with the [handoffToken] in its fragment. */
     public val launchUrl: String
         get() {
