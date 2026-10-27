@@ -2201,6 +2201,7 @@ internal class SyncManagerTest {
         buildSyncManager().onEvent(healthEvent())
 
         val order = inOrder(repositoryFacade, chatClient)
+        order.verify(repositoryFacade).insertChannel(placeholder.copy(id = "!members-a, b"))
         order.verify(repositoryFacade).replacePlaceholderChannel(placeholder.cid, "messaging:!members-a, b")
         order.verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
     }
@@ -2218,6 +2219,27 @@ internal class SyncManagerTest {
         verify(chatClient).createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())
         verify(repositoryFacade, never()).replacePlaceholderChannel(any(), any())
     }
+
+    @Test
+    fun `messages of a channel created with its own id are sent once the create returns it`() =
+        runTest(testDispatcher) {
+            val channel = randomChannel(type = "messaging", createdAt = localDate(), syncStatus = SyncStatus.SYNC_NEEDED)
+            whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+            whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+            whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
+                TestCall(Result.Success(channel))
+            val message = localRandomMessage().copy(cid = channel.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            val channelClient: ChannelClient = mock {
+                on(it.sendMessage(message)) doReturn message.asCall()
+            }
+            whenever(chatClient.channel(channel.cid)) doReturn channelClient
+
+            buildSyncManager().onEvent(healthEvent())
+
+            verify(channelClient).sendMessage(message)
+        }
 
     @Test
     fun `messages wait when the create falls back to the stored placeholder`() = runTest(testDispatcher) {

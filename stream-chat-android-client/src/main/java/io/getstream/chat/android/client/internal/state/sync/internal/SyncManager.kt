@@ -928,14 +928,16 @@ internal class SyncManager(
                     extraData = channel.extraData,
                 )
                 val isPlaceholder = channel.isLocalPlaceholder()
-                // The create stores and replaces the placeholder regenerated from the members, so one stored with
-                // another member order is renamed first, or it would be left behind next to the regenerated one
                 val retriedCid = if (isPlaceholder) {
-                    "${channel.type}:${generateChannelIdIfNeeded("", params.memberIds)}".also { regeneratedCid ->
-                        if (regeneratedCid != cid) repos.replacePlaceholderChannel(cid, regeneratedCid)
-                    }
+                    "${channel.type}:${generateChannelIdIfNeeded("", params.memberIds)}"
                 } else {
                     cid
+                }
+                if (retriedCid != cid) {
+                    // The create stores and replaces the placeholder regenerated from the members, so one stored with
+                    // another member order is renamed first, or it would be left behind next to the regenerated one
+                    repos.insertChannel(channel.copy(id = retriedCid.substringAfter(':')))
+                    repos.replacePlaceholderChannel(cid, retriedCid)
                 }
                 // The server rejects the placeholder id, so it resolves the distinct channel from the members
                 val channelId = if (isPlaceholder) "" else channel.id
