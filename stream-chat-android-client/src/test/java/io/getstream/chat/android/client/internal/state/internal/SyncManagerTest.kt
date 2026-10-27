@@ -2229,6 +2229,65 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `messages of a channel the server rejects for good are sent so they fail where the user sees them`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            givenChannelRetryFails(placeholder, statusCode = 400)
+            val message = localRandomMessage().copy(cid = placeholder.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            val channelClient: ChannelClient = mock {
+                on(it.sendMessage(message)) doReturn message.asCall()
+            }
+            whenever(chatClient.channel(message.cid)) doReturn channelClient
+
+            buildSyncManager().onEvent(healthEvent())
+
+            verify(channelClient).sendMessage(message)
+        }
+
+    @Test
+    fun `an outdated message stops waiting for its channel and is removed`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(cid = "messaging:!members-a, b", syncStatus = SyncStatus.SYNC_NEEDED)
+        delay(7_000)
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        givenChannelRetryFails(placeholder, statusCode = 429)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        buildSyncManager().onEvent(healthEvent())
+
+        verify(repositoryFacade).deleteChannelMessage(message)
+    }
+
+    @Test
+    fun `messages awaiting attachments wait for their channel too`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        givenChannelRetryFails(placeholder, statusCode = 429)
+        val message = localRandomMessage().copy(
+            cid = placeholder.cid,
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+            attachments = emptyList(),
+        )
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+            listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        buildSyncManager().onEvent(healthEvent())
+
+        verify(chatClient, never()).sendMessage(any(), any(), any(), any())
+        verify(repositoryFacade, never()).deleteChannelMessage(any())
+    }
+
+    private suspend fun givenChannelRetryFails(channel: Channel, statusCode: Int) {
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+        whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+        whenever(chatClient.createChannel(eq(channel.type), eq(""), any<CreateChannelParams>())) doReturn TestCall(
+            Result.Failure(Error.NetworkError(message = "rejected", serverErrorCode = 4, statusCode = statusCode)),
+        )
+    }
+
+    @Test
     fun `retrying a channel with a regular id sends that id`() = runTest(testDispatcher) {
         val channel = randomChannel(type = "messaging", createdAt = localDate(), syncStatus = SyncStatus.SYNC_NEEDED)
         whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)

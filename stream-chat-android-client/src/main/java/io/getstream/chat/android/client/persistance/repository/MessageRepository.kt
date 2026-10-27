@@ -222,7 +222,7 @@ public interface MessageRepository {
     /**
      * Returns all messages for [cid] that are local-only: syncStatus is one of
      * SYNC_NEEDED, IN_PROGRESS, AWAITING_ATTACHMENTS, FAILED_PERMANENTLY, or type is
-     * "ephemeral" or "error", including messages whose write to storage is still pending.
+     * "ephemeral" or "error", including just-sent messages not yet written to storage.
      * Used by the preservation mechanism before a server response replaces the active message window.
      *
      * @param cid The channel ID (format "type:id").
