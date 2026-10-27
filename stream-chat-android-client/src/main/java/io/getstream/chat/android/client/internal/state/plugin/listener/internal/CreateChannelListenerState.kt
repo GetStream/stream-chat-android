@@ -89,7 +89,7 @@ private suspend fun evictPlaceholderChannel(
         .filter { placeholderCid in it.cids() }
         .forEach { queryChannelsLogic ->
             queryChannelsLogic.removeChannel(placeholderCid)
-            // An existing distinct channel brings no event that would add it to the list
-            queryChannelsLogic.addChannelFromEvent(serverChannel)
+            // An existing distinct channel brings no event that would add it to the list, unless the user hid it
+            if (serverChannel.hidden != true) queryChannelsLogic.addChannelFromEvent(serverChannel)
         }
 }

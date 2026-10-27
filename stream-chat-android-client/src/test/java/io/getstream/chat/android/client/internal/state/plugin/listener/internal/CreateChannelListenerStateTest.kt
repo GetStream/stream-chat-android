@@ -67,7 +67,7 @@ internal class CreateChannelListenerStateTest {
 
     @Test
     fun `the server creating the channel drops the placeholder from state`() = runTest {
-        val serverChannel = randomChannel(type = "messaging", id = "!members-hash")
+        val serverChannel = randomChannel(type = "messaging", id = "!members-hash", hidden = false)
 
         sut.onCreateChannelResult("messaging", "", listOf("b", "a"), Result.Success(serverChannel))
 
@@ -77,6 +77,16 @@ internal class CreateChannelListenerStateTest {
         verify(queryChannelsLogic).addChannelFromEvent(serverChannel)
         verify(otherQueryChannelsLogic, never()).removeChannel(any())
         verify(otherQueryChannelsLogic, never()).addChannelFromEvent(any())
+    }
+
+    @Test
+    fun `a server channel the user hid is not added in place of the placeholder`() = runTest {
+        val serverChannel = randomChannel(type = "messaging", id = "!members-hash", hidden = true)
+
+        sut.onCreateChannelResult("messaging", "", listOf("b", "a"), Result.Success(serverChannel))
+
+        verify(queryChannelsLogic).removeChannel("messaging:!members-a, b")
+        verify(queryChannelsLogic, never()).addChannelFromEvent(any())
     }
 
     @Test

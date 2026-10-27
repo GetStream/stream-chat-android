@@ -155,6 +155,7 @@ internal class SyncManagerTest {
             runBlocking {
                 on(it.selectChannelCidsBySyncNeeded()) doReturn emptyList()
                 on(it.selectChannelCidsBySyncStatus(any())) doReturn emptyList()
+                on(it.selectChannels(any<List<String>>())) doReturn emptyList()
                 on(it.selectMessageIdsBySyncState(any())) doReturn emptyList()
                 on(it.selectReactionIdsBySyncStatus(any())) doReturn emptyList()
             }
@@ -171,7 +172,8 @@ internal class SyncManagerTest {
             syncManager.onEvent(randomConnectedEvent())
 
             /* Then */
-            verify(repositoryFacade).selectChannelCidsBySyncNeeded()
+            // Also read before the retries, to record the stored placeholders
+            verify(repositoryFacade, times(2)).selectChannelCidsBySyncNeeded()
             verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
             verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
             verify(repositoryFacade).selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
@@ -792,6 +794,29 @@ internal class SyncManagerTest {
         }
         verify(logicRegistry).channel(ChannelId.fromCid(real)!!)
         verify(logicRegistry, never()).channel(ChannelId.fromCid(placeholder)!!)
+    }
+
+    @Test
+    fun `a connect records the placeholders an earlier session stored`() = runTest(testDispatcher) {
+        val singleMember = randomChannel(
+            id = "!members-bob@x.com",
+            type = "messaging",
+            members = listOf(randomMember(user = randomUser(id = "bob@x.com"))),
+        )
+        val distinct = randomChannel(
+            id = "!members-${randomString()}",
+            type = "messaging",
+            members = listOf(randomMember(user = randomUser(id = "bob@x.com"))),
+        )
+        whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.FAILED_PERMANENTLY)) doReturn
+            listOf(singleMember.cid, distinct.cid)
+        whenever(repositoryFacade.selectChannels(listOf(singleMember.cid, distinct.cid))) doReturn
+            listOf(singleMember, distinct)
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(logicRegistry).markPlaceholderChannel(singleMember.cid)
+        verify(logicRegistry, never()).markPlaceholderChannel(distinct.cid)
     }
 
     /**

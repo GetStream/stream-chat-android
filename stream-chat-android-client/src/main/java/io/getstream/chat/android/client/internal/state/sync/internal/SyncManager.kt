@@ -280,6 +280,7 @@ internal class SyncManager(
         state.value = State.Syncing
         val online = clientState.isOnline
         logger.v { "[onConnectionEstablished] online: $online" }
+        markStoredPlaceholders()
         retryFailedEntities()
 
         if (syncState.value == null && syncState.value?.userId != userId) {
@@ -336,6 +337,26 @@ internal class SyncManager(
         }
         return mutex.withLock {
             performSync(cids, watch)
+        }
+    }
+
+    /**
+     * Records the local placeholders stored by an earlier session, so they are left out of what is synced even when
+     * their id does not give them away.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    private suspend fun markStoredPlaceholders() {
+        try {
+            val pendingCids = repos.selectChannelCidsBySyncNeeded() +
+                repos.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS) +
+                repos.selectChannelCidsBySyncStatus(SyncStatus.FAILED_PERMANENTLY)
+            if (pendingCids.isEmpty()) return
+            repos.selectChannels(pendingCids)
+                .filter { it.isLocalPlaceholder() }
+                .forEach { logicRegistry.markPlaceholderChannel(it.cid) }
+        } catch (e: Throwable) {
+            // The retries and the sync must still run; a placeholder missed here is still caught by its id
+            logger.e(e) { "[markStoredPlaceholders] failed: $e" }
         }
     }
 
