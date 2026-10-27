@@ -228,6 +228,8 @@ public interface ChatAiComponentFactory {
             connect = params.connect,
             decline = params.decline,
             modifier = params.modifier,
+            textStyle = params.textStyle,
+            colors = params.colors,
         )
     }
 }

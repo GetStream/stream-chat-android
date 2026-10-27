@@ -19,12 +19,16 @@ package io.getstream.chat.android.ai.compose.ui.component
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.ai.compose.parts.AIMessagePart
 import io.getstream.chat.android.ai.compose.parts.AIToolAuthorization
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import kotlinx.coroutines.CompletableDeferred
@@ -109,5 +113,49 @@ internal class AIToolAuthorizationPromptTest {
 
         rule.onNodeWithText("Sign in to linear for call-1").assertExists()
         rule.onNodeWithText("Connect").assertDoesNotExist()
+    }
+
+    @Test
+    fun `a reply's sign-in gets the style and palette of its question`() {
+        val textStyle = TextStyle(fontSize = 19.sp)
+        val colors = AIToolApprovalColors(
+            title = Color.Red,
+            message = Color.Green,
+            background = Color.Blue,
+            border = Color.Cyan,
+            accent = Color.Magenta,
+            failure = Color.Yellow,
+        )
+        val seen = mutableListOf<AIToolAuthorizationContentParams>()
+        val factory = object : ChatAiComponentFactory {
+            @Composable
+            override fun AIToolAuthorizationContent(params: AIToolAuthorizationContentParams) {
+                seen += params
+            }
+        }
+        val approver = approver(AIToolAuthorizer(connect = { _, _ -> true }, decline = {}))
+        rule.setContent {
+            CompositionLocalProvider(LocalChatAiComponentFactory provides factory) {
+                AIMessagePartItem(
+                    part = AIMessagePart.from(
+                        type = "ai_tool_call",
+                        payload = mapOf(
+                            "id" to "call-1",
+                            "status" to "awaiting_authorization",
+                            "target_user_id" to "u_1",
+                            "authorization" to mapOf("title" to "Connect Linear", "url" to "https://router.example/launch/a1"),
+                        ),
+                    )!!,
+                    approver = approver,
+                    textStyle = textStyle,
+                    toolApprovalColors = colors,
+                )
+            }
+        }
+
+        rule.runOnIdle {
+            assertEquals(textStyle, seen.last().textStyle)
+            assertEquals(colors, seen.last().colors)
+        }
     }
 }

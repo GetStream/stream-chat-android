@@ -127,13 +127,18 @@ public data class AIToolAuthorizationState(
  * @param call The tool call.
  * @param approver Who answers on this device, with the [AIToolAuthorizer] the sign-in needs.
  * @param modifier The modifier to apply to the sign-in.
+ * @param textStyle The style of the sign-in's question, handed to the default content.
+ * @param colors The palette of the sign-in, handed to the default content.
  * @param content Shows the sign-in. Defaults to [ChatAiComponentFactory.AIToolAuthorizationContent].
  */
+@Suppress("LongParameterList") // The sign-in, its look, and its content.
 @Composable
 public fun AIToolAuthorizationPrompt(
     call: AIToolCallPart,
     approver: AIToolApprover,
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    colors: AIToolApprovalColors = AIToolApprovalDefaults.colors(),
     content: @Composable (
         authorization: AIToolAuthorization,
         state: AIToolAuthorizationState,
@@ -148,6 +153,8 @@ public fun AIToolAuthorizationPrompt(
                     state = state,
                     connect = connect,
                     decline = decline,
+                    textStyle = textStyle,
+                    colors = colors,
                 ),
             )
         }

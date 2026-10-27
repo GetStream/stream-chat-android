@@ -20,7 +20,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams.RenderingMode
@@ -100,6 +104,40 @@ internal class AIToolAuthorizationCardTest : PaparazziTest {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 steps.forEach { step -> AIMessagePartItem(part = step, approver = approver) }
             }
+        }
+    }
+
+    @Test
+    fun themed_steps() {
+        val approver = AIToolApprover(
+            userId = "u_1",
+            clientId = "android-1",
+            scope = TestScope(UnconfinedTestDispatcher()),
+            authorizer = AIToolAuthorizer(connect = { _, _ -> true }, decline = {}),
+        ) { _, _ -> }
+        val step = AIMessagePart.fromJson(
+            "ai_tool_call",
+            """
+                {"id":"call-1","display_title":"Using Linear","status":"awaiting_authorization","target_user_id":"u_1",
+                "authorization":{"provider":"linear","title":"Connect Linear","url":"https://router.example/launch/a1",
+                "message":"You sign in at Linear. The agent can then read and update your issues."}}
+            """.trimIndent(),
+        )!!
+        snapshot {
+            AIMessagePartItem(
+                part = step,
+                approver = approver,
+                modifier = Modifier.padding(16.dp),
+                textStyle = TextStyle(fontSize = 18.sp, fontFamily = FontFamily.Serif),
+                toolApprovalColors = AIToolApprovalColors(
+                    title = Color(0xFF3B0764),
+                    message = Color(0xFF6B21A8),
+                    background = Color(0xFFF5F3FF),
+                    border = Color(0xFFC4B5FD),
+                    accent = Color(0xFF7C3AED),
+                    failure = Color(0xFFB91C1C),
+                ),
+            )
         }
     }
 

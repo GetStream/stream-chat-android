@@ -47,7 +47,7 @@ import io.getstream.chat.android.ai.compose.parts.AIMessagePart
  * @param textStyle The style of the steps.
  * @param reasoningColors The palette of reasoning steps.
  * @param toolCallColors The palette of tool calls and of the placeholder for unknown steps.
- * @param toolApprovalColors The palette of calls' questions.
+ * @param toolApprovalColors The palette of calls' questions and sign-ins.
  */
 @Suppress("LongParameterList") // One palette per kind of step.
 @Composable
@@ -118,7 +118,7 @@ public fun AIMessageParts(
  * @param textStyle The style of the step.
  * @param reasoningColors The palette of a reasoning step.
  * @param toolCallColors The palette of a tool call and of the placeholder for an unknown step.
- * @param toolApprovalColors The palette of a call's question.
+ * @param toolApprovalColors The palette of a call's question and of its sign-in.
  */
 @Suppress("LongParameterList") // One palette per kind of step.
 @Composable
@@ -152,7 +152,12 @@ public fun AIMessagePartItem(
                         colors = toolApprovalColors,
                     )
                 }
-                AIToolAuthorizationPrompt(call = call, approver = approver)
+                AIToolAuthorizationPrompt(
+                    call = call,
+                    approver = approver,
+                    textStyle = textStyle,
+                    colors = toolApprovalColors,
+                )
             }
         }
         else -> UnsupportedPart(textStyle = textStyle, colors = toolCallColors, modifier = modifier)

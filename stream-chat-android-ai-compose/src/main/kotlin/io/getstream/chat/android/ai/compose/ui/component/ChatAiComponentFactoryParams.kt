@@ -19,6 +19,7 @@ package io.getstream.chat.android.ai.compose.ui.component
 import android.net.Uri
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
@@ -213,13 +214,18 @@ public data class AIConversationAttachmentParams(
  * @param state Where the person's answer is.
  * @param connect Hands the sign-in page to the approver's [AIToolAuthorizer], which opens it.
  * @param decline Sends the person's "not now".
+ * @param textStyle The style of the sign-in's question, the one the tool call's question uses.
+ * @param colors The palette of the sign-in, the one the tool call's question uses.
  * @param modifier The modifier to apply.
  */
+@Suppress("LongParameterList") // The sign-in, its two answers, and its look.
 public data class AIToolAuthorizationContentParams(
     val call: AIToolCallPart,
     val authorization: AIToolAuthorization,
     val state: AIToolAuthorizationState,
     val connect: () -> Unit,
     val decline: () -> Unit,
+    val textStyle: TextStyle,
+    val colors: AIToolApprovalColors,
     val modifier: Modifier = Modifier,
 )
