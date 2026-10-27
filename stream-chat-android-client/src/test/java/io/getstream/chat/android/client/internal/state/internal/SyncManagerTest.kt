@@ -2257,7 +2257,7 @@ internal class SyncManagerTest {
             whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
                 TestCall(Result.Success(randomChannel(id = "!members-${randomString()}", type = "messaging")))
 
-            buildSyncManager().onEvent(healthEvent())
+            buildSyncManager().onEvent(randomConnectedEvent())
 
             verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
             verify(repositoryFacade, never()).replacePlaceholderChannel(any(), any())
@@ -2271,7 +2271,7 @@ internal class SyncManagerTest {
         whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
             TestCall(Result.Success(randomChannel(id = "!members-${randomString()}", type = "messaging")))
 
-        buildSyncManager().onEvent(healthEvent())
+        buildSyncManager().onEvent(randomConnectedEvent())
 
         val order = inOrder(repositoryFacade, chatClient)
         order.verify(repositoryFacade).insertChannel(placeholder.copy(id = "!members-a, b"))
@@ -2287,7 +2287,7 @@ internal class SyncManagerTest {
         whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
             TestCall(Result.Success(channel))
 
-        buildSyncManager().onEvent(healthEvent())
+        buildSyncManager().onEvent(randomConnectedEvent())
 
         verify(chatClient).createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())
         verify(repositoryFacade, never()).replacePlaceholderChannel(any(), any())
@@ -2309,7 +2309,7 @@ internal class SyncManagerTest {
             }
             whenever(chatClient.channel(channel.cid)) doReturn channelClient
 
-            buildSyncManager().onEvent(healthEvent())
+            buildSyncManager().onEvent(randomConnectedEvent())
 
             verify(channelClient).sendMessage(message)
         }
@@ -2325,7 +2325,7 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
         whenever(repositoryFacade.selectMessage(message.id)) doReturn message
 
-        buildSyncManager().onEvent(healthEvent())
+        buildSyncManager().onEvent(randomConnectedEvent())
 
         verify(chatClient, never()).channel(placeholder.cid)
     }
@@ -2349,7 +2349,7 @@ internal class SyncManagerTest {
         }
         whenever(chatClient.channel(other.cid)) doReturn channelClient
 
-        buildSyncManager().onEvent(healthEvent())
+        buildSyncManager().onEvent(randomConnectedEvent())
 
         verify(chatClient, never()).channel(placeholder.cid)
         verify(channelClient).sendMessage(other)
@@ -2368,7 +2368,7 @@ internal class SyncManagerTest {
             }
             whenever(chatClient.channel(message.cid)) doReturn channelClient
 
-            buildSyncManager().onEvent(healthEvent())
+            buildSyncManager().onEvent(randomConnectedEvent())
 
             verify(channelClient).sendMessage(message)
         }
@@ -2382,7 +2382,7 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
         whenever(repositoryFacade.selectMessage(message.id)) doReturn message
 
-        buildSyncManager().onEvent(healthEvent())
+        buildSyncManager().onEvent(randomConnectedEvent())
 
         verify(repositoryFacade).deleteChannelMessage(message)
     }
@@ -2400,7 +2400,7 @@ internal class SyncManagerTest {
             listOf(message.id)
         whenever(repositoryFacade.selectMessage(message.id)) doReturn message
 
-        buildSyncManager().onEvent(healthEvent())
+        buildSyncManager().onEvent(randomConnectedEvent())
 
         verify(chatClient, never()).sendMessage(any(), any(), any(), any())
         verify(repositoryFacade, never()).deleteChannelMessage(any())
@@ -2422,7 +2422,7 @@ internal class SyncManagerTest {
         whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
             TestCall(Result.Success(channel))
 
-        buildSyncManager().onEvent(healthEvent())
+        buildSyncManager().onEvent(randomConnectedEvent())
 
         verify(chatClient).createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())
         verify(repositoryFacade, never()).deleteChannel(channel.cid)
@@ -2437,15 +2437,6 @@ internal class SyncManagerTest {
         createdAt = localDate(),
         syncStatus = SyncStatus.SYNC_NEEDED,
     )
-
-    private fun TestScope.healthEvent() = localDate().let { createdAt ->
-        HealthEvent(
-            type = EventType.HEALTH_CHECK,
-            createdAt = createdAt,
-            rawCreatedAt = streamDateFormatter.format(createdAt),
-            connectionId = randomString(),
-        )
-    }
 
     private fun TestScope.buildSyncManager(
         isAutomaticSyncOnReconnectEnabled: Boolean = true,
