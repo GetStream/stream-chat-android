@@ -16,12 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
-import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
-import io.getstream.chat.android.network.models.PrivacySettingsResponse
-import io.getstream.chat.android.network.models.ReadReceiptsResponse
-import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -144,102 +138,4 @@ internal object UserDtoTestData {
             name = "username",
             image = "image",
         )
-
-    @Language("JSON")
-    val upstreamJsonWithoutExtraData =
-        """{
-            "banned": true,
-            "id": "userId",
-            "name": "username",
-            "image": "image",
-            "invisible": false,
-            "language": "language",
-            "role": "owner",
-            "devices": [],
-            "teams": []
-         }""".withoutWhitespace()
-
-    val upstreamUserWithoutExtraData = UpstreamUserDto(
-        id = "userId",
-        role = "owner",
-        name = "username",
-        image = "image",
-        language = "language",
-        invisible = false,
-        privacy_settings = null,
-        banned = true,
-        devices = emptyList(),
-        teams = emptyList(),
-        teams_role = null,
-        extraData = emptyMap(),
-    )
-
-    @Language("JSON")
-    val upstreamJson =
-        """{
-            "banned": false,
-            "id": "userId",
-            "name": "username",
-            "image": "image",
-            "invisible": false,
-            "privacy_settings": {
-              "typing_indicators": {
-                "enabled": false
-              },
-              "read_receipts": {
-                "enabled": false
-              },
-              "delivery_receipts": {
-                "enabled": false
-              }
-            },
-            "language": "language",
-            "role": "owner",
-            "devices": [
-             {
-              "id": "deviceId",
-              "push_provider": "provider",
-              "push_provider_name": "provider_name"
-             }
-            ],
-            "teams": [ "team1", "team2"],
-            "teams_role": {
-                "team1": "owner",
-                "team2": "member"
-            }
-         }""".withoutWhitespace()
-
-    val upstreamUser = UpstreamUserDto(
-        id = "userId",
-        role = "owner",
-        invisible = false,
-        privacy_settings = PrivacySettingsResponse(
-            typingIndicators = TypingIndicatorsResponse(
-                enabled = false,
-            ),
-            readReceipts = ReadReceiptsResponse(
-                enabled = false,
-            ),
-            deliveryReceipts = DeliveryReceiptsResponse(
-                enabled = false,
-            ),
-        ),
-        banned = false,
-        devices = listOf(
-            DeviceDto(
-                id = "deviceId",
-                push_provider = "provider",
-                push_provider_name = "provider_name",
-            ),
-        ),
-        teams = listOf("team1", "team2"),
-        teams_role = mapOf(
-            "team1" to "owner",
-            "team2" to "member",
-        ),
-        name = "username",
-        image = "image",
-        language = "language",
-        extraData = emptyMap(),
-    )
 }

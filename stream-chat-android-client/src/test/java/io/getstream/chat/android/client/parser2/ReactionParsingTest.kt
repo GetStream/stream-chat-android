@@ -17,20 +17,15 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
-import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.testdata.ReactionTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.network.models.ReactionResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.Date
 
 internal class ReactionParsingTest {
 
@@ -41,17 +36,6 @@ internal class ReactionParsingTest {
         channelTransformer = NoOpChannelTransformer,
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
-    )
-
-    private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
-    private val dateAdapter = moshi.adapter(Date::class.java)
-    private val userAdapter = UserAdapter(
-        dateAdapter = dateAdapter,
-        userTransformer = NoOpUserTransformer,
-    )
-    private val reactionAdapter = ReactionAdapter(
-        userAdapter = userAdapter,
-        dateAdapter = dateAdapter,
     )
 
     // region DTO path (JSON → ReactionResponse → Reaction)
@@ -72,22 +56,6 @@ internal class ReactionParsingTest {
 
     // endregion
 
-    // region Direct path (JSON → Reaction via ReactionAdapter)
-
-    @Test
-    fun `Direct path - deserializes all fields`() {
-        val reaction = reactionAdapter.fromJson(ReactionTestData.jsonAllFields)
-        assertEquals(ReactionTestData.expectedAllFields, reaction)
-    }
-
-    @Test
-    fun `Direct path - deserializes with optional fields missing`() {
-        val reaction = reactionAdapter.fromJson(ReactionTestData.jsonOptionalFieldsMissing)
-        assertEquals(ReactionTestData.expectedOptionalFieldsMissing, reaction)
-    }
-
-    // endregion
-
     // region Explicit null values
 
     @Test
@@ -97,27 +65,14 @@ internal class ReactionParsingTest {
         assertEquals(ReactionTestData.expectedWithExplicitNulls, reaction)
     }
 
-    @Test
-    fun `Direct path - deserializes with explicit null values`() {
-        val reaction = reactionAdapter.fromJson(ReactionTestData.jsonWithExplicitNulls)
-        assertEquals(ReactionTestData.expectedWithExplicitNulls, reaction)
-    }
-
     // endregion
 
-    // region Error message parity
+    // region Errors
 
     @Test
     fun `DTO path - throws on missing message_id`() {
         assertThrows<JsonDataException> {
             parser.fromJson(ReactionTestData.jsonMissingMessageId, ReactionResponse::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing message_id`() {
-        assertThrows<JsonDataException> {
-            reactionAdapter.fromJson(ReactionTestData.jsonMissingMessageId)
         }
     }
 
@@ -129,23 +84,9 @@ internal class ReactionParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing type`() {
-        assertThrows<JsonDataException> {
-            reactionAdapter.fromJson(ReactionTestData.jsonMissingType)
-        }
-    }
-
-    @Test
     fun `DTO path - throws on missing score`() {
         assertThrows<JsonDataException> {
             parser.fromJson(ReactionTestData.jsonMissingScore, ReactionResponse::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing score`() {
-        assertThrows<JsonDataException> {
-            reactionAdapter.fromJson(ReactionTestData.jsonMissingScore)
         }
     }
 
@@ -157,23 +98,9 @@ internal class ReactionParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing user_id`() {
-        assertThrows<JsonDataException> {
-            reactionAdapter.fromJson(ReactionTestData.jsonMissingUserId)
-        }
-    }
-
-    @Test
     fun `DTO path - throws on missing created_at`() {
         assertThrows<JsonDataException> {
             parser.fromJson(ReactionTestData.jsonMissingCreatedAt, ReactionResponse::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing created_at`() {
-        assertThrows<JsonDataException> {
-            reactionAdapter.fromJson(ReactionTestData.jsonMissingCreatedAt)
         }
     }
 
@@ -185,23 +112,9 @@ internal class ReactionParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing updated_at`() {
-        assertThrows<JsonDataException> {
-            reactionAdapter.fromJson(ReactionTestData.jsonMissingUpdatedAt)
-        }
-    }
-
-    @Test
     fun `DTO path - throws on missing user`() {
         assertThrows<JsonDataException> {
             parser.fromJson(ReactionTestData.jsonMissingUser, ReactionResponse::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing user`() {
-        assertThrows<JsonDataException> {
-            reactionAdapter.fromJson(ReactionTestData.jsonMissingUser)
         }
     }
 

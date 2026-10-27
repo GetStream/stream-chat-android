@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.WSEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -38,7 +38,7 @@ internal class EventMappingTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.mapping.EventMappingTestArguments#arguments")
-    fun testChatEventMapping(dto: ChatEventDto, expected: ChatEvent) {
+    fun testChatEventMapping(dto: WSEvent, expected: ChatEvent) {
         val actual = with(eventMapping) {
             dto.toDomain()
         }
