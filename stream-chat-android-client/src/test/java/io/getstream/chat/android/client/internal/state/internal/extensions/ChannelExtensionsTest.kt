@@ -27,6 +27,8 @@ import io.getstream.chat.android.client.internal.state.model.querychannels.pagin
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ScheduledMessageFailure
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.randomChannel
@@ -59,6 +61,22 @@ internal class ChannelExtensionsTest {
                     // Dummy adapter because reflective serialization can't deal with sealed classes
                     override fun fromJson(reader: JsonReader): Attachment.UploadState? = null
                     override fun toJson(writer: JsonWriter, value: Attachment.UploadState?) = TODO("Not implemented")
+                },
+            )
+            .add(
+                ScheduledMessageStatus::class.java,
+                object : JsonAdapter<ScheduledMessageStatus>() {
+                    // Dummy adapter because reflective serialization can't deal with abstract classes
+                    override fun fromJson(reader: JsonReader): ScheduledMessageStatus? = null
+                    override fun toJson(writer: JsonWriter, value: ScheduledMessageStatus?) = TODO("Not implemented")
+                },
+            )
+            .add(
+                ScheduledMessageFailure::class.java,
+                object : JsonAdapter<ScheduledMessageFailure>() {
+                    // Dummy adapter because reflective serialization can't deal with abstract classes
+                    override fun fromJson(reader: JsonReader): ScheduledMessageFailure? = null
+                    override fun toJson(writer: JsonWriter, value: ScheduledMessageFailure?) = TODO("Not implemented")
                 },
             )
             .add(KotlinJsonAdapterFactory())

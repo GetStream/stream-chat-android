@@ -80,6 +80,11 @@ import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageCreatedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageDeletedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageFailedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageSentEvent
+import io.getstream.chat.android.client.events.ScheduledMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
@@ -109,7 +114,10 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -315,6 +323,11 @@ public class ChannelClient internal constructor(
             is ReminderUpdatedEvent -> event.cid == cid
             is ReminderDeletedEvent -> event.cid == cid
             is NotificationReminderDueEvent -> event.cid == cid
+            is ScheduledMessageCreatedEvent -> event.cid == cid
+            is ScheduledMessageUpdatedEvent -> event.cid == cid
+            is ScheduledMessageDeletedEvent -> event.cid == cid
+            is ScheduledMessageSentEvent -> event.cid == cid
+            is ScheduledMessageFailedEvent -> event.cid == cid
             is UserMessagesDeletedEvent -> event.cid == cid
             is ThreadUpdatedEvent -> event.cid == cid
             is HealthEvent,
@@ -996,6 +1009,29 @@ public class ChannelClient internal constructor(
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+    }
+
+    /**
+     * Queries the current user's scheduled messages in this channel: the pending ones first, then the failed ones,
+     * each sorted by [ScheduledMessage.scheduledAt].
+     *
+     * @param statuses The statuses of the scheduled messages, or empty for every status. Only
+     * [ScheduledMessageStatus.Scheduled], [ScheduledMessageStatus.Sending] and [ScheduledMessageStatus.Failed] are
+     * accepted: the server rejects the query for any other status.
+     * @param limit The maximum number of scheduled messages to return, at most 100.
+     * @param next The cursor of the page to return, from [QueryScheduledMessagesResult.next], or null for the first
+     * page.
+     *
+     * @return Executable async [Call] responsible for querying the scheduled messages.
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun queryScheduledMessages(
+        statuses: Set<ScheduledMessageStatus> = emptySet(),
+        limit: Int = ChatClient.DEFAULT_SCHEDULED_MESSAGES_LIMIT,
+        next: String? = null,
+    ): Call<QueryScheduledMessagesResult> {
+        return client.queryScheduledMessages(cid = cid, statuses = statuses, limit = limit, next = next)
     }
 
     @CheckResult

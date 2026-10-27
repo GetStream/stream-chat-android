@@ -68,6 +68,11 @@ import java.util.Date
  * @param disabled Whether the channel is disabled or not.
  * @param blocked Whether the channel is blocked or not. Note that the field is not provided by every endpoint, nor in
  * the events.
+ * @param scheduledMessages The current user's scheduled messages in the channel, pending ones first, each sorted by
+ * [ScheduledMessage.scheduledAt]. Set only on the channels a channel query with `includeScheduledMessages` returns.
+ * Empty means there are none. Null means they are unknown: they were not requested, the feature is off, the server
+ * could not read them, or they are more than one page. The channels of the local state and database don't keep them
+ * either. When null, query them with `ChatClient.queryScheduledMessages`.
  */
 @Immutable
 public data class Channel(
@@ -116,6 +121,7 @@ public data class Channel(
     val truncatedAt: Date? = null,
     val disabled: Boolean = false,
     val blocked: Boolean? = null,
+    val scheduledMessages: List<ScheduledMessage>? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -222,6 +228,7 @@ public data class Channel(
         private var truncatedAt: Date? = null
         private var disabled: Boolean = false
         private var blocked: Boolean? = null
+        private var scheduledMessages: List<ScheduledMessage>? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -261,6 +268,7 @@ public data class Channel(
             truncatedAt = channel.truncatedAt
             disabled = channel.disabled
             blocked = channel.blocked
+            scheduledMessages = channel.scheduledMessages
             extraData = channel.extraData
         }
 
@@ -324,6 +332,10 @@ public data class Channel(
         public fun withTruncatedAt(truncatedAt: Date?): Builder = apply { this.truncatedAt = truncatedAt }
         public fun withDisabled(disabled: Boolean): Builder = apply { this.disabled = disabled }
         public fun withBlocked(blocked: Boolean?): Builder = apply { this.blocked = blocked }
+        public fun withScheduledMessages(scheduledMessages: List<ScheduledMessage>?): Builder = apply {
+            this.scheduledMessages = scheduledMessages
+        }
+
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         public fun build(): Channel = Channel(
@@ -363,6 +375,7 @@ public data class Channel(
             truncatedAt = truncatedAt,
             disabled = disabled,
             blocked = blocked,
+            scheduledMessages = scheduledMessages,
             extraData = extraData,
         )
     }

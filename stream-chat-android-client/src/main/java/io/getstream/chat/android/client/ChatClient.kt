@@ -211,10 +211,13 @@ import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -5127,6 +5130,82 @@ internal constructor(
         return api.queryReminders(filter, limit, next, sort)
     }
 
+    /**
+     * Queries the current user's scheduled messages: the pending ones first, then the failed ones, each sorted by
+     * [ScheduledMessage.scheduledAt]. By default, a user has at most 100 pending scheduled messages, so the first
+     * page of the default size holds all of them. The failed ones are kept for 7 days.
+     *
+     * @param cid The channel of the scheduled messages in the format `type:id`, or null for every channel.
+     * @param statuses The statuses of the scheduled messages, or empty for every status. Only
+     * [ScheduledMessageStatus.Scheduled], [ScheduledMessageStatus.Sending] and [ScheduledMessageStatus.Failed] are
+     * accepted: the server rejects the query for any other status.
+     * @param limit The maximum number of scheduled messages to return, at most 100.
+     * @param next The cursor of the page to return, from [QueryScheduledMessagesResult.next], or null for the first
+     * page.
+     *
+     * @return Executable async [Call] responsible for querying the scheduled messages.
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun queryScheduledMessages(
+        cid: String? = null,
+        statuses: Set<ScheduledMessageStatus> = emptySet(),
+        limit: Int = DEFAULT_SCHEDULED_MESSAGES_LIMIT,
+        next: String? = null,
+    ): Call<QueryScheduledMessagesResult> {
+        return api.queryScheduledMessages(cid, statuses, limit, next)
+    }
+
+    /**
+     * Edits the content of a scheduled message, reschedules it, or both. Failed scheduled messages can't be edited:
+     * delete them and schedule a new message instead.
+     *
+     * @param id The ID of the scheduled message.
+     * @param message The new content, which replaces the whole content of the scheduled message, or null to keep it.
+     * Upload new attachments before passing them. The [ScheduledMessage.message] of a message scheduled from a client
+     * can be passed back with its changes. For a message a backend scheduled, remove the `mml` of its
+     * [Message.extraData] first, as a client can't send it without the permission.
+     * @param scheduledAt The new date when the message is sent, or null to keep it. The server rounds it up to the next
+     * minute. To keep the date while editing the content, pass null or the [ScheduledMessage.scheduledAt] the server
+     * returned: a past date fails.
+     *
+     * @return Executable async [Call] responsible for updating the scheduled message, with its new content and date.
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun updateScheduledMessage(
+        id: String,
+        message: Message? = null,
+        scheduledAt: Date? = null,
+    ): Call<ScheduledMessage> {
+        return api.updateScheduledMessage(id, message, scheduledAt)
+    }
+
+    /**
+     * Deletes a scheduled message, so it is never sent. Failed scheduled messages can be deleted too.
+     *
+     * @param id The ID of the scheduled message.
+     *
+     * @return Executable async [Call] responsible for deleting the scheduled message.
+     */
+    @CheckResult
+    public fun deleteScheduledMessage(id: String): Call<Unit> {
+        return api.deleteScheduledMessage(id)
+    }
+
+    /**
+     * Sends a scheduled message right away, instead of at its date. Failed scheduled messages can't be sent now.
+     *
+     * @param id The ID of the scheduled message.
+     *
+     * @return Executable async [Call] responsible for sending the scheduled message, with the scheduled message and
+     * its date set to now.
+     */
+    @CheckResult
+    public fun sendScheduledMessageNow(id: String): Call<ScheduledMessage> {
+        return api.sendScheduledMessageNow(id)
+    }
+
     private fun warmUp() {
         if (config.warmUp) {
             api.warmUp()
@@ -5700,6 +5779,7 @@ internal constructor(
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
         private val THIRTY_DAYS_IN_MILLISECONDS = 30.days.inWholeMilliseconds
         private const val INITIALIZATION_DELAY = 100L
+        internal const val DEFAULT_SCHEDULED_MESSAGES_LIMIT = 100
         public const val RESOLVE_DEPENDENCY_TIMEOUT: Long = 10_000L
 
         private var instance: ChatClient? = null

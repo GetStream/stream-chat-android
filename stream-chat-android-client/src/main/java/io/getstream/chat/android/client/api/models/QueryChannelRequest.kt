@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api.models
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
 
 @Suppress("TooManyFunctions")
 public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
@@ -24,6 +25,12 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     override var state: Boolean = false
     override var watch: Boolean = false
     override var presence: Boolean = false
+
+    /**
+     * Whether the channel is loaded with the current user's scheduled messages in it, in [Channel.scheduledMessages].
+     * Defaults to false.
+     */
+    public var includeScheduledMessages: Boolean = false
 
     @InternalStreamChatApi
     public var shouldRefresh: Boolean = false
@@ -170,6 +177,7 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         if (state != other.state) return false
         if (watch != other.watch) return false
         if (presence != other.presence) return false
+        if (includeScheduledMessages != other.includeScheduledMessages) return false
         if (shouldRefresh != other.shouldRefresh) return false
         if (messages != other.messages) return false
         if (watchers != other.watchers) return false
@@ -183,6 +191,7 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         var result = state.hashCode()
         result = 31 * result + watch.hashCode()
         result = 31 * result + presence.hashCode()
+        result = 31 * result + includeScheduledMessages.hashCode()
         result = 31 * result + shouldRefresh.hashCode()
         result = 31 * result + messages.hashCode()
         result = 31 * result + watchers.hashCode()
@@ -197,6 +206,7 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
             "state=$state, " +
             "watch=$watch, " +
             "presence=$presence, " +
+            "includeScheduledMessages=$includeScheduledMessages, " +
             "shouldRefresh=$shouldRefresh, " +
             "isWatchChannel=$isWatchChannel, " +
             "isNotificationUpdate=$isNotificationUpdate, " +

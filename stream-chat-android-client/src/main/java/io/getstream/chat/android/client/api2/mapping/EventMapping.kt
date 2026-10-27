@@ -81,6 +81,11 @@ import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageCreatedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageDeletedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageFailedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageSentEvent
+import io.getstream.chat.android.client.events.ScheduledMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
@@ -151,6 +156,11 @@ import io.getstream.chat.android.network.models.ReminderCreatedEvent as Generate
 import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
 import io.getstream.chat.android.network.models.ReminderNotificationEvent as GeneratedReminderNotificationEvent
 import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
+import io.getstream.chat.android.network.models.ScheduledMessageCreatedEvent as GeneratedScheduledMessageCreatedEvent
+import io.getstream.chat.android.network.models.ScheduledMessageDeletedEvent as GeneratedScheduledMessageDeletedEvent
+import io.getstream.chat.android.network.models.ScheduledMessageFailedEvent as GeneratedScheduledMessageFailedEvent
+import io.getstream.chat.android.network.models.ScheduledMessageSentEvent as GeneratedScheduledMessageSentEvent
+import io.getstream.chat.android.network.models.ScheduledMessageUpdatedEvent as GeneratedScheduledMessageUpdatedEvent
 import io.getstream.chat.android.network.models.ThreadUpdatedEvent as GeneratedThreadUpdatedEvent
 import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
 import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
@@ -497,6 +507,11 @@ internal class EventMapping(
         is GeneratedReminderUpdatedEvent -> toDomain()
         is GeneratedReminderDeletedEvent -> toDomain()
         is GeneratedReminderNotificationEvent -> toDomain()
+        is GeneratedScheduledMessageCreatedEvent -> toDomain()
+        is GeneratedScheduledMessageUpdatedEvent -> toDomain()
+        is GeneratedScheduledMessageDeletedEvent -> toDomain()
+        is GeneratedScheduledMessageSentEvent -> toDomain()
+        is GeneratedScheduledMessageFailedEvent -> toDomain()
         is GeneratedNotificationNewMessageEvent -> toDomain()
         is GeneratedThreadUpdatedEvent -> toDomain()
         is GeneratedUserDeletedEvent -> toDomain()
@@ -1306,6 +1321,92 @@ internal class EventMapping(
             messageId = messageId,
             userId = userId,
             reminder = reminder.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedScheduledMessageCreatedEvent] to [ScheduledMessageCreatedEvent].
+     */
+    private fun GeneratedScheduledMessageCreatedEvent.toDomain(): ScheduledMessageCreatedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        ScheduledMessageCreatedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            scheduledMessage = requireNotNull(scheduledMessage).toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedScheduledMessageUpdatedEvent] to [ScheduledMessageUpdatedEvent].
+     */
+    private fun GeneratedScheduledMessageUpdatedEvent.toDomain(): ScheduledMessageUpdatedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        ScheduledMessageUpdatedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            scheduledMessage = requireNotNull(scheduledMessage).toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedScheduledMessageDeletedEvent] to [ScheduledMessageDeletedEvent].
+     */
+    private fun GeneratedScheduledMessageDeletedEvent.toDomain(): ScheduledMessageDeletedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        ScheduledMessageDeletedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            scheduledMessage = requireNotNull(scheduledMessage).toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedScheduledMessageSentEvent] to [ScheduledMessageSentEvent].
+     */
+    private fun GeneratedScheduledMessageSentEvent.toDomain(): ScheduledMessageSentEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        ScheduledMessageSentEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            scheduledMessage = requireNotNull(scheduledMessage).toDomain(),
+            messageId = messageId,
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedScheduledMessageFailedEvent] to [ScheduledMessageFailedEvent].
+     */
+    private fun GeneratedScheduledMessageFailedEvent.toDomain(): ScheduledMessageFailedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        ScheduledMessageFailedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            scheduledMessage = requireNotNull(scheduledMessage).toDomain(),
         )
     }
 

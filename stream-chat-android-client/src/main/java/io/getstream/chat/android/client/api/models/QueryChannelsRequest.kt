@@ -88,6 +88,12 @@ public data class QueryChannelsRequest @JvmOverloads constructor(
     override var presence: Boolean = false
 
     /**
+     * Whether each channel is loaded with the current user's scheduled messages in it, in [Channel.scheduledMessages].
+     * Defaults to false.
+     */
+    public var includeScheduledMessages: Boolean = false
+
+    /**
      * List of sort specifications.
      */
     public val sort: List<Map<String, Any>> = querySort.toDto()

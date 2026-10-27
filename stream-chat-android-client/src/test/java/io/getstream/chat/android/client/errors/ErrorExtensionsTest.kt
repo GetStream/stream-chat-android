@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.errors
 
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling.Reason
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
 import org.amshove.kluent.shouldBeEqualTo
@@ -40,7 +41,35 @@ internal class ErrorExtensionsTest {
         error.deleteFailureSyncStatus() shouldBeEqualTo expected
     }
 
+    @ParameterizedTest
+    @MethodSource("scheduledMessageRejectionArguments")
+    fun `scheduledMessageRejectionReason should map the scheduled message error codes`(
+        error: Error,
+        expected: Reason?,
+    ) {
+        error.scheduledMessageRejectionReason() shouldBeEqualTo expected
+    }
+
     companion object {
+        @JvmStatic
+        fun scheduledMessageRejectionArguments() = listOf(
+            Arguments.of(Error.NetworkError("disabled", 114, 400), Reason.ScheduledMessagesDisabled),
+            Arguments.of(Error.NetworkError("too soon", 115, 400), Reason.ScheduledAtTooSoon),
+            Arguments.of(Error.NetworkError("too far", 116, 400), Reason.ScheduledAtTooFar),
+            Arguments.of(Error.NetworkError("channel limit", 117, 400), Reason.ScheduledLimitChannel),
+            Arguments.of(Error.NetworkError("user limit", 118, 400), Reason.ScheduledLimitUser),
+            Arguments.of(Error.NetworkError("id taken", 119, 400), Reason.ScheduledMessageIdTaken),
+            Arguments.of(Error.NetworkError("not editable", 120, 400), Reason.ScheduledMessageNotEditable),
+            Arguments.of(Error.NetworkError("sending", 121, 409), Reason.ScheduledMessageSending),
+            Arguments.of(Error.NetworkError("conflict", 122, 409), Reason.ScheduledMessageConflict),
+            Arguments.of(Error.NetworkError("already sent", 123, 400), Reason.ScheduledMessageAlreadySent),
+            Arguments.of(Error.NetworkError("canceled", 124, 400), Reason.ScheduledMessageCanceled),
+            Arguments.of(Error.NetworkError("other", 113, 400), null),
+            Arguments.of(Error.NetworkError("other", 125, 400), null),
+            Arguments.of(Error.NetworkError("not found", 16, 404), null),
+            Arguments.of(Error.GenericError("no answer"), null),
+        )
+
         @JvmStatic
         fun messageGoneErrorArguments() = listOf(
             Arguments.of(Error.NetworkError("message with id m1 has been deleted", 16, 404), SyncStatus.COMPLETED),

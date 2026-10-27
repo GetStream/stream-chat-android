@@ -90,6 +90,11 @@ import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.ScheduledMessageChannelResponse
+import io.getstream.chat.android.network.models.ScheduledMessageContentResponse
+import io.getstream.chat.android.network.models.ScheduledMessageFailureReason
+import io.getstream.chat.android.network.models.ScheduledMessageResponse
+import io.getstream.chat.android.network.models.ScheduledMessageStatus
 import io.getstream.chat.android.network.models.SearchResultMessage
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.ThreadParticipant
@@ -1036,6 +1041,7 @@ internal object Mother {
         activeLiveLocations = activeLiveLocations,
         pendingMessages = pendingMessages,
         read = read,
+        scheduledMessages = scheduledMessages,
         watchers = watchers,
         channel = channel,
         draft = draft,
@@ -1176,6 +1182,26 @@ internal object Mother {
         channel = channel,
         message = message,
         user = user,
+    )
+
+    fun randomScheduledMessageResponse(
+        id: String = randomString(),
+        cid: String = randomCID(),
+        status: ScheduledMessageStatus = ScheduledMessageStatus.Scheduled,
+        failureReason: ScheduledMessageFailureReason? = null,
+        message: ScheduledMessageContentResponse = ScheduledMessageContentResponse(text = randomString()),
+        channel: ScheduledMessageChannelResponse? = null,
+    ): ScheduledMessageResponse = ScheduledMessageResponse(
+        cid = cid,
+        createdAt = randomDate(),
+        id = id,
+        scheduledAt = randomDate(),
+        status = status,
+        updatedAt = randomDate(),
+        message = message,
+        user = randomUserResponse(),
+        failureReason = failureReason,
+        channel = channel,
     )
 
     fun randomQueryRemindersResponse(

@@ -64,6 +64,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun deleteReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun deleteReminder (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun deleteScheduledMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun deleteUserGroup (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun deleteUserGroup$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
@@ -184,6 +185,12 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun queryReactions$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryReminders (Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryReminders$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages ()Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages (Ljava/lang/String;Ljava/util/Set;I)Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages (Ljava/lang/String;Ljava/util/Set;ILjava/lang/String;)Lio/getstream/result/call/Call;
+	public static synthetic fun queryScheduledMessages$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Set;ILjava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryThreads (Lio/getstream/chat/android/client/api/models/QueryThreadsRequest;)Lio/getstream/result/call/Call;
 	public final fun queryUserGroups (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryUserGroups$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -220,6 +227,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun sendScheduledMessageNow (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun sendStaticLocation (Ljava/lang/String;DDLjava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun setChannelChatPreferences (Ljava/lang/String;Lio/getstream/chat/android/models/ChatPreferences;)Lio/getstream/result/call/Call;
 	public final fun setChannelPushPreference (Ljava/lang/String;Lio/getstream/chat/android/models/PushPreferenceLevel;)Lio/getstream/result/call/Call;
@@ -278,6 +286,10 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun updatePoll (Lio/getstream/chat/android/client/api/models/UpdatePollRequest;)Lio/getstream/result/call/Call;
 	public final fun updatePollOption (Ljava/lang/String;Lio/getstream/chat/android/models/PollOption;)Lio/getstream/result/call/Call;
 	public final fun updateReminder (Ljava/lang/String;Ljava/util/Date;)Lio/getstream/result/call/Call;
+	public final fun updateScheduledMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun updateScheduledMessage (Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
+	public final fun updateScheduledMessage (Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Date;)Lio/getstream/result/call/Call;
+	public static synthetic fun updateScheduledMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun updateUser (Lio/getstream/chat/android/models/User;)Lio/getstream/result/call/Call;
 	public final fun updateUserGroup (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun updateUserGroup$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -620,6 +632,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun filteringOlderMessages ()Z
 	public final fun getData ()Ljava/util/Map;
+	public final fun getIncludeScheduledMessages ()Z
 	public final fun getMembers ()Ljava/util/Map;
 	public final fun getMessages ()Ljava/util/Map;
 	public fun getPresence ()Z
@@ -634,6 +647,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public final fun membersOffset ()I
 	public final fun messagesLimit ()I
 	public final fun pagination ()Lkotlin/Pair;
+	public final fun setIncludeScheduledMessages (Z)V
 	public fun setPresence (Z)V
 	public fun setState (Z)V
 	public fun setWatch (Z)V
@@ -678,6 +692,7 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFilter ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun getFilterValues ()Ljava/util/Map;
+	public final fun getIncludeScheduledMessages ()Z
 	public final fun getLimit ()I
 	public final fun getMemberLimit ()Ljava/lang/Integer;
 	public final fun getMessageLimit ()Ljava/lang/Integer;
@@ -691,6 +706,7 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public fun getWatch ()Z
 	public fun hashCode ()I
 	public final fun isFirstPage ()Z
+	public final fun setIncludeScheduledMessages (Z)V
 	public final fun setLimit (I)V
 	public final fun setMemberLimit (Ljava/lang/Integer;)V
 	public final fun setMessageLimit (Ljava/lang/Integer;)V
@@ -1142,6 +1158,11 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryMembers (IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages ()Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages (Ljava/util/Set;)Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages (Ljava/util/Set;I)Lio/getstream/result/call/Call;
+	public final fun queryScheduledMessages (Ljava/util/Set;ILjava/lang/String;)Lio/getstream/result/call/Call;
+	public static synthetic fun queryScheduledMessages$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/Set;ILjava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun rejectInvite ()Lio/getstream/result/call/Call;
 	public final fun removeMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
 	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -2817,6 +2838,123 @@ public final class io/getstream/chat/android/client/events/ReminderUpdatedEvent 
 	public fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
 	public fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/ScheduledMessageCreatedEvent : io/getstream/chat/android/client/events/CidEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;)Lio/getstream/chat/android/client/events/ScheduledMessageCreatedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ScheduledMessageCreatedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ScheduledMessageCreatedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public final fun getScheduledMessage ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/ScheduledMessageDeletedEvent : io/getstream/chat/android/client/events/CidEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;)Lio/getstream/chat/android/client/events/ScheduledMessageDeletedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ScheduledMessageDeletedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ScheduledMessageDeletedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public final fun getScheduledMessage ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/ScheduledMessageFailedEvent : io/getstream/chat/android/client/events/CidEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;)Lio/getstream/chat/android/client/events/ScheduledMessageFailedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ScheduledMessageFailedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ScheduledMessageFailedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public final fun getScheduledMessage ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/ScheduledMessageSentEvent : io/getstream/chat/android/client/events/CidEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;Ljava/lang/String;)Lio/getstream/chat/android/client/events/ScheduledMessageSentEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ScheduledMessageSentEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ScheduledMessageSentEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public final fun getMessageId ()Ljava/lang/String;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public final fun getScheduledMessage ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/ScheduledMessageUpdatedEvent : io/getstream/chat/android/client/events/CidEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;)Lio/getstream/chat/android/client/events/ScheduledMessageUpdatedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ScheduledMessageUpdatedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/ScheduledMessage;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ScheduledMessageUpdatedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public final fun getScheduledMessage ()Lio/getstream/chat/android/models/ScheduledMessage;
+	public fun getType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
