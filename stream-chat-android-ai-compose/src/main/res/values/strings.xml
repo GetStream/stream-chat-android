@@ -35,6 +35,8 @@
     <string name="stream_ai_compose_tool_call_completed">Completed</string>
     <string name="stream_ai_compose_tool_call_awaiting_client">Waiting for the device</string>
     <string name="stream_ai_compose_tool_call_awaiting_approval">Waiting for approval</string>
+    <string name="stream_ai_compose_tool_call_awaiting_authorization">Waiting for sign-in</string>
+    <string name="stream_ai_compose_tool_call_awaiting_your_authorization">Waiting for you to sign in</string>
     <string name="stream_ai_compose_tool_call_declined">Declined</string>
     <string name="stream_ai_compose_tool_call_failed">Didn\'t complete</string>
     <string name="stream_ai_compose_tool_call_cancelled">Cancelled</string>
@@ -47,6 +49,11 @@
     <string name="stream_ai_compose_tool_approval_allow">Allow</string>
     <string name="stream_ai_compose_tool_approval_decline">Don\'t allow</string>
     <string name="stream_ai_compose_tool_approval_not_sent">Your answer couldn\'t be sent. Try again.</string>
+    <string name="stream_ai_compose_tool_authorization_connect">Connect</string>
+    <string name="stream_ai_compose_tool_authorization_connecting">Connecting…</string>
+    <string name="stream_ai_compose_tool_authorization_decline">Not now</string>
+    <string name="stream_ai_compose_tool_authorization_expired">This sign-in expired.</string>
+    <string name="stream_ai_compose_tool_authorization_not_opened">The sign-in couldn\'t be opened. Try again.</string>
     <string name="stream_ai_compose_voice_agent">Voice agent</string>
     <string name="stream_ai_compose_voice_state_idle">Ready</string>
     <string name="stream_ai_compose_voice_state_connecting">Connecting</string>

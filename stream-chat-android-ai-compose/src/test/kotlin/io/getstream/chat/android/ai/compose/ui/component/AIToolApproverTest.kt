@@ -19,10 +19,13 @@ package io.getstream.chat.android.ai.compose.ui.component
 import io.getstream.chat.android.ai.compose.parts.AIToolApproval
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -88,5 +91,42 @@ internal class AIToolApproverTest {
         approver.decide(call, allowed = true)
 
         assertEquals(AIToolApprovalState(), approver.state(call.copy(id = "toolu_01B")))
+    }
+
+    @Test
+    fun `an approver is made the ways it was before sign-ins`() {
+        val answers = mutableListOf<Boolean>()
+        suspend fun send(call: AIToolCallPart, allowed: Boolean) {
+            answers += allowed
+        }
+        val decide: suspend (AIToolCallPart, Boolean) -> Unit = ::send
+        val authorizer = AIToolAuthorizer(connect = { _, _ -> false }, decline = {})
+
+        val approvers = listOf(
+            AIToolApprover("u_1", "android-1", scope) { _, allowed -> answers += allowed },
+            AIToolApprover("u_1", "android-1", scope, ::send),
+            AIToolApprover("u_1", "android-1", scope, decide),
+            AIToolApprover("u_1", "android-1", scope, decide = decide),
+            AIToolApprover(userId = "u_1", clientId = "android-1", scope = scope, decide = decide),
+            AIToolApprover("u_1", "android-1", scope, authorizer) { _, allowed -> answers += allowed },
+            AIToolApprover("u_1", "android-1", scope, authorizer, decide),
+        )
+        approvers.forEach { it.decide(call, allowed = true) }
+
+        assertEquals(List(approvers.size) { true }, answers)
+        approvers.take(5).forEach { assertNull(it.authorizer) }
+        approvers.drop(5).forEach { assertEquals(authorizer, it.authorizer) }
+    }
+
+    @Test
+    fun `the constructor without an authorizer links as it did`() {
+        val constructor = AIToolApprover::class.java.getConstructor(
+            String::class.java,
+            String::class.java,
+            CoroutineScope::class.java,
+            Function3::class.java,
+        )
+
+        assertFalse(constructor.isSynthetic)
     }
 }
