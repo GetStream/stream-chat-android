@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataA
 import io.getstream.chat.android.client.parser2.adapters.PollResponseDataAdapter
 import io.getstream.chat.android.client.parser2.adapters.ReactionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ReactionResponseAdapter
+import io.getstream.chat.android.client.parser2.adapters.ScheduledMessageContentResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.SearchResultMessageAdapter
 import io.getstream.chat.android.client.parser2.adapters.ThreadResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.ThreadStateResponseAdapter
@@ -113,6 +114,7 @@ internal class MoshiChatParser(
             .add(PollOptionResponseDataAdapter)
             .add(PollResponseDataAdapter)
             .add(ReactionResponseAdapter)
+            .add(ScheduledMessageContentResponseAdapter)
             .add(DraftPayloadResponseAdapter)
             // Registered last so the model-specific adapters above keep precedence and delegate into it.
             .add(NullCollectionsAsEmptyFactory)
