@@ -32,6 +32,7 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -160,7 +161,9 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).replacePlaceholderChannel("$channelType:$channelId", result.value.cid)
+            val order = inOrder(repos)
+            order.verify(repos).insertChannel(result.value.copy(syncStatus = SyncStatus.COMPLETED))
+            order.verify(repos).replacePlaceholderChannel("$channelType:$channelId", result.value.cid)
         }
 
     @Test

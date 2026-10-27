@@ -525,8 +525,8 @@ internal class SyncManager(
         entitiesRetryMutex.withLock {
             logger.d { "[retryFailedEntities] no args" }
             // retry channels, messages and reactions in that order..
-            retryChannels()
-            retryMessages()
+            val pendingPlaceholderCids = retryChannels()
+            retryMessages(pendingPlaceholderCids)
             retryReactions()
             logger.v { "[retryFailedEntities] completed" }
         }
@@ -903,9 +903,13 @@ internal class SyncManager(
         return WatchedChannelsRefresh(refreshedCids = refreshedCids, error = failed.get())
     }
 
-    private suspend fun retryChannels() {
+    /**
+     * @return The placeholder cids the server has not created yet, whose messages can only be sent once it has.
+     */
+    private suspend fun retryChannels(): Set<String> {
         val cids = repos.selectChannelCidsBySyncNeeded()
         logger.d { "[retryChannels] cids.size: ${cids.size}" }
+        val pendingPlaceholderCids = mutableSetOf<String>()
         cids.forEach { cid ->
             logger.v { "[retryChannels] channel.cid: $cid" }
             val channel = repos.selectChannel(cid) ?: return@forEach
@@ -929,17 +933,24 @@ internal class SyncManager(
                     if (created.cid != cid && cid != regeneratedCid) {
                         repos.replacePlaceholderChannel(cid, created.cid)
                     }
+                }.onError {
+                    if (channelId.isEmpty()) pendingPlaceholderCids += cid
                 }
             }
             logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }
         }
+        return pendingPlaceholderCids
     }
 
+    /**
+     * @param pendingPlaceholderCids The placeholder cids the server rejects, whose messages wait for a later retry
+     * instead of failing permanently.
+     */
     @VisibleForTesting
-    internal suspend fun retryMessages() {
-        logger.d { "[retryMessages] no args" }
-        retryMessagesWithSyncedAttachments()
-        retryMessagesWithPendingAttachments()
+    internal suspend fun retryMessages(pendingPlaceholderCids: Set<String> = emptySet()) {
+        logger.d { "[retryMessages] pendingPlaceholderCids.size: ${pendingPlaceholderCids.size}" }
+        retryMessagesWithSyncedAttachments(pendingPlaceholderCids)
+        retryMessagesWithPendingAttachments(pendingPlaceholderCids)
         logger.v { "[retryMessages] completed" }
     }
 
@@ -958,12 +969,13 @@ internal class SyncManager(
         }
     }
 
-    private suspend fun retryMessagesWithSyncedAttachments() {
+    private suspend fun retryMessagesWithSyncedAttachments(pendingPlaceholderCids: Set<String>) {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
         logger.d { "[retryMgsWithSyncedAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
             logger.v { "[retryMgsWithSyncedAttachments] message.id: $id" }
             val message = repos.selectMessage(id) ?: return@forEach
+            if (message.cid in pendingPlaceholderCids) return@forEach
             val channelClient = chatClient.channel(message.cid)
             val result = when {
                 message.isDeleted() && !message.deletedForMe -> {
@@ -989,12 +1001,13 @@ internal class SyncManager(
     /**
      * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
      */
-    private suspend fun retryMessagesWithPendingAttachments() {
+    private suspend fun retryMessagesWithPendingAttachments(pendingPlaceholderCids: Set<String>) {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
         logger.d { "[retryMessagesWithPendingAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
             logger.d { "[retryMessagesWithPendingAttachments] process message($id)" }
             val message = repos.selectMessage(id) ?: return@forEach
+            if (message.cid in pendingPlaceholderCids) return@forEach
             val isFailed = message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
             if (isFailed) {
                 logger.v { "[retryMessagesWithPendingAttachments] marking message($id) as failed" }

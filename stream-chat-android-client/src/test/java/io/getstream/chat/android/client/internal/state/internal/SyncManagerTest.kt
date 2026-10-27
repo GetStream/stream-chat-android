@@ -2204,6 +2204,31 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `messages of a placeholder whose retry failed wait for a later retry`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+        whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+        whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn TestCall(
+            Result.Failure(Error.NetworkError(message = "too many requests", serverErrorCode = 9, statusCode = 429)),
+        )
+        val pending = localRandomMessage().copy(cid = placeholder.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+        val other = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn
+            listOf(pending.id, other.id)
+        whenever(repositoryFacade.selectMessage(pending.id)) doReturn pending
+        whenever(repositoryFacade.selectMessage(other.id)) doReturn other
+        val channelClient: ChannelClient = mock {
+            on(it.sendMessage(other)) doReturn other.asCall()
+        }
+        whenever(chatClient.channel(other.cid)) doReturn channelClient
+
+        buildSyncManager().onEvent(healthEvent())
+
+        verify(chatClient, never()).channel(placeholder.cid)
+        verify(channelClient).sendMessage(other)
+    }
+
+    @Test
     fun `retrying a channel with a regular id sends that id`() = runTest(testDispatcher) {
         val channel = randomChannel(type = "messaging", createdAt = localDate(), syncStatus = SyncStatus.SYNC_NEEDED)
         whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)

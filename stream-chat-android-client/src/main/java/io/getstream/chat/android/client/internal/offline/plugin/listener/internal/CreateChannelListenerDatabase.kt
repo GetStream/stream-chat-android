@@ -119,11 +119,12 @@ internal class CreateChannelListenerDatabase(
             is Result.Success -> {
                 val channel = result.value.copy(syncStatus = SyncStatus.COMPLETED)
 
+                repos.insertChannel(channel)
                 // Generated if might differ from the actual one. This might happen when the channel already exists.
+                // Replaced after the insert, so the placeholder's draft replaces the one the server channel carries.
                 if (channel.cid != generatedCid) {
                     repos.replacePlaceholderChannel(generatedCid, channel.cid)
                 }
-                repos.insertChannel(channel)
             }
             is Result.Failure -> {
                 repos.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
