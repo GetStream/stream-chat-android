@@ -48,6 +48,8 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWri
  * To float the composer over the list, pass the space it covers as [contentPadding]:
  *
  * ```
+ * var composerHeight by remember { mutableStateOf(0.dp) }
+ * val density = LocalDensity.current
  * Box {
  *     AIConversation(
  *         messages = messages,
