@@ -193,7 +193,7 @@ constructor(
         }
     }
 
-    // Shared by the v2 socket and the REST calls that return an event, such as sending one.
+    // Shared by the socket and the REST calls that return events: sending one, and `/sync`.
     private val v2EventParser by lazy { V2EventParser(v2DomainMapping, v2DirectEventParser) }
 
     private val v2DirectEventParser: DirectEventParser? by lazy {
@@ -221,7 +221,7 @@ constructor(
             parser = moshiParser,
             tokenManager = tokenManager,
             headersUtil = headersUtil,
-            v2EventParser = v2EventParser.takeIf { config.useV2WebSocket },
+            eventParser = v2EventParser,
         )
     }
 

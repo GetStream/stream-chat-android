@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
+import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -29,6 +31,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.kotest.assertions.json.shouldEqualJson
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -43,16 +46,17 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-/** The v2 websocket: its connect request, the auth frame it sends once open, its keepalive and its event parsing. */
+/** The websocket: its connect request, the auth frame it sends once open, its keepalive and its event parsing. */
 internal class V2SocketTest {
 
     private val webSocket: WebSocket = mock()
@@ -67,7 +71,7 @@ internal class V2SocketTest {
         tokenManager = FakeTokenManager(TOKEN),
         headersUtil = headersUtil,
         httpClient = httpClient,
-        v2EventParser = V2EventParser(
+        eventParser = V2EventParser(
             DomainMapping(
                 currentUserIdProvider = { USER.id },
                 channelTransformer = NoOpChannelTransformer,
@@ -111,10 +115,54 @@ internal class V2SocketTest {
     }
 
     @Test
+    fun `The first connection sends every privacy setting it has, and leaves out the unset ones`() {
+        val user = USER.copy(
+            privacySettings = PrivacySettings(
+                typingIndicators = null,
+                deliveryReceipts = DeliveryReceipts(enabled = false),
+                readReceipts = ReadReceipts(enabled = true),
+            ),
+        )
+        open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, user))
+
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip",
+            "name":"Chewbacca","image":"https://example.com/chewie.png","language":"en","invisible":true,
+            "privacy_settings":{"delivery_receipts":{"enabled":false},"read_receipts":{"enabled":true}},
+            "custom":{"flair":"gold"}}}"""
+    }
+
+    @Test
     fun `A reconnection authenticates with the user id only`() {
         open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER).asReconnectionConf())
 
         sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip"}}"""
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = [false, true])
+    fun `An expired token is reloaded before the auth frame is built`(reconnection: Boolean) {
+        val tokenManager = FakeTokenManager(TOKEN, loadSyncToken = "fresh").apply { expireToken() }
+        val factory = SocketFactory(
+            parser = ParserFactory.createMoshiChatParser(),
+            tokenManager = tokenManager,
+            headersUtil = headersUtil,
+            eventParser = mock(),
+            httpClient = httpClient,
+        )
+        val conf = SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER)
+        factory.createSocket(if (reconnection) conf.asReconnectionConf() else conf)
+        val listener = argumentCaptor<WebSocketListener>().also { verify(httpClient).newWebSocket(any(), it.capture()) }
+        listener.firstValue.onOpen(webSocket, mock<Response>())
+
+        Serializer.moshi.adapter(Map::class.java).fromJson(sentFrame())!!["token"] shouldBeEqualTo "fresh"
+    }
+
+    @Test
+    fun `An anonymous reconnection authenticates with the anonymous id only`() {
+        val user = User(id = "!anon", name = "Anonymous")
+        open(SocketFactory.ConnectionConf.AnonymousConnectionConf(ENDPOINT, API_KEY, user).asReconnectionConf())
+
+        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"user_details":{"id":"anon"}}"""
     }
 
     @Test
@@ -136,21 +184,6 @@ internal class V2SocketTest {
         socket.sendKeepAlive(connected)
 
         sentFrame() shouldEqualJson """[{"type":"health.check","client_id":"conn-1"}]"""
-    }
-
-    @Test
-    fun `Without the v2 parser the socket stays v1, sending nothing once open and echoing the connection`() {
-        val parser = ParserFactory.createMoshiChatParser()
-        val v1Factory = SocketFactory(parser, FakeTokenManager(TOKEN), headersUtil, httpClient)
-        val socket = v1Factory.createSocket(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER))
-        val listener = argumentCaptor<WebSocketListener>().also { verify(httpClient).newWebSocket(any(), it.capture()) }
-        listener.firstValue.onOpen(webSocket, mock<Response>())
-        verify(webSocket, never()).send(any<String>())
-        val connected = ConnectedEvent("health.check", Date(), "", USER, "conn-1")
-
-        socket.sendKeepAlive(connected)
-
-        sentFrame() shouldBeEqualTo parser.toJson(connected)
     }
 
     @Test

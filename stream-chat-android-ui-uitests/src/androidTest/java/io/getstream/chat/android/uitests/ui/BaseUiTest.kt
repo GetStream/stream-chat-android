@@ -21,7 +21,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.uitests.app.login.LoginActivity
 import io.getstream.chat.android.uitests.ui.util.CoroutineTaskExecutorRule
 import io.getstream.chat.android.uitests.util.readFileContents
@@ -63,13 +62,10 @@ internal abstract class BaseUiTest {
         ChatClient.instance().disconnect(flushPersistence = false).execute()
     }
 
-    @OptIn(InternalStreamChatApi::class)
     private fun setupStreamSdk() {
         ChatClient.Builder("hrwwzsgrzapv", context)
             .baseUrl(mockWebServer.url("/").toString())
             .logLevel(ChatLogLevel.ALL)
-            // The mock socket below serves v1 frames on the v1 endpoint.
-            .useV2WebSocket(false)
             .build()
     }
 
@@ -79,13 +75,13 @@ internal abstract class BaseUiTest {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 val path = requireNotNull(request.path)
 
-                return if (path.startsWith("/connect?json")) {
+                return if (path.startsWith("/api/v2/connect")) {
                     MockResponse().withWebSocketUpgrade(
                         object : WebSocketListener() {
                             override fun onOpen(webSocket: WebSocket, response: Response) {
                                 super.onOpen(webSocket, response)
                                 this@BaseUiTest.webSocket = webSocket
-                                webSocket.send(readFileContents(WS_HEALTH_CHECK))
+                                webSocket.send(readFileContents(WS_CONNECTION_OK))
                             }
                         },
                     )
@@ -111,7 +107,7 @@ internal abstract class BaseUiTest {
     }
 
     companion object {
-        private const val WS_HEALTH_CHECK: String = "ws_health_check.json"
+        private const val WS_CONNECTION_OK: String = "ws_connection_ok.json"
         private const val WS_MESSAGE_NEW: String = "ws_message_new.json"
 
         private const val HTTP_CHANNELS: String = "http_channels.json"
