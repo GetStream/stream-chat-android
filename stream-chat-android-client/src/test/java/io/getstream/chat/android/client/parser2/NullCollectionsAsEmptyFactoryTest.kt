@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
+import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEmpty
@@ -70,7 +70,7 @@ internal class NullCollectionsAsEmptyFactoryTest {
 
     @Test
     fun `Hand-written DTOs are left alone`() {
-        invoking { parser.fromJson("""{"events": null}""", SyncHistoryResponse::class.java) }
+        invoking { parser.fromJson("""{"details": null}""", ErrorDto::class.java) }
             .shouldThrow(Exception::class)
     }
 }

@@ -34,6 +34,8 @@ package io.getstream.chat.android.ai.compose.parts
  * @param durationMs How long the call took, in milliseconds.
  * @param approval What the call asks the person it waits for before it runs, and how they
  * answered, when its tool asks first.
+ * @param authorization The sign-in the call waits for the person to finish before it runs, and how
+ * it ended, when it needs their account at a provider.
  */
 @Suppress("LongParameterList", "DataClassContainsFunctions") // One property per field of the step.
 public data class AIToolCallPart(
@@ -48,10 +50,69 @@ public data class AIToolCallPart(
     val summary: String? = null,
     val durationMs: Int? = null,
     val approval: AIToolApproval? = null,
+    val authorization: AIToolAuthorization? = null,
 ) {
 
-    /** Whether the person declined the call, so it never ran. */
-    public val isDeclined: Boolean get() = approval?.decision == AIToolApproval.Decision.Declined
+    @Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        id: String,
+        name: String,
+        displayTitle: String? = null,
+        status: Status,
+        executor: Executor = Executor.Server,
+        targetUserId: String? = null,
+        targetClientId: String? = null,
+        arguments: String? = null,
+        summary: String? = null,
+        durationMs: Int? = null,
+        approval: AIToolApproval? = null,
+    ) : this(
+        id = id,
+        name = name,
+        displayTitle = displayTitle,
+        status = status,
+        executor = executor,
+        targetUserId = targetUserId,
+        targetClientId = targetClientId,
+        arguments = arguments,
+        summary = summary,
+        durationMs = durationMs,
+        approval = approval,
+        authorization = null,
+    )
+
+    @Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        id: String = this.id,
+        name: String = this.name,
+        displayTitle: String? = this.displayTitle,
+        status: Status = this.status,
+        executor: Executor = this.executor,
+        targetUserId: String? = this.targetUserId,
+        targetClientId: String? = this.targetClientId,
+        arguments: String? = this.arguments,
+        summary: String? = this.summary,
+        durationMs: Int? = this.durationMs,
+        approval: AIToolApproval? = this.approval,
+    ): AIToolCallPart = copy(
+        id = id,
+        name = name,
+        displayTitle = displayTitle,
+        status = status,
+        executor = executor,
+        targetUserId = targetUserId,
+        targetClientId = targetClientId,
+        arguments = arguments,
+        summary = summary,
+        durationMs = durationMs,
+        approval = approval,
+        authorization = authorization,
+    )
+
+    /** Whether the person declined the call, or the sign-in it waited for, so it never ran. */
+    public val isDeclined: Boolean
+        get() = approval?.decision == AIToolApproval.Decision.Declined ||
+            authorization?.status == AIToolAuthorization.Status.Declined
 
     /** How long the call took, in seconds. */
     public val durationSeconds: Double? get() = durationMs?.let { it / MillisPerSecond }
@@ -80,6 +141,16 @@ public data class AIToolCallPart(
             (targetClientId == null || targetClientId == clientId)
 
     /**
+     * Whether this call is waiting for this person to sign in at a provider it needs: still
+     * awaiting authorization, with a sign-in, and targeted at this person. They may sign in from
+     * any of their devices.
+     *
+     * @param userId The person signed in on this device.
+     */
+    public fun isAwaitingAuthorization(userId: String): Boolean =
+        status == Status.AwaitingAuthorization && authorization != null && targetUserId == userId
+
+    /**
      * Where a tool call is. An open set: compare against the statuses you know, and treat the rest
      * as still in progress.
      *
@@ -102,6 +173,12 @@ public data class AIToolCallPart(
              * what to ask them.
              */
             public val AwaitingApproval: Status = Status("awaiting_approval")
+
+            /**
+             * Waiting for the targeted person to sign in at a provider the call needs. Its
+             * [authorization] says where.
+             */
+            public val AwaitingAuthorization: Status = Status("awaiting_authorization")
 
             /** Waiting for the targeted device to run the tool and send its result. */
             public val AwaitingClient: Status = Status("awaiting_client")
@@ -148,6 +225,7 @@ public data class AIToolCallPart(
             summary = fields.string("summary"),
             durationMs = fields.int("duration_ms"),
             approval = fields.nested("approval")?.let(AIToolApproval::from),
+            authorization = fields.nested("authorization")?.let(AIToolAuthorization::from),
         )
     }
 }

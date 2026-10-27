@@ -52,6 +52,10 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.shimmer
 /**
  * One tool call: what it is doing, where it runs, and how it went.
  *
+ * A call waiting for someone to sign in says so in neutral words, since this view doesn't know who
+ * is looking. [AIMessagePartItem], given an [AIToolApprover], tells the person it waits for that it
+ * waits for them.
+ *
  * @param part The tool call.
  * @param modifier The modifier to apply to the view.
  * @param textStyle The style of the call's title. Its outcome uses a smaller style.
@@ -64,7 +68,22 @@ public fun AIToolCall(
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     colors: AIToolCallColors = AIToolCallDefaults.colors(),
 ) {
-    val status = toolCallStatus(part)
+    AIToolCall(part = part, userId = null, modifier = modifier, textStyle = textStyle, colors = colors)
+}
+
+/**
+ * [AIToolCall] as seen by [userId], the person signed in here, so a call waiting for them to sign
+ * in says it waits for them, and one waiting for someone else stays neutral.
+ */
+@Composable
+internal fun AIToolCall(
+    part: AIToolCallPart,
+    userId: String?,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    colors: AIToolCallColors = AIToolCallDefaults.colors(),
+) {
+    val status = toolCallStatus(part, userId)
     val detail = part.summary ?: status.text.takeIf { status.shownAsDetail }
     // The icon carries the status for TalkBack unless the detail already says it.
     val statusDescription = status.text.takeUnless { status.shownAsDetail && part.summary == null }
@@ -187,16 +206,27 @@ internal fun UnsupportedPart(textStyle: TextStyle, colors: AIToolCallColors, mod
 private data class ToolCallStatus(val text: String, val shownAsDetail: Boolean)
 
 @Composable
-private fun toolCallStatus(part: AIToolCallPart): ToolCallStatus = if (part.isDeclined) {
-    ToolCallStatus(stringResource(R.string.stream_ai_compose_tool_call_declined), shownAsDetail = true)
-} else {
-    statusOf(part.status)
+private fun toolCallStatus(part: AIToolCallPart, userId: String?): ToolCallStatus = when {
+    part.isDeclined ->
+        ToolCallStatus(stringResource(R.string.stream_ai_compose_tool_call_declined), shownAsDetail = true)
+    // Only the person a sign-in is for reads that it waits for them.
+    userId != null && part.isAwaitingAuthorization(userId) ->
+        ToolCallStatus(
+            stringResource(R.string.stream_ai_compose_tool_call_awaiting_your_authorization),
+            shownAsDetail = true,
+        )
+    else -> statusOf(part.status)
 }
 
 @Composable
 private fun statusOf(status: AIToolCallPart.Status): ToolCallStatus = when (status) {
     AIToolCallPart.Status.AwaitingApproval ->
         ToolCallStatus(stringResource(R.string.stream_ai_compose_tool_call_awaiting_approval), shownAsDetail = true)
+    AIToolCallPart.Status.AwaitingAuthorization ->
+        ToolCallStatus(
+            stringResource(R.string.stream_ai_compose_tool_call_awaiting_authorization),
+            shownAsDetail = true,
+        )
     AIToolCallPart.Status.AwaitingClient ->
         ToolCallStatus(stringResource(R.string.stream_ai_compose_tool_call_awaiting_client), shownAsDetail = true)
     AIToolCallPart.Status.Failed ->
@@ -216,6 +246,13 @@ private fun ToolCallIcon(part: AIToolCallPart, colors: AIToolCallColors, descrip
             R.drawable.stream_ai_compose_ic_hand,
             colors.accent,
             15.dp,
+            description,
+            Modifier.shimmer(true, colors.title),
+        )
+        AIToolCallPart.Status.AwaitingAuthorization -> StatusIcon(
+            R.drawable.stream_ai_compose_ic_key,
+            colors.accent,
+            16.dp,
             description,
             Modifier.shimmer(true, colors.title),
         )

@@ -1378,10 +1378,7 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms the generated [GeneratedConnectedEvent] to [ConnectedEvent]. On the v1 socket it is the
-     * `health.check` hello that carries `me`.
-     */
+    /** Transforms the generated [GeneratedConnectedEvent] to [ConnectedEvent]. */
     @Suppress("DEPRECATION")
     private fun GeneratedConnectedEvent.toDomain(): ConnectedEvent = with(domainMapping) {
         ConnectedEvent(

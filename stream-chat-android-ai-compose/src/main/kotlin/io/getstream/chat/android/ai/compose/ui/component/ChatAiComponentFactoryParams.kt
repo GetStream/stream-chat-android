@@ -19,11 +19,14 @@ package io.getstream.chat.android.ai.compose.ui.component
 import android.net.Uri
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.parts.AIMessagePart
 import io.getstream.chat.android.ai.compose.parts.AIReasoningPart
+import io.getstream.chat.android.ai.compose.parts.AIToolAuthorization
+import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 
 /**
  * Parameters for [ChatAiComponentFactory.ComposerLeadingContent].
@@ -160,7 +163,7 @@ public data class AIConversationUserMessageParams(
  * @param parts The steps the agent took, in order.
  * @param attachments What the agent sent with it, such as images and files.
  * @param reasoningText The whole of a reasoning step's thinking, when the app has it.
- * @param approver Who answers tool calls' questions on this device.
+ * @param approver Who answers tool calls' questions and sign-ins on this device.
  * @param modifier The modifier to apply.
  */
 public data class AIConversationAssistantMessageParams(
@@ -200,5 +203,29 @@ public data class AIConversationReplyActionsParams(
 public data class AIConversationAttachmentParams(
     val attachment: AIMessageAttachment,
     val role: AIMessageRole,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatAiComponentFactory.AIToolAuthorizationContent].
+ *
+ * @param call The tool call that waits for the sign-in.
+ * @param authorization The sign-in, such as "Connect Linear".
+ * @param state Where the person's answer is.
+ * @param connect Hands the sign-in page to the approver's [AIToolAuthorizer], which opens it.
+ * @param decline Sends the person's "not now".
+ * @param textStyle The style of the sign-in's question, the one the tool call's question uses.
+ * @param colors The palette of the sign-in, the one the tool call's question uses.
+ * @param modifier The modifier to apply.
+ */
+@Suppress("LongParameterList") // The sign-in, its two answers, and its look.
+public data class AIToolAuthorizationContentParams(
+    val call: AIToolCallPart,
+    val authorization: AIToolAuthorization,
+    val state: AIToolAuthorizationState,
+    val connect: () -> Unit,
+    val decline: () -> Unit,
+    val textStyle: TextStyle,
+    val colors: AIToolApprovalColors,
     val modifier: Modifier = Modifier,
 )

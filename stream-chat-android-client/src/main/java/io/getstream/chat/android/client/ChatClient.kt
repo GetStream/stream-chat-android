@@ -126,6 +126,7 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -4794,7 +4795,7 @@ internal constructor(
 
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
-     * connected to the web-socket).
+     * connected to the web-socket). An event that can't be read is left out and logged.
      *
      * @param channelsIds The list of channel CIDs. Cannot be empty.
      * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
@@ -4805,7 +4806,7 @@ internal constructor(
     public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: Date,
-    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false)
+    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false).map { it.events }
 
     /**
      * Variant of [getSyncHistory] that can also start watching the channels.
@@ -4821,7 +4822,7 @@ internal constructor(
         channelsIds: List<String>,
         lastSyncAt: Date,
         watch: Boolean,
-    ): Call<List<ChatEvent>> {
+    ): Call<SyncedEvents> {
         val stringDate = streamDateFormatter.format(lastSyncAt)
 
         return api.getSyncHistory(channelsIds, stringDate, watch)
@@ -4833,7 +4834,7 @@ internal constructor(
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
      * connected to the web socket). [lastSyncAt] is in _yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'_ format.  Use this version of
-     * getSyncHistory when high precision is necessary.
+     * getSyncHistory when high precision is necessary. An event that can't be read is left out and logged.
      *
      * @param channelsIds The list of channel CIDs. Cannot be empty.
      * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
@@ -4844,7 +4845,7 @@ internal constructor(
     public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: String,
-    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false)
+    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false).map { it.events }
 
     /**
      * Variant of [getSyncHistory] that can also start watching the channels. [lastSyncAt] is in
@@ -4861,7 +4862,7 @@ internal constructor(
         channelsIds: List<String>,
         lastSyncAt: String,
         watch: Boolean,
-    ): Call<List<ChatEvent>> {
+    ): Call<SyncedEvents> {
         val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
             userScope,
             Error.GenericError(
@@ -5164,7 +5165,6 @@ internal constructor(
         private var forceInsecureConnection = false
         private var forceHttpUrl: String? = null
         private var forceWsUrl: String? = null
-        private var useV2WebSocket: Boolean = true
         private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String? = null
         private var logLevel = ChatLogLevel.NOTHING
@@ -5373,18 +5373,6 @@ internal constructor(
         }
 
         /**
-         * Connects the websocket through the v2 endpoint, the default, or through v1 when disabled.
-         *
-         * This for internal use only, until the v1 websocket is removed.
-         *
-         * @param enabled Whether to use the v2 websocket.
-         */
-        @InternalStreamChatApi
-        public fun useV2WebSocket(enabled: Boolean): Builder = apply {
-            useV2WebSocket = enabled
-        }
-
-        /**
          * Sets a custom [CDN] implementation to be used by the client.
          *
          * @param cdn The custom CDN implementation.
@@ -5510,7 +5498,6 @@ internal constructor(
                 debugRequests = debugRequests,
                 notificationConfig = notificationConfig,
                 fastEventParsing = chatClientConfig.fastEventParsing,
-                useV2WebSocket = useV2WebSocket,
             )
             setupStreamLog()
 

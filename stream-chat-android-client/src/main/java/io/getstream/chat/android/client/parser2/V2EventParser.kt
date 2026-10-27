@@ -41,6 +41,7 @@ import io.getstream.chat.android.network.models.NotificationMarkReadEvent
 import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.log.taggedLogger
 import okio.Buffer
+import okio.BufferedSource
 
 /**
  * Parses the frames of the v2 websocket. Their dates are unix nanoseconds and their custom data sits under `custom`,
@@ -120,6 +121,77 @@ internal class V2EventParser(
     fun parseSentEvent(body: String): ChatEvent? {
         val event = rawFields(body)["event"] ?: throw JsonDataException("Required value 'event' missing at $")
         return parse(withCustomAtRoot(event))
+    }
+
+    /**
+     * Parses the events a `/sync` response replays, each as the socket delivers it, leaving out those the SDK
+     * ignores. An event that fails to parse is skipped and the rest are replayed: failing the response would keep the
+     * sync cursor where it is, so every later sync would ask for the same events and fail on the same one. That holds
+     * when none of them can be read too. A response whose envelope can't be read still fails.
+     */
+    fun parseSyncEvents(body: BufferedSource): SyncedEvents {
+        val parsed = mutableListOf<ChatEvent>()
+        val skipped = mutableListOf<SkippedEvent>()
+        forEachSyncEvent(body) { raw -> parseSyncEvent(raw, parsed, skipped) }
+        if (skipped.isNotEmpty()) {
+            val events = skipped.map { "${it.type}@${it.cid}" }
+            logger.e(skipped.first().cause) { "[parseSyncEvents] skipped ${skipped.size} event(s): $events" }
+        }
+        return SyncedEvents(
+            events = parsed,
+            skippedCids = skipped.mapNotNullTo(mutableSetOf()) { it.cid },
+            hasSkippedWithoutCid = skipped.any { it.cid == null },
+        )
+    }
+
+    /** Calls [action] with the raw JSON of each event in a `/sync` response's `events`. */
+    private fun forEachSyncEvent(body: BufferedSource, action: (String) -> Unit) {
+        JsonReader.of(body).use { reader ->
+            reader.beginObject()
+            while (reader.hasNext()) {
+                if (reader.nextName() != "events" || reader.peek() == JsonReader.Token.NULL) {
+                    reader.skipValue()
+                    continue
+                }
+                reader.beginArray()
+                while (reader.hasNext()) action(reader.nextSource().use { it.readUtf8() })
+                reader.endArray()
+            }
+            reader.endObject()
+        }
+    }
+
+    /**
+     * Reads [raw] into [parsed], unless the SDK ignores it; an event that can't be read is added to [skipped] instead.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    private fun parseSyncEvent(raw: String, parsed: MutableList<ChatEvent>, skipped: MutableList<SkippedEvent>) {
+        try {
+            parse(raw)?.let(parsed::add)
+        } catch (e: Exception) {
+            // Any failure to read one event skips it; an Error, such as running out of memory, still fails the sync.
+            val head = runCatching { readTypeAndCid(raw) }.getOrNull()
+            skipped += SkippedEvent(head?.first ?: "unknown", head?.second, e)
+        }
+    }
+
+    private class SkippedEvent(val type: String, val cid: String?, val cause: Exception)
+
+    /** The type and `cid` at the root of [raw], read without parsing the rest of it. */
+    private fun readTypeAndCid(raw: String): Pair<String?, String?> {
+        var type: String? = null
+        var cid: String? = null
+        reader(raw).use { reader ->
+            reader.beginObject()
+            while (reader.hasNext()) {
+                when (reader.nextName()) {
+                    "type" -> type = valueAdapter.fromJson(reader) as? String
+                    "cid" -> cid = valueAdapter.fromJson(reader) as? String
+                    else -> reader.skipValue()
+                }
+            }
+        }
+        return type to cid
     }
 
     private fun withCustomAtRoot(event: String): String {
@@ -217,6 +289,17 @@ internal class V2EventParser(
         private val ENVELOPE_DATE_KEYS = setOf("created_at", "channel_last_message_at")
     }
 }
+
+/**
+ * The events a `/sync` response replays, and the channels of the ones skipped as unreadable, whose updates are lost.
+ * [hasSkippedWithoutCid] is set when a skipped event's channel couldn't be read, so no channel can be trusted as
+ * synced.
+ */
+internal data class SyncedEvents(
+    val events: List<ChatEvent>,
+    val skippedCids: Set<String> = emptySet(),
+    val hasSkippedWithoutCid: Boolean = false,
+)
 
 /**
  * Gives an unknown event's raw data the v1 shape apps read their custom event fields from: the `custom` entries at

@@ -38,11 +38,12 @@ private const val CLOSE_SOCKET_CODE = 1000
 private const val CLOSE_SOCKET_REASON = "Connection close by client"
 
 /**
- * @param v2 What the v2 socket does differently, or null for the v1 socket.
+ * @param parser Parses the error frames.
+ * @param protocol Authenticates the socket, parses its events and keeps it alive.
  */
 internal class StreamWebSocket(
     private val parser: ChatParser,
-    private val v2: V2SocketProtocol? = null,
+    private val protocol: V2SocketProtocol,
     socketCreator: (WebSocketListener) -> WebSocket,
 ) {
     private val logger by taggedLogger("Chat:StreamWebSocket")
@@ -53,16 +54,12 @@ internal class StreamWebSocket(
 
     private val webSocket = socketCreator(object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            v2?.let { webSocket.send(it.authFrame) }
+            webSocket.send(protocol.authFrame)
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             StreamLog.v("Chat:Events") { "[handleEvent] event: `$text`" }
-            val event = when (v2) {
-                null -> parseMessage(text)
-                else -> parseV2Message(text, v2)
-            }
-            event?.let(eventFlow::tryEmit)
+            parseMessage(text)?.let(eventFlow::tryEmit)
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -90,38 +87,26 @@ internal class StreamWebSocket(
         }
     })
 
-    fun send(chatEvent: ChatEvent): Boolean = webSocket.send(parser.toJson(chatEvent))
-
-    /** Keeps the connection [connectedEvent] established alive: v1 echoes the event, v2 sends a health check. */
+    /** Keeps the connection [connectedEvent] established alive with a health check. */
     fun sendKeepAlive(connectedEvent: ConnectedEvent): Boolean =
-        v2?.let { webSocket.send(it.keepAliveFrame(connectedEvent)) } ?: send(connectedEvent)
+        webSocket.send(protocol.keepAliveFrame(connectedEvent))
     fun close(): Boolean = webSocket.close(CLOSE_SOCKET_CODE, CLOSE_SOCKET_REASON)
     fun listen(): Flow<StreamWebSocketEvent> = eventFlow.asSharedFlow()
 
     /**
-     * Parses [text] into its event. Once connected, a frame that fails to parse and isn't an error is dropped and
-     * logged: its update is lost until the next sync, instead of reconnecting on every such frame. Before that, it
-     * fails the connection.
+     * Parses [text] into its event, or null for a frame the parser ignores. Once connected, a frame that fails to parse
+     * and isn't an error is dropped and logged, instead of reconnecting on every such frame: its update is lost until
+     * the channel is queried again, as `/sync` skips the same event. Before that, it fails the connection.
      */
-    private fun parseMessage(text: String): StreamWebSocketEvent? =
-        when (val result = parser.fromJsonOrError(text, ChatEvent::class.java)) {
-            is Result.Success -> {
-                if (result.value is ConnectedEvent) connected = true
-                StreamWebSocketEvent.Message(result.value)
-            }
-            is Result.Failure -> parseFailure(text, result.value)
-        }
-
-    /** Null for a frame the v2 parser ignores, or one dropped as [parseFailure] describes. */
     @Suppress("TooGenericExceptionCaught")
-    private fun parseV2Message(text: String, v2: V2SocketProtocol): StreamWebSocketEvent? = try {
-        v2.eventParser.parse(text)?.let { event ->
+    private fun parseMessage(text: String): StreamWebSocketEvent? = try {
+        protocol.eventParser.parse(text)?.let { event ->
             if (event is ConnectedEvent) connected = true
             StreamWebSocketEvent.Message(event)
         }
     } catch (expected: Throwable) {
-        // Throwable, as v1's parser catches: an error escaping here would reach OkHttp's reader thread.
-        parseFailure(text, Error.ThrowableError("Failed to parse the v2 event", expected))
+        // Throwable: an error escaping here would reach OkHttp's reader thread.
+        parseFailure(text, Error.ThrowableError("Failed to parse the event", expected))
     }
 
     private fun parseFailure(text: String, parseChatError: Error): StreamWebSocketEvent? {

@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
@@ -63,10 +62,9 @@ object ChatHelper {
     }
 
     /**
-     * Initializes the SDK with the given API key. [useV2WebSocket] false connects the websocket through v1.
+     * Initializes the SDK with the given API key.
      */
-    @OptIn(InternalStreamChatApi::class)
-    fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null, useV2WebSocket: Boolean = true) {
+    fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null) {
         this.apiKey = apiKey
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
@@ -114,7 +112,6 @@ object ChatHelper {
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .appName("Chat Sample Compose")
-            .useV2WebSocket(useV2WebSocket)
             .apply {
                 baseUrl?.let {
                     if (it.startsWith("http://")) forceInsecureConnection()

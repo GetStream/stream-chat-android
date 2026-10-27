@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.deleteFailureSyncStatus
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageForMeListener
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -61,7 +62,7 @@ internal class DeleteMessageForMeListenerState(
                     ?.let { message ->
                         val messageToBeUpdated = message.copy(
                             deletedForMe = true,
-                            syncStatus = SyncStatus.SYNC_NEEDED,
+                            syncStatus = result.value.deleteFailureSyncStatus(),
                         )
 
                         updateMessage(messageToBeUpdated)

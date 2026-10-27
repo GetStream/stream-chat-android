@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class SyncHistoryResponse(
-    val events: List<ChatEventDto>,
+import com.squareup.moshi.Json
+
+/**
+ * Sync request
+ */
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class SyncRequest(
+    @Json(name = "last_sync_at")
+    internal val lastSyncAt: io.getstream.chat.android.network.infrastructure.ExactDate,
+
+    @Json(name = "channel_cids")
+    internal val channelCids: List<String> = emptyList(),
 )

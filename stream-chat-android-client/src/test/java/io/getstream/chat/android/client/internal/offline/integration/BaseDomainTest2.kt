@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.client.internal.offline.repository.factory.internal.DatabaseRepositoryFactory
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.QueryChannelsSpec
@@ -146,7 +147,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
                     }
                 }
             }
-            on { getSyncHistoryInternal(any(), any<Date>(), any()) } doReturn TestCall(eventResults)
+            on { getSyncHistoryInternal(any(), any<Date>(), any()) } doReturn TestCall(eventResults.synced())
             on { queryChannels(any()) } doReturn TestCall(queryChannelsResult)
             on { queryChannelsInternal(any()) } doReturn TestCall(queryChannelsInternalResult)
             on { queryChannel(any(), any(), any(), any()) } doReturn TestCall(queryChannelResult)
@@ -199,3 +200,5 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         query = QueryChannelsSpec(data.filter1, QuerySortByField())
     }
 }
+
+private fun Result<List<ChatEvent>>.synced(): Result<SyncedEvents> = map { SyncedEvents(it) }

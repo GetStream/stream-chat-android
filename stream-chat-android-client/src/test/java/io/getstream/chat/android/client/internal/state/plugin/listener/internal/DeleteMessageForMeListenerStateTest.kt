@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -109,6 +110,19 @@ internal class DeleteMessageForMeListenerStateTest {
         sut.onDeleteMessageForMeResult(message.id, Result.Failure(mock()))
 
         val updatedMessage = message.copy(deletedForMe = true, syncStatus = SyncStatus.SYNC_NEEDED)
+        fixture.verifyUpsertMessage(updatedMessage)
+    }
+
+    @Test
+    fun `on result failure, when the message is already gone, should upsert it as completed`() = runTest {
+        val message = randomMessage()
+        val fixture = Fixture()
+            .givenMessage(message)
+        val sut = fixture.get()
+
+        sut.onDeleteMessageForMeResult(message.id, Result.Failure(Error.NetworkError(message = "message has been deleted", serverErrorCode = 16, statusCode = 404)))
+
+        val updatedMessage = message.copy(deletedForMe = true, syncStatus = SyncStatus.COMPLETED)
         fixture.verifyUpsertMessage(updatedMessage)
     }
 

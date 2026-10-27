@@ -209,6 +209,29 @@ public interface ChatAiComponentFactory {
     public fun AIConversationAttachment(params: AIConversationAttachmentParams) {
         AIMessageAttachmentItem(attachment = params.attachment, modifier = params.modifier)
     }
+
+    /**
+     * What asks the person to sign in when a tool call waits for their account at a provider,
+     * shown under the call by [AIToolAuthorizationPrompt], and so in [AIConversation].
+     *
+     * The default renders [AIToolAuthorizationCard]. Content of your own calls the params'
+     * `connect` and `decline`, which hand the sign-in page to the approver's [AIToolAuthorizer] and
+     * send the person's "not now".
+     *
+     * @param params The parameters for the sign-in.
+     */
+    @Composable
+    public fun AIToolAuthorizationContent(params: AIToolAuthorizationContentParams) {
+        AIToolAuthorizationCard(
+            authorization = params.authorization,
+            state = params.state,
+            connect = params.connect,
+            decline = params.decline,
+            modifier = params.modifier,
+            textStyle = params.textStyle,
+            colors = params.colors,
+        )
+    }
 }
 
 /**

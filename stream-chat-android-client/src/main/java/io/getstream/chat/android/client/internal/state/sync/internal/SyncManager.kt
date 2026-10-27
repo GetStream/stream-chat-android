@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
@@ -36,6 +35,7 @@ import io.getstream.chat.android.client.internal.state.plugin.listener.internal.
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -64,6 +64,7 @@ import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
 import io.getstream.result.onSuccessSuspend
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -83,6 +84,8 @@ import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 private const val QUERIES_TO_RETRY = 3
 private const val SYNC_MAX_CIDS = 100
@@ -113,8 +116,8 @@ private const val QUERY_CHANNELS_MAX_LIMIT = 30
 private const val SYNC_MAX_AGE_DAYS = 30
 
 /**
- * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
- * when connection is reestablished or when a health check event happens.
+ * This class is responsible to sync messages, reactions and channel data. It tries to sync them, if necessary,
+ * when the connection is established.
  */
 @Suppress("LongParameterList", "TooManyFunctions", "TooGenericExceptionCaught", "LargeClass")
 internal class SyncManager(
@@ -247,11 +250,6 @@ internal class SyncManager(
                 syncScope.coroutineContext.job.cancelChildren()
             }
 
-            is HealthEvent -> syncScope.launch {
-                logger.v { "[onEvent] HealthEvent received" }
-                retryFailedEntities()
-            }
-
             is MarkAllReadEvent -> syncScope.launch {
                 logger.i { "[onEvent] MarkAllReadEvent received" }
                 updateAllReadStateForDate(event.user.id, event.createdAt)
@@ -372,7 +370,6 @@ internal class SyncManager(
             return SyncOutcome()
         }
         val cappedCids = cids.take(SYNC_MAX_CIDS)
-        val syncedCids = if (syncState?.lastSyncedAt == null) emptySet() else cappedCids.toSet()
         val result = if (rawLastSyncAt != null) {
             chatClient.getSyncHistoryInternal(cappedCids, rawLastSyncAt, watch).await()
         } else {
@@ -389,8 +386,9 @@ internal class SyncManager(
             logger.e { "[performSync] failed($result)" }
             return SyncOutcome()
         }
-        val sortedEvents = result.value.sortedBy { it.createdAt }
+        val sortedEvents = result.value.events.sortedBy { it.createdAt }
         logger.v { "[performSync] succeed; events.size: ${sortedEvents.size}" }
+        val syncedCids = syncedCids(cappedCids, result.value, hasCursor = syncState?.lastSyncedAt != null)
 
         if (sortedEvents.size > eventReplayMaxCount) {
             return SyncOutcome(refreshedCids = skipEventReplay(sortedEvents, cappedCids))
@@ -410,7 +408,7 @@ internal class SyncManager(
             logger.w { "[performSync] rejected (no events to emit)" }
             return SyncOutcome(syncedCids = syncedCids)
         }
-        if (rawLastSyncAt == rawLatestEventDate) {
+        if (sameInstant(rawLastSyncAt, rawLatestEventDate)) {
             logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
             return SyncOutcome(syncedCids = syncedCids)
         }
@@ -550,12 +548,13 @@ internal class SyncManager(
             }
         }
         rescueStuckInProgress("messages") {
+            // An old delete left in progress almost always reached the backend and lost only its result, and the
+            // retry would just remove it locally. A delete for the current user has no local date to tell its age.
+            repos.markDeletesInProgressAsCompleted(deletedBefore = Date(now() - syncMaxThreshold.millis))
             val messageIds = repos.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)
             logger.d { "[rescueEntitiesStuckInProgress] messageIds.size: ${messageIds.size}" }
-            messageIds.forEach { id ->
-                val message = repos.selectMessage(id) ?: return@forEach
-                repos.insertMessage(message.copy(syncStatus = SyncStatus.SYNC_NEEDED))
-            }
+            // Status only, since every insert of a deleted message is dropped
+            messageIds.forEach { id -> repos.updateMessageSyncStatus(id, SyncStatus.SYNC_NEEDED) }
         }
         rescueStuckInProgress("reactions") {
             val reactionIds = repos.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)
@@ -569,6 +568,8 @@ internal class SyncManager(
 
     private suspend fun rescueStuckInProgress(entities: String, rescue: suspend () -> Unit) = try {
         rescue()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Throwable) {
         logger.e(e) { "[rescueEntitiesStuckInProgress] failed for $entities: $e" }
     }
@@ -1158,7 +1159,7 @@ internal class SyncManager(
      *
      * @return True if the error is related to too many events to sync, false otherwise.
      */
-    private fun Result<List<ChatEvent>>.isTooManyEventsToSyncError(): Boolean {
+    private fun Result<SyncedEvents>.isTooManyEventsToSyncError(): Boolean {
         val error = errorOrNull()
         return error is Error.NetworkError &&
             error.isStatusBadRequest() &&
@@ -1191,6 +1192,23 @@ internal class SyncManager(
     }
 
     /**
+     * The channels whose events the sync replayed in full. A skipped event's update is lost, so its channel is left
+     * out, and when the channel of one isn't known, none is.
+     */
+    private fun syncedCids(cids: List<String>, synced: SyncedEvents, hasCursor: Boolean): Set<String> {
+        if (synced.hasSkippedWithoutCid || synced.skippedCids.isNotEmpty()) {
+            logger.w {
+                "[syncedCids] not synced in full: ${synced.skippedCids}" +
+                    if (synced.hasSkippedWithoutCid) ", and a skipped event of an unknown channel" else ""
+            }
+        }
+        return when {
+            !hasCursor || synced.hasSkippedWithoutCid -> emptySet()
+            else -> cids.toSet() - synced.skippedCids
+        }
+    }
+
+    /**
      * Outcome of [performSync].
      *
      * @param syncedCids The cids whose events since a known last sync date were received and replayed. A grouped list
@@ -1215,4 +1233,16 @@ internal class SyncManager(
     ) {
         val isSuccess: Boolean get() = error == null
     }
+}
+
+/**
+ * Whether two raw ISO dates name the same instant. The fraction can be written with its trailing zeros trimmed, as the
+ * v1 encoding does, or with all nine digits, as the v2 one does, so they are compared as parsed instants. Dates that
+ * don't parse are compared as written.
+ */
+@OptIn(ExperimentalTime::class)
+internal fun sameInstant(raw: String?, other: String?): Boolean {
+    val instant = raw?.let(Instant::parseOrNull)
+    val otherInstant = other?.let(Instant::parseOrNull)
+    return if (instant != null && otherInstant != null) instant == otherInstant else raw == other
 }
