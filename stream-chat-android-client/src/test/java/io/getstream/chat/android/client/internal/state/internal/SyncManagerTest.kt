@@ -693,7 +693,7 @@ internal class SyncManagerTest {
 
         /* Then */
         verify(repositoryFacade).deleteReaction(reaction1)
-        verify(repositoryFacade).deleteReaction(reaction1)
+        verify(repositoryFacade).deleteReaction(reaction2)
 
         verify(chatClient, never()).sendReaction(any(), any(), any(), any())
         verify(chatClient, never()).deleteReaction(any(), any(), any())
