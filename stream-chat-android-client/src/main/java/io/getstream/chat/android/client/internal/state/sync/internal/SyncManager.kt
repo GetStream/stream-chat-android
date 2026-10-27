@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.errors.isStatusBadRequest
 import io.getstream.chat.android.client.errors.isValidationError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -40,6 +41,8 @@ import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.sync.stringify
+import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
+import io.getstream.chat.android.client.utils.channel.isLocalPlaceholder
 import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -521,8 +524,8 @@ internal class SyncManager(
         entitiesRetryMutex.withLock {
             logger.d { "[retryFailedEntities] no args" }
             // retry channels, messages and reactions in that order..
-            retryChannels()
-            retryMessages()
+            val uncreatedCids = retryChannels()
+            retryMessages(uncreatedCids)
             retryReactions()
             logger.v { "[retryFailedEntities] completed" }
         }
@@ -902,15 +905,20 @@ internal class SyncManager(
         return WatchedChannelsRefresh(refreshedCids = refreshedCids, error = failed.get())
     }
 
-    private suspend fun retryChannels() {
+    /**
+     * @return The cids of the channels the server has not created yet, whose messages can only be sent once it has.
+     */
+    private suspend fun retryChannels(): Set<String> {
         val cids = repos.selectChannelCidsBySyncNeeded()
         logger.d { "[retryChannels] cids.size: ${cids.size}" }
+        val uncreatedCids = mutableSetOf<String>()
         cids.forEach { cid ->
             logger.v { "[retryChannels] channel.cid: $cid" }
             val channel = repos.selectChannel(cid) ?: return@forEach
             val result = if (channel.createdAt.exceedsSyncThreshold()) {
                 logger.w { "[retryChannels] outdated channel($cid)" }
                 repos.deleteChannel(cid)
+                uncreatedCids += cid
                 Result.Success(Unit)
             } else {
                 logger.v { "[retryChannels] sending channel($cid)" }
@@ -920,23 +928,47 @@ internal class SyncManager(
                     },
                     extraData = channel.extraData,
                 )
-                chatClient.createChannel(
-                    channel.type,
-                    channel.id,
-                    params,
-                ).await()
+                val isPlaceholder = channel.isLocalPlaceholder()
+                val retriedCid = if (isPlaceholder) {
+                    "${channel.type}:${generateChannelIdIfNeeded("", params.memberIds)}"
+                } else {
+                    cid
+                }
+                if (retriedCid != cid) {
+                    // The create stores and replaces the placeholder regenerated from the members, so one stored with
+                    // another member order is renamed first, or it would be left behind next to the regenerated one
+                    repos.insertChannel(channel.copy(id = retriedCid.substringAfter(':')))
+                    repos.replacePlaceholderChannel(cid, retriedCid)
+                }
+                // The server rejects the placeholder id, so it resolves the distinct channel from the members
+                val channelId = if (isPlaceholder) "" else channel.id
+                chatClient.createChannel(channel.type, channelId, params).await().onSuccess { created ->
+                    // While the socket is down the create falls back to the stored placeholder on a temporary error
+                    if (created.cid == retriedCid && isPlaceholder) uncreatedCids += retriedCid
+                }.onError { error ->
+                    // A permanent rejection leaves the messages to fail where the user can retry them
+                    if (!error.isPermanent()) uncreatedCids += retriedCid
+                }
             }
             logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }
         }
+        return uncreatedCids
     }
 
+    /**
+     * @param uncreatedCids The cids of the channels the server has not created yet. Their messages wait for a later
+     * retry instead of failing against a channel that does not exist, until they are outdated.
+     */
     @VisibleForTesting
-    internal suspend fun retryMessages() {
-        logger.d { "[retryMessages] no args" }
-        retryMessagesWithSyncedAttachments()
-        retryMessagesWithPendingAttachments()
+    internal suspend fun retryMessages(uncreatedCids: Set<String> = emptySet()) {
+        logger.d { "[retryMessages] uncreatedCids.size: ${uncreatedCids.size}" }
+        retryMessagesWithSyncedAttachments(uncreatedCids)
+        retryMessagesWithPendingAttachments(uncreatedCids)
         logger.v { "[retryMessages] completed" }
     }
+
+    private fun Message.waitsForChannel(uncreatedCids: Set<String>): Boolean =
+        cid in uncreatedCids && !createdLocallyAt.exceedsSyncThresholdServerTime()
 
     private suspend fun retryReactions() {
         val ids = repos.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
@@ -953,12 +985,13 @@ internal class SyncManager(
         }
     }
 
-    private suspend fun retryMessagesWithSyncedAttachments() {
+    private suspend fun retryMessagesWithSyncedAttachments(uncreatedCids: Set<String>) {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
         logger.d { "[retryMgsWithSyncedAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
             logger.v { "[retryMgsWithSyncedAttachments] message.id: $id" }
             val message = repos.selectMessage(id) ?: return@forEach
+            if (message.waitsForChannel(uncreatedCids)) return@forEach
             val channelClient = chatClient.channel(message.cid)
             val result = when {
                 message.isDeleted() && !message.deletedForMe -> {
@@ -984,7 +1017,7 @@ internal class SyncManager(
     /**
      * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
      */
-    private suspend fun retryMessagesWithPendingAttachments() {
+    private suspend fun retryMessagesWithPendingAttachments(uncreatedCids: Set<String>) {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
         logger.d { "[retryMessagesWithPendingAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
@@ -999,6 +1032,8 @@ internal class SyncManager(
                 if (message.createdLocallyAt.exceedsSyncThresholdServerTime()) {
                     logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
                     removeMessage(message).await()
+                } else if (message.waitsForChannel(uncreatedCids)) {
+                    logger.v { "[retryMessagesWithPendingAttachments] waiting for channel(${message.cid})" }
                 } else {
                     val (channelType, channelId) = message.cid.cidToTypeAndId()
                     chatClient.sendMessage(channelType, channelId, message, true).await()

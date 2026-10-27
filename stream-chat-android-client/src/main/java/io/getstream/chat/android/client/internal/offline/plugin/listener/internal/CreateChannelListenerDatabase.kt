@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.query.CreateChannelParams
@@ -38,12 +38,12 @@ import java.util.Date
  * for the current user or not.
  *
  * @param clientState [ClientState]
- * @param channelRepository [ChannelRepository] to cache intermediate data and final result of channels.
+ * @param repos [RepositoryFacade] to cache intermediate data and final result of channels.
  * @param userRepository [UserRepository] Requests users from database.
  */
 internal class CreateChannelListenerDatabase(
     private val clientState: ClientState,
-    private val channelRepository: ChannelRepository,
+    private val repos: RepositoryFacade,
     private val userRepository: UserRepository,
 ) : CreateChannelListener {
 
@@ -76,7 +76,7 @@ internal class CreateChannelListenerDatabase(
             image = params.extraData["image"] as? String ?: "",
         )
 
-        channelRepository.insertChannel(channel)
+        repos.insertChannel(channel)
     }
 
     /**
@@ -119,15 +119,16 @@ internal class CreateChannelListenerDatabase(
             is Result.Success -> {
                 val channel = result.value.copy(syncStatus = SyncStatus.COMPLETED)
 
+                repos.insertChannel(channel)
                 // Generated if might differ from the actual one. This might happen when the channel already exists.
+                // Replaced after the insert, so the placeholder's draft replaces the one the server channel carries.
                 if (channel.cid != generatedCid) {
-                    channelRepository.deleteChannel(generatedCid)
+                    repos.replacePlaceholderChannel(generatedCid, channel.cid)
                 }
-                channelRepository.insertChannel(channel)
             }
             is Result.Failure -> {
-                channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
-                    channelRepository.insertChannel(
+                repos.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
+                    repos.insertChannel(
                         cachedChannel.copy(
                             syncStatus = if (result.value.isPermanent()) {
                                 SyncStatus.FAILED_PERMANENTLY
