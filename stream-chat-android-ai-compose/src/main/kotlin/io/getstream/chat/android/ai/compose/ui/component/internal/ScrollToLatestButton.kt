@@ -16,8 +16,19 @@
 
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -27,10 +38,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.ui.component.AIConversationColors
+
+/**
+ * [ScrollToLatestButton] at the bottom of the conversation, above what [contentPadding] covers,
+ * fading in while [visible].
+ */
+@Composable
+internal fun BoxScope.ScrollToLatestOverlay(
+    visible: Boolean,
+    contentPadding: PaddingValues,
+    onClick: () -> Unit,
+    colors: AIConversationColors,
+    icon: Painter,
+) {
+    val layoutDirection = LocalLayoutDirection.current
+    AnimatedVisibility(
+        visible = visible,
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(
+                start = contentPadding.calculateStartPadding(layoutDirection),
+                end = contentPadding.calculateEndPadding(layoutDirection),
+                bottom = contentPadding.calculateBottomPadding() + 8.dp,
+            ),
+        enter = fadeIn(tween(FadeMillis)) + scaleIn(tween(FadeMillis), initialScale = 0.8f),
+        exit = fadeOut(tween(FadeMillis)) + scaleOut(tween(FadeMillis), targetScale = 0.8f),
+    ) {
+        ScrollToLatestButton(onClick = onClick, colors = colors, icon = icon)
+    }
+}
 
 /** A round button over the bottom of the conversation that brings its end back into view. */
 @Composable
@@ -60,3 +101,5 @@ internal fun ScrollToLatestButton(
         }
     }
 }
+
+private const val FadeMillis = 200

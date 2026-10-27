@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.compose.ui.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -59,6 +60,7 @@ internal class AIConversationLayoutTest {
     private var messages by mutableStateOf(emptyList<Message>())
     private var isThinking by mutableStateOf(false)
     private var loadOlderMessages: (suspend () -> Unit)? by mutableStateOf(null)
+    private var contentPadding by mutableStateOf(PaddingValues())
 
     private fun setContent() {
         rule.setContent { Conversation() }
@@ -75,6 +77,7 @@ internal class AIConversationLayoutTest {
                 loadOlderMessages = loadOlderMessages,
                 footer = { Text("footer") },
                 emptyContent = { Text("How can I help?") },
+                contentPadding = contentPadding,
             ) { message ->
                 Text(text = message.id, modifier = Modifier.height(message.height))
             }
@@ -251,11 +254,102 @@ internal class AIConversationLayoutTest {
         assertNear(shown, top("q1"))
     }
 
+    @Test
+    fun `with padding, the empty content is in the middle of what it leaves visible`() {
+        contentPadding = PaddingValues(top = TopBarHeight, bottom = ComposerHeight)
+        setContent()
+
+        val bounds = rule.onNodeWithText("How can I help?").getUnclippedBoundsInRoot()
+        assertNear((TopBarHeight + ListHeight - ComposerHeight) / 2, (bounds.top + bounds.bottom) / 2)
+    }
+
+    @Test
+    fun `with padding, the list opens at its end with the latest turn under the top padding`() {
+        contentPadding = PaddingValues(top = TopBarHeight, bottom = ComposerHeight)
+        messages = listOf(question("q1"), reply("a1"), question("q2"), reply("a2"))
+        setContent()
+
+        // The latest turn fills what the padding leaves visible, so its question is just under it.
+        assertNear(TopBarHeight, top("q2"))
+        // The turn before scrolls under the top padding.
+        assertTrue(bottom("q1") <= TopBarHeight)
+        rule.onAllNodesWithContentDescription(ScrollToLatest).assertCountEquals(0)
+    }
+
+    @Test
+    fun `with padding, a long reply ends clear of the bottom padding`() {
+        contentPadding = PaddingValues(bottom = ComposerHeight)
+        messages = listOf(question("q1"), reply("a1", height = ListHeight * 2))
+        setContent()
+
+        // The footer ends the turn, above the list's own spacing and the padding.
+        assertNear(ListHeight - ComposerHeight - EndSpacing, bottom("footer"))
+        rule.onAllNodesWithContentDescription(ScrollToLatest).assertCountEquals(0)
+    }
+
+    @Test
+    fun `with padding, a question the person sends goes to the top of what is visible`() {
+        contentPadding = PaddingValues(top = TopBarHeight, bottom = ComposerHeight)
+        messages = listOf(question("q1"), reply("a1"))
+        setContent()
+
+        messages = messages + question("q2")
+        rule.waitForIdle()
+        assertNear(TopBarHeight + TurnTopPadding, top("q2"))
+
+        // The reply has the rest of the visible list to grow into without moving anything.
+        messages = messages + reply("a2", height = 120.dp)
+        rule.waitForIdle()
+        assertNear(TopBarHeight + TurnTopPadding, top("q2"))
+        rule.onAllNodesWithContentDescription(ScrollToLatest).assertCountEquals(0)
+    }
+
+    @Test
+    fun `with padding, the button shows above the bottom padding and brings the end back`() {
+        contentPadding = PaddingValues(bottom = ComposerHeight)
+        messages = listOf(question("q1"), reply("a1"), question("q2"), reply("a2"))
+        setContent()
+
+        scrollToStart()
+        val button = rule.onNodeWithContentDescription(ScrollToLatest).getUnclippedBoundsInRoot()
+        assertTrue(button.bottom <= ListHeight - ComposerHeight)
+
+        rule.onNodeWithContentDescription(ScrollToLatest).performClick()
+        rule.waitForIdle()
+
+        assertNear(0.dp, top("q2"))
+        rule.onAllNodesWithContentDescription(ScrollToLatest).assertCountEquals(0)
+    }
+
+    @Test
+    fun `with padding, older messages load once the spinner is out from under the top padding`() {
+        var loads = 0
+        loadOlderMessages = { loads++ }
+        contentPadding = PaddingValues(top = TopBarHeight)
+        messages = listOf(question("q1"), reply("a1"), question("q2"), reply("a2"))
+        setContent()
+
+        // The first turn just under the top padding, and the spinner above it, under the padding.
+        rule.onNode(hasScrollToIndexAction()).performScrollToIndex(1)
+        rule.waitForIdle()
+        rule.mainClock.advanceTimeBy(LoadDelayMillis)
+        assertEquals("the spinner is covered", 0, loads)
+
+        scrollToStart()
+        rule.mainClock.advanceTimeBy(LoadDelayMillis)
+        assertEquals(1, loads)
+    }
+
+    private fun bottom(text: String): Dp = rule.onNodeWithText(text).getUnclippedBoundsInRoot().bottom
+
     private fun top(text: String, substring: Boolean): Dp =
         rule.onNodeWithText(text, substring = substring, useUnmergedTree = true).getUnclippedBoundsInRoot().top
 }
 
 private val ListHeight = 400.dp
 private val TurnTopPadding = 16.dp
+private val EndSpacing = 16.dp
+private val TopBarHeight = 56.dp
+private val ComposerHeight = 80.dp
 private const val LoadDelayMillis = 350L
 private const val ScrollToLatest = "Scroll to latest"
