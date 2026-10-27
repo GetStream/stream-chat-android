@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.utils.channel
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import java.util.Date
@@ -35,9 +36,19 @@ import java.util.Date
 @InternalStreamChatApi
 public fun generateChannelIdIfNeeded(channelId: String, memberIds: List<String>): String {
     return channelId.ifBlank {
-        memberIds.sorted().joinToString(prefix = "!members-")
+        memberIds.sorted().joinToString(prefix = PLACEHOLDER_ID_PREFIX)
     }
 }
+
+/**
+ * Whether this channel's id is the local placeholder generated from its members, in any order: placeholders stored
+ * before the member ids were sorted keep the order they were created with. Server ids never match.
+ */
+internal fun Channel.isLocalPlaceholder(): Boolean =
+    id.startsWith(PLACEHOLDER_ID_PREFIX) &&
+        id.removePrefix(PLACEHOLDER_ID_PREFIX).split(", ").toSet() == members.map { it.getUserId() }.toSet()
+
+private const val PLACEHOLDER_ID_PREFIX = "!members-"
 
 /**
  * Calculates the new lastMessageAt date based on the message.

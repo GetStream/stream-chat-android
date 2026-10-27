@@ -17,7 +17,10 @@
 package io.getstream.chat.android.client.utils.channel
 
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -57,6 +60,22 @@ internal class ChannelUtilsTests {
         val memberIds = emptyList<String>()
         generateChannelIdIfNeeded(channelId, memberIds) shouldBeEqualTo "!members-"
     }
+
+    @Test
+    fun `a channel named after its members in any order is a local placeholder`() {
+        placeholder(id = "!members-user1, user2", "user2", "user1").isLocalPlaceholder() shouldBeEqualTo true
+        placeholder(id = "!members-user2, user1", "user1", "user2").isLocalPlaceholder() shouldBeEqualTo true
+    }
+
+    @Test
+    fun `a server distinct channel or one named after other members is not a local placeholder`() {
+        placeholder(id = "!members-Zq3kP9xT2", "user1", "user2").isLocalPlaceholder() shouldBeEqualTo false
+        placeholder(id = "!members-user1, user3", "user1", "user2").isLocalPlaceholder() shouldBeEqualTo false
+        placeholder(id = "general", "user1", "user2").isLocalPlaceholder() shouldBeEqualTo false
+    }
+
+    private fun placeholder(id: String, vararg memberIds: String) =
+        randomChannel(id = id, members = memberIds.map { randomMember(user = randomUser(id = it)) })
 
     @Test
     fun `Given regular message with newer date, When calculateNewLastMessageAt is called, Then returns message date`() {

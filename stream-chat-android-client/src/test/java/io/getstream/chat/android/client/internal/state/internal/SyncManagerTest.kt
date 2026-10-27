@@ -96,6 +96,7 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.mockingDetails
 import org.mockito.kotlin.never
@@ -2190,17 +2191,48 @@ internal class SyncManagerTest {
         }
 
     @Test
-    fun `retrying an unsorted placeholder replaces it with the server channel`() = runTest(testDispatcher) {
+    fun `an unsorted placeholder is renamed to the sorted one before the retry`() = runTest(testDispatcher) {
         val placeholder = placeholderChannel(id = "!members-b, a")
-        val serverChannel = randomChannel(id = "!members-${randomString()}", type = "messaging")
         whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
         whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
         whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
-            TestCall(Result.Success(serverChannel))
+            TestCall(Result.Success(randomChannel(id = "!members-${randomString()}", type = "messaging")))
 
         buildSyncManager().onEvent(healthEvent())
 
-        verify(repositoryFacade).replacePlaceholderChannel(placeholder.cid, serverChannel.cid)
+        val order = inOrder(repositoryFacade, chatClient)
+        order.verify(repositoryFacade).replacePlaceholderChannel(placeholder.cid, "messaging:!members-a, b")
+        order.verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
+    }
+
+    @Test
+    fun `a server distinct channel is retried with its own id`() = runTest(testDispatcher) {
+        val channel = placeholderChannel(id = "!members-${randomString()}")
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+        whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+        whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(channel))
+
+        buildSyncManager().onEvent(healthEvent())
+
+        verify(chatClient).createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())
+        verify(repositoryFacade, never()).replacePlaceholderChannel(any(), any())
+    }
+
+    @Test
+    fun `messages wait when the create falls back to the stored placeholder`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+        whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+        whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(placeholder))
+        val message = localRandomMessage().copy(cid = placeholder.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        buildSyncManager().onEvent(healthEvent())
+
+        verify(chatClient, never()).channel(placeholder.cid)
     }
 
     @Test
