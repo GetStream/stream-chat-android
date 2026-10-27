@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomConnectedEvent
+import io.getstream.chat.android.client.utils.channel.isMultiMemberPlaceholderCid
 import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -96,8 +97,10 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
@@ -666,6 +669,139 @@ internal class SyncManagerTest {
         /* Then */
         // Read state is not carried by the queryChannels refresh, so dropping it loses it entirely.
         assertEquals(createdAt, _syncState.value?.markedAllReadAt)
+    }
+
+    @Test
+    fun `the refresh after an oversized sync leaves placeholders out and keeps real distinct channels`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            givenOversizedSyncPayload(eventCount = 3, createdAt = createdAt, rawCreatedAt = streamDateFormatter.format(createdAt))
+            val sessionPlaceholder = "messaging:!members-me"
+            val storedPlaceholder = "messaging:!members-a, c"
+            val distinctChannel = "messaging:!members-${randomString()}"
+            givenWatchedChannels(cids = setOf(sessionPlaceholder, storedPlaceholder, distinctChannel), foundChannels = emptyList())
+            givenPlaceholders(sessionPlaceholder)
+
+            buildSyncManager(eventReplayMaxCount = 2).performSync(cids = listOf("messaging:1", "messaging:2"))
+
+            argumentCaptor<QueryChannelsRequest> {
+                verify(chatClient).queryChannelsInternal(capture())
+                assertEquals(setOf(distinctChannel), (firstValue.filter as InFilterObject).values)
+            }
+        }
+
+    @Test
+    fun `the refresh after an oversized sync falls back to the synced channels when only placeholders are watched`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            givenOversizedSyncPayload(eventCount = 3, createdAt = createdAt, rawCreatedAt = streamDateFormatter.format(createdAt))
+            givenWatchedChannels(cids = setOf("messaging:!members-a, b"), foundChannels = emptyList())
+            givenPlaceholders()
+
+            buildSyncManager(eventReplayMaxCount = 2).performSync(cids = listOf("messaging:1", "messaging:2"))
+
+            argumentCaptor<QueryChannelsRequest> {
+                verify(chatClient).queryChannelsInternal(capture())
+                assertEquals(setOf("messaging:1", "messaging:2"), (firstValue.filter as InFilterObject).values)
+            }
+        }
+
+    @Test
+    fun `a disconnect saves the active channels without placeholders`() = runTest(testDispatcher) {
+        val real = "messaging:${randomString()}"
+        val placeholder = "messaging:!members-a, b"
+        val activeLogics = listOf(real, placeholder).map { cid -> mock<ChannelLogic> { on(it.cid) doReturn cid } }
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn activeLogics
+        givenPlaceholders()
+        _syncState.value = SyncState(userId = user.id)
+
+        buildSyncManager().onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+
+        verify(repositoryFacade).insertSyncState(argThat { activeChannelIds == listOf(real) })
+    }
+
+    @Test
+    fun `a sync with only placeholders active falls back to the saved channels without placeholders`() =
+        runTest(testDispatcher) {
+            val real = "messaging:${randomString()}"
+            val placeholder = "messaging:!members-a, b"
+            val placeholderLogic = mock<ChannelLogic> { on(it.cid) doReturn placeholder }
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn listOf(placeholderLogic)
+            givenPlaceholders()
+            val syncedAt = localDate()
+            whenever(repositoryFacade.selectSyncState(any())) doReturn SyncState(
+                userId = user.id,
+                activeChannelIds = listOf(real, placeholder),
+                lastSyncedAt = syncedAt,
+                rawLastSyncedAt = streamDateFormatter.format(syncedAt),
+            )
+            whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
+                TestCall(Result.Success(emptyList<ChatEvent>()).synced())
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(chatClient).getSyncHistoryInternal(eq(listOf(real)), any<String>(), any())
+        }
+
+    @Test
+    fun `a sync leaves the placeholders of grouped lists out`() = runTest(testDispatcher) {
+        val real = "messaging:${randomString()}"
+        val placeholder = "messaging:!members-a, b"
+        val groupedQuery = mock<QueryChannelsLogic> {
+            on(it.groupKey()) doReturn "all"
+            on(it.cids()) doReturn setOf(real, placeholder)
+        }
+        whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery)
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+        givenPlaceholders()
+        val syncedAt = localDate()
+        whenever(repositoryFacade.selectSyncState(any())) doReturn SyncState(
+            userId = user.id,
+            lastSyncedAt = syncedAt,
+            rawLastSyncedAt = streamDateFormatter.format(syncedAt),
+        )
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
+            TestCall(Result.Success(emptyList<ChatEvent>()).synced())
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(chatClient).getSyncHistoryInternal(eq(listOf(real)), any<String>(), any())
+    }
+
+    @Test
+    fun `channels missing after a reconnect are queried and watched without placeholders`() = runTest(testDispatcher) {
+        val real = "messaging:${randomString()}"
+        val placeholder = "messaging:!members-a, b"
+        whenever(clientState.isOnline) doReturn true
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+        val activeStates = listOf(real, placeholder).associate { cid ->
+            ChannelId.fromCid(cid)!! to mock<ChannelState> { on(it.recoveryNeeded) doReturn true }
+        }
+        whenever(stateRegistry.getActiveChannelStates()) doReturn activeStates
+        whenever(logicRegistry.channel(any<ChannelId>())) doReturn mock()
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+            Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+        )
+        givenPlaceholders()
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient).queryChannelsInternal(capture())
+            assertEquals(setOf(real), (firstValue.filter as InFilterObject).values)
+        }
+        verify(logicRegistry).channel(ChannelId.fromCid(real)!!)
+        verify(logicRegistry, never()).channel(ChannelId.fromCid(placeholder)!!)
+    }
+
+    /**
+     * Applies [LogicRegistry.isPlaceholderChannel]'s rule, with [sessionCids] as the placeholders created this session.
+     */
+    private fun givenPlaceholders(vararg sessionCids: String) {
+        whenever(logicRegistry.isPlaceholderChannel(any())) doAnswer { invocation ->
+            val cid = invocation.getArgument<String>(0)
+            cid in sessionCids || isMultiMemberPlaceholderCid(cid)
+        }
     }
 
     /**

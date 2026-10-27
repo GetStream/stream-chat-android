@@ -36,7 +36,7 @@ import java.util.Date
 @InternalStreamChatApi
 public fun generateChannelIdIfNeeded(channelId: String, memberIds: List<String>): String {
     return channelId.ifBlank {
-        memberIds.sorted().joinToString(prefix = PLACEHOLDER_ID_PREFIX)
+        memberIds.sorted().joinToString(separator = PLACEHOLDER_ID_SEPARATOR, prefix = PLACEHOLDER_ID_PREFIX)
     }
 }
 
@@ -46,9 +46,17 @@ public fun generateChannelIdIfNeeded(channelId: String, memberIds: List<String>)
  */
 internal fun Channel.isLocalPlaceholder(): Boolean =
     id.startsWith(PLACEHOLDER_ID_PREFIX) &&
-        id.removePrefix(PLACEHOLDER_ID_PREFIX).split(", ").toSet() == members.map { it.getUserId() }.toSet()
+        id.removePrefix(PLACEHOLDER_ID_PREFIX).split(PLACEHOLDER_ID_SEPARATOR).toSet() ==
+        members.map { it.getUserId() }.toSet()
+
+/**
+ * Whether [cid] is a local placeholder with more than one member, which no server id looks like.
+ */
+internal fun isMultiMemberPlaceholderCid(cid: String): Boolean =
+    cid.substringAfter(':').let { id -> id.startsWith(PLACEHOLDER_ID_PREFIX) && PLACEHOLDER_ID_SEPARATOR in id }
 
 private const val PLACEHOLDER_ID_PREFIX = "!members-"
+private const val PLACEHOLDER_ID_SEPARATOR = ", "
 
 /**
  * Calculates the new lastMessageAt date based on the message.
