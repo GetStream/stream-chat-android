@@ -73,19 +73,19 @@ internal data class ScheduledMessageContentResponse(
     internal val type: String? = null,
 
     @Json(name = "attachments")
-    internal val attachments: List<io.getstream.chat.android.network.models.Attachment>? = emptyList(),
+    internal val attachments: List<io.getstream.chat.android.network.models.Attachment>? = null,
 
     @Json(name = "mentioned_group_ids")
-    internal val mentionedGroupIds: List<String>? = emptyList(),
+    internal val mentionedGroupIds: List<String>? = null,
 
     @Json(name = "mentioned_roles")
-    internal val mentionedRoles: List<String>? = emptyList(),
+    internal val mentionedRoles: List<String>? = null,
 
     @Json(name = "mentioned_users")
-    internal val mentionedUsers: List<String>? = emptyList(),
+    internal val mentionedUsers: List<String>? = null,
 
     @Json(name = "restricted_visibility")
-    internal val restrictedVisibility: List<String>? = emptyList(),
+    internal val restrictedVisibility: List<String>? = null,
 
     @Json(name = "shared_location")
     internal val sharedLocation: io.getstream.chat.android.network.models.ScheduledMessageLocation? = null,

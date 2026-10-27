@@ -51,7 +51,8 @@ internal interface ScheduledMessagesApi {
      * Updates the content of a scheduled message, when it is sent, or both.
      *
      * @param id The ID of the scheduled message.
-     * @param body The new content and date. A field left out keeps its current value.
+     * @param body The new content and date. Leaving out `message` or `scheduled_at` keeps it; a `message` replaces
+     * the whole content.
      */
     @PATCH("/api/v2/chat/scheduled_messages/{id}")
     fun updateScheduledMessage(

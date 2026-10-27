@@ -33,7 +33,6 @@ internal data class ScheduledMessagesFilter(
     @Json(name = "cid")
     internal val cid: String? = null,
 
-    // Patched: the generator defaults this to an empty list, which would send `"status": []` when no status filter is set.
     @Json(name = "status")
     internal val status: List<io.getstream.chat.android.network.models.ScheduledMessageQueryStatus>? = null,
 )

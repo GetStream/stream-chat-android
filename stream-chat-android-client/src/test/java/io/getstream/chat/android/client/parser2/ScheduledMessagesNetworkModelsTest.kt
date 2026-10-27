@@ -194,7 +194,7 @@ internal class ScheduledMessagesNetworkModelsTest {
         )
 
         toJson(request).shouldEqualJson(
-            """{ "limit": 100, "sort": [], "filter": { "cid": "messaging:general" } }""",
+            """{ "limit": 100, "filter": { "cid": "messaging:general" } }""",
         )
     }
 
@@ -206,7 +206,7 @@ internal class ScheduledMessagesNetworkModelsTest {
             ),
         )
 
-        toJson(request).shouldEqualJson("""{ "sort": [], "filter": { "status": ["scheduled", "failed"] } }""")
+        toJson(request).shouldEqualJson("""{ "filter": { "status": ["scheduled", "failed"] } }""")
     }
 
     @Test

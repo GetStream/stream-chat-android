@@ -37,7 +37,7 @@ internal data class QueryScheduledMessagesRequest(
     internal val next: String? = null,
 
     @Json(name = "sort")
-    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = emptyList(),
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
 
     @Json(name = "filter")
     internal val filter: io.getstream.chat.android.network.models.ScheduledMessagesFilter? = null,
