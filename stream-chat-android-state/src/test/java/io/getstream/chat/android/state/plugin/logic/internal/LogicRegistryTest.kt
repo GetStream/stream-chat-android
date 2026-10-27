@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -33,6 +34,7 @@ import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.grouped.internal.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
@@ -604,5 +606,63 @@ internal class LogicRegistryTest {
 
         state.setChannels(mapOf(unread.cid to unread.copy(read = read.read), read.cid to read))
         verify(mutableGlobalState).setFilteredGroupedUnreadChannels("expired", 3)
+    }
+
+    @Test
+    fun `channel with malformed cid returns a non-cached ChannelLogic`() {
+        stubChannelStates()
+
+        val first = logicRegistry.channel("messaging", "")
+        val second = logicRegistry.channel("messaging", "")
+
+        Assertions.assertNotSame(first, second)
+        Assertions.assertTrue(logicRegistry.getActiveChannelsLogic().isEmpty())
+        Assertions.assertFalse(logicRegistry.isActiveChannel("messaging", ""))
+    }
+
+    @Test
+    fun `channel with valid cid returns the cached ChannelLogic`() {
+        stubChannelStates()
+
+        val first = logicRegistry.channel("messaging", "123")
+        val second = logicRegistry.channel("messaging", "123")
+
+        Assertions.assertSame(first, second)
+        Assertions.assertTrue(logicRegistry.isActiveChannel("messaging", "123"))
+    }
+
+    @Test
+    fun `removeChannel with malformed cid is a no-op`() {
+        stubChannelStates()
+        logicRegistry.channel("messaging", "123")
+        Assertions.assertEquals(1, logicRegistry.getActiveChannelsLogic().size)
+
+        logicRegistry.removeChannel("", "123")
+
+        Assertions.assertEquals(1, logicRegistry.getActiveChannelsLogic().size)
+    }
+
+    @Test
+    fun `channelFromMessage returns null when cid is malformed`() {
+        val message = Message(id = "msg1", cid = "not-a-cid", parentId = null)
+
+        val result = logicRegistry.channelFromMessage(message)
+
+        Assertions.assertNull(result)
+    }
+
+    private fun stubChannelStates() {
+        whenever(mutableGlobalState.channelMutes) doReturn MutableStateFlow(emptyList())
+        whenever(stateRegistry.mutableChannel(any<String>(), any<String>())).thenAnswer {
+            ChannelMutableState(
+                channelType = it.getArgument(0),
+                channelId = it.getArgument(1),
+                userFlow = MutableStateFlow(null),
+                latestUsers = MutableStateFlow(emptyMap()),
+                activeLiveLocations = MutableStateFlow(emptyList()),
+                baseMessageLimit = null,
+                now = { System.currentTimeMillis() },
+            )
+        }
     }
 }

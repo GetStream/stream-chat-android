@@ -19,9 +19,6 @@ package io.getstream.chat.android.client.utils.internal
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.result.Error
 import io.getstream.result.Result
-import java.util.regex.Pattern
-
-private val cidPattern = Pattern.compile("^([a-zA-z0-9]|!|-)+:([a-zA-z0-9]|!|-)+$")
 
 /**
  * Validates a cid. Verifies it's not empty and in the format messaging:123.
@@ -33,9 +30,8 @@ private val cidPattern = Pattern.compile("^([a-zA-z0-9]|!|-)+:([a-zA-z0-9]|!|-)+
 @Throws(IllegalArgumentException::class)
 @InternalStreamChatApi
 public fun validateCid(cid: String): String = cid.apply {
-    require(cid.isNotEmpty()) { "cid can not be empty" }
-    require(cid.isNotBlank()) { "cid can not be blank" }
-    require(cidPattern.matcher(cid).matches()) {
+    val parts = cid.split(":")
+    require(parts.size == 2 && parts[0].isNotBlank() && parts[1].isNotBlank()) {
         "cid needs to be in the format channelType:channelId. For example, messaging:123"
     }
 }

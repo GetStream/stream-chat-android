@@ -30,6 +30,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -128,7 +129,7 @@ internal class QueryChannelsLogicGroupedReconnectTest {
         val stateLogic = QueryChannelsStateLogic(
             mutableState = mutableState,
             stateRegistry = mock(),
-            logicRegistry = mock { on(it.channelState(any(), any())) doReturn mock() },
+            logicRegistry = mock(defaultAnswer = Answers.RETURNS_MOCKS),
             coroutineScope = testCoroutines.scope,
         )
         val realLogic = QueryChannelsLogic(

@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -46,6 +45,8 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
+import io.getstream.chat.android.state.utils.internal.ChannelId
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -72,9 +73,11 @@ internal class LogicRegistry internal constructor(
     private val now: () -> Long,
 ) : ChannelStateLogicProvider {
 
+    private val logger by taggedLogger("Chat:LogicRegistry")
+
     private val queryChannels: ConcurrentHashMap<QueryChannelsIdentifier, QueryChannelsLogic> =
         ConcurrentHashMap()
-    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
+    private val channels: ConcurrentHashMap<ChannelId, ChannelLogic> = ConcurrentHashMap()
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>?>, QueryThreadsLogic> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
@@ -151,32 +154,50 @@ internal class LogicRegistry internal constructor(
     internal fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
         queryChannels(queryChannelsRequest.identifier)
 
-    /** Returns [ChannelLogic] by channelType and channelId combination. */
+    /**
+     * Returns [ChannelLogic] by channelType and channelId combination.
+     *
+     * A malformed cid yields a fresh, non-cached logic so callers still get a non-null object, but
+     * the registry won't track it and updates fed to it will be discarded.
+     */
     fun channel(channelType: String, channelId: String): ChannelLogic {
-        return channels.getOrPut(channelType to channelId) {
-            val mutableState = stateRegistry.mutableChannel(channelType, channelId)
-            val stateLogic = ChannelStateLogic(
-                clientState = clientState,
-                mutableState = mutableState,
-                globalMutableState = mutableGlobalState,
-                searchLogic = SearchLogic(mutableState),
-                now = now,
-                coroutineScope = coroutineScope,
-            )
-
-            ChannelLogicImpl(
-                repos = repos,
-                userPresence = userPresence,
-                channelStateLogic = stateLogic,
-                coroutineScope = coroutineScope,
-            ) {
-                clientState.user.value?.id
-            }
+        val id = ChannelId.fromTypeAndId(channelType, channelId)
+        if (id == null) {
+            logger.w { "[channel] rejected malformed cid: $channelType:$channelId" }
+            return buildChannelLogic(channelType, channelId)
         }
+        return channel(id)
+    }
+
+    /** Returns [ChannelLogic] for a validated [ChannelId], creating and caching it on first access. */
+    fun channel(channelId: ChannelId): ChannelLogic = channels.getOrPut(channelId) {
+        buildChannelLogic(channelId.type, channelId.id)
     }
 
     internal fun removeChannel(channelType: String, channelId: String) {
-        channels.remove(channelType to channelId)
+        val id = ChannelId.fromTypeAndId(channelType, channelId) ?: return
+        channels.remove(id)
+    }
+
+    private fun buildChannelLogic(type: String, id: String): ChannelLogic {
+        val mutableState = stateRegistry.mutableChannel(type, id)
+        val stateLogic = ChannelStateLogic(
+            clientState = clientState,
+            mutableState = mutableState,
+            globalMutableState = mutableGlobalState,
+            searchLogic = SearchLogic(mutableState),
+            now = now,
+            coroutineScope = coroutineScope,
+        )
+
+        return ChannelLogicImpl(
+            repos = repos,
+            userPresence = userPresence,
+            channelStateLogic = stateLogic,
+            coroutineScope = coroutineScope,
+        ) {
+            clientState.user.value?.id
+        }
     }
 
     fun channelState(channelType: String, channelId: String): ChannelStateLogic {
@@ -221,8 +242,7 @@ internal class LogicRegistry internal constructor(
      */
     fun channelFromMessage(message: Message): ChannelLogic? {
         return if (message.parentId == null || message.showInChannel) {
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            channel(channelType, channelId)
+            ChannelId.fromCid(message.cid)?.let(::channel)
         } else {
             null
         }
@@ -314,8 +334,10 @@ internal class LogicRegistry internal constructor(
      *
      * @return True if the channel is active.
      */
-    fun isActiveChannel(channelType: String, channelId: String): Boolean =
-        channels.containsKey(channelType to channelId)
+    fun isActiveChannel(channelType: String, channelId: String): Boolean {
+        val id = ChannelId.fromTypeAndId(channelType, channelId) ?: return false
+        return channels.containsKey(id)
+    }
 
     /**
      * Returns a list of [ChannelLogic] for all, active channel requests.

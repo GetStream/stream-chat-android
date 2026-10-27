@@ -43,6 +43,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
@@ -174,7 +175,7 @@ internal class QueryChannelsLogicGroupedTest {
         val stateLogic = QueryChannelsStateLogic(
             mutableState = mutableState,
             stateRegistry = mock(),
-            logicRegistry = mock { on(it.channelState(any(), any())) doReturn mock() },
+            logicRegistry = mock(defaultAnswer = Answers.RETURNS_MOCKS),
             coroutineScope = testCoroutines.scope,
         )
         val realLogic = QueryChannelsLogic(
@@ -792,8 +793,7 @@ internal class QueryChannelsLogicGroupedTest {
             activeLiveLocations = MutableStateFlow(emptyList()),
         )
         // applyGroupedResult writes through to per-channel logic, so the registry needs to answer.
-        val logicRegistry = mock<LogicRegistry>()
-        whenever(logicRegistry.channelState(any(), any())) doReturn mock()
+        val logicRegistry = mock<LogicRegistry>(defaultAnswer = Answers.RETURNS_MOCKS)
         val realLogic = QueryChannelsLogic(
             identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
             client = client,

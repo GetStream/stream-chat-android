@@ -17,6 +17,9 @@
 package io.getstream.chat.android.state.plugin.state
 
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
@@ -24,8 +27,10 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelStateFlow
+import io.getstream.chat.android.state.utils.internal.ChannelId
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +43,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import java.util.Date
 
 internal class StateRegistryTest {
 
@@ -46,6 +52,8 @@ internal class StateRegistryTest {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
+
+    private val messaging123 = ChannelId.fromTypeAndId("messaging", "123")!!
 
     private lateinit var stateRegistry: StateRegistry
     private lateinit var userStateFlow: StateFlow<User?>
@@ -290,4 +298,54 @@ internal class StateRegistryTest {
     }
 
     // endregion
+
+    @Test
+    fun `channel with valid cid returns the cached ChannelState`() {
+        val first = stateRegistry.channel("messaging", "123")
+        val second = stateRegistry.channel("messaging", "123")
+
+        assertSame(first, second)
+        assertTrue(stateRegistry.isActiveChannel(messaging123))
+    }
+
+    @Test
+    fun `channel created offline as distinct returns the cached ChannelState`() {
+        val channelId = generateChannelIdIfNeeded(channelId = "", memberIds = listOf("alice", "bob"))
+
+        val first = stateRegistry.channel("messaging", channelId)
+        val second = stateRegistry.channel("messaging", channelId)
+
+        assertSame(first, second)
+        assertTrue(stateRegistry.isActiveChannel(ChannelId.fromTypeAndId("messaging", channelId)!!))
+    }
+
+    @Test
+    fun `channel with malformed cid returns a non-cached ChannelState`() {
+        val state = stateRegistry.channel("messaging", "")
+        assertEquals("messaging:", state.cid)
+        assertTrue(stateRegistry.getActiveChannelStates().isEmpty())
+    }
+
+    @Test
+    fun `handleBatchEvent with malformed cid ChannelDeletedEvent is a no-op`() {
+        stateRegistry.channel("messaging", "123")
+        assertEquals(1, stateRegistry.getActiveChannelStates().size)
+
+        val event = ChannelDeletedEvent(
+            type = "channel.deleted",
+            createdAt = Date(),
+            rawCreatedAt = "",
+            cid = ":id",
+            channelType = "",
+            channelId = "id",
+            channel = Channel(id = "id", type = ""),
+            user = null,
+        )
+        val batchEvent = BatchEvent(sortedEvents = listOf(event), isFromHistorySync = false)
+
+        stateRegistry.handleBatchEvent(batchEvent)
+
+        assertEquals(1, stateRegistry.getActiveChannelStates().size)
+        assertTrue(stateRegistry.isActiveChannel(messaging123))
+    }
 }
