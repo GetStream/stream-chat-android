@@ -74,7 +74,9 @@ internal class CreateChannelListenerStateTest {
         verify(logic).removeChannel("messaging", "!members-a, b")
         verify(stateRegistry).removeChannel("messaging", "!members-a, b")
         verify(queryChannelsLogic).removeChannel("messaging:!members-a, b")
+        verify(queryChannelsLogic).addChannelFromEvent(serverChannel)
         verify(otherQueryChannelsLogic, never()).removeChannel(any())
+        verify(otherQueryChannelsLogic, never()).addChannelFromEvent(any())
     }
 
     @Test

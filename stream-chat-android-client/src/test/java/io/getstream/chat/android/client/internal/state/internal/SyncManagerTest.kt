@@ -2255,6 +2255,14 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `on reconnect a grouped list holding a placeholder keeps its loaded pages`() = runTest(testDispatcher) {
+        givenPlaceholders()
+        givenReconnect(listOf(groupedQueryLogic(watch = true, cids = setOf("messaging:a", "messaging:!members-a, b"))))
+
+        assertEquals(setOf("all"), keysKeepingPages())
+    }
+
+    @Test
     fun `on reconnect a grouped list is reset when the sync reported too many events`() = runTest(testDispatcher) {
         givenReconnect(
             listOf(groupedQueryLogic(watch = true, cids = setOf("messaging:a"))),
@@ -2534,6 +2542,8 @@ internal class SyncManagerTest {
         order.verify(repositoryFacade).insertChannel(placeholder.copy(id = "!members-a, b"))
         order.verify(repositoryFacade).replacePlaceholderChannel(placeholder.cid, "messaging:!members-a, b")
         order.verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
+        // The renamed placeholder stays listed until the server creates the channel
+        verify(stateRegistry, never()).removeChannel(any(), any())
     }
 
     @Test

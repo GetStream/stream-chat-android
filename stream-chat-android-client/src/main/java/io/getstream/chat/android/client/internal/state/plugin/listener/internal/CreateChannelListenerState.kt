@@ -59,7 +59,7 @@ internal class CreateChannelListenerState(
         if (result !is Result.Success) return
         val placeholderCid = "$channelType:${generateChannelIdIfNeeded(channelId, memberIds)}"
         if (result.value.cid != placeholderCid) {
-            evictPlaceholderChannel(placeholderCid, logic, stateRegistry)
+            evictPlaceholderChannel(placeholderCid, logic, stateRegistry, serverChannel = result.value)
         }
     }
 
@@ -71,13 +71,15 @@ internal class CreateChannelListenerState(
 }
 
 /**
- * Drops [placeholderCid] from the channel and query-channels state, so it is no longer synced or watched. A consumer
- * already holding its state keeps it as it was.
+ * Drops [placeholderCid] from the channel and query-channels state, so it is no longer synced or watched, and puts
+ * [serverChannel] in its place in the channel lists that held it. A consumer already holding its state keeps it as it
+ * was.
  */
-internal suspend fun evictPlaceholderChannel(
+private suspend fun evictPlaceholderChannel(
     placeholderCid: String,
     logic: LogicRegistry,
     stateRegistry: StateRegistry,
+    serverChannel: Channel,
 ) {
     val (type, id) = placeholderCid.cidToTypeAndId()
     logic.markPlaceholderChannel(placeholderCid)
@@ -85,5 +87,9 @@ internal suspend fun evictPlaceholderChannel(
     stateRegistry.removeChannel(type, id)
     logic.getActiveQueryChannelsLogic()
         .filter { placeholderCid in it.cids() }
-        .forEach { it.removeChannel(placeholderCid) }
+        .forEach { queryChannelsLogic ->
+            queryChannelsLogic.removeChannel(placeholderCid)
+            // An existing distinct channel brings no event that would add it to the list
+            queryChannelsLogic.addChannelFromEvent(serverChannel)
+        }
 }

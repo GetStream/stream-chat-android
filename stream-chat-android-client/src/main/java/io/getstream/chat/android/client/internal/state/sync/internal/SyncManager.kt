@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.ReconnectGroupQueries
-import io.getstream.chat.android.client.internal.state.plugin.listener.internal.evictPlaceholderChannel
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
@@ -698,7 +697,7 @@ internal class SyncManager(
                     emptySet()
                 } else {
                     activeGroupedLogics
-                        .filter { syncedCids.containsAll(it.cids()) }
+                        .filter { syncedCids.containsAll(it.cids().withoutPlaceholders()) }
                         .mapNotNull { it.groupKey() }
                         .toSet()
                 }
@@ -974,7 +973,6 @@ internal class SyncManager(
                     // another member order is renamed first, or it would be left behind next to the regenerated one
                     repos.insertChannel(channel.copy(id = retriedCid.substringAfter(':')))
                     repos.replacePlaceholderChannel(cid, retriedCid)
-                    evictPlaceholderChannel(cid, logicRegistry, stateRegistry)
                 }
                 // The server rejects the placeholder id, so it resolves the distinct channel from the members
                 val channelId = if (isPlaceholder) "" else channel.id
