@@ -56,6 +56,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -87,7 +88,7 @@ internal class LogicRegistry internal constructor(
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>?>, QueryThreadsLogic> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
-    private val placeholderCids: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    private val placeholderCids: MutableSet<String> = Collections.newSetFromMap(ConcurrentHashMap())
 
     /**
      * Keeps the badge of a filtered group in [MutableGlobalState]: the unread channels not loaded yet plus the
