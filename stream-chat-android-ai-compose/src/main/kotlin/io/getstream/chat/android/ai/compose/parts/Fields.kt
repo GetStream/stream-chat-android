@@ -19,7 +19,11 @@ package io.getstream.chat.android.ai.compose.parts
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.Calendar
+import java.util.Date
+import java.util.GregorianCalendar
 import java.util.Locale
+import java.util.TimeZone
 
 /**
  * Lenient reads from a JSON object: a field of the wrong type reads as missing, and so does an
@@ -36,6 +40,9 @@ internal class Fields(private val values: Map<String, Any?>) {
         else -> null
     }
 
+    /** An RFC 3339 time, with or without fractional seconds. Other text reads as missing. */
+    fun date(key: String): Date? = string(key)?.let(::parseRfc3339)
+
     fun nested(key: String): Fields? = (values[key] as? Map<*, *>)?.let { Fields(it.stringKeyed()) }
 
     /** An object or an array, as JSON text with sorted keys. Other values read as missing. */
@@ -43,6 +50,36 @@ internal class Fields(private val values: Map<String, Any?>) {
         is Map<*, *>, is List<*> -> Json.write(value)
         else -> null
     }
+}
+
+private val Rfc3339 = Regex(
+    "(\\d{4})-(\\d{2})-(\\d{2})[Tt ](\\d{2}):(\\d{2}):(\\d{2})(?:\\.(\\d+))?(?:([Zz])|([+-])(\\d{2}):(\\d{2}))",
+)
+
+@Suppress("MagicNumber") // The positions of the time's parts in the pattern.
+private fun parseRfc3339(text: String): Date? {
+    val match = Rfc3339.matchEntire(text) ?: return null
+    val parts = match.groupValues
+    val calendar = GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.ROOT).apply {
+        isLenient = false
+        clear()
+        set(parts[1].toInt(), parts[2].toInt() - 1, parts[3].toInt())
+        set(Calendar.HOUR_OF_DAY, parts[4].toInt())
+        set(Calendar.MINUTE, parts[5].toInt())
+        set(Calendar.SECOND, parts[6].toInt())
+        set(Calendar.MILLISECOND, parts[7].take(3).padEnd(3, '0').toInt())
+    }
+    val utc = try {
+        calendar.timeInMillis
+    } catch (_: IllegalArgumentException) {
+        return null
+    }
+    val offsetMinutes = if (parts[8].isNotEmpty()) {
+        0
+    } else {
+        (parts[10].toInt() * 60 + parts[11].toInt()) * if (parts[9] == "-") -1 else 1
+    }
+    return Date(utc - offsetMinutes * 60_000L)
 }
 
 /** JSON reading and writing on `org.json`, with plain Kotlin collections on the outside. */

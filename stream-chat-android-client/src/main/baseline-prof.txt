@@ -2490,11 +2490,6 @@ PLio/getstream/chat/android/client/socket/HealthMonitor$postponeHealthMonitor$1;
 PLio/getstream/chat/android/client/socket/HealthMonitor$postponeHealthMonitor$1;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 Lio/getstream/chat/android/client/socket/SocketFactory;
 HSPLio/getstream/chat/android/client/socket/SocketFactory;->$r8$lambda$NlknKBdRqB4plmYdo62lR9H9cpE(Lio/getstream/chat/android/client/socket/SocketFactory;Lokhttp3/Request;Lokhttp3/WebSocketListener;)Lokhttp3/WebSocket;
-HSPLio/getstream/chat/android/client/socket/SocketFactory;-><init>(Lio/getstream/chat/android/client/parser/ChatParser;Lio/getstream/chat/android/client/token/TokenManager;Lokhttp3/OkHttpClient;)V
-HSPLio/getstream/chat/android/client/socket/SocketFactory;-><init>(Lio/getstream/chat/android/client/parser/ChatParser;Lio/getstream/chat/android/client/token/TokenManager;Lokhttp3/OkHttpClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-HSPLio/getstream/chat/android/client/socket/SocketFactory;->buildRequest(Lio/getstream/chat/android/client/socket/SocketFactory$ConnectionConf;)Lokhttp3/Request;
-HSPLio/getstream/chat/android/client/socket/SocketFactory;->buildUrl(Lio/getstream/chat/android/client/socket/SocketFactory$ConnectionConf;)Ljava/lang/String;
-HSPLio/getstream/chat/android/client/socket/SocketFactory;->buildUserDetailJson(Lio/getstream/chat/android/client/socket/SocketFactory$ConnectionConf;)Ljava/lang/String;
 HSPLio/getstream/chat/android/client/socket/SocketFactory;->createSocket$lambda$1(Lio/getstream/chat/android/client/socket/SocketFactory;Lokhttp3/Request;Lokhttp3/WebSocketListener;)Lokhttp3/WebSocket;
 HSPLio/getstream/chat/android/client/socket/SocketFactory;->createSocket(Lio/getstream/chat/android/client/socket/SocketFactory$ConnectionConf;)Lio/getstream/chat/android/client/socket/StreamWebSocket;
 HSPLio/getstream/chat/android/client/socket/SocketFactory;->getLogger()Lio/getstream/log/TaggedLogger;
@@ -2516,12 +2511,10 @@ HSPLio/getstream/chat/android/client/socket/SocketFactory$ConnectionConf$UserCon
 Lio/getstream/chat/android/client/socket/SocketListener;
 HSPLio/getstream/chat/android/client/socket/SocketListener;-><init>()V
 Lio/getstream/chat/android/client/socket/StreamWebSocket;
-HSPLio/getstream/chat/android/client/socket/StreamWebSocket;-><init>(Lio/getstream/chat/android/client/parser/ChatParser;Lkotlin/jvm/functions/Function1;)V
 HSPLio/getstream/chat/android/client/socket/StreamWebSocket;->access$getEventFlow$p(Lio/getstream/chat/android/client/socket/StreamWebSocket;)Lkotlinx/coroutines/flow/MutableSharedFlow;
 HSPLio/getstream/chat/android/client/socket/StreamWebSocket;->access$parseMessage(Lio/getstream/chat/android/client/socket/StreamWebSocket;Ljava/lang/String;)Lio/getstream/chat/android/client/socket/StreamWebSocketEvent;
 HSPLio/getstream/chat/android/client/socket/StreamWebSocket;->listen()Lkotlinx/coroutines/flow/Flow;
 HPLio/getstream/chat/android/client/socket/StreamWebSocket;->parseMessage(Ljava/lang/String;)Lio/getstream/chat/android/client/socket/StreamWebSocketEvent;
-PLio/getstream/chat/android/client/socket/StreamWebSocket;->send(Lio/getstream/chat/android/client/events/ChatEvent;)Z
 Lio/getstream/chat/android/client/socket/StreamWebSocket$$ExternalSyntheticLambda0;
 HPLio/getstream/chat/android/client/socket/StreamWebSocket$$ExternalSyntheticLambda0;-><init>(Lio/getstream/chat/android/client/socket/StreamWebSocket;Ljava/lang/String;)V
 Lio/getstream/chat/android/client/socket/StreamWebSocket$webSocket$1;

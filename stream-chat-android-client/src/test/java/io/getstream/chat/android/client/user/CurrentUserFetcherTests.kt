@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.Mother.randomConnectedEvent
 import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser.ChatParser
@@ -56,6 +55,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
@@ -70,6 +70,7 @@ internal class CurrentUserFetcherTests {
 
     lateinit var userScope: UserScope
     lateinit var chatParser: ChatParser
+    lateinit var eventParser: V2EventParser
     val networkStateProvider: NetworkStateProvider = mock()
     lateinit var fetcher: CurrentUserFetcher
     lateinit var webSocketListener: WebSocketListener
@@ -90,7 +91,8 @@ internal class CurrentUserFetcherTests {
     fun before() {
         userScope = UserTestScope(testCoroutines.scope)
         chatParser = mock()
-        streamWebSocket = StreamWebSocket(chatParser) {
+        eventParser = mock()
+        streamWebSocket = StreamWebSocket(chatParser, V2SocketProtocol(authFrame = "{}", eventParser = eventParser)) {
             webSocketListener = it
             ws
         }
@@ -135,7 +137,7 @@ internal class CurrentUserFetcherTests {
             ErrorResponse(message = "Error"),
         )
         whenever(networkStateProvider.isConnected()) doReturn true
-        whenever(chatParser.fromJsonOrError(errorMessage.toString(), ChatEvent::class.java)) doReturn Result.Failure(Error.GenericError(""))
+        whenever(eventParser.parse(errorMessage.toString())) doThrow IllegalStateException()
         whenever(chatParser.fromJsonOrError(errorMessage.toString(), SocketErrorMessage::class.java)) doReturn Result.Success(errorMessage)
 
         /* When */
@@ -187,7 +189,7 @@ internal class CurrentUserFetcherTests {
         val connectedEvent = randomConnectedEvent()
         whenever(networkStateProvider.isConnected()) doReturn true
         whenever(chatParser.fromJsonOrError(message, SocketErrorMessage::class.java)) doReturn Result.Failure(Error.GenericError("Error"))
-        whenever(chatParser.fromJsonOrError(message, ChatEvent::class.java)) doReturn Result.Success(connectedEvent)
+        whenever(eventParser.parse(message)) doReturn connectedEvent
 
         /* When */
         val localScope = testCoroutines.scope + Job()
@@ -206,7 +208,7 @@ internal class CurrentUserFetcherTests {
     }
 
     @Test
-    fun `When the v2 socket connects, the own user is fetched`() = runTest {
+    fun `When a real connection frame arrives, the own user is fetched`() = runTest {
         /* Given */
         var listener: WebSocketListener? = null
         val v2Socket = StreamWebSocket(

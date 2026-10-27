@@ -57,7 +57,7 @@ import kotlinx.coroutines.delay
  * @param isGenerating Whether the agent is still writing it.
  * @param parts The steps the agent took, in order.
  * @param attachments What the agent sent with it, such as images and files.
- * @param approver Who answers tool calls' questions on this device, to ask them.
+ * @param approver Who answers tool calls' questions and sign-ins on this device, to ask them.
  * @param reasoningText The whole of a reasoning step's thinking, when the app has it. Without it,
  * the step shows its own excerpt.
  */
