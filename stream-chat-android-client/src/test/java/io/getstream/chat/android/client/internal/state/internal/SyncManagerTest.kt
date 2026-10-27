@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.internal.state.sync.internal.sameInstant
 import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomConnectedEvent
@@ -65,6 +66,7 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomLocation
+import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
@@ -1191,6 +1193,127 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `on reconnect, up to 30 active channels are queried in one request with presence`() = runTest(testDispatcher) {
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds)) }
+        stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds)
+
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient, times(1)).queryChannelsInternal(capture())
+            assertEquals(channelIds.take(30).map(ChannelId::cid).toSet(), (firstValue.filter as InFilterObject).values)
+            assertEquals(30, firstValue.limit)
+            assertEquals(true, firstValue.presence)
+        }
+    }
+
+    @Test
+    fun `on reconnect, open active channels are queried first, also past the cap`() = runTest(testDispatcher) {
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        val openId = channelIds.last()
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds)) }
+        stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds, openCids = setOf(openId.cid))
+
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient, times(1)).queryChannelsInternal(capture())
+            assertEquals(
+                (listOf(openId) + channelIds.take(29)).map(ChannelId::cid).toSet(),
+                (firstValue.filter as InFilterObject).values,
+            )
+        }
+    }
+
+    @Test
+    fun `on reconnect, only the active channels the server does not return are watched`() = runTest(testDispatcher) {
+        val channelIds = (1..20).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds.take(10))) }
+        val logics = stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds)
+
+        channelIds.take(10).forEach { verify(logics.getValue(it.cid), never()).watch(any(), any()) }
+        channelIds.drop(10).forEach { verify(logics.getValue(it.cid)).watch(userPresence = true) }
+    }
+
+    @Test
+    fun `on reconnect, a failed request watches only the open channels it asked for`() = runTest(testDispatcher) {
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        val openIds = listOf(channelIds[4], channelIds[34])
+        answerQueryWith { Result.Failure(Error.GenericError("rejected")) }
+        val logics = stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds, openCids = openIds.map(ChannelId::cid).toSet())
+
+        verify(chatClient, times(1)).queryChannelsInternal(any<QueryChannelsRequest>())
+        channelIds.forEach { id ->
+            if (id in openIds) {
+                verify(logics.getValue(id.cid)).watch(userPresence = true)
+            } else {
+                verify(logics.getValue(id.cid), never()).watch(any(), any())
+            }
+        }
+    }
+
+    /** Answers `queryChannels` with [respond], given the channel ids the request asks for. */
+    private fun answerQueryWith(respond: (List<ChannelId>) -> Result<List<Channel>>) {
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())).thenAnswer { invocation ->
+            val request = invocation.getArgument<QueryChannelsRequest>(0)
+            val requestedIds = (request.filter as InFilterObject).values
+                .map { cid -> ChannelId.fromCid(cid as String)!! }
+            TestCall(respond(requestedIds).map { QueryChannelsResult(it, predefinedFilter = null) })
+        }
+    }
+
+    private fun channelsFor(ids: List<ChannelId>): List<Channel> = ids.map { randomChannel(type = it.type, id = it.id) }
+
+    /** Stubs one [ChannelLogic] per id in [channelIds] and returns them by cid. */
+    private fun stubChannelLogics(channelIds: List<ChannelId>): Map<String, ChannelLogic> {
+        val logics = channelIds.associate { id ->
+            id.cid to mock<ChannelLogic> {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel(id = id.id))
+            }
+        }
+        // The value class reaches Mockito unboxed, as its cid.
+        whenever(logicRegistry.channel(any<ChannelId>())).thenAnswer { logics.getValue(it.arguments[0] as String) }
+        return logics
+    }
+
+    /** Connects again with [channelIds] as recoverable active channel states, and no channel queries. */
+    private suspend fun TestScope.reconnectWithActiveChannels(
+        channelIds: List<ChannelId>,
+        openCids: Set<String> = emptySet(),
+    ) {
+        val createdAt = localDate()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        whenever(repositoryFacade.selectSyncState(user.id)) doReturn SyncState(
+            userId = user.id,
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
+            TestCall(Result.Success(emptyList<ChatEvent>()).synced())
+        whenever(clientState.isOnline) doReturn true
+        val recoverableState: ChannelState = mock { on(it.recoveryNeeded) doReturn true }
+        whenever(stateRegistry.getActiveChannelStates()) doReturn channelIds.associateWith { recoverableState }
+        whenever(stateRegistry.getTrackedWatchedChannels()) doReturn openCids
+
+        buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(
+            ConnectedEvent(
+                type = "type",
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt,
+                connectionId = randomString(),
+                me = user,
+            ),
+        )
+    }
+
+    @Test
     fun `when isAutomaticSyncOnReconnectEnabled is false, getSyncHistory should not be called on connected event`() =
         runTest(testDispatcher) {
             /* Given */
@@ -2246,7 +2369,195 @@ internal class SyncManagerTest {
         deletedForMe = false,
     )
 
+    @Test
+    fun `retrying a placeholder lets the server resolve the channel and leaves the replacement to the create`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+            whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+            whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
+                TestCall(Result.Success(randomChannel(id = "!members-${randomString()}", type = "messaging")))
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
+            verify(repositoryFacade, never()).replacePlaceholderChannel(any(), any())
+        }
+
+    @Test
+    fun `an unsorted placeholder is renamed to the sorted one before the retry`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-b, a")
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+        whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+        whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(randomChannel(id = "!members-${randomString()}", type = "messaging")))
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        val order = inOrder(repositoryFacade, chatClient)
+        order.verify(repositoryFacade).insertChannel(placeholder.copy(id = "!members-a, b"))
+        order.verify(repositoryFacade).replacePlaceholderChannel(placeholder.cid, "messaging:!members-a, b")
+        order.verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
+    }
+
+    @Test
+    fun `a server distinct channel is retried with its own id`() = runTest(testDispatcher) {
+        val channel = placeholderChannel(id = "!members-${randomString()}")
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+        whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+        whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(channel))
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(chatClient).createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())
+        verify(repositoryFacade, never()).replacePlaceholderChannel(any(), any())
+    }
+
+    @Test
+    fun `messages of a channel created with its own id are sent once the create returns it`() =
+        runTest(testDispatcher) {
+            val channel = randomChannel(type = "messaging", createdAt = localDate(), syncStatus = SyncStatus.SYNC_NEEDED)
+            whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+            whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+            whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
+                TestCall(Result.Success(channel))
+            val message = localRandomMessage().copy(cid = channel.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            val channelClient: ChannelClient = mock {
+                on(it.sendMessage(message)) doReturn message.asCall()
+            }
+            whenever(chatClient.channel(channel.cid)) doReturn channelClient
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(channelClient).sendMessage(message)
+        }
+
+    @Test
+    fun `messages wait when the create falls back to the stored placeholder`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+        whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+        whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(placeholder))
+        val message = localRandomMessage().copy(cid = placeholder.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(chatClient, never()).channel(placeholder.cid)
+    }
+
+    @Test
+    fun `messages of a placeholder whose retry failed wait for a later retry`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+        whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+        whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doReturn TestCall(
+            Result.Failure(Error.NetworkError(message = "too many requests", serverErrorCode = 9, statusCode = 429)),
+        )
+        val pending = localRandomMessage().copy(cid = placeholder.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+        val other = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn
+            listOf(pending.id, other.id)
+        whenever(repositoryFacade.selectMessage(pending.id)) doReturn pending
+        whenever(repositoryFacade.selectMessage(other.id)) doReturn other
+        val channelClient: ChannelClient = mock {
+            on(it.sendMessage(other)) doReturn other.asCall()
+        }
+        whenever(chatClient.channel(other.cid)) doReturn channelClient
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(chatClient, never()).channel(placeholder.cid)
+        verify(channelClient).sendMessage(other)
+    }
+
+    @Test
+    fun `messages of a channel the server rejects for good are sent so they fail where the user sees them`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            givenChannelRetryFails(placeholder, statusCode = 400)
+            val message = localRandomMessage().copy(cid = placeholder.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            val channelClient: ChannelClient = mock {
+                on(it.sendMessage(message)) doReturn message.asCall()
+            }
+            whenever(chatClient.channel(message.cid)) doReturn channelClient
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(channelClient).sendMessage(message)
+        }
+
+    @Test
+    fun `an outdated message stops waiting for its channel and is removed`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(cid = "messaging:!members-a, b", syncStatus = SyncStatus.SYNC_NEEDED)
+        delay(7_000)
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        givenChannelRetryFails(placeholder, statusCode = 429)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(repositoryFacade).deleteChannelMessage(message)
+    }
+
+    @Test
+    fun `messages awaiting attachments wait for their channel too`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        givenChannelRetryFails(placeholder, statusCode = 429)
+        val message = localRandomMessage().copy(
+            cid = placeholder.cid,
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+            attachments = emptyList(),
+        )
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+            listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(chatClient, never()).sendMessage(any(), any(), any(), any())
+        verify(repositoryFacade, never()).deleteChannelMessage(any())
+    }
+
+    private suspend fun givenChannelRetryFails(channel: Channel, statusCode: Int) {
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+        whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+        whenever(chatClient.createChannel(eq(channel.type), eq(""), any<CreateChannelParams>())) doReturn TestCall(
+            Result.Failure(Error.NetworkError(message = "rejected", serverErrorCode = 4, statusCode = statusCode)),
+        )
+    }
+
+    @Test
+    fun `retrying a channel with a regular id sends that id`() = runTest(testDispatcher) {
+        val channel = randomChannel(type = "messaging", createdAt = localDate(), syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+        whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+        whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(channel))
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(chatClient).createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())
+        verify(repositoryFacade, never()).deleteChannel(channel.cid)
+    }
+
     private fun TestScope.localDate() = Date(currentTime)
+
+    private fun TestScope.placeholderChannel(id: String) = randomChannel(
+        id = id,
+        type = "messaging",
+        members = listOf(randomMember(user = randomUser(id = "a")), randomMember(user = randomUser(id = "b"))),
+        createdAt = localDate(),
+        syncStatus = SyncStatus.SYNC_NEEDED,
+    )
 
     private fun TestScope.buildSyncManager(
         isAutomaticSyncOnReconnectEnabled: Boolean = true,

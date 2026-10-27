@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.state.errorhandler.internal
 
 import io.getstream.chat.android.client.errorhandler.CreateChannelErrorHandler
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
@@ -43,9 +44,9 @@ internal class CreateChannelErrorHandlerImpl(
 ) : CreateChannelErrorHandler {
 
     /**
-     * Replaces the original response error if the user is offline and the channel exists in the cache.
-     * This means that the channel was created locally but the API request failed due to lack of connection.
-     * The request will be synced once user's connection is recovered.
+     * Replaces the original response error if the user is offline, the error is not permanent and the channel
+     * exists in the cache. This means that the channel was created locally but the API request failed due to lack
+     * of connection. The request will be synced once user's connection is recovered.
      *
      * @param originalCall The original call.
      * @param channelType The channel type. ie messaging.
@@ -63,7 +64,8 @@ internal class CreateChannelErrorHandlerImpl(
         extraData: Map<String, Any>,
     ): ReturnOnErrorCall<Channel> {
         return originalCall.onErrorReturn(scope) { originalError ->
-            if (clientState.isOnline) {
+            // The socket can be down while HTTP works, so a server rejection must still reach the caller
+            if (clientState.isOnline || originalError.isPermanent()) {
                 Result.Failure(originalError)
             } else {
                 val generatedCid =

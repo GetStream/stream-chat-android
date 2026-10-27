@@ -189,7 +189,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
 
         val createChannelListener: CreateChannelListener = CreateChannelListenerDatabase(
             clientState = clientState,
-            channelRepository = repositoryFacade,
+            repos = repositoryFacade,
             userRepository = repositoryFacade,
         )
 

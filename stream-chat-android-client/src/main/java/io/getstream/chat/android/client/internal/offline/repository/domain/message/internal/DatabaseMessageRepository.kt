@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.utils.message.LocalOnlyMessageTypes
 import io.getstream.chat.android.client.utils.message.LocalOnlySyncStatuses
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
@@ -314,12 +315,19 @@ internal class DatabaseMessageRepository(
         }
     }
 
-    override suspend fun selectLocalOnlyMessagesForChannel(cid: String): List<Message> =
-        messageDao.selectBySyncStatusOrTypeForChannel(
+    override suspend fun selectLocalOnlyMessagesForChannel(cid: String): List<Message> {
+        val stored = messageDao.selectBySyncStatusOrTypeForChannel(
             cid = cid,
             syncStatuses = LocalOnlySyncStatuses.map(SyncStatus::status),
             types = LocalOnlyMessageTypes.toList(),
-        ).map { entity -> entity.toMessage() }
+        ).map { entity -> messageCache[entity.messageInnerEntity.id] ?: entity.toMessage() }
+        // The cache is written before the database, so a message sent moments ago may only be there
+        val unwritten = messageCache.snapshot().values.filter { it.cid == cid && it.createdAt == null }
+        return (stored + unwritten)
+            .distinctBy(Message::id)
+            .filter { it.cid == cid && it.isLocalOnly() }
+            .sortedBy { it.createdAt ?: it.createdLocallyAt }
+    }
 
     private suspend fun selectMessagesEntitiesForChannel(
         cid: String,
