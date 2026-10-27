@@ -134,6 +134,28 @@ internal class AIToolAuthorizationTest {
     }
 
     @Test
+    fun `a sign-in on a cleartext page is not offered`() {
+        val cleartext = call(
+            """
+                {"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"provider":"linear",
+                "title":"Connect Linear","url":"http://router.example/launch/a1","handoff_token":"tok_-1"}}
+            """.trimIndent(),
+        )
+
+        assertNull(cleartext.authorization)
+        assertFalse(cleartext.isAwaitingAuthorization(userId = "u_1"))
+        assertNull(approver("u_1", AIToolAuthorizer(connect = { _, _ -> true }, decline = {})).signIn(cleartext))
+
+        val secure = call(
+            """
+                {"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"provider":"linear",
+                "title":"Connect Linear","url":"HTTPS://router.example/launch/a1"}}
+            """.trimIndent(),
+        )
+        assertEquals("HTTPS://router.example/launch/a1", secure.authorization?.url)
+    }
+
+    @Test
     fun `a sign-in without a title or a page asks nothing`() {
         val untitled = call(
             """{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"url":"https://router.example/launch/a1"}}""",
@@ -151,6 +173,8 @@ internal class AIToolAuthorizationTest {
             "javascript:alert(1)",
             "com.example.app:/connected",
             "https:///launch/a1",
+            "http://router.example/launch/a1",
+            "HTTP://router.example/launch/a1",
         ).forEach { page ->
             val notAPage = call(
                 """{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"title":"Connect Linear","url":"$page"}}""",

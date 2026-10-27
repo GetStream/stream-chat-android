@@ -35,8 +35,8 @@ import java.util.Locale
  * @param providerName What people call the provider, such as "Linear".
  * @param title The question, such as "Connect Linear".
  * @param message What signing in means for the person.
- * @param url The sign-in page to open, an `http` or `https` URL. Open [launchUrl], which carries
- * the [handoffToken].
+ * @param url The sign-in page to open, an `https` URL. Open [launchUrl], which carries the
+ * [handoffToken].
  * @param handoffToken What binds the sign-in to the first browser that opens it. It goes in the
  * page's fragment, which no server sees. Gone once the sign-in is over.
  * @param expiresAt When the sign-in expires.
@@ -114,12 +114,13 @@ public data class AIToolAuthorization(
 
     internal companion object {
         /**
-         * Reads the step's `authorization`. A sign-in with no title, or no web page to open, asks
-         * nothing.
+         * Reads the step's `authorization`. A sign-in with no title, or no secure web page to open,
+         * asks nothing: the handoff token goes in the page's fragment, which a cleartext page would
+         * expose to anything on the way.
          */
         fun from(fields: Fields): AIToolAuthorization? {
             val title = fields.string("title") ?: return null
-            val url = fields.string("url")?.takeIf(::isWebPage) ?: return null
+            val url = fields.string("url")?.takeIf(::isSecureWebPage) ?: return null
             return AIToolAuthorization(
                 kind = fields.string("type")?.let(::Kind) ?: Kind.OAuth,
                 provider = fields.string("provider").orEmpty(),
@@ -133,9 +134,9 @@ public data class AIToolAuthorization(
             )
         }
 
-        private fun isWebPage(url: String): Boolean = try {
+        private fun isSecureWebPage(url: String): Boolean = try {
             val uri = URI(url)
-            uri.scheme?.lowercase(Locale.ROOT) in WebSchemes && !uri.host.isNullOrEmpty()
+            uri.scheme?.lowercase(Locale.ROOT) == SECURE_WEB_SCHEME && !uri.host.isNullOrEmpty()
         } catch (_: URISyntaxException) {
             false
         }
@@ -153,7 +154,7 @@ public data class AIToolAuthorization(
             }
         }
 
-        private val WebSchemes = setOf("http", "https")
+        private const val SECURE_WEB_SCHEME = "https"
         private const val FragmentSafe = "!$'()*,-./:;?@_~"
         private const val BYTE_MASK = 0xFF
         private const val ASCII_END = 0x80
