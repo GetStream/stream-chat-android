@@ -81,7 +81,14 @@ public class AIToolApprover(
     private val states = mutableStateMapOf<String, AIToolApprovalState>()
     private val authorizationStates = mutableStateMapOf<String, AIToolAuthorizationState>()
 
-    @Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    /**
+     * An approver that answers tool calls' questions here, without offering sign-ins.
+     *
+     * @param userId The person signed in, matched against a call's `target_user_id`.
+     * @param clientId This install, matched against a client tool call's `target_client_id`.
+     * @param scope Where answers are sent.
+     * @param decide Sends the answer. A thrown exception lets the person answer again.
+     */
     public constructor(
         userId: String,
         clientId: String,

@@ -783,7 +783,7 @@ public final class io/getstream/chat/android/ai/compose/ui/component/AIToolAppro
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlinx/coroutines/CoroutineScope;Lio/getstream/chat/android/ai/compose/ui/component/AIToolAuthorizer;Lkotlin/jvm/functions/Function3;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlinx/coroutines/CoroutineScope;Lio/getstream/chat/android/ai/compose/ui/component/AIToolAuthorizer;Lkotlin/jvm/functions/Function3;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function3;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function3;)V
 	public final fun getAuthorizer ()Lio/getstream/chat/android/ai/compose/ui/component/AIToolAuthorizer;
 	public final fun getClientId ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
