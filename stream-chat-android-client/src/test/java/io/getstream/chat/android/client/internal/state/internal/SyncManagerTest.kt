@@ -1191,83 +1191,56 @@ internal class SyncManagerTest {
         }
 
     @Test
-    fun `on reconnect, active channels are queried in batches of 30 up to 100 cids`() = runTest(testDispatcher) {
-        val channelIds = (1..120).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
-        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
-            Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
-        )
-        val missingLogic: ChannelLogic = mock {
-            onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel())
-        }
-        whenever(logicRegistry.channel(any<ChannelId>())) doReturn missingLogic
+    fun `on reconnect, up to 30 active channels are queried in one request with presence`() = runTest(testDispatcher) {
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds)) }
+        stubChannelLogics(channelIds)
 
         reconnectWithActiveChannels(channelIds)
 
         argumentCaptor<QueryChannelsRequest> {
-            verify(chatClient, times(4)).queryChannelsInternal(capture())
-            val requestedCids = allValues.map { (it.filter as InFilterObject).values }
-            assertEquals(listOf(30, 30, 30, 10), requestedCids.map { it.size })
-            assertEquals(listOf(30, 30, 30, 10), allValues.map { it.limit })
-            assertEquals(listOf(true, true, true, true), allValues.map { it.presence })
-            assertEquals(channelIds.take(100).map(ChannelId::cid).toSet(), requestedCids.flatten().toSet())
+            verify(chatClient, times(1)).queryChannelsInternal(capture())
+            assertEquals(channelIds.take(30).map(ChannelId::cid).toSet(), (firstValue.filter as InFilterObject).values)
+            assertEquals(30, firstValue.limit)
+            assertEquals(true, firstValue.presence)
         }
     }
 
     @Test
     fun `on reconnect, open active channels are queried first, also past the cap`() = runTest(testDispatcher) {
-        val channelIds = (1..120).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
         val openId = channelIds.last()
-        answerQueriesWithRequestedChannels()
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds)) }
         stubChannelLogics(channelIds)
 
         reconnectWithActiveChannels(channelIds, openCids = setOf(openId.cid))
 
         argumentCaptor<QueryChannelsRequest> {
-            verify(chatClient, times(4)).queryChannelsInternal(capture())
-            val requestedCids = allValues.map { (it.filter as InFilterObject).values }
-            assertEquals(openId.cid, requestedCids.first().first())
+            verify(chatClient, times(1)).queryChannelsInternal(capture())
             assertEquals(
-                (listOf(openId) + channelIds.take(99)).map(ChannelId::cid).toSet(),
-                requestedCids.flatten().toSet(),
+                (listOf(openId) + channelIds.take(29)).map(ChannelId::cid).toSet(),
+                (firstValue.filter as InFilterObject).values,
             )
         }
     }
 
     @Test
-    fun `on reconnect, only the channels a batch does not return are watched`() = runTest(testDispatcher) {
-        val channelIds = (1..60).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
-        answerQueriesWithRequestedChannels(emptyResponseAt = 2)
+    fun `on reconnect, only the active channels the server does not return are watched`() = runTest(testDispatcher) {
+        val channelIds = (1..20).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds.take(10))) }
         val logics = stubChannelLogics(channelIds)
 
         reconnectWithActiveChannels(channelIds)
 
-        verify(chatClient, times(2)).queryChannelsInternal(any<QueryChannelsRequest>())
-        channelIds.take(30).forEach { verify(logics.getValue(it.cid), never()).watch(any(), any()) }
-        channelIds.drop(30).forEach { verify(logics.getValue(it.cid)).watch(userPresence = true) }
+        channelIds.take(10).forEach { verify(logics.getValue(it.cid), never()).watch(any(), any()) }
+        channelIds.drop(10).forEach { verify(logics.getValue(it.cid)).watch(userPresence = true) }
     }
 
     @Test
-    fun `on reconnect, a failed batch stops the refresh and watches the open channels not refreshed`() =
-        runTest(testDispatcher) {
-            // Open channels go first, so the first two batches are open and the third holds 5 open and 5 closed.
-            val channelIds = (1..70).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
-            val openIds = channelIds.take(65)
-            answerQueriesWithRequestedChannels(failureAt = 2)
-            val logics = stubChannelLogics(channelIds)
-
-            reconnectWithActiveChannels(channelIds, openCids = openIds.map(ChannelId::cid).toSet())
-
-            verify(chatClient, times(2)).queryChannelsInternal(any<QueryChannelsRequest>())
-            openIds.take(30).forEach { verify(logics.getValue(it.cid), never()).watch(any(), any()) }
-            openIds.drop(30).forEach { verify(logics.getValue(it.cid)).watch(userPresence = true) }
-            channelIds.drop(65).forEach { verify(logics.getValue(it.cid), never()).watch(any(), any()) }
-        }
-
-    @Test
-    fun `on reconnect, a failed first batch watches every open channel`() = runTest(testDispatcher) {
+    fun `on reconnect, a failed request watches only the open channels it asked for`() = runTest(testDispatcher) {
         val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
         val openIds = listOf(channelIds[4], channelIds[34])
-        answerQueriesWithRequestedChannels(failureAt = 1)
+        answerQueryWith { Result.Failure(Error.GenericError("rejected")) }
         val logics = stubChannelLogics(channelIds)
 
         reconnectWithActiveChannels(channelIds, openCids = openIds.map(ChannelId::cid).toSet())
@@ -1282,25 +1255,17 @@ internal class SyncManagerTest {
         }
     }
 
-    /**
-     * Answers each `queryChannels` call with the channels it asks for. The call numbered [failureAt] fails, and the
-     * one numbered [emptyResponseAt] returns no channels. Calls are numbered from 1.
-     */
-    private fun answerQueriesWithRequestedChannels(failureAt: Int? = null, emptyResponseAt: Int? = null) {
-        var call = 0
+    /** Answers `queryChannels` with [respond], given the channel ids the request asks for. */
+    private fun answerQueryWith(respond: (List<ChannelId>) -> Result<List<Channel>>) {
         whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())).thenAnswer { invocation ->
-            call++
             val request = invocation.getArgument<QueryChannelsRequest>(0)
-            val channels = (request.filter as InFilterObject).values
+            val requestedIds = (request.filter as InFilterObject).values
                 .map { cid -> ChannelId.fromCid(cid as String)!! }
-                .map { id -> randomChannel(type = id.type, id = id.id) }
-            when (call) {
-                failureAt -> TestCall(Result.Failure(Error.GenericError("rejected")))
-                emptyResponseAt -> TestCall(Result.Success(QueryChannelsResult(emptyList(), predefinedFilter = null)))
-                else -> TestCall(Result.Success(QueryChannelsResult(channels, predefinedFilter = null)))
-            }
+            TestCall(respond(requestedIds).map { QueryChannelsResult(it, predefinedFilter = null) })
         }
     }
+
+    private fun channelsFor(ids: List<ChannelId>): List<Channel> = ids.map { randomChannel(type = it.type, id = it.id) }
 
     /** Stubs one [ChannelLogic] per id in [channelIds] and returns them by cid. */
     private fun stubChannelLogics(channelIds: List<ChannelId>): Map<String, ChannelLogic> {

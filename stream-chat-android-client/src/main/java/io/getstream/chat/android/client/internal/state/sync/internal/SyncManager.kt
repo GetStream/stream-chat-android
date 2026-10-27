@@ -104,12 +104,6 @@ private const val SYNC_EVENT_REPLAY_MAX_COUNT = 250
 private const val QUERY_CHANNELS_MAX_LIMIT = 30
 
 /**
- * Maximum number of active channels refreshed by cid after a reconnect, so a large channel cache
- * costs at most a few `queryChannels` requests.
- */
-private const val ACTIVE_CHANNELS_MAX_CIDS = 100
-
-/**
  * Age at which the last-synced date is abandoned instead of synced from.
  *
  * `/sync` cannot serve a range this old anyway, and without a ceiling a checkpoint that stops
@@ -776,13 +770,10 @@ internal class SyncManager(
     }
 
     /**
-     * Refreshes up to [ACTIVE_CHANNELS_MAX_CIDS] active channels that [cidsToExclude] does not cover, in
-     * `queryChannels` batches of [QUERY_CHANNELS_MAX_LIMIT]. Open channels, see
-     * [StateRegistry.getTrackedWatchedChannels], are picked first. Channels a successful batch does not
-     * return are watched one by one.
-     *
-     * Stops at the first failed batch, whatever the error, and watches only the open channels among
-     * those not refreshed yet.
+     * Refreshes up to [QUERY_CHANNELS_MAX_LIMIT] active channels that [cidsToExclude] does not cover, with
+     * one `queryChannels` request. Open channels, see [StateRegistry.getTrackedWatchedChannels], are picked
+     * first. Channels the response does not return are watched one by one. If the request fails, only the
+     * open channels among them are watched.
      */
     private suspend fun updateActiveChannels(
         recoverAll: Boolean,
@@ -797,34 +788,28 @@ internal class SyncManager(
             .filter { (id, state) -> (state.recoveryNeeded || recoverAll) && id.cid !in cidsToExclude }
             .keys
             .sortedBy { it.cid !in openCids }
-            .take(ACTIVE_CHANNELS_MAX_CIDS)
+            .take(QUERY_CHANNELS_MAX_LIMIT)
 
         logger.v { "[updateActiveChannels] missingCids.size: ${missingChannelIds.size}" }
         if (missingChannelIds.isEmpty() || !online) {
             return
         }
-        val batches = missingChannelIds.chunked(QUERY_CHANNELS_MAX_LIMIT)
-        for ((index, batch) in batches.withIndex()) {
-            val request = QueryChannelsRequest(
-                filter = Filters.`in`("cid", batch.map(ChannelId::cid)),
-                offset = 0,
-                limit = batch.size,
-            ).apply { presence = userPresence }
-            logger.v { "[updateActiveChannels] request: $request" }
-            when (val result = chatClient.queryChannelsInternal(request).await()) {
-                is Result.Success -> updateActiveChannelsBatch(batch, result.value.channels)
-                is Result.Failure -> {
-                    logger.e { "[updateActiveChannels] request failed: ${result.value}" }
-                    // Stops for every error: a rejected filter would reject the remaining batches too, as they
-                    // share its shape, and the open channels are covered by the watches below.
-                    rewatchOpenChannels(batches.drop(index).flatten(), openCids)
-                    return
-                }
+        val request = QueryChannelsRequest(
+            filter = Filters.`in`("cid", missingChannelIds.map(ChannelId::cid)),
+            offset = 0,
+            limit = missingChannelIds.size,
+        ).apply { presence = userPresence }
+        logger.v { "[updateActiveChannels] request: $request" }
+        when (val result = chatClient.queryChannelsInternal(request).await()) {
+            is Result.Success -> updateFoundActiveChannels(missingChannelIds, result.value.channels)
+            is Result.Failure -> {
+                logger.e { "[updateActiveChannels] request failed: ${result.value}" }
+                rewatchOpenChannels(missingChannelIds, openCids)
             }
         }
     }
 
-    private suspend fun updateActiveChannelsBatch(batch: List<ChannelId>, foundChannels: List<Channel>) {
+    private suspend fun updateFoundActiveChannels(requestedIds: List<ChannelId>, foundChannels: List<Channel>) {
         logger.v { "[updateActiveChannels] request completed; foundChannels.size: ${foundChannels.size}" }
         foundChannels.forEach { channel ->
             ChannelId.fromTypeAndId(channel.type, channel.id)
@@ -834,7 +819,7 @@ internal class SyncManager(
         mutableGlobalState.updateChannelDrafts(foundChannels)
         repos.storeStateForChannels(foundChannels)
         val foundCids = foundChannels.mapTo(mutableSetOf(), Channel::cid)
-        val stillMissingChannelIds = batch.filterNot { it.cid in foundCids }
+        val stillMissingChannelIds = requestedIds.filterNot { it.cid in foundCids }
         logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingChannelIds.size}" }
 
         // create channels that are not present on the API
