@@ -16,17 +16,13 @@
 
 package io.getstream.chat.android.ai.compose.ui.component
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -57,7 +53,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIConversationScroll
@@ -66,7 +64,7 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.AIThinkingCloc
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIThinkingTurn
 import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAIThinkingTurn
 import io.getstream.chat.android.ai.compose.ui.component.internal.OlderMessagesLoading
-import io.getstream.chat.android.ai.compose.ui.component.internal.ScrollToLatestButton
+import io.getstream.chat.android.ai.compose.ui.component.internal.ScrollToLatestOverlay
 import io.getstream.chat.android.ai.compose.ui.component.internal.conversationScroll
 import io.getstream.chat.android.ai.compose.ui.component.internal.distanceToEnd
 import io.getstream.chat.android.ai.compose.ui.component.internal.messageTurns
@@ -97,7 +95,28 @@ import kotlinx.coroutines.launch
  * loads, or replaces the one shown, opens at its end, and a button brings the end back into view
  * whenever it is out of it.
  *
- * Place the composer below the list, so the list knows how much of it is visible.
+ * Place the composer below the list, so the list knows how much of it is visible. To float the
+ * composer over the list instead, pass the space it covers as [contentPadding]:
+ *
+ * ```
+ * var composerHeight by remember { mutableStateOf(0.dp) }
+ * val density = LocalDensity.current
+ * Box {
+ *     AIConversation(
+ *         messages = messages,
+ *         key = { it.id },
+ *         isFromUser = { it.isMine },
+ *         contentPadding = PaddingValues(bottom = composerHeight),
+ *     ) { message ->
+ *         MessageRow(message)
+ *     }
+ *     Composer(
+ *         modifier = Modifier
+ *             .align(Alignment.BottomCenter)
+ *             .onSizeChanged { composerHeight = with(density) { it.height.toDp() } },
+ *     )
+ * }
+ * ```
  *
  * @param messages The conversation, oldest message first.
  * @param key A stable, unique key for a message. A turn is known by its first message's key, so
@@ -118,6 +137,11 @@ import kotlinx.coroutines.launch
  * @param colors The palette of the list's own views: the button that brings the end back into view,
  * and the spinner while older messages load.
  * @param icons The icons of the list's own views.
+ * @param contentPadding Space at the edges of the list that something drawn over it covers, such as
+ * a composer floating over its bottom. The messages scroll under it but stop clear of it, the
+ * latest turn is at least as tall as the part of the list it leaves visible, [emptyContent] is
+ * centered in that part, and the button that brings the end back into view and the spinner while
+ * older messages load show inside it. It adds to the list's own spacing.
  * @param messageContent The view of a message.
  */
 @Suppress("LongMethod", "LongParameterList")
@@ -133,6 +157,7 @@ public fun <T> AIConversation(
     emptyContent: @Composable () -> Unit = {},
     colors: AIConversationColors = AIConversationDefaults.colors(),
     icons: AIConversationIcons = AIConversationDefaults.icons(),
+    contentPadding: PaddingValues = PaddingValues(),
     messageContent: @Composable (T) -> Unit,
 ) {
     // The first message keeps starting a turn as older messages arrive above it, so the turns on
@@ -157,7 +182,7 @@ public fun <T> AIConversation(
 
     KeepsTurnsInPlace(listState, firstTurnId, loadsOlder, turns, turnsStart)
     ScrollsOnNewLastTurn(listState, turns, turnsStart)
-    LoadsOlderMessages(listState, firstTurnId, loadOlderMessages.takeIf { loadsOlder })
+    LoadsOlderMessages(listState, firstTurnId, loadOlderMessages.takeIf { loadsOlder }, contentPadding)
 
     val slack = with(LocalDensity.current) { EndSlack.roundToPx() }
     val endInView by remember(listState, slack) {
@@ -165,12 +190,23 @@ public fun <T> AIConversation(
     }
     val scope = rememberCoroutineScope()
 
+    val layoutDirection = LocalLayoutDirection.current
+    val top = contentPadding.calculateTopPadding()
+    val bottom = contentPadding.calculateBottomPadding()
+    KeepsEndOnPaddingChange(listState, lastTurn?.id, top, bottom)
+
     BoxWithConstraints(modifier = modifier) {
-        val viewportHeight = if (constraints.hasBoundedHeight) maxHeight else 0.dp
+        // The height of the list that nothing covers.
+        val viewportHeight = if (constraints.hasBoundedHeight) (maxHeight - top - bottom).coerceAtLeast(0.dp) else 0.dp
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = listState,
-            contentPadding = PaddingValues(bottom = if (turns.isEmpty()) 0.dp else 16.dp),
+            contentPadding = PaddingValues(
+                start = contentPadding.calculateStartPadding(layoutDirection),
+                top = top,
+                end = contentPadding.calculateEndPadding(layoutDirection),
+                bottom = bottom + if (turns.isEmpty()) 0.dp else 16.dp,
+            ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             if (turns.isEmpty()) {
@@ -211,21 +247,63 @@ public fun <T> AIConversation(
                 }
             }
         }
-        AnimatedVisibility(
+        ScrollToLatestOverlay(
             visible = turns.isNotEmpty() && !endInView,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 8.dp),
-            enter = fadeIn(tween(ButtonFadeMillis)) + scaleIn(tween(ButtonFadeMillis), initialScale = 0.8f),
-            exit = fadeOut(tween(ButtonFadeMillis)) + scaleOut(tween(ButtonFadeMillis), targetScale = 0.8f),
-        ) {
-            ScrollToLatestButton(
-                onClick = { scope.launch { listState.scrollToEnd(animated = true) } },
-                colors = colors,
-                icon = icons.scrollToLatest,
-            )
-        }
+            contentPadding = contentPadding,
+            onClick = { scope.launch { listState.scrollToEnd(animated = true) } },
+            colors = colors,
+            icon = icons.scrollToLatest,
+        )
     }
+}
+
+/**
+ * The [AIConversation] signature without `contentPadding`, kept so apps compiled against it keep
+ * working.
+ *
+ * @param messages The conversation, oldest message first.
+ * @param key A stable, unique key for a message.
+ * @param isFromUser Whether the person using the app sent a message.
+ * @param modifier The modifier to apply to the list.
+ * @param isThinking Whether the agent is answering the latest message and its reply shows nothing
+ * yet.
+ * @param loadOlderMessages Loads the messages before the first one.
+ * @param footer Content under the latest turn's messages.
+ * @param emptyContent What the list shows while there are no messages.
+ * @param colors The palette of the list's own views.
+ * @param icons The icons of the list's own views.
+ * @param messageContent The view of a message.
+ */
+@Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+@Suppress("LongParameterList")
+@Composable
+public fun <T> AIConversation(
+    messages: List<T>,
+    key: (T) -> Any,
+    isFromUser: (T) -> Boolean,
+    modifier: Modifier = Modifier,
+    isThinking: Boolean = false,
+    loadOlderMessages: (suspend () -> Unit)? = null,
+    footer: @Composable () -> Unit = {},
+    emptyContent: @Composable () -> Unit = {},
+    colors: AIConversationColors = AIConversationDefaults.colors(),
+    icons: AIConversationIcons = AIConversationDefaults.icons(),
+    messageContent: @Composable (T) -> Unit,
+) {
+    AIConversation(
+        messages = messages,
+        key = key,
+        isFromUser = isFromUser,
+        modifier = modifier,
+        isThinking = isThinking,
+        loadOlderMessages = loadOlderMessages,
+        footer = footer,
+        emptyContent = emptyContent,
+        colors = colors,
+        icons = icons,
+        contentPadding = PaddingValues(),
+        messageContent = messageContent,
+    )
 }
 
 /**
@@ -346,6 +424,33 @@ private fun ScrollsOnNewLastTurn(listState: LazyListState, turns: List<AIMessage
 }
 
 /**
+ * Keeps the end of the conversation in view when the padding changes while it was: a composer
+ * floating over the list is often measured a frame after the list opens at its end, and it grows
+ * and shrinks with its draft. The list keeps its first visible item in place by itself, which
+ * would leave the end under the new padding, or short of it.
+ *
+ * Only a list that showed its very end follows it. A person who scrolled up stays where they are,
+ * and so does a turn the person just sent, at the top with the list's spacing still below it.
+ */
+@Composable
+private fun KeepsEndOnPaddingChange(listState: LazyListState, lastTurnId: Any?, top: Dp, bottom: Dp) {
+    val padding = remember { PaddingSeen(top, bottom) }
+    val scope = rememberCoroutineScope()
+    // Runs before the list measures with the new padding, while its layout still has the old one.
+    SideEffect {
+        if (padding.top == top && padding.bottom == bottom) return@SideEffect
+        padding.top = top
+        padding.bottom = bottom
+        val info = listState.layoutInfo
+        // A layout of other turns is one a new last turn scrolls away from.
+        val showsLastTurn = lastTurnId != null && info.visibleItemsInfo.lastOrNull()?.key == lastTurnId
+        if (showsLastTurn && info.distanceToEnd() <= AtEndTolerancePx) {
+            scope.launch { listState.scrollToEnd(animated = false) }
+        }
+    }
+}
+
+/**
  * Calls [loadOlderMessages] once the spinner has stayed in view a moment, rather than for the
  * frame a list that opens at its end can show its start, and again whenever the first turn
  * changes while it is in view.
@@ -355,15 +460,22 @@ private fun LoadsOlderMessages(
     listState: LazyListState,
     firstTurnId: Any?,
     loadOlderMessages: (suspend () -> Unit)?,
+    contentPadding: PaddingValues,
 ) {
     val load by rememberUpdatedState(loadOlderMessages)
-    val spinnerInView by remember(listState) {
+    val density = LocalDensity.current
+    // What covers the list's edges, where the spinner is out of view.
+    val covered = with(density) {
+        contentPadding.calculateTopPadding().roundToPx() to contentPadding.calculateBottomPadding().roundToPx()
+    }
+    val spinnerInView by remember(listState, covered) {
         derivedStateOf {
             val info = listState.layoutInfo
+            val (coveredTop, coveredBottom) = covered
             info.visibleItemsInfo.any {
                 it.key == OlderMessagesKey &&
-                    it.offset < info.viewportEndOffset &&
-                    it.offset + it.size > info.viewportStartOffset
+                    it.offset < info.viewportEndOffset - coveredBottom &&
+                    it.offset + it.size > info.viewportStartOffset + coveredTop
             }
         }
     }
@@ -375,6 +487,9 @@ private fun LoadsOlderMessages(
         }
     }
 }
+
+/** The padding the list was last composed with. */
+private class PaddingSeen(var top: Dp, var bottom: Dp)
 
 /** What was above the turns when the list last laid them out. */
 private class AboveTurns(var firstTurnId: Any?, var loadsOlder: Boolean)
@@ -391,5 +506,7 @@ private const val EmptyContentKey = "io.getstream.chat.android.ai.compose.AIConv
 private const val TurnContentType = "io.getstream.chat.android.ai.compose.AIConversation.turn"
 
 private const val LoadOlderDelayMillis = 300L
-private const val ButtonFadeMillis = 200
 private val EndSlack = 24.dp
+
+// How far from its end a list still shows it, for the rounding of a scroll.
+private const val AtEndTolerancePx = 1

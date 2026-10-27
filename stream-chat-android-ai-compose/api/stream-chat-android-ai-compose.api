@@ -551,11 +551,13 @@ public final class io/getstream/chat/android/ai/compose/ui/component/AIConversat
 }
 
 public final class io/getstream/chat/android/ai/compose/ui/component/AIConversationKt {
-	public static final fun AIConversation (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun AIConversation (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final synthetic fun AIConversation (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/ai/compose/ui/component/AIConversationMessagesKt {
-	public static final fun AIConversation (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/conversation/AIPendingMessage;ZLio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Landroidx/compose/runtime/Composer;II)V
+	public static final fun AIConversation (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/conversation/AIPendingMessage;ZLio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;III)V
+	public static final synthetic fun AIConversation (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/conversation/AIPendingMessage;ZLio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/ai/compose/ui/component/AIConversationReplyActionsParams {
@@ -1017,13 +1019,17 @@ public final class io/getstream/chat/android/ai/compose/ui/component/ChatCompose
 public final class io/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIConversationKt {
 	public static final field INSTANCE Lio/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIConversationKt;
 	public fun <init> ()V
+	public final fun getLambda$-1658018281$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-2031655728$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-797114273$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$149379942$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIConversationMessagesKt {
 	public static final field INSTANCE Lio/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIConversationMessagesKt;
 	public fun <init> ()V
+	public final fun getLambda$-910991191$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1576577882$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1596490082$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$361948627$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 }

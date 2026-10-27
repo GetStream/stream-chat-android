@@ -134,6 +134,32 @@ internal class AIToolAuthorizationTest {
     }
 
     @Test
+    fun `a sign-in on this device's own cleartext page is offered`() {
+        listOf(
+            "http://localhost:8080/v1/agents/connectors/oauth/launch/a1",
+            "http://127.0.0.1:8080/launch/a1",
+            "http://[::1]:8080/launch/a1",
+        ).forEach { url ->
+            val local = call(
+                """
+                    {"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"provider":"linear",
+                    "title":"Connect Linear","url":"$url","handoff_token":"tok_-1"}}
+                """.trimIndent(),
+            )
+            assertEquals(url, local.authorization?.url)
+        }
+        listOf("http://10.0.2.2:8080/launch/a1", "http://localhost.example/launch/a1", "http://192.168.1.5/launch/a1").forEach { url ->
+            val remote = call(
+                """
+                    {"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"provider":"linear",
+                    "title":"Connect Linear","url":"$url","handoff_token":"tok_-1"}}
+                """.trimIndent(),
+            )
+            assertNull(url, remote.authorization)
+        }
+    }
+
+    @Test
     fun `a sign-in on a cleartext page is not offered`() {
         val cleartext = call(
             """
