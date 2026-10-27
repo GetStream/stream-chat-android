@@ -529,6 +529,7 @@ internal class DomainMapping(
         activeLiveLocations = activeLiveLocations,
         pendingMessages = pendingMessages,
         read = read,
+        scheduledMessages = scheduledMessages,
         watchers = watchers,
         channel = channel,
         draft = draft,

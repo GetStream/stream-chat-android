@@ -91,6 +91,7 @@ internal class CustomAdapterCoverageTest {
             "ChannelInput" to "Only sent to the v2 endpoints, which read custom data nested",
             "ChannelInputRequest" to "Only sent to the v2 endpoints, which read custom data nested",
             "EventRequest" to "Only sent to the v2 endpoint, which reads custom data nested",
+            "ScheduledMessageContentResponse" to "Only read from v2 responses and events, which nest custom data",
         )
     }
 }
