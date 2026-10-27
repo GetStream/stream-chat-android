@@ -16,13 +16,16 @@
 
 package io.getstream.chat.android.ai.compose.ui.component
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.text.TextStyle
@@ -129,6 +132,32 @@ internal class AIToolAuthorizationPromptTest {
         rule.onNodeWithText("Connecting…").assertIsNotEnabled()
         rule.onNodeWithText("Not now").assertIsNotEnabled()
         rule.runOnIdle { assertEquals(listOf("call-1"), declined) }
+    }
+
+    @Test
+    fun `only the person a sign-in is for reads that it waits for them`() {
+        val approver = approver(AIToolAuthorizer(connect = { _, _ -> true }, decline = {}))
+        fun step(id: String, targetUserId: String) = AIMessagePart.from(
+            type = "ai_tool_call",
+            payload = mapOf(
+                "id" to id,
+                "display_title" to "Using Linear $id",
+                "status" to "awaiting_authorization",
+                "target_user_id" to targetUserId,
+                "authorization" to mapOf("title" to "Connect Linear", "url" to "https://router.example/launch/$id"),
+            ),
+        )!!
+        rule.setContent {
+            Column {
+                AIMessagePartItem(part = step("a1", targetUserId = "u_1"), approver = approver)
+                AIMessagePartItem(part = step("a2", targetUserId = "u_2"), approver = approver)
+                AIMessagePartItem(part = step("a3", targetUserId = "u_1"))
+                AIToolCall(part = step("a4", targetUserId = "u_1").toolCall!!)
+            }
+        }
+
+        rule.onAllNodesWithText("Waiting for you to sign in").assertCountEquals(1)
+        rule.onAllNodesWithText("Waiting for sign-in").assertCountEquals(3)
     }
 
     @Test

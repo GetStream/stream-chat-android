@@ -141,7 +141,7 @@ public fun AIMessagePartItem(
             colors = reasoningColors,
         )
         call != null -> Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            AIToolCall(part = call, textStyle = textStyle, colors = toolCallColors)
+            AIToolCall(part = call, userId = approver?.userId, textStyle = textStyle, colors = toolCallColors)
             if (approver != null) {
                 AIToolApprovalPrompt(call = call, approver = approver) { approval, state, decide ->
                     AIToolApprovalCard(

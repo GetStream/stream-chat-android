@@ -98,6 +98,7 @@ internal class AIToolAuthorizationCardTest : PaparazziTest {
         """.trimIndent()
         val steps = listOf(
             """{"id":"call-1","display_title":"Using Linear","status":"awaiting_authorization","target_user_id":"u_1",$authorization}}""",
+            """{"id":"call-5","display_title":"Using Linear","status":"awaiting_authorization","target_user_id":"u_2",$authorization}}""",
             """{"id":"call-2","display_title":"Using Linear","status":"cancelled",$authorization,"status":"declined"}}""",
             """
                 {"id":"call-3","display_title":"Using Linear","status":"cancelled","summary":"Linear wasn't connected in time",
