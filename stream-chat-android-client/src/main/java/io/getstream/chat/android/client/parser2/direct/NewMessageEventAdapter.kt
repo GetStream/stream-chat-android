@@ -70,7 +70,7 @@ internal class NewMessageEventAdapter(
                 2 -> user = userAdapter.fromJson(reader)
                 3 -> cid = JsonParsingUtils.readNullableString(reader)
                 4 -> channelMemberCount = JsonParsingUtils.readNullableInt(reader)
-                5 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                5 -> if (JsonParsingUtils.expectToken(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
                     val channelCustom = JsonParsingUtils.readJsonObject(reader)
                     channelCustomName = channelCustom?.get("name") as? String
                     channelCustomImage = channelCustom?.get("image") as? String
@@ -87,11 +87,11 @@ internal class NewMessageEventAdapter(
                 8 -> totalUnreadCount = JsonParsingUtils.readNullableInt(reader)
                 9 -> unreadChannels = JsonParsingUtils.readNullableInt(reader)
                 10 -> channelMessageCount = JsonParsingUtils.readNullableInt(reader)
-                11 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                11 -> if (JsonParsingUtils.expectToken(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
                     groupedUnreadChannels = JsonParsingUtils.parseIntMap(reader)
                 }
                 // Not mapped, but the generated model rejects a null or a non-object.
-                12 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
+                12 -> if (JsonParsingUtils.expectToken(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
                     reader.skipValue()
                 }
                 else -> {
