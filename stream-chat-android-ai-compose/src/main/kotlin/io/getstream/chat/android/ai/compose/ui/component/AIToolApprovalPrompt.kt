@@ -136,7 +136,11 @@ public class AIToolApprover(
         val authorization = call.authorization ?: return AIToolAuthorizationState()
         val state = signInEntry(call.id, authorization)?.state ?: AIToolAuthorizationState()
         return if (authorization.isExpired()) {
-            AIToolAuthorizationState(isExpired = true, isDeclining = state.isDeclining, declineFailed = state.declineFailed)
+            AIToolAuthorizationState(
+                isExpired = true,
+                isDeclining = state.isDeclining,
+                declineFailed = state.declineFailed,
+            )
         } else {
             state
         }
@@ -169,7 +173,7 @@ public class AIToolApprover(
             }
             if (connected == true) {
                 // Your backend's change to the step hides the card. Until then it says connecting.
-                delay(CONNECTED_SETTLE_MILLIS)
+                delay(ConnectedSettleMillis)
             }
             updateSignIn(call.id, attempt) { state ->
                 state.copy(isConnecting = false, connectFailed = connected == null)
@@ -210,7 +214,11 @@ public class AIToolApprover(
         signIns[callId]?.takeIf { it.authorization.isSameSignIn(authorization) }
 
     /** Applies the end of a connect, unless the sign-in started over or another connect took its place. */
-    private fun updateSignIn(callId: String, attempt: Any, update: (AIToolAuthorizationState) -> AIToolAuthorizationState) {
+    private fun updateSignIn(
+        callId: String,
+        attempt: Any,
+        update: (AIToolAuthorizationState) -> AIToolAuthorizationState,
+    ) {
         val entry = signIns[callId]?.takeIf { it.attempt === attempt } ?: return
         signIns[callId] = entry.copy(state = update(entry.state), attempt = null)
     }
@@ -236,7 +244,7 @@ internal fun AIToolAuthorization.isExpired(now: Long = System.currentTimeMillis(
     expiresAt?.let { now >= it.time } ?: false
 
 /** How long a sign-in that came back connected keeps saying so while your backend updates the step. */
-internal const val CONNECTED_SETTLE_MILLIS: Long = 30_000L
+internal const val ConnectedSettleMillis: Long = 30_000L
 
 /**
  * Where the person's answer to a question is.

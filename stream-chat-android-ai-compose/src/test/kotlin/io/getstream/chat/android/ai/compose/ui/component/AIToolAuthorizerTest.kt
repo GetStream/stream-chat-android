@@ -84,7 +84,7 @@ internal class AIToolAuthorizerTest {
         )
 
         approver.connect(call)
-        scope.advanceTimeBy(CONNECTED_SETTLE_MILLIS - 1)
+        scope.advanceTimeBy(ConnectedSettleMillis - 1)
         assertEquals(AIToolAuthorizationState(isConnecting = true), approver.authorizationState(call))
 
         scope.advanceTimeBy(1)
