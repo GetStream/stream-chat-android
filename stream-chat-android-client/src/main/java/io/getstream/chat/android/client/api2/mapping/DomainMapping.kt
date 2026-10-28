@@ -352,6 +352,7 @@ internal val MEMBER_HIDDEN_CUSTOM_KEYS = setOf(
 /** V1 moderation is injected into the message custom data, not declared on the payload. */
 internal const val MODERATION_DETAILS_KEY = "moderation_details"
 
+// TEMP: exercises E2E test selection on this PR; dropped before merge.
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
     val currentUserIdProvider: () -> UserId?,
