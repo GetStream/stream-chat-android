@@ -83,6 +83,7 @@ internal fun LocalScheduledMessage.toEntity(): ScheduledMessageEntity = Schedule
     mentionedGroups = message.mentionedGroups,
     mentionedRoles = message.mentionedRoles,
     pinned = message.pinned,
+    pinnedAt = message.pinnedAt,
     pinExpires = message.pinExpires,
     silent = message.silent,
     restrictedVisibility = message.restrictedVisibility,
@@ -98,6 +99,7 @@ internal fun LocalScheduledMessage.toEntity(): ScheduledMessageEntity = Schedule
     hasPendingScheduledAt = hasPendingScheduledAt,
     isPendingSendNow = isPendingSendNow,
     isDeleted = isDeleted,
+    isCreateSent = isCreateSent,
     localFailureType = when (localFailure) {
         is ServerRejectedScheduling -> LOCAL_FAILURE_SERVER_REJECTED
         is LocalDeviceFailedScheduling -> LOCAL_FAILURE_LOCAL_DEVICE
@@ -142,6 +144,7 @@ internal suspend fun ScheduledMessageEntity.toModel(getUser: suspend (userId: St
             mentionedGroups = mentionedGroups,
             mentionedRoles = mentionedRoles,
             pinned = pinned,
+            pinnedAt = pinnedAt,
             pinExpires = pinExpires,
             silent = silent,
             restrictedVisibility = restrictedVisibility,
@@ -159,6 +162,7 @@ internal suspend fun ScheduledMessageEntity.toModel(getUser: suspend (userId: St
         hasPendingScheduledAt = hasPendingScheduledAt,
         isPendingSendNow = isPendingSendNow,
         isDeleted = isDeleted,
+        isCreateSent = isCreateSent,
         localFailure = toLocalFailure(),
         createdAt = createdAt,
         updatedAt = updatedAt,

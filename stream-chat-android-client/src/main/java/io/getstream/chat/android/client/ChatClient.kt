@@ -253,6 +253,7 @@ import io.getstream.result.call.toUnitCall
 import io.getstream.result.call.withPrecondition
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
+import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -3360,6 +3361,7 @@ internal constructor(
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<QueryChannelsResult> {
         return api.queryChannels(request)
+            .saveScheduledMessages(request.includeScheduledMessages, QueryChannelsResult::channels)
     }
 
     /**
@@ -3437,6 +3439,24 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> = api.queryChannel(channelType, channelId, request)
+        .saveScheduledMessages(request.includeScheduledMessages, ::listOf)
+
+    /**
+     * Saves the scheduled messages of the returned channels in [scheduledMessages] when [isIncluded].
+     */
+    private fun <T : Any> Call<T>.saveScheduledMessages(
+        isIncluded: Boolean,
+        channels: (T) -> List<Channel>,
+    ): Call<T> {
+        if (!isIncluded) return this
+        var knownIds = emptySet<String>()
+        return doOnStart(userScope) { knownIds = scheduledMessageManager.knownIds() }
+            .doOnResult(userScope) { result ->
+                result.onSuccessSuspend { value ->
+                    scheduledMessageManager.saveQueried(channels(value).flatMap(Channel::scheduledMessages), knownIds)
+                }
+            }
+    }
 
     /**
      * Gets the channel from the server based on [channelType], [channelId] and parameters from [QueryChannelRequest].
@@ -3509,7 +3529,7 @@ internal constructor(
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         logger.d { "[queryChannels] offset: ${request.offset}, limit: ${request.limit}" }
-        return api.queryChannels(request).doOnStart(userScope) {
+        return queryChannelsInternal(request).doOnStart(userScope) {
             plugins.forEach { listener ->
                 logger.v { "[queryChannels] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsRequest(request)
@@ -5311,6 +5331,8 @@ internal constructor(
     /**
      * Sends a scheduled message right away, instead of at its date. The message is only marked locally: it is sent
      * once its pending changes and attachments are on the server, so it never goes out with older content.
+     *
+     * When the latest changes of the message failed to reach the server, they are sent again first.
      *
      * It is refused when the message quotes a message that was deleted, as known from the messages saved on this
      * device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be sent

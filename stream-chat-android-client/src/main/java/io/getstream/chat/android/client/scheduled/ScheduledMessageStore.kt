@@ -43,13 +43,17 @@ internal class ScheduledMessageStore {
     val scheduledMessages: StateFlow<List<ScheduledMessage>> = _scheduledMessages
 
     /**
-     * Loads the scheduled messages saved in [repository], and saves every later change there. The ones changed before,
-     * for example by an event, win over the saved ones and are saved too.
+     * Loads the scheduled messages saved in [repository], and saves every later change there. The ones changed before
+     * are merged and saved too: a local change wins, and a server version from an event keeps the saved local changes.
      */
     suspend fun load(repository: ScheduledMessageRepository) = mutex.withLock {
         this.repository = repository
-        _messages.value.values.forEach { repository.insertScheduledMessage(it) }
-        setMessages(repository.selectScheduledMessages().associateBy(LocalScheduledMessage::id) + _messages.value)
+        val saved = repository.selectScheduledMessages().associateBy(LocalScheduledMessage::id)
+        val changed = _messages.value.mapValues { (id, message) ->
+            if (message.pendingChange == null) saved[id].mergeServer(message.toScheduledMessage()) else message
+        }
+        changed.values.forEach { repository.insertScheduledMessage(it) }
+        setMessages(saved + changed)
     }
 
     /**

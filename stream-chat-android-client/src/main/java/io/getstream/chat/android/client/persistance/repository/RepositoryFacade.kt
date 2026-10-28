@@ -50,6 +50,7 @@ public class RepositoryFacade private constructor(
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
+    /** Keeps the scheduled messages in the database of the offline support. Without it, they live in memory only. */
     internal val scheduledMessageRepository: ScheduledMessageRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,

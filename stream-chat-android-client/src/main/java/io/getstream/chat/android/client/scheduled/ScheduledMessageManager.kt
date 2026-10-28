@@ -87,9 +87,6 @@ internal class ScheduledMessageManager(
     }
 
     suspend fun schedule(cid: String, message: Message, scheduledAt: Date): Result<ScheduledMessage> {
-        if (store.messages.value.containsKey(message.id)) {
-            return Result.Failure(Error.GenericError("A scheduled message with id: ${message.id} already exists."))
-        }
         validateContent(cid, message)?.let { return Result.Failure(it) }
         val now = now()
         val content = message.copy(
@@ -98,8 +95,10 @@ internal class ScheduledMessageManager(
             createdAt = now,
             updatedAt = now,
         )
-        val scheduled = store.update(message.id) {
-            LocalScheduledMessage(
+        var exists = false
+        val scheduled = store.update(message.id) { current ->
+            exists = current != null
+            current ?: LocalScheduledMessage(
                 id = message.id,
                 cid = cid,
                 channel = null,
@@ -111,10 +110,14 @@ internal class ScheduledMessageManager(
                 hasPendingScheduledAt = false,
                 isPendingSendNow = false,
                 isDeleted = false,
+                isCreateSent = false,
                 localFailure = null,
                 createdAt = now,
                 updatedAt = now,
             )
+        }
+        if (exists) {
+            return Result.Failure(Error.GenericError("A scheduled message with id: ${message.id} already exists."))
         }
         return Result.Success(requireNotNull(scheduled).toScheduledMessage())
     }
@@ -144,9 +147,8 @@ internal class ScheduledMessageManager(
     suspend fun sendNow(id: String): Result<ScheduledMessage> {
         val current = store.messages.value[id] ?: return notFound(id)
         validateQuote(current.message.replyMessageId)?.let { return Result.Failure(it) }
-        return store.update(id) { it?.copy(isPendingSendNow = true) }
-            ?.let { Result.Success(it.toScheduledMessage()) }
-            ?: notFound(id)
+        // A failure of the latest changes is cleared, so they are sent again before the message is sent now.
+        return updateVisible(id) { it.copy(isPendingSendNow = true, localFailure = null) }
     }
 
     suspend fun resend(id: String): Result<ScheduledMessage> {
@@ -154,9 +156,7 @@ internal class ScheduledMessageManager(
         if (current.localFailure == null) {
             return Result.Failure(Error.GenericError("The scheduled message $id has no failed changes to send."))
         }
-        return store.update(id) { it?.copy(localFailure = null) }
-            ?.let { Result.Success(it.toScheduledMessage()) }
-            ?: notFound(id)
+        return updateVisible(id) { it.copy(localFailure = null) }
     }
 
     /**
@@ -172,7 +172,8 @@ internal class ScheduledMessageManager(
     /**
      * Queries the scheduled messages and saves them. When the query has no status filter and returns a single page,
      * the ones the server no longer has are removed, for example the ones sent while the device was offline. Only the
-     * ones that were on the server before the query are removed, so a message scheduled meanwhile is kept.
+     * ones that were on the server before the query are removed, so a message scheduled meanwhile is kept. A result
+     * for a message removed while the query ran, or older than the local message, is not saved.
      */
     suspend fun query(
         cid: String?,
@@ -180,10 +181,11 @@ internal class ScheduledMessageManager(
         limit: Int,
         next: String?,
     ): Result<QueryScheduledMessagesResult> {
-        val knownOnServer = store.messages.value.values.filterNot(LocalScheduledMessage::isLocalOnly).map { it.id }
+        val before = store.messages.value
+        val knownOnServer = before.values.filterNot(LocalScheduledMessage::isLocalOnly).map { it.id }
         val result = api.queryScheduledMessages(cid, statuses, limit, next).await()
         if (result is Result.Success) {
-            result.value.scheduledMessages.forEach { save(it) }
+            saveQueried(result.value.scheduledMessages, knownBefore = before.keys)
             if (statuses.isEmpty() && next == null && result.value.next == null) {
                 val ids = result.value.scheduledMessages.map(ScheduledMessage::id).toSet()
                 val removed = knownOnServer.toSet() - ids
@@ -191,6 +193,29 @@ internal class ScheduledMessageManager(
             }
         }
         return result
+    }
+
+    /**
+     * The IDs of the scheduled messages known now, to pass to [saveQueried] once a query that starts now returns.
+     */
+    fun knownIds(): Set<String> = store.messages.value.keys
+
+    /**
+     * Saves the scheduled messages a query returned. One removed while the query ran, for example sent or deleted, or
+     * older than the local message, is not saved.
+     *
+     * @param knownBefore The IDs from [knownIds] when the query started.
+     */
+    suspend fun saveQueried(scheduledMessages: List<ScheduledMessage>, knownBefore: Set<String>) {
+        scheduledMessages.forEach { server ->
+            store.update(server.id) { current ->
+                when {
+                    current == null && server.id in knownBefore -> null
+                    current != null && current.pendingChange == null && server.updatedAt < current.updatedAt -> current
+                    else -> current.mergeServer(server)
+                }
+            }
+        }
     }
 
     suspend fun onEvent(event: ChatEvent) {
@@ -213,22 +238,20 @@ internal class ScheduledMessageManager(
         transform: (LocalScheduledMessage, now: Date) -> LocalScheduledMessage,
     ): Result<ScheduledMessage> {
         val now = now()
-        return store.update(id) { scheduled ->
-            scheduled?.let {
-                transform(it, now).copy(
-                    pendingChange = if (it.isLocalOnly) PendingChange.Create else PendingChange.Update,
-                    localFailure = null,
-                    updatedAt = now,
-                )
-            }
-        }?.let { Result.Success(it.toScheduledMessage()) } ?: notFound(id)
+        return updateVisible(id) {
+            transform(it, now).copy(
+                pendingChange = if (it.isLocalOnly) PendingChange.Create else PendingChange.Update,
+                localFailure = null,
+                updatedAt = now,
+            )
+        }
     }
 
     private fun LocalScheduledMessage.reschedule(scheduledAt: Date?): LocalScheduledMessage =
         if (scheduledAt == null) {
             this
         } else {
-            copy(scheduledAt = scheduledAt, hasPendingScheduledAt = hasPendingScheduledAt || !isLocalOnly)
+            copy(scheduledAt = scheduledAt, hasPendingScheduledAt = hasPendingScheduledAt || mayBeOnServer)
         }
 
     /**
@@ -252,6 +275,18 @@ internal class ScheduledMessageManager(
             null
         }
     }
+
+    /**
+     * Applies [transform] to the scheduled message with [id], unless it is deleted.
+     */
+    private suspend fun updateVisible(
+        id: String,
+        transform: (LocalScheduledMessage) -> LocalScheduledMessage,
+    ): Result<ScheduledMessage> =
+        store.update(id) { current -> current?.let { if (it.isDeleted) it else transform(it) } }
+            ?.takeUnless(LocalScheduledMessage::isDeleted)
+            ?.let { Result.Success(it.toScheduledMessage()) }
+            ?: notFound(id)
 
     private fun <T : Any> notFound(id: String): Result<T> =
         Result.Failure(Error.GenericError("There is no scheduled message with id: $id."))

@@ -31,10 +31,12 @@ import java.util.Date
  * is not on the server yet.
  * @property publishingFailure Why the server could not send the message, when [serverStatus] is failed.
  * @property pendingChange The change to send to the server, or null when the server has the latest content.
- * @property hasPendingScheduledAt Whether [scheduledAt] changed after the message reached the server.
+ * @property hasPendingScheduledAt Whether [scheduledAt] changed after the message reached the server, or may have.
  * @property isPendingSendNow Whether the message is sent now, once its pending change is on the server.
- * @property isDeleted Whether a message that was not on the server yet was deleted. It is hidden, and removed once no
- * request for it is in flight.
+ * @property isDeleted Whether the message was deleted. It is hidden, deleted on the server if the server may have it,
+ * then removed.
+ * @property isCreateSent Whether a create was sent with no answer that the server did not store it, so the server
+ * may have the message even though its create is still pending.
  * @property localFailure Why the latest changes could not reach the server. Nothing is sent until they are resent.
  */
 internal data class LocalScheduledMessage(
@@ -49,6 +51,7 @@ internal data class LocalScheduledMessage(
     val hasPendingScheduledAt: Boolean,
     val isPendingSendNow: Boolean,
     val isDeleted: Boolean,
+    val isCreateSent: Boolean,
     val localFailure: ScheduledMessageFailure?,
     val createdAt: Date,
     val updatedAt: Date,
@@ -68,6 +71,10 @@ internal data class LocalScheduledMessage(
     /** Whether the message is not on the server yet. */
     val isLocalOnly: Boolean
         get() = pendingChange == PendingChange.Create
+
+    /** Whether the server may have the message. */
+    val mayBeOnServer: Boolean
+        get() = !isLocalOnly || isCreateSent
 
     /** Whether there is something to send to the server, or a deleted message to remove. */
     val hasPendingRequest: Boolean
@@ -111,6 +118,7 @@ internal fun LocalScheduledMessage?.mergeServer(server: ScheduledMessage): Local
         hasPendingScheduledAt = false,
         isPendingSendNow = false,
         isDeleted = false,
+        isCreateSent = false,
         localFailure = null,
         createdAt = server.createdAt,
         updatedAt = server.updatedAt,

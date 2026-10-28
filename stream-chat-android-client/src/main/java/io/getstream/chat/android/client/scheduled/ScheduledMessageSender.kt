@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.scheduled
 
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.attachment.AttachmentUploader
-import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.errors.isDuplicateMessageError
 import io.getstream.chat.android.client.errors.isStatusNotFound
 import io.getstream.chat.android.client.errors.scheduledMessageRejectionReason
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageFailure.LocalDeviceFailedScheduling
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -106,7 +107,7 @@ internal class ScheduledMessageSender(
      * the message shows again with the failure.
      */
     private suspend fun delete(message: LocalScheduledMessage): Boolean {
-        if (!message.isLocalOnly) {
+        if (message.mayBeOnServer) {
             if (!clientState.isOnline) return false
             val result = retryOnConflict { api.deleteScheduledMessage(message.id) }
             if (result is Result.Failure && !result.value.isNotFound()) {
@@ -148,21 +149,32 @@ internal class ScheduledMessageSender(
 
     private suspend fun create(message: LocalScheduledMessage): Boolean {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
+        // From now on the server may have the message, until it answers.
+        val sent = store.update(message.id) { it?.copy(isCreateSent = true) } ?: return true
         val result = retryOnConflict {
-            api.scheduleMessage(channelType, channelId, message.message, message.scheduledAt)
+            api.scheduleMessage(channelType, channelId, sent.message, sent.scheduledAt)
         }
         return when (result) {
             is Result.Success -> {
                 val scheduledMessage = result.value.scheduledMessage
-                if (scheduledMessage == null) {
-                    onSentAsMessage(result.value.message)
-                    store.update(message.id) { null }
-                } else {
-                    saveSent(message, scheduledMessage)
+                when {
+                    scheduledMessage == null -> {
+                        onSentAsMessage(result.value.message)
+                        store.update(message.id) { null }
+                    }
+                    // The server answers a repeated create with the message it stored first, with older content.
+                    message.isCreateSent -> saveRepeatedCreate(scheduledMessage)
+                    else -> saveSent(sent, scheduledMessage)
                 }
                 true
             }
-            is Result.Failure -> onFailure(message, result.value)
+            // The first create was sent right away, as its date had passed, and its answer was lost.
+            is Result.Failure -> if (message.isCreateSent && result.value.isDuplicateMessageError()) {
+                store.update(message.id) { null }
+                true
+            } else {
+                onFailure(sent, result.value)
+            }
         }
     }
 
@@ -210,8 +222,23 @@ internal class ScheduledMessageSender(
                 else -> current.copy(
                     pendingChange = PendingChange.Update,
                     hasPendingScheduledAt = current.hasPendingScheduledAt || current.scheduledAt != sent.scheduledAt,
+                    isCreateSent = false,
                 ).mergeServer(server)
             }
+        }
+    }
+
+    /**
+     * Saves the answer to a create that was sent before. While the server can still edit the message, the local
+     * content stays pending as an update, with the date when it was rescheduled since. Otherwise the server version is
+     * saved.
+     */
+    private suspend fun saveRepeatedCreate(server: ScheduledMessage) {
+        store.update(server.id) { current ->
+            current?.copy(
+                pendingChange = PendingChange.Update.takeIf { server.status == ScheduledMessageStatus.Scheduled },
+                isCreateSent = false,
+            )?.mergeServer(server)
         }
     }
 
@@ -228,17 +255,30 @@ internal class ScheduledMessageSender(
         when {
             isGone -> store.update(sent.id) { null }
             error.isWaitingForConnection() -> return false
-            else -> store.update(sent.id) { it?.copy(localFailure = error.toScheduledMessageFailure()) }
+            else -> store.update(sent.id) {
+                // A rejection means the server did not store a create.
+                it?.copy(
+                    localFailure = error.toScheduledMessageFailure(),
+                    isCreateSent = it.isCreateSent && !error.isRejection(),
+                )
+            }
         }
         return true
     }
 
     private fun Error.isNotFound(): Boolean = (this as? Error.NetworkError)?.isStatusNotFound() == true
 
-    /** Whether the request failed with no answer from the server because the device is offline. */
-    private fun Error.isWaitingForConnection(): Boolean = !isPermanent() && !clientState.isOnline
+    /**
+     * Whether the server answered that it rejects the request. A 5xx, a rate limit, a timeout or no answer leave the
+     * outcome unknown.
+     */
+    private fun Error.isRejection(): Boolean =
+        this is Error.NetworkError && statusCode in HTTP_CLIENT_ERRORS && statusCode !in UNKNOWN_OUTCOME_STATUSES
 
-    private fun Error.toScheduledMessageFailure(): ScheduledMessageFailure = if (isPermanent()) {
+    /** Whether the request failed with no answer from the server because the device is offline. */
+    private fun Error.isWaitingForConnection(): Boolean = !isRejection() && !clientState.isOnline
+
+    private fun Error.toScheduledMessageFailure(): ScheduledMessageFailure = if (isRejection()) {
         ServerRejectedScheduling(reason = scheduledMessageRejectionReason(), message = message)
     } else {
         LocalDeviceFailedScheduling(reason = LocalDeviceFailedScheduling.Reason.RequestFailed, message = message)
@@ -247,3 +287,11 @@ internal class ScheduledMessageSender(
     private fun LocalScheduledMessage.replaceAttachment(old: Attachment, new: Attachment): LocalScheduledMessage =
         copy(message = message.copy(attachments = message.attachments.map { if (it == old) new else it }))
 }
+
+/** The HTTP client error statuses. */
+@Suppress("MagicNumber") // The HTTP statuses, listed once here.
+private val HTTP_CLIENT_ERRORS = 400..499
+
+/** Request timeout and too many requests, whose outcome is unknown. */
+@Suppress("MagicNumber") // The HTTP statuses, listed once here.
+private val UNKNOWN_OUTCOME_STATUSES = setOf(408, 429)

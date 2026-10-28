@@ -89,6 +89,7 @@ public data class QueryChannelsRequest @JvmOverloads constructor(
 
     /**
      * Whether each channel is loaded with the current user's scheduled messages in it, in [Channel.scheduledMessages].
+     * They are also saved in `ChatClient.scheduledMessages`.
      * Defaults to false.
      */
     public var includeScheduledMessages: Boolean = false

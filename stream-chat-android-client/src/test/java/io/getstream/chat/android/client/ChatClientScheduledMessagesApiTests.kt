@@ -16,12 +16,15 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
@@ -29,9 +32,11 @@ import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomQueryScheduledMessagesResult
+import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Result
@@ -106,6 +111,24 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
         // then
         chatClient.scheduledMessages.value.map(ScheduledMessage::id) shouldContainSame
             queryResult.scheduledMessages.map(ScheduledMessage::id)
+    }
+
+    @Test
+    fun channelQueriesSaveTheScheduledMessagesOnlyWhenIncluded() = runTest {
+        // given
+        val scheduledMessage = randomScheduledMessage()
+        val channel = randomChannel().copy(scheduledMessages = listOf(scheduledMessage))
+        whenever(api.queryChannels(any()))
+            .thenReturn(RetroSuccess(QueryChannelsResult(listOf(channel), predefinedFilter = null)).toRetrofitCall())
+        // when
+        chatClient.queryChannelsInternal(QueryChannelsRequest(Filters.neutral(), limit = 1)).await()
+        val notIncluded = chatClient.scheduledMessages.value
+        chatClient.queryChannelsInternal(
+            QueryChannelsRequest(Filters.neutral(), limit = 1).apply { includeScheduledMessages = true },
+        ).await()
+        // then
+        notIncluded.shouldBeEmpty()
+        chatClient.scheduledMessages.value shouldBeEqualTo listOf(scheduledMessage)
     }
 
     @Test

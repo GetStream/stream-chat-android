@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPublishing
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.randomCID
@@ -151,6 +152,25 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `a deleted message can't be edited, rescheduled, sent now or resent`() = runTest {
+        startOffline()
+        val onServer = givenScheduledOnServer()
+        manager.delete(onServer.id)
+
+        listOf(
+            manager.update(onServer.id, onServer.message.copy(text = randomString()), null),
+            manager.reschedule(onServer.id, randomDate()),
+            manager.sendNow(onServer.id),
+            manager.resend(onServer.id),
+        ).forEach { it.shouldBeInstanceOf<Result.Failure>() }
+
+        val deleted = repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
+        deleted.isDeleted shouldBeEqualTo true
+        deleted.message shouldBeEqualTo onServer.message
+        manager.scheduledMessages.value.shouldBeEmpty()
+    }
+
+    @Test
     fun `deleting a message this device does not know deletes it on the server`() = runTest {
         val id = randomString()
         whenever(fixture.api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Success(Unit)))
@@ -168,6 +188,22 @@ internal class ScheduledMessageManagerTest {
             .shouldBeInstanceOf<Result.Failure>()
 
         manager.scheduledMessages.value shouldBeEqualTo listOf(onServer)
+    }
+
+    @Test
+    fun `send now clears a failure of the latest changes, so they are sent again`() = runTest {
+        val failed = randomLocalScheduledMessage(
+            pendingChange = LocalScheduledMessage.PendingChange.Update,
+            localFailure = ServerRejectedScheduling(reason = null, message = randomString()),
+        )
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(failed))
+        restarted.connectionState.value = ConnectionState.Offline
+        restarted.manager.start(backgroundScope)
+
+        val sentNow = (restarted.manager.sendNow(failed.id) as Result.Success).value
+
+        sentNow.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
+        sentNow.failure shouldBeEqualTo null
     }
 
     @Test
@@ -203,20 +239,15 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
-    fun `sent and message new end in the same state in either order`() = runTest {
+    fun `the new message of a sent message keeps the scheduled message until the sent event`() = runTest {
         val scheduled = givenScheduledOnServer()
-        val newMessage = newMessageEvent(scheduled.message.copy(id = randomString()))
+
+        // The sent message has a new ID, so it is not the scheduled message.
+        manager.onEvent(newMessageEvent(scheduled.message.copy(id = randomString())))
+        manager.scheduledMessages.value shouldBeEqualTo listOf(scheduled)
 
         manager.onEvent(sentEvent(scheduled))
-        manager.onEvent(newMessage)
-        val sentFirst = manager.scheduledMessages.value
-
-        givenScheduledOnServer(scheduled)
-        manager.onEvent(newMessage)
-        manager.onEvent(sentEvent(scheduled))
-
-        manager.scheduledMessages.value shouldBeEqualTo sentFirst
-        sentFirst.shouldBeEmpty()
+        manager.scheduledMessages.value.shouldBeEmpty()
     }
 
     @Test
@@ -286,6 +317,33 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `a query result does not bring back a message removed while the query ran`() = runTest {
+        val scheduled = givenScheduledOnServer()
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).thenReturn(
+            SuspendingCall {
+                manager.onEvent(sentEvent(scheduled))
+                Result.Success(QueryScheduledMessagesResult(listOf(scheduled), next = null))
+            },
+        )
+
+        manager.query(null, setOf(ScheduledMessageQueryStatus.Scheduled), limit = 100, next = null)
+
+        manager.scheduledMessages.value.shouldBeEmpty()
+    }
+
+    @Test
+    fun `a query result older than the local message does not replace it`() = runTest {
+        val now = Date()
+        val older = randomScheduledMessage(updatedAt = Date(now.time - 1_000))
+        val newer = older.copy(message = older.message.copy(text = randomString()), updatedAt = now)
+        givenScheduledOnServer(newer)
+
+        query(null, setOf(ScheduledMessageQueryStatus.Scheduled), null, QueryScheduledMessagesResult(listOf(older), null))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(newer)
+    }
+
+    @Test
     fun `a partial query removes nothing`() = runTest {
         val scheduled = givenScheduledOnServer()
 
@@ -310,6 +368,21 @@ internal class ScheduledMessageManagerTest {
         listOf(failedEarly, late, early).forEach { givenScheduledOnServer(it) }
 
         manager.scheduledMessages.value shouldBeEqualTo listOf(early, late, failedEarly)
+    }
+
+    @Test
+    fun `an event before the load keeps the saved local changes`() = runTest {
+        val pendingEdit = randomLocalScheduledMessage(cid = cid, pendingChange = LocalScheduledMessage.PendingChange.Update)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(pendingEdit))
+        restarted.connectionState.value = ConnectionState.Offline
+        val fromEvent = randomScheduledMessage(id = pendingEdit.id, cid = cid, status = ScheduledMessageStatus.Sending)
+
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(fromEvent))
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.manager.scheduledMessages.value.single()
+        loaded.message shouldBeEqualTo pendingEdit.message
+        loaded.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
     }
 
     @Test

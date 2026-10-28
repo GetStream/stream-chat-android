@@ -138,10 +138,13 @@ internal class ScheduledMessageSenderTest {
         status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
 
         givenScheduleAnswers()
+        givenUpdateAnswers()
         fixture.connectionState.value = ConnectionState.Connected
         runCurrent()
 
         verify(api, times(2)).scheduleMessage(any(), any(), any(), eq(scheduled.scheduledAt))
+        // The server may have stored the first create, with which it answers the second one.
+        verify(api).updateScheduledMessage(eq(scheduled.id), any(), anyOrNull())
         status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
     }
 
@@ -237,10 +240,12 @@ internal class ScheduledMessageSenderTest {
         )
 
         givenScheduleAnswers()
+        givenUpdateAnswers()
         manager.resend(scheduled.id)
         runCurrent()
 
         verify(api, times(2)).scheduleMessage(channelType, channelId, scheduled.message, scheduled.scheduledAt)
+        verify(api).updateScheduledMessage(eq(scheduled.id), any(), anyOrNull())
         status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
     }
 
@@ -395,6 +400,149 @@ internal class ScheduledMessageSenderTest {
         runCurrent()
 
         verify(api, times(1)).scheduleMessage(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `a delete after a create with no answer deletes it on the server, which may have it`() = runTest {
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(connectionError())))
+        whenever(api.deleteScheduledMessage(any()))
+            .thenReturn(TestCall(Result.Failure(serverError(code = 16, statusCode = 404))))
+        start()
+        val scheduled = schedule()
+        runCurrent()
+
+        manager.delete(scheduled.id)
+        runCurrent()
+
+        verify(api).deleteScheduledMessage(scheduled.id)
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [408, 429, 500, 502, 503, 504])
+    fun `a create failing with an unknown outcome is a request failure, and a delete reaches the server`(
+        statusCode: Int,
+    ) = runTest {
+        val error = Error.NetworkError(message = randomString(), serverErrorCode = -1, statusCode = statusCode)
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(error)))
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Success(Unit)))
+        start()
+        val scheduled = schedule()
+        runCurrent()
+        scheduledMessage(scheduled.id).failure shouldBeEqualTo LocalDeviceFailedScheduling(
+            reason = LocalDeviceFailedScheduling.Reason.RequestFailed,
+            message = error.message,
+        )
+
+        manager.delete(scheduled.id)
+        runCurrent()
+
+        verify(api).deleteScheduledMessage(scheduled.id)
+    }
+
+    @Test
+    fun `a reschedule after a create with no answer sends the new date after the repeated create`() = runTest {
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(connectionError())))
+        givenUpdateAnswers()
+        start()
+        val scheduled = schedule()
+        runCurrent()
+        val stored = scheduleAnswer(scheduled).scheduledMessage!!
+        val scheduledAt = randomDate()
+
+        whenever(api.scheduleMessage(any(), any(), any(), any()))
+            .thenReturn(TestCall(Result.Success(ScheduleMessageResult(stored.message, stored))))
+        manager.reschedule(scheduled.id, scheduledAt)
+        runCurrent()
+
+        verify(api).updateScheduledMessage(eq(scheduled.id), any(), eq(scheduledAt))
+    }
+
+    @Test
+    fun `a delete after a rejected create sends no request`() = runTest {
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(serverError(117))))
+        start()
+        val scheduled = schedule()
+        runCurrent()
+
+        manager.delete(scheduled.id)
+        runCurrent()
+
+        verify(api, never()).deleteScheduledMessage(any())
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+    }
+
+    @Test
+    fun `an edit after a create with no answer is sent as an update after the repeated create`() = runTest {
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(connectionError())))
+        givenUpdateAnswers()
+        start()
+        val scheduled = schedule()
+        runCurrent()
+        val stored = scheduleAnswer(scheduled).scheduledMessage!!
+        val edited = scheduled.message.copy(text = randomString())
+
+        // The server stored the first create, and answers the repeated one with it.
+        whenever(api.scheduleMessage(any(), any(), any(), any()))
+            .thenReturn(TestCall(Result.Success(ScheduleMessageResult(stored.message, stored))))
+        manager.update(scheduled.id, edited, scheduledAt = null)
+        runCurrent()
+
+        verify(api).updateScheduledMessage(eq(scheduled.id), argThat { text == edited.text }, eq(null))
+        scheduledMessage(scheduled.id).message.text shouldBeEqualTo edited.text
+        status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+    }
+
+    @Test
+    fun `a repeated create of a message the server already sent, as its date had passed, drops it`() = runTest {
+        val duplicate = Error.NetworkError(
+            message = "a message with ID ${randomString()} already exists",
+            serverErrorCode = 4,
+            statusCode = 400,
+        )
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(connectionError())))
+        start()
+        val scheduled = schedule()
+        runCurrent()
+
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(duplicate)))
+        manager.resend(scheduled.id)
+        runCurrent()
+
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+    }
+
+    @Test
+    fun `a repeated create answered with a message the server is sending saves it, with no update`() = runTest {
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(connectionError())))
+        start()
+        val scheduled = schedule()
+        runCurrent()
+
+        val sending = scheduleAnswer(scheduled).scheduledMessage!!.copy(status = ScheduledMessageStatus.Sending)
+        whenever(api.scheduleMessage(any(), any(), any(), any()))
+            .thenReturn(TestCall(Result.Success(ScheduleMessageResult(sending.message, sending))))
+        manager.resend(scheduled.id)
+        runCurrent()
+
+        verify(api, never()).updateScheduledMessage(any(), anyOrNull(), anyOrNull())
+        status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Sending
+    }
+
+    @Test
+    fun `a create left in flight before a restart is followed by an update`() = runTest {
+        val inFlight = randomLocalScheduledMessage(cid = cid, pendingChange = PendingChange.Create, isCreateSent = true)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(inFlight))
+        givenScheduleAnswers(restarted.api)
+        givenUpdateAnswers(restarted.api)
+
+        restarted.manager.start(backgroundScope)
+        runCurrent()
+
+        inOrder(restarted.api) {
+            verify(restarted.api).scheduleMessage(channelType, channelId, inFlight.message, inFlight.scheduledAt)
+            verify(restarted.api).updateScheduledMessage(eq(inFlight.id), eq(inFlight.message), anyOrNull())
+        }
     }
 
     @ParameterizedTest
