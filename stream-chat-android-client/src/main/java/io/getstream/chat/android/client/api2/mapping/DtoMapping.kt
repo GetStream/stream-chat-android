@@ -189,6 +189,7 @@ internal class DtoMapping(
             state = state,
             watch = watch,
             presence = presence,
+            includeScheduledMessages = includeScheduledMessages.takeIf { it },
             // Always present, even when empty: the backend decodes them into pointers.
             messages = messages.toMessagePaginationParams(),
             members = members.toPaginationParams(),

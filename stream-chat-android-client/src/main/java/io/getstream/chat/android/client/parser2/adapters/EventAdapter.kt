@@ -76,6 +76,11 @@ import io.getstream.chat.android.network.models.ReminderCreatedEvent
 import io.getstream.chat.android.network.models.ReminderDeletedEvent
 import io.getstream.chat.android.network.models.ReminderNotificationEvent
 import io.getstream.chat.android.network.models.ReminderUpdatedEvent
+import io.getstream.chat.android.network.models.ScheduledMessageCreatedEvent
+import io.getstream.chat.android.network.models.ScheduledMessageDeletedEvent
+import io.getstream.chat.android.network.models.ScheduledMessageFailedEvent
+import io.getstream.chat.android.network.models.ScheduledMessageSentEvent
+import io.getstream.chat.android.network.models.ScheduledMessageUpdatedEvent
 import io.getstream.chat.android.network.models.ThreadUpdatedEvent
 import io.getstream.chat.android.network.models.TypingStartEvent
 import io.getstream.chat.android.network.models.TypingStopEvent
@@ -217,6 +222,21 @@ internal fun generatedEventAdapters(moshi: Moshi): Map<String, JsonAdapter<ChatE
     EventType.REMINDER_UPDATED to generatedEventAdapter<ReminderUpdatedEvent>(moshi) { emptyMap() },
     EventType.REMINDER_DELETED to generatedEventAdapter<ReminderDeletedEvent>(moshi) { emptyMap() },
     EventType.NOTIFICATION_REMINDER_DUE to generatedEventAdapter<ReminderNotificationEvent>(moshi) { emptyMap() },
+    EventType.SCHEDULED_MESSAGE_CREATED to generatedEventAdapter<ScheduledMessageCreatedEvent>(moshi) {
+        mapOf("cid" to cid, "scheduled_message" to scheduledMessage)
+    },
+    EventType.SCHEDULED_MESSAGE_UPDATED to generatedEventAdapter<ScheduledMessageUpdatedEvent>(moshi) {
+        mapOf("cid" to cid, "scheduled_message" to scheduledMessage)
+    },
+    EventType.SCHEDULED_MESSAGE_DELETED to generatedEventAdapter<ScheduledMessageDeletedEvent>(moshi) {
+        mapOf("cid" to cid, "scheduled_message" to scheduledMessage)
+    },
+    EventType.SCHEDULED_MESSAGE_SENT to generatedEventAdapter<ScheduledMessageSentEvent>(moshi) {
+        mapOf("cid" to cid, "scheduled_message" to scheduledMessage)
+    },
+    EventType.SCHEDULED_MESSAGE_FAILED to generatedEventAdapter<ScheduledMessageFailedEvent>(moshi) {
+        mapOf("cid" to cid, "scheduled_message" to scheduledMessage)
+    },
     EventType.USER_MESSAGES_DELETED to generatedEventAdapter<UserMessagesDeletedEvent>(moshi) { emptyMap() },
     EventType.AI_TYPING_INDICATOR_UPDATED to generatedEventAdapter<AIIndicatorUpdateEvent>(moshi) {
         mapOf("cid" to cid, "user" to user)

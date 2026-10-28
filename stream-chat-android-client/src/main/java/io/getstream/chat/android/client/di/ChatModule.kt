@@ -54,6 +54,7 @@ import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
+import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
@@ -399,6 +400,7 @@ constructor(
             buildV2RetrofitApi<ThreadsApi>(),
             buildV2RetrofitApi<PollsApi>(),
             buildV2RetrofitApi<RemindersApi>(),
+            buildV2RetrofitApi<ScheduledMessagesApi>(),
             buildV2RetrofitApi<PushPreferencesApi>(),
             buildV2RetrofitApi<UserGroupApi>(),
             buildV2RetrofitApi<RoleApi>(),

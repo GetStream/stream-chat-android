@@ -65,9 +65,13 @@ import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.Role
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageFailure
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -125,10 +129,14 @@ import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryRemindersResponse
+import io.getstream.chat.android.network.models.QueryScheduledMessagesResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.ScheduledMessageContentResponse
+import io.getstream.chat.android.network.models.ScheduledMessageFailureReason
+import io.getstream.chat.android.network.models.ScheduledMessageResponse
 import io.getstream.chat.android.network.models.SearchResultMessage
 import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
@@ -148,10 +156,12 @@ import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPublishing.Reason as PublishingFailureReason
 import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.ScheduledMessageStatus as ScheduledMessageStatusDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningResponse
 import io.getstream.chat.android.network.models.ThreadParticipant as ThreadParticipantDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
@@ -1648,6 +1658,119 @@ internal class DomainMapping(
         reminders = reminders.map { it.toDomain() },
         next = next,
     )
+
+    /**
+     * Transforms the generated [ScheduledMessageResponse] into a domain [ScheduledMessage]. Its content becomes a
+     * [Message] with the ID, channel, author and dates of the scheduled message, and the declared fields a message
+     * request sends back from [Message.extraData] kept there, so the message can be passed back to an edit as it is.
+     */
+    internal fun ScheduledMessageResponse.toDomain(): ScheduledMessage = ScheduledMessage(
+        id = id,
+        cid = cid,
+        channel = channel?.let {
+            ChannelInfo(cid = it.cid, id = it.id, type = it.type, name = it.name, image = it.image)
+        },
+        message = message.toDomain(
+            id = id,
+            cid = cid,
+            user = user.toDomain(),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+        ),
+        scheduledAt = scheduledAt,
+        status = status.toDomain(),
+        failure = if (status == ScheduledMessageStatusDto.Failed) {
+            ScheduledMessageFailure.ServerFailedPublishing(failureReason?.toDomain())
+        } else {
+            null
+        },
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+
+    private fun ScheduledMessageContentResponse.toDomain(
+        id: String,
+        cid: String,
+        user: User,
+        createdAt: Date,
+        updatedAt: Date,
+    ): Message = Message(
+        id = id,
+        cid = cid,
+        text = text,
+        html = html.orEmpty(),
+        type = type.orEmpty(),
+        parentId = parentId,
+        showInChannel = showInChannel ?: false,
+        replyMessageId = quotedMessageId,
+        attachments = attachments.orEmpty().map { it.toDomain() },
+        mentionedUsersIds = mentionedUsers.orEmpty(),
+        mentionedHere = mentionedHere ?: false,
+        mentionedChannel = mentionedChannel ?: false,
+        mentionedGroups = mentionedGroupIds.orEmpty().map { UserGroup(id = it, name = "") },
+        mentionedRoles = mentionedRoles.orEmpty(),
+        pinned = pinned ?: false,
+        pinExpires = pinExpires,
+        silent = silent ?: false,
+        restrictedVisibility = restrictedVisibility.orEmpty(),
+        sharedLocation = sharedLocation?.let {
+            Location(
+                cid = cid,
+                messageId = id,
+                userId = user.id,
+                endAt = it.endAt,
+                latitude = it.latitude ?: 0.0,
+                longitude = it.longitude ?: 0.0,
+                deviceId = it.createdByDeviceId,
+            )
+        },
+        user = user,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        extraData = messageExtraData(
+            custom = custom,
+            draft = null,
+            imageLabels = null,
+            mentionedGroupIds = mentionedGroupIds,
+            mml = mml,
+            pollId = pollId,
+            restrictedVisibility = restrictedVisibility.orEmpty(),
+        ),
+    ).let(messageTransformer::transform)
+
+    private fun ScheduledMessageStatusDto.toDomain(): ScheduledMessageStatus = when (this) {
+        ScheduledMessageStatusDto.Scheduled -> ScheduledMessageStatus.Scheduled
+        ScheduledMessageStatusDto.Sending -> ScheduledMessageStatus.Sending
+        ScheduledMessageStatusDto.Failed -> ScheduledMessageStatus.Failed
+        ScheduledMessageStatusDto.Sent -> ScheduledMessageStatus.Sent
+        ScheduledMessageStatusDto.Canceled -> ScheduledMessageStatus.Canceled
+        is ScheduledMessageStatusDto.Unknown -> ScheduledMessageStatus.Unknown(value)
+    }
+
+    private fun ScheduledMessageFailureReason.toDomain(): ScheduledMessageFailure.ServerFailedPublishing.Reason =
+        when (this) {
+            ScheduledMessageFailureReason.Banned -> PublishingFailureReason.Banned
+            ScheduledMessageFailureReason.ChannelDeleted -> PublishingFailureReason.ChannelDeleted
+            ScheduledMessageFailureReason.ChannelFrozen -> PublishingFailureReason.ChannelFrozen
+            ScheduledMessageFailureReason.Expired -> PublishingFailureReason.Expired
+            ScheduledMessageFailureReason.HookRejected -> PublishingFailureReason.HookRejected
+            ScheduledMessageFailureReason.InternalError -> PublishingFailureReason.InternalError
+            ScheduledMessageFailureReason.InvalidMessage -> PublishingFailureReason.InvalidMessage
+            ScheduledMessageFailureReason.ModerationBlocked -> PublishingFailureReason.ModerationBlocked
+            ScheduledMessageFailureReason.NoPermission -> PublishingFailureReason.NoPermission
+            ScheduledMessageFailureReason.PendingNotSupported -> PublishingFailureReason.PendingNotSupported
+            ScheduledMessageFailureReason.UserDeleted -> PublishingFailureReason.UserDeleted
+            is ScheduledMessageFailureReason.Unknown -> PublishingFailureReason.Unknown(value)
+        }
+
+    /**
+     * Transforms the generated [QueryScheduledMessagesResponse] into a domain [QueryScheduledMessagesResult].
+     */
+    internal fun QueryScheduledMessagesResponse.toDomain(): QueryScheduledMessagesResult =
+        QueryScheduledMessagesResult(
+            scheduledMessages = scheduledMessages.map { it.toDomain() },
+            next = next,
+        )
 
     internal fun WrappedUnreadCountsResponse.toDomain(): UnreadCounts = UnreadCounts(
         messagesCount = totalUnreadCount,
