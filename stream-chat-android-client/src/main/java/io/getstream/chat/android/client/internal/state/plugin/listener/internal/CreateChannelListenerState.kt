@@ -82,7 +82,6 @@ private suspend fun evictPlaceholderChannel(
     serverChannel: Channel,
 ) {
     val (type, id) = placeholderCid.cidToTypeAndId()
-    logic.markPlaceholderChannel(placeholderCid)
     logic.removeChannel(type, id)
     stateRegistry.removeChannel(type, id)
     logic.getActiveQueryChannelsLogic()
