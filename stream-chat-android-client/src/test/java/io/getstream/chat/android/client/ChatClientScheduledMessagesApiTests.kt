@@ -42,6 +42,9 @@ import io.getstream.chat.android.randomUser
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
@@ -129,6 +132,22 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
         // then
         notIncluded.shouldBeEmpty()
         chatClient.scheduledMessages.value shouldBeEqualTo listOf(scheduledMessage)
+    }
+
+    @Test
+    fun scheduledMessagesOfAChannelDoNotEmitForChangesElsewhere() = runTest {
+        // given
+        val cid = randomCID()
+        val (channelType, channelId) = randomCID().cidToTypeAndId()
+        whenever(mutableClientState.user).thenReturn(MutableStateFlow(randomUser()))
+        val emissions = mutableListOf<List<ScheduledMessage>>()
+        backgroundScope.launch { chatClient.scheduledMessages(cid).toList(emissions) }
+        runCurrent()
+        // when
+        chatClient.scheduleMessage(channelType, channelId, Message(text = randomString()), randomDate()).await()
+        runCurrent()
+        // then
+        emissions shouldBeEqualTo listOf(emptyList())
     }
 
     @Test

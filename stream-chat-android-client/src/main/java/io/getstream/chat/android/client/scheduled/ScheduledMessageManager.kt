@@ -156,7 +156,10 @@ internal class ScheduledMessageManager(
         if (current.localFailure == null) {
             return Result.Failure(Error.GenericError("The scheduled message $id has no failed changes to send."))
         }
-        return updateVisible(id) { it.copy(localFailure = null) }
+        // A message whose deletion failed is deleted again.
+        return store.update(id) { it?.copy(localFailure = null) }
+            ?.let { Result.Success(it.toScheduledMessage()) }
+            ?: notFound(id)
     }
 
     /**
@@ -165,7 +168,7 @@ internal class ScheduledMessageManager(
      * on the server directly.
      */
     suspend fun delete(id: String): Result<Unit> {
-        if (store.update(id) { it?.copy(isDeleted = true) } != null) return Result.Success(Unit)
+        if (store.update(id) { it?.copy(isDeleted = true, localFailure = null) } != null) return Result.Success(Unit)
         return api.deleteScheduledMessage(id).await()
     }
 
@@ -223,8 +226,8 @@ internal class ScheduledMessageManager(
             is ScheduledMessageCreatedEvent -> save(event.scheduledMessage)
             is ScheduledMessageUpdatedEvent -> save(event.scheduledMessage)
             is ScheduledMessageFailedEvent -> save(event.scheduledMessage)
-            is ScheduledMessageDeletedEvent -> store.update(event.scheduledMessage.id) { null }
-            is ScheduledMessageSentEvent -> store.update(event.scheduledMessage.id) { null }
+            is ScheduledMessageDeletedEvent -> store.remove(event.scheduledMessage.id)
+            is ScheduledMessageSentEvent -> store.remove(event.scheduledMessage.id)
             else -> Unit
         }
     }

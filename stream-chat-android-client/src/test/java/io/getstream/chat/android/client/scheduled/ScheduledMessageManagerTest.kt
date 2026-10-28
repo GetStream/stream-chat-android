@@ -386,6 +386,35 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `a message removed before the load stays removed`() = runTest {
+        val saved = randomLocalScheduledMessage(cid = cid)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(saved))
+        restarted.connectionState.value = ConnectionState.Offline
+
+        restarted.manager.onEvent(sentEvent(saved.toScheduledMessage()))
+        restarted.manager.start(backgroundScope)
+
+        restarted.manager.scheduledMessages.value.shouldBeEmpty()
+        restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @Test
+    fun `a send now made before the load is kept with the saved local changes`() = runTest {
+        val pendingEdit = randomLocalScheduledMessage(cid = cid, pendingChange = LocalScheduledMessage.PendingChange.Update)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(pendingEdit))
+        restarted.connectionState.value = ConnectionState.Offline
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(randomScheduledMessage(id = pendingEdit.id, cid = cid)))
+
+        restarted.manager.sendNow(pendingEdit.id)
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
+        loaded.message shouldBeEqualTo pendingEdit.message
+        loaded.pendingChange shouldBeEqualTo LocalScheduledMessage.PendingChange.Update
+        loaded.isPendingSendNow shouldBeEqualTo true
+    }
+
+    @Test
     fun `start loads the saved messages, and stop clears them from memory only`() = runTest {
         val saved = randomLocalScheduledMessage(localFailure = null)
         val repository = InMemoryScheduledMessageRepository(saved)

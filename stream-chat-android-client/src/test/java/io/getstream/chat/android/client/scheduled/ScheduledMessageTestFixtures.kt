@@ -32,16 +32,21 @@ import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.test.TestCall
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.io.IOException
 import java.util.Date
 
@@ -89,7 +94,11 @@ internal class InMemoryScheduledMessageRepository(
 
     override suspend fun selectScheduledMessages(): List<LocalScheduledMessage> = messages.values.toList()
 
+    /** When set, an insert waits for it to complete. */
+    var insertGate: CompletableDeferred<Unit>? = null
+
     override suspend fun insertScheduledMessage(message: LocalScheduledMessage) {
+        insertGate?.await()
         messages[message.id] = message
     }
 
@@ -170,3 +179,45 @@ internal fun scheduledMessageCreatedEvent(scheduledMessage: ScheduledMessage) = 
     channelId = scheduledMessage.cid.substringAfter(":"),
     scheduledMessage = scheduledMessage,
 )
+
+/** Answers a schedule with the scheduled message the server stores for it. */
+internal fun ChatApi.givenScheduleAnswers() {
+    whenever(this.scheduleMessage(any(), any(), any(), any())).thenAnswer { invocation ->
+        val message = invocation.getArgument<Message>(2)
+        val scheduledAt = invocation.getArgument<Date>(3)
+        TestCall(
+            Result.Success(
+                ScheduleMessageResult(
+                    message = message,
+                    scheduledMessage = randomScheduledMessage(
+                        id = message.id,
+                        cid = message.cid,
+                        message = message,
+                        scheduledAt = scheduledAt,
+                    ),
+                ),
+            ),
+        )
+    }
+}
+
+/**
+ * Answers send now with a sending message, and fails after [maxCalls], so a send now that is never cleared fails
+ * the test instead of sending forever.
+ */
+internal fun ChatApi.givenSendNowAnswers(id: String, maxCalls: Int = 2) {
+    var calls = 0
+    whenever(this.sendScheduledMessageNow(any())).thenAnswer {
+        check(++calls <= maxCalls) { "Send now was sent $calls times" }
+        TestCall(Result.Success(randomScheduledMessage(id = id, status = ScheduledMessageStatus.Sending)))
+    }
+}
+
+/** Answers an update with the scheduled message as edited. */
+internal fun ChatApi.givenUpdateAnswers() {
+    whenever(this.updateScheduledMessage(any(), anyOrNull(), anyOrNull())).thenAnswer { invocation ->
+        val id = invocation.getArgument<String>(0)
+        val message = invocation.getArgument<Message>(1)
+        TestCall(Result.Success(randomScheduledMessage(id = id, cid = message.cid, message = message)))
+    }
+}

@@ -33,6 +33,8 @@ internal class ScheduledMessageStore {
 
     private val mutex = Mutex()
     private var repository: ScheduledMessageRepository = NoOpScheduledMessageRepository
+    private var isLoaded = false
+    private val removedBeforeLoad = mutableSetOf<String>()
     private val _messages = MutableStateFlow<Map<String, LocalScheduledMessage>>(emptyMap())
     private val _scheduledMessages = MutableStateFlow<List<ScheduledMessage>>(emptyList())
 
@@ -43,16 +45,19 @@ internal class ScheduledMessageStore {
     val scheduledMessages: StateFlow<List<ScheduledMessage>> = _scheduledMessages
 
     /**
-     * Loads the scheduled messages saved in [repository], and saves every later change there. The ones changed before
-     * are merged and saved too: a local change wins, and a server version from an event keeps the saved local changes.
+     * Loads the scheduled messages saved in [repository], and saves every later change there. The changes made before
+     * are kept and saved too: the ones removed stay removed, and the ones changed are merged with the saved ones.
      */
     suspend fun load(repository: ScheduledMessageRepository) = mutex.withLock {
         this.repository = repository
+        removedBeforeLoad.forEach { repository.deleteScheduledMessage(it) }
         val saved = repository.selectScheduledMessages().associateBy(LocalScheduledMessage::id)
         val changed = _messages.value.mapValues { (id, message) ->
-            if (message.pendingChange == null) saved[id].mergeServer(message.toScheduledMessage()) else message
+            saved[id]?.let { message.mergedWith(it) } ?: message
         }
         changed.values.forEach { repository.insertScheduledMessage(it) }
+        removedBeforeLoad.clear()
+        isLoaded = true
         setMessages(saved + changed)
     }
 
@@ -61,6 +66,8 @@ internal class ScheduledMessageStore {
      */
     suspend fun clear() = mutex.withLock {
         repository = NoOpScheduledMessageRepository
+        isLoaded = false
+        removedBeforeLoad.clear()
         setMessages(emptyMap())
     }
 
@@ -77,10 +84,18 @@ internal class ScheduledMessageStore {
         val current = _messages.value[id]
         val new = transform(current)
         if (new != current) {
-            if (new == null) repository.deleteScheduledMessage(id) else repository.insertScheduledMessage(new)
+            if (new == null) delete(id) else repository.insertScheduledMessage(new)
             setMessages(if (new == null) _messages.value - id else _messages.value + (id to new))
         }
         new
+    }
+
+    /**
+     * Removes the scheduled message with [id], also when it is saved but not loaded yet.
+     */
+    suspend fun remove(id: String) = mutex.withLock {
+        delete(id)
+        setMessages(_messages.value - id)
     }
 
     /**
@@ -88,14 +103,41 @@ internal class ScheduledMessageStore {
      */
     suspend fun removeAll(predicate: (LocalScheduledMessage) -> Boolean) = mutex.withLock {
         val (removed, kept) = _messages.value.values.partition(predicate)
-        removed.forEach { repository.deleteScheduledMessage(it.id) }
+        removed.forEach { delete(it.id) }
         setMessages(kept.associateBy(LocalScheduledMessage::id))
+    }
+
+    private suspend fun delete(id: String) {
+        if (!isLoaded) removedBeforeLoad += id
+        repository.deleteScheduledMessage(id)
+    }
+
+    /**
+     * Merges this message, changed before the load, with the [saved] one. A local change made before wins. A server
+     * version received before keeps the saved local changes, and the pending requests of both are kept.
+     */
+    private fun LocalScheduledMessage.mergedWith(saved: LocalScheduledMessage): LocalScheduledMessage {
+        val merged = if (pendingChange != null || saved.pendingChange == null) {
+            this
+        } else {
+            saved.copy(
+                channel = channel ?: saved.channel,
+                serverStatus = serverStatus,
+                publishingFailure = publishingFailure,
+                createdAt = createdAt,
+            )
+        }
+        return merged.copy(
+            isPendingSendNow = isPendingSendNow || saved.isPendingSendNow,
+            isDeleted = isDeleted || saved.isDeleted,
+            localFailure = localFailure ?: saved.localFailure,
+        )
     }
 
     private fun setMessages(messages: Map<String, LocalScheduledMessage>) {
         _messages.value = messages
         _scheduledMessages.value = messages.values
-            .filterNot(LocalScheduledMessage::isDeleted)
+            .filterNot { it.isDeleted && it.localFailure == null }
             .map(LocalScheduledMessage::toScheduledMessage)
             .sortedWith(
                 compareBy<ScheduledMessage> { it.status == ScheduledMessageStatus.Failed }

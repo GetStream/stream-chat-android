@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.scheduled
 
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage.PendingChange
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
@@ -32,6 +31,8 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCall
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -39,6 +40,7 @@ import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -69,7 +71,7 @@ internal class ScheduledMessageSenderTest {
         val uploaded = upload.copy(assetUrl = randomString(), uploadState = Attachment.UploadState.Success)
         whenever(fixture.attachmentUploader.uploadAttachment(any(), any(), eq(upload), anyOrNull(), anyOrNull()))
             .thenReturn(Result.Success(uploaded))
-        givenScheduleAnswers()
+        api.givenScheduleAnswers()
         start()
 
         val scheduled = schedule(Message(text = randomString(), attachments = listOf(upload)))
@@ -98,7 +100,7 @@ internal class ScheduledMessageSenderTest {
         runCurrent()
         verify(api, times(1)).scheduleMessage(any(), any(), any(), any())
 
-        givenScheduleAnswers()
+        api.givenScheduleAnswers()
         first.result.complete(Result.Failure(serverError(code = 4)))
         runCurrent()
         verify(api, times(2)).scheduleMessage(any(), any(), any(), any())
@@ -107,7 +109,7 @@ internal class ScheduledMessageSenderTest {
     @Test
     fun `offline, the message stays pending and is sent once on reconnect`() = runTest {
         fixture.connectionState.value = ConnectionState.Offline
-        givenScheduleAnswers()
+        api.givenScheduleAnswers()
         start()
 
         val scheduled = schedule()
@@ -137,8 +139,8 @@ internal class ScheduledMessageSenderTest {
         runCurrent()
         status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
 
-        givenScheduleAnswers()
-        givenUpdateAnswers()
+        api.givenScheduleAnswers()
+        api.givenUpdateAnswers()
         fixture.connectionState.value = ConnectionState.Connected
         runCurrent()
 
@@ -153,8 +155,8 @@ internal class ScheduledMessageSenderTest {
         val notCreated = randomLocalScheduledMessage(cid = cid, pendingChange = PendingChange.Create)
         val notUpdated = randomLocalScheduledMessage(pendingChange = PendingChange.Update, hasPendingScheduledAt = true)
         val manager = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(notCreated, notUpdated))
-        givenScheduleAnswers(manager.api)
-        givenUpdateAnswers(manager.api)
+        manager.api.givenScheduleAnswers()
+        manager.api.givenUpdateAnswers()
 
         manager.manager.start(backgroundScope)
         runCurrent()
@@ -166,7 +168,7 @@ internal class ScheduledMessageSenderTest {
     @Test
     fun `an edit before the create reached the server goes out in the first request`() = runTest {
         fixture.connectionState.value = ConnectionState.Offline
-        givenScheduleAnswers()
+        api.givenScheduleAnswers()
         start()
         val scheduled = schedule()
         val edited = scheduled.message.copy(text = randomString())
@@ -184,7 +186,7 @@ internal class ScheduledMessageSenderTest {
     fun `an edit while the create is in flight is sent as an update after it`() = runTest {
         val create = PendingCall<ScheduleMessageResult>()
         whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(create)
-        givenUpdateAnswers()
+        api.givenUpdateAnswers()
         start()
         val scheduled = schedule()
         runCurrent()
@@ -218,7 +220,7 @@ internal class ScheduledMessageSenderTest {
 
         whenever(fixture.attachmentUploader.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull()))
             .thenReturn(Result.Success(upload.copy(assetUrl = randomString(), uploadState = Attachment.UploadState.Success)))
-        givenScheduleAnswers()
+        api.givenScheduleAnswers()
         manager.resend(scheduled.id)
         runCurrent()
 
@@ -239,8 +241,8 @@ internal class ScheduledMessageSenderTest {
             message = error.message,
         )
 
-        givenScheduleAnswers()
-        givenUpdateAnswers()
+        api.givenScheduleAnswers()
+        api.givenUpdateAnswers()
         manager.resend(scheduled.id)
         runCurrent()
 
@@ -335,7 +337,61 @@ internal class ScheduledMessageSenderTest {
             reason = LocalDeviceFailedScheduling.Reason.RequestFailed,
             message = error.message,
         )
-        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single().isDeleted.shouldBeFalse()
+        // It stays deleted, so a resend deletes it again.
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single().isDeleted.shouldBeTrue()
+    }
+
+    @Test
+    fun `a failed delete is sent again on resend`() = runTest {
+        val onServer = givenScheduledOnServer()
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Failure(serverError(code = 4))))
+        start()
+        manager.delete(onServer.id)
+        runCurrent()
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Failed
+
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Success(Unit)))
+        manager.resend(onServer.id)
+        runCurrent()
+
+        verify(api, times(2)).deleteScheduledMessage(onServer.id)
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @Test
+    fun `a create sends the content whose uploads were checked, and a file added meanwhile goes after it`() = runTest {
+        val repository = InMemoryScheduledMessageRepository()
+        val gated = ScheduledMessageManagerFixture(repository)
+        val upload = Attachment(upload = File(randomString()))
+        val uploaded = upload.copy(assetUrl = randomString(), uploadState = Attachment.UploadState.Success)
+        whenever(gated.attachmentUploader.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull()))
+            .thenReturn(Result.Success(uploaded))
+        gated.api.givenScheduleAnswers()
+        gated.api.givenUpdateAnswers()
+        gated.connectionState.value = ConnectionState.Offline
+        gated.manager.start(backgroundScope)
+        val scheduled = (gated.manager.schedule(cid, Message(id = randomString()), randomDate()) as Result.Success).value
+
+        // The edit holds the store while it saves, so the create starts in the middle of it.
+        repository.insertGate = CompletableDeferred()
+        backgroundScope.launch {
+            gated.manager.update(scheduled.id, scheduled.message.copy(attachments = listOf(upload)), null)
+        }
+        runCurrent()
+        gated.connectionState.value = ConnectionState.Connected
+        runCurrent()
+        repository.insertGate?.complete(Unit)
+        runCurrent()
+
+        inOrder(gated.api, gated.attachmentUploader) {
+            verify(gated.api).scheduleMessage(any(), any(), argThat { attachments.isEmpty() }, any())
+            verify(gated.attachmentUploader).uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())
+            verify(gated.api).updateScheduledMessage(
+                eq(scheduled.id),
+                argThat { attachments == listOf(uploaded) },
+                anyOrNull(),
+            )
+        }
     }
 
     @Test
@@ -443,7 +499,7 @@ internal class ScheduledMessageSenderTest {
     @Test
     fun `a reschedule after a create with no answer sends the new date after the repeated create`() = runTest {
         whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(connectionError())))
-        givenUpdateAnswers()
+        api.givenUpdateAnswers()
         start()
         val scheduled = schedule()
         runCurrent()
@@ -475,7 +531,7 @@ internal class ScheduledMessageSenderTest {
     @Test
     fun `an edit after a create with no answer is sent as an update after the repeated create`() = runTest {
         whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(connectionError())))
-        givenUpdateAnswers()
+        api.givenUpdateAnswers()
         start()
         val scheduled = schedule()
         runCurrent()
@@ -533,8 +589,8 @@ internal class ScheduledMessageSenderTest {
     fun `a create left in flight before a restart is followed by an update`() = runTest {
         val inFlight = randomLocalScheduledMessage(cid = cid, pendingChange = PendingChange.Create, isCreateSent = true)
         val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(inFlight))
-        givenScheduleAnswers(restarted.api)
-        givenUpdateAnswers(restarted.api)
+        restarted.api.givenScheduleAnswers()
+        restarted.api.givenUpdateAnswers()
 
         restarted.manager.start(backgroundScope)
         runCurrent()
@@ -615,7 +671,7 @@ internal class ScheduledMessageSenderTest {
     @Test
     fun `a reschedule sends the new date, and an edit alone sends no date`() = runTest {
         val onServer = givenScheduledOnServer()
-        givenUpdateAnswers()
+        api.givenUpdateAnswers()
         start()
         val scheduledAt = randomDate()
 
@@ -638,8 +694,8 @@ internal class ScheduledMessageSenderTest {
         val uploaded = upload.copy(assetUrl = randomString(), uploadState = Attachment.UploadState.Success)
         whenever(fixture.attachmentUploader.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull()))
             .thenReturn(Result.Success(uploaded))
-        givenUpdateAnswers()
-        givenSendNowAnswers(onServer.id)
+        api.givenUpdateAnswers()
+        api.givenSendNowAnswers(onServer.id)
         fixture.connectionState.value = ConnectionState.Offline
         start()
 
@@ -668,7 +724,7 @@ internal class ScheduledMessageSenderTest {
         runCurrent()
         status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Failed
 
-        givenSendNowAnswers(onServer.id)
+        api.givenSendNowAnswers(onServer.id)
         manager.resend(onServer.id)
         runCurrent()
 
@@ -703,44 +759,4 @@ internal class ScheduledMessageSenderTest {
         message = scheduled.message,
         scheduledMessage = scheduled.copy(status = ScheduledMessageStatus.Scheduled),
     )
-
-    private fun givenScheduleAnswers(api: ChatApi = this.api) {
-        whenever(api.scheduleMessage(any(), any(), any(), any())).thenAnswer { invocation ->
-            val message = invocation.getArgument<Message>(2)
-            val scheduledAt = invocation.getArgument<Date>(3)
-            TestCall(
-                Result.Success(
-                    ScheduleMessageResult(
-                        message = message,
-                        scheduledMessage = randomScheduledMessage(
-                            id = message.id,
-                            cid = message.cid,
-                            message = message,
-                            scheduledAt = scheduledAt,
-                        ),
-                    ),
-                ),
-            )
-        }
-    }
-
-    /**
-     * Answers send now with a sending message, and fails after [maxCalls], so a send now that is never cleared fails
-     * the test instead of sending forever.
-     */
-    private fun givenSendNowAnswers(id: String, maxCalls: Int = 2) {
-        var calls = 0
-        whenever(api.sendScheduledMessageNow(any())).thenAnswer {
-            check(++calls <= maxCalls) { "Send now was sent $calls times" }
-            TestCall(Result.Success(randomScheduledMessage(id = id, status = ScheduledMessageStatus.Sending)))
-        }
-    }
-
-    private fun givenUpdateAnswers(api: ChatApi = this.api) {
-        whenever(api.updateScheduledMessage(any(), anyOrNull(), anyOrNull())).thenAnswer { invocation ->
-            val id = invocation.getArgument<String>(0)
-            val message = invocation.getArgument<Message>(1)
-            TestCall(Result.Success(randomScheduledMessage(id = id, cid = message.cid, message = message)))
-        }
-    }
 }

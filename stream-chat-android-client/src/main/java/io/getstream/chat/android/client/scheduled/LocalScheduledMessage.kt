@@ -33,8 +33,8 @@ import java.util.Date
  * @property pendingChange The change to send to the server, or null when the server has the latest content.
  * @property hasPendingScheduledAt Whether [scheduledAt] changed after the message reached the server, or may have.
  * @property isPendingSendNow Whether the message is sent now, once its pending change is on the server.
- * @property isDeleted Whether the message was deleted. It is hidden, deleted on the server if the server may have it,
- * then removed.
+ * @property isDeleted Whether the message was deleted. It is deleted on the server if the server may have it, then
+ * removed. It is hidden, unless deleting it on the server failed.
  * @property isCreateSent Whether a create was sent with no answer that the server did not store it, so the server
  * may have the message even though its create is still pending.
  * @property localFailure Why the latest changes could not reach the server. Nothing is sent until they are resent.
@@ -78,7 +78,8 @@ internal data class LocalScheduledMessage(
 
     /** Whether there is something to send to the server, or a deleted message to remove. */
     val hasPendingRequest: Boolean
-        get() = isDeleted || (localFailure == null && (pendingChange != null || isPendingSendNow))
+        get() = (isDeleted && !mayBeOnServer) ||
+            (localFailure == null && (isDeleted || pendingChange != null || isPendingSendNow))
 
     /**
      * The scheduled message to show. The latest local failure wins over a failure to publish: once the local changes

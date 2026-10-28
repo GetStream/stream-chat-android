@@ -104,7 +104,7 @@ internal class ScheduledMessageSender(
 
     /**
      * Deletes [message] on the server, unless it is not there yet, then removes it. When the server can't delete it,
-     * the message shows again with the failure.
+     * the message shows again with the failure, and a resend deletes it again.
      */
     private suspend fun delete(message: LocalScheduledMessage): Boolean {
         if (message.mayBeOnServer) {
@@ -113,9 +113,7 @@ internal class ScheduledMessageSender(
             if (result is Result.Failure && !result.value.isNotFound()) {
                 if (result.value.isWaitingForConnection()) return false
                 logger.e { "[delete] failed to delete ${message.id} on the server: ${result.value}" }
-                store.update(message.id) {
-                    it?.copy(isDeleted = false, localFailure = result.value.toScheduledMessageFailure())
-                }
+                store.update(message.id) { it?.copy(localFailure = result.value.toScheduledMessageFailure()) }
                 return true
             }
         }
@@ -149,8 +147,10 @@ internal class ScheduledMessageSender(
 
     private suspend fun create(message: LocalScheduledMessage): Boolean {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
-        // From now on the server may have the message, until it answers.
-        val sent = store.update(message.id) { it?.copy(isCreateSent = true) } ?: return true
+        // From now on the server may have the message, until it answers. The content sent is the one whose uploads
+        // were checked: a later change is sent after it.
+        store.update(message.id) { it?.copy(isCreateSent = true) } ?: return true
+        val sent = message.copy(isCreateSent = true)
         val result = retryOnConflict {
             api.scheduleMessage(channelType, channelId, sent.message, sent.scheduledAt)
         }

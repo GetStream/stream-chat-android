@@ -254,12 +254,15 @@ import io.getstream.result.call.withPrecondition
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
 import io.getstream.result.onSuccessSuspend
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.job
@@ -717,7 +720,12 @@ internal constructor(
         appSettingsManager.loadAppSettings()
         warmUp()
         messageReceiptReporter.start()
-        launch { scheduledMessageManager.start(this) }
+        // A failure stops sending until the next connection, and is logged instead of crashing the app.
+        val scheduledMessagesExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            logger.e(throwable) { "[initializeClientWithUser] scheduled messages failed: $throwable" }
+        }
+        inheritScope { SupervisorJob(it) + scheduledMessagesExceptionHandler }
+            .launch { scheduledMessageManager.start(this) }
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
@@ -5196,7 +5204,7 @@ internal constructor(
     public fun scheduledMessages(cid: String, parentId: String? = null): Flow<List<ScheduledMessage>> =
         scheduledMessageManager.scheduledMessages.map { scheduledMessages ->
             scheduledMessages.filter { it.cid == cid && it.message.parentId == parentId }
-        }
+        }.distinctUntilChanged()
 
     /**
      * Schedules a message to be sent at [scheduledAt]. Set [Message.parentId] to schedule a thread reply.
@@ -5316,7 +5324,7 @@ internal constructor(
      * leaves [scheduledMessages] right away, and is deleted on the server once the device is online. A message that is
      * not on the server yet is only deleted locally, and deleted on the server too if its scheduling is in flight. If
      * the server can't delete it, the message comes back in [scheduledMessages] with a [ScheduledMessage.failure], and
-     * can be deleted again.
+     * [resendScheduledMessage] or another delete deletes it again.
      *
      * @param id The ID of the scheduled message.
      *
@@ -5352,7 +5360,7 @@ internal constructor(
      * Sends again the changes of a scheduled message that could not reach the server, when
      * [ScheduledMessage.failure] is a [ScheduledMessageFailure.ServerRejectedScheduling] or a
      * [ScheduledMessageFailure.LocalDeviceFailedScheduling], whatever its [ScheduledMessageFailure.isRetryable] says.
-     * Attachments that failed to upload are uploaded again.
+     * Attachments that failed to upload are uploaded again, and a message whose deletion failed is deleted again.
      *
      * @param id The ID of the scheduled message.
      *
