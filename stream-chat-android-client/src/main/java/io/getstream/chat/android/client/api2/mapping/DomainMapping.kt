@@ -500,6 +500,7 @@ internal class DomainMapping(
             text = message.text,
             command = message.custom[DRAFT_COMMAND_KEY] as? String,
             args = message.custom[DRAFT_ARGS_KEY] as? String,
+            createdAt = createdAt,
             extraData = message.custom
                 .filterKeys { it != DRAFT_COMMAND_KEY && it != DRAFT_ARGS_KEY }
                 .mapNotNull { (key, value) -> value?.let { key to it } }
@@ -1478,6 +1479,7 @@ internal class DomainMapping(
         sharedLocationsEnabled = sharedLocations,
         markMessagesPending = markMessagesPending,
         pushLevel = pushLevel?.value,
+        quotesEnabled = quotes,
     )
 
     /**
