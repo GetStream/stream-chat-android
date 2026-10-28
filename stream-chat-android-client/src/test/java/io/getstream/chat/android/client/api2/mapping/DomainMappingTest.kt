@@ -132,6 +132,7 @@ import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
+import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
@@ -819,6 +820,7 @@ internal class DomainMappingTest {
         FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<FullUserResponse>() - "custom" + USER_RECORD_ONLY_KEYS
         CHANNEL_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelResponse>() - "custom"
         MEMBER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelMemberResponse>() - "custom"
+        MESSAGE_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<MessageResponse>() - "custom" + "channel"
         OWN_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<OwnUserResponse>() - "custom"
         EVENT_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponsePrivacyFields>() - "custom"
         EVENT_USER_HIDDEN_CUSTOM_KEYS.containsAll(jsonNames<UserResponseCommonFields>() - "custom") shouldBeEqualTo true
@@ -888,6 +890,27 @@ internal class DomainMappingTest {
         member.extraData["is_moderator"] shouldBeEqualTo false
         member.extraData.containsKey("deleted_at") shouldBeEqualTo false
         member.extraData["color"] shouldBeEqualTo "teal"
+    }
+
+    @Test
+    fun `On v2, a message's custom value stored under a declared name gives way to the field, present or not`() {
+        val messageResponse = Mother.randomMessageResponse(
+            custom = mapOf(
+                // Copies older clients stored by sending the whole message back as custom data.
+                "image_labels" to mapOf("old.png" to emptyList<String>()),
+                "draft" to mapOf("message" to mapOf("text" to "stale")),
+                "channel" to mapOf("id" to "stale"),
+                "color" to "teal",
+            ),
+        ).copy(imageLabels = mapOf("new.png" to listOf("nudity")), draft = null)
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val message = with(sut) { messageResponse.toDomain() }
+
+        message.extraData["image_labels"] shouldBeEqualTo mapOf("new.png" to listOf("nudity"))
+        message.extraData.containsKey("draft") shouldBeEqualTo false
+        message.extraData.containsKey("channel") shouldBeEqualTo false
+        message.extraData["color"] shouldBeEqualTo "teal"
     }
 
     @Test
