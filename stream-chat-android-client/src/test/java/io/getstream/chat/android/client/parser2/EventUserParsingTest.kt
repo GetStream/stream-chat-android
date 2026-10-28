@@ -31,14 +31,16 @@ import org.junit.jupiter.api.Test
 internal class EventUserParsingTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
-    // Keys that only reach the user as flattened custom data on the wire.
+    // Declared fields the domain user has no property for, and custom data, including a stored copy of the devices.
     private val customUserKeys = """
         "deleted_at": "2020-06-29T06:14:28.000Z",
         "revoke_tokens_issued_before": "2020-06-29T06:14:28.000Z",
-        "flair": "gold",
-        "devices": [
-          { "id": "token-1", "push_provider": "firebase", "push_provider_name": "chat-android-firebase" }
-        ]
+        "custom": {
+          "flair": "gold",
+          "devices": [
+            { "id": "token-1", "push_provider": "firebase", "push_provider_name": "chat-android-firebase" }
+          ]
+        }
     """.trimIndent()
 
     private fun userJson(extra: String = "") = """

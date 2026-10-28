@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.testdata.AttachmentTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -39,8 +38,6 @@ internal class AttachmentParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    private val attachmentAdapter = AttachmentAdapter()
-
     // region Response path (JSON → network Attachment → Attachment)
 
     @Test
@@ -59,22 +56,6 @@ internal class AttachmentParsingTest {
 
     // endregion
 
-    // region Direct path (JSON → Attachment via AttachmentAdapter)
-
-    @Test
-    fun `Direct path - deserializes all fields`() {
-        val attachment = attachmentAdapter.fromJson(AttachmentTestData.jsonAllFields)
-        assertEquals(AttachmentTestData.expectedAllFields, attachment)
-    }
-
-    @Test
-    fun `Direct path - deserializes with optional fields missing`() {
-        val attachment = attachmentAdapter.fromJson(AttachmentTestData.jsonOptionalFieldsMissing)
-        assertEquals(AttachmentTestData.expectedOptionalFieldsMissing, attachment)
-    }
-
-    // endregion
-
     // region Explicit null values ({"asset_url": null, ...})
 
     @Test
@@ -84,27 +65,15 @@ internal class AttachmentParsingTest {
         assertEquals(AttachmentTestData.expectedWithExplicitNulls, attachment)
     }
 
-    @Test
-    fun `Direct path - deserializes with explicit null values`() {
-        val attachment = attachmentAdapter.fromJson(AttachmentTestData.jsonWithExplicitNulls)
-        assertEquals(AttachmentTestData.expectedWithExplicitNulls, attachment)
-    }
-
     // endregion
 
-    // region file_size: null (both paths default it to 0)
+    // region file_size: null (defaults to 0)
 
     @Test
     fun `Response path - defaults to 0 on file_size null`() {
         val dto = parser.fromJson(AttachmentTestData.jsonWithFileSizeNull, NetworkAttachment::class.java)
         val attachment = with(domainMapping) { dto.toDomain() }
         assertEquals(0, attachment.fileSize)
-    }
-
-    @Test
-    fun `Direct path - defaults to 0 on file_size null`() {
-        val attachment = attachmentAdapter.fromJson(AttachmentTestData.jsonWithFileSizeNull)
-        assertEquals(0, attachment?.fileSize)
     }
 
     // endregion
@@ -115,12 +84,6 @@ internal class AttachmentParsingTest {
     fun `Response path - extraData JSON field and custom keys both land in extraData`() {
         val dto = parser.fromJson(AttachmentTestData.jsonWithExtraDataFieldAndCustomKey, NetworkAttachment::class.java)
         val attachment = with(domainMapping) { dto.toDomain() }
-        assertEquals(AttachmentTestData.expectedWithExtraDataFieldAndCustomKey, attachment)
-    }
-
-    @Test
-    fun `Direct path - extraData JSON field and custom keys both land in extraData`() {
-        val attachment = attachmentAdapter.fromJson(AttachmentTestData.jsonWithExtraDataFieldAndCustomKey)
         assertEquals(AttachmentTestData.expectedWithExtraDataFieldAndCustomKey, attachment)
     }
 

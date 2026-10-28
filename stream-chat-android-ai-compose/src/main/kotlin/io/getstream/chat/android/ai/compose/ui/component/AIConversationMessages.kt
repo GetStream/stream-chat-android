@@ -21,6 +21,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -44,6 +45,27 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWri
  *
  * A reply joins the list once it shows something; until then the list shows the agent thinking.
  *
+ * To float the composer over the list, pass the space it covers as [contentPadding]:
+ *
+ * ```
+ * var composerHeight by remember { mutableStateOf(0.dp) }
+ * val density = LocalDensity.current
+ * Box {
+ *     AIConversation(
+ *         messages = messages,
+ *         contentPadding = PaddingValues(bottom = composerHeight),
+ *     )
+ *     ChatComposer(
+ *         onSendClick = ::send,
+ *         onStopClick = ::stop,
+ *         isGenerating = isGenerating,
+ *         modifier = Modifier
+ *             .align(Alignment.BottomCenter)
+ *             .onSizeChanged { composerHeight = with(density) { it.height.toDp() } },
+ *     )
+ * }
+ * ```
+ *
  * @param messages The conversation, oldest message first.
  * @param modifier The modifier to apply.
  * @param pendingMessage A message the person sent that is not in [messages] yet. Keep passing it
@@ -61,6 +83,9 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWri
  * @param colors The palette of the list's own views: the button that brings the end back into view,
  * and the spinner while older messages load.
  * @param icons The icons of the list's own views.
+ * @param contentPadding Space at the edges of the list that something drawn over it covers, such as
+ * a composer floating over its bottom. The messages scroll under it but stop clear of it, and the
+ * list's own views show inside it.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -75,6 +100,7 @@ public fun AIConversation(
     emptyContent: @Composable () -> Unit = {},
     colors: AIConversationColors = AIConversationDefaults.colors(),
     icons: AIConversationIcons = AIConversationDefaults.icons(),
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val tracker = remember { AIPendingMessageTracker() }
     // A copy, so a list changed in place still counts as changed.
@@ -93,9 +119,56 @@ public fun AIConversation(
         emptyContent = emptyContent,
         colors = colors,
         icons = icons,
+        contentPadding = contentPadding,
     ) { entry ->
         AIConversationEntryContent(entry = entry, approver = approver)
     }
+}
+
+/**
+ * The [AIConversation] signature without `contentPadding`, kept so apps compiled against it keep
+ * working.
+ *
+ * @param messages The conversation, oldest message first.
+ * @param modifier The modifier to apply.
+ * @param pendingMessage A message the person sent that is not in [messages] yet.
+ * @param isThinking Whether the agent is answering the latest message and its reply shows nothing
+ * yet.
+ * @param approver Who answers tool calls' questions on this device, to ask them.
+ * @param loadOlderMessages Loads the messages before the first one.
+ * @param footer A view under the latest turn's messages.
+ * @param emptyContent What the list shows while there are no messages.
+ * @param colors The palette of the list's own views.
+ * @param icons The icons of the list's own views.
+ */
+@Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+@Suppress("LongParameterList")
+@Composable
+public fun AIConversation(
+    messages: List<AIMessage>,
+    modifier: Modifier = Modifier,
+    pendingMessage: AIPendingMessage? = null,
+    isThinking: Boolean = false,
+    approver: AIToolApprover? = null,
+    loadOlderMessages: (suspend () -> Unit)? = null,
+    footer: @Composable () -> Unit = {},
+    emptyContent: @Composable () -> Unit = {},
+    colors: AIConversationColors = AIConversationDefaults.colors(),
+    icons: AIConversationIcons = AIConversationDefaults.icons(),
+) {
+    AIConversation(
+        messages = messages,
+        modifier = modifier,
+        pendingMessage = pendingMessage,
+        isThinking = isThinking,
+        approver = approver,
+        loadOlderMessages = loadOlderMessages,
+        footer = footer,
+        emptyContent = emptyContent,
+        colors = colors,
+        icons = icons,
+        contentPadding = PaddingValues(),
+    )
 }
 
 @Composable

@@ -18,13 +18,6 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
 import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
@@ -39,12 +32,8 @@ import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.ConnectionErrorEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
-import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
@@ -89,7 +78,6 @@ import io.getstream.chat.android.client.events.ScheduledMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
-import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
 import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -186,24 +174,6 @@ internal const val CONNECTED_EVENT_TYPE: String = EventType.HEALTH_CHECK
 internal class EventMapping(
     private val domainMapping: DomainMapping,
 ) {
-
-    /**
-     * Transforms [ChatEventDto] to [ChatEvent].
-     * This is a generic transformation method that can be used to transform any [ChatEventDto] to [ChatEvent].
-     * The actual transformation is delegated to the specific transformation methods for each event type.
-     * The specific transformation methods are defined below.
-     */
-    @Suppress("LongMethod")
-    internal fun ChatEventDto.toDomain(): ChatEvent {
-        return when (this) {
-            is ConnectionErrorEventDto -> toDomain()
-            is ConnectingEventDto -> toDomain()
-            is DisconnectedEventDto -> toDomain()
-            is ErrorEventDto -> toDomain()
-            is UnknownEventDto -> toDomain()
-            is GeneratedEventDto -> event.toDomain()
-        }
-    }
 
     /**
      * Transforms the generated [GeneratedChannelHiddenEvent] to [ChannelHiddenEvent].
@@ -476,7 +446,7 @@ internal class EventMapping(
      * handled here, and rejects an event missing a field its domain event requires.
      */
     @Suppress("LongMethod")
-    private fun WSEvent.toDomain(): ChatEvent = when (this) {
+    internal fun WSEvent.toDomain(): ChatEvent = when (this) {
         is GeneratedUserWatchingStartEvent -> toDomain()
         is GeneratedUserWatchingStopEvent -> toDomain()
         is GeneratedUserPresenceChangedEvent -> toDomain()
@@ -1488,54 +1458,6 @@ internal class EventMapping(
             rawCreatedAt = createdAt.raw,
             me = me.toDomain(),
             connectionId = connectionId,
-        )
-    }
-
-    private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent {
-        return ConnectionErrorEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            connectionId = connection_id,
-            error = error.toDomain(),
-        )
-    }
-
-    private fun ConnectingEventDto.toDomain(): ConnectingEvent {
-        return ConnectingEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-        )
-    }
-
-    private fun DisconnectedEventDto.toDomain(): DisconnectedEvent {
-        return DisconnectedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-        )
-    }
-
-    private fun ErrorEventDto.toDomain(): ErrorEvent {
-        return ErrorEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            error = error,
-        )
-    }
-
-    /**
-     * Transforms [UnknownEventDto] to [UnknownEvent].
-     */
-    private fun UnknownEventDto.toDomain(): UnknownEvent = with(domainMapping) {
-        UnknownEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user?.toDomain(),
-            rawData = rawData,
         )
     }
 }

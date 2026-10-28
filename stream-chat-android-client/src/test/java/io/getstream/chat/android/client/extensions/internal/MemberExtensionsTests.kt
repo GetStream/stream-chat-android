@@ -95,7 +95,7 @@ internal class MemberExtensionsTests {
                     "shadow_banned": false,
                     "created_at": "2020-06-29T06:14:28.000Z",
                     "updated_at": "2020-06-29T06:14:28.000Z",
-                    "flair": { "tier": "gold" }
+                    "custom": { "flair": { "tier": "gold" } }
                 }
             }
         """.trimIndent()

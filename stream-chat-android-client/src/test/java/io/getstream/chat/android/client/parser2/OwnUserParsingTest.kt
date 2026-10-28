@@ -33,7 +33,7 @@ internal class OwnUserParsingTest {
     fun `The own user keeps the legacy keys in extraData and parses its devices`() {
         val json = """
             {
-              "type": "health.check",
+              "type": "connection.ok",
               "created_at": "2020-06-29T06:14:28.000Z",
               "connection_id": "connection-1",
               "me": {
@@ -61,7 +61,7 @@ internal class OwnUserParsingTest {
                 "latest_hidden_channels": ["messaging:hidden"],
                 "revoke_tokens_issued_before": "2020-06-29T06:14:28.000Z",
                 "total_unread_count_by_team": { "red": 3 },
-                "flair": "gold"
+                "custom": { "flair": "gold" }
               }
             }
         """.trimIndent()

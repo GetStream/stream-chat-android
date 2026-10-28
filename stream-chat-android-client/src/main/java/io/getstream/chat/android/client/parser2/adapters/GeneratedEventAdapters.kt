@@ -21,13 +21,6 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import com.squareup.moshi.rawType
-import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.models.AIIndicatorClearEvent
 import io.getstream.chat.android.network.models.AIIndicatorStopEvent
@@ -37,10 +30,8 @@ import io.getstream.chat.android.network.models.ChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent
-import io.getstream.chat.android.network.models.ConnectedEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent
-import io.getstream.chat.android.network.models.HealthCheckEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent
@@ -57,7 +48,6 @@ import io.getstream.chat.android.network.models.NotificationChannelTruncatedEven
 import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent
 import io.getstream.chat.android.network.models.NotificationInvitedEvent
-import io.getstream.chat.android.network.models.NotificationMarkReadEvent
 import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent
@@ -88,30 +78,19 @@ import io.getstream.chat.android.network.models.UserBannedEvent
 import io.getstream.chat.android.network.models.UserDeletedEvent
 import io.getstream.chat.android.network.models.UserMessagesDeletedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent
-import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserUnbannedEvent
 import io.getstream.chat.android.network.models.UserUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent
 import io.getstream.chat.android.network.models.UserWatchingStopEvent
 import io.getstream.chat.android.network.models.WSEvent
-import java.lang.reflect.Type
 import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
 
-internal class EventAdapterFactory : JsonAdapter.Factory {
-    override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi): JsonAdapter<*>? {
-        return when (type.rawType) {
-            ChatEventDto::class.java -> EventDtoAdapter(moshi)
-            else -> null
-        }
-    }
-}
-
 /**
- * The generated adapter of every event type that always maps to one model, shared by the v1 and v2 socket parsers.
- * Types whose model depends on the payload, connection errors and unknown types are left to each parser.
+ * The generated adapter of every event type that always maps to one model. Types whose model depends on the payload,
+ * connection errors and unknown types are left to the event parser.
  */
 @Suppress("LongMethod")
-internal fun generatedEventAdapters(moshi: Moshi): Map<String, JsonAdapter<ChatEventDto>> = mapOf(
+internal fun generatedEventAdapters(moshi: Moshi): Map<String, JsonAdapter<WSEvent>> = mapOf(
     EventType.DRAFT_MESSAGE_UPDATED to generatedEventAdapter<DraftUpdatedEvent>(moshi) { mapOf("draft" to draft) },
     EventType.DRAFT_MESSAGE_DELETED to generatedEventAdapter<DraftDeletedEvent>(moshi) { mapOf("draft" to draft) },
     EventType.MESSAGE_NEW to generatedEventAdapter<MessageNewEvent>(moshi) { mapOf("cid" to cid, "user" to user) },
@@ -252,7 +231,7 @@ internal fun generatedEventAdapters(moshi: Moshi): Map<String, JsonAdapter<ChatE
 internal inline fun <reified T : WSEvent> generatedEventAdapter(
     moshi: Moshi,
     noinline required: T.() -> Map<String, Any?>,
-): JsonAdapter<ChatEventDto> = GeneratedEventAdapter(moshi.adapter(T::class.java), required)
+): JsonAdapter<WSEvent> = GeneratedEventAdapter(moshi.adapter(T::class.java), required)
 
 /**
  * Parses an event with its generated model. The spec makes some fields optional that the domain event
@@ -262,66 +241,12 @@ internal inline fun <reified T : WSEvent> generatedEventAdapter(
 internal class GeneratedEventAdapter<T : WSEvent>(
     private val delegate: JsonAdapter<T>,
     private val required: T.() -> Map<String, Any?>,
-) : JsonAdapter<ChatEventDto>() {
-    override fun fromJson(reader: JsonReader): ChatEventDto? = delegate.fromJson(reader)?.let { event ->
+) : JsonAdapter<WSEvent>() {
+    override fun fromJson(reader: JsonReader): WSEvent? = delegate.fromJson(reader)?.also { event ->
         event.required().entries.firstOrNull { it.value == null }?.let { (name, _) ->
             throw JsonDataException("Required value '$name' missing for ${event.getWSEventType()}")
         }
-        GeneratedEventDto(event)
     }
 
-    override fun toJson(writer: JsonWriter, value: ChatEventDto?): Unit = error("Can't convert this event to Json")
-}
-
-internal class EventDtoAdapter(
-    private val moshi: Moshi,
-) : JsonAdapter<ChatEventDto>() {
-
-    private val mapAdapter: JsonAdapter<MutableMap<String, Any?>> =
-        moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
-
-    private val generatedAdapters = generatedEventAdapters(moshi)
-    private val connectedEventAdapter = generatedEventAdapter<ConnectedEvent>(moshi) { emptyMap() }
-    private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-    private val healthEventAdapter = generatedEventAdapter<HealthCheckEvent>(moshi) { emptyMap() }
-    private val notificationMarkReadEventAdapter = generatedEventAdapter<NotificationMarkReadEvent>(moshi) {
-        mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
-    }
-    private val markAllReadEventAdapter =
-        generatedEventAdapter<NotificationMarkReadEvent>(moshi) { mapOf("user" to user) }
-
-    @Suppress("ReturnCount")
-    override fun fromJson(reader: JsonReader): ChatEventDto? {
-        if (reader.peek() == JsonReader.Token.NULL) {
-            reader.nextNull<Nothing?>()
-            return null
-        }
-
-        val map: Map<String, Any?> = mapAdapter.fromJson(reader)!!.filterValues { it != null }
-
-        val adapter = when (val type = map["type"] as? String) {
-            EventType.HEALTH_CHECK -> when {
-                map.containsKey("me") -> connectedEventAdapter
-                else -> healthEventAdapter
-            }
-            EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
-            EventType.NOTIFICATION_MARK_READ -> when {
-                map.containsKey("cid") -> notificationMarkReadEventAdapter
-                else -> markAllReadEventAdapter
-            }
-            else -> generatedAdapters[type] ?: // Custom case, early return
-                return UnknownEventDto(
-                    type = type ?: EventType.UNKNOWN,
-                    created_at = moshi.adapter(ExactDate::class.java).fromJsonValue(map["created_at"])!!,
-                    user = moshi.adapter(UserResponseCommonFields::class.java).fromJsonValue(map["user"]),
-                    rawData = map,
-                )
-        }
-
-        return adapter.fromJsonValue(map)
-    }
-
-    override fun toJson(writer: JsonWriter, value: ChatEventDto?) {
-        error("Can't convert this event to Json $value")
-    }
+    override fun toJson(writer: JsonWriter, value: WSEvent?): Unit = error("Can't convert this event to Json")
 }

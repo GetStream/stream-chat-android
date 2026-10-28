@@ -61,7 +61,6 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.cdn.CDN
 import io.getstream.chat.android.client.cdn.internal.CDNOkHttpInterceptor
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -180,19 +179,6 @@ constructor(
             apiModelTransformers.outgoingUserTransformers,
         )
     }
-    private val eventMapping by lazy { EventMapping(domainMapping) }
-
-    private val directEventParser: DirectEventParser? by lazy {
-        if (config.fastEventParsing) {
-            DirectEventParser(
-                currentUserIdProvider = currentUserIdProvider,
-                messageTransformer = apiModelTransformers.incomingMessageTransformer,
-                userTransformer = apiModelTransformers.incomingUserTransformer,
-            )
-        } else {
-            null
-        }
-    }
 
     // Shared by the socket and the REST calls that return events: sending one, and `/sync`.
     private val v2EventParser by lazy { V2EventParser(v2DomainMapping, v2DirectEventParser) }
@@ -200,23 +186,16 @@ constructor(
     private val v2DirectEventParser: DirectEventParser? by lazy {
         if (config.fastEventParsing) {
             DirectEventParser(
-                currentUserIdProvider = currentUserIdProvider,
                 messageTransformer = apiModelTransformers.incomingMessageTransformer,
                 userTransformer = apiModelTransformers.incomingUserTransformer,
-                v2Mapping = v2DomainMapping,
+                mapping = v2DomainMapping,
             )
         } else {
             null
         }
     }
 
-    private val moshiParser: ChatParser by lazy {
-        MoshiChatParser(
-            eventMapping = eventMapping,
-            dtoMapping = dtoMapping,
-            directEventParser = directEventParser,
-        )
-    }
+    private val moshiParser: ChatParser by lazy { MoshiChatParser() }
     private val socketFactory: SocketFactory by lazy {
         SocketFactory(
             parser = moshiParser,

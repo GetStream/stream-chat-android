@@ -284,9 +284,7 @@ internal fun createNotificationChannelPartialUpdatedEventStringJson() =
                 "frozen": true,
                 "disabled": false,
                 "team": "team1",
-                "name": "Channel name",
-                "image": "https://example.com/channel.png",
-                "group": "current"
+                "custom": {"name": "Channel name", "image": "https://example.com/channel.png", "group": "current"}
             }
         """.trimIndent(),
     )
@@ -598,7 +596,7 @@ internal fun createHealthEventStringJson() =
 
 internal fun createConnectedEventStringJson(userJsonString: String? = createOwnUserJsonString()) =
     createChatEventStringJson(
-        "health.check",
+        if (userJsonString == null) "health.check" else "connection.ok",
         """
             "connection_id":"6cfffec7-40df-40ac-901a-6ea6c5b7fb83",
             "me": $userJsonString
@@ -1010,8 +1008,7 @@ private fun createMessageAttachmentJsonString() =
             "type": "image",
             "image_url": "https://example.com/image.png",
             "thumb_url": "https://example.com/thumb.png",
-            "file_size": 1234,
-            "mime_type": "image/png"
+            "custom": {"file_size": 1234, "mime_type": "image/png"}
         }
     """.trimIndent()
 
@@ -1231,9 +1228,7 @@ private fun createDraftJsonString() =
             "message": {
                 "id": "draft-message-id",
                 "text": "Draft text",
-                "command": "giphy",
-                "args": "cat",
-                "flair": "gold"
+                "custom": {"command": "giphy", "args": "cat", "flair": "gold"}
             },
             "channel_cid": "channelType:channelId",
             "created_at": "2020-06-29T06:14:28.000Z"

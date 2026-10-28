@@ -17,11 +17,8 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.parser2.DirectEventParser.Companion.extractType
-import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -35,10 +32,18 @@ import org.junit.jupiter.api.Test
 
 internal class DirectEventParserTest {
 
-    private val parser = DirectEventParser(
+    private val mapping = DomainMapping(
         currentUserIdProvider = { "" },
+        channelTransformer = NoOpChannelTransformer,
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
+        hidesStoredDeclaredCustom = true,
+    )
+
+    private val parser = DirectEventParser(
+        messageTransformer = NoOpMessageTransformer,
+        userTransformer = NoOpUserTransformer,
+        mapping = mapping,
     )
 
     @Nested
@@ -92,32 +97,8 @@ internal class DirectEventParserTest {
 
         @Test
         fun `returns NewMessageEvent for message_new type`() {
-            val event = parser.parse(NewMessageEventTestData.jsonAllFields)
+            val event = parser.parse(MESSAGE_NEW)
             assertTrue(event is NewMessageEvent)
-        }
-
-        @Test
-        fun `direct path produces the same NewMessageEvent as the generated path`() {
-            // Parity check: the DirectEventParser output must match what the generated
-            // MessageNewEvent → toDomain() pipeline produces for the same JSON.
-            val moshiChatParser = ParserFactory.createMoshiChatParser()
-            val eventMapping = EventMapping(
-                DomainMapping(
-                    currentUserIdProvider = { "" },
-                    channelTransformer = NoOpChannelTransformer,
-                    messageTransformer = NoOpMessageTransformer,
-                    userTransformer = NoOpUserTransformer,
-                ),
-            )
-
-            val directResult = parser.parse(NewMessageEventTestData.jsonAllFields)
-            val generatedResult = with(eventMapping) {
-                moshiChatParser
-                    .fromJson(NewMessageEventTestData.jsonAllFields, ChatEventDto::class.java)
-                    .toDomain()
-            }
-
-            assertEquals(generatedResult, directResult)
         }
 
         @Test
@@ -145,22 +126,22 @@ internal class DirectEventParserTest {
         @Test
         fun `custom MessageTransformer is applied to parsed NewMessageEvent`() {
             val customParser = DirectEventParser(
-                currentUserIdProvider = { "" },
                 messageTransformer = MessageTransformer { it.copy(text = it.text + " [transformed]") },
                 userTransformer = NoOpUserTransformer,
+                mapping = mapping,
             )
-            val event = customParser.parse(NewMessageEventTestData.jsonAllFields) as NewMessageEvent
+            val event = customParser.parse(MESSAGE_NEW) as NewMessageEvent
             assertTrue(event.message.text.endsWith(" [transformed]"))
         }
 
         @Test
         fun `custom UserTransformer is applied to all nested users in parsed NewMessageEvent`() {
             val customParser = DirectEventParser(
-                currentUserIdProvider = { "" },
                 messageTransformer = NoOpMessageTransformer,
                 userTransformer = UserTransformer { it.copy(name = it.name + " [transformed]") },
+                mapping = mapping,
             )
-            val event = customParser.parse(NewMessageEventTestData.jsonAllFields) as NewMessageEvent
+            val event = customParser.parse(MESSAGE_NEW) as NewMessageEvent
 
             // Event-level user
             assertTrue(event.user.name.endsWith(" [transformed]"))
@@ -170,5 +151,19 @@ internal class DirectEventParserTest {
             event.message.mentionedUsers.forEach { assertTrue(it.name.endsWith(" [transformed]")) }
             event.message.threadParticipants.forEach { assertTrue(it.name.endsWith(" [transformed]")) }
         }
+    }
+
+    private companion object {
+        private const val USER = """{"id":"luke","role":"user","language":"en","banned":false,"online":true,
+            "name":"Luke","created_at":1791976405614650759,"updated_at":1791976405614650759,"custom":{}}"""
+
+        /** A v2 `message.new` frame, as the socket delivers it. */
+        private const val MESSAGE_NEW = """{"type":"message.new","created_at":1791976405614650759,
+            "cid":"messaging:general","channel_type":"messaging","channel_id":"general","custom":{},"user":$USER,
+            "message":{"id":"m1","text":"hi","html":"<p>hi</p>","type":"regular","cid":"messaging:general",
+            "user":$USER,"created_at":1791976405614650759,"updated_at":1791976405614650759,"reply_count":0,
+            "deleted_reply_count":0,"mentioned_channel":false,"mentioned_here":false,"pinned":false,"shadowed":false,
+            "silent":false,"attachments":[],"latest_reactions":[],"own_reactions":[],"reaction_counts":{},
+            "reaction_scores":{},"mentioned_users":[$USER],"custom":{}}}"""
     }
 }

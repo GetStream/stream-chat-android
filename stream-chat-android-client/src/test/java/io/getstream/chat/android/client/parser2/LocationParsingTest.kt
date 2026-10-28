@@ -17,19 +17,15 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.direct.LocationAdapter
 import io.getstream.chat.android.client.parser2.testdata.LocationTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.Date
 
 internal class LocationParsingTest {
 
@@ -41,10 +37,6 @@ internal class LocationParsingTest {
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
     )
-
-    private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
-    private val dateAdapter = moshi.adapter(Date::class.java)
-    private val adapter = LocationAdapter(dateAdapter)
 
     // region DTO path (JSON → SharedLocationResponseData → Location)
 
@@ -64,35 +56,12 @@ internal class LocationParsingTest {
 
     // endregion
 
-    // region Direct path (JSON → Location via LocationAdapter)
-
-    @Test
-    fun `Direct path - deserializes all fields`() {
-        val domain = adapter.fromJson(LocationTestData.jsonAllFields)
-        assertEquals(LocationTestData.expectedAllFields, domain)
-    }
-
-    @Test
-    fun `Direct path - deserializes with optional fields missing`() {
-        val domain = adapter.fromJson(LocationTestData.jsonOptionalFieldsMissing)
-        assertEquals(LocationTestData.expectedOptionalFieldsMissing, domain)
-    }
-
-    // endregion
-
-    // region Error message parity
+    // region Errors
 
     @Test
     fun `DTO path - throws on missing channel_cid`() {
         assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingChannelCid, SharedLocationResponseData::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing channel_cid`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(LocationTestData.jsonMissingChannelCid)
         }
     }
 
@@ -104,23 +73,9 @@ internal class LocationParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing message_id`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(LocationTestData.jsonMissingMessageId)
-        }
-    }
-
-    @Test
     fun `DTO path - throws on missing user_id`() {
         assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingUserId, SharedLocationResponseData::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing user_id`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(LocationTestData.jsonMissingUserId)
         }
     }
 
@@ -132,13 +87,6 @@ internal class LocationParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing latitude`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(LocationTestData.jsonMissingLatitude)
-        }
-    }
-
-    @Test
     fun `DTO path - throws on missing longitude`() {
         assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingLongitude, SharedLocationResponseData::class.java)
@@ -146,23 +94,9 @@ internal class LocationParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing longitude`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(LocationTestData.jsonMissingLongitude)
-        }
-    }
-
-    @Test
     fun `DTO path - throws on missing created_by_device_id`() {
         assertThrows<JsonDataException> {
             parser.fromJson(LocationTestData.jsonMissingCreatedByDeviceId, SharedLocationResponseData::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing created_by_device_id`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(LocationTestData.jsonMissingCreatedByDeviceId)
         }
     }
 

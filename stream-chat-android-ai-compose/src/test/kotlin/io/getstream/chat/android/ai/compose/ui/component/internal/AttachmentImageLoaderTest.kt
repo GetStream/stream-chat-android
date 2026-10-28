@@ -136,7 +136,9 @@ internal class AttachmentImageLoaderTest {
 
     @Test
     fun `a server that can't be reached shows no image`() = runTest {
-        val uri = url("/photo.png")
+        // A path no other test loads: the loader keeps what it decoded by address, and a later
+        // server can be given the port an earlier test's was, which would serve this from memory.
+        val uri = url("/unreachable.png")
         server.close()
 
         assertNull(AttachmentImageLoader.load(context, uri, targetSizePx = 100))

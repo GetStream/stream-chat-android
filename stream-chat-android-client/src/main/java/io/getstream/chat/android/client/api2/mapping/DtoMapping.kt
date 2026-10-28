@@ -20,10 +20,6 @@ import com.squareup.moshi.JsonAdapter
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
-import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_MEMBER_EXTRA_DATA_KEYS
@@ -34,7 +30,6 @@ import io.getstream.chat.android.client.parser2.adapters.LEGACY_CHANNEL_EXTRA_DA
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChatPreferences
-import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -79,15 +74,6 @@ internal class DtoMapping(
     private val supportedUpstreamMessageTypes = setOf(MessageType.REGULAR, MessageType.SYSTEM)
 
     private val dateFormatter = StreamDateFormatter()
-
-    /**
-     * Converts [Device] to [DeviceDto].
-     */
-    internal fun Device.toDto(): DeviceDto = DeviceDto(
-        id = token,
-        push_provider = pushProvider.key,
-        push_provider_name = providerName,
-    )
 
     /**
      * Maps the domain [Attachment] to the generated network [AttachmentRequest] model.
@@ -413,30 +399,6 @@ internal class DtoMapping(
     )
 
     /**
-     * Maps the domain [User] model to a network [UpstreamUserDto] model.
-     *
-     * Additionally, applies transformation using the provided [UserTransformer] before mapping.
-     */
-    internal fun User.toDto(): UpstreamUserDto =
-        userTransformer.transform(this)
-            .run {
-                UpstreamUserDto(
-                    banned = isBanned,
-                    id = id,
-                    name = name,
-                    image = image,
-                    invisible = isInvisible,
-                    privacy_settings = privacySettings?.toDto(),
-                    language = language,
-                    role = role,
-                    devices = devices.map { it.toDto() },
-                    teams = teams,
-                    teams_role = teamsRole,
-                    extraData = extraData,
-                )
-            }
-
-    /**
      * Maps the domain [User] model to a network [UserRequest] model.
      *
      * Applies [UserTransformer] first, then maps only the fields a client is allowed to set. The
@@ -456,16 +418,6 @@ internal class DtoMapping(
                     custom = extraData - RESPONSE_ONLY_USER_KEYS - USER_DEVICES_CUSTOM_KEY,
                 )
             }
-
-    /**
-     * Maps the domain [ConnectedEvent] model to a network [UpstreamConnectedEventDto] model.
-     */
-    internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto = UpstreamConnectedEventDto(
-        type = this.type,
-        created_at = createdAt,
-        me = me.toDto(),
-        connection_id = connectionId,
-    )
 
     internal fun ChatPreferences.toChatPreferencesInput(): ChatPreferencesInput = ChatPreferencesInput(
         directMentions = directMentions?.value?.let(ChatPreferencesInput.DirectMentions::fromString),

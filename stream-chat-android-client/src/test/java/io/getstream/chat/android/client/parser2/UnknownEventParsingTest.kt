@@ -48,11 +48,13 @@ internal class UnknownEventParsingTest {
     }
 
     @Test
-    fun `Own-user fields on a custom event's user land in extraData, as on other event users`() {
-        val user = parse(customEvent(USER.replace("}", ""","total_unread_count":4,"unread_channels":2}"""))).user!!
+    fun `Own-user fields at the root of a custom event's user are dropped, and custom data comes from custom`() {
+        val ownUserFields = ""","total_unread_count":4,"unread_channels":2}"""
+        val user = parse(customEvent(USER.removeSuffix("}") + ownUserFields)).user!!
 
         user.totalUnreadCount shouldBeEqualTo 0
-        user.extraData shouldBeEqualTo mapOf("nickname" to "Chewie", "total_unread_count" to 4.0, "unread_channels" to 2.0)
+        user.unreadChannels shouldBeEqualTo 0
+        user.extraData shouldBeEqualTo mapOf("nickname" to "Chewie")
     }
 
     @Test
@@ -70,10 +72,10 @@ internal class UnknownEventParsingTest {
         private const val USER = """{"id":"filip","name":"Chewbacca","image":"https://example.com/chewie.png",
             "language":"","role":"user","teams":[],"created_at":"2021-10-21T21:58:10.403855Z",
             "updated_at":"2026-10-12T13:08:19.684936Z","banned":false,"online":false,
-            "last_active":"2026-10-13T07:49:19.429513146Z","blocked_user_ids":[],"nickname":"Chewie"}"""
+            "last_active":"2026-10-13T07:49:19.429513146Z","blocked_user_ids":[],"custom":{"nickname":"Chewie"}}"""
 
         private fun customEvent(user: String) = """{"type":"friendship_request","cid":"messaging:general",
             "channel_id":"general","channel_type":"messaging","user":$user,
-            "created_at":"2026-10-13T07:49:27.355584826Z","text":"hi","score":3}"""
+            "created_at":"2026-10-13T07:49:27.355584826Z","custom":{"text":"hi","score":3}}"""
     }
 }

@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
@@ -637,16 +636,6 @@ internal object Mother {
         pushProvider = pushProvider,
         userId = userId,
         pushProviderName = pushProviderName,
-    )
-
-    fun randomDeviceDto(
-        id: String = randomString(),
-        pushProvider: String = randomString(),
-        pushProviderName: String = randomString(),
-    ): DeviceDto = DeviceDto(
-        id = id,
-        push_provider = pushProvider,
-        push_provider_name = pushProviderName,
     )
 
     fun randomDownstreamFlagDto(
