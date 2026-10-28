@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -44,6 +45,7 @@ public fun Channel.users(): List<User> {
     return members.map(Member::user) +
         read.map(ChannelUserRead::user) +
         createdBy +
+        listOfNotNull(truncatedBy) +
         messages.flatMap { it.users() } +
         watchers
 }
@@ -269,8 +271,8 @@ public fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationR
 public fun Collection<Channel>.updateUsers(users: Map<String, User>): List<Channel> = map { it.updateUsers(users) }
 
 /**
- * Updates a channel with more recent data of [users]. It updates messages, members, watchers, createdBy and
- * pinnedMessages of channel instance.
+ * Updates a channel with more recent data of [users]. It updates messages, members, watchers, createdBy, truncatedBy
+ * and pinnedMessages of channel instance.
  */
 internal fun Channel.updateUsers(users: Map<String, User>): Channel {
     return if (users().map(User::id).any(users::containsKey)) {
@@ -279,12 +281,21 @@ internal fun Channel.updateUsers(users: Map<String, User>): Channel {
             members = members.updateUsers(users).toList(),
             watchers = watchers.updateUsers(users),
             createdBy = users[createdBy.id] ?: createdBy,
+            truncatedBy = truncatedBy?.let { users[it.id] ?: it },
             pinnedMessages = pinnedMessages.updateUsers(users),
         )
     } else {
         this
     }
 }
+
+/**
+ * Updates [ChannelData.createdBy] and [ChannelData.truncatedBy] with more recent data of [users].
+ */
+internal fun ChannelData.updateUsers(users: Map<String, User>): ChannelData = copy(
+    createdBy = users[createdBy.id] ?: createdBy,
+    truncatedBy = truncatedBy?.let { users[it.id] ?: it },
+)
 
 /**
  * Updates the live locations of the channels with the provided [locations].

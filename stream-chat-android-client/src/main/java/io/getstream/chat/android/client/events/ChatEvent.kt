@@ -986,6 +986,8 @@ public data class UserMessagesDeletedEvent(
 
 /**
  * Triggered when an ai indicator is updated.
+ *
+ * @property aiMessage A message describing the current AI state, if the server sent one.
  */
 public data class AIIndicatorUpdatedEvent(
     override val type: String,
@@ -997,6 +999,7 @@ public data class AIIndicatorUpdatedEvent(
     override val channelId: String,
     val aiState: String,
     val messageId: String,
+    val aiMessage: String? = null,
 ) : CidEvent(), UserEvent
 
 /**

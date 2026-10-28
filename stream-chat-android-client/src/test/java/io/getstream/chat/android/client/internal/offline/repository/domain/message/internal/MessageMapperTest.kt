@@ -121,6 +121,8 @@ internal class MessageMapperTest {
                     latitude = latitude,
                     longitude = longitude,
                     deviceId = deviceId,
+                    createdAt = createdAt,
+                    updatedAt = updatedAt,
                 )
             },
             channelRole = messageEntity.messageInnerEntity.member?.channelRole,

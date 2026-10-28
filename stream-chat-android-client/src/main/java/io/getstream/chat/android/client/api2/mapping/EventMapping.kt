@@ -1311,6 +1311,7 @@ internal class EventMapping(
             channelId = channelId,
             aiState = aiState,
             messageId = messageId,
+            aiMessage = aiMessage,
         )
     }
 

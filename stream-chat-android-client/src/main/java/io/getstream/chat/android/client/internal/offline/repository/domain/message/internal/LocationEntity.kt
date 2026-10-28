@@ -28,4 +28,6 @@ public data class LocationEntity(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val deviceId: String = "",
+    val createdAt: Date? = null,
+    val updatedAt: Date? = null,
 )

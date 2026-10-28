@@ -70,6 +70,8 @@ internal object LocationTestData {
         longitude = -122.4194,
         deviceId = "device-1",
         endAt = Date(1744113600000L),
+        createdAt = Date(1743501600000L),
+        updatedAt = Date(1743501900000L),
     )
 
     val expectedOptionalFieldsMissing = Location(
@@ -80,5 +82,7 @@ internal object LocationTestData {
         longitude = -122.4194,
         deviceId = "device-1",
         endAt = null,
+        createdAt = Date(1743501600000L),
+        updatedAt = Date(1743501900000L),
     )
 }

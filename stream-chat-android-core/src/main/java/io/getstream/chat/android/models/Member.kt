@@ -90,6 +90,12 @@ public data class Member(
      * The date when this channel was archived.
      */
     val archivedAt: Date? = null,
+
+    /**
+     * The date when the member was removed from the channel.
+     */
+    val deletedAt: Date? = null,
+
     /**
      * A map of custom fields for the member.
      */
@@ -112,6 +118,7 @@ public data class Member(
             "status" -> status
             "pinned_at", "pinnedAt" -> pinnedAt
             "archived_at", "archivedAt" -> archivedAt
+            "deleted_at", "deletedAt" -> deletedAt
             else -> extraData[fieldName] as? Comparable<*>
         }
     }
