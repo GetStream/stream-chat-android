@@ -91,6 +91,7 @@ internal class ChannelMapperTest {
             ownCapabilities = channel.ownCapabilities,
             membership = membership.toEntity(),
             messageCount = channel.messageCount,
+            activeMemberCount = channel.activeMemberCount,
         )
 
         val result = channel.toEntity()
@@ -218,6 +219,7 @@ internal class ChannelMapperTest {
             membership = membership,
             draftMessage = draftMessage,
             messageCount = channelEntity.messageCount,
+            activeMemberCount = channelEntity.activeMemberCount,
         )
 
         val result = channelEntity.toModel(

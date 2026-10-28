@@ -480,6 +480,7 @@ internal fun randomChannelEntity(
     ownCapabilities: Set<String> = emptySet(),
     membership: MemberEntity? = null,
     messageCount: Int? = randomInt(),
+    activeMemberCount: Int? = randomInt(),
 ): ChannelEntity = ChannelEntity(
     type = type,
     channelId = channelId,
@@ -510,6 +511,7 @@ internal fun randomChannelEntity(
     ownCapabilities = ownCapabilities,
     membership = membership,
     messageCount = messageCount,
+    activeMemberCount = activeMemberCount,
 )
 
 internal fun randomAnswerEntity(

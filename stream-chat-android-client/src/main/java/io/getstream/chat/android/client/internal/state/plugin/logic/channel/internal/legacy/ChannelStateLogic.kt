@@ -119,11 +119,15 @@ internal class ChannelStateLogic(
     fun writeChannelState(): ChannelStateLegacyImpl = mutableState
 
     private fun updateChannelData(channel: Channel) {
+        val currentChannelData = mutableState.channelData.value
         val newChannelData = channel.toChannelData().let {
             when (it.ownCapabilities.isEmpty()) {
-                true -> it.copy(ownCapabilities = mutableState.channelData.value.ownCapabilities)
+                true -> it.copy(ownCapabilities = currentChannelData.ownCapabilities)
                 else -> it
             }
+        }.let {
+            // Only queries that ask for it carry the active member count, so keep the last known one
+            it.copy(activeMemberCount = it.activeMemberCount ?: currentChannelData.activeMemberCount)
         }
         mutableState.setChannelData(newChannelData)
     }

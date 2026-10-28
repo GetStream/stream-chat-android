@@ -953,6 +953,17 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `ChannelResponse maps active_member_count and hides a custom value stored under its name`() {
+        val response = randomChannelResponse(custom = mapOf("active_member_count" to 99)).copy(activeMemberCount = 6)
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val channel = with(sut) { response.toDomain() }
+
+        assertEquals(6, channel.activeMemberCount)
+        assertFalse(channel.extraData.containsKey("active_member_count"))
+    }
+
+    @Test
     fun `ChannelResponse without a config maps to the default Config`() {
         val channelResponse = randomChannelResponse().copy(config = null)
         val sut = Fixture().get()

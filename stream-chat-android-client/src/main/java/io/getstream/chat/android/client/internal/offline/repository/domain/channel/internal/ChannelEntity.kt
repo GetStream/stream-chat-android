@@ -61,6 +61,7 @@ import java.util.Date
  * the events.
  * @param membership Represents relationship of the current user to this channel.
  * @param messageCount The total number of messages in the channel, if known.
+ * @param activeMemberCount Number of members whose users are neither deactivated nor deleted, if known.
  */
 @Entity(tableName = CHANNEL_ENTITY_TABLE_NAME, indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
@@ -93,6 +94,7 @@ internal data class ChannelEntity(
     val ownCapabilities: Set<String>,
     val membership: MemberEntity?,
     val messageCount: Int?,
+    val activeMemberCount: Int? = null,
 ) {
     /**
      * The channel id in the format messaging:123.

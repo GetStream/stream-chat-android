@@ -50,6 +50,7 @@ import java.util.Date
  * @param disabled Whether the channel is disabled or not.
  * @param blocked Whether the channel is blocked or not. Note that the field is not provided by every endpoint, nor in
  * the events.
+ * @param activeMemberCount Number of members whose users are neither deactivated nor deleted, if known.
  */
 @Immutable
 public data class ChannelData(
@@ -76,6 +77,7 @@ public data class ChannelData(
     val truncatedAt: Date? = null,
     val disabled: Boolean = false,
     val blocked: Boolean? = null,
+    val activeMemberCount: Int? = null,
 ) {
 
     /**
@@ -142,6 +144,7 @@ public data class ChannelData(
             truncatedAt = truncatedAt,
             disabled = disabled,
             blocked = blocked,
+            activeMemberCount = activeMemberCount,
         )
     }
 
@@ -183,6 +186,8 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         // blocked is omitted by the events, and truncatedAt only ever moves forward
         blocked = that.blocked ?: this.blocked,
         truncatedAt = max(this.truncatedAt, that.truncatedAt),
+        // events never carry the active member count
+        activeMemberCount = that.activeMemberCount ?: this.activeMemberCount,
         /* Do not merge (ownCapabilities, membership, pushPreference) fields, they are not updated in events
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,
