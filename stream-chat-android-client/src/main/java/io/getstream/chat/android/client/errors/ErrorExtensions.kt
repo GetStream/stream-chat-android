@@ -70,6 +70,10 @@ private val SCHEDULED_MESSAGE_REJECTION_REASONS = mapOf(
     124 to ServerRejectedScheduling.Reason.ScheduledMessageCanceled,
 )
 
+/** The reasons the server rejects a scheduled message request with. */
+internal val scheduledMessageRejectionReasons: Collection<ServerRejectedScheduling.Reason>
+    get() = SCHEDULED_MESSAGE_REJECTION_REASONS.values
+
 /**
  * The reason the server rejected a scheduled message request with this error, or null when the error is not one of the
  * scheduled message rejections. The reason is read from the numeric code: [Error.NetworkError] does not keep the

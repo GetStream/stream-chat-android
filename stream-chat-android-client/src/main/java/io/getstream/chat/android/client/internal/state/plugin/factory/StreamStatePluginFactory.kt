@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.internal.state.event.handler.internal.Ev
 import io.getstream.chat.android.client.internal.state.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.refreshChannelsOnScheduledMessages
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -112,6 +113,7 @@ public class StreamStatePluginFactory(
             mutedUsers = mutableGlobalState.muted,
             useLegacyChannelState = config.useLegacyChannelLogic,
             isLocalUnreadCountEnabled = config.isLocalUnreadCountEnabled,
+            scheduledMessages = chatClient.scheduledMessages,
         )
 
         val isQueryingFree = MutableStateFlow(true)
@@ -130,6 +132,7 @@ public class StreamStatePluginFactory(
         )
 
         chatClient.logicRegistry = logic
+        scope.refreshChannelsOnScheduledMessages(chatClient.scheduledMessages, logic::getActiveQueryChannelsLogic)
 
         val groupedUnreadChannelsUpdater = GroupedUnreadChannelsUpdater(
             stateRegistry = stateRegistry,

@@ -65,6 +65,7 @@ import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdent
 import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getRepliesAroundIdentifier
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.attachment.MessagePreparer
 import io.getstream.chat.android.client.attachment.prepareForUpload
@@ -142,6 +143,7 @@ import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.client.receipts.MessageReceiptReporter
+import io.getstream.chat.android.client.scheduled.ScheduledMessageManager
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -217,7 +219,9 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -249,11 +253,18 @@ import io.getstream.result.call.toUnitCall
 import io.getstream.result.call.withPrecondition
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
+import io.getstream.result.onSuccessSuspend
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -457,6 +468,20 @@ internal constructor(
 
     internal lateinit var attachmentsSender: AttachmentsSender
 
+    private val scheduledMessageManager = ScheduledMessageManager(
+        api = api,
+        attachmentUploader = AttachmentUploader(this),
+        clientState = clientState,
+        getRepositoryFacade = { repositoryFacade },
+        now = now,
+        onSentAsMessage = { message ->
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            plugins.forEach { listener ->
+                listener.onMessageSendResult(Result.Success(message), channelType, channelId, message)
+            }
+        },
+    )
+
     init {
         eventsObservable.subscribeSuspend { event ->
             eventMutex.withLock {
@@ -527,6 +552,8 @@ internal constructor(
 
             else -> Unit // Ignore other events
         }
+
+        scheduledMessageManager.onEvent(event)
 
         event.extractCurrentUser()?.let { currentUser ->
             userStateService.onUserUpdated(currentUser)
@@ -693,6 +720,12 @@ internal constructor(
         appSettingsManager.loadAppSettings()
         warmUp()
         messageReceiptReporter.start()
+        // A failure stops sending until the next connection, and is logged instead of crashing the app.
+        val scheduledMessagesExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            logger.e(throwable) { "[initializeClientWithUser] scheduled messages failed: $throwable" }
+        }
+        inheritScope { SupervisorJob(it) + scheduledMessagesExceptionHandler }
+            .launch { scheduledMessageManager.start(this) }
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
@@ -1681,6 +1714,7 @@ internal constructor(
         chatSocket.disconnect()
         clientState.awaitConnectionState(ConnectionState.Offline)
         userScope.cancelChildren(userId)
+        scheduledMessageManager.stop()
 
         if (flushPersistence) {
             repositoryFacade.clear()
@@ -3335,6 +3369,7 @@ internal constructor(
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<QueryChannelsResult> {
         return api.queryChannels(request)
+            .saveScheduledMessages(request.includeScheduledMessages, QueryChannelsResult::channels)
     }
 
     /**
@@ -3412,6 +3447,24 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> = api.queryChannel(channelType, channelId, request)
+        .saveScheduledMessages(request.includeScheduledMessages, ::listOf)
+
+    /**
+     * Saves the scheduled messages of the returned channels in [scheduledMessages] when [isIncluded].
+     */
+    private fun <T : Any> Call<T>.saveScheduledMessages(
+        isIncluded: Boolean,
+        channels: (T) -> List<Channel>,
+    ): Call<T> {
+        if (!isIncluded) return this
+        var knownIds = emptySet<String>()
+        return doOnStart(userScope) { knownIds = scheduledMessageManager.knownIds() }
+            .doOnResult(userScope) { result ->
+                result.onSuccessSuspend { value ->
+                    scheduledMessageManager.saveQueried(channels(value).flatMap(Channel::scheduledMessages), knownIds)
+                }
+            }
+    }
 
     /**
      * Gets the channel from the server based on [channelType], [channelId] and parameters from [QueryChannelRequest].
@@ -3484,7 +3537,7 @@ internal constructor(
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         logger.d { "[queryChannels] offset: ${request.offset}, limit: ${request.limit}" }
-        return api.queryChannels(request).doOnStart(userScope) {
+        return queryChannelsInternal(request).doOnStart(userScope) {
             plugins.forEach { listener ->
                 logger.v { "[queryChannels] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsRequest(request)
@@ -5131,9 +5184,70 @@ internal constructor(
     }
 
     /**
+     * The current user's scheduled messages known on this device: the pending ones first, then the failed ones, each
+     * sorted by [ScheduledMessage.scheduledAt]. A change made with this client shows right away, and the events of
+     * the user's other devices keep it up to date. [queryScheduledMessages] loads the ones this device does not know
+     * yet.
+     */
+    public val scheduledMessages: StateFlow<List<ScheduledMessage>>
+        get() = scheduledMessageManager.scheduledMessages
+
+    /**
+     * The current user's scheduled messages in a channel or a thread, from [scheduledMessages].
+     *
+     * @param cid The channel of the scheduled messages in the format `type:id`.
+     * @param parentId The ID of the thread, or null for the messages scheduled in the channel, outside threads.
+     *
+     * @return A [Flow] of the scheduled messages, in the order of [scheduledMessages].
+     */
+    @JvmOverloads
+    public fun scheduledMessages(cid: String, parentId: String? = null): Flow<List<ScheduledMessage>> =
+        scheduledMessageManager.scheduledMessages.map { scheduledMessages ->
+            scheduledMessages.filter { it.cid == cid && it.message.parentId == parentId }
+        }.distinctUntilChanged()
+
+    /**
+     * Schedules a message to be sent at [scheduledAt]. Set [Message.parentId] to schedule a thread reply.
+     *
+     * The message is saved locally first, so it is in [scheduledMessages] right away with the
+     * [ScheduledMessageStatus.PreparingToSchedule] status. It is sent to the server once its attachments are uploaded
+     * and the device is online. The server answers later, on the scheduled message: a rejection sets its status to
+     * [ScheduledMessageStatus.Failed], and [ScheduledMessage.failure] says why. When [scheduledAt] has passed by then,
+     * the server sends it right away as a normal message.
+     *
+     * The message is refused before it is saved when it starts with `/` in a channel that has commands, or when it
+     * quotes a message that was deleted, as known from the channel config and messages saved on this device.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     * @param message The message to send. Its attachments can have local files to upload.
+     * @param scheduledAt The date when the message is sent. The server rounds it up to the next minute.
+     *
+     * @return Executable async [Call] responsible for scheduling the message, with the scheduled message as saved
+     * locally.
+     */
+    @CheckResult
+    public fun scheduleMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        scheduledAt: Date,
+    ): Call<ScheduledMessage> {
+        val messageWithId = message.ensureId()
+        return CoroutineCall(userScope) {
+            scheduledMessageManager.schedule("$channelType:$channelId", messageWithId, scheduledAt)
+        }
+    }
+
+    /**
      * Queries the current user's scheduled messages: the pending ones first, then the failed ones, each sorted by
      * [ScheduledMessage.scheduledAt]. By default, a user has at most 100 pending scheduled messages, so the first
      * page of the default size holds all of them. The failed ones are kept for 7 days.
+     *
+     * The results are saved in [scheduledMessages]. When the query has no status filter and returns a single page, the
+     * scheduled messages of the queried channel, or of every channel, that are not in the results are removed from
+     * [scheduledMessages], for example the ones sent while the device was offline. The ones not on the server yet, or
+     * scheduled while the query ran, are kept.
      *
      * @param cid The channel of the scheduled messages in the format `type:id`, or null for every channel.
      * @param statuses The statuses of the scheduled messages, or empty for every status.
@@ -5151,57 +5265,111 @@ internal constructor(
         limit: Int = DEFAULT_SCHEDULED_MESSAGES_LIMIT,
         next: String? = null,
     ): Call<QueryScheduledMessagesResult> {
-        return api.queryScheduledMessages(cid, statuses, limit, next)
+        return CoroutineCall(userScope) {
+            scheduledMessageManager.query(cid, statuses, limit, next)
+        }
     }
 
     /**
-     * Edits the content of a scheduled message, reschedules it, or both. Failed scheduled messages can't be edited:
-     * delete them and schedule a new message instead.
+     * Edits the content of a scheduled message, and reschedules it when [scheduledAt] is set. The change is saved
+     * locally first, and sent to the server like a new scheduled message (see [scheduleMessage]). An edit made
+     * before the message reached the server goes out with it.
+     *
+     * The edit is refused before it is saved when the message starts with `/` in a channel that has commands, or when
+     * it quotes a message that was deleted, as known from the channel config and messages saved on this device. A
+     * message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be edited: the server
+     * rejects the edit, so delete it and schedule a new message instead.
      *
      * @param id The ID of the scheduled message.
-     * @param message The new content, which replaces the whole content of the scheduled message, or null to keep it.
-     * Upload new attachments before passing them. The [ScheduledMessage.message] of a message scheduled from a client
-     * can be passed back with its changes. For a message a backend scheduled, remove the `mml` of its
-     * [Message.extraData] first, as a client can't send it without the permission.
+     * @param message The new content, which replaces the whole content of the scheduled message. The
+     * [ScheduledMessage.message] can be passed back with its changes. For a message a backend scheduled, remove the
+     * `mml` of its [Message.extraData] first, as a client can't send it without the permission.
      * @param scheduledAt The new date when the message is sent, or null to keep it. The server rounds it up to the next
-     * minute. To keep the date while editing the content, pass null or the [ScheduledMessage.scheduledAt] the server
-     * returned: a past date fails.
+     * minute.
      *
-     * @return Executable async [Call] responsible for updating the scheduled message, with its new content and date.
+     * @return Executable async [Call] responsible for editing the scheduled message, with the scheduled message as
+     * saved locally.
      */
     @CheckResult
     @JvmOverloads
     public fun updateScheduledMessage(
         id: String,
-        message: Message? = null,
+        message: Message,
         scheduledAt: Date? = null,
-    ): Call<ScheduledMessage> {
-        return api.updateScheduledMessage(id, message, scheduledAt)
+    ): Call<ScheduledMessage> = CoroutineCall(userScope) {
+        scheduledMessageManager.update(id, message, scheduledAt)
     }
 
     /**
-     * Deletes a scheduled message, so it is never sent. Failed scheduled messages can be deleted too.
+     * Changes the date when a scheduled message is sent. The change is saved locally first, and sent to the server
+     * like a new scheduled message (see [scheduleMessage]).
+     *
+     * It is refused before it is saved when the message quotes a message that was deleted, as known from the messages
+     * saved on this device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing])
+     * can't be rescheduled: the server rejects it, so delete it and schedule a new message instead.
      *
      * @param id The ID of the scheduled message.
+     * @param scheduledAt The new date when the message is sent. The server rounds it up to the next minute.
      *
-     * @return Executable async [Call] responsible for deleting the scheduled message.
+     * @return Executable async [Call] responsible for rescheduling the message, with the scheduled message as saved
+     * locally.
      */
     @CheckResult
-    public fun deleteScheduledMessage(id: String): Call<Unit> {
-        return api.deleteScheduledMessage(id)
+    public fun rescheduleMessage(id: String, scheduledAt: Date): Call<ScheduledMessage> = CoroutineCall(userScope) {
+        scheduledMessageManager.reschedule(id, scheduledAt)
     }
 
     /**
-     * Sends a scheduled message right away, instead of at its date. Failed scheduled messages can't be sent now.
+     * Deletes a scheduled message, so it is never sent. Failed scheduled messages can be deleted too. The message
+     * leaves [scheduledMessages] right away, and is deleted on the server once the device is online. A message that is
+     * not on the server yet is only deleted locally, and deleted on the server too if its scheduling is in flight. If
+     * the server can't delete it, the message comes back in [scheduledMessages] with a [ScheduledMessage.failure], and
+     * [resendScheduledMessage] or another delete deletes it again.
      *
      * @param id The ID of the scheduled message.
      *
-     * @return Executable async [Call] responsible for sending the scheduled message, with the scheduled message and
-     * its date set to now.
+     * @return Executable async [Call] responsible for deleting the scheduled message locally, or on the server when
+     * this device does not know it.
      */
     @CheckResult
-    public fun sendScheduledMessageNow(id: String): Call<ScheduledMessage> {
-        return api.sendScheduledMessageNow(id)
+    public fun deleteScheduledMessage(id: String): Call<Unit> = CoroutineCall(userScope) {
+        scheduledMessageManager.delete(id)
+    }
+
+    /**
+     * Sends a scheduled message right away, instead of at its date. The message is only marked locally: it is sent
+     * once its pending changes and attachments are on the server, so it never goes out with older content.
+     *
+     * When the latest changes of the message failed to reach the server, they are sent again first.
+     *
+     * It is refused when the message quotes a message that was deleted, as known from the messages saved on this
+     * device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be sent
+     * now: the server rejects it.
+     *
+     * @param id The ID of the scheduled message.
+     *
+     * @return Executable async [Call] responsible for sending the scheduled message, with the scheduled message as
+     * saved locally.
+     */
+    @CheckResult
+    public fun sendScheduledMessageNow(id: String): Call<ScheduledMessage> = CoroutineCall(userScope) {
+        scheduledMessageManager.sendNow(id)
+    }
+
+    /**
+     * Sends again the changes of a scheduled message that could not reach the server, when
+     * [ScheduledMessage.failure] is a [ScheduledMessageFailure.ServerRejectedScheduling] or a
+     * [ScheduledMessageFailure.LocalDeviceFailedScheduling], whatever its [ScheduledMessageFailure.isRetryable] says.
+     * Attachments that failed to upload are uploaded again, and a message whose deletion failed is deleted again.
+     *
+     * @param id The ID of the scheduled message.
+     *
+     * @return Executable async [Call] responsible for resending the changes, with the scheduled message as saved
+     * locally.
+     */
+    @CheckResult
+    public fun resendScheduledMessage(id: String): Call<ScheduledMessage> = CoroutineCall(userScope) {
+        scheduledMessageManager.resend(id)
     }
 
     private fun warmUp() {

@@ -26,8 +26,9 @@ import java.util.Date
  * @property id The ID of the scheduled message. It is also the ID of [message], and not the ID of the message the
  * server creates when it sends it.
  * @property cid The ID of the channel the message is sent to, in the format `type:id`.
- * @property channel A summary of the channel the message is sent to. Only the results of a scheduled messages query
- * carry it, so it is null everywhere else.
+ * @property channel A summary of the channel the message is sent to. The server sends it only with the results of a
+ * scheduled messages query, and the scheduled messages kept on the device keep the last one received, so it can be
+ * null.
  * @property message The content that will be sent. It is not in the messages of the channel until it is sent, and has
  * no reactions, replies or read state. Its [Message.createdAt] and [Message.updatedAt] are the ones of the scheduled
  * message. The mentioned users and groups, the quoted message and the poll come as IDs only: in

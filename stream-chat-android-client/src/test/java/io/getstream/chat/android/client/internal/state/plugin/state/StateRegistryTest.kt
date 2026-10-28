@@ -34,6 +34,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -110,6 +111,32 @@ internal class StateRegistryTest {
     // region General tests (not related to legacy/non-legacy channel state)
 
     // -- QueryChannels --
+
+    @Test
+    fun `toChannel fills the scheduled messages of the channel from the user's scheduled messages`() {
+        val inChannel = randomScheduledMessage(cid = messaging123.cid)
+        val elsewhere = randomScheduledMessage(cid = messaging456.cid)
+        val scheduledMessages = MutableStateFlow(listOf(inChannel, elsewhere))
+
+        listOf(true, false).forEach { useLegacyChannelState ->
+            val registry = StateRegistry(
+                userStateFlow = userStateFlow,
+                latestUsers = latestUsers,
+                activeLiveLocations = activeLiveLocations,
+                job = job,
+                now = { System.currentTimeMillis() },
+                scope = scope,
+                messageLimitConfig = messageLimitConfig,
+                mutedUsers = mutedUsers,
+                useLegacyChannelState = useLegacyChannelState,
+                scheduledMessages = scheduledMessages,
+            )
+
+            val channel = registry.channel(messaging123.type, messaging123.id).toChannel()
+
+            assertEquals(listOf(inChannel), channel.scheduledMessages)
+        }
+    }
 
     @Test
     fun `queryChannels should return same instance for same filter and sort`() {
