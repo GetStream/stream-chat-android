@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser2.SyncedEvents
+import io.getstream.chat.android.client.scheduled.ScheduleMessageResult
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
@@ -766,6 +767,14 @@ internal interface ChatApi {
         next: String?,
         sort: QuerySorter<MessageReminder>,
     ): Call<QueryRemindersResult>
+
+    @CheckResult
+    fun scheduleMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        scheduledAt: Date,
+    ): Call<ScheduleMessageResult>
 
     @CheckResult
     fun queryScheduledMessages(

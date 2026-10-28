@@ -405,6 +405,20 @@ public class ChannelClient internal constructor(
         return client.sendMessage(channelType, channelId, message, isRetrying)
     }
 
+    /**
+     * Schedules a message to be sent to this channel at [scheduledAt]. See [ChatClient.scheduleMessage].
+     *
+     * @param message The message to send. Set [Message.parentId] to schedule a thread reply.
+     * @param scheduledAt The date when the message is sent. The server rounds it up to the next minute.
+     *
+     * @return Executable async [Call] responsible for scheduling the message, with the scheduled message as saved
+     * locally.
+     */
+    @CheckResult
+    public fun scheduleMessage(message: Message, scheduledAt: Date): Call<ScheduledMessage> {
+        return client.scheduleMessage(channelType, channelId, message, scheduledAt)
+    }
+
     @CheckResult
     public fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> {
         return client.banUser(

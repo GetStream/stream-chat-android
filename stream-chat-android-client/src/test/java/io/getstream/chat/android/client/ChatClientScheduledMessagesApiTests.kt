@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
@@ -30,13 +32,21 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomQueryScheduledMessagesResult
-import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
+import io.getstream.result.Result
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEmpty
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldContainSame
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
 internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
@@ -86,34 +96,54 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun updateScheduledMessageSuccess() = runTest {
+    fun queryScheduledMessagesSavesTheResults() = runTest {
         // given
-        val id = randomString()
-        val message = randomMessage()
-        val scheduledAt = randomDate()
-        val scheduledMessage = randomScheduledMessage(id = id)
-        whenever(api.updateScheduledMessage(any(), anyOrNull(), anyOrNull()))
-            .thenReturn(RetroSuccess(scheduledMessage).toRetrofitCall())
+        val queryResult = randomQueryScheduledMessagesResult()
+        whenever(api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))
+            .thenReturn(RetroSuccess(queryResult).toRetrofitCall())
         // when
-        val result = chatClient.updateScheduledMessage(id, message, scheduledAt).await()
+        chatClient.queryScheduledMessages().await()
         // then
-        verifySuccess(result, scheduledMessage)
-        verify(api).updateScheduledMessage(id, message, scheduledAt)
+        chatClient.scheduledMessages.value.map(ScheduledMessage::id) shouldContainSame
+            queryResult.scheduledMessages.map(ScheduledMessage::id)
     }
 
     @Test
-    fun updateScheduledMessageError() = runTest {
+    fun scheduleMessageSavesItLocallyFirst() = runTest {
+        // given
+        val cid = randomCID()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        val parentId = randomString()
+        val scheduledAt = randomDate()
+        val message = Message(text = randomString(), parentId = parentId)
+        whenever(mutableClientState.user).thenReturn(MutableStateFlow(randomUser()))
+        // when
+        val result = chatClient.scheduleMessage(channelType, channelId, message, scheduledAt).await()
+        // then
+        val scheduledMessage = (result as Result.Success).value
+        scheduledMessage.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
+        scheduledMessage.scheduledAt shouldBeEqualTo scheduledAt
+        scheduledMessage.message.text shouldBeEqualTo message.text
+        chatClient.scheduledMessages.value shouldBeEqualTo listOf(scheduledMessage)
+        chatClient.scheduledMessages(cid, parentId).first() shouldBeEqualTo listOf(scheduledMessage)
+        chatClient.scheduledMessages(cid).first().shouldBeEmpty()
+        verifyNoInteractions(api)
+    }
+
+    @Test
+    fun changingAnUnknownScheduledMessageFailsWithNoRequest() = runTest {
         // given
         val id = randomString()
-        val scheduledAt = randomDate()
-        val errorCode = positiveRandomInt()
-        whenever(api.updateScheduledMessage(any(), anyOrNull(), anyOrNull()))
-            .thenReturn(RetroError<ScheduledMessage>(errorCode).toRetrofitCall())
         // when
-        val result = chatClient.updateScheduledMessage(id, scheduledAt = scheduledAt).await()
+        val results = listOf(
+            chatClient.updateScheduledMessage(id, randomMessage()).await(),
+            chatClient.rescheduleMessage(id, randomDate()).await(),
+            chatClient.sendScheduledMessageNow(id).await(),
+            chatClient.resendScheduledMessage(id).await(),
+        )
         // then
-        verifyNetworkError(result, errorCode)
-        verify(api).updateScheduledMessage(id, null, scheduledAt)
+        results.forEach { it.shouldBeInstanceOf<Result.Failure>() }
+        verifyNoInteractions(api)
     }
 
     @Test
@@ -141,33 +171,5 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
         // then
         verifyNetworkError(result, errorCode)
         verify(api).deleteScheduledMessage(id)
-    }
-
-    @Test
-    fun sendScheduledMessageNowSuccess() = runTest {
-        // given
-        val id = randomString()
-        val scheduledMessage = randomScheduledMessage(id = id, status = ScheduledMessageStatus.Sending)
-        whenever(api.sendScheduledMessageNow(any()))
-            .thenReturn(RetroSuccess(scheduledMessage).toRetrofitCall())
-        // when
-        val result = chatClient.sendScheduledMessageNow(id).await()
-        // then
-        verifySuccess(result, scheduledMessage)
-        verify(api).sendScheduledMessageNow(id)
-    }
-
-    @Test
-    fun sendScheduledMessageNowError() = runTest {
-        // given
-        val id = randomString()
-        val errorCode = positiveRandomInt()
-        whenever(api.sendScheduledMessageNow(any()))
-            .thenReturn(RetroError<ScheduledMessage>(errorCode).toRetrofitCall())
-        // when
-        val result = chatClient.sendScheduledMessageNow(id).await()
-        // then
-        verifyNetworkError(result, errorCode)
-        verify(api).sendScheduledMessageNow(id)
     }
 }

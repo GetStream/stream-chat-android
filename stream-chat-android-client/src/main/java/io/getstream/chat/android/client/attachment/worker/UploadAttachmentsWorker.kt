@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.AttachmentsUploadStates
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
-import io.getstream.chat.android.client.extensions.internal.isUploaded
+import io.getstream.chat.android.client.extensions.needsUpload
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -212,8 +212,6 @@ public class UploadAttachmentsWorker(
             messageRepository.insertMessage(message)
         }
     }
-
-    private fun Attachment.needsUpload(): Boolean = upload != null && !isUploaded()
 
     private class ProgressCallbackImpl(
         private val messageId: String,

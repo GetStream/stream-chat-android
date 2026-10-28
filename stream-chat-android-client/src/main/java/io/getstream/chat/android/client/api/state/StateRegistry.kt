@@ -34,6 +34,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -60,6 +61,8 @@ import java.util.concurrent.ConcurrentHashMap
  * @param useLegacyChannelState Whether to use the legacy channel state implementation.
  * @param isLocalUnreadCountEnabled Whether the per-channel unread count is tracked on-device for channels with
  * server-side read events disabled.
+ * @param scheduledMessages The current user's scheduled messages known on the device, which fill
+ * [Channel.scheduledMessages] in [ChannelState.toChannel].
  */
 @Suppress("LongParameterList", "TooManyFunctions")
 public class StateRegistry @JvmOverloads constructor(
@@ -73,6 +76,7 @@ public class StateRegistry @JvmOverloads constructor(
     private val mutedUsers: StateFlow<List<Mute>> = MutableStateFlow(emptyList()),
     private val useLegacyChannelState: Boolean = true,
     private val isLocalUnreadCountEnabled: Boolean = false,
+    private val scheduledMessages: StateFlow<List<ScheduledMessage>> = MutableStateFlow(emptyList()),
 ) {
 
     private val logger by taggedLogger("Chat:StateRegistry")
@@ -189,6 +193,7 @@ public class StateRegistry @JvmOverloads constructor(
             userFlow = userStateFlow,
             latestUsers = latestUsers,
             activeLiveLocations = activeLiveLocations,
+            scheduledMessages = scheduledMessages,
             baseMessageLimit = baseMessageLimit,
             now = now,
             isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
@@ -206,6 +211,7 @@ public class StateRegistry @JvmOverloads constructor(
             latestUsers = latestUsers,
             mutedUsers = mutedUsers,
             liveLocations = activeLiveLocations,
+            scheduledMessages = scheduledMessages,
             messageLimit = baseMessageLimit,
             isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
         )

@@ -19,7 +19,9 @@ package io.getstream.chat.android.client.persistance.repository
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpScheduledMessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -48,6 +50,7 @@ public class RepositoryFacade private constructor(
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
+    internal val scheduledMessageRepository: ScheduledMessageRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
@@ -238,6 +241,7 @@ public class RepositoryFacade private constructor(
         configsRepository.clear()
         queryChannelsRepository.clear()
         syncStateRepository.clear()
+        scheduledMessageRepository.clear()
     }
 
     @InternalStreamChatApi
@@ -278,6 +282,9 @@ public class RepositoryFacade private constructor(
                 messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),
+                scheduledMessageRepository = (factory as? DatabaseRepositoryFactory)
+                    ?.createScheduledMessageRepository(getUser)
+                    ?: NoOpScheduledMessageRepository,
                 scope = scope,
                 defaultConfig = defaultConfig,
             )

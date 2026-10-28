@@ -112,6 +112,7 @@ public class StreamStatePluginFactory(
             mutedUsers = mutableGlobalState.muted,
             useLegacyChannelState = config.useLegacyChannelLogic,
             isLocalUnreadCountEnabled = config.isLocalUnreadCountEnabled,
+            scheduledMessages = chatClient.scheduledMessages,
         )
 
         val isQueryingFree = MutableStateFlow(true)

@@ -65,6 +65,7 @@ import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.V2EventParser
+import io.getstream.chat.android.client.scheduled.ScheduleMessageResult
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploadContext
@@ -1353,7 +1354,7 @@ constructor(
             hiddenMessagesBefore = state.hideMessagesBefore,
             draftMessage = state.draft?.toDomain(),
             activeLiveLocations = state.activeLiveLocations.orEmpty().map { it.toDomain() },
-            scheduledMessages = state.scheduledMessages?.map { it.toDomain() },
+            scheduledMessages = state.scheduledMessages.orEmpty().map { it.toDomain() },
         ).syncUnreadCountWithReads(currentUserIdProvider())
     }
 
@@ -2025,6 +2026,27 @@ constructor(
             sort = sort.toSortParams(),
         )
         return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
+    }
+
+    override fun scheduleMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        scheduledAt: Date,
+    ): Call<ScheduleMessageResult> = messageApi.sendMessage(
+        channelType = channelType,
+        channelId = channelId,
+        message = SendMessageRequest(
+            message = with(dtoMapping) { message.toMessageRequest() },
+            skipPush = message.skipPushNotification,
+            skipEnrichUrl = message.skipEnrichUrl,
+            scheduledAt = scheduledAt,
+        ),
+    ).mapDomain { response ->
+        ScheduleMessageResult(
+            message = response.message.toDomain(),
+            scheduledMessage = response.scheduledMessage?.toDomain(),
+        )
     }
 
     override fun queryScheduledMessages(

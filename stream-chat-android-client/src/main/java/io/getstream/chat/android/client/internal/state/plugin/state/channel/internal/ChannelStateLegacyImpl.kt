@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
@@ -72,6 +73,7 @@ internal class ChannelStateLegacyImpl(
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
+    private val scheduledMessages: StateFlow<List<ScheduledMessage>> = MutableStateFlow(emptyList()),
     val baseMessageLimit: Int?,
     val isLocalUnreadCountEnabled: Boolean = false,
     private val now: () -> Long,
@@ -299,6 +301,7 @@ internal class ChannelStateLegacyImpl(
                 hidden = hidden.value,
                 pinnedMessages = sortedPinnedMessages.value,
                 activeLiveLocations = activeLiveLocations.value,
+                scheduledMessages = scheduledMessages.value.filter { it.cid == cid },
             )
             // Resolve the user from userFlow (the same clientState.user) instead of the default's
             // ChatClient singleton lookup, which requires an initialized ChatClient.
