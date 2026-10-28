@@ -55,6 +55,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
+import io.getstream.chat.android.models.PushSchedule
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
@@ -156,6 +157,12 @@ internal interface ChatApi {
 
     @CheckResult
     fun snoozeUserPushNotifications(until: Date): Call<PushPreference>
+
+    @CheckResult
+    fun setUserPushSchedule(schedule: PushSchedule): Call<PushPreference>
+
+    @CheckResult
+    fun removeUserPushSchedule(): Call<PushPreference>
 
     @CheckResult
     fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference>

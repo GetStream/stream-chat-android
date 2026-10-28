@@ -37,6 +37,8 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.PushSchedule
+import io.getstream.chat.android.models.QuietHoursDay
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
@@ -57,6 +59,8 @@ import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PaginationParams
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.PushScheduleInput
+import io.getstream.chat.android.network.models.QuietHoursRuleInput
 import io.getstream.chat.android.network.models.ReactionRequest
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.SharedLocation
@@ -426,6 +430,17 @@ internal class DtoMapping(
         channelMentions = channelMentions?.value?.let(ChatPreferencesInput.ChannelMentions::fromString),
         threadReplies = threadReplies?.value?.let(ChatPreferencesInput.ThreadReplies::fromString),
         defaultPreference = defaultPreference?.value?.let(ChatPreferencesInput.DefaultPreference::fromString),
+    )
+
+    internal fun PushSchedule.toPushScheduleInput(): PushScheduleInput = PushScheduleInput(
+        timezone = timezone,
+        quietHours = quietHours.map { rule ->
+            QuietHoursRuleInput(
+                end = rule.end,
+                start = rule.start,
+                days = rule.days.map(QuietHoursDay::value),
+            )
+        },
     )
 }
 

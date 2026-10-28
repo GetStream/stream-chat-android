@@ -46,4 +46,10 @@ internal class RequestBodiesAdapterTest {
         val json = parser.toJson(RequestBodiesTestData.setChatPreferences)
         Assertions.assertEquals(RequestBodiesTestData.setChatPreferencesJson, json)
     }
+
+    @Test
+    fun `Serialize a push preference that replaces the quiet-hours schedule`() {
+        val json = parser.toJson(RequestBodiesTestData.setUserPushSchedule)
+        Assertions.assertEquals(RequestBodiesTestData.setUserPushScheduleJson, json)
+    }
 }

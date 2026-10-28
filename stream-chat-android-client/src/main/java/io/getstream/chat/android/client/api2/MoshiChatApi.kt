@@ -97,6 +97,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
+import io.getstream.chat.android.models.PushSchedule
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
@@ -520,6 +521,28 @@ constructor(
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
             .upsertPushPreferences(request)
+            .parseUserPushPreferencesResponse()
+    }
+
+    override fun setUserPushSchedule(schedule: PushSchedule): Call<PushPreference> {
+        // remove_schedule together with schedule replaces the stored schedule instead of merging into it
+        val input = PushPreferenceInput(
+            channelCid = null,
+            removeSchedule = true,
+            schedule = with(dtoMapping) { schedule.toPushScheduleInput() },
+        )
+        return pushPreferencesApi
+            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
+            .parseUserPushPreferencesResponse()
+    }
+
+    override fun removeUserPushSchedule(): Call<PushPreference> {
+        val input = PushPreferenceInput(
+            channelCid = null,
+            removeSchedule = true,
+        )
+        return pushPreferencesApi
+            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
             .parseUserPushPreferencesResponse()
     }
 
