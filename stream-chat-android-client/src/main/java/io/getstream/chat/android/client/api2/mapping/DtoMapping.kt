@@ -78,8 +78,8 @@ internal class DtoMapping(
     /**
      * Maps the domain [Attachment] to the generated network [AttachmentRequest] model.
      *
-     * The spec does not declare `file_size`, `image`, `mime_type` or `name`, so they go through `custom`: the v1
-     * adapter flattens it to the root and v2 sends it nested, and the backend stores them as custom data either way.
+     * The spec does not declare `file_size`, `image`, `mime_type` or `name`, so they go through `custom`, where the
+     * backend stores them as custom data.
      * `file_size` stays an Int here: parsing yields a Double for an undeclared number, and writing that would change
      * `1` to `1.0`.
      *
