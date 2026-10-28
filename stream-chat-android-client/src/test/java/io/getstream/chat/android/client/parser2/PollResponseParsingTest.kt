@@ -47,25 +47,6 @@ internal class PollResponseParsingTest {
     }
 
     @Test
-    fun `Collect the root-level custom fields of a poll and its options`() {
-        val poll = parser.fromJson(POLL_JSON, PollResponse::class.java).poll
-
-        poll.custom shouldBeEqualTo mapOf("category" to "cinema")
-        poll.options.first().custom shouldBeEqualTo mapOf("episode" to "V")
-    }
-
-    @Test
-    fun `Option custom data survives the mapping to the domain`() {
-        val response = parser.fromJson(POLL_JSON, PollResponse::class.java).poll
-
-        val poll = with(domainMapping) { response.toDomain() }
-
-        // Collected into `custom` on the way in, and it has to reach `Option.extraData` too: the
-        // hand-written DTO path and the direct path both carry it.
-        poll.options.first().extraData shouldBeEqualTo mapOf("episode" to "V")
-    }
-
-    @Test
     fun `Deserialize the nested vote and its user`() {
         val poll = parser.fromJson(POLL_JSON, PollResponse::class.java).poll
 

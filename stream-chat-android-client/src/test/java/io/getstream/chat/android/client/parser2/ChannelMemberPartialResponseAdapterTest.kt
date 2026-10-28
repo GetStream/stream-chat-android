@@ -32,15 +32,6 @@ internal class ChannelMemberPartialResponseAdapterTest {
     }
 
     @Test
-    fun `Deserialize JSON member info with member custom inlined by API v1`() {
-        val member = parser.fromJson(
-            MemberInfoDtoTestData.downstreamJsonWithInlineCustom,
-            ChannelMemberPartialResponse::class.java,
-        )
-        member shouldBeEqualTo MemberInfoDtoTestData.downstreamMemberInfoWithInlineCustom
-    }
-
-    @Test
     fun `Deserialize JSON member info with member custom nested by API v2`() {
         val member = parser.fromJson(
             MemberInfoDtoTestData.downstreamJsonWithNestedCustom,

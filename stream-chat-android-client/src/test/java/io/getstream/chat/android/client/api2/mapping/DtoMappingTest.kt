@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_MEMBER_EXTRA_DATA_KEYS
@@ -35,6 +34,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.Action
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
@@ -427,11 +427,10 @@ internal class DtoMappingTest {
             mentionedGroups = emptyList(),
         )
         val mapping = Fixture().get()
-        val parser = ParserFactory.createMoshiChatParser()
 
-        val json = parser.toJson(with(mapping) { message.toMessageRequest() })
+        val json = Serializer.moshi.adapter(MessageRequest::class.java).toJson(with(mapping) { message.toMessageRequest() })
 
-        parser.fromJson(json, Map::class.java)["mentioned_group_ids"] shouldBeEqualTo emptyList<String>()
+        Serializer.moshi.adapter(Map::class.java).fromJson(json)!!["mentioned_group_ids"] shouldBeEqualTo emptyList<String>()
     }
 
     @ParameterizedTest

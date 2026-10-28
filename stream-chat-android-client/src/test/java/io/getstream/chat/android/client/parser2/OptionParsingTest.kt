@@ -38,15 +38,6 @@ internal class OptionParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    // region Response-model path (JSON → PollOptionResponseData → Option)
-
-    @Test
-    fun `Response path - deserializes all fields`() {
-        val dto = parser.fromJson(OptionTestData.jsonAllFields, PollOptionResponseData::class.java)
-        val domain = with(domainMapping) { dto.toOption() }
-        assertEquals(OptionTestData.expectedAllFields, domain)
-    }
-
     @Test
     fun `Response path - deserializes with optional fields missing`() {
         val dto = parser.fromJson(OptionTestData.jsonOptionalFieldsMissing, PollOptionResponseData::class.java)

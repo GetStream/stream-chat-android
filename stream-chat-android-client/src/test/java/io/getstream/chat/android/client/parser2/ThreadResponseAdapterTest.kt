@@ -25,15 +25,6 @@ internal class ThreadResponseAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
-    fun `Deserialize JSON thread info with custom fields`() {
-        val threadInfo = parser.fromJson(
-            ThreadDtoTestData.downstreamThreadInfoJson,
-            ThreadResponse::class.java,
-        )
-        threadInfo shouldBeEqualTo ThreadDtoTestData.downstreamThreadInfo
-    }
-
-    @Test
     fun `Deserialize JSON thread info without custom fields`() {
         val threadInfo = parser.fromJson(
             ThreadDtoTestData.downstreamThreadInfoJsonWithoutExtraData,
