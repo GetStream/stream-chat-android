@@ -108,7 +108,7 @@ dependencyResolutionManagement {
 
 buildCache {
 	local {
-		isEnabled = !System.getenv().containsKey("CI")
+		isEnabled = !System.getenv().containsKey("CI") || System.getenv("GRADLE_LOCAL_BUILD_CACHE") == "true"
 	}
 	val localProperties = Properties()
 	val file = File("local.properties")
