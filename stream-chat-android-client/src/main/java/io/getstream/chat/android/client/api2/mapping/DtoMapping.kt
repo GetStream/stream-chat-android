@@ -143,13 +143,19 @@ internal class DtoMapping(
 
     /**
      * Maps the domain [MemberData] to the generated network [ChannelMemberRequest] model.
+     *
+     * A string `channel_role` in the extra data sets the member's role, as it does for the members in channel data,
+     * instead of being stored as custom data.
      */
-    internal fun MemberData.toChannelMemberRequest(): ChannelMemberRequest = ChannelMemberRequest(
-        userId = userId,
-        channelRole = null,
-        user = null,
-        custom = extraData - RESPONSE_ONLY_MEMBER_KEYS,
-    )
+    internal fun MemberData.toChannelMemberRequest(): ChannelMemberRequest {
+        val custom = (extraData - RESPONSE_ONLY_MEMBER_KEYS).toMutableMap()
+        return ChannelMemberRequest(
+            userId = userId,
+            channelRole = custom.takeString("channel_role"),
+            user = null,
+            custom = custom,
+        )
+    }
 
     /**
      * Maps the domain [Member] to the generated network [ChannelMemberRequest] model.
