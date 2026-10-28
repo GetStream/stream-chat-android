@@ -187,6 +187,32 @@ internal class DtoMappingTest {
     }
 
     @Test
+    fun `Attachment fills an unset typed field from an extraData key named like it, and never sends the key as custom`() {
+        val attachment = randomAttachment().copy(
+            thumbUrl = null,
+            titleLink = "https://example.com/field",
+            originalWidth = null,
+            image = null,
+            name = null,
+            mimeType = null,
+            extraData = mapOf(
+                "thumb_url" to "https://example.com/extra.png",
+                "title_link" to "https://example.com/extra",
+                "original_width" to 320.0,
+                "sentinel" to "keep-me",
+            ),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { attachment.toAttachmentRequest() }
+
+        request.thumbUrl shouldBeEqualTo "https://example.com/extra.png"
+        request.titleLink shouldBeEqualTo "https://example.com/field"
+        request.originalWidth shouldBeEqualTo 320
+        request.custom shouldBeEqualTo mapOf("sentinel" to "keep-me", "file_size" to attachment.fileSize)
+    }
+
+    @Test
     fun `Attachment keeps an extraData key in custom data when it does not read as the typed field`() {
         val partialGiphy = mapOf("original" to mapOf("url" to "https://giphy.com/o.gif"))
         val attachment = randomAttachment().copy(
