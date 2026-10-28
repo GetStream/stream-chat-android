@@ -2044,7 +2044,7 @@ constructor(
         ),
     ).mapDomain { response ->
         ScheduleMessageResult(
-            message = response.message.toDomain(),
+            message = response.message.toDomain().enrichWithCid("$channelType:$channelId"),
             scheduledMessage = response.scheduledMessage?.toDomain(),
         )
     }

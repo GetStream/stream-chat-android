@@ -268,6 +268,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
@@ -316,6 +317,23 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(api, times(1)).sendMessage(any(), any(), any())
+    }
+
+    @Test
+    fun `scheduleMessage sends the date and maps a message sent right away to the channel`() = runTest {
+        // given
+        val api = mock<MessageApi>()
+        val response = SendMessageResponse(duration = "1ms", message = Mother.randomMessageResponse(cid = ""))
+        whenever(api.sendMessage(any(), any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withMessageApi(api).get()
+        val scheduledAt = randomDate()
+        // when
+        val result = sut.scheduleMessage("messaging", "123", randomMessage(), scheduledAt).await()
+        // then
+        val value = result.getOrThrow()
+        value.message.cid shouldBeEqualTo "messaging:123"
+        value.scheduledMessage.shouldBeNull()
+        verify(api).sendMessage(eq("messaging"), eq("123"), argThat { this.scheduledAt == scheduledAt })
     }
 
     @ParameterizedTest
