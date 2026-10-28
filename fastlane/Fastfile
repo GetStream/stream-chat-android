@@ -141,10 +141,9 @@ lane :select_e2e_tests do |options|
   FileUtils.mkdir_p(File.dirname(e2e_selection_path))
   File.write(e2e_selection_path, JSON.pretty_generate(tests: tests, reasons: reasons))
 
-  # Up to 8 batches, none bigger than an eighth of the suite, so a small selection takes fewer runners.
+  # 8 batches, or one per test when fewer are selected, so the selection runs in parallel.
   max_batches = 8
-  batch_size = [(all_tests.size / max_batches.to_f).ceil, 1].max
-  batches = (0...[(tests.size / batch_size.to_f).ceil, max_batches].min).to_a
+  batches = (0...[tests.size, max_batches].min).to_a
   UI.important("E2E batches: #{batches.size}")
   File.write(ENV['GITHUB_OUTPUT'], "e2e_batches=#{batches.to_json}\n", mode: 'a') if ENV['GITHUB_OUTPUT']
   batches
