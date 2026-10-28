@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.parser2.testdata.LocationTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.assertThrows
 
 internal class LocationParsingTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
@@ -42,14 +43,14 @@ internal class LocationParsingTest {
 
     @Test
     fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(LocationTestData.jsonAllFields, SharedLocationResponseData::class.java)
+        val dto = parse<SharedLocationResponseData>(LocationTestData.jsonAllFields)
         val domain = with(domainMapping) { dto.toDomain() }
         assertEquals(LocationTestData.expectedAllFields, domain)
     }
 
     @Test
     fun `DTO path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(LocationTestData.jsonOptionalFieldsMissing, SharedLocationResponseData::class.java)
+        val dto = parse<SharedLocationResponseData>(LocationTestData.jsonOptionalFieldsMissing)
         val domain = with(domainMapping) { dto.toDomain() }
         assertEquals(LocationTestData.expectedOptionalFieldsMissing, domain)
     }
@@ -61,56 +62,56 @@ internal class LocationParsingTest {
     @Test
     fun `DTO path - throws on missing channel_cid`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(LocationTestData.jsonMissingChannelCid, SharedLocationResponseData::class.java)
+            parse<SharedLocationResponseData>(LocationTestData.jsonMissingChannelCid)
         }
     }
 
     @Test
     fun `DTO path - throws on missing message_id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(LocationTestData.jsonMissingMessageId, SharedLocationResponseData::class.java)
+            parse<SharedLocationResponseData>(LocationTestData.jsonMissingMessageId)
         }
     }
 
     @Test
     fun `DTO path - throws on missing user_id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(LocationTestData.jsonMissingUserId, SharedLocationResponseData::class.java)
+            parse<SharedLocationResponseData>(LocationTestData.jsonMissingUserId)
         }
     }
 
     @Test
     fun `DTO path - throws on missing latitude`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(LocationTestData.jsonMissingLatitude, SharedLocationResponseData::class.java)
+            parse<SharedLocationResponseData>(LocationTestData.jsonMissingLatitude)
         }
     }
 
     @Test
     fun `DTO path - throws on missing longitude`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(LocationTestData.jsonMissingLongitude, SharedLocationResponseData::class.java)
+            parse<SharedLocationResponseData>(LocationTestData.jsonMissingLongitude)
         }
     }
 
     @Test
     fun `DTO path - throws on missing created_by_device_id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(LocationTestData.jsonMissingCreatedByDeviceId, SharedLocationResponseData::class.java)
+            parse<SharedLocationResponseData>(LocationTestData.jsonMissingCreatedByDeviceId)
         }
     }
 
     @Test
     fun `DTO path - throws on missing created_at`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(LocationTestData.jsonMissingCreatedAt, SharedLocationResponseData::class.java)
+            parse<SharedLocationResponseData>(LocationTestData.jsonMissingCreatedAt)
         }
     }
 
     @Test
     fun `DTO path - throws on missing updated_at`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(LocationTestData.jsonMissingUpdatedAt, SharedLocationResponseData::class.java)
+            parse<SharedLocationResponseData>(LocationTestData.jsonMissingUpdatedAt)
         }
     }
 

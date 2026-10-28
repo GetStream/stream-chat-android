@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.SortParamRequest
@@ -27,7 +28,7 @@ import java.util.Date
 
 internal class QueryGroupedChannelsRequestSerializationTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
 
     @Test
     fun `Serialize group filters with a date cutoff, a relative cutoff, an empty filter and no filter`() {
@@ -44,7 +45,7 @@ internal class QueryGroupedChannelsRequestSerializationTest {
             sort = listOf(SortParamRequest(field = "query_timestamp", direction = -1)),
         )
 
-        val json = parser.toJson(request)
+        val json = toJson(request)
 
         assertEquals(
             "{\"limit\":10,\"presence\":false,\"watch\":true," +

@@ -17,21 +17,22 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.UpdateChannelPartialRequestTestData
+import io.getstream.chat.android.network.infrastructure.Serializer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class UpdateChannelPartialRequestAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
 
     @Test
     fun `Serialize UpdateChannelPartialRequest with all fields`() {
-        val json = parser.toJson(UpdateChannelPartialRequestTestData.updateChannelPartialRequest)
+        val json = toJson(UpdateChannelPartialRequestTestData.updateChannelPartialRequest)
         Assertions.assertEquals(UpdateChannelPartialRequestTestData.updateChannelPartialRequestJson, json)
     }
 
     @Test
     fun `Serialize UpdateChannelPartialRequest with default fields`() {
-        val json = parser.toJson(UpdateChannelPartialRequestTestData.updateChannelPartialRequestWithDefaults)
+        val json = toJson(UpdateChannelPartialRequestTestData.updateChannelPartialRequestWithDefaults)
         Assertions.assertEquals(UpdateChannelPartialRequestTestData.updateChannelPartialRequestJsonWithDefaults, json)
     }
 }

@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SearchResultMessage
@@ -36,7 +37,6 @@ import org.junit.jupiter.params.provider.MethodSource
  */
 internal class SearchResponseParityTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "jaewoong" },
         channelTransformer = NoOpChannelTransformer,
@@ -44,12 +44,14 @@ internal class SearchResponseParityTest {
         userTransformer = NoOpUserTransformer,
     )
 
+    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("io.getstream.chat.android.client.parser2.testdata.MessageFixtures#fixtures")
     fun `A search result maps like the MessageResponse it extends`(name: String, json: String) {
-        val message = runCatching { with(mapping) { parser.fromJson(json, MessageResponse::class.java).toDomain() } }
+        val message = runCatching { with(mapping) { parse<MessageResponse>(json).toDomain() } }
         val searchResult = runCatching {
-            with(mapping) { parser.fromJson(json, SearchResultMessage::class.java).toDomain() }
+            with(mapping) { parse<SearchResultMessage>(json).toDomain() }
         }
 
         // Fixtures missing a required field must be rejected by both.
@@ -60,8 +62,8 @@ internal class SearchResponseParityTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("io.getstream.chat.android.client.parser2.testdata.MessageFixtures#fixtures")
     fun `A search result converts to the MessageResponse of its JSON`(name: String, json: String) {
-        val message = runCatching { parser.fromJson(json, MessageResponse::class.java) }.getOrNull() ?: return
-        val searchResult = parser.fromJson(json, SearchResultMessage::class.java)
+        val message = runCatching { parse<MessageResponse>(json) }.getOrNull() ?: return
+        val searchResult = parse<SearchResultMessage>(json)
 
         // Compares every field, including the ones the message mapper doesn't read yet.
         assertFieldsEqual(name, message, with(mapping) { searchResult.toMessageResponse() })
@@ -76,9 +78,9 @@ internal class SearchResponseParityTest {
             "draft": {"channel_cid": "messaging:search-parity", "created_at": "2026-09-30T09:00:00.000Z",
             "message": {"id": "draft-1", "text": "draft"}},""",
         )
-        val searchResult = parser.fromJson(json, SearchResultMessage::class.java)
+        val searchResult = parse<SearchResultMessage>(json)
         // Without the channel, which MessageResponse doesn't declare and would collect into custom.
-        val message = parser.fromJson(mapAdapter.toJson(mapAdapter.fromJson(json)!! - "channel"), MessageResponse::class.java)
+        val message = parse<MessageResponse>(mapAdapter.toJson(mapAdapter.fromJson(json)!! - "channel"))
 
         assertFieldsEqual("extra fields", message, with(mapping) { searchResult.toMessageResponse() })
     }
@@ -86,7 +88,7 @@ internal class SearchResponseParityTest {
     @Test
     fun `A search result takes its channel info from the channel it carries`() {
         val message = with(mapping) {
-            parser.fromJson(recordedMessages().first(), SearchResultMessage::class.java).toDomain()
+            parse<SearchResultMessage>(recordedMessages().first()).toDomain()
         }
 
         message.channelInfo?.cid shouldBeEqualTo "messaging:search-parity"
@@ -97,7 +99,7 @@ internal class SearchResponseParityTest {
 
     @Test
     fun `The search response keeps the results warning and the pagination cursor`() {
-        val response = parser.fromJson(RECORDED_RESPONSE, SearchResponse::class.java)
+        val response = parse<SearchResponse>(RECORDED_RESPONSE)
 
         response.results.size shouldBeEqualTo 4
         response.next shouldBeEqualTo "W3sibmFtZSI6ImNyZWF0ZWRfYXQiLCJ2YWx1ZSI6IjIwMjYtMDktMzAiLCJkaXJlY3Rpb24iOi0xfV0="

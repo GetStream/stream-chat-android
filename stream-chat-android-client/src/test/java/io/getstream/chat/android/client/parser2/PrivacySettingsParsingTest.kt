@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.parser2.testdata.PrivacySettingsTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.assertThrows
 
 internal class PrivacySettingsParsingTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
@@ -42,14 +43,14 @@ internal class PrivacySettingsParsingTest {
 
     @Test
     fun `Response path - deserializes all fields`() {
-        val dto = parser.fromJson(PrivacySettingsTestData.jsonAllFields, PrivacySettingsResponse::class.java)
+        val dto = parse<PrivacySettingsResponse>(PrivacySettingsTestData.jsonAllFields)
         val privacySettings = with(domainMapping) { dto.toDomain() }
         assertEquals(PrivacySettingsTestData.expectedAllFields, privacySettings)
     }
 
     @Test
     fun `Response path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(PrivacySettingsTestData.jsonOptionalFieldsMissing, PrivacySettingsResponse::class.java)
+        val dto = parse<PrivacySettingsResponse>(PrivacySettingsTestData.jsonOptionalFieldsMissing)
         val privacySettings = with(domainMapping) { dto.toDomain() }
         assertEquals(PrivacySettingsTestData.expectedOptionalFieldsMissing, privacySettings)
     }
@@ -61,21 +62,21 @@ internal class PrivacySettingsParsingTest {
     @Test
     fun `Response path - throws on typing_indicators missing enabled`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(PrivacySettingsTestData.jsonTypingIndicatorsMissingEnabled, PrivacySettingsResponse::class.java)
+            parse<PrivacySettingsResponse>(PrivacySettingsTestData.jsonTypingIndicatorsMissingEnabled)
         }
     }
 
     @Test
     fun `Response path - throws on delivery_receipts missing enabled`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(PrivacySettingsTestData.jsonDeliveryReceiptsMissingEnabled, PrivacySettingsResponse::class.java)
+            parse<PrivacySettingsResponse>(PrivacySettingsTestData.jsonDeliveryReceiptsMissingEnabled)
         }
     }
 
     @Test
     fun `Response path - throws on read_receipts missing enabled`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(PrivacySettingsTestData.jsonReadReceiptsMissingEnabled, PrivacySettingsResponse::class.java)
+            parse<PrivacySettingsResponse>(PrivacySettingsTestData.jsonReadReceiptsMissingEnabled)
         }
     }
 

@@ -96,20 +96,22 @@ internal object MessageDtoTestData {
           },
           "member": ${MemberInfoDtoTestData.downstreamJson},
           "deleted_for_me": true,
-          "extraData": {
-            "key1": "value1",
-            "key2": true,
-            "key3": {
-              "key4": "val4"
-            }
-          },
-          "customKey1": "customVal1",
-          "customKey2": true,
-          "customKey3": [
-            "a",
-            "b",
-            "c"
-          ]
+          "custom": {
+            "extraData": {
+              "key1": "value1",
+              "key2": true,
+              "key3": {
+                "key4": "val4"
+              }
+            },
+            "customKey1": "customVal1",
+            "customKey2": true,
+            "customKey3": [
+              "a",
+              "b",
+              "c"
+            ]
+          }
         }""".withoutWhitespace()
 
     @Language("JSON")
@@ -164,109 +166,6 @@ internal object MessageDtoTestData {
           },
           "member": ${MemberInfoDtoTestData.downstreamJson},
           "deleted_for_me": false
-        }""".withoutWhitespace()
-
-    /**
-     * The request body as the generated model serialises it: custom data flattened to the root, and
-     * none of the legacy fields the server discards (`cid`, `html`, `shadowed`, `thread_participants`).
-     */
-    @Language("JSON")
-    val upstreamJson =
-        """{
-          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-          "text": "text",
-          "type": "regular",
-          "attachments": [
-            {
-              "asset_url": "assetUrl",
-              "author_name": "authorName",
-              "author_link": "authorLink",
-              "fallback": "fallback",
-              "image_url": "imageUrl",
-              "og_scrape_url": "ogScrapeUrl",
-              "text": "text",
-              "thumb_url": "thumbUrl",
-              "title": "title",
-              "title_link": "titleLink",
-              "type": "type",
-              "original_height": 100,
-              "original_width": 100,
-              "actions": [],
-              "fields": [],
-              "draft": true,
-              "file_size": 1.0,
-              "image": "image",
-              "mime_type": "mimeType",
-              "name": "name"
-            }
-          ],
-          "mentioned_users": [],
-          "mentioned_here": false,
-          "mentioned_channel": false,
-          "mentioned_group_ids": [],
-          "mentioned_roles": [],
-          "pinned": true,
-          "show_in_channel": false,
-          "silent": false,
-          "restricted_visibility": [],
-          "extraData": {
-            "key1": "value1",
-            "key2": true,
-            "key3": {
-              "key4": "val4"
-            }
-          },
-          "customKey1": "customVal1",
-          "customKey2": true,
-          "customKey3": [
-            "a",
-            "b",
-            "c"
-          ]
-        }""".withoutWhitespace()
-
-    val upstreamMessage = MessageRequest(
-        id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        text = "text",
-        type = MessageRequest.Type.Regular,
-        attachments = listOf(AttachmentDtoTestData.generatedAttachment),
-        mentionedUsers = emptyList(),
-        mentionedHere = false,
-        mentionedChannel = false,
-        mentionedGroupIds = emptyList(),
-        mentionedRoles = emptyList(),
-        pinned = true,
-        showInChannel = false,
-        silent = false,
-        restrictedVisibility = emptyList(),
-        custom = mapOf(
-            "extraData" to mapOf(
-                "key1" to "value1",
-                "key2" to true,
-                "key3" to mapOf("key4" to "val4"),
-            ),
-            "customKey1" to "customVal1",
-            "customKey2" to true,
-            "customKey3" to listOf("a", "b", "c"),
-        ),
-    )
-
-    @Language("JSON")
-    val upstreamJsonWithoutExtraData =
-        """{
-          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-          "text": "",
-          "type": "regular",
-          "attachments": [],
-          "mentioned_users": [],
-          "mentioned_here": false,
-          "mentioned_channel": false,
-          "mentioned_group_ids": [],
-          "mentioned_roles": [],
-          "pinned": false,
-          "show_in_channel": false,
-          "silent": false,
-          "restricted_visibility": []
         }""".withoutWhitespace()
 
     val upstreamMessageWithoutExtraData = MessageRequest(

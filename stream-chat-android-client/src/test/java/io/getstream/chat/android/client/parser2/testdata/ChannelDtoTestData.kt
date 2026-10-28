@@ -116,8 +116,6 @@ internal object ChannelDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
-          "name": "channelName",
-          "image": "channelImage",
           "disabled": true,
           "blocked": true,
           "truncated_at": "2020-06-10T11:04:31.588Z",
@@ -129,7 +127,11 @@ internal object ChannelDtoTestData {
           "hide_messages_before": "2020-06-10T11:04:31.588Z",
           "own_capabilities": ["connect-events", "pin-message"],
           "config": $configJson,
-          "customKey1": "customVal1"
+          "custom": {
+            "name": "channelName",
+            "image": "channelImage",
+            "customKey1": "customVal1"
+          }
         }
         """.withoutWhitespace()
 

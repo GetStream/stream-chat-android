@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import org.intellij.lang.annotations.Language
 
 internal object MemberInfoDtoTestData {
@@ -29,41 +28,4 @@ internal object MemberInfoDtoTestData {
           "notifications_muted": false
         }
     """.trimIndent()
-
-    val downstreamMemberInfo = ChannelMemberPartialResponse(
-        channelRole = "channel_member",
-        notificationsMuted = false,
-    )
-
-    /** API v1 inlines the projected member custom keys next to the declared fields. */
-    @Language("JSON")
-    val downstreamJsonWithInlineCustom: String = """
-        {
-          "channel_role": "channel_member",
-          "notifications_muted": true,
-          "flair": { "tier": "gold" }
-        }
-    """.trimIndent()
-
-    val downstreamMemberInfoWithInlineCustom = ChannelMemberPartialResponse(
-        channelRole = "channel_member",
-        notificationsMuted = true,
-        custom = mapOf("flair" to mapOf("tier" to "gold")),
-    )
-
-    /** API v2 nests the same keys under `custom`. */
-    @Language("JSON")
-    val downstreamJsonWithNestedCustom: String = """
-        {
-          "channel_role": "channel_member",
-          "notifications_muted": true,
-          "custom": { "flair": { "tier": "gold" } }
-        }
-    """.trimIndent()
-
-    val downstreamMemberInfoWithNestedCustom = ChannelMemberPartialResponse(
-        channelRole = "channel_member",
-        notificationsMuted = true,
-        custom = mapOf("flair" to mapOf("tier" to "gold")),
-    )
 }

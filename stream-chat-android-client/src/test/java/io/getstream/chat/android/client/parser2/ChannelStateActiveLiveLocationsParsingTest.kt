@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.parser2.testdata.LocationTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.QueryChannelsResponse
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.Test
  */
 internal class ChannelStateActiveLiveLocationsParsingTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
     private val channelState =
         """{"channel":$CHANNEL,"active_live_locations":[${LocationTestData.jsonAllFields}]}"""
@@ -53,7 +54,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
     @Test
     fun `query channel response`() {
-        val response = parser.fromJson(channelState.withDuration(), ChannelStateResponse::class.java)
+        val response = parse<ChannelStateResponse>(channelState.withDuration())
 
         assertEquals(expected, response.activeLiveLocations.orEmpty().toDomain())
     }
@@ -62,7 +63,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
     fun `query channels response`() {
         val json = """{"channels":[$channelState],"duration":"1ms"}"""
 
-        val response = parser.fromJson(json, QueryChannelsResponse::class.java)
+        val response = parse<QueryChannelsResponse>(json)
 
         assertEquals(expected, response.channels.single().activeLiveLocations.orEmpty().toDomain())
     }
@@ -71,7 +72,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
     fun `query grouped channels response`() {
         val json = """{"groups":{"all":{"channels":[$channelState]}},"duration":"1ms"}"""
 
-        val response = parser.fromJson(json, GroupedQueryChannelsResponse::class.java)
+        val response = parse<GroupedQueryChannelsResponse>(json)
 
         val state = response.groups.getValue("all").channels.single()
         assertEquals(expected, state.activeLiveLocations.orEmpty().toDomain())
@@ -79,7 +80,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
     @Test
     fun `missing field parses as null`() {
-        val response = parser.fromJson("""{"channel":$CHANNEL}""".withDuration(), ChannelStateResponse::class.java)
+        val response = parse<ChannelStateResponse>("""{"channel":$CHANNEL}""".withDuration())
 
         assertEquals(null, response.activeLiveLocations)
     }

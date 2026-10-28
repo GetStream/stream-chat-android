@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
@@ -34,7 +35,6 @@ import org.junit.jupiter.api.Test
  * mapper silently falling back to the default sort.
  */
 internal class PredefinedFilterParsingTest {
-    private val parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { null },
         channelTransformer = NoOpChannelTransformer,
@@ -55,7 +55,7 @@ internal class PredefinedFilterParsingTest {
             }
         """.trimIndent()
 
-        val parsed = parser.fromJson(json, ParsedPredefinedFilterResponse::class.java)
+        val parsed = Serializer.moshi.adapter(ParsedPredefinedFilterResponse::class.java).fromJson(json)!!
         val sort = with(mapping) { parsed.sort.toSortDomain() }
 
         sort shouldBeEqualTo ascByName<Channel>("created_at").descByName("last_updated")
@@ -65,7 +65,7 @@ internal class PredefinedFilterParsingTest {
     fun `A predefined filter without a sort decodes to no sort`() {
         val json = """{ "name": "android_sample_filter", "filter": { "type": "messaging" } }"""
 
-        val parsed = parser.fromJson(json, ParsedPredefinedFilterResponse::class.java)
+        val parsed = Serializer.moshi.adapter(ParsedPredefinedFilterResponse::class.java).fromJson(json)!!
 
         with(mapping) { parsed.sort.toSortDomain() } shouldBeEqualTo null
     }
@@ -79,7 +79,7 @@ internal class PredefinedFilterParsingTest {
             }
         """.trimIndent()
 
-        val parsed = parser.fromJson(json, ParsedPredefinedFilterResponse::class.java)
+        val parsed = Serializer.moshi.adapter(ParsedPredefinedFilterResponse::class.java).fromJson(json)!!
 
         parsed.filter.toFilterDomainWithFields()?.first shouldBeEqualTo Filters.and(
             Filters.eq("type", "messaging"),
