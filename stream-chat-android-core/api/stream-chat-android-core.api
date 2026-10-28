@@ -2587,6 +2587,34 @@ public final class io/getstream/chat/android/models/ScheduledMessageFailure$Serv
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract class io/getstream/chat/android/models/ScheduledMessageQueryStatus {
+	public abstract fun getValue ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/ScheduledMessageQueryStatus$Failed : io/getstream/chat/android/models/ScheduledMessageQueryStatus {
+	public static final field INSTANCE Lio/getstream/chat/android/models/ScheduledMessageQueryStatus$Failed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/ScheduledMessageQueryStatus$Scheduled : io/getstream/chat/android/models/ScheduledMessageQueryStatus {
+	public static final field INSTANCE Lio/getstream/chat/android/models/ScheduledMessageQueryStatus$Scheduled;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/ScheduledMessageQueryStatus$Sending : io/getstream/chat/android/models/ScheduledMessageQueryStatus {
+	public static final field INSTANCE Lio/getstream/chat/android/models/ScheduledMessageQueryStatus$Sending;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract class io/getstream/chat/android/models/ScheduledMessageStatus {
 	public abstract fun getValue ()Ljava/lang/String;
 }

@@ -117,7 +117,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ScheduledMessage
-import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -1015,9 +1015,7 @@ public class ChannelClient internal constructor(
      * Queries the current user's scheduled messages in this channel: the pending ones first, then the failed ones,
      * each sorted by [ScheduledMessage.scheduledAt].
      *
-     * @param statuses The statuses of the scheduled messages, or empty for every status. Only
-     * [ScheduledMessageStatus.Scheduled], [ScheduledMessageStatus.Sending] and [ScheduledMessageStatus.Failed] are
-     * accepted: the server rejects the query for any other status.
+     * @param statuses The statuses of the scheduled messages, or empty for every status.
      * @param limit The maximum number of scheduled messages to return, at most 100.
      * @param next The cursor of the page to return, from [QueryScheduledMessagesResult.next], or null for the first
      * page.
@@ -1027,7 +1025,7 @@ public class ChannelClient internal constructor(
     @CheckResult
     @JvmOverloads
     public fun queryScheduledMessages(
-        statuses: Set<ScheduledMessageStatus> = emptySet(),
+        statuses: Set<ScheduledMessageQueryStatus> = emptySet(),
         limit: Int = ChatClient.DEFAULT_SCHEDULED_MESSAGES_LIMIT,
         next: String? = null,
     ): Call<QueryScheduledMessagesResult> {

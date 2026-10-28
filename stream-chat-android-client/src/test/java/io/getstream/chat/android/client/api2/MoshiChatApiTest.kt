@@ -88,7 +88,7 @@ import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.RoleType
-import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.Vote
@@ -182,7 +182,6 @@ import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
-import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.network.models.ScheduledMessageResponse
 import io.getstream.chat.android.network.models.ScheduledMessagesFilter
 import io.getstream.chat.android.network.models.SearchResponse
@@ -281,6 +280,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.reflect.KClass
+import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
 
 @Suppress("LargeClass")
@@ -3536,7 +3536,7 @@ internal class MoshiChatApiTest {
 
         val result = sut.queryScheduledMessages(
             cid = "messaging:123",
-            statuses = setOf(ScheduledMessageStatus.Scheduled, ScheduledMessageStatus.Failed),
+            statuses = setOf(ScheduledMessageQueryStatus.Scheduled, ScheduledMessageQueryStatus.Failed),
             limit = 50,
             next = "next-1",
         ).await()
@@ -3546,7 +3546,7 @@ internal class MoshiChatApiTest {
             next = "next-1",
             filter = ScheduledMessagesFilter(
                 cid = "messaging:123",
-                status = listOf(ScheduledMessageQueryStatus.Scheduled, ScheduledMessageQueryStatus.Failed),
+                status = listOf(ScheduledMessageQueryStatusDto.Scheduled, ScheduledMessageQueryStatusDto.Failed),
             ),
         )
         verify(api, times(1)).queryScheduledMessages(expectedBody)

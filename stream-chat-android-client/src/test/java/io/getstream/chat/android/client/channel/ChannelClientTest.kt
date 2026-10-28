@@ -45,7 +45,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.Reaction
-import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -2589,7 +2589,7 @@ internal class ChannelClientTest {
     @Test
     fun `queryScheduledMessages should return success when ChatClient returns success`() = runTest {
         // given
-        val statuses = setOf(ScheduledMessageStatus.Failed)
+        val statuses = setOf(ScheduledMessageQueryStatus.Failed)
         val limit = positiveRandomInt()
         val next = randomString()
         val queryResult = randomQueryScheduledMessagesResult()

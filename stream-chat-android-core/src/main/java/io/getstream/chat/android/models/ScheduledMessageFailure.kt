@@ -43,15 +43,12 @@ public abstract class ScheduledMessageFailure internal constructor() {
     ) : ScheduledMessageFailure() {
 
         /**
-         * False when the changes have to be changed first: the date is too soon or too far, a scheduling limit is
-         * reached, the feature is off, the ID is taken, or the message can't be edited, was already sent or was
-         * deleted.
+         * True only when another edit was saved first ([Reason.ScheduledMessageConflict]). Every other rejection,
+         * including one this SDK does not know, needs a change first, or waits for the server: while the server is
+         * sending the message ([Reason.ScheduledMessageSending]), it ends sent or failed, never editable again.
          */
         override val isRetryable: Boolean
-            get() = when (reason) {
-                null, Reason.ScheduledMessageSending, Reason.ScheduledMessageConflict -> true
-                else -> false
-            }
+            get() = reason == Reason.ScheduledMessageConflict
 
         /**
          * The reason the server rejects scheduling, editing or rescheduling a message. More reasons can be added in a

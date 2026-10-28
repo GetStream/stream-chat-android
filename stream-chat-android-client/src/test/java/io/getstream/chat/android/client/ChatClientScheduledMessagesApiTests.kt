@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
@@ -44,7 +45,7 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
     fun queryScheduledMessagesSuccess() = runTest {
         // given
         val cid = randomCID()
-        val statuses = setOf(ScheduledMessageStatus.Scheduled, ScheduledMessageStatus.Failed)
+        val statuses = setOf(ScheduledMessageQueryStatus.Scheduled, ScheduledMessageQueryStatus.Failed)
         val limit = positiveRandomInt()
         val next = randomString()
         val queryResult = randomQueryScheduledMessagesResult()

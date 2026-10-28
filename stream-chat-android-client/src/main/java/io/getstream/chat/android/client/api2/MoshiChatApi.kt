@@ -109,7 +109,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.ScheduledMessage
-import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -163,7 +163,6 @@ import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.QueryScheduledMessagesRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
-import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.network.models.ScheduledMessagesFilter
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
@@ -213,6 +212,7 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
+import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -2029,11 +2029,11 @@ constructor(
 
     override fun queryScheduledMessages(
         cid: String?,
-        statuses: Set<ScheduledMessageStatus>,
+        statuses: Set<ScheduledMessageQueryStatus>,
         limit: Int,
         next: String?,
     ): Call<QueryScheduledMessagesResult> {
-        val status = statuses.takeIf { it.isNotEmpty() }?.map { ScheduledMessageQueryStatus.fromString(it.value) }
+        val status = statuses.takeIf { it.isNotEmpty() }?.map { ScheduledMessageQueryStatusDto.fromString(it.value) }
         val body = QueryScheduledMessagesRequest(
             limit = limit,
             next = next,

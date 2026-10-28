@@ -44,11 +44,11 @@ internal class ScheduledMessageFailureTest {
             Arguments.of(Reason.ScheduledLimitUser, false),
             Arguments.of(Reason.ScheduledMessageIdTaken, false),
             Arguments.of(Reason.ScheduledMessageNotEditable, false),
-            Arguments.of(Reason.ScheduledMessageSending, true),
+            Arguments.of(Reason.ScheduledMessageSending, false),
             Arguments.of(Reason.ScheduledMessageConflict, true),
             Arguments.of(Reason.ScheduledMessageAlreadySent, false),
             Arguments.of(Reason.ScheduledMessageCanceled, false),
-            Arguments.of(null, true),
+            Arguments.of(null, false),
         )
     }
 }

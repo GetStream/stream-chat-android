@@ -66,7 +66,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.ScheduledMessage
-import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -770,7 +770,7 @@ internal interface ChatApi {
     @CheckResult
     fun queryScheduledMessages(
         cid: String?,
-        statuses: Set<ScheduledMessageStatus>,
+        statuses: Set<ScheduledMessageQueryStatus>,
         limit: Int,
         next: String?,
     ): Call<QueryScheduledMessagesResult>
