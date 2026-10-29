@@ -164,6 +164,10 @@ internal class ChannelConfigRepositoryTest {
                 urlEnrichmentEnabled = randomBoolean(),
                 messageRemindersEnabled = randomBoolean(),
                 markMessagesPending = randomBoolean(),
+                quotesEnabled = randomBoolean(),
+                skipLastMsgUpdateForSystemMsgs = randomBoolean(),
+                pollsEnabled = randomBoolean(),
+                sharedLocationsEnabled = randomBoolean(),
             ),
             emptyList(),
         )

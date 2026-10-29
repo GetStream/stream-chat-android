@@ -630,6 +630,7 @@ internal class DomainMappingTest {
                 showInChannel = true,
                 command = "giphy",
                 args = "cat",
+                createdAt = draftMessageResponse.createdAt,
             )
         }
 
@@ -1174,6 +1175,7 @@ internal class DomainMappingTest {
             messageRemindersEnabled = true,
             sharedLocationsEnabled = true,
             markMessagesPending = true,
+            quotesEnabled = false,
         )
 
     @Test
