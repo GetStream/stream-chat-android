@@ -43,7 +43,8 @@ internal class CameraAttachmentFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val permissionChecker: PermissionChecker = PermissionChecker()
-    private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
+    private var activityResultLauncher: ActivityResultLauncher<CaptureMediaContract.Target>? = null
+    private var pickCaptureTarget: (() -> Unit)? = null
 
     /**
      * Style for the attachment picker dialog.
@@ -116,6 +117,9 @@ internal class CameraAttachmentFragment : Fragment() {
                 attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
                 attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
             }
+        pickCaptureTarget = CaptureMediaTargetDialogFragment.register(this, style.pickerMediaMode.mode) {
+            activityResultLauncher?.launch(it)
+        }
     }
 
     private fun checkPermissions() {
@@ -133,7 +137,7 @@ internal class CameraAttachmentFragment : Fragment() {
     private fun onPermissionGranted() {
         _binding?.run {
             grantPermissionsInclude.grantPermissionsContainer.isVisible = false
-            activityResultLauncher?.launch(Unit)
+            pickCaptureTarget?.invoke()
         }
     }
 

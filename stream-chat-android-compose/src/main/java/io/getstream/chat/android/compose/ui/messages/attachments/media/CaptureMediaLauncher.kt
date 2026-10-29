@@ -16,13 +16,62 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.media
 
+import android.content.Context
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
+import io.getstream.log.taggedLogger
 import java.io.File
+
+/**
+ * Launches a camera app to capture a photo or a video.
+ *
+ * When several camera apps can capture the media allowed by the mode, [launch] asks the user to pick
+ * one through [CaptureMediaTargetSheet], which must be placed in the composition next to the launcher.
+ */
+@InternalStreamChatApi
+@Stable
+public class CaptureMediaLauncher internal constructor(
+    internal val contract: CaptureMediaContract,
+    private val activityLauncher: ManagedActivityResultLauncher<CaptureMediaContract.Target, File?>,
+    private val context: Context,
+    private val pickingTarget: MutableState<Boolean>,
+) {
+
+    private val logger by taggedLogger("Chat:CaptureMediaLauncher")
+
+    internal var isPickingTarget: Boolean
+        get() = pickingTarget.value
+        set(value) {
+            pickingTarget.value = value
+        }
+
+    /**
+     * Opens the camera app, or asks the user to pick one when several are available.
+     */
+    public fun launch() {
+        val targets = contract.targets(context)
+        when (targets.size) {
+            0 -> logger.w { "[launch] No camera app can capture the requested media" }
+            1 -> launch(targets.single())
+            else -> isPickingTarget = true
+        }
+    }
+
+    internal fun launch(target: CaptureMediaContract.Target) {
+        isPickingTarget = false
+        activityLauncher.launch(target)
+    }
+}
 
 /**
  * Creates and remembers a launcher for capturing media (photo and/or video) using the device camera.
@@ -34,20 +83,26 @@ import java.io.File
  * @param onResult Callback invoked when media capture completes successfully. Receives a [File]
  * representing the captured media. Not called if the user cancels the capture.
  *
- * @return A [ManagedActivityResultLauncher] to launch the media capture activity.
+ * @return A [CaptureMediaLauncher] to launch the media capture activity.
  *
  * @see CaptureMediaContract
  */
+@InternalStreamChatApi
 @Composable
 public fun rememberCaptureMediaLauncher(
     mode: CaptureMediaContract.Mode,
     onResult: (File) -> Unit,
-): ManagedActivityResultLauncher<Unit, File?> {
+): CaptureMediaLauncher {
+    val context = LocalContext.current
     val contract = rememberSaveable(mode, saver = captureMediaContractSaver(mode)) {
         CaptureMediaContract(mode)
     }
-    return rememberLauncherForActivityResult(contract) { file ->
+    val activityLauncher = rememberLauncherForActivityResult(contract) { file ->
         file?.let(onResult)
+    }
+    val pickingTarget = rememberSaveable { mutableStateOf(false) }
+    return remember(contract, activityLauncher, context) {
+        CaptureMediaLauncher(contract, activityLauncher, context, pickingTarget)
     }
 }
 
