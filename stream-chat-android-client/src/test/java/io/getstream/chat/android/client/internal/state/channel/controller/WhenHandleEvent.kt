@@ -219,8 +219,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         val user1 = randomUser()
         val user2 = randomUser()
 
-        val typingStartEvent1 = randomTypingStartEvent(user = user1, channelId = channelId)
-        val typingStopEvent = randomTypingStopEvent(user = user2, channelId = channelId)
+        val typingStartEvent1 = randomTypingStartEvent(user = user1, channelId = channelId, parentId = null)
+        val typingStopEvent = randomTypingStopEvent(user = user2, channelId = channelId, parentId = null)
 
         channelLogic.run {
             handleEvent(typingStartEvent1)

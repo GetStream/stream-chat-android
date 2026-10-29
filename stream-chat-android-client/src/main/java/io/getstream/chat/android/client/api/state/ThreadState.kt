@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api.state
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.TypingEvent
 import kotlinx.coroutines.flow.StateFlow
 
 /** State container with reactive data of a thread.*/
@@ -31,6 +32,9 @@ public interface ThreadState {
 
     /** If we are currently loading messages. */
     public val loading: StateFlow<Boolean>
+
+    /** The users currently typing a reply in this thread, other than the current user. */
+    public val typing: StateFlow<TypingEvent>
 
     /** If we've reached the earliest point in this thread. */
     public val endOfOlderMessages: StateFlow<Boolean>

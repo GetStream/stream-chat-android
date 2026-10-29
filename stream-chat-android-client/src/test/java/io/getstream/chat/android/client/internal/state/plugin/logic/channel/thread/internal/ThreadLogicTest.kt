@@ -42,6 +42,7 @@ import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -65,7 +66,7 @@ internal class ThreadLogicTest {
         threadStateLogic = mock()
         whenever(threadStateLogic.writeThreadState()).doReturn(threadMutableState)
         whenever(threadMutableState.heldReplies).doReturn(emptyMap())
-        threadLogic = ThreadLogic(threadStateLogic)
+        threadLogic = ThreadLogic(threadStateLogic, TestScope())
     }
 
     @Test
