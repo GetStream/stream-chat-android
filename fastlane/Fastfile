@@ -236,8 +236,10 @@ lane :build_e2e_coverage_map do |options|
   failed_tests_files = Dir.glob("#{e2e_coverage_dir}/**/#{e2e_failed_tests_file}")
   batch_count = options[:batch_count].to_i
   # The tests of a missing batch would leave the map and run on every pull request, so the previous map stays instead.
-  if batch_count.positive? && failed_tests_files.size < batch_count
-    next UI.important("Only #{failed_tests_files.size} of #{batch_count} batches collected coverage, keeping the previous map")
+  # A batch counts once it reported its failed tests and collected coverage.
+  covered_batches = failed_tests_files.count { |file| Dir.glob("#{File.dirname(file)}/**/*.ec").any? }
+  if batch_count.positive? && covered_batches < batch_count
+    next UI.important("Only #{covered_batches} of #{batch_count} batches collected coverage, keeping the previous map")
   end
 
   build_test_coverage_map(
