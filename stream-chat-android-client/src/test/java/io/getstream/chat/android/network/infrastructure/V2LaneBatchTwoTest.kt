@@ -17,7 +17,6 @@
 package io.getstream.chat.android.network.infrastructure
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -47,7 +46,6 @@ import java.util.Date
  */
 internal class V2LaneBatchTwoTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -121,11 +119,6 @@ internal class V2LaneBatchTwoTest {
             """{"users":{"filip":{"id":"filip","name":"Chewbacca","custom":{"v2cap_probe":"nested"}}}}""",
             v2Body(request),
         )
-        // v1 flattens custom data to the user's root, which a v2 endpoint silently drops.
-        assertEquals(
-            """{"users":{"filip":{"id":"filip","name":"Chewbacca","v2cap_probe":"nested"}}}""",
-            v1Parser.toJson(request),
-        )
     }
 
     @Test
@@ -136,9 +129,10 @@ internal class V2LaneBatchTwoTest {
     }
 
     @Test
-    fun `A partial user update has the same body on v2 as on v1`() {
+    fun `A partial user update keeps its v1 body`() {
         // Root keys of `set` are custom data on both versions.
-        assertSameBody(
+        assertBody(
+            """{"users":[{"id":"filip","unset":["old"],"set":{"hobby":"chess"}}]}""",
             UpdateUsersPartialRequest(
                 listOf(UpdateUserPartialRequest(id = "filip", set = mapOf("hobby" to "chess"), unset = listOf("old"))),
             ),
@@ -146,8 +140,10 @@ internal class V2LaneBatchTwoTest {
     }
 
     @Test
-    fun `A users query has the same payload on v2 as on v1`() {
-        assertSameBody(
+    fun `A users query keeps its v1 payload`() {
+        assertBody(
+            """{"filter_conditions":{"id":{"${'$'}in":["filip","jaewoong"]}},"limit":30,"offset":0,""" +
+                """"presence":true,"sort":[{"direction":-1,"field":"last_active"}]}""",
             QueryUsersPayload(
                 filterConditions = mapOf("id" to mapOf("\$in" to listOf("filip", "jaewoong"))),
                 offset = 0,
@@ -159,12 +155,12 @@ internal class V2LaneBatchTwoTest {
     }
 
     @Test
-    fun `A block request has the same body on v2 as on v1`() {
-        assertSameBody(BlockUsersRequest("jaewoong"))
+    fun `A block request keeps its v1 body`() {
+        assertBody("""{"blocked_user_id":"jaewoong"}""", BlockUsersRequest("jaewoong"))
     }
 
-    private inline fun <reified T : Any> assertSameBody(request: T) {
-        assertEquals(v1Parser.toJson(request), v2Body(request))
+    private inline fun <reified T : Any> assertBody(expected: String, request: T) {
+        assertEquals(expected, v2Body(request))
     }
 
     private companion object {

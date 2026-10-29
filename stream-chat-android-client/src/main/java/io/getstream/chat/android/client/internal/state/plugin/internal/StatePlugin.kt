@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.internal.state.event.handler.grouped.int
 import io.getstream.chat.android.client.internal.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.BlockUserListenerState
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.ChannelMarkReadListenerState
+import io.getstream.chat.android.client.internal.state.plugin.listener.internal.CreateChannelListenerState
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.DeleteChannelListenerState
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.DeleteMessageForMeListenerState
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.DeleteMessageListenerState
@@ -58,6 +59,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.BlockUserListener
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageForMeListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
@@ -131,6 +133,7 @@ public class StatePlugin internal constructor(
     MarkAllReadListener by MarkAllReadListenerState(logic),
     DeleteReactionListener by DeleteReactionListenerState(logic, clientState),
     DeleteChannelListener by DeleteChannelListenerState(logic, clientState),
+    CreateChannelListener by CreateChannelListenerState(logic, stateRegistry),
     SendReactionListener by SendReactionListenerState(logic, clientState),
     DeleteMessageListener by DeleteMessageListenerState(logic, clientState, mutableGlobalState),
     DeleteMessageForMeListener by DeleteMessageForMeListenerState(logic, clientState),

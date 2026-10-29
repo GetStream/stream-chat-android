@@ -17,7 +17,6 @@
 package io.getstream.chat.android.network.infrastructure
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -43,7 +42,6 @@ import java.util.Date
  */
 internal class V2LaneBatchOneTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -109,8 +107,9 @@ internal class V2LaneBatchOneTest {
     }
 
     @Test
-    fun `A device request has the same body on v2 as on v1`() {
-        assertSameBody(
+    fun `A device request keeps its v1 body`() {
+        assertBody(
+            """{"id":"token","push_provider":"firebase"}""",
             CreateDeviceRequest(
                 id = "token",
                 pushProvider = CreateDeviceRequest.PushProvider.fromString("firebase"),
@@ -120,8 +119,11 @@ internal class V2LaneBatchOneTest {
     }
 
     @Test
-    fun `A push preferences request has the same body on v2 as on v1`() {
-        assertSameBody(
+    fun `A push preferences request keeps its v1 body`() {
+        assertBody(
+            """{"preferences":[{"channel_cid":"messaging:general","chat_level":"mentions",""" +
+                """"disabled_until":"2026-10-09T14:33:26.815Z",""" +
+                """"chat_preferences":{"direct_mentions":"all"}}]}""",
             UpsertPushPreferencesRequest(
                 listOf(
                     PushPreferenceInput(
@@ -138,9 +140,9 @@ internal class V2LaneBatchOneTest {
         )
     }
 
-    private fun assertSameBody(request: Any) {
+    private fun assertBody(expected: String, request: Any) {
         val v2Body = Serializer.moshi.adapter(request.javaClass).toJson(request)
-        assertEquals(v1Parser.toJson(request), v2Body)
+        assertEquals(expected, v2Body)
     }
 
     private companion object {

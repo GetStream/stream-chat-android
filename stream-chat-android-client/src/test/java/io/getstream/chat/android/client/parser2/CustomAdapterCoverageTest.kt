@@ -16,46 +16,62 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 
 /**
- * Guards against silently dropping custom data.
+ * Guards against silently dropping custom data on the endpoints still on v1.
  *
- * The v1 endpoints flatten custom data to the root of the enclosing object, so a generated model that
- * declares `custom` needs a [io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter]
- * registered in [MoshiChatParser] to collect it. Without one the field stays empty and the data is lost
- * with no error, which is how member `extraData` was dropped by the queryMembers slice.
- *
- * Models whose `custom` is genuinely a nested object on the wire (the Go struct declares a plain map
- * rather than `jsonextra.ExtraFields`) must be listed in [NESTED_CUSTOM] with a reason instead.
- *
- * Events are skipped: no domain event exposes the event's own custom data, so collecting it would only cost
- * an extra pass per event. `CustomEvent` stays checked, since its custom data is the event's payload.
+ * Those endpoints flatten custom data to the root of the enclosing object, so a model they return that declares
+ * `custom` needs a [io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter] registered in
+ * [MoshiChatParser] to collect it. Without one the field stays empty and the data is lost with no error.
  */
 internal class CustomAdapterCoverageTest {
 
     @Test
-    fun `every generated model declaring custom is either adapted or documented as nested`() {
-        val declaring = modelsDeclaringCustom()
-        check(declaring.isNotEmpty()) { "Found no generated models declaring `custom`; is $MODELS_DIR correct?" }
+    fun `every model the v1 endpoints return that declares custom is adapted`() {
+        val declaring = reachableModels().filter(::declaresCustom).map { it.simpleName }.toSet()
+        check(declaring.isNotEmpty()) { "Found no model declaring `custom` in the ModerationV1Api responses" }
 
-        val unprotected = declaring - adaptedModels() - NESTED_CUSTOM.keys
+        val unprotected = declaring - adaptedModels()
 
         check(unprotected.isEmpty()) {
-            "These generated models declare `custom` but have no adapter registered in MoshiChatParser:\n" +
-                unprotected.sorted().joinToString("\n") { "  - $it" } +
-                "\n\nAdd a CustomObjectDtoAdapter (extraDataPropertyName = \"custom\") and register it, or " +
-                "list the model in NESTED_CUSTOM if its custom really is a nested object on the wire."
+            "These models returned by ModerationV1Api declare `custom` but have no adapter registered in " +
+                "MoshiChatParser:\n" + unprotected.sorted().joinToString("\n") { "  - $it" } +
+                "\n\nAdd a CustomObjectDtoAdapter (extraDataPropertyName = \"custom\") and register it."
         }
     }
 
-    private fun modelsDeclaringCustom(): Set<String> =
-        File(MODELS_DIR).listFiles { f -> f.extension == "kt" }.orEmpty()
-            .filter { it.readText().contains(CUSTOM_PROPERTY) }
-            .filter { it.nameWithoutExtension == CUSTOM_EVENT || !WS_EVENT_SUPERTYPE.containsMatchIn(it.readText()) }
-            .map { it.nameWithoutExtension }
-            .toSet()
+    /** The response models of [ModerationV1Api] and every model their fields reach. */
+    private fun reachableModels(): Set<Class<*>> {
+        val seen = mutableSetOf<Class<*>>()
+        val pending = ArrayDeque(ModerationV1Api::class.java.methods.flatMap { classesOf(it.genericReturnType) })
+        while (pending.isNotEmpty()) {
+            val model = pending.removeFirst()
+            if (!model.isModel() || !seen.add(model)) continue
+            model.declaredFields.filterNot { Modifier.isStatic(it.modifiers) }
+                .forEach { field -> pending.addAll(classesOf(field.genericType)) }
+        }
+        return seen
+    }
+
+    private fun classesOf(type: Type): List<Class<*>> = when (type) {
+        is Class<*> -> listOf(type)
+        is ParameterizedType -> classesOf(type.rawType) + type.actualTypeArguments.flatMap(::classesOf)
+        else -> emptyList()
+    }
+
+    private fun Class<*>.isModel(): Boolean = MODEL_PACKAGES.any { name.startsWith(it) }
+
+    private fun declaresCustom(model: Class<*>): Boolean =
+        model.declaredFields.any { it.isCustomMap() }
+
+    private fun Field.isCustomMap(): Boolean = name == "custom" && Map::class.java.isAssignableFrom(type)
 
     private fun adaptedModels(): Set<String> {
         val registered = Regex("""\.add\((\w+)\)""").findAll(File(PARSER_FILE).readText())
@@ -69,30 +85,15 @@ internal class CustomAdapterCoverageTest {
     }
 
     private companion object {
-        private const val MODELS_DIR = "src/main/java/io/getstream/chat/android/network/models"
         private const val PARSER_FILE = "src/main/java/io/getstream/chat/android/client/parser2/MoshiChatParser.kt"
         private const val ADAPTERS_DIR = "src/main/java/io/getstream/chat/android/client/parser2/adapters"
 
+        private val MODEL_PACKAGES = listOf(
+            "io.getstream.chat.android.network.models.",
+            "io.getstream.chat.android.client.api2.model.",
+        )
+
         /** Read from the type parameter, since an adapter's name need not match the model it adapts. */
         private val ADAPTER_DECLARATION = Regex("""object\s+(\w+)\s*:\s*CustomObjectDtoAdapter<(\w+)>""")
-
-        /**
-         * Custom data is a map. Matching the type also skips unrelated properties like `customEvents` and change flags
-         * like `MessageChangeSet.custom: Boolean`.
-         */
-        private const val CUSTOM_PROPERTY = "internal val custom: Map<"
-
-        private val WS_EVENT_SUPERTYPE = Regex("""\bio\.getstream\.chat\.android\.network\.models\.WSEvent\s*\{""")
-        private const val CUSTOM_EVENT = "CustomEvent"
-
-        /** Models whose `custom` is a nested object on the wire, so no collecting adapter applies. */
-        private val NESTED_CUSTOM = mapOf(
-            "ChannelPartialUpdateResponse" to "Only read from the v2 websocket and /sync, which nest custom data",
-            "ThreadParticipant" to "Go declares a plain map, not jsonextra.ExtraFields, so custom stays nested",
-            "ChannelInput" to "Only sent to the v2 endpoints, which read custom data nested",
-            "ChannelInputRequest" to "Only sent to the v2 endpoints, which read custom data nested",
-            "EventRequest" to "Only sent to the v2 endpoint, which reads custom data nested",
-            "ScheduledMessageContentResponse" to "Only read from v2 responses and events, which nest custom data",
-        )
     }
 }

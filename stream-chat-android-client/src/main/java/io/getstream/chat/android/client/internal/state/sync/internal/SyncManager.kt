@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.errors.isStatusBadRequest
 import io.getstream.chat.android.client.errors.isValidationError
@@ -279,6 +280,7 @@ internal class SyncManager(
         state.value = State.Syncing
         val online = clientState.isOnline
         logger.v { "[onConnectionEstablished] online: $online" }
+        markStoredPlaceholders()
         retryFailedEntities()
 
         if (syncState.value == null && syncState.value?.userId != userId) {
@@ -311,7 +313,7 @@ internal class SyncManager(
         logger.i { "[connectionLost] firstConnect: $isFirstConnect" }
         state.value = State.Idle
         syncState.value?.let { syncState ->
-            val activeCids = logicRegistry.getActiveChannelsLogic().map { it.cid }
+            val activeCids = activeChannelCidsToSync()
             logger.d { "[connectionLost] activeCids.size: ${activeCids.size}" }
             val newSyncState = syncState.copy(activeChannelIds = activeCids)
             repos.insertSyncState(newSyncState)
@@ -328,19 +330,53 @@ internal class SyncManager(
      */
     private suspend fun performSync(watch: Boolean, groupedListsFirst: Boolean): SyncOutcome {
         logger.i { "[performSync] watch: $watch, groupedListsFirst: $groupedListsFirst" }
-        val groupedCids = if (groupedListsFirst) {
-            logicRegistry.getActiveQueryChannelsLogic().filter { it.groupKey() != null }.flatMap { it.cids() }
-        } else {
-            emptyList()
-        }
-        val cids = (groupedCids + logicRegistry.getActiveChannelsLogic().map { it.cid }).distinct().ifEmpty {
+        val groupedCids = if (groupedListsFirst) groupedListCidsToSync() else emptyList()
+        val cids = (groupedCids + activeChannelCidsToSync()).distinct().ifEmpty {
             logger.w { "[performSync] no active cids found" }
-            repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
+            repos.selectSyncState(currentUserId)?.activeChannelIds.orEmpty().withoutPlaceholders()
         }
         return mutex.withLock {
             performSync(cids, watch)
         }
     }
+
+    /**
+     * Records the local placeholders stored by an earlier session, so they are left out of what is synced even when
+     * their id does not give them away.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    private suspend fun markStoredPlaceholders() {
+        try {
+            val pendingCids = repos.selectChannelCidsBySyncNeeded() +
+                repos.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS) +
+                repos.selectChannelCidsBySyncStatus(SyncStatus.FAILED_PERMANENTLY)
+            if (pendingCids.isEmpty()) return
+            repos.selectChannels(pendingCids)
+                .filter { it.isLocalPlaceholder() }
+                .forEach { logicRegistry.markPlaceholderChannel(it.cid) }
+        } catch (e: Throwable) {
+            // The retries and the sync must still run; a placeholder missed here is still caught by its id
+            logger.e(e) { "[markStoredPlaceholders] failed: $e" }
+        }
+    }
+
+    // Every cid sent to the server is read through these: the server rejects a local placeholder's id, and one
+    // rejected id fails the whole request it is part of.
+    private fun activeChannelCidsToSync(): List<String> =
+        logicRegistry.getActiveChannelsLogic().map { it.cid }.withoutPlaceholders()
+
+    private fun groupedListCidsToSync(): List<String> = logicRegistry.getActiveQueryChannelsLogic()
+        .filter { it.groupKey() != null }
+        .flatMap { it.cids() }
+        .withoutPlaceholders()
+
+    private fun trackedWatchedCidsToSync(): Set<String> =
+        stateRegistry.getTrackedWatchedChannels().withoutPlaceholders().toSet()
+
+    private fun activeChannelStatesToSync(): Map<ChannelId, ChannelState> =
+        stateRegistry.getActiveChannelStates().filterKeys { !logicRegistry.isPlaceholderChannel(it.cid) }
+
+    private fun Collection<String>.withoutPlaceholders(): List<String> = filterNot(logicRegistry::isPlaceholderChannel)
 
     /**
      * Whether a grouped list watches its channels. The channels on its later pages are only watched again by `/sync`,
@@ -682,7 +718,7 @@ internal class SyncManager(
                     emptySet()
                 } else {
                     activeGroupedLogics
-                        .filter { syncedCids.containsAll(it.cids()) }
+                        .filter { syncedCids.containsAll(it.cids().withoutPlaceholders()) }
                         .mapNotNull { it.groupKey() }
                         .toSet()
                 }
@@ -719,7 +755,7 @@ internal class SyncManager(
      */
     private suspend fun rewatchTrackedWatchedChannels(cidsToExclude: Set<String> = emptySet()): Set<String> {
         val online = clientState.isOnline
-        val watchedCids = stateRegistry.getTrackedWatchedChannels() - cidsToExclude
+        val watchedCids = trackedWatchedCidsToSync() - cidsToExclude
         logger.d {
             "[rewatchTrackedWatchedChannels] watchedCids.size: ${watchedCids.size}, online: $online, " +
                 "cidsToExclude.size: ${cidsToExclude.size}"
@@ -786,8 +822,8 @@ internal class SyncManager(
         logger.d {
             "[updateActiveChannels] recoverAll: $recoverAll, online: $online, cidsToExclude.size: ${cidsToExclude.size}"
         }
-        val openCids = stateRegistry.getTrackedWatchedChannels()
-        val missingChannelIds: List<ChannelId> = stateRegistry.getActiveChannelStates()
+        val openCids = trackedWatchedCidsToSync()
+        val missingChannelIds: List<ChannelId> = activeChannelStatesToSync()
             .filter { (id, state) -> (state.recoveryNeeded || recoverAll) && id.cid !in cidsToExclude }
             .keys
             .sortedBy { it.cid !in openCids }
@@ -868,7 +904,7 @@ internal class SyncManager(
      */
     private suspend fun refreshActiveWatchedChannels(syncedCids: List<String>): WatchedChannelsRefresh {
         val online = clientState.isOnline
-        val watchedCids = stateRegistry.getTrackedWatchedChannels().ifEmpty { syncedCids.toSet() }
+        val watchedCids = trackedWatchedCidsToSync().ifEmpty { syncedCids.toSet() }
         logger.d { "[refreshActiveWatchedChannels] watchedCids.size: ${watchedCids.size}, online: $online" }
         if (watchedCids.isEmpty()) {
             return WatchedChannelsRefresh(refreshedCids = emptySet())

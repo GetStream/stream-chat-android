@@ -17,7 +17,6 @@
 package io.getstream.chat.android.network.infrastructure
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -49,7 +48,6 @@ import java.util.Date
  */
 internal class V2LaneBatchThreeTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -117,8 +115,6 @@ internal class V2LaneBatchThreeTest {
             """{"name":"Poll","options":[{"text":"A","custom":{"o":"1"}}],"custom":{"p":"2"}}""",
             v2Body(request),
         )
-        // v1 flattens custom data to the root of the poll and of each option, which a v2 endpoint silently drops.
-        assertEquals("""{"name":"Poll","options":[{"text":"A","o":"1"}],"p":"2"}""", v1Parser.toJson(request))
     }
 
     @Test
@@ -149,26 +145,35 @@ internal class V2LaneBatchThreeTest {
     }
 
     @Test
-    fun `A partial poll update has the same body on v2 as on v1`() {
+    fun `A partial poll update keeps its v1 body`() {
         // Root keys of `set` are custom data on both versions.
-        assertSameBody(UpdatePollPartialRequest(set = mapOf("name" to "Poll", "p" to "2"), unset = listOf("q")))
+        assertBody(
+            """{"unset":["q"],"set":{"name":"Poll","p":"2"}}""",
+            UpdatePollPartialRequest(set = mapOf("name" to "Poll", "p" to "2"), unset = listOf("q")),
+        )
     }
 
     @Test
-    fun `A vote and a polls query have the same bodies on v2 as on v1`() {
-        assertSameBody(CastPollVoteRequest(VoteData(optionId = "a")))
-        assertSameBody(CastPollVoteRequest(VoteData(answerText = "answer")))
-        assertSameBody(QueryPollsRequest(filter = mapOf("id" to "poll"), limit = 1))
+    fun `A vote and a polls query keep their v1 bodies`() {
+        assertBody("""{"vote":{"option_id":"a"}}""", CastPollVoteRequest(VoteData(optionId = "a")))
+        assertBody("""{"vote":{"answer_text":"answer"}}""", CastPollVoteRequest(VoteData(answerText = "answer")))
+        assertBody(
+            """{"limit":1,"sort":[],"filter":{"id":"poll"}}""",
+            QueryPollsRequest(filter = mapOf("id" to "poll"), limit = 1),
+        )
     }
 
     @Test
-    fun `User group requests have the same bodies on v2 as on v1`() {
-        assertSameBody(CreateUserGroupRequest(name = "Group", id = "group", memberIds = listOf("filip")))
-        assertSameBody(AddUserGroupMembersRequest(memberIds = listOf("jaewoong")))
+    fun `User group requests keep their v1 bodies`() {
+        assertBody(
+            """{"name":"Group","id":"group","member_ids":["filip"]}""",
+            CreateUserGroupRequest(name = "Group", id = "group", memberIds = listOf("filip")),
+        )
+        assertBody("""{"member_ids":["jaewoong"]}""", AddUserGroupMembersRequest(memberIds = listOf("jaewoong")))
     }
 
-    private inline fun <reified T : Any> assertSameBody(request: T) {
-        assertEquals(v1Parser.toJson(request), v2Body(request))
+    private inline fun <reified T : Any> assertBody(expected: String, request: T) {
+        assertEquals(expected, v2Body(request))
     }
 
     private companion object {

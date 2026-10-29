@@ -17,7 +17,6 @@
 package io.getstream.chat.android.network.infrastructure
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -48,7 +47,6 @@ import java.util.Date
  */
 internal class V2LaneBatchFiveTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -113,8 +111,6 @@ internal class V2LaneBatchFiveTest {
             """"restricted_visibility":[]"""
 
         assertEquals("""{"message":{"text":"Hi",$lists,"custom":{"k":"v"}}}""", v2Body(request))
-        // v1 flattens custom data to the message's root, which a v2 endpoint silently drops.
-        assertEquals("""{"message":{"text":"Hi",$lists,"k":"v"}}""", v1Parser.toJson(request))
     }
 
     @Test
@@ -134,26 +130,34 @@ internal class V2LaneBatchFiveTest {
         val request = SendReactionRequest(reaction, enforceUnique = true)
 
         assertEquals("""{"reaction":{"type":"like","custom":{"k":"v"}},"enforce_unique":true}""", v2Body(request))
-        // v1 flattens custom data to the reaction's root, which a v2 endpoint silently drops.
-        assertEquals("""{"reaction":{"type":"like","k":"v"},"enforce_unique":true}""", v1Parser.toJson(request))
     }
 
     @Test
-    fun `A partial message update has the same body on v2 as on v1`() {
+    fun `A partial message update keeps its v1 body`() {
         // Root keys of `set` are custom data on both versions.
-        assertSameBody(UpdateMessagePartialRequest(set = mapOf("text" to "Hi", "k" to "v"), unset = listOf("q")))
+        assertBody(
+            """{"unset":["q"],"set":{"text":"Hi","k":"v"}}""",
+            UpdateMessagePartialRequest(set = mapOf("text" to "Hi", "k" to "v"), unset = listOf("q")),
+        )
     }
 
     @Test
-    fun `Reaction queries, actions and translations have the same bodies on v2 as on v1`() {
+    fun `Reaction queries, actions and translations keep their v1 bodies`() {
         val sort = listOf(SortParamRequest(field = "created_at", direction = -1))
-        assertSameBody(QueryReactionsRequest(filter = mapOf("type" to "like"), limit = 5, sort = sort))
-        assertSameBody(MessageActionRequest(formData = mapOf("image_action" to "shuffle")))
-        assertSameBody(TranslateMessageRequest(TranslateMessageRequest.Language.fromString("it")))
+        assertBody(
+            """{"limit":5,"sort":[{"direction":-1,"field":"created_at"}],""" +
+                """"filter":{"type":"like"}}""",
+            QueryReactionsRequest(filter = mapOf("type" to "like"), limit = 5, sort = sort),
+        )
+        assertBody(
+            """{"form_data":{"image_action":"shuffle"}}""",
+            MessageActionRequest(formData = mapOf("image_action" to "shuffle")),
+        )
+        assertBody("""{"language":"it"}""", TranslateMessageRequest(TranslateMessageRequest.Language.fromString("it")))
     }
 
-    private inline fun <reified T : Any> assertSameBody(request: T) {
-        assertEquals(v1Parser.toJson(request), v2Body(request))
+    private inline fun <reified T : Any> assertBody(expected: String, request: T) {
+        assertEquals(expected, v2Body(request))
     }
 
     private companion object {

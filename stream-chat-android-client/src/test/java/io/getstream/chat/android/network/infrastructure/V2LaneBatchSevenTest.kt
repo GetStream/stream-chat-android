@@ -19,7 +19,6 @@ package io.getstream.chat.android.network.infrastructure
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -45,7 +44,6 @@ import java.util.Date
  */
 internal class V2LaneBatchSevenTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -108,20 +106,28 @@ internal class V2LaneBatchSevenTest {
     }
 
     @Test
-    fun `The other channel requests have the same bodies on v2 as on v1`() {
+    fun `The other channel requests keep their v1 bodies`() {
         val sort = listOf(SortParamRequest(field = "last_message_at", direction = -1))
-        assertSameBody(QueryChannelsRequest(filterConditions = mapOf("type" to "messaging"), sort = sort, limit = 1))
-        assertSameBody(UpdateChannelPartialRequest(set = mapOf("k" to "v"), unset = listOf("q")))
-        assertSameBody(MarkReadRequest(messageId = "m"))
-        assertSameBody(MarkUnreadRequest(messageId = "m"))
-        assertSameBody(MarkDeliveredRequest())
-        assertSameBody(HideChannelRequest(clearHistory = true))
-        assertSameBody(TruncateChannelRequest(skipPush = true))
-        assertSameBody(emptyMap<Any, Any>())
+        assertBody(
+            """{"limit":1,"member_custom_include":[],"sort":[{"direction":-1,""" +
+                """"field":"last_message_at"}],"filter_conditions":{"type":"messaging"},""" +
+                """"filter_values":{},"sort_values":{}}""",
+            QueryChannelsRequest(filterConditions = mapOf("type" to "messaging"), sort = sort, limit = 1),
+        )
+        assertBody(
+            """{"unset":["q"],"set":{"k":"v"}}""",
+            UpdateChannelPartialRequest(set = mapOf("k" to "v"), unset = listOf("q")),
+        )
+        assertBody("""{"message_id":"m"}""", MarkReadRequest(messageId = "m"))
+        assertBody("""{"message_id":"m"}""", MarkUnreadRequest(messageId = "m"))
+        assertBody("""{"latest_delivered_messages":[]}""", MarkDeliveredRequest())
+        assertBody("""{"clear_history":true}""", HideChannelRequest(clearHistory = true))
+        assertBody("""{"skip_push":true,"member_ids":[]}""", TruncateChannelRequest(skipPush = true))
+        assertBody("""{}""", emptyMap<Any, Any>())
     }
 
-    private inline fun <reified T : Any> assertSameBody(request: T) {
-        assertEquals(v1Parser.toJson(request), v2Body(request))
+    private inline fun <reified T : Any> assertBody(expected: String, request: T) {
+        assertEquals(expected, v2Body(request))
     }
 
     private companion object {

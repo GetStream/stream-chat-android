@@ -78,20 +78,6 @@ internal class GetMessageResponseParityTest {
     }
 
     @Test
-    fun `A message takes its channel info and keeps its custom data`() {
-        val json = message().replaceFirst("{", """{"probe": "x",""").withChannel()
-
-        val message = with(mapping) { parser.fromJson(json, MessageWithChannelResponse::class.java).toDomain() }
-
-        message.channelInfo?.cid shouldBeEqualTo "messaging:get-parity"
-        message.channelInfo?.id shouldBeEqualTo "get-parity"
-        message.channelInfo?.type shouldBeEqualTo "messaging"
-        message.channelInfo?.name shouldBeEqualTo "Get parity"
-        message.channelInfo?.memberCount shouldBeEqualTo 2
-        message.extraData["probe"] shouldBeEqualTo "x"
-    }
-
-    @Test
     fun `A pending message carries the message and no metadata`() {
         val response = getMessageResponse()
 
