@@ -1,0 +1,254 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ChannelListSearchOptions</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.17.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-compose/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-compose/main" data-filter=":stream-chat-android-compose/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-compose::io.getstream.chat.android.compose.viewmodel.channels/ChannelListSearchOptions///PointingToDeclaration//1083215311">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-compose</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.compose.viewmodel.channels</a><span class="delimiter">/</span><span class="current">ChannelListSearchOptions</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Channel</span><wbr><span>List</span><wbr><span>Search</span><wbr><span><span>Options</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">ChannelListSearchOptions</a></div><p class="paragraph">Builds the filters and sort that <a href="../-channel-list-view-model/index.html">ChannelListViewModel</a> uses to search channels and messages.</p><p class="paragraph">Extend this class and override the functions you want to change. Each default implementation returns the filter or sort the view model uses when no options are provided.</p><p class="paragraph">The functions are called on the main thread when a search request is built, so they must return quickly and must not block. They are called again for the next page of a message search, and for the next page of a channel search in a channel list created with a filter. In a channel list that uses a predefined filter or a channel group, the next page of a channel search reuses the filter and sort of the first page.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="1778154194%2FConstructors%2F1083215311" anchor-label="ChannelListSearchOptions" id="1778154194%2FConstructors%2F1083215311" data-filterable-set=":stream-chat-android-compose/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-compose/main" data-filterable-set=":stream-chat-android-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-channel-list-search-options.html"><span>Channel</span><wbr><span>List</span><wbr><span>Search</span><wbr><span><span>Options</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1778154194%2FConstructors%2F1083215311"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="-1292809707%2FClasslikes%2F1083215311" anchor-label="ChannelSearchParams" id="-1292809707%2FClasslikes%2F1083215311" data-filterable-set=":stream-chat-android-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-compose/main" data-filterable-set=":stream-chat-android-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-channel-search-params/index.html"><span>Channel</span><wbr><span>Search</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1292809707%2FClasslikes%2F1083215311"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-channel-search-params/index.html">ChannelSearchParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>query<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>currentUser<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>listFilter<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filter-object/index.html">FilterObject</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>listSort<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models.querysort/-query-sorter/index.html">QuerySorter</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The state of a channel search.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1625430417%2FClasslikes%2F1083215311" anchor-label="MessageSearchParams" id="1625430417%2FClasslikes%2F1083215311" data-filterable-set=":stream-chat-android-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-compose/main" data-filterable-set=":stream-chat-android-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-message-search-params/index.html"><span>Message</span><wbr><span>Search</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1625430417%2FClasslikes%2F1083215311"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-message-search-params/index.html">MessageSearchParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>query<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>currentUser<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>listFilter<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filter-object/index.html">FilterObject</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The state of a message search.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1029023791%2FFunctions%2F1083215311" anchor-label="channelFilter" id="1029023791%2FFunctions%2F1083215311" data-filterable-set=":stream-chat-android-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-compose/main" data-filterable-set=":stream-chat-android-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel-filter.html"><span>channel</span><wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1029023791%2FFunctions%2F1083215311"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="channel-filter.html"><span class="token function">channelFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">params<span class="token operator">: </span><a href="-channel-search-params/index.html">ChannelListSearchOptions.ChannelSearchParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filter-object/index.html">FilterObject</a></div><div class="brief "><p class="paragraph">Returns the filter used to query channels while a channel search is active.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2118633963%2FFunctions%2F1083215311" anchor-label="channelSort" id="-2118633963%2FFunctions%2F1083215311" data-filterable-set=":stream-chat-android-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-compose/main" data-filterable-set=":stream-chat-android-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel-sort.html"><span>channel</span><wbr><span><span>Sort</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2118633963%2FFunctions%2F1083215311"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="channel-sort.html"><span class="token function">channelSort</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">params<span class="token operator">: </span><a href="-channel-search-params/index.html">ChannelListSearchOptions.ChannelSearchParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models.querysort/-query-sorter/index.html">QuerySorter</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns the sort used to query channels while a channel search is active.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1936873712%2FFunctions%2F1083215311" anchor-label="messageChannelFilter" id="-1936873712%2FFunctions%2F1083215311" data-filterable-set=":stream-chat-android-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-compose/main" data-filterable-set=":stream-chat-android-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-channel-filter.html"><span>message</span><wbr><span>Channel</span><wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1936873712%2FFunctions%2F1083215311"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="message-channel-filter.html"><span class="token function">messageChannelFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">params<span class="token operator">: </span><a href="-message-search-params/index.html">ChannelListSearchOptions.MessageSearchParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filter-object/index.html">FilterObject</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Returns the filter that selects the channels in which messages are searched.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1469540783%2FFunctions%2F1083215311" anchor-label="messageFilter" id="1469540783%2FFunctions%2F1083215311" data-filterable-set=":stream-chat-android-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-compose/main" data-filterable-set=":stream-chat-android-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-filter.html"><span>message</span><wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1469540783%2FFunctions%2F1083215311"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="message-filter.html"><span class="token function">messageFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">params<span class="token operator">: </span><a href="-message-search-params/index.html">ChannelListSearchOptions.MessageSearchParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filter-object/index.html">FilterObject</a></div><div class="brief "><p class="paragraph">Returns the filter that messages must match to be part of the message search results.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1966532757%2FFunctions%2F1083215311" anchor-label="messageSort" id="1966532757%2FFunctions%2F1083215311" data-filterable-set=":stream-chat-android-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-compose/main" data-filterable-set=":stream-chat-android-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-sort.html"><span>message</span><wbr><span><span>Sort</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1966532757%2FFunctions%2F1083215311"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="message-sort.html"><span class="token function">messageSort</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">params<span class="token operator">: </span><a href="-message-search-params/index.html">ChannelListSearchOptions.MessageSearchParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models.querysort/-query-sorter/index.html">QuerySorter</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Returns the sort of the message search results.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
