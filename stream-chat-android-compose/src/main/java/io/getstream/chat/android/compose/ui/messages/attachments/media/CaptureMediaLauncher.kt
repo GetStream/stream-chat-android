@@ -27,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.log.taggedLogger
 import java.io.File
@@ -38,10 +37,9 @@ import java.io.File
  * When several camera apps can capture the media allowed by the mode, [launch] asks the user to pick
  * one through [CaptureMediaTargetSheet], which must be placed in the composition next to the launcher.
  */
-@InternalStreamChatApi
 @Stable
-public class CaptureMediaLauncher internal constructor(
-    internal val contract: CaptureMediaContract,
+internal class CaptureMediaLauncher(
+    val contract: CaptureMediaContract,
     private val activityLauncher: ManagedActivityResultLauncher<CaptureMediaContract.Target, File?>,
     private val context: Context,
     private val pickingTarget: MutableState<Boolean>,
@@ -49,7 +47,7 @@ public class CaptureMediaLauncher internal constructor(
 
     private val logger by taggedLogger("Chat:CaptureMediaLauncher")
 
-    internal var isPickingTarget: Boolean
+    var isPickingTarget: Boolean
         get() = pickingTarget.value
         set(value) {
             pickingTarget.value = value
@@ -58,7 +56,7 @@ public class CaptureMediaLauncher internal constructor(
     /**
      * Opens the camera app, or asks the user to pick one when several are available.
      */
-    public fun launch() {
+    fun launch() {
         val targets = contract.targets(context)
         when (targets.size) {
             0 -> logger.w { "[launch] No camera app can capture the requested media" }
@@ -67,7 +65,7 @@ public class CaptureMediaLauncher internal constructor(
         }
     }
 
-    internal fun launch(target: CaptureMediaContract.Target) {
+    fun launch(target: CaptureMediaContract.Target) {
         isPickingTarget = false
         activityLauncher.launch(target)
     }
@@ -87,9 +85,8 @@ public class CaptureMediaLauncher internal constructor(
  *
  * @see CaptureMediaContract
  */
-@InternalStreamChatApi
 @Composable
-public fun rememberCaptureMediaLauncher(
+internal fun rememberCaptureMediaLauncher(
     mode: CaptureMediaContract.Mode,
     onResult: (File) -> Unit,
 ): CaptureMediaLauncher {
