@@ -94,6 +94,11 @@ public data class Member(
      * A map of custom fields for the member.
      */
     override val extraData: Map<String, Any> = emptyMap(),
+
+    /**
+     * The date when the member was removed from the channel.
+     */
+    val deletedAt: Date? = null,
 ) : UserEntity, CustomObject, ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
@@ -112,6 +117,7 @@ public data class Member(
             "status" -> status
             "pinned_at", "pinnedAt" -> pinnedAt
             "archived_at", "archivedAt" -> archivedAt
+            "deleted_at", "deletedAt" -> deletedAt
             else -> extraData[fieldName] as? Comparable<*>
         }
     }

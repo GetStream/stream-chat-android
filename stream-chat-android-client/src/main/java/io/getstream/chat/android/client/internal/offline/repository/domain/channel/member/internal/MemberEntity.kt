@@ -66,6 +66,9 @@ internal data class MemberEntity(
     /** The date when the member archived the channel. */
     val archivedAt: Date? = null,
 
+    /** The date when the member was removed from the channel. */
+    val deletedAt: Date? = null,
+
     /** Map of custom fields for the member. */
     val extraData: Map<String, Any> = emptyMap(),
 )

@@ -67,6 +67,9 @@ internal fun Channel.toEntity(): ChannelEntity {
         ownCapabilities = ownCapabilities,
         membership = membership?.toEntity(),
         messageCount = messageCount,
+        truncatedByUserId = truncatedBy?.id,
+        autoTranslationEnabled = autoTranslationEnabled,
+        autoTranslationLanguages = autoTranslationLanguages.toList(),
     )
 }
 
@@ -107,4 +110,7 @@ internal suspend fun ChannelEntity.toModel(
     membership = membership?.toModel(getUser),
     draftMessage = getDraftMessage(channelId),
     messageCount = messageCount,
+    truncatedBy = truncatedByUserId?.let { getUser(it) },
+    autoTranslationEnabled = autoTranslationEnabled,
+    autoTranslationLanguages = autoTranslationLanguages.toSet(),
 ).syncUnreadCountWithReads()
