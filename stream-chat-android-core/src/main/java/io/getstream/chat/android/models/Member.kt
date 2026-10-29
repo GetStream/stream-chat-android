@@ -90,16 +90,15 @@ public data class Member(
      * The date when this channel was archived.
      */
     val archivedAt: Date? = null,
+    /**
+     * A map of custom fields for the member.
+     */
+    override val extraData: Map<String, Any> = emptyMap(),
 
     /**
      * The date when the member was removed from the channel.
      */
     val deletedAt: Date? = null,
-
-    /**
-     * A map of custom fields for the member.
-     */
-    override val extraData: Map<String, Any> = emptyMap(),
 ) : UserEntity, CustomObject, ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
