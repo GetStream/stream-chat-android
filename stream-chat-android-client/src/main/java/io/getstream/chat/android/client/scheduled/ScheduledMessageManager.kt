@@ -46,6 +46,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Keeps the current user's scheduled messages, and changes them locally first: a change shows in [scheduledMessages]
@@ -71,6 +72,9 @@ internal class ScheduledMessageManager(
     private var connectionJob: Job? = null
     private val _hasLoadedAll = MutableStateFlow(false)
 
+    // Counts the resets of [hasLoadedAll], so a query that ends after one does not set it again.
+    private val hasLoadedAllResets = AtomicInteger(0)
+
     /** The scheduled messages to show: the pending ones first, then the failed ones, each by date. */
     val scheduledMessages: StateFlow<List<ScheduledMessage>> = store.scheduledMessages
 
@@ -90,7 +94,10 @@ internal class ScheduledMessageManager(
         senderJob = sender.start(scope)
         connectionJob = clientState.connectionState
             .filter { it != ConnectionState.Connected }
-            .onEach { _hasLoadedAll.value = false }
+            .onEach {
+                hasLoadedAllResets.incrementAndGet()
+                _hasLoadedAll.value = false
+            }
             .launchIn(scope)
     }
 
@@ -102,6 +109,7 @@ internal class ScheduledMessageManager(
         senderJob = null
         connectionJob?.cancel()
         connectionJob = null
+        hasLoadedAllResets.incrementAndGet()
         _hasLoadedAll.value = false
         store.clear()
     }
@@ -206,6 +214,7 @@ internal class ScheduledMessageManager(
     ): Result<QueryScheduledMessagesResult> {
         val before = store.messages.value
         val knownOnServer = before.values.filterNot(LocalScheduledMessage::isLocalOnly).map { it.id }
+        val resetsBefore = hasLoadedAllResets.get()
         val result = api.queryScheduledMessages(cid, statuses, limit, next).await()
         if (result is Result.Success) {
             saveQueried(result.value.scheduledMessages, knownBefore = before.keys)
@@ -214,7 +223,8 @@ internal class ScheduledMessageManager(
                 val removed = knownOnServer.toSet() - ids
                 store.removeAll { (cid == null || it.cid == cid) && it.id in removed && !it.isLocalOnly }
             }
-            if (cid == null && statuses.isEmpty() && result.value.next == null) _hasLoadedAll.value = true
+            val isLastPageOfAll = cid == null && statuses.isEmpty() && result.value.next == null
+            if (isLastPageOfAll && hasLoadedAllResets.get() == resetsBefore) _hasLoadedAll.value = true
         }
         return result
     }

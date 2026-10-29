@@ -141,14 +141,21 @@ internal class ScheduledMessagesViewModel(
         }
     }
 
+    /** Loads every page, as only the last one tells [ChatClient.hasLoadedAllScheduledMessages]. */
     private fun load() {
         isLoadFailed.value = false
         viewModelScope.launch {
-            val result = client.queryScheduledMessages().await()
-            if (result is Result.Failure) {
-                isLoadFailed.value = true
-                _events.send(ScheduledMessagesEvent.Error(result.value.message))
-            }
+            var next: String? = null
+            do {
+                when (val result = client.queryScheduledMessages(next = next).await()) {
+                    is Result.Success -> next = result.value.next
+                    is Result.Failure -> {
+                        isLoadFailed.value = true
+                        _events.send(ScheduledMessagesEvent.Error(result.value.message))
+                        return@launch
+                    }
+                }
+            } while (next != null)
         }
     }
 

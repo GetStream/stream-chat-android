@@ -398,6 +398,22 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `a query that ends after the connection was lost does not load all the messages`() = runTest {
+        manager.start(backgroundScope)
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).thenReturn(
+            SuspendingCall {
+                fixture.connectionState.value = ConnectionState.Offline
+                runCurrent()
+                Result.Success(QueryScheduledMessagesResult(emptyList(), next = null))
+            },
+        )
+
+        manager.query(null, emptySet(), limit = 100, next = null)
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
     fun `stop forgets that all the messages were loaded`() = runTest {
         manager.start(backgroundScope)
         query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))

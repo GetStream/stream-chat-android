@@ -43,6 +43,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -138,6 +139,20 @@ internal class ScheduledMessagesViewModelTest {
         ScheduledMessagesViewModel(client)
 
         verify(client).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `loads every page of the scheduled messages`() = runTest {
+        val next = randomString()
+        whenever(client.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).doReturn(
+            QueryScheduledMessagesResult(emptyList(), next = next).asCall(),
+            QueryScheduledMessagesResult(emptyList(), next = null).asCall(),
+        )
+
+        ScheduledMessagesViewModel(client)
+
+        verify(client).queryScheduledMessages(anyOrNull(), any(), any(), isNull())
+        verify(client).queryScheduledMessages(anyOrNull(), any(), any(), eq(next))
     }
 
     @Test

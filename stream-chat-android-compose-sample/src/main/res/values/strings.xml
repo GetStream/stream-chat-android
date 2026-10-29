@@ -57,6 +57,7 @@
     <string name="custom_login_flag_markdown_description">Render message text as markdown</string>
     <string name="custom_login_flag_scheduled_messages_label">Scheduled messages</string>
     <string name="custom_login_flag_scheduled_messages_description">Long press send to schedule a message, in channels that allow it</string>
+    <string name="custom_login_flag_scheduled_messages_adaptive_description">Not available with the adaptive layout yet</string>
 
     <!-- Pinned Messages -->
     <string name="pinned_messages_title">Pinned Messages</string>
