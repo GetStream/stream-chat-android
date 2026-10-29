@@ -1173,6 +1173,58 @@ internal class MessageListControllerTests {
         }
 
     @Test
+    fun `Update unread count, when the count rises again after marking read lowered it`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val lastReadMessage = randomMessage(
+                id = "last_read_message_id",
+                user = user1,
+                deletedAt = null,
+                deletedForMe = false,
+                silent = false,
+            )
+            val unreadMessages = List(2) { index ->
+                randomMessage(
+                    id = "unread_message_id_$index",
+                    user = user2,
+                    syncStatus = SyncStatus.COMPLETED,
+                    deletedAt = null,
+                    deletedForMe = false,
+                    silent = false,
+                )
+            }
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = lastReadMessage.id,
+                    unreadMessages = 2,
+                ),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser(user1)
+                .givenChannelQuery()
+                .givenChannelState(
+                    messagesState = MutableStateFlow(listOf(lastReadMessage) + unreadMessages),
+                    read = channelRead,
+                )
+                .get()
+            // The state plugin zeroes the count optimistically, keeping the last read message.
+            whenever(chatClient.markRead(any(), any())) doAnswer {
+                channelRead.value = channelRead.value.copy(unreadMessages = 0)
+                Unit.asCall()
+            }
+
+            controller.markLastMessageRead()
+            delay(1000)
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 2
+
+            channelRead.value = channelRead.value.copy(unreadMessages = 1)
+            delay(1000)
+
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 1
+        }
+
+    @Test
     fun `Show unread label, when message is marked as unread`() =
         runTest {
             val user = randomUser()

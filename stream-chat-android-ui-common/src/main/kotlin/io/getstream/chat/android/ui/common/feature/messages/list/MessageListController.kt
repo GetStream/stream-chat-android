@@ -626,7 +626,8 @@ public class MessageListController(
      * Marking the message right after the last read one as unread keeps
      * [ChannelUserRead.lastReadMessageId] and only raises the count, for example when the label was
      * computed before newer messages arrived. Marking read lowers the count without moving
-     * [ChannelUserRead.lastReadMessageId], and leaves the label as it is.
+     * [ChannelUserRead.lastReadMessageId], and leaves the label as it is, but a later rise is
+     * compared to the lowered count.
      */
     private fun computeUnreadLabel(
         channelUserRead: ChannelUserRead?,
@@ -636,6 +637,13 @@ public class MessageListController(
         channelUserRead
             ?.takeIf { !isStartedForThread }
             ?.takeIf { it.lastReadMessageId != null }
+            ?.also { read ->
+                if (read.lastReadMessageId == lastProcessedReadMessageId &&
+                    read.unreadMessages < lastProcessedUnreadMessages
+                ) {
+                    lastProcessedUnreadMessages = read.unreadMessages
+                }
+            }
             ?.takeIf {
                 lastProcessedReadMessageId != it.lastReadMessageId || it.unreadMessages > lastProcessedUnreadMessages
             }
