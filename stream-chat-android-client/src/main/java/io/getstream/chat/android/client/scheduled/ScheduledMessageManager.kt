@@ -79,8 +79,8 @@ internal class ScheduledMessageManager(
     val scheduledMessages: StateFlow<List<ScheduledMessage>> = store.scheduledMessages
 
     /**
-     * True once a query of every channel and status returned its last page, until the connection is lost or [stop],
-     * as events can be missed while not connected.
+     * True once a query of every channel and status returned all of them in a single page, until the connection is
+     * lost or [stop], as events can be missed while not connected.
      */
     val hasLoadedAll: StateFlow<Boolean> = _hasLoadedAll
 
@@ -218,13 +218,14 @@ internal class ScheduledMessageManager(
         val result = api.queryScheduledMessages(cid, statuses, limit, next).await()
         if (result is Result.Success) {
             saveQueried(result.value.scheduledMessages, knownBefore = before.keys)
-            if (statuses.isEmpty() && next == null && result.value.next == null) {
+            // Only a single page holds every scheduled message of the query, so only then are the others removed.
+            val isComplete = statuses.isEmpty() && next == null && result.value.next == null
+            if (isComplete) {
                 val ids = result.value.scheduledMessages.map(ScheduledMessage::id).toSet()
                 val removed = knownOnServer.toSet() - ids
                 store.removeAll { (cid == null || it.cid == cid) && it.id in removed && !it.isLocalOnly }
             }
-            val isLastPageOfAll = cid == null && statuses.isEmpty() && result.value.next == null
-            if (isLastPageOfAll && hasLoadedAllResets.get() == resetsBefore) _hasLoadedAll.value = true
+            if (isComplete && cid == null && hasLoadedAllResets.get() == resetsBefore) _hasLoadedAll.value = true
         }
         return result
     }

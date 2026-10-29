@@ -56,20 +56,25 @@ internal class ScheduledMessagesViewModel(
 ) : ViewModel() {
 
     private val isLoadFailed = MutableStateFlow(false)
+
+    // Whether this screen loaded them once, so it shows them, or that there are none, until it loads again.
+    private val hasLoaded = MutableStateFlow(false)
     private val channels = MutableStateFlow<Map<String, ChatChannel>>(emptyMap())
     private val _events = Channel<ScheduledMessagesEvent>(Channel.BUFFERED)
 
     /** The state of the scheduled messages screen. */
     val state: StateFlow<ScheduledMessagesViewState> = combine(
         client.scheduledMessages,
-        client.hasLoadedAllScheduledMessages,
+        combine(client.hasLoadedAllScheduledMessages, hasLoaded) { hasLoadedAll, hasLoaded ->
+            hasLoadedAll || hasLoaded
+        },
         isLoadFailed,
         channels,
         client.clientState.connectionState,
-    ) { scheduledMessages, hasLoadedAll, isLoadFailed, channels, connectionState ->
+    ) { scheduledMessages, isKnown, isLoadFailed, channels, connectionState ->
         scheduledMessagesViewState(
             scheduledMessages = scheduledMessages,
-            hasLoadedAll = hasLoadedAll,
+            isKnown = isKnown,
             isLoadFailed = isLoadFailed,
             channels = channels,
             isOffline = connectionState is ConnectionState.Offline,
@@ -79,7 +84,7 @@ internal class ScheduledMessagesViewModel(
         started = SharingStarted.Eagerly,
         initialValue = scheduledMessagesViewState(
             scheduledMessages = client.scheduledMessages.value,
-            hasLoadedAll = client.hasLoadedAllScheduledMessages.value,
+            isKnown = client.hasLoadedAllScheduledMessages.value,
             isLoadFailed = false,
             channels = emptyMap(),
             isOffline = client.clientState.connectionState.value is ConnectionState.Offline,
@@ -156,6 +161,7 @@ internal class ScheduledMessagesViewModel(
                     }
                 }
             } while (next != null)
+            hasLoaded.value = true
         }
     }
 
@@ -189,15 +195,16 @@ internal class ScheduledMessagesViewModel(
  * The state of the scheduled messages screen.
  *
  * @param groups The scheduled messages, in groups.
- * @param pendingCount The number of scheduled messages that did not fail.
  * @param isLoading Whether the scheduled messages are loading, with none to show yet.
- * @param isLoadFailed Whether the scheduled messages failed to load, with none to show.
+ * @param isLoadFailed Whether the scheduled messages could not load, with none to show: the load failed, or the
+ * device is offline.
+ * @param isOffline Whether the device is offline, so changes wait for the connection.
  */
 internal data class ScheduledMessagesViewState(
     val groups: List<ScheduledMessagesGroup>,
-    val pendingCount: Int,
     val isLoading: Boolean,
     val isLoadFailed: Boolean,
+    val isOffline: Boolean,
 )
 
 /**
@@ -233,18 +240,20 @@ internal data class ScheduledMessageItemState(
 
 private fun scheduledMessagesViewState(
     scheduledMessages: List<ScheduledMessage>,
-    hasLoadedAll: Boolean,
+    isKnown: Boolean,
     isLoadFailed: Boolean,
     channels: Map<String, ChatChannel>,
     isOffline: Boolean,
 ): ScheduledMessagesViewState {
     val items = scheduledMessages.map { ScheduledMessageItemState(it, it.actions, channels[it.cid]) }
-    val isUnknown = scheduledMessages.isEmpty() && !hasLoadedAll
+    val isUnknown = scheduledMessages.isEmpty() && !isKnown
+    // Nothing loads while offline.
+    val cannotLoad = isLoadFailed || isOffline
     return ScheduledMessagesViewState(
         groups = scheduledMessagesGroups(items, isOffline),
-        pendingCount = scheduledMessages.count { it.status != ScheduledMessageStatus.Failed },
-        isLoading = isUnknown && !isLoadFailed,
-        isLoadFailed = isUnknown && isLoadFailed,
+        isLoading = isUnknown && !cannotLoad,
+        isLoadFailed = isUnknown && cannotLoad,
+        isOffline = isOffline,
     )
 }
 

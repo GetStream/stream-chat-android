@@ -115,7 +115,7 @@ class ChannelActivity : ComponentActivity() {
 
     @Composable
     private fun SetupContent() {
-        if (settings.isScheduledMessagesEnabled) {
+        if (settings.isScheduledMessagesShown) {
             ScheduledMessagesContent { ChannelContent() }
         } else {
             ChannelContent()

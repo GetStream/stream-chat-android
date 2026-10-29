@@ -5195,9 +5195,11 @@ internal constructor(
     /**
      * Whether [scheduledMessages] holds all the current user's scheduled messages from the server, so an empty list
      * means the user has none. It becomes true once a [queryScheduledMessages] of every channel and every status
-     * returns its last page. It becomes false again when the connection is lost, as the events of other devices can be
-     * missed until the next query, and when the user disconnects. While it is false, [scheduledMessages] holds only the
-     * ones known on this device, for example from earlier sessions or channel queries.
+     * returns all of them in a single page, with no `next` cursor before or after, as only such a query also removes
+     * the ones the server no longer has. It becomes false again when the connection is lost, as the events of other
+     * devices can be missed until the next query, and when the user disconnects. While it is false,
+     * [scheduledMessages] holds only the ones known on this device, for example from earlier sessions or channel
+     * queries.
      */
     public val hasLoadedAllScheduledMessages: StateFlow<Boolean>
         get() = scheduledMessageManager.hasLoadedAll
@@ -5257,7 +5259,7 @@ internal constructor(
      * The results are saved in [scheduledMessages]. When the query has no status filter and returns a single page, the
      * scheduled messages of the queried channel, or of every channel, that are not in the results are removed from
      * [scheduledMessages], for example the ones sent while the device was offline. The ones not on the server yet, or
-     * scheduled while the query ran, are kept. The last page of a query with no channel and no status filter sets
+     * scheduled while the query ran, are kept. Such a query of every channel also sets
      * [hasLoadedAllScheduledMessages].
      *
      * @param cid The channel of the scheduled messages in the format `type:id`, or null for every channel.

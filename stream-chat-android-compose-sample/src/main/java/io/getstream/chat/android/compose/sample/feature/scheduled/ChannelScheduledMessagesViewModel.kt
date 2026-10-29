@@ -28,6 +28,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.UserGroup
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -125,13 +126,20 @@ internal class ChannelScheduledMessagesViewModel(
     fun onScheduleClick(message: Message, scheduledAt: Date) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         val replaced = _editedMessage.value?.takeIf { isScheduledAgain }
-        // A new message, with a new ID, that keeps the content of the one it replaces.
+        var deleteError: Error? = null
         submit(
             endsEditing = replaced != null,
-            afterAnswer = { if (replaced != null) deleteReplaced(replaced.id) },
+            // Told after the answer, so the snackbar of the answer does not hide it.
+            afterAnswer = { deleteError?.let { _events.send(ScheduledMessagesEvent.Error(it.message)) } },
         ) {
+            // A new message, with a new ID, that keeps the content of the one it replaces.
             val content = replaced?.withContentOf(message)?.copy(id = "") ?: message.withResolvedAttachments()
-            client.scheduleMessage(channelType, channelId, content, scheduledAt).await()
+            client.scheduleMessage(channelType, channelId, content, scheduledAt).await().also { result ->
+                // Deleted right away, as deletes are local first too, so leaving the screen does not cancel it.
+                if (result is Result.Success && replaced != null) {
+                    deleteError = (client.deleteScheduledMessage(replaced.id).await() as? Result.Failure)?.value
+                }
+            }
         }
     }
 
@@ -186,11 +194,6 @@ internal class ChannelScheduledMessagesViewModel(
         if (ids.isEmpty()) return emptyMap()
         val request = QueryUsersRequest(filter = Filters.`in`("id", ids), offset = 0, limit = ids.size)
         return client.queryUsers(request).await().getOrNull().orEmpty().associate { it.id to it.name }
-    }
-
-    private suspend fun deleteReplaced(id: String) {
-        val result = client.deleteScheduledMessage(id).await()
-        if (result is Result.Failure) _events.send(ScheduledMessagesEvent.Error(result.value.message))
     }
 
     /**

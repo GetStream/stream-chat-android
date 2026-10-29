@@ -156,7 +156,7 @@ internal fun ScheduledMessagesScreen(
             previewText = scheduledMessage.message.text,
             initialDate = scheduledMessage.scheduledAt,
             note = null,
-            isOffline = false,
+            isOffline = state.isOffline,
             onConfirm = { viewModel.onRescheduleClick(scheduledMessage.id, it) },
             onDismiss = { messageToReschedule = null },
         )

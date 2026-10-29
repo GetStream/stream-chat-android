@@ -357,14 +357,20 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
-    fun `the last page of a query of every channel and status loads all the messages`() = runTest {
+    fun `a single page query of every channel and status loads all the messages`() = runTest {
         manager.hasLoadedAll.value shouldBeEqualTo false
 
-        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = randomString()))
-        manager.hasLoadedAll.value shouldBeEqualTo false
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
 
-        query(null, emptySet(), randomString(), QueryScheduledMessagesResult(emptyList(), next = null))
         manager.hasLoadedAll.value shouldBeEqualTo true
+    }
+
+    @Test
+    fun `a query of several pages does not load all the messages, as it removes none`() = runTest {
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = randomString()))
+        query(null, emptySet(), randomString(), QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
     }
 
     @Test

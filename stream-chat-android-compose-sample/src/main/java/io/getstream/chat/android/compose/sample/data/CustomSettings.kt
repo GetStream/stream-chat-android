@@ -44,6 +44,10 @@ class CustomSettings(private val context: Context) {
     var isMarkdownEnabled: Boolean by booleanPref(Markdown)
     var isScheduledMessagesEnabled: Boolean by booleanPref(ScheduledMessages)
 
+    /** Whether scheduled messages are shown: the adaptive layout has none yet. */
+    val isScheduledMessagesShown: Boolean
+        get() = isScheduledMessagesEnabled && !isAdaptiveLayoutEnabled
+
     private fun booleanPref(key: String, default: Boolean = false) =
         object : ReadWriteProperty<Any?, Boolean> {
             override fun getValue(thisRef: Any?, property: KProperty<*>) =

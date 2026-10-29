@@ -62,7 +62,6 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGro
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersActivity
 import io.getstream.chat.android.compose.sample.feature.scheduled.ScheduledMessagesActivity
-import io.getstream.chat.android.compose.sample.feature.scheduled.ScheduledMessagesViewModel
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
@@ -92,12 +91,14 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.Thread
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -111,8 +112,12 @@ class ChannelsActivity : ComponentActivity() {
 
     private val channelsViewModel: ChannelListViewModel by viewModels { channelsViewModelFactory }
 
-    // Loads the scheduled messages once, for the drawer count and the banners of the channels, when they are on.
-    private val scheduledMessagesViewModel: ScheduledMessagesViewModel by viewModels()
+    // The scheduled messages known on this device that did not fail, for the drawer.
+    private val pendingScheduledMessagesCount by lazy {
+        ChatClient.instance().scheduledMessages.map { scheduledMessages ->
+            scheduledMessages.count { it.status != ScheduledMessageStatus.Failed }
+        }
+    }
     private val threadsViewModelFactory = ThreadsViewModelFactory(query = QueryThreadsRequest())
 
     @Suppress("LongMethod")
@@ -145,8 +150,8 @@ class ChannelsActivity : ComponentActivity() {
                 ),
             ) {
                 val user by channelsViewModel.user.collectAsStateWithLifecycle()
-                val scheduledMessagesCount = if (settings.isScheduledMessagesEnabled) {
-                    scheduledMessagesViewModel.state.collectAsStateWithLifecycle().value.pendingCount
+                val scheduledMessagesCount = if (settings.isScheduledMessagesShown) {
+                    pendingScheduledMessagesCount.collectAsStateWithLifecycle(0).value
                 } else {
                     null
                 }

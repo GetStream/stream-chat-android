@@ -33,6 +33,8 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
+import io.getstream.result.call.CoroutineCall
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
@@ -92,7 +94,6 @@ internal class ScheduledMessagesViewModelTest {
             ScheduledMessageItemState(scheduled, scheduled.actions),
             ScheduledMessageItemState(sending, emptyList()),
         )
-        state.pendingCount shouldBeEqualTo 2
     }
 
     @Test
@@ -179,7 +180,9 @@ internal class ScheduledMessagesViewModelTest {
     }
 
     @Test
-    fun `is loading until all the messages are loaded, then empty`() = runTest {
+    fun `is loading until the messages are loaded, then empty`() = runTest {
+        whenever(client.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())) doReturn
+            CoroutineCall<QueryScheduledMessagesResult>(backgroundScope) { awaitCancellation() }
         val viewModel = ScheduledMessagesViewModel(client)
         viewModel.state.value.isLoading shouldBeEqualTo true
 
@@ -198,7 +201,31 @@ internal class ScheduledMessagesViewModelTest {
         val state = ScheduledMessagesViewModel(client).state.value
 
         state.isLoading shouldBeEqualTo false
-        state.pendingCount shouldBeEqualTo 1
+        state.groups.single().items.size shouldBeEqualTo 1
+    }
+
+    @Test
+    fun `once loaded, losing the connection keeps showing that there are none`() = runTest {
+        val viewModel = ScheduledMessagesViewModel(client)
+        viewModel.state.value.isLoading shouldBeEqualTo false
+
+        connectionState.value = ConnectionState.Offline
+
+        viewModel.state.value.isLoading shouldBeEqualTo false
+        viewModel.state.value.isLoadFailed shouldBeEqualTo false
+        viewModel.state.value.groups.shouldBeEmpty()
+    }
+
+    @Test
+    fun `offline with nothing known, the messages can't load`() = runTest {
+        connectionState.value = ConnectionState.Offline
+
+        val state = ScheduledMessagesViewModel(client).state.value
+
+        state.isLoading shouldBeEqualTo false
+        state.isLoadFailed shouldBeEqualTo true
+        state.isOffline shouldBeEqualTo true
+        verify(client, never()).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
     }
 
     @Test
@@ -214,7 +241,7 @@ internal class ScheduledMessagesViewModelTest {
         viewModel.onRetryLoadClick()
 
         viewModel.state.value.isLoadFailed shouldBeEqualTo false
-        viewModel.state.value.isLoading shouldBeEqualTo true
+        viewModel.state.value.isLoading shouldBeEqualTo false
         verify(client, times(2)).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
     }
 

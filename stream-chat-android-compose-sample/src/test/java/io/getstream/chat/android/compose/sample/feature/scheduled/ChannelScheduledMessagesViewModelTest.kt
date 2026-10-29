@@ -237,6 +237,24 @@ internal class ChannelScheduledMessagesViewModelTest {
     }
 
     @Test
+    fun `a failed message scheduled again is deleted before the server answers`() = runTest {
+        val failed = scheduled(status = ScheduledMessageStatus.Failed)
+        val new = scheduled(status = ScheduledMessageStatus.PreparingToSchedule)
+        scheduledMessages.value = listOf(failed)
+        whenever(client.scheduleMessage(any(), any(), any(), any())) doAnswer {
+            scheduledMessages.value = listOf(failed, new)
+            new.asCall()
+        }
+        whenever(client.deleteScheduledMessage(failed.id)) doAnswer { Unit.asCall() }
+        val viewModel = viewModel(editedMessageId = failed.id, isScheduledAgain = true)
+
+        viewModel.onScheduleClick(randomMessage(cid = cid), randomDate())
+
+        // The new message is still waiting for the server.
+        verify(client).deleteScheduledMessage(failed.id)
+    }
+
+    @Test
     fun `a failed message scheduled again that can't be deleted tells so last`() = runTest {
         val failed = scheduled(status = ScheduledMessageStatus.Failed)
         val new = scheduled()
