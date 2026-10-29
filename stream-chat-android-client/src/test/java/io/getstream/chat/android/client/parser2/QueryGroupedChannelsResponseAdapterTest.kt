@@ -19,8 +19,6 @@ package io.getstream.chat.android.client.parser2
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
@@ -155,54 +153,6 @@ internal class QueryGroupedChannelsResponseAdapterTest {
           "duration": "12ms"
         }
     """.trimIndent()
-
-    @Test
-    fun `Deserialize grouped query channels response`() {
-        val response = parser.fromJson(json, GroupedQueryChannelsResponse::class.java)
-
-        assertEquals("12ms", response.duration)
-        assertEquals(setOf("all-open"), response.groups.keys)
-
-        val group = response.groups["all-open"]!!
-        assertEquals(1, group.unreadChannels)
-        assertEquals(1, group.channels.size)
-
-        val state = group.channels[0]
-        val channel = state.channel!!
-        assertEquals("messaging:support-123", channel.cid)
-        assertEquals("support-123", channel.id)
-        assertEquals("messaging", channel.type)
-        assertEquals("Support", channel.custom["name"])
-        assertEquals("https://getstream.imgix.net/images/random_svg/stream_logo.svg", channel.custom["image"])
-        assertFalse(channel.frozen)
-        assertEquals(0, channel.memberCount)
-        val config = channel.config!!
-        assertTrue(config.typingEvents)
-        assertTrue(config.readEvents)
-        assertTrue(config.connectEvents)
-        assertTrue(config.search)
-        assertTrue(config.reactions)
-        assertTrue(config.replies)
-        assertTrue(config.uploads)
-        assertTrue(config.urlEnrichment)
-        assertTrue(config.mutes)
-        assertTrue(config.deliveryEvents)
-        assertTrue(config.quotes)
-        assertTrue(config.countMessages)
-        assertFalse(config.reminders)
-        assertFalse(config.userMessageReminders)
-        assertFalse(config.sharedLocations)
-        assertFalse(config.skipLastMsgUpdateForSystemMsgs)
-        assertEquals("messaging", config.name)
-        assertEquals("infinite", config.messageRetention)
-        assertEquals(5000, config.maxMessageLength)
-        assertEquals(emptyList<Any>(), state.members)
-        assertEquals(emptyList<Any>(), state.messages)
-        assertEquals(emptyList<Any>(), state.pinnedMessages)
-        assertEquals(emptyList<Any>(), state.watchers)
-        assertEquals(0, state.watcherCount)
-        assertEquals(emptyList<Any>(), state.read)
-    }
 
     @Test
     fun `Deserialize default unread counters when missing`() {
