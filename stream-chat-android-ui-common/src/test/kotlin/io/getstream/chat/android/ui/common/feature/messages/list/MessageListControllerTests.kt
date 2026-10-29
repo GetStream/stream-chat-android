@@ -1109,6 +1109,137 @@ internal class MessageListControllerTests {
         }
 
     @Test
+    fun `Update unread count, when marking unread keeps the last read message of the label`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val lastReadMessage = completedMessage(id = "last_read_message_id", user = user1, createdAt = Date(1_000))
+            val firstUnreadMessage = completedMessage(id = "first_unread_message_id", user = user2, createdAt = Date(2_000))
+            val secondUnreadMessage = completedMessage(id = "second_unread_message_id", user = user2, createdAt = Date(3_000))
+            val messagesState = MutableStateFlow(listOf(lastReadMessage, firstUnreadMessage))
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = lastReadMessage.id,
+                    lastRead = Date(1_500),
+                    unreadMessages = 1,
+                ),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser(user1)
+                .givenChannelQuery()
+                .givenChannelState(messagesState = messagesState, read = channelRead)
+                .get()
+            whenever(chatClient.markRead(any(), any())) doAnswer {
+                channelRead.value = channelRead.value.copy(
+                    lastReadMessageId = firstUnreadMessage.id,
+                    lastRead = Date(2_500),
+                    unreadMessages = 0,
+                )
+                Unit.asCall()
+            }
+
+            // The label is computed while only the first message from the other user is there.
+            controller.markLastMessageRead()
+            delay(1000)
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 1
+
+            // The second message arrives, then the user marks the first one as unread, which puts
+            // the read state back on the same last read message, read at its creation time.
+            messagesState.value = listOf(lastReadMessage, firstUnreadMessage, secondUnreadMessage)
+            channelRead.value = channelRead.value.copy(
+                lastReadMessageId = lastReadMessage.id,
+                lastRead = lastReadMessage.createdAt!!,
+                unreadMessages = 2,
+            )
+            delay(1000)
+
+            val unreadLabel = controller.unreadLabelState.value.`should not be null`()
+            unreadLabel.lastReadMessageId `should be equal to` lastReadMessage.id
+            unreadLabel.unreadCount `should be equal to` 2
+        }
+
+    @Test
+    fun `Keep unread label hidden, when a message arrives after hiding it`() =
+        runTest {
+            val lastReadMessage = completedMessage(id = "last_read_message_id", user = user1, createdAt = Date(1_000))
+            val unreadMessage = completedMessage(id = "unread_message_id", user = user2, createdAt = Date(2_000))
+            val messagesState = MutableStateFlow(listOf(lastReadMessage, unreadMessage))
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = lastReadMessage.id,
+                    lastRead = Date(1_500),
+                    unreadMessages = 1,
+                ),
+            )
+            val controller = Fixture()
+                .givenCurrentUser(user1)
+                .givenChannelState(messagesState = messagesState, read = channelRead)
+                .get()
+            delay(1000)
+            controller.unreadLabelState.value.`should not be null`()
+
+            controller.hideUnreadSeparator()
+            messagesState.value += completedMessage(id = "new_message_id", user = user2, createdAt = Date(3_000))
+            channelRead.value = channelRead.value.copy(unreadMessages = 2)
+            delay(1000)
+
+            controller.unreadLabelState.value.shouldBeNull()
+        }
+
+    @Test
+    fun `Keep unread count, when messages arrive after marking read`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val lastReadMessage = completedMessage(id = "last_read_message_id", user = user1, createdAt = Date(1_000))
+            val unreadMessages = List(3) { index ->
+                completedMessage(id = "unread_message_id_$index", user = user2, createdAt = Date(2_000L + index))
+            }
+            val messagesState = MutableStateFlow(listOf(lastReadMessage) + unreadMessages)
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = lastReadMessage.id,
+                    lastRead = Date(1_500),
+                    unreadMessages = 3,
+                ),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser(user1)
+                .givenChannelQuery()
+                .givenChannelState(messagesState = messagesState, read = channelRead)
+                .get()
+            // The state plugin zeroes the count optimistically, keeping the rest of the read state.
+            whenever(chatClient.markRead(any(), any())) doAnswer {
+                channelRead.value = channelRead.value.copy(unreadMessages = 0)
+                Unit.asCall()
+            }
+
+            controller.markLastMessageRead()
+            delay(1000)
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 3
+
+            // Messages arrive before the server moves the read state.
+            messagesState.value += List(2) { index ->
+                completedMessage(id = "new_message_id_$index", user = user2, createdAt = Date(3_000L + index))
+            }
+            channelRead.value = channelRead.value.copy(unreadMessages = 2)
+            delay(1000)
+
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 3
+        }
+
+    private fun completedMessage(id: String, user: User, createdAt: Date) = randomMessage(
+        id = id,
+        user = user,
+        createdAt = createdAt,
+        syncStatus = SyncStatus.COMPLETED,
+        deletedAt = null,
+        deletedForMe = false,
+        silent = false,
+    )
+
+    @Test
     fun `Show unread label, when message is marked as unread`() =
         runTest {
             val user = randomUser()
