@@ -51,6 +51,10 @@ internal data class ChannelConfigInnerEntity(
     val messageRemindersEnabled: Boolean,
     val markMessagesPending: Boolean,
     val pushLevel: String? = null,
+    val quotesEnabled: Boolean,
+    val skipLastMsgUpdateForSystemMsgs: Boolean,
+    val pollsEnabled: Boolean,
+    val sharedLocationsEnabled: Boolean,
 )
 
 @Entity(

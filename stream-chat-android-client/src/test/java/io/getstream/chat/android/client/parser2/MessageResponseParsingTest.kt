@@ -22,8 +22,6 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.models.MessageResponse
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldContain
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -63,38 +61,6 @@ internal class MessageResponseParsingTest {
         """.trimIndent(),
         MessageResponse::class.java,
     )
-
-    @Test
-    fun `Keys the hand-written DTO did not declare stay in custom as well as being typed`() {
-        val parsed = message(
-            """,
-              "mml": "<mml/>",
-              "poll_id": "poll-1",
-              "restricted_visibility": ["jaewoong"],
-              "mentioned_group_ids": ["group-1"],
-              "image_labels": {"cat": ["animal"]}
-            """.trimIndent(),
-        )
-
-        parsed.mml shouldBeEqualTo "<mml/>"
-        parsed.pollId shouldBeEqualTo "poll-1"
-        parsed.restrictedVisibility shouldBeEqualTo listOf("jaewoong")
-
-        // Declaring these keys would otherwise drop them from Message.extraData.
-        parsed.custom.keys shouldContain "mml"
-        parsed.custom.keys shouldContain "poll_id"
-        parsed.custom.keys shouldContain "restricted_visibility"
-        parsed.custom.keys shouldContain "mentioned_group_ids"
-        parsed.custom.keys shouldContain "image_labels"
-    }
-
-    @Test
-    fun `Undeclared root keys are collected into custom`() {
-        val parsed = message(""", "moderation_details": {"action": "MESSAGE_RESPONSE_ACTION_BOUNCE"}, "flair": "gold"""")
-
-        parsed.custom["flair"] shouldBeEqualTo "gold"
-        parsed.custom.keys shouldContain "moderation_details"
-    }
 
     @Test
     fun `A message by a deleted user parses with the placeholder the backend sends`() {

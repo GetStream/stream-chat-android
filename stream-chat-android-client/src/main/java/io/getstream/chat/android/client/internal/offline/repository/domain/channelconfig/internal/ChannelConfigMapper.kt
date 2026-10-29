@@ -47,6 +47,10 @@ internal fun ChannelConfig.toEntity(): ChannelConfigEntity = ChannelConfigEntity
             messageRemindersEnabled = messageRemindersEnabled,
             markMessagesPending = markMessagesPending,
             pushLevel = pushLevel,
+            quotesEnabled = quotesEnabled,
+            skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
+            pollsEnabled = pollsEnabled,
+            sharedLocationsEnabled = sharedLocationsEnabled,
         )
     },
     commands = config.commands.map { it.toEntity(type) },
@@ -80,6 +84,10 @@ internal fun ChannelConfigEntity.toModel(): ChannelConfig = ChannelConfig(
             messageRemindersEnabled = messageRemindersEnabled,
             markMessagesPending = markMessagesPending,
             pushLevel = pushLevel,
+            quotesEnabled = quotesEnabled,
+            skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
+            pollsEnabled = pollsEnabled,
+            sharedLocationsEnabled = sharedLocationsEnabled,
         )
     },
 )

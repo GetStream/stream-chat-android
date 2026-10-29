@@ -31,6 +31,21 @@ lane :allure_launch do |options|
   sh("echo 'LAUNCH_ID=#{launch_id}' >> $GITHUB_ENV") if is_ci
 end
 
+desc 'Create a launch on Allure TestOps per Android API level, for the nightly run that splits each level over several jobs'
+lane :allure_launches do |options|
+  run_details = github_run_details
+  launch_ids = options[:api_levels].to_s.split(',').to_h do |api_level|
+    launch_id = allure_create_launch(
+      url: allure_api_url,
+      project_id: allure_project_id,
+      github_run_details: run_details,
+      cron: ENV['GITHUB_EVENT_NAME'] == 'schedule'
+    )
+    [api_level, launch_id]
+  end
+  File.write(ENV['GITHUB_OUTPUT'], "launch_ids=#{launch_ids.to_json}\n", mode: 'a') if ENV['GITHUB_OUTPUT']
+end
+
 desc 'Remove launch on Allure TestOps'
 lane :allure_launch_removal do |options|
   options[:launch_id] ||= ENV.fetch('LAUNCH_ID', nil)

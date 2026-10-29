@@ -22,79 +22,24 @@ import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.parser2.adapters.ChannelMemberPartialResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.ChannelMemberResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.ChannelResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.CreatePollOptionRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.DraftPayloadResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.FullUserResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.GetOGResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.MemberUserRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.MessageRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.MessageResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.MessageWithChannelResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.NetworkAttachmentAdapter
 import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
-import io.getstream.chat.android.client.parser2.adapters.OwnUserResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollResponseDataAdapter
-import io.getstream.chat.android.client.parser2.adapters.ReactionRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.ReactionResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.SearchResultMessageAdapter
-import io.getstream.chat.android.client.parser2.adapters.ThreadResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.ThreadStateResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.UpdatePollRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.UserRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UserResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.UserResponseCommonFieldsAdapter
-import io.getstream.chat.android.client.parser2.adapters.UserResponsePrivacyFieldsAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-/** Parses the v1 REST responses and error frames. Events go through [V2EventParser]. */
+/**
+ * Parses the responses of the endpoints still on v1, which flatten custom data to the root of the user, and the
+ * error frames. Events go through [V2EventParser].
+ */
 internal class MoshiChatParser : ChatParser {
 
     private val moshi: Moshi by lazy {
         Serializer.moshi.newBuilder()
-            .add(ReactionRequestAdapter)
-            .add(FullUserResponseAdapter)
             .add(UserResponseAdapter)
-            .add(UserResponseCommonFieldsAdapter)
-            .add(UserResponsePrivacyFieldsAdapter)
-            .add(UserRequestAdapter)
-            .add(MemberUserRequestAdapter)
-            .add(NetworkAttachmentAdapter)
-            .add(OwnUserResponseAdapter)
-            .add(MessageRequestAdapter)
-            .add(MessageResponseAdapter)
-            .add(SearchResultMessageAdapter)
-            .add(MessageWithChannelResponseAdapter)
-            .add(ChannelMemberRequestAdapter)
-            .add(ChannelResponseAdapter)
-            .add(ChannelMemberResponseAdapter)
-            .add(ChannelMemberPartialResponseAdapter)
             .add(FlagRequestAdapterFactory)
-            .add(ThreadStateResponseAdapter)
-            .add(ThreadResponseAdapter)
-            .add(CreatePollRequestAdapter)
-            .add(UpdatePollRequestAdapter)
-            .add(CreatePollOptionRequestAdapter)
-            .add(UpdatePollOptionRequestAdapter)
-            .add(PollOptionInputAdapter)
-            .add(PollOptionRequestAdapter)
-            .add(GetOGResponseAdapter)
-            .add(PollOptionResponseDataAdapter)
-            .add(PollResponseDataAdapter)
-            .add(ReactionResponseAdapter)
-            .add(DraftPayloadResponseAdapter)
             // Registered last so the model-specific adapters above keep precedence and delegate into it.
             .add(NullCollectionsAsEmptyFactory)
             .build()

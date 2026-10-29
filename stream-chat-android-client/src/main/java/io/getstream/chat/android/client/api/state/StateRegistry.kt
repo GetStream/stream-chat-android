@@ -293,11 +293,11 @@ public class StateRegistry @JvmOverloads constructor(
         for (event in batchEvent.sortedEvents) {
             when (event) {
                 is ChannelDeletedEvent -> {
-                    removeChanel(event.channelType, event.channelId)
+                    removeChannel(event.channelType, event.channelId)
                 }
 
                 is NotificationChannelDeletedEvent -> {
-                    removeChanel(event.channelType, event.channelId)
+                    removeChannel(event.channelType, event.channelId)
                 }
 
                 else -> continue
@@ -305,15 +305,15 @@ public class StateRegistry @JvmOverloads constructor(
         }
     }
 
-    private fun removeChanel(channelType: String, channelId: String) {
+    internal fun removeChannel(channelType: String, channelId: String) {
         val id = ChannelId.fromTypeAndId(channelType, channelId) ?: return
         // The state is dropped from the registry but not destroyed: consumers already holding it keep
-        // the channel as it was, with ChannelData.deletedAt set, instead of seeing it blanked.
+        // the channel as it was instead of seeing it blanked.
         val removed = if (useLegacyChannelState) {
             legacyChannels.remove(id) != null
         } else {
             channels.remove(id) != null
         }
-        logger.i { "[removeChanel] removed channel($channelType, $channelId): $removed" }
+        logger.i { "[removeChannel] removed channel($channelType, $channelId): $removed" }
     }
 }

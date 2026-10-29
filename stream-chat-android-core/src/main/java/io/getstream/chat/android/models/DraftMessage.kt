@@ -18,6 +18,7 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
+import java.util.Date
 
 /**
  * Model holding data about a draft message.
@@ -87,6 +88,11 @@ public data class DraftMessage(
      */
     val args: String? = null,
 
+    /**
+     * The date the draft was saved on the server, or `null` until it is.
+     */
+    val createdAt: Date? = null,
+
 ) : CustomObject, ComparableFieldProvider {
 
     @Suppress("ComplexMethod")
@@ -96,6 +102,7 @@ public data class DraftMessage(
             "cid" -> cid
             "text" -> text
             "parent_id", "parentId" -> parentId
+            "created_at", "createdAt" -> createdAt
             "silent" -> silent
             else -> extraData[fieldName] as? Comparable<*>
         }
@@ -130,6 +137,7 @@ public data class DraftMessage(
         if (replyMessage != null) append(", replyMessage=").append(replyMessage)
         if (command != null) append(", command=\"").append(command).append("\"")
         if (args != null) append(", args=\"").append(args).append("\"")
+        if (createdAt != null) append(", createdAt=").append(createdAt)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -152,6 +160,7 @@ public data class DraftMessage(
         private var replyMessage: Message? = null
         private var command: String? = null
         private var args: String? = null
+        private var createdAt: Date? = null
 
         public constructor(message: DraftMessage) : this() {
             id = message.id
@@ -166,6 +175,7 @@ public data class DraftMessage(
             replyMessage = message.replyMessage
             command = message.command
             args = message.args
+            createdAt = message.createdAt
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -182,6 +192,7 @@ public data class DraftMessage(
         public fun withReplyMessage(replyMessage: Message?): Builder = apply { this.replyMessage = replyMessage }
         public fun withCommand(command: String?): Builder = apply { this.command = command }
         public fun withArgs(args: String?): Builder = apply { this.args = args }
+        public fun withCreatedAt(createdAt: Date?): Builder = apply { this.createdAt = createdAt }
 
         public fun build(): DraftMessage {
             return DraftMessage(
@@ -197,6 +208,7 @@ public data class DraftMessage(
                 replyMessage = replyMessage,
                 command = command,
                 args = args,
+                createdAt = createdAt,
             )
         }
     }

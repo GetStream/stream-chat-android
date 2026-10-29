@@ -132,6 +132,7 @@ import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
+import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
@@ -634,6 +635,7 @@ internal class DomainMappingTest {
                 showInChannel = true,
                 command = "giphy",
                 args = "cat",
+                createdAt = draftMessageResponse.createdAt,
             )
         }
 
@@ -809,6 +811,50 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `MessageResponse adds the declared fields v1 also keeps in custom, in their wire shape`() {
+        val messageResponse = Mother.randomMessageResponse().copy(
+            custom = mapOf("color" to "teal"),
+            imageLabels = mapOf("i.png" to listOf("cat")),
+            mml = "<mml/>",
+            pollId = "p1",
+            restrictedVisibility = listOf("filip"),
+            mentionedGroupIds = listOf("g1"),
+        )
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val message = with(sut) { messageResponse.toDomain() }
+
+        message.extraData["color"] shouldBeEqualTo "teal"
+        message.extraData["image_labels"] shouldBeEqualTo mapOf("i.png" to listOf("cat"))
+        message.extraData["mml"] shouldBeEqualTo "<mml/>"
+        message.extraData["poll_id"] shouldBeEqualTo "p1"
+        message.extraData["restricted_visibility"] shouldBeEqualTo listOf("filip")
+        message.extraData["mentioned_group_ids"] shouldBeEqualTo listOf("g1")
+    }
+
+    @Test
+    fun `On v2, ChannelMemberResponse adds the declared fields v1 also keeps in custom, in their wire shape`() {
+        val memberResponse = Mother.randomChannelMemberResponse().copy(
+            custom = mapOf("color" to "teal"),
+            deletedAt = Date(4_000),
+            deletedMessages = listOf("m1"),
+            isModerator = true,
+            role = "admin",
+            userId = "filip",
+        )
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        member.extraData["color"] shouldBeEqualTo "teal"
+        member.extraData["deleted_at"] shouldBeEqualTo "1970-01-01T00:00:04.000Z"
+        member.extraData["deleted_messages"] shouldBeEqualTo listOf("m1")
+        member.extraData["is_moderator"] shouldBeEqualTo true
+        member.extraData["role"] shouldBeEqualTo "admin"
+        member.extraData["user_id"] shouldBeEqualTo "filip"
+    }
+
+    @Test
     fun `ChannelResponse keeps the custom value of a declared field over the typed one`() {
         val channelResponse = Mother.randomChannelResponse(custom = mapOf("hidden" to "from-custom")).copy(hidden = true)
         val sut = Fixture().get()
@@ -824,6 +870,7 @@ internal class DomainMappingTest {
         FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<FullUserResponse>() - "custom" + USER_RECORD_ONLY_KEYS
         CHANNEL_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelResponse>() - "custom"
         MEMBER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelMemberResponse>() - "custom"
+        MESSAGE_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<MessageResponse>() - "custom" + "channel"
         OWN_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<OwnUserResponse>() - "custom"
         EVENT_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponsePrivacyFields>() - "custom"
         EVENT_USER_HIDDEN_CUSTOM_KEYS.containsAll(jsonNames<UserResponseCommonFields>() - "custom") shouldBeEqualTo true
@@ -893,6 +940,27 @@ internal class DomainMappingTest {
         member.extraData["is_moderator"] shouldBeEqualTo false
         member.extraData.containsKey("deleted_at") shouldBeEqualTo false
         member.extraData["color"] shouldBeEqualTo "teal"
+    }
+
+    @Test
+    fun `On v2, a message's custom value stored under a declared name gives way to the field, present or not`() {
+        val messageResponse = Mother.randomMessageResponse(
+            custom = mapOf(
+                // Copies older clients stored by sending the whole message back as custom data.
+                "image_labels" to mapOf("old.png" to emptyList<String>()),
+                "draft" to mapOf("message" to mapOf("text" to "stale")),
+                "channel" to mapOf("id" to "stale"),
+                "color" to "teal",
+            ),
+        ).copy(imageLabels = mapOf("new.png" to listOf("nudity")), draft = null)
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val message = with(sut) { messageResponse.toDomain() }
+
+        message.extraData["image_labels"] shouldBeEqualTo mapOf("new.png" to listOf("nudity"))
+        message.extraData.containsKey("draft") shouldBeEqualTo false
+        message.extraData.containsKey("channel") shouldBeEqualTo false
+        message.extraData["color"] shouldBeEqualTo "teal"
     }
 
     @Test
@@ -1131,6 +1199,7 @@ internal class DomainMappingTest {
             messageRemindersEnabled = true,
             sharedLocationsEnabled = true,
             markMessagesPending = true,
+            quotesEnabled = false,
         )
 
     @Test

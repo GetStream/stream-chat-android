@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.parser2.testdata.AttachmentTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import org.amshove.kluent.shouldBeEqualTo
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -37,15 +36,6 @@ internal class AttachmentParsingTest {
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
     )
-
-    // region Response path (JSON → network Attachment → Attachment)
-
-    @Test
-    fun `Response path - deserializes all fields`() {
-        val dto = parser.fromJson(AttachmentTestData.jsonAllFields, NetworkAttachment::class.java)
-        val attachment = with(domainMapping) { dto.toDomain() }
-        assertEquals(AttachmentTestData.expectedAllFields, attachment)
-    }
 
     @Test
     fun `Response path - deserializes with optional fields missing`() {
@@ -78,15 +68,6 @@ internal class AttachmentParsingTest {
 
     // endregion
 
-    // region extraData edge case (literal "extraData" JSON field + custom keys)
-
-    @Test
-    fun `Response path - extraData JSON field and custom keys both land in extraData`() {
-        val dto = parser.fromJson(AttachmentTestData.jsonWithExtraDataFieldAndCustomKey, NetworkAttachment::class.java)
-        val attachment = with(domainMapping) { dto.toDomain() }
-        assertEquals(AttachmentTestData.expectedWithExtraDataFieldAndCustomKey, attachment)
-    }
-
     // endregion
 
     // region Generated path (JSON → network Attachment)
@@ -116,43 +97,5 @@ internal class AttachmentParsingTest {
           "sentinel": "keep-me"
         }"""
 
-    @Test
-    fun `Keys the spec does not declare are collected into custom`() {
-        val attachment = parser.fromJson(giphyAttachment, io.getstream.chat.android.network.models.Attachment::class.java)
-
-        // An undeclared number arrives untyped, so it is a Double rather than an Int.
-        attachment.custom["file_size"] shouldBeEqualTo 2048.0
-        attachment.custom["image"] shouldBeEqualTo "https://giphy.com/i.gif"
-        attachment.custom["mime_type"] shouldBeEqualTo "image/gif"
-        attachment.custom["name"] shouldBeEqualTo "cat.gif"
-        attachment.custom["sentinel"] shouldBeEqualTo "keep-me"
-    }
-
-    @Test
-    fun `Keys the hand-written DTO did not declare stay in custom as well`() {
-        val attachment = parser.fromJson(giphyAttachment, io.getstream.chat.android.network.models.Attachment::class.java)
-
-        // Declared on the generated model, so without the keep set they would leave the map.
-        attachment.custom["color"] shouldBeEqualTo "#ff0000"
-        attachment.custom["pretext"] shouldBeEqualTo "look"
-        (attachment.custom["actions"] as List<*>).size shouldBeEqualTo 1
-        // Still parsed into their own fields too.
-        attachment.color shouldBeEqualTo "#ff0000"
-        attachment.actions?.size shouldBeEqualTo 1
-    }
-
-    @Test
-    fun `The giphy object is kept in the exact shape giphyInfo reads`() {
-        val attachment = parser.fromJson(giphyAttachment, io.getstream.chat.android.network.models.Attachment::class.java)
-
-        @Suppress("UNCHECKED_CAST")
-        val giphy = attachment.custom["giphy"] as Map<String, Map<String, String>>
-        giphy["original"]?.get("url") shouldBeEqualTo "https://giphy.com/original.gif"
-        giphy["original"]?.get("width") shouldBeEqualTo "480"
-        giphy["fixed_height"]?.get("url") shouldBeEqualTo "https://giphy.com/fixed_height.gif"
-        giphy.keys.size shouldBeEqualTo 7
-        // The typed field parses as well; the map is what the UI reads.
-        attachment.giphy?.original?.url shouldBeEqualTo "https://giphy.com/original.gif"
-    }
     // endregion
 }
