@@ -239,6 +239,7 @@ public class MessageListController(
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
     private val showUnreadButtonState = MutableStateFlow(true)
     private var lastProcessedReadMessageId: String? = null
+    private var lastProcessedUnreadMessages: Int = 0
     private val originalTranslationsStore by lazy { MessageOriginalTranslationsStore.forChannel(cid) }
 
     /**
@@ -589,9 +590,9 @@ public class MessageListController(
      * - Channel state with all messages
      * - User read state ([ChannelUserRead])
      *
-     * The unread label is recalculated whenever [ChannelUserRead.lastReadMessageId] changes,
-     * but the result is "sticky": a null calculation never overwrites a non-null label.
-     * This ensures the separator persists when the user auto-reads messages by scrolling,
+     * The unread label is recalculated whenever [ChannelUserRead.lastReadMessageId] changes or
+     * [ChannelUserRead.unreadMessages] grows, but the result is "sticky": a null calculation never
+     * overwrites a non-null label. This ensures the separator persists when the user auto-reads messages by scrolling,
      * while still reacting to mark-as-unread events (which move [lastReadMessageId] backward
      * and produce a new non-null label).
      *
@@ -616,10 +617,16 @@ public class MessageListController(
     /**
      * Recalculates the unread label from the given read state and updates [unreadLabelState].
      *
-     * The label is recalculated whenever [ChannelUserRead.lastReadMessageId] changes, and the
-     * result is "sticky": a null calculation never overwrites a non-null label, so the separator
-     * persists when the user auto-reads messages by scrolling, while mark-as-unread events
-     * (which move [ChannelUserRead.lastReadMessageId] backward) still produce a new label.
+     * The label is recalculated whenever [ChannelUserRead.lastReadMessageId] changes or
+     * [ChannelUserRead.unreadMessages] grows, and the result is "sticky": a null calculation never
+     * overwrites a non-null label, so the separator persists when the user auto-reads messages by
+     * scrolling, while mark-as-unread events (which move [ChannelUserRead.lastReadMessageId]
+     * backward) still produce a new label.
+     *
+     * Marking the message right after the last read one as unread keeps
+     * [ChannelUserRead.lastReadMessageId] and only raises the count, for example when the label was
+     * computed before newer messages arrived. Marking read lowers the count without moving
+     * [ChannelUserRead.lastReadMessageId], and leaves the label as it is.
      */
     private fun computeUnreadLabel(
         channelUserRead: ChannelUserRead?,
@@ -628,7 +635,10 @@ public class MessageListController(
     ) {
         channelUserRead
             ?.takeIf { !isStartedForThread }
-            ?.takeIf { it.lastReadMessageId != null && lastProcessedReadMessageId != it.lastReadMessageId }
+            ?.takeIf { it.lastReadMessageId != null }
+            ?.takeIf {
+                lastProcessedReadMessageId != it.lastReadMessageId || it.unreadMessages > lastProcessedUnreadMessages
+            }
             ?.let { read ->
                 // Delegate to the calculator for the complex unread label logic
                 val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
@@ -643,6 +653,7 @@ public class MessageListController(
                     // recalculation open while the reason for a null result is transient, for
                     // example a message list that has not loaded yet.
                     lastProcessedReadMessageId = read.lastReadMessageId
+                    lastProcessedUnreadMessages = read.unreadMessages
                     unreadLabelState.value = unreadLabel
                 }
             }
