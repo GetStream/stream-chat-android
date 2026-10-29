@@ -24,6 +24,8 @@
     <string name="user_login_screen_title">Welcome to Stream Chat</string>
     <string name="user_login_screen_subtitle">Select a user to try the Compose SDK:</string>
     <string name="user_login_user_subtitle">Stream test account</string>
+    <string name="user_login_staging_title">US East staging</string>
+    <string name="user_login_staging_user_subtitle">Staging test account</string>
     <string name="user_login_advanced_options">Advanced options</string>
     <string name="user_login_custom_settings">Custom settings</string>
 
@@ -53,6 +55,8 @@
     <string name="custom_login_flag_member_name_search_description">Also find channels by the name of a member when searching for channels</string>
     <string name="custom_login_flag_markdown_label">Markdown</string>
     <string name="custom_login_flag_markdown_description">Render message text as markdown</string>
+    <string name="custom_login_flag_scheduled_messages_label">Scheduled messages</string>
+    <string name="custom_login_flag_scheduled_messages_description">Long press send to schedule a message, in channels that allow it</string>
 
     <!-- Pinned Messages -->
     <string name="pinned_messages_title">Pinned Messages</string>
@@ -92,6 +96,7 @@
     <string name="navigation_drawer_new_direct_message">New Direct Message</string>
     <string name="navigation_drawer_new_group_chat">Create a group</string>
     <string name="navigation_drawer_later">Later</string>
+    <string name="navigation_drawer_scheduled_messages">Scheduled</string>
     <string name="navigation_drawer_sign_out">Sign out</string>
 
     <!--  Message reminders  -->
@@ -145,4 +150,96 @@
     <!-- User Profile -->
     <string name="user_profile_title">Profile</string>
 
+    <!--  Scheduled messages  -->
+    <string name="scheduled_messages_title">Scheduled messages</string>
+    <string name="scheduled_messages_schedule_title">Schedule message</string>
+    <string name="scheduled_messages_reschedule_title">Reschedule message</string>
+    <string name="scheduled_messages_schedule">Schedule</string>
+    <string name="scheduled_messages_custom_time">Custom time</string>
+    <string name="scheduled_messages_message_to">Message to %1$s</string>
+    <string name="scheduled_messages_date">Date</string>
+    <string name="scheduled_messages_time">Time</string>
+    <string name="scheduled_messages_enter_time">Enter time</string>
+    <string name="scheduled_messages_ok">OK</string>
+    <string name="scheduled_messages_time_zone">Sent in your time zone (%1$s)</string>
+    <string name="scheduled_messages_time_too_soon">Pick a time at least 1 minute from now</string>
+    <string name="scheduled_messages_time_too_far">That\'s further ahead than your app allows</string>
+    <string name="scheduled_messages_offline_note">You\'re offline. We\'ll schedule this when you reconnect.</string>
+    <plurals name="scheduled_messages_in_this_channel_count">
+        <item quantity="one">%1$d scheduled in this channel</item>
+        <item quantity="other">%1$d scheduled in this channel</item>
+    </plurals>
+    <string name="scheduled_messages_today">Today</string>
+    <string name="scheduled_messages_tomorrow">Tomorrow</string>
+    <string name="scheduled_messages_date_at_time">%1$s at %2$s</string>
+    <string name="scheduled_messages_scheduled_at">Scheduled for %1$s</string>
+    <string name="scheduled_messages_scheduled_for">Message scheduled for %1$s</string>
+    <string name="scheduled_messages_queued_until_online">Queued until you\'re online</string>
+    <string name="scheduled_messages_sent_right_away">Sent now: time had passed</string>
+    <string name="scheduled_messages_sent">Message sent</string>
+    <string name="scheduled_messages_failed">Scheduled message failed</string>
+    <string name="scheduled_messages_deleted">Scheduled message deleted</string>
+    <string name="scheduled_messages_still_sending">Still sending. Try again in a moment.</string>
+    <string name="scheduled_messages_view">View</string>
+    <plurals name="scheduled_messages_count">
+        <item quantity="one">%1$d scheduled message</item>
+        <item quantity="other">%1$d scheduled messages</item>
+    </plurals>
+    <plurals name="scheduled_messages_replies_count">
+        <item quantity="one">%1$d scheduled reply</item>
+        <item quantity="other">%1$d scheduled replies</item>
+    </plurals>
+    <plurals name="scheduled_messages_waiting_count">
+        <item quantity="one">%1$d scheduled message waiting for connection</item>
+        <item quantity="other">%1$d scheduled messages waiting for connection</item>
+    </plurals>
+    <plurals name="scheduled_messages_failed_count">
+        <item quantity="one">%1$d failed to send</item>
+        <item quantity="other">%1$d failed to send</item>
+    </plurals>
+    <string name="scheduled_messages_failed_header">Failed to send</string>
+    <string name="scheduled_messages_waiting_header">Waiting for connection</string>
+    <string name="scheduled_messages_queued">Queued</string>
+    <string name="scheduled_messages_sending">Sending…</string>
+    <string name="scheduled_messages_thread_reply">Thread reply: %1$s</string>
+    <plurals name="scheduled_messages_attachments">
+        <item quantity="one">%1$d attachment</item>
+        <item quantity="other">%1$d attachments</item>
+    </plurals>
+    <string name="scheduled_messages_edit">Edit message</string>
+    <string name="scheduled_messages_reschedule">Reschedule</string>
+    <string name="scheduled_messages_send_now">Send now</string>
+    <string name="scheduled_messages_try_again">Try again</string>
+    <string name="scheduled_messages_copy_text">Copy text</string>
+    <string name="scheduled_messages_schedule_again">Edit &amp; reschedule</string>
+    <string name="scheduled_messages_delete">Delete</string>
+    <string name="scheduled_messages_cancel">Cancel</string>
+    <string name="scheduled_messages_save">Save scheduled message</string>
+    <string name="scheduled_messages_edit_header">Edit scheduled message</string>
+    <string name="scheduled_messages_cancel_edit">Cancel editing</string>
+    <string name="scheduled_messages_empty_title">No scheduled messages</string>
+    <string name="scheduled_messages_empty_description">Long press the send button in a channel to schedule a message.</string>
+    <string name="scheduled_messages_load_failed">Couldn\'t load scheduled messages</string>
+    <string name="scheduled_messages_send_now_title">Send now?</string>
+    <string name="scheduled_messages_send_now_description">This message will be sent right away instead of at its scheduled time.</string>
+    <string name="scheduled_messages_delete_title">Delete scheduled message?</string>
+    <string name="scheduled_messages_delete_description">This message to %1$s won\'t be sent. This can\'t be undone.</string>
+    <string name="scheduled_messages_edited_sent">This message was already sent</string>
+    <string name="scheduled_messages_edited_deleted">This scheduled message no longer exists</string>
+    <string name="scheduled_messages_failed_to_send">Failed to send</string>
+    <string name="scheduled_messages_failure_attachment_upload">An attachment could not be uploaded</string>
+    <string name="scheduled_messages_failure_request">Could not schedule the message</string>
+    <string name="scheduled_messages_failure_limit_channel">You reached the limit of scheduled messages in this channel</string>
+    <string name="scheduled_messages_failure_limit_user">You reached the limit of scheduled messages</string>
+    <string name="scheduled_messages_failure_too_soon">The scheduled time has passed</string>
+    <string name="scheduled_messages_failure_too_far">The scheduled time is too far away</string>
+    <string name="scheduled_messages_failure_disabled">Scheduled messages are turned off</string>
+    <string name="scheduled_messages_failure_sending">The message is being sent</string>
+    <string name="scheduled_messages_failure_conflict">The message was changed on another device</string>
+    <string name="scheduled_messages_failure_banned">You are banned from this channel</string>
+    <string name="scheduled_messages_failure_channel_deleted">This channel was deleted</string>
+    <string name="scheduled_messages_failure_channel_frozen">This channel is frozen</string>
+    <string name="scheduled_messages_failure_moderation">Moderation blocked this message</string>
+    <string name="scheduled_messages_failure_no_permission">You can no longer send messages in this channel</string>
+    <string name="scheduled_messages_failure_invalid_message">The message is no longer valid</string>
 </resources>

@@ -45,4 +45,9 @@ object PredefinedUserCredentials {
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVpYV9vcmdhbmEifQ.IzwBuaYwX5dRvnDDnJN2AyW3wwfYwgQm3w-1RD4BLPU",
         ),
     )
+
+    /**
+     * The users of the [StagingEnvironment]: none, as the e2e tests run against the mock server.
+     */
+    val stagingUsers: List<UserCredentials> = emptyList()
 }

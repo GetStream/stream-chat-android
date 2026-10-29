@@ -42,6 +42,7 @@ class CustomSettings(private val context: Context) {
     var isChannelSearchEnabled: Boolean by booleanPref(ChannelSearch)
     var isMemberNameSearchEnabled: Boolean by booleanPref(MemberNameSearch)
     var isMarkdownEnabled: Boolean by booleanPref(Markdown)
+    var isScheduledMessagesEnabled: Boolean by booleanPref(ScheduledMessages)
 
     private fun booleanPref(key: String, default: Boolean = false) =
         object : ReadWriteProperty<Any?, Boolean> {
@@ -63,5 +64,6 @@ private const val LocalUnreadCount = "local_unread_count"
 private const val ChannelSearch = "channel_search"
 private const val MemberNameSearch = "member_name_search"
 private const val Markdown = "markdown"
+private const val ScheduledMessages = "scheduled_messages"
 
 fun Context.customSettings(): CustomSettings = CustomSettings(this)

@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.sample.feature.channel.list
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.data.CustomSettings
+import io.getstream.chat.android.compose.sample.data.StagingEnvironment
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListSearchOptions
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -43,7 +45,8 @@ fun sampleChannelListViewModelFactory(settings: CustomSettings): ChannelListView
     } else {
         ChannelListSearchOptions()
     }
-    return if (settings.isLocalUnreadCountEnabled) {
+    // The staging app has no predefined filter.
+    return if (settings.isLocalUnreadCountEnabled || ChatHelper.apiKey == StagingEnvironment.API_KEY) {
         ChannelListViewModelFactory(
             chatClient = chatClient,
             querySort = QuerySortByField<Channel>().desc("pinned_at").desc("last_updated"),

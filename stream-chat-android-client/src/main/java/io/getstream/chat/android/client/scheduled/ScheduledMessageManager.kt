@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage.PendingChange
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
@@ -37,7 +38,11 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
@@ -63,9 +68,17 @@ internal class ScheduledMessageManager(
     private val sender = ScheduledMessageSender(store, api, attachmentUploader, clientState, onSentAsMessage)
     private val lifecycleMutex = Mutex()
     private var senderJob: Job? = null
+    private var connectionJob: Job? = null
+    private val _hasLoadedAll = MutableStateFlow(false)
 
     /** The scheduled messages to show: the pending ones first, then the failed ones, each by date. */
     val scheduledMessages: StateFlow<List<ScheduledMessage>> = store.scheduledMessages
+
+    /**
+     * True once a query of every channel and status returned its last page, until the connection is lost or [stop],
+     * as events can be missed while not connected.
+     */
+    val hasLoadedAll: StateFlow<Boolean> = _hasLoadedAll
 
     /**
      * Loads the scheduled messages saved for the connected user, and starts sending their pending changes in [scope].
@@ -75,6 +88,10 @@ internal class ScheduledMessageManager(
         if (senderJob?.isActive == true) return@withLock
         store.load(getRepositoryFacade().scheduledMessageRepository)
         senderJob = sender.start(scope)
+        connectionJob = clientState.connectionState
+            .filter { it != ConnectionState.Connected }
+            .onEach { _hasLoadedAll.value = false }
+            .launchIn(scope)
     }
 
     /**
@@ -83,6 +100,9 @@ internal class ScheduledMessageManager(
     suspend fun stop() = lifecycleMutex.withLock {
         senderJob?.cancel()
         senderJob = null
+        connectionJob?.cancel()
+        connectionJob = null
+        _hasLoadedAll.value = false
         store.clear()
     }
 
@@ -194,6 +214,7 @@ internal class ScheduledMessageManager(
                 val removed = knownOnServer.toSet() - ids
                 store.removeAll { (cid == null || it.cid == cid) && it.id in removed && !it.isLocalOnly }
             }
+            if (cid == null && statuses.isEmpty() && result.value.next == null) _hasLoadedAll.value = true
         }
         return result
     }

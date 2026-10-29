@@ -155,6 +155,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var isMarkdownEnabled by remember {
                         mutableStateOf(settings.isMarkdownEnabled)
                     }
+                    var isScheduledMessagesEnabled by remember {
+                        mutableStateOf(settings.isScheduledMessagesEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
@@ -255,6 +258,15 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isMarkdownEnabled = it
                                 settings.isMarkdownEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_scheduled_messages_label),
+                            description = stringResource(R.string.custom_login_flag_scheduled_messages_description),
+                            value = isScheduledMessagesEnabled,
+                            onValueChange = {
+                                isScheduledMessagesEnabled = it
+                                settings.isScheduledMessagesEnabled = it
                             },
                         ),
                     )

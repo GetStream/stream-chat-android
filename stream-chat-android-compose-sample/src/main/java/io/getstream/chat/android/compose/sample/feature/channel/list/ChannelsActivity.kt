@@ -61,6 +61,8 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelAc
 import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersActivity
+import io.getstream.chat.android.compose.sample.feature.scheduled.ScheduledMessagesActivity
+import io.getstream.chat.android.compose.sample.feature.scheduled.ScheduledMessagesViewModel
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
@@ -108,6 +110,9 @@ class ChannelsActivity : ComponentActivity() {
     }
 
     private val channelsViewModel: ChannelListViewModel by viewModels { channelsViewModelFactory }
+
+    // Loads the scheduled messages once, for the drawer count and the banners of the channels, when they are on.
+    private val scheduledMessagesViewModel: ScheduledMessagesViewModel by viewModels()
     private val threadsViewModelFactory = ThreadsViewModelFactory(query = QueryThreadsRequest())
 
     @Suppress("LongMethod")
@@ -140,6 +145,11 @@ class ChannelsActivity : ComponentActivity() {
                 ),
             ) {
                 val user by channelsViewModel.user.collectAsStateWithLifecycle()
+                val scheduledMessagesCount = if (settings.isScheduledMessagesEnabled) {
+                    scheduledMessagesViewModel.state.collectAsStateWithLifecycle().value.pendingCount
+                } else {
+                    null
+                }
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
                 val coroutineScope = rememberCoroutineScope()
                 ModalNavigationDrawer(
@@ -165,6 +175,11 @@ class ChannelsActivity : ComponentActivity() {
                                 },
                                 onRemindersClick = {
                                     openReminders()
+                                    coroutineScope.launch { drawerState.close() }
+                                },
+                                scheduledMessagesCount = scheduledMessagesCount,
+                                onScheduledMessagesClick = {
+                                    openScheduledMessages()
                                     coroutineScope.launch { drawerState.close() }
                                 },
                                 onSignOutClick = ::signOut,
@@ -372,6 +387,10 @@ class ChannelsActivity : ComponentActivity() {
 
     private fun openReminders() {
         startActivity(Intent(this, MessageRemindersActivity::class.java))
+    }
+
+    private fun openScheduledMessages() {
+        startActivity(Intent(this, ScheduledMessagesActivity::class.java))
     }
 
     private fun openUserLogin() {
