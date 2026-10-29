@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.camera.internal
 
+import android.content.DialogInterface
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -34,7 +35,6 @@ import io.getstream.chat.android.ui.databinding.StreamUiDialogCaptureMediaTarget
 import io.getstream.chat.android.ui.databinding.StreamUiItemCaptureMediaTargetBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
-import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Lets the user pick the camera app to capture media with, when several are available.
@@ -57,6 +57,11 @@ internal class CaptureMediaTargetDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState != null) {
+            // The hosts do not register for the result again once recreated, so a pick would go nowhere.
+            dismiss()
+            return
+        }
         val mode = CaptureMediaContract.Mode.valueOf(requireArguments().getString(ARG_MODE)!!)
         val contract = CaptureMediaContract(mode)
         val targets = contract.targets(requireContext())
@@ -67,6 +72,11 @@ internal class CaptureMediaTargetDialogFragment : BottomSheetDialogFragment() {
             setFragmentResult(REQUEST_KEY, target.toBundle())
             dismiss()
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        setFragmentResult(REQUEST_KEY, Bundle.EMPTY)
     }
 
     override fun onDestroyView() {
@@ -89,14 +99,7 @@ internal class CaptureMediaTargetDialogFragment : BottomSheetDialogFragment() {
             val packageManager = holder.itemView.context.packageManager
             holder.binding.iconImageView.setImageDrawable(target.activityInfo.loadIcon(packageManager))
             holder.binding.labelTextView.text = target.activityInfo.loadLabel(packageManager)
-            holder.binding.subtitleTextView.setText(
-                when (target.kind) {
-                    CaptureMediaContract.Target.Kind.PHOTO ->
-                        UiCommonR.string.stream_ui_message_composer_capture_media_take_photo
-                    CaptureMediaContract.Target.Kind.VIDEO ->
-                        UiCommonR.string.stream_ui_message_composer_capture_media_video
-                },
-            )
+            holder.binding.subtitleTextView.setText(target.kind.label)
             holder.itemView.setOnClickListener { onTargetClick(target) }
         }
 
@@ -128,23 +131,27 @@ internal class CaptureMediaTargetDialogFragment : BottomSheetDialogFragment() {
 
         /**
          * Lists the camera apps for [mode] and hands the one to launch to [onTargetPicked], asking the user
-         * to pick one when there are several.
+         * to pick one when there are several. [onCancelled] is invoked when the user dismisses the dialog
+         * or no camera app is available.
          *
-         * Must be called from [Fragment.onViewCreated], so the pick is still delivered after the host
-         * fragment is recreated while the dialog is showing.
+         * Must be called from [Fragment.onViewCreated], as the result listener is bound to the view lifecycle.
          */
         fun register(
             host: Fragment,
             mode: CaptureMediaContract.Mode,
             onTargetPicked: (CaptureMediaContract.Target) -> Unit,
+            onCancelled: () -> Unit,
         ): () -> Unit {
             host.childFragmentManager.setFragmentResultListener(REQUEST_KEY, host.viewLifecycleOwner) { _, result ->
-                result.toTarget()?.let(onTargetPicked)
+                result.toTarget()?.let(onTargetPicked) ?: onCancelled()
             }
             return {
                 val targets = CaptureMediaContract(mode).targets(host.requireContext())
                 when {
-                    targets.isEmpty() -> logger.w { "[pick] No camera app can capture the requested media" }
+                    targets.isEmpty() -> {
+                        logger.w { "[pick] No camera app can capture the requested media" }
+                        onCancelled()
+                    }
                     targets.size == 1 -> onTargetPicked(targets.single())
                     host.childFragmentManager.findFragmentByTag(TAG) == null ->
                         CaptureMediaTargetDialogFragment()

@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,8 +49,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
-import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Lets the user pick the camera app [launcher] opens, while it is asking for one.
@@ -59,14 +58,18 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
 internal fun CaptureMediaTargetSheet(launcher: CaptureMediaLauncher) {
     if (!launcher.isPickingTarget) return
     val context = LocalContext.current
+    val iconSizePx = with(LocalDensity.current) { TargetIconSize.roundToPx() }
     val title = remember(launcher) { launcher.contract.title(context) }
     val items = remember(launcher) {
         val packageManager = context.packageManager
         launcher.contract.targets(context).map { target ->
             CaptureMediaTargetItem(
                 label = target.activityInfo.loadLabel(packageManager).toString(),
-                icon = target.activityInfo.loadIcon(packageManager).toBitmap().asImageBitmap(),
-                subtitle = context.getString(target.kind.subtitle),
+                // An explicit size, as toBitmap() throws for drawables without an intrinsic one.
+                icon = target.activityInfo.loadIcon(packageManager)
+                    .toBitmap(width = iconSizePx, height = iconSizePx)
+                    .asImageBitmap(),
+                subtitle = context.getString(target.kind.label),
                 onClick = { launcher.launch(target) },
             )
         }
@@ -161,12 +164,6 @@ private fun CaptureMediaTarget(item: CaptureMediaTargetItem) {
         )
     }
 }
-
-private val CaptureMediaContract.Target.Kind.subtitle: Int
-    get() = when (this) {
-        CaptureMediaContract.Target.Kind.PHOTO -> UiCommonR.string.stream_ui_message_composer_capture_media_take_photo
-        CaptureMediaContract.Target.Kind.VIDEO -> UiCommonR.string.stream_ui_message_composer_capture_media_video
-    }
 
 private val TargetWidth = 88.dp
 private val TargetIconSize = 48.dp

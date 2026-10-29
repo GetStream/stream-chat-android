@@ -150,20 +150,14 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
         captureMedia = activity?.activityResultRegistry?.register(
             LauncherRequestsKeys.CAPTURE_MEDIA,
             CaptureMediaContract(style.pickerMediaMode.mode),
-        ) { file: File? ->
-            val result: List<AttachmentMetaData> = if (file == null) {
-                emptyList()
-            } else {
-                listOf(AttachmentMetaData(requireContext(), file))
-            }
-
-            attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
-            attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
-        }
+        ) { file: File? -> submitCapture(file) }
         captureMedia?.let {
-            val pickCaptureTarget = CaptureMediaTargetDialogFragment.register(this, style.pickerMediaMode.mode) {
-                captureMedia?.launch(it)
-            }
+            val pickCaptureTarget = CaptureMediaTargetDialogFragment.register(
+                host = this,
+                mode = style.pickerMediaMode.mode,
+                onTargetPicked = { captureMedia?.launch(it) },
+                onCancelled = { submitCapture(null) },
+            )
             binding.buttonCapture.setOnClickListener {
                 checkCameraPermissions {
                     if (_binding != null) pickCaptureTarget()
@@ -219,6 +213,17 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
             }
             attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
         }
+    }
+
+    private fun submitCapture(file: File?) {
+        val result: List<AttachmentMetaData> = if (file == null) {
+            emptyList()
+        } else {
+            listOf(AttachmentMetaData(requireContext(), file))
+        }
+
+        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
+        attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
     }
 
     private fun checkCameraPermissions(onPermissionGranted: () -> Unit) {

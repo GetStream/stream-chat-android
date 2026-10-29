@@ -24,6 +24,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.annotation.StringRes
 import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
@@ -146,10 +147,16 @@ public class CaptureMediaContract(
         val kind: Kind,
         val activityInfo: ActivityInfo,
     ) {
+        /**
+         * @property label The name of the capture to show under the camera app's name.
+         */
         @InternalStreamChatApi
-        public enum class Kind(internal val action: String) {
-            PHOTO(MediaStore.ACTION_IMAGE_CAPTURE),
-            VIDEO(MediaStore.ACTION_VIDEO_CAPTURE),
+        public enum class Kind(
+            internal val action: String,
+            @StringRes public val label: Int,
+        ) {
+            PHOTO(MediaStore.ACTION_IMAGE_CAPTURE, R.string.stream_ui_message_composer_capture_media_take_photo),
+            VIDEO(MediaStore.ACTION_VIDEO_CAPTURE, R.string.stream_ui_message_composer_capture_media_video),
         }
     }
 }

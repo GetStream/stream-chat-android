@@ -107,19 +107,24 @@ internal class CameraAttachmentFragment : Fragment() {
             ?.register(
                 LauncherRequestsKeys.CAPTURE_MEDIA,
                 CaptureMediaContract(style.pickerMediaMode.mode),
-            ) { file: File? ->
-                val result: List<AttachmentMetaData> = if (file == null) {
-                    emptyList()
-                } else {
-                    listOf(AttachmentMetaData(requireContext(), file))
-                }
+            ) { file: File? -> submitCapture(file) }
+        pickCaptureTarget = CaptureMediaTargetDialogFragment.register(
+            host = this,
+            mode = style.pickerMediaMode.mode,
+            onTargetPicked = { activityResultLauncher?.launch(it) },
+            onCancelled = { submitCapture(null) },
+        )
+    }
 
-                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
-                attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
-            }
-        pickCaptureTarget = CaptureMediaTargetDialogFragment.register(this, style.pickerMediaMode.mode) {
-            activityResultLauncher?.launch(it)
+    private fun submitCapture(file: File?) {
+        val result: List<AttachmentMetaData> = if (file == null) {
+            emptyList()
+        } else {
+            listOf(AttachmentMetaData(requireContext(), file))
         }
+
+        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
+        attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
     }
 
     private fun checkPermissions() {
