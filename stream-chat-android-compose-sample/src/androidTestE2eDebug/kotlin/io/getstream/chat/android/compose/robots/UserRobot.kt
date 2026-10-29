@@ -28,6 +28,7 @@ import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message.ContextMenu
+import io.getstream.chat.android.compose.pages.ScheduledMessagesPage
 import io.getstream.chat.android.compose.pages.ThreadListPage
 import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
@@ -45,6 +46,7 @@ import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
 import io.getstream.chat.android.e2e.test.uiautomator.typeText
 import io.getstream.chat.android.e2e.test.uiautomator.wait
 import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
+import io.getstream.chat.android.e2e.test.uiautomator.waitForText
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearAndClick
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
@@ -71,6 +73,92 @@ class UserRobot {
     fun openReminders(): UserRobot {
         openNavigationDrawer()
         ChannelListPage.NavigationDrawer.reminders.waitToAppearAndClick()
+        return this
+    }
+
+    fun openScheduledMessages(): UserRobot {
+        openNavigationDrawer()
+        ScheduledMessagesPage.Screen.drawerItem.waitToAppearAndClick()
+        return this
+    }
+
+    fun openScheduledMessagesFromBanner(): UserRobot {
+        ScheduledMessagesPage.Banner.view.waitToAppearAndClick()
+        return this
+    }
+
+    /** Schedules [text] for tomorrow at 9:00, with a long press on send. */
+    fun scheduleMessage(text: String): UserRobot {
+        typeText(text)
+        scheduleComposerContent()
+        return this
+    }
+
+    /** Schedules what the composer holds for tomorrow at 9:00, with a long press on send. */
+    fun scheduleComposerContent(): UserRobot {
+        Composer.sendButton.waitToAppear().longPress()
+        // The sheet slides in once the keyboard is hidden, and a tap that lands while it moves is
+        // lost, so tap again while the sheet stays.
+        repeat(3) {
+            ScheduledMessagesPage.ScheduleSheet.tomorrowMorning.waitToAppearAndClick()
+            if (!ScheduledMessagesPage.ScheduleSheet.view.waitToDisappear(timeOutMillis = 3_000).isDisplayed()) {
+                return this
+            }
+        }
+        return this
+    }
+
+    /** Long presses send, which schedules the message only when the channel allows it. */
+    fun longPressSendButton(): UserRobot {
+        Composer.sendButton.waitToAppear().longPress()
+        return this
+    }
+
+    /** Opens the actions of the scheduled message whose row shows [text]. */
+    fun openScheduledMessageActions(text: String): UserRobot {
+        ScheduledMessagesPage.Screen.item(text).waitToAppearAndClick()
+        ScheduledMessagesPage.Actions.view.wait()
+        return this
+    }
+
+    fun sendScheduledMessageNow(text: String): UserRobot {
+        openScheduledMessageActions(text)
+        ScheduledMessagesPage.Actions.sendNow.waitToAppearAndClick()
+        ScheduledMessagesPage.Screen.dialogConfirmButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun deleteScheduledMessage(text: String): UserRobot {
+        openScheduledMessageActions(text)
+        ScheduledMessagesPage.Actions.delete.waitToAppearAndClick()
+        ScheduledMessagesPage.Screen.dialogConfirmButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun retryScheduledMessage(text: String): UserRobot {
+        openScheduledMessageActions(text)
+        ScheduledMessagesPage.Actions.retry.waitToAppearAndClick()
+        return this
+    }
+
+    /** Edits the scheduled message [text] in the composer of its channel. */
+    fun editScheduledMessage(text: String, newText: String): UserRobot {
+        openScheduledMessageActions(text)
+        ScheduledMessagesPage.Actions.edit.waitToAppearAndClick()
+        Composer.inputField.waitForText(text)
+        typeText(newText)
+        ScheduledMessagesPage.Editor.saveButton.waitToAppearAndClick()
+        return this
+    }
+
+    /** Moves the scheduled message [text] to [hour] o'clock on the same day. */
+    fun rescheduleScheduledMessage(text: String, hour: Int): UserRobot {
+        openScheduledMessageActions(text)
+        ScheduledMessagesPage.Actions.reschedule.waitToAppearAndClick()
+        ScheduledMessagesPage.ScheduleTimeSheet.time.waitToAppearAndClick()
+        ScheduledMessagesPage.ScheduleTimeSheet.hourField.waitToAppear().typeText(hour.toString())
+        ScheduledMessagesPage.ScheduleTimeSheet.timeDialogConfirmButton.waitToAppearAndClick()
+        ScheduledMessagesPage.ScheduleTimeSheet.confirmButton.waitToAppearAndClick()
         return this
     }
 
