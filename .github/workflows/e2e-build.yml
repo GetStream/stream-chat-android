@@ -63,13 +63,15 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
       # Keeps one snapshot per branch, so the nightly saves don't pile up in the repo's Actions cache.
+      # A failed save only warns, so the older snapshots stay unless the new one is listed.
       - name: Remove older Gradle caches
         if: ${{ !inputs.coverage && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          NEW_KEY: ${{ steps.gradle_cache.outputs.cache-primary-key }}
         run: |
           gh cache list -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF" --key "${{ runner.os }}-gradle-e2e-" --limit 100 --json id,key \
-            --jq '.[] | select(.key != "${{ steps.gradle_cache.outputs.cache-primary-key }}") | .id' \
+            --jq 'if any(.[]; .key == env.NEW_KEY) then .[] | select(.key != env.NEW_KEY) | .id else empty end' \
             | xargs -r -n1 gh cache delete -R "$GITHUB_REPOSITORY"
       - name: Select E2E Tests
         id: select_e2e_tests
