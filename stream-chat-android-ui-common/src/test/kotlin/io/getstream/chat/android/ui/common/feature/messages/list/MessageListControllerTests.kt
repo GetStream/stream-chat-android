@@ -1190,6 +1190,112 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `Update unread label count, when marking unread returns to the read message of the current label`() =
+        runTest {
+            val ownMessage = randomMessage(id = "own", user = user1, deletedAt = null, deletedForMe = false)
+            val firstIncoming = randomMessage(id = "incoming_1", user = user2, deletedAt = null, deletedForMe = false)
+            val secondIncoming = randomMessage(id = "incoming_2", user = user2, deletedAt = null, deletedForMe = false)
+            val messagesState = MutableStateFlow(listOf(ownMessage, firstIncoming))
+            val channelUserRead = MutableStateFlow(
+                randomChannelUserRead(user = user1, lastReadMessageId = ownMessage.id, unreadMessages = 1),
+            )
+            val controller = Fixture()
+                .givenCurrentUser(user1)
+                .givenChannelState(messagesState = messagesState, read = channelUserRead)
+                .get()
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 1
+
+            // The second message arrives while the channel is being marked read.
+            channelUserRead.value = channelUserRead.value.copy(unreadMessages = 0)
+            messagesState.value = listOf(ownMessage, firstIncoming, secondIncoming)
+            channelUserRead.value = channelUserRead.value.copy(unreadMessages = 1)
+            channelUserRead.value = channelUserRead.value.copy(lastReadMessageId = secondIncoming.id, unreadMessages = 0)
+            // Marking the first incoming message unread moves the read state back to the own message,
+            // read at its creation time.
+            channelUserRead.value = channelUserRead.value.copy(
+                lastReadMessageId = ownMessage.id,
+                lastRead = ownMessage.createdAt.`should not be null`(),
+                unreadMessages = 2,
+            )
+
+            val unreadLabel = controller.unreadLabelState.value.`should not be null`()
+            unreadLabel.lastReadMessageId `should be equal to` ownMessage.id
+            unreadLabel.unreadCount `should be equal to` 2
+        }
+
+    @Test
+    fun `Keep unread label count, when more messages arrive than it counts after the channel is marked read`() =
+        runTest {
+            val lastReadMessage = randomMessage(id = "last_read", user = user2, deletedAt = null, deletedForMe = false)
+            val unreadMessage = randomMessage(id = "unread", user = user2, deletedAt = null, deletedForMe = false)
+            val newMessages = List(2) { randomMessage(id = "new_$it", user = user2, deletedAt = null, deletedForMe = false) }
+            val messagesState = MutableStateFlow(listOf(lastReadMessage, unreadMessage))
+            val channelUserRead = MutableStateFlow(
+                randomChannelUserRead(user = user1, lastReadMessageId = lastReadMessage.id, unreadMessages = 1),
+            )
+            val controller = Fixture()
+                .givenCurrentUser(user1)
+                .givenChannelState(messagesState = messagesState, read = channelUserRead)
+                .get()
+
+            // The optimistic mark read zeroes the count, then two messages arrive before the server
+            // moves the read state.
+            channelUserRead.value = channelUserRead.value.copy(unreadMessages = 0)
+            newMessages.forEachIndexed { index, message ->
+                messagesState.value = messagesState.value + message
+                channelUserRead.value = channelUserRead.value.copy(unreadMessages = index + 1)
+            }
+
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 1
+        }
+
+    @Test
+    fun `Keep unread label hidden, when a message arrives after hideUnreadSeparator`() = runTest {
+        val lastReadMessage = randomMessage(id = "last_read", user = user2, deletedAt = null, deletedForMe = false)
+        val firstUnread = randomMessage(id = "unread_1", user = user2, deletedAt = null, deletedForMe = false)
+        val secondUnread = randomMessage(id = "unread_2", user = user2, deletedAt = null, deletedForMe = false)
+        val messagesState = MutableStateFlow(listOf(lastReadMessage, firstUnread))
+        val channelUserRead = MutableStateFlow(
+            randomChannelUserRead(user = user1, lastReadMessageId = lastReadMessage.id, unreadMessages = 1),
+        )
+        val controller = Fixture()
+            .givenCurrentUser(user1)
+            .givenChannelState(messagesState = messagesState, read = channelUserRead)
+            .get()
+
+        controller.hideUnreadSeparator()
+        messagesState.value = listOf(lastReadMessage, firstUnread, secondUnread)
+        channelUserRead.value = channelUserRead.value.copy(unreadMessages = 2)
+
+        controller.unreadLabelState.value.shouldBeNull()
+    }
+
+    @Test
+    fun `Keep unread label count, when a message arrives after the channel is marked read`() = runTest {
+        val lastReadMessage = randomMessage(id = "last_read", user = user2, deletedAt = null, deletedForMe = false)
+        val unreadMessages = List(3) { randomMessage(id = "unread_$it", user = user2, deletedAt = null, deletedForMe = false) }
+        val newMessage = randomMessage(id = "new", user = user2, deletedAt = null, deletedForMe = false)
+        val messagesState = MutableStateFlow(listOf(lastReadMessage) + unreadMessages)
+        val channelUserRead = MutableStateFlow(
+            randomChannelUserRead(user = user1, lastReadMessageId = lastReadMessage.id, unreadMessages = 3),
+        )
+        val controller = Fixture()
+            .givenCurrentUser(user1)
+            .givenChannelState(messagesState = messagesState, read = channelUserRead)
+            .get()
+
+        // The optimistic mark read zeroes the count, then a message arrives before the server
+        // moves the read state.
+        channelUserRead.value = channelUserRead.value.copy(unreadMessages = 0)
+        messagesState.value = messagesState.value + newMessage
+        channelUserRead.value = channelUserRead.value.copy(unreadMessages = 1)
+
+        val unreadLabel = controller.unreadLabelState.value.`should not be null`()
+        unreadLabel.lastReadMessageId `should be equal to` lastReadMessage.id
+        unreadLabel.unreadCount `should be equal to` 3
+    }
+
+    @Test
     fun `When deleting message with playing audio, audio is stopped before deletion`() = runTest {
         val messageId = randomString()
         val audioRecording = randomAttachment(type = AttachmentType.AUDIO_RECORDING)
