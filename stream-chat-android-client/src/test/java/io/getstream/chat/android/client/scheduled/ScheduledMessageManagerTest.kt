@@ -41,8 +41,10 @@ import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCall
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
@@ -352,6 +354,79 @@ internal class ScheduledMessageManagerTest {
         query(null, emptySet(), randomString(), QueryScheduledMessagesResult(emptyList(), next = null))
 
         manager.scheduledMessages.value shouldBeEqualTo listOf(scheduled)
+    }
+
+    @Test
+    fun `a single page query of every channel and status loads all the messages`() = runTest {
+        manager.hasLoadedAll.value shouldBeEqualTo false
+
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.hasLoadedAll.value shouldBeEqualTo true
+    }
+
+    @Test
+    fun `a query of several pages does not load all the messages, as it removes none`() = runTest {
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = randomString()))
+        query(null, emptySet(), randomString(), QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a query of a channel or a status does not load all the messages`() = runTest {
+        query(cid, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+        query(null, setOf(ScheduledMessageQueryStatus.Scheduled), null, QueryScheduledMessagesResult(emptyList(), null))
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a failed query does not load all the messages`() = runTest {
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))
+            .thenReturn(TestCall(Result.Failure(Error.GenericError(randomString()))))
+
+        manager.query(null, emptySet(), limit = 100, next = null)
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `losing the connection forgets that all the messages were loaded`() = runTest {
+        manager.start(backgroundScope)
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+        manager.hasLoadedAll.value shouldBeEqualTo true
+
+        fixture.connectionState.value = ConnectionState.Offline
+        runCurrent()
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a query that ends after the connection was lost does not load all the messages`() = runTest {
+        manager.start(backgroundScope)
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).thenReturn(
+            SuspendingCall {
+                fixture.connectionState.value = ConnectionState.Offline
+                runCurrent()
+                Result.Success(QueryScheduledMessagesResult(emptyList(), next = null))
+            },
+        )
+
+        manager.query(null, emptySet(), limit = 100, next = null)
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `stop forgets that all the messages were loaded`() = runTest {
+        manager.start(backgroundScope)
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.stop()
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
     }
 
     @Test
