@@ -146,4 +146,19 @@ public object ChannelCapabilities {
 
     /** Ability to use user-group mentions. */
     public const val NOTIFY_GROUP: String = "notify-group"
+
+    /** Ability to add attachments to messages. */
+    public const val CREATE_ATTACHMENT: String = "create-attachment"
+
+    /** Ability to query the votes of a poll. */
+    public const val QUERY_POLL_VOTES: String = "query-poll-votes"
+
+    /** Ability to send messages visible only to specific channel members. */
+    public const val SEND_RESTRICTED_VISIBILITY_MESSAGE: String = "send-restricted-visibility-message"
+
+    /** Ability to share a location. */
+    public const val SHARE_LOCATION: String = "share-location"
+
+    /** Ability to update a thread. */
+    public const val UPDATE_THREAD: String = "update-thread"
 }

@@ -269,6 +269,7 @@ internal fun DraftMessage.toEntity(): DraftMessageEntity = DraftMessageEntity(
     command = command,
     args = args,
     extraData = extraData,
+    createdAt = createdAt,
 )
 
 internal suspend fun DraftMessageEntity.toModel(
@@ -285,6 +286,7 @@ internal suspend fun DraftMessageEntity.toModel(
     command = command,
     args = args,
     extraData = extraData,
+    createdAt = createdAt,
 )
 
 internal fun MessageReminderInfo.toEntity(): ReminderInfoEntity = ReminderInfoEntity(

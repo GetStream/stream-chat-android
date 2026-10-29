@@ -403,6 +403,7 @@ internal object EventArguments {
         command = "giphy",
         args = "cat",
         extraData = mapOf("flair" to "gold"),
+        createdAt = date,
     )
 
     private val reminder = MessageReminder(

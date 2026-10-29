@@ -444,7 +444,7 @@ internal class MessageMapperTest {
 
     @Test
     fun `Should map DraftMessage to DraftMessageEntity correctly`() = runTest {
-        val draftMessage = randomDraftMessage()
+        val draftMessage = randomDraftMessage(createdAt = randomDate())
 
         val expectedDraftMessageEntity = DraftMessageEntity(
             id = draftMessage.id,
@@ -458,6 +458,7 @@ internal class MessageMapperTest {
             command = draftMessage.command,
             args = draftMessage.args,
             extraData = draftMessage.extraData,
+            createdAt = draftMessage.createdAt,
         )
 
         val result = draftMessage.toEntity()
@@ -480,6 +481,7 @@ internal class MessageMapperTest {
             command = randomString(),
             args = randomString(),
             extraData = mapOf(randomString() to randomString()),
+            createdAt = randomDate(),
         )
 
         val expectedDraftMessage = DraftMessage(
@@ -494,6 +496,7 @@ internal class MessageMapperTest {
             command = draftMessageEntity.command,
             args = draftMessageEntity.args,
             extraData = draftMessageEntity.extraData,
+            createdAt = draftMessageEntity.createdAt,
         )
 
         val result = draftMessageEntity.toModel { messageId ->
