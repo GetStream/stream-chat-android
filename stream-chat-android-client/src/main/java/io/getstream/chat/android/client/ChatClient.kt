@@ -5264,7 +5264,8 @@ internal constructor(
      *
      * @param cid The channel of the scheduled messages in the format `type:id`, or null for every channel.
      * @param statuses The statuses of the scheduled messages, or empty for every status.
-     * @param limit The maximum number of scheduled messages to return, at most 100.
+     * @param limit The maximum number of scheduled messages to return, from 1 to 100. A value outside that range is
+     * moved into it.
      * @param next The cursor of the page to return, from [QueryScheduledMessagesResult.next], or null for the first
      * page.
      *

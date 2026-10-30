@@ -51,6 +51,8 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldContainSame
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.never
@@ -365,6 +367,17 @@ internal class ScheduledMessageManagerTest {
         query(null, setOf(ScheduledMessageQueryStatus.Scheduled), null, QueryScheduledMessagesResult(listOf(older), null))
 
         manager.scheduledMessages.value shouldBeEqualTo listOf(newer)
+    }
+
+    @ParameterizedTest
+    @CsvSource("150, 100", "0, 1", "20, 20")
+    fun `a query limit outside 1 to 100 is moved into that range`(limit: Int, sent: Int) = runTest {
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))
+            .thenReturn(TestCall(Result.Success(QueryScheduledMessagesResult(emptyList(), next = null))))
+
+        manager.query(null, emptySet(), limit = limit, next = null)
+
+        verify(fixture.api).queryScheduledMessages(null, emptySet(), sent, null)
     }
 
     @Test

@@ -64,7 +64,7 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
         // given
         val cid = randomCID()
         val statuses = setOf(ScheduledMessageQueryStatus.Scheduled, ScheduledMessageQueryStatus.Failed)
-        val limit = positiveRandomInt()
+        val limit = positiveRandomInt(maxInt = 100)
         val next = randomString()
         val queryResult = randomQueryScheduledMessagesResult()
         whenever(api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))

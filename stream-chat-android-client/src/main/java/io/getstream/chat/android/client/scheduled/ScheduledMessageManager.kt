@@ -215,7 +215,7 @@ internal class ScheduledMessageManager(
         val before = store.messages.value
         val knownOnServer = before.values.filterNot(LocalScheduledMessage::isLocalOnly).map { it.id }
         val resetsBefore = hasLoadedAllResets.get()
-        val result = api.queryScheduledMessages(cid, statuses, limit, next).await()
+        val result = api.queryScheduledMessages(cid, statuses, limit.coerceIn(1, MAX_QUERY_LIMIT), next).await()
         if (result is Result.Success) {
             saveQueried(result.value.scheduledMessages, knownBefore = before.keys)
             // Only a single page holds every scheduled message of the query, so only then are the others removed.
@@ -325,6 +325,9 @@ internal class ScheduledMessageManager(
     private fun <T : Any> notFound(id: String): Result<T> =
         Result.Failure(Error.GenericError("There is no scheduled message with id: $id."))
 }
+
+/** The largest page the server returns. */
+private const val MAX_QUERY_LIMIT = 100
 
 /**
  * Merges [server] into the local message, unless it is older than the local message with no pending changes, for
