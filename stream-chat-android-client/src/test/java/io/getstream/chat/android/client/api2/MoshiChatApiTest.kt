@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
+import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
@@ -63,6 +64,7 @@ import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.NoOpFileTransformer
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
@@ -86,6 +88,7 @@ import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.RoleType
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.Vote
@@ -121,6 +124,7 @@ import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeleteMessageResponse
 import io.getstream.chat.android.network.models.DeleteReactionResponse
+import io.getstream.chat.android.network.models.DeleteScheduledMessageResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetApplicationResponse
@@ -171,17 +175,22 @@ import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.QueryRemindersResponse
+import io.getstream.chat.android.network.models.QueryScheduledMessagesRequest
+import io.getstream.chat.android.network.models.QueryScheduledMessagesResponse
 import io.getstream.chat.android.network.models.QueryThreadsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.ScheduledMessageResponse
+import io.getstream.chat.android.network.models.ScheduledMessagesFilter
 import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SendMessageResponse
 import io.getstream.chat.android.network.models.SendReactionResponse
+import io.getstream.chat.android.network.models.SendScheduledMessageNowResponse
 import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
@@ -205,6 +214,8 @@ import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderResponse
+import io.getstream.chat.android.network.models.UpdateScheduledMessageRequest
+import io.getstream.chat.android.network.models.UpdateScheduledMessageResponse
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
@@ -257,6 +268,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
@@ -269,6 +281,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.reflect.KClass
+import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
 
 @Suppress("LargeClass")
@@ -304,6 +317,23 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(api, times(1)).sendMessage(any(), any(), any())
+    }
+
+    @Test
+    fun `scheduleMessage sends the date and maps a message sent right away to the channel`() = runTest {
+        // given
+        val api = mock<MessageApi>()
+        val response = SendMessageResponse(duration = "1ms", message = Mother.randomMessageResponse(cid = ""))
+        whenever(api.sendMessage(any(), any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withMessageApi(api).get()
+        val scheduledAt = randomDate()
+        // when
+        val result = sut.scheduleMessage("messaging", "123", randomMessage(), scheduledAt).await()
+        // then
+        val value = result.getOrThrow()
+        value.message.cid shouldBeEqualTo "messaging:123"
+        value.scheduledMessage.shouldBeNull()
+        verify(api).sendMessage(eq("messaging"), eq("123"), argThat { this.scheduledAt == scheduledAt })
     }
 
     @ParameterizedTest
@@ -2680,6 +2710,63 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
+    fun `channel state maps the scheduled messages, an absent field as null`(
+        @Suppress("UNUSED_PARAMETER") path: String,
+        stub: (ChannelApi, ChannelStateResponseFields) -> Unit,
+        query: (MoshiChatApi) -> Call<List<Channel>>,
+    ) = runTest {
+        val channel = Mother.randomChannelResponse(id = "123", type = "messaging")
+        val scheduledMessage = Mother.randomScheduledMessageResponse(cid = channel.cid)
+        val scheduledMessagesOf = { scheduledMessages: List<ScheduledMessageResponse>? ->
+            val api = mock<ChannelApi>()
+            stub(api, ChannelStateResponseFields(channel = channel, scheduledMessages = scheduledMessages))
+            val sut = Fixture().withChannelApi(api).get()
+            sut.setConnection(userId = randomString(), connectionId = randomString())
+            query(sut)
+        }
+
+        scheduledMessagesOf(null).await().getOrThrow().single().scheduledMessages shouldBeEqualTo null
+        scheduledMessagesOf(emptyList()).await().getOrThrow().single().scheduledMessages shouldBeEqualTo emptyList()
+        scheduledMessagesOf(listOf(scheduledMessage)).await().getOrThrow().single().scheduledMessages
+            ?.map { it.id } shouldBeEqualTo listOf(scheduledMessage.id)
+    }
+
+    @Test
+    fun `queryChannel sends include_scheduled_messages only when requested`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.queryChannel(any(), any(), any(), any())).doReturn(
+            RetroSuccess(Mother.randomChannelStateResponseFields().toChannelStateResponse()).toRetrofitCall(),
+        )
+        val sut = Fixture().withChannelApi(api).get()
+        sut.setConnection(userId = randomString(), connectionId = "connection-1")
+
+        sut.queryChannel("messaging", "123", QueryChannelRequest()).await()
+        sut.queryChannel("messaging", "123", QueryChannelRequest().apply { includeScheduledMessages = true }).await()
+
+        val captor = argumentCaptor<ChannelGetOrCreateRequest>()
+        verify(api, times(2)).queryChannel(eq("messaging"), eq("123"), eq("connection-1"), captor.capture())
+        captor.allValues.map { it.includeScheduledMessages } shouldBeEqualTo listOf(null, true)
+    }
+
+    @Test
+    fun `queryChannels sends include_scheduled_messages only when requested`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.queryChannels(any(), any())).doReturn(
+            RetroSuccess(QueryChannelsResponse(duration = "1ms", channels = emptyList())).toRetrofitCall(),
+        )
+        val sut = Fixture().withChannelApi(api).get()
+        sut.setConnection(userId = randomString(), connectionId = "connection-1")
+
+        sut.queryChannels(Mother.randomQueryChannelsRequest()).await()
+        sut.queryChannels(Mother.randomQueryChannelsRequest().apply { includeScheduledMessages = true }).await()
+
+        val captor = argumentCaptor<io.getstream.chat.android.network.models.QueryChannelsRequest>()
+        verify(api, times(2)).queryChannels(eq("connection-1"), captor.capture())
+        captor.allValues.map { it.includeScheduledMessages } shouldBeEqualTo listOf(null, true)
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelInput")
     fun testQueryChannelWithoutChannelId(call: RetrofitCall<ChannelStateResponse>, expected: KClass<*>) = runTest {
         // given
@@ -3457,6 +3544,178 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).queryPollVotes(pollId, expectedBody)
     }
 
+    @Test
+    fun `queryScheduledMessages sends the channel and status filter and maps the page`() = runTest {
+        val response = Mother.randomScheduledMessageResponse()
+        val api = mock<ScheduledMessagesApi> {
+            on { queryScheduledMessages(any()) } doReturn RetroSuccess(
+                QueryScheduledMessagesResponse(duration = "1ms", scheduledMessages = listOf(response), next = "next-2"),
+            ).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+
+        val result = sut.queryScheduledMessages(
+            cid = "messaging:123",
+            statuses = setOf(ScheduledMessageQueryStatus.Scheduled, ScheduledMessageQueryStatus.Failed),
+            limit = 50,
+            next = "next-1",
+        ).await()
+
+        val expectedBody = QueryScheduledMessagesRequest(
+            limit = 50,
+            next = "next-1",
+            filter = ScheduledMessagesFilter(
+                cid = "messaging:123",
+                status = listOf(ScheduledMessageQueryStatusDto.Scheduled, ScheduledMessageQueryStatusDto.Failed),
+            ),
+        )
+        verify(api, times(1)).queryScheduledMessages(expectedBody)
+        val page = result.getOrThrow()
+        page.scheduledMessages.map { it.id } shouldBeEqualTo listOf(response.id)
+        page.next shouldBeEqualTo "next-2"
+    }
+
+    @Test
+    fun `queryScheduledMessages without a channel or status sends no filter`() = runTest {
+        val api = mock<ScheduledMessagesApi> {
+            on { queryScheduledMessages(any()) } doReturn RetroSuccess(
+                QueryScheduledMessagesResponse(duration = "1ms"),
+            ).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+
+        sut.queryScheduledMessages(cid = null, statuses = emptySet(), limit = 100, next = null).await()
+
+        verify(api, times(1)).queryScheduledMessages(QueryScheduledMessagesRequest(limit = 100))
+    }
+
+    @Test
+    fun `queryScheduledMessages fails when the request fails`() = runTest {
+        val api = mock<ScheduledMessagesApi> {
+            on { queryScheduledMessages(any()) } doReturn
+                RetroError<QueryScheduledMessagesResponse>(statusCode = 500).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+
+        val result = sut.queryScheduledMessages(cid = null, statuses = emptySet(), limit = 100, next = null).await()
+
+        result `should be instance of` Result.Failure::class
+    }
+
+    @Test
+    fun `updateScheduledMessage sends the new content and date and maps the scheduled message`() = runTest {
+        val response = Mother.randomScheduledMessageResponse(id = "scheduled-1")
+        val api = mock<ScheduledMessagesApi> {
+            on { updateScheduledMessage(any(), any()) } doReturn RetroSuccess(
+                UpdateScheduledMessageResponse(duration = "1ms", scheduledMessage = response),
+            ).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+        val message = Message(id = "scheduled-1", text = "Edited")
+        val scheduledAt = randomDate()
+
+        val result = sut.updateScheduledMessage("scheduled-1", message, scheduledAt).await()
+
+        val expectedBody = UpdateScheduledMessageRequest(
+            scheduledAt = scheduledAt,
+            message = with(DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)) { message.toMessageRequest() },
+        )
+        verify(api, times(1)).updateScheduledMessage("scheduled-1", expectedBody)
+        result.getOrThrow().id shouldBeEqualTo "scheduled-1"
+    }
+
+    @Test
+    fun `updateScheduledMessage with only a new date sends no message`() = runTest {
+        val api = mock<ScheduledMessagesApi> {
+            on { updateScheduledMessage(any(), any()) } doReturn RetroSuccess(
+                UpdateScheduledMessageResponse(
+                    duration = "1ms",
+                    scheduledMessage = Mother.randomScheduledMessageResponse(),
+                ),
+            ).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+        val scheduledAt = randomDate()
+
+        sut.updateScheduledMessage("scheduled-1", message = null, scheduledAt = scheduledAt).await()
+
+        verify(api, times(1))
+            .updateScheduledMessage("scheduled-1", UpdateScheduledMessageRequest(scheduledAt = scheduledAt))
+    }
+
+    @Test
+    fun `updateScheduledMessage fails when the request fails`() = runTest {
+        val api = mock<ScheduledMessagesApi> {
+            on { updateScheduledMessage(any(), any()) } doReturn
+                RetroError<UpdateScheduledMessageResponse>(statusCode = 409).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+
+        val result = sut.updateScheduledMessage("scheduled-1", message = null, scheduledAt = randomDate()).await()
+
+        result `should be instance of` Result.Failure::class
+    }
+
+    @Test
+    fun `deleteScheduledMessage calls the delete endpoint`() = runTest {
+        val api = mock<ScheduledMessagesApi> {
+            on { deleteScheduledMessage(any()) } doReturn RetroSuccess(
+                DeleteScheduledMessageResponse(
+                    duration = "1ms",
+                    scheduledMessage = Mother.randomScheduledMessageResponse(),
+                ),
+            ).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+
+        val result = sut.deleteScheduledMessage("scheduled-1").await()
+
+        verify(api, times(1)).deleteScheduledMessage("scheduled-1")
+        result `should be instance of` Result.Success::class
+    }
+
+    @Test
+    fun `deleteScheduledMessage fails when the request fails`() = runTest {
+        val api = mock<ScheduledMessagesApi> {
+            on { deleteScheduledMessage(any()) } doReturn
+                RetroError<DeleteScheduledMessageResponse>(statusCode = 404).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+
+        val result = sut.deleteScheduledMessage("scheduled-1").await()
+
+        result `should be instance of` Result.Failure::class
+    }
+
+    @Test
+    fun `sendScheduledMessageNow calls the send now endpoint and maps the scheduled message`() = runTest {
+        val response = Mother.randomScheduledMessageResponse(id = "scheduled-1")
+        val api = mock<ScheduledMessagesApi> {
+            on { sendScheduledMessageNow(any(), any()) } doReturn RetroSuccess(
+                SendScheduledMessageNowResponse(duration = "1ms", scheduledMessage = response),
+            ).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+
+        val result = sut.sendScheduledMessageNow("scheduled-1").await()
+
+        verify(api, times(1)).sendScheduledMessageNow("scheduled-1", emptyMap())
+        result.getOrThrow().id shouldBeEqualTo "scheduled-1"
+    }
+
+    @Test
+    fun `sendScheduledMessageNow fails when the request fails`() = runTest {
+        val api = mock<ScheduledMessagesApi> {
+            on { sendScheduledMessageNow(any(), any()) } doReturn
+                RetroError<SendScheduledMessageNowResponse>(statusCode = 400).toRetrofitCall()
+        }
+        val sut = Fixture().withScheduledMessagesApi(api).get()
+
+        val result = sut.sendScheduledMessageNow("scheduled-1").await()
+
+        result `should be instance of` Result.Failure::class
+    }
+
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createReminderInput")
     fun testCreateReminder(call: RetrofitCall<CreateReminderResponse>, expected: KClass<*>) = runTest {
@@ -4097,6 +4356,7 @@ internal class MoshiChatApiTest {
         private var threadsApi: ThreadsApi = mock()
         private var pollsApi: PollsApi = mock()
         private var remindersApi: RemindersApi = mock()
+        private var scheduledMessagesApi: ScheduledMessagesApi = mock()
         private var pushPreferencesApi: PushPreferencesApi = mock()
         private var userGroupApi: UserGroupApi = mock()
         private var roleApi: RoleApi = mock()
@@ -4172,6 +4432,10 @@ internal class MoshiChatApiTest {
             this.remindersApi = remindersApi
         }
 
+        fun withScheduledMessagesApi(scheduledMessagesApi: ScheduledMessagesApi) = apply {
+            this.scheduledMessagesApi = scheduledMessagesApi
+        }
+
         fun withPushPreferencesApi(pushPreferencesApi: PushPreferencesApi) = apply {
             this.pushPreferencesApi = pushPreferencesApi
         }
@@ -4228,6 +4492,7 @@ internal class MoshiChatApiTest {
                 threadsApi = threadsApi,
                 pollsApi = pollsApi,
                 remindersApi = remindersApi,
+                scheduledMessagesApi = scheduledMessagesApi,
                 pushPreferencesApi = pushPreferencesApi,
                 userGroupApi = userGroupApi,
                 roleApi = roleApi,

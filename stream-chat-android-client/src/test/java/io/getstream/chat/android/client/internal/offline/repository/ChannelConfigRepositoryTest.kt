@@ -168,6 +168,10 @@ internal class ChannelConfigRepositoryTest {
                 skipLastMsgUpdateForSystemMsgs = randomBoolean(),
                 pollsEnabled = randomBoolean(),
                 sharedLocationsEnabled = randomBoolean(),
+                scheduledMessagesMaxPerChannel = randomInt(),
+                scheduledMessagesMaxPerUser = randomInt(),
+                scheduledMessagesMaxLeadTimeSeconds = randomInt(),
+                scheduledMessagesMinLeadTimeSeconds = randomInt(),
             ),
             emptyList(),
         )

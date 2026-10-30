@@ -63,6 +63,8 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.query
 import io.getstream.chat.android.client.internal.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.ReactionDao
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.ReactionEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.scheduled.internal.ScheduledMessageDao
+import io.getstream.chat.android.client.internal.offline.repository.domain.scheduled.internal.ScheduledMessageEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.syncState.internal.SyncStateDao
 import io.getstream.chat.android.client.internal.offline.repository.domain.syncState.internal.SyncStateEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.ThreadDao
@@ -89,8 +91,9 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.user.
         ThreadEntity::class,
         ThreadOrderEntity::class,
         DraftMessageEntity::class,
+        ScheduledMessageEntity::class,
     ],
-    version = 209,
+    version = 211,
     exportSchema = false,
 )
 @TypeConverters(
@@ -130,6 +133,7 @@ internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun pollDao(): PollDao
     abstract fun threadDao(): ThreadDao
     abstract fun threadOrderDao(): ThreadOrderDao
+    abstract fun scheduledMessageDao(): ScheduledMessageDao
 
     companion object {
         @Volatile

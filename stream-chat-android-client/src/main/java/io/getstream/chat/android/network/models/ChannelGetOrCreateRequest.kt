@@ -33,6 +33,9 @@ internal data class ChannelGetOrCreateRequest(
     @Json(name = "hide_for_creator")
     internal val hideForCreator: Boolean? = null,
 
+    @Json(name = "include_scheduled_messages")
+    internal val includeScheduledMessages: Boolean? = null,
+
     @Json(name = "presence")
     internal val presence: Boolean? = null,
 

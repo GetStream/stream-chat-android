@@ -129,6 +129,10 @@
             android:label="@string/reminders_title"
             />
         <activity
+            android:name=".feature.scheduled.ScheduledMessagesActivity"
+            android:label="@string/scheduled_messages_title"
+            />
+        <activity
             android:name=".ui.profile.UserProfileActivity"
             android:label="@string/user_profile_title"
             />

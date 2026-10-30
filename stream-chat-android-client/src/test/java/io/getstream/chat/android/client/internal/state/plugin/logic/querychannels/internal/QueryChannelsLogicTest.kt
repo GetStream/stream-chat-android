@@ -39,6 +39,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -322,6 +323,22 @@ internal class QueryChannelsLogicTest {
             memberLimit = 50,
         )
         verify(client).queryChannelsInternal(expectedRequest)
+    }
+
+    @Test
+    fun `queryFirstPage keeps includeScheduledMessages from prior request`() = runTest {
+        // Given
+        val priorRequest = QueryChannelsRequest(filter = filter, offset = 0, limit = 30, querySort = sort)
+            .apply { includeScheduledMessages = true }
+        whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(priorRequest)
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
+
+        // When
+        logic.queryFirstPage()
+
+        // Then
+        verify(client).queryChannelsInternal(argThat { includeScheduledMessages })
     }
 
     @Test

@@ -62,6 +62,7 @@ internal sealed class ChannelOwnCapability(internal val value: String) {
             "query-poll-votes" -> QueryPollVotes
             "quote-message" -> QuoteMessage
             "read-events" -> ReadEvents
+            "schedule-message" -> ScheduleMessage
             "search-messages" -> SearchMessages
             "send-custom-events" -> SendCustomEvents
             "send-links" -> SendLinks
@@ -107,6 +108,7 @@ internal sealed class ChannelOwnCapability(internal val value: String) {
     internal object QueryPollVotes : ChannelOwnCapability("query-poll-votes")
     internal object QuoteMessage : ChannelOwnCapability("quote-message")
     internal object ReadEvents : ChannelOwnCapability("read-events")
+    internal object ScheduleMessage : ChannelOwnCapability("schedule-message")
     internal object SearchMessages : ChannelOwnCapability("search-messages")
     internal object SendCustomEvents : ChannelOwnCapability("send-custom-events")
     internal object SendLinks : ChannelOwnCapability("send-links")

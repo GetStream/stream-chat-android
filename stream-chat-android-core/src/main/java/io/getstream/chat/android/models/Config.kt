@@ -165,4 +165,28 @@ public data class Config(
      * Determines if replying to a message with a quote is enabled. Enabled by default.
      */
     val quotesEnabled: Boolean = true,
+
+    /**
+     * The maximum number of pending scheduled messages the current user can have in a channel, or null when
+     * scheduled messages are not enabled for the app.
+     */
+    val scheduledMessagesMaxPerChannel: Int? = null,
+
+    /**
+     * The maximum number of pending scheduled messages the current user can have across all channels, or null when
+     * scheduled messages are not enabled for the app.
+     */
+    val scheduledMessagesMaxPerUser: Int? = null,
+
+    /**
+     * How far ahead, in seconds, a message can be scheduled, or null when scheduled messages are not enabled for the
+     * app.
+     */
+    val scheduledMessagesMaxLeadTimeSeconds: Int? = null,
+
+    /**
+     * How far ahead, in seconds, a message is scheduled at least, or null when scheduled messages are not enabled for
+     * the app. The server moves a closer date later, to the first whole minute at least this far ahead.
+     */
+    val scheduledMessagesMinLeadTimeSeconds: Int? = null,
 )

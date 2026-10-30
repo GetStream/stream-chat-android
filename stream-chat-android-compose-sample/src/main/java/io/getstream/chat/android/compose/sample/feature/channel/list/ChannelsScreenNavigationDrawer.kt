@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,8 @@ fun ChannelsScreenNavigationDrawer(
     onNewDirectMessageClick: () -> Unit,
     onNewGroupClick: () -> Unit,
     onRemindersClick: () -> Unit,
+    scheduledMessagesCount: Int?,
+    onScheduledMessagesClick: () -> Unit,
     onSignOutClick: () -> Unit,
 ) {
     Column(
@@ -89,6 +92,16 @@ fun ChannelsScreenNavigationDrawer(
             text = stringResource(R.string.navigation_drawer_later),
             onClick = onRemindersClick,
         )
+        // Scheduled messages, when the user can schedule them
+        if (scheduledMessagesCount != null) {
+            NavigationDrawerItem(
+                modifier = Modifier.testTag("Stream_DrawerScheduledMessages"),
+                icon = ComposeR.drawable.stream_design_ic_clock,
+                text = stringResource(R.string.navigation_drawer_scheduled_messages),
+                badgeCount = scheduledMessagesCount,
+                onClick = onScheduledMessagesClick,
+            )
+        }
         // Fill content spacer
         Spacer(modifier = Modifier.weight(1f))
         // Sign Out
@@ -175,9 +188,11 @@ private fun NavigationDrawerItem(
     icon: Int,
     text: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    badgeCount: Int = 0,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(
                 interactionSource = null,
@@ -199,6 +214,15 @@ private fun NavigationDrawerItem(
             fontSize = 14.sp,
             style = ChatTheme.typography.bodyEmphasis,
         )
+        if (badgeCount > 0) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = badgeCount.toString(),
+                color = ChatTheme.colors.textSecondary,
+                fontSize = 14.sp,
+                style = ChatTheme.typography.bodyDefault,
+            )
+        }
     }
 }
 

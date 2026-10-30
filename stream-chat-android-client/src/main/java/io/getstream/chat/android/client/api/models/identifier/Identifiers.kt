@@ -53,6 +53,8 @@ internal fun QueryChannelsIdentifier(
 ): Int {
     var result = "QueryChannels".hashCode()
     result = 31 * result + request.hashCode()
+    // Not part of the data class equality, and it changes the response.
+    result = 31 * result + request.includeScheduledMessages.hashCode()
     return result
 }
 

@@ -1,0 +1,666 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.client.scheduled
+
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.ScheduledMessageDeletedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageFailedEvent
+import io.getstream.chat.android.client.events.ScheduledMessageSentEvent
+import io.getstream.chat.android.client.events.ScheduledMessageUpdatedEvent
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPublishing
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
+import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomScheduledMessage
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.test.TestCall
+import io.getstream.result.Error
+import io.getstream.result.Result
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEmpty
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldContainSame
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
+import java.util.Date
+
+internal class ScheduledMessageManagerTest {
+
+    private val fixture = ScheduledMessageManagerFixture()
+    private val manager = fixture.manager
+    private val repositoryFacade: RepositoryFacade = fixture.repositoryFacade
+    private val cid = randomCID()
+    private val later = Date(fixture.now.time + 3_600_000)
+
+    @Test
+    fun `schedule saves the message locally first, as the current user's`() = runTest {
+        startOffline()
+        val message = Message(id = randomString(), text = randomString(), parentId = randomString())
+        val scheduledAt = randomDate()
+
+        val scheduled = (manager.schedule(cid, message, scheduledAt) as Result.Success).value
+
+        scheduled.id shouldBeEqualTo message.id
+        scheduled.cid shouldBeEqualTo cid
+        scheduled.scheduledAt shouldBeEqualTo scheduledAt
+        scheduled.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
+        scheduled.message.user shouldBeEqualTo fixture.user
+        scheduled.message.parentId shouldBeEqualTo message.parentId
+        scheduled.message.createdAt shouldBeEqualTo scheduledAt
+        manager.scheduledMessages.value shouldBeEqualTo listOf(scheduled)
+        repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single().id shouldBeEqualTo message.id
+        verifyNoInteractions(fixture.api)
+        verify(repositoryFacade, never()).insertMessage(any())
+    }
+
+    @Test
+    fun `edit and reschedule are saved locally first`() = runTest {
+        val onServer = givenScheduledOnServer()
+        val edited = onServer.message.copy(text = randomString())
+        val scheduledAt = randomDate()
+
+        val updated = (manager.update(onServer.id, edited, scheduledAt = null) as Result.Success).value
+        val rescheduled = (manager.reschedule(onServer.id, scheduledAt) as Result.Success).value
+
+        updated.message.text shouldBeEqualTo edited.text
+        updated.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
+        rescheduled.scheduledAt shouldBeEqualTo scheduledAt
+        rescheduled.message.createdAt shouldBeEqualTo scheduledAt
+        rescheduled.message.text shouldBeEqualTo edited.text
+        manager.scheduledMessages.value shouldBeEqualTo listOf(rescheduled)
+        verifyNoInteractions(fixture.api)
+    }
+
+    @Test
+    fun `a slash command is refused in a channel with commands, on schedule and edit`() = runTest {
+        whenever(repositoryFacade.selectChannelConfig(cid.substringBefore(":")))
+            .thenReturn(ChannelConfig(cid.substringBefore(":"), Config(commands = listOf(Command("giphy", "", "", "")))))
+        val onServer = givenScheduledOnServer(randomScheduledMessage(cid = cid))
+        val command = Message(id = randomString(), text = "/giphy hello")
+
+        manager.schedule(cid, command, randomDate()).shouldBeInstanceOf<Result.Failure>()
+        manager.update(onServer.id, onServer.message.copy(text = "/giphy hello"), null)
+            .shouldBeInstanceOf<Result.Failure>()
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(onServer)
+        verifyNoInteractions(fixture.api)
+    }
+
+    @Test
+    fun `a date further ahead than the max lead time is refused on schedule, edit and reschedule`() = runTest {
+        givenConfig(Config(scheduledMessagesMaxLeadTimeSeconds = 60))
+        val onServer = givenScheduledOnServer(randomScheduledMessage(cid = cid))
+        // The server accepts a date up to the max lead time plus one minute, once rounded up to the minute.
+        val wholeMinute = fixture.now.time / 60_000 * 60_000
+        val tooFar = Date(wholeMinute + 180_000)
+        val inTime = Date(wholeMinute + 120_000)
+
+        manager.schedule(cid, Message(id = randomString()), tooFar).shouldBeInstanceOf<Result.Failure>()
+        manager.update(onServer.id, onServer.message, tooFar).shouldBeInstanceOf<Result.Failure>()
+        manager.reschedule(onServer.id, tooFar).shouldBeInstanceOf<Result.Failure>()
+        manager.scheduledMessages.value shouldBeEqualTo listOf(onServer)
+
+        manager.reschedule(onServer.id, inTime).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        manager.schedule(cid, Message(id = randomString()), inTime).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        verifyNoInteractions(fixture.api)
+    }
+
+    @Test
+    fun `the limit per channel refuses a new scheduled message, and failed ones don't count`() = runTest {
+        givenConfig(Config(scheduledMessagesMaxPerChannel = 1))
+        givenScheduledOnServer(
+            randomScheduledMessage(
+                cid = cid,
+                scheduledAt = later,
+                status = ScheduledMessageStatus.Failed,
+                failure = ServerFailedPublishing(null),
+            ),
+        )
+        givenScheduledOnServer(randomScheduledMessage(cid = randomCID(), scheduledAt = later))
+
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Failure>()
+    }
+
+    @Test
+    fun `the limits don't count a message whose date has passed, as the server most likely sent it`() = runTest {
+        givenConfig(Config(scheduledMessagesMaxPerChannel = 1))
+        givenScheduledOnServer(randomScheduledMessage(cid = cid, scheduledAt = Date(fixture.now.time - 60_000)))
+
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+    }
+
+    @Test
+    fun `the limit per user counts the pending messages of every channel`() = runTest {
+        givenConfig(Config(scheduledMessagesMaxPerUser = 2))
+        givenScheduledOnServer(randomScheduledMessage(cid = randomCID(), scheduledAt = later))
+
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Failure>()
+    }
+
+    @Test
+    fun `a slash is scheduled in a channel without commands`() = runTest {
+        manager.schedule(cid, Message(id = randomString(), text = "/shrug"), randomDate())
+            .shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+    }
+
+    @Test
+    fun `a quote of a deleted message is refused on schedule, edit, reschedule and send now`() = runTest {
+        val quoted = randomMessage(deletedAt = Date())
+        whenever(repositoryFacade.selectMessage(quoted.id)).thenReturn(quoted)
+        val onServer = givenScheduledOnServer(
+            randomScheduledMessage().let { it.copy(message = it.message.copy(replyMessageId = quoted.id)) },
+        )
+
+        listOf(
+            manager.schedule(cid, Message(id = randomString(), replyMessageId = quoted.id), randomDate()),
+            manager.update(onServer.id, onServer.message.copy(text = randomString()), null),
+            manager.reschedule(onServer.id, randomDate()),
+            manager.sendNow(onServer.id),
+        ).forEach { it.shouldBeInstanceOf<Result.Failure>() }
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(onServer)
+    }
+
+    @Test
+    fun `deleting a message that is not on the server sends no request`() = runTest {
+        fixture.connectionState.value = ConnectionState.Offline
+        val scheduled = (manager.schedule(cid, Message(id = randomString()), randomDate()) as Result.Success).value
+
+        manager.delete(scheduled.id) shouldBeEqualTo Result.Success(Unit)
+
+        manager.scheduledMessages.value.shouldBeEmpty()
+        verifyNoInteractions(fixture.api)
+    }
+
+    @Test
+    fun `a deleted message can't be edited, rescheduled, sent now or resent`() = runTest {
+        startOffline()
+        val onServer = givenScheduledOnServer()
+        manager.delete(onServer.id)
+
+        listOf(
+            manager.update(onServer.id, onServer.message.copy(text = randomString()), null),
+            manager.reschedule(onServer.id, randomDate()),
+            manager.sendNow(onServer.id),
+            manager.resend(onServer.id),
+        ).forEach { it.shouldBeInstanceOf<Result.Failure>() }
+
+        val deleted = repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
+        deleted.isDeleted shouldBeEqualTo true
+        deleted.message shouldBeEqualTo onServer.message
+        manager.scheduledMessages.value.shouldBeEmpty()
+    }
+
+    @Test
+    fun `deleting a message this device does not know deletes it on the server`() = runTest {
+        val id = randomString()
+        whenever(fixture.api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Success(Unit)))
+
+        manager.delete(id) shouldBeEqualTo Result.Success(Unit)
+
+        verify(fixture.api).deleteScheduledMessage(id)
+    }
+
+    @Test
+    fun `scheduling an id that is already scheduled is refused`() = runTest {
+        val onServer = givenScheduledOnServer()
+
+        manager.schedule(cid, Message(id = onServer.id, text = randomString()), randomDate())
+            .shouldBeInstanceOf<Result.Failure>()
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(onServer)
+    }
+
+    @Test
+    fun `send now clears a failure of the latest changes, so they are sent again`() = runTest {
+        val failed = randomLocalScheduledMessage(
+            pendingChange = LocalScheduledMessage.PendingChange.Update,
+            localFailure = ServerRejectedScheduling(reason = null, message = randomString()),
+        )
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(failed))
+        restarted.connectionState.value = ConnectionState.Offline
+        restarted.manager.start(backgroundScope)
+
+        val sentNow = (restarted.manager.sendNow(failed.id) as Result.Success).value
+
+        sentNow.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
+        sentNow.failure shouldBeEqualTo null
+    }
+
+    @Test
+    fun `resend fails when nothing failed locally`() = runTest {
+        val failedToPublish = givenScheduledOnServer(
+            randomScheduledMessage(status = ScheduledMessageStatus.Failed, failure = ServerFailedPublishing(null)),
+        )
+
+        manager.resend(failedToPublish.id).shouldBeInstanceOf<Result.Failure>()
+    }
+
+    @Test
+    fun `created, updated and failed events save the message, deleted and sent events remove it`() = runTest {
+        startOffline()
+        val created = randomScheduledMessage()
+        val updated = created.copy(message = created.message.copy(text = randomString()))
+        val failed = updated.copy(status = ScheduledMessageStatus.Failed, failure = ServerFailedPublishing(null))
+        val other = randomScheduledMessage()
+
+        manager.onEvent(scheduledMessageCreatedEvent(created))
+        manager.scheduledMessages.value shouldBeEqualTo listOf(created)
+        manager.onEvent(ScheduledMessageUpdatedEvent(EventType.SCHEDULED_MESSAGE_UPDATED, Date(), null, cid, "", "", updated))
+        manager.scheduledMessages.value shouldBeEqualTo listOf(updated)
+        manager.onEvent(ScheduledMessageFailedEvent(EventType.SCHEDULED_MESSAGE_FAILED, Date(), null, cid, "", "", failed))
+        manager.scheduledMessages.value shouldBeEqualTo listOf(failed)
+        manager.onEvent(ScheduledMessageDeletedEvent(EventType.SCHEDULED_MESSAGE_DELETED, Date(), null, cid, "", "", failed))
+        manager.scheduledMessages.value.shouldBeEmpty()
+
+        manager.onEvent(scheduledMessageCreatedEvent(other))
+        manager.onEvent(sentEvent(other))
+        manager.scheduledMessages.value.shouldBeEmpty()
+        repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @Test
+    fun `the new message of a sent message keeps the scheduled message until the sent event`() = runTest {
+        val scheduled = givenScheduledOnServer()
+
+        // The sent message has a new ID, so it is not the scheduled message.
+        manager.onEvent(newMessageEvent(scheduled.message.copy(id = randomString())))
+        manager.scheduledMessages.value shouldBeEqualTo listOf(scheduled)
+
+        manager.onEvent(sentEvent(scheduled))
+        manager.scheduledMessages.value.shouldBeEmpty()
+    }
+
+    @Test
+    fun `a duplicate created event changes nothing`() = runTest {
+        val scheduled = givenScheduledOnServer()
+
+        manager.onEvent(scheduledMessageCreatedEvent(scheduled))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(scheduled)
+    }
+
+    @Test
+    fun `an event older than the local message does not replace it`() = runTest {
+        val now = Date()
+        val older = randomScheduledMessage(updatedAt = Date(now.time - 1_000))
+        val newer = older.copy(message = older.message.copy(text = randomString()), updatedAt = now)
+        givenScheduledOnServer(newer)
+
+        manager.onEvent(ScheduledMessageUpdatedEvent(EventType.SCHEDULED_MESSAGE_UPDATED, Date(), null, cid, "", "", older))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(newer)
+    }
+
+    @Test
+    fun `an event as recent as the local message replaces it, so a failure without a new date is saved`() = runTest {
+        val scheduled = givenScheduledOnServer()
+        val failed = scheduled.copy(status = ScheduledMessageStatus.Failed, failure = ServerFailedPublishing(null))
+
+        manager.onEvent(ScheduledMessageFailedEvent(EventType.SCHEDULED_MESSAGE_FAILED, Date(), null, cid, "", "", failed))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(failed)
+    }
+
+    @Test
+    fun `an event keeps the local content while it has changes the server does not have`() = runTest {
+        fixture.connectionState.value = ConnectionState.Offline
+        val onServer = givenScheduledOnServer()
+        val edited = onServer.message.copy(text = randomString())
+        manager.update(onServer.id, edited, scheduledAt = null)
+
+        manager.onEvent(scheduledMessageCreatedEvent(onServer.copy(status = ScheduledMessageStatus.Sending)))
+
+        val scheduled = manager.scheduledMessages.value.single()
+        scheduled.message.text shouldBeEqualTo edited.text
+        scheduled.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
+    }
+
+    @Test
+    fun `a full query removes the messages the server no longer has, except the ones not on the server yet`() = runTest {
+        startOffline()
+        val sentWhileOffline = givenScheduledOnServer()
+        val kept = givenScheduledOnServer()
+        val notOnServer = (manager.schedule(cid, Message(id = randomString()), randomDate()) as Result.Success).value
+        val new = randomScheduledMessage()
+
+        query(null, emptySet(), null, QueryScheduledMessagesResult(listOf(kept, new), next = null))
+
+        manager.scheduledMessages.value.map(ScheduledMessage::id) shouldContainSame
+            listOf(kept.id, new.id, notOnServer.id)
+        repositoryFacade.scheduledMessageRepository.selectScheduledMessages().map { it.id } shouldContainSame
+            listOf(kept.id, new.id, notOnServer.id)
+        (sentWhileOffline.id in manager.scheduledMessages.value.map(ScheduledMessage::id)) shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a full query of a channel removes only the missing messages of that channel`() = runTest {
+        val inChannel = givenScheduledOnServer(randomScheduledMessage(cid = cid))
+        val elsewhere = givenScheduledOnServer()
+
+        query(cid, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(elsewhere)
+        (inChannel.id in manager.scheduledMessages.value.map(ScheduledMessage::id)) shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a channel returned with its scheduled messages removes only its missing ones, not ones scheduled meanwhile`() =
+        runTest {
+            val sentElsewhere = givenScheduledOnServer(randomScheduledMessage(cid = cid))
+            val otherChannel = givenScheduledOnServer()
+            val known = manager.known()
+            val scheduledMeanwhile = givenScheduledOnServer(randomScheduledMessage(cid = cid))
+
+            manager.saveChannel(cid, emptyList(), known)
+
+            manager.scheduledMessages.value.map(ScheduledMessage::id) shouldContainSame
+                listOf(otherChannel.id, scheduledMeanwhile.id)
+            (sentElsewhere.id in manager.scheduledMessages.value.map(ScheduledMessage::id)) shouldBeEqualTo false
+        }
+
+    @Test
+    fun `a full query keeps a message scheduled on the server while it ran`() = runTest {
+        val scheduledMeanwhile = randomScheduledMessage()
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).thenReturn(
+            SuspendingCall {
+                givenScheduledOnServer(scheduledMeanwhile)
+                Result.Success(QueryScheduledMessagesResult(emptyList(), next = null))
+            },
+        )
+
+        manager.query(null, emptySet(), limit = 100, next = null)
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(scheduledMeanwhile)
+    }
+
+    @Test
+    fun `a query result does not bring back a message removed while the query ran`() = runTest {
+        val scheduled = givenScheduledOnServer()
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).thenReturn(
+            SuspendingCall {
+                manager.onEvent(sentEvent(scheduled))
+                Result.Success(QueryScheduledMessagesResult(listOf(scheduled), next = null))
+            },
+        )
+
+        manager.query(null, setOf(ScheduledMessageQueryStatus.Scheduled), limit = 100, next = null)
+
+        manager.scheduledMessages.value.shouldBeEmpty()
+    }
+
+    @Test
+    fun `a query result older than the local message does not replace it`() = runTest {
+        val now = Date()
+        val older = randomScheduledMessage(updatedAt = Date(now.time - 1_000))
+        val newer = older.copy(message = older.message.copy(text = randomString()), updatedAt = now)
+        givenScheduledOnServer(newer)
+
+        query(null, setOf(ScheduledMessageQueryStatus.Scheduled), null, QueryScheduledMessagesResult(listOf(older), null))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(newer)
+    }
+
+    @ParameterizedTest
+    @CsvSource("150, 100", "0, 1", "20, 20")
+    fun `a query limit outside 1 to 100 is moved into that range`(limit: Int, sent: Int) = runTest {
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))
+            .thenReturn(TestCall(Result.Success(QueryScheduledMessagesResult(emptyList(), next = null))))
+
+        manager.query(null, emptySet(), limit = limit, next = null)
+
+        verify(fixture.api).queryScheduledMessages(null, emptySet(), sent, null)
+    }
+
+    @Test
+    fun `a partial query removes nothing`() = runTest {
+        val scheduled = givenScheduledOnServer()
+
+        query(null, setOf(ScheduledMessageQueryStatus.Failed), null, QueryScheduledMessagesResult(emptyList(), null))
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = randomString()))
+        query(null, emptySet(), randomString(), QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(scheduled)
+    }
+
+    @Test
+    fun `a single page query of every channel and status loads all the messages`() = runTest {
+        manager.hasLoadedAll.value shouldBeEqualTo false
+
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.hasLoadedAll.value shouldBeEqualTo true
+    }
+
+    @Test
+    fun `a query of several pages does not load all the messages, as it removes none`() = runTest {
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = randomString()))
+        query(null, emptySet(), randomString(), QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a query of a channel or a status does not load all the messages`() = runTest {
+        query(cid, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+        query(null, setOf(ScheduledMessageQueryStatus.Scheduled), null, QueryScheduledMessagesResult(emptyList(), null))
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a failed query does not load all the messages`() = runTest {
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))
+            .thenReturn(TestCall(Result.Failure(Error.GenericError(randomString()))))
+
+        manager.query(null, emptySet(), limit = 100, next = null)
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `losing the connection forgets that all the messages were loaded`() = runTest {
+        manager.start(backgroundScope)
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+        manager.hasLoadedAll.value shouldBeEqualTo true
+
+        fixture.connectionState.value = ConnectionState.Offline
+        runCurrent()
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a query that ends after the connection was lost does not load all the messages`() = runTest {
+        manager.start(backgroundScope)
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).thenReturn(
+            SuspendingCall {
+                fixture.connectionState.value = ConnectionState.Offline
+                runCurrent()
+                Result.Success(QueryScheduledMessagesResult(emptyList(), next = null))
+            },
+        )
+
+        manager.query(null, emptySet(), limit = 100, next = null)
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `stop forgets that all the messages were loaded`() = runTest {
+        manager.start(backgroundScope)
+        query(null, emptySet(), null, QueryScheduledMessagesResult(emptyList(), next = null))
+
+        manager.stop()
+
+        manager.hasLoadedAll.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun `the scheduled messages list the pending ones first, then the failed ones, each by date`() = runTest {
+        val now = Date()
+        val failedEarly = randomScheduledMessage(
+            scheduledAt = Date(now.time + 1_000),
+            status = ScheduledMessageStatus.Failed,
+            failure = ServerFailedPublishing(null),
+        )
+        val late = randomScheduledMessage(scheduledAt = Date(now.time + 3_000))
+        val early = randomScheduledMessage(scheduledAt = Date(now.time + 2_000))
+
+        listOf(failedEarly, late, early).forEach { givenScheduledOnServer(it) }
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(early, late, failedEarly)
+    }
+
+    @Test
+    fun `an event before the load keeps the saved local changes`() = runTest {
+        val pendingEdit = randomLocalScheduledMessage(cid = cid, pendingChange = LocalScheduledMessage.PendingChange.Update)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(pendingEdit))
+        restarted.connectionState.value = ConnectionState.Offline
+        val fromEvent = randomScheduledMessage(id = pendingEdit.id, cid = cid, status = ScheduledMessageStatus.Sending)
+
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(fromEvent))
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.manager.scheduledMessages.value.single()
+        loaded.message shouldBeEqualTo pendingEdit.message
+        loaded.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
+    }
+
+    @Test
+    fun `a message removed before the load stays removed`() = runTest {
+        val saved = randomLocalScheduledMessage(cid = cid)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(saved))
+        restarted.connectionState.value = ConnectionState.Offline
+
+        restarted.manager.onEvent(sentEvent(saved.toScheduledMessage()))
+        restarted.manager.start(backgroundScope)
+
+        restarted.manager.scheduledMessages.value.shouldBeEmpty()
+        restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @Test
+    fun `a send now made before the load is kept with the saved local changes`() = runTest {
+        val pendingEdit = randomLocalScheduledMessage(cid = cid, pendingChange = LocalScheduledMessage.PendingChange.Update)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(pendingEdit))
+        restarted.connectionState.value = ConnectionState.Offline
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(randomScheduledMessage(id = pendingEdit.id, cid = cid)))
+
+        restarted.manager.sendNow(pendingEdit.id)
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
+        loaded.message shouldBeEqualTo pendingEdit.message
+        loaded.pendingChange shouldBeEqualTo LocalScheduledMessage.PendingChange.Update
+        loaded.isPendingSendNow shouldBeEqualTo true
+    }
+
+    @Test
+    fun `start loads the saved messages, and stop clears them from memory only`() = runTest {
+        val saved = randomLocalScheduledMessage(localFailure = null)
+        val repository = InMemoryScheduledMessageRepository(saved)
+        val restarted = ScheduledMessageManagerFixture(repository).manager
+
+        restarted.start(backgroundScope)
+        restarted.scheduledMessages.value shouldBeEqualTo listOf(saved.toScheduledMessage())
+        restarted.stop()
+
+        restarted.scheduledMessages.value.shouldBeEmpty()
+        repository.messages.values.toList() shouldBeEqualTo listOf(saved)
+    }
+
+    private suspend fun query(
+        cid: String?,
+        statuses: Set<ScheduledMessageQueryStatus>,
+        next: String?,
+        result: QueryScheduledMessagesResult,
+    ) {
+        whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))
+            .thenReturn(TestCall(Result.Success(result)))
+        manager.query(cid, statuses, limit = 100, next = next)
+    }
+
+    /** Starts saving to the repository, offline so nothing is sent. */
+    private suspend fun TestScope.startOffline() {
+        fixture.connectionState.value = ConnectionState.Offline
+        manager.start(backgroundScope)
+    }
+
+    private suspend fun givenScheduledOnServer(
+        scheduledMessage: ScheduledMessage = randomScheduledMessage(),
+    ): ScheduledMessage {
+        manager.onEvent(scheduledMessageCreatedEvent(scheduledMessage))
+        return scheduledMessage
+    }
+
+    private suspend fun givenConfig(config: Config) {
+        val channelType = cid.substringBefore(":")
+        whenever(repositoryFacade.selectChannelConfig(channelType)).thenReturn(ChannelConfig(channelType, config))
+    }
+
+    private fun sentEvent(scheduledMessage: ScheduledMessage) = ScheduledMessageSentEvent(
+        type = EventType.SCHEDULED_MESSAGE_SENT,
+        createdAt = Date(),
+        rawCreatedAt = null,
+        cid = scheduledMessage.cid,
+        channelType = "",
+        channelId = "",
+        scheduledMessage = scheduledMessage.copy(status = ScheduledMessageStatus.Sent),
+        messageId = randomString(),
+    )
+
+    private fun newMessageEvent(message: Message) = NewMessageEvent(
+        type = EventType.MESSAGE_NEW,
+        createdAt = Date(),
+        rawCreatedAt = "",
+        user = randomUser(),
+        cid = message.cid,
+        channelType = "",
+        channelId = "",
+        message = message,
+        watcherCount = 0,
+        totalUnreadCount = 0,
+        unreadChannels = 0,
+        channelMessageCount = null,
+    )
+}

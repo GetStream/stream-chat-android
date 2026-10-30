@@ -42,6 +42,9 @@ internal data class SendMessageRequest(
     @Json(name = "keep_channel_hidden")
     internal val keepChannelHidden: Boolean? = null,
 
+    @Json(name = "scheduled_at")
+    internal val scheduledAt: java.util.Date? = null,
+
     @Json(name = "skip_enrich_url")
     internal val skipEnrichUrl: Boolean? = null,
 

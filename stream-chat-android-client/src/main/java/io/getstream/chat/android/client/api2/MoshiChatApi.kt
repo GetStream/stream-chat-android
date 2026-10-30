@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
+import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
@@ -64,6 +65,7 @@ import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.V2EventParser
+import io.getstream.chat.android.client.scheduled.ScheduleMessageResult
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploadContext
@@ -102,10 +104,13 @@ import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -156,8 +161,10 @@ import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryRemindersRequest
+import io.getstream.chat.android.network.models.QueryScheduledMessagesRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
+import io.getstream.chat.android.network.models.ScheduledMessagesFilter
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SendMessageRequest
@@ -178,6 +185,7 @@ import io.getstream.chat.android.network.models.UpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
+import io.getstream.chat.android.network.models.UpdateScheduledMessageRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
@@ -205,6 +213,7 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
+import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -233,6 +242,7 @@ constructor(
     private val threadsApi: ThreadsApi,
     private val pollsApi: PollsApi,
     private val remindersApi: RemindersApi,
+    private val scheduledMessagesApi: ScheduledMessagesApi,
     private val pushPreferencesApi: PushPreferencesApi,
     private val userGroupApi: UserGroupApi,
     private val roleApi: RoleApi,
@@ -1344,6 +1354,7 @@ constructor(
             hiddenMessagesBefore = state.hideMessagesBefore,
             draftMessage = state.draft?.toDomain(),
             activeLiveLocations = state.activeLiveLocations.orEmpty().map { it.toDomain() },
+            scheduledMessages = state.scheduledMessages?.map { it.toDomain() },
         ).syncUnreadCountWithReads(currentUserIdProvider())
     }
 
@@ -1517,6 +1528,7 @@ constructor(
             state = query.state,
             watch = query.watch,
             presence = query.presence,
+            includeScheduledMessages = query.includeScheduledMessages.takeIf { it },
         )
 
         val lazyQueryChannelsCall = {
@@ -2014,6 +2026,59 @@ constructor(
             sort = sort.toSortParams(),
         )
         return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
+    }
+
+    override fun scheduleMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        scheduledAt: Date,
+    ): Call<ScheduleMessageResult> = messageApi.sendMessage(
+        channelType = channelType,
+        channelId = channelId,
+        message = SendMessageRequest(
+            message = with(dtoMapping) { message.toMessageRequest() },
+            skipPush = message.skipPushNotification,
+            skipEnrichUrl = message.skipEnrichUrl,
+            scheduledAt = scheduledAt,
+        ),
+    ).mapDomain { response ->
+        ScheduleMessageResult(
+            message = response.message.toDomain().enrichWithCid("$channelType:$channelId"),
+            scheduledMessage = response.scheduledMessage?.toDomain(),
+        )
+    }
+
+    override fun queryScheduledMessages(
+        cid: String?,
+        statuses: Set<ScheduledMessageQueryStatus>,
+        limit: Int,
+        next: String?,
+    ): Call<QueryScheduledMessagesResult> {
+        val status = statuses.takeIf { it.isNotEmpty() }?.map { ScheduledMessageQueryStatusDto.fromString(it.value) }
+        val body = QueryScheduledMessagesRequest(
+            limit = limit,
+            next = next,
+            filter = if (cid != null || status != null) ScheduledMessagesFilter(cid = cid, status = status) else null,
+        )
+        return scheduledMessagesApi.queryScheduledMessages(body = body).mapDomain { it.toDomain() }
+    }
+
+    override fun updateScheduledMessage(id: String, message: Message?, scheduledAt: Date?): Call<ScheduledMessage> {
+        val body = UpdateScheduledMessageRequest(
+            scheduledAt = scheduledAt,
+            message = message?.let { with(dtoMapping) { it.toMessageRequest() } },
+        )
+        return scheduledMessagesApi.updateScheduledMessage(id = id, body = body)
+            .mapDomain { it.scheduledMessage.toDomain() }
+    }
+
+    override fun deleteScheduledMessage(id: String): Call<Unit> {
+        return scheduledMessagesApi.deleteScheduledMessage(id).toUnitCall()
+    }
+
+    override fun sendScheduledMessageNow(id: String): Call<ScheduledMessage> {
+        return scheduledMessagesApi.sendScheduledMessageNow(id).mapDomain { it.scheduledMessage.toDomain() }
     }
 
     override fun queryActiveLocations(): Call<List<Location>> =

@@ -55,9 +55,13 @@ import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryRemindersResult
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageFailure
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -622,6 +626,10 @@ public fun randomConfig(
     skipLastMsgUpdateForSystemMsgs: Boolean = randomBoolean(),
     sharedLocationsEnabled: Boolean = randomBoolean(),
     quotesEnabled: Boolean = randomBoolean(),
+    scheduledMessagesMaxPerChannel: Int? = null,
+    scheduledMessagesMaxPerUser: Int? = null,
+    scheduledMessagesMaxLeadTimeSeconds: Int? = null,
+    scheduledMessagesMinLeadTimeSeconds: Int? = null,
 ): Config = Config(
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -649,6 +657,10 @@ public fun randomConfig(
     skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
     sharedLocationsEnabled = sharedLocationsEnabled,
     quotesEnabled = quotesEnabled,
+    scheduledMessagesMaxPerChannel = scheduledMessagesMaxPerChannel,
+    scheduledMessagesMaxPerUser = scheduledMessagesMaxPerUser,
+    scheduledMessagesMaxLeadTimeSeconds = scheduledMessagesMaxLeadTimeSeconds,
+    scheduledMessagesMinLeadTimeSeconds = scheduledMessagesMinLeadTimeSeconds,
 )
 
 public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =
@@ -1245,6 +1257,35 @@ public fun randomMessageReminder(
     message = message,
     createdAt = createdAt,
     updatedAt = updatedAt,
+)
+
+public fun randomScheduledMessage(
+    id: String = randomString(),
+    cid: String = randomCID(),
+    message: Message = randomMessage(id = id, cid = cid),
+    scheduledAt: Date = randomDate(),
+    status: ScheduledMessageStatus = ScheduledMessageStatus.Scheduled,
+    failure: ScheduledMessageFailure? = null,
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+): ScheduledMessage = ScheduledMessage(
+    id = id,
+    cid = cid,
+    channel = null,
+    message = message,
+    scheduledAt = scheduledAt,
+    status = status,
+    failure = failure,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+public fun randomQueryScheduledMessagesResult(
+    scheduledMessages: List<ScheduledMessage> = List(positiveRandomInt(5)) { randomScheduledMessage() },
+    next: String? = randomString(),
+): QueryScheduledMessagesResult = QueryScheduledMessagesResult(
+    scheduledMessages = scheduledMessages,
+    next = next,
 )
 
 public fun randomQueryMessageRemindersResult(

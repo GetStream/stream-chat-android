@@ -88,6 +88,14 @@ public data class QueryChannelsRequest @JvmOverloads constructor(
     override var presence: Boolean = false
 
     /**
+     * Whether each channel is loaded with the current user's scheduled messages in it, in [Channel.scheduledMessages].
+     * They are also saved in `ChatClient.scheduledMessages`, where the ones of a returned channel that the server no
+     * longer has are removed. [Channel.scheduledMessages] is null when the server did not send them.
+     * Defaults to false.
+     */
+    public var includeScheduledMessages: Boolean = false
+
+    /**
      * List of sort specifications.
      */
     public val sort: List<Map<String, Any>> = querySort.toDto()

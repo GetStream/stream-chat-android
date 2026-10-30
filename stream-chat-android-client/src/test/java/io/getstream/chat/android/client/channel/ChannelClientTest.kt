@@ -43,7 +43,9 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -56,6 +58,7 @@ import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMute
+import io.getstream.chat.android.randomQueryScheduledMessagesResult
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.test.runTest
@@ -2581,5 +2584,34 @@ internal class ChannelClientTest {
         // then
         verifyNetworkError(result, errorCode)
         verify(chatClient).unarchiveChannel(channelType, channelId)
+    }
+
+    @Test
+    fun `queryScheduledMessages should return success when ChatClient returns success`() = runTest {
+        // given
+        val statuses = setOf(ScheduledMessageQueryStatus.Failed)
+        val limit = positiveRandomInt()
+        val next = randomString()
+        val queryResult = randomQueryScheduledMessagesResult()
+        whenever(chatClient.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))
+            .thenReturn(RetroSuccess(queryResult).toRetrofitCall())
+        // when
+        val result = channelClient.queryScheduledMessages(statuses, limit, next).await()
+        // then
+        verifySuccess(result, queryResult)
+        verify(chatClient).queryScheduledMessages(channelClient.cid, statuses, limit, next)
+    }
+
+    @Test
+    fun `queryScheduledMessages should return error when ChatClient returns error`() = runTest {
+        // given
+        val errorCode = positiveRandomInt()
+        whenever(chatClient.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()))
+            .thenReturn(RetroError<QueryScheduledMessagesResult>(errorCode).toRetrofitCall())
+        // when
+        val result = channelClient.queryScheduledMessages().await()
+        // then
+        verifyNetworkError(result, errorCode)
+        verify(chatClient).queryScheduledMessages(channelClient.cid, emptySet(), 100, null)
     }
 }

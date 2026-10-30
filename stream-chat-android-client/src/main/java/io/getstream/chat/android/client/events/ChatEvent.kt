@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
@@ -967,6 +968,87 @@ public data class NotificationReminderDueEvent(
     val messageId: String,
     val userId: String,
 ) : CidEvent(), HasReminder
+
+/**
+ * Triggered when the current user schedules a message. Only the current user's connections receive it.
+ *
+ * @property scheduledMessage The scheduled message.
+ */
+public data class ScheduledMessageCreatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val scheduledMessage: ScheduledMessage,
+) : CidEvent()
+
+/**
+ * Triggered when the current user edits or reschedules a scheduled message. Only the current user's connections
+ * receive it.
+ *
+ * @property scheduledMessage The scheduled message, with its new content and date.
+ */
+public data class ScheduledMessageUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val scheduledMessage: ScheduledMessage,
+) : CidEvent()
+
+/**
+ * Triggered when the current user deletes a scheduled message, so it is never sent. Only the current user's
+ * connections receive it.
+ *
+ * @property scheduledMessage The deleted scheduled message.
+ */
+public data class ScheduledMessageDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val scheduledMessage: ScheduledMessage,
+) : CidEvent()
+
+/**
+ * Triggered when the server sends a scheduled message of the current user to the channel. Only the current user's
+ * connections receive it. The sent message arrives with a [NewMessageEvent], before or after this event.
+ *
+ * @property scheduledMessage The scheduled message that was sent.
+ * @property messageId The ID of the message the server created when it sent the scheduled message.
+ */
+public data class ScheduledMessageSentEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val scheduledMessage: ScheduledMessage,
+    val messageId: String,
+) : CidEvent()
+
+/**
+ * Triggered when the server could not send a scheduled message of the current user. Only the current user's
+ * connections receive it.
+ *
+ * @property scheduledMessage The scheduled message, with the reason of the failure in [ScheduledMessage.failure].
+ */
+public data class ScheduledMessageFailedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val scheduledMessage: ScheduledMessage,
+) : CidEvent()
 
 /**
  * Event triggered after a user was banned and their messages were deleted. Triggered in two scenarios:
