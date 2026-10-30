@@ -74,6 +74,7 @@ internal class ChannelTest {
             draftMessage = randomDraftMessage(),
             activeLiveLocations = listOf(randomLocation()),
             messageCount = randomInt(),
+            activeMemberCount = randomInt(),
             pushPreference = PushPreference(level = PushPreferenceLevel.all, disabledUntil = randomDate()),
             filterTags = listOf(randomString()),
             lastMessageAt = randomDate(),
@@ -111,6 +112,7 @@ internal class ChannelTest {
             .withDraftMessage(expected.draftMessage)
             .withActiveLiveLocations(expected.activeLiveLocations)
             .withMessageCount(expected.messageCount)
+            .withActiveMemberCount(expected.activeMemberCount)
             .withPushPreference(expected.pushPreference)
             .withFilterTags(expected.filterTags)
             .withLastMessageAt(expected.lastMessageAt)
@@ -316,6 +318,24 @@ internal class ChannelTest {
         val merged = original.mergeChannelFromEvent(update)
 
         assertEquals(50, merged.messageCount)
+    }
+
+    @Test
+    fun `mergeChannelFromEvent should keep activeMemberCount when the update has none`() {
+        val original = Channel(activeMemberCount = 7)
+
+        val merged = original.mergeChannelFromEvent(Channel(activeMemberCount = null))
+
+        assertEquals(7, merged.activeMemberCount)
+    }
+
+    @Test
+    fun `mergeChannelFromEvent should take activeMemberCount from the update when present`() {
+        val original = Channel(activeMemberCount = 7)
+
+        val merged = original.mergeChannelFromEvent(Channel(activeMemberCount = 5))
+
+        assertEquals(5, merged.activeMemberCount)
     }
 
     @Test

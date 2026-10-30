@@ -54,6 +54,9 @@ internal data class ChannelResponse(
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),
 
+    @Json(name = "active_member_count")
+    internal val activeMemberCount: Int? = null,
+
     @Json(name = "auto_translation_enabled")
     internal val autoTranslationEnabled: Boolean? = null,
 

@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * When set, [filter] and [querySort] are ignored by the backend.
  * @property filterValues Values to interpolate into the predefined filter template.
  * @property sortValues Values to interpolate into the predefined sort template.
+ * @property includeActiveMemberCount Whether to fill [Channel.activeMemberCount] on the returned channels.
  */
 public data class QueryChannelsRequest @JvmOverloads constructor(
     public val filter: FilterObject,
@@ -48,6 +49,7 @@ public data class QueryChannelsRequest @JvmOverloads constructor(
     public val predefinedFilter: String? = null,
     public val filterValues: Map<String, Any>? = null,
     public val sortValues: Map<String, Any>? = null,
+    public val includeActiveMemberCount: Boolean = false,
 ) : ChannelRequest<QueryChannelsRequest> {
 
     /**
@@ -61,6 +63,7 @@ public data class QueryChannelsRequest @JvmOverloads constructor(
      * @param offset Pagination offset.
      * @param messageLimit Number of messages in the response. When `null`, the server-side default is used.
      * @param memberLimit Number of members in the response. When `null`, the server-side default is used.
+     * @param includeActiveMemberCount Whether to fill [Channel.activeMemberCount] on the returned channels.
      */
     @JvmOverloads
     public constructor(
@@ -71,6 +74,7 @@ public data class QueryChannelsRequest @JvmOverloads constructor(
         offset: Int = 0,
         messageLimit: Int? = null,
         memberLimit: Int? = null,
+        includeActiveMemberCount: Boolean = false,
     ) : this(
         filter = Filters.neutral(),
         offset = offset,
@@ -81,6 +85,7 @@ public data class QueryChannelsRequest @JvmOverloads constructor(
         predefinedFilter = predefinedFilter,
         filterValues = filterValues,
         sortValues = sortValues,
+        includeActiveMemberCount = includeActiveMemberCount,
     )
 
     override var state: Boolean = true

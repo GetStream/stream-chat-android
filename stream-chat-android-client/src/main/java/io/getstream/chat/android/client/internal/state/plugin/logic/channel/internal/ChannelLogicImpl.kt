@@ -311,13 +311,15 @@ internal class ChannelLogicImpl(
 
         // Update channel data
         val channelData = channel.toChannelData()
-        state.updateChannelData {
+        state.updateChannelData { current ->
             // Enrich own_capabilities
-            if (channelData.ownCapabilities.isEmpty()) {
+            val enriched = if (channelData.ownCapabilities.isEmpty()) {
                 channelData.copy(ownCapabilities = state.channelData.value.ownCapabilities)
             } else {
                 channelData
             }
+            // Only queries that ask for it carry the active member count, so keep the last known one
+            enriched.copy(activeMemberCount = enriched.activeMemberCount ?: current?.activeMemberCount)
         }
         // Update member/watcher data
         state.setMemberCount(channel.memberCount)

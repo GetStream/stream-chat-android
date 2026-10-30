@@ -364,6 +364,32 @@ internal class ChannelDataTest {
     }
 
     @Test
+    fun `mergeFromEvent should keep activeMemberCount when the update has none`() {
+        val original = ChannelData(id = "123", type = "messaging", activeMemberCount = 7)
+        val update = ChannelData(id = "123", type = "messaging", activeMemberCount = null)
+
+        assertEquals(7, original.mergeFromEvent(update).activeMemberCount)
+    }
+
+    @Test
+    fun `toChannel and toChannelData should carry activeMemberCount`() {
+        val data = ChannelData(id = "123", type = "messaging", activeMemberCount = 7)
+
+        val channel = data.toChannel(
+            messages = emptyList(),
+            cachedLatestMessages = emptyList(),
+            members = emptyList(),
+            reads = emptyList(),
+            watchers = emptyList(),
+            watcherCount = 0,
+            insideSearch = false,
+        )
+
+        assertEquals(7, channel.activeMemberCount)
+        assertEquals(7, channel.toChannelData().activeMemberCount)
+    }
+
+    @Test
     fun `mergeFromEvent should keep the latest truncatedAt`() {
         val earlier = Date(1000)
         val later = Date(2000)

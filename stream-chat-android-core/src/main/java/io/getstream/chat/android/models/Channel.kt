@@ -72,6 +72,9 @@ import java.util.Date
  * @param truncatedBy The user who last truncated the channel, if it was truncated by a user.
  * @param autoTranslationEnabled Whether messages in the channel are translated automatically.
  * @param autoTranslationLanguages The language codes messages are translated to when [autoTranslationEnabled] is set.
+ * @param activeMemberCount Number of members whose users are neither deactivated nor deleted. Only filled when
+ * the channels are queried with `QueryChannelsRequest.includeActiveMemberCount`, and kept from the last such query
+ * otherwise. Null when it was never requested, or when the server could not compute it in time.
  */
 @Immutable
 public data class Channel(
@@ -123,6 +126,7 @@ public data class Channel(
     val truncatedBy: User? = null,
     val autoTranslationEnabled: Boolean = false,
     val autoTranslationLanguages: Set<String> = emptySet(),
+    val activeMemberCount: Int? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -232,6 +236,7 @@ public data class Channel(
         private var truncatedBy: User? = null
         private var autoTranslationEnabled: Boolean = false
         private var autoTranslationLanguages: Set<String> = emptySet()
+        private var activeMemberCount: Int? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -265,6 +270,7 @@ public data class Channel(
             draft = channel.draftMessage
             activeLiveLocations = channel.activeLiveLocations
             messageCount = channel.messageCount
+            activeMemberCount = channel.activeMemberCount
             pushPreference = channel.pushPreference
             filterTags = channel.filterTags
             lastMessageAt = channel.lastMessageAt
@@ -344,6 +350,9 @@ public data class Channel(
         public fun withAutoTranslationLanguages(autoTranslationLanguages: Set<String>): Builder = apply {
             this.autoTranslationLanguages = autoTranslationLanguages
         }
+        public fun withActiveMemberCount(activeMemberCount: Int?): Builder = apply {
+            this.activeMemberCount = activeMemberCount
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         public fun build(): Channel = Channel(
@@ -386,6 +395,7 @@ public data class Channel(
             truncatedBy = truncatedBy,
             autoTranslationEnabled = autoTranslationEnabled,
             autoTranslationLanguages = autoTranslationLanguages,
+            activeMemberCount = activeMemberCount,
             extraData = extraData,
         )
     }
@@ -415,6 +425,8 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
         messageCount = that.messageCount ?: messageCount,
+        // events never carry the active member count
+        activeMemberCount = that.activeMemberCount ?: activeMemberCount,
         lastMessageAt = that.lastMessageAt,
         disabled = that.disabled,
         // blocked is omitted by the events, and truncatedAt only ever moves forward
@@ -477,5 +489,6 @@ public fun Channel.toChannelData(): ChannelData {
         truncatedBy = truncatedBy,
         autoTranslationEnabled = autoTranslationEnabled,
         autoTranslationLanguages = autoTranslationLanguages,
+        activeMemberCount = activeMemberCount,
     )
 }

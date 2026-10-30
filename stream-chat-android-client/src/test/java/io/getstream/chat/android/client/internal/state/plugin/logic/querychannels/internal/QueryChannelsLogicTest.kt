@@ -325,6 +325,34 @@ internal class QueryChannelsLogicTest {
     }
 
     @Test
+    fun `queryFirstPage keeps includeActiveMemberCount from prior request`() = runTest {
+        // Given
+        val priorRequest = QueryChannelsRequest(
+            filter = filter,
+            offset = 0,
+            limit = 30,
+            querySort = sort,
+            includeActiveMemberCount = true,
+        )
+        whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(priorRequest)
+        whenever(client.queryChannelsInternal(any()))
+            .thenReturn(QueryChannelsResult(channels = emptyList(), predefinedFilter = null).asCall())
+
+        // When
+        logic.queryFirstPage()
+
+        // Then
+        val expectedRequest = QueryChannelsRequest(
+            filter = filter,
+            offset = 0,
+            limit = 30,
+            querySort = sort,
+            includeActiveMemberCount = true,
+        )
+        verify(client).queryChannelsInternal(expectedRequest)
+    }
+
+    @Test
     fun `queryFirstPage rebuilds a predefined-filter request from a Predefined identifier`() = runTest {
         // Given
         val predefinedIdentifier = QueryChannelsIdentifier.Predefined(

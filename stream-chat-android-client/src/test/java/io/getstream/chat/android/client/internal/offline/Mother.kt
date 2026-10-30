@@ -485,6 +485,7 @@ internal fun randomChannelEntity(
     truncatedByUserId: String? = null,
     autoTranslationEnabled: Boolean = randomBoolean(),
     autoTranslationLanguages: List<String> = listOf(randomString()),
+    activeMemberCount: Int? = randomInt(),
 ): ChannelEntity = ChannelEntity(
     type = type,
     channelId = channelId,
@@ -518,6 +519,7 @@ internal fun randomChannelEntity(
     truncatedByUserId = truncatedByUserId,
     autoTranslationEnabled = autoTranslationEnabled,
     autoTranslationLanguages = autoTranslationLanguages,
+    activeMemberCount = activeMemberCount,
 )
 
 internal fun randomAnswerEntity(

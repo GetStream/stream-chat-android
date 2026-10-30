@@ -238,6 +238,7 @@ internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
 
 /** The [ChannelResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
 internal val CHANNEL_HIDDEN_CUSTOM_KEYS = setOf(
+    "active_member_count",
     "auto_translation_enabled",
     "auto_translation_language",
     "blocked",
@@ -466,6 +467,7 @@ internal class DomainMapping(
             cooldown = cooldown ?: 0,
             ownCapabilities = ownCapabilities.orEmpty().mapTo(mutableSetOf(), ChannelOwnCapability::value),
             messageCount = messageCount,
+            activeMemberCount = activeMemberCount,
             lastMessageAt = lastMessageAt,
             truncatedBy = truncatedBy?.toDomain(),
             autoTranslationEnabled = autoTranslationEnabled ?: false,

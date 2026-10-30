@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -2184,6 +2185,24 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannels(connectionId, expectedPayload)
+    }
+
+    @Test
+    fun `queryChannels sends include_active_member_count only when requested`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.queryChannels(any(), any()))
+            .doReturn(RetroSuccess(QueryChannelsResponse(duration = randomString())).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+        sut.setConnection(userId = randomString(), connectionId = randomString())
+        val filter = Filters.eq("type", "messaging")
+
+        sut.queryChannels(QueryChannelsRequest(filter = filter, limit = 10, includeActiveMemberCount = true)).await()
+        sut.queryChannels(QueryChannelsRequest(filter = filter, limit = 10)).await()
+
+        val captor = argumentCaptor<io.getstream.chat.android.network.models.QueryChannelsRequest>()
+        verify(api, times(2)).queryChannels(any(), captor.capture())
+        assertEquals(true, captor.firstValue.includeActiveMemberCount)
+        assertEquals(null, captor.secondValue.includeActiveMemberCount)
     }
 
     @ParameterizedTest
