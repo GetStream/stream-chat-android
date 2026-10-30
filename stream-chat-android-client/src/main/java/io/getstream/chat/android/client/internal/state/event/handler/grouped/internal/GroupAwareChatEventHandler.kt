@@ -57,7 +57,7 @@ internal class GroupAwareChatEventHandler(
     clientState: ClientState,
     private val blockedUserIds: () -> Collection<String>,
     private val now: () -> Date = ::Date,
-) : DefaultChatEventHandler(channels, clientState) {
+) : DefaultChatEventHandler(channels, clientState, blockedUserIds) {
 
     override fun handleChatEvent(
         event: ChatEvent,

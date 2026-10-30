@@ -23,7 +23,9 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.EqualsFilterObject
 import io.getstream.chat.android.models.FilterObject
 
 /**
@@ -87,6 +89,9 @@ public sealed class EventHandlingResult {
  *
  * The channel will be watched and added to the set after receiving [ChannelVisibleEvent] event.
  *
+ * A set filtered on `hidden: true` lists hidden channels instead, so [ChannelHiddenEvent] watches and adds the channel,
+ * and [ChannelVisibleEvent] removes it.
+ *
  * Other events will be skipped.
  */
 public abstract class BaseChatEventHandler : ChatEventHandler {
@@ -103,8 +108,16 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         return when (event) {
             is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
             is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
-            is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
-            is ChannelVisibleEvent -> EventHandlingResult.WatchAndAdd(event.cid)
+            is ChannelHiddenEvent -> if (filter.listsHiddenChannels()) {
+                EventHandlingResult.WatchAndAdd(event.cid)
+            } else {
+                EventHandlingResult.Remove(event.cid)
+            }
+            is ChannelVisibleEvent -> if (filter.listsHiddenChannels()) {
+                EventHandlingResult.Remove(event.cid)
+            } else {
+                EventHandlingResult.WatchAndAdd(event.cid)
+            }
             else -> EventHandlingResult.Skip
         }
     }
@@ -141,3 +154,12 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         }
     }
 }
+
+/** Whether the filter selects hidden channels, alone or as part of an `and`. */
+internal fun FilterObject.listsHiddenChannels(): Boolean = when (this) {
+    is EqualsFilterObject -> fieldName == HIDDEN_FIELD && value == true
+    is AndFilterObject -> filterObjects.any { it.listsHiddenChannels() }
+    else -> false
+}
+
+private const val HIDDEN_FIELD = "hidden"

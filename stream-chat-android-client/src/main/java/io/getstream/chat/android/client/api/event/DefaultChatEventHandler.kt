@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.api.event
 
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.globalState
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
@@ -28,10 +30,12 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.extensions.internal.updateMember
 import io.getstream.chat.android.client.extensions.internal.updateMembership
+import io.getstream.chat.android.client.internal.state.utils.internal.unhidesChannel
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -39,17 +43,31 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param channels The map of visible channels.
  * @param clientState The client state used to obtain current user.
+ * @param blockedUserIds The ids of the users the current user blocked.
  */
-public open class DefaultChatEventHandler(
+public open class DefaultChatEventHandler internal constructor(
     protected val channels: StateFlow<Map<String, Channel>?>,
     protected val clientState: ClientState,
+    private val blockedUserIds: () -> Collection<String>,
 ) : BaseChatEventHandler() {
+
+    /**
+     * @param channels The map of visible channels.
+     * @param clientState The client state used to obtain current user.
+     */
+    public constructor(
+        channels: StateFlow<Map<String, Channel>?>,
+        clientState: ClientState,
+    ) : this(channels, clientState, { ChatClient.instance().globalState.blockedUserIds.value })
 
     /**
      * Handles additional events:
      * - [NewMessageEvent] - adds the channel to the set if its not a system message.
      * - [MemberRemovedEvent] - removes the channel from the set if a current user left.
      * - [MemberAddedEvent] - adds the channel to the set if a current user was added.
+     *
+     * In a set filtered on `hidden: true`, these events never add a channel, and [NewMessageEvent] removes the channel
+     * when the message shows it again.
      *
      * @see [BaseChatEventHandler.handleCidEvent]
      *
@@ -60,11 +78,20 @@ public open class DefaultChatEventHandler(
      * @return [EventHandlingResult] Result of handling.
      */
     override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
+        val listsHiddenChannels = filter.listsHiddenChannels()
         return when (event) {
-            is NewMessageEvent -> handleNewMessageEvent(event, cachedChannel)
+            is NewMessageEvent -> if (listsHiddenChannels) {
+                removeIfMessageShowsChannel(event.cid, event.message, cachedChannel?.blocked)
+            } else {
+                handleNewMessageEvent(event, cachedChannel)
+            }
             is MemberRemovedEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
-            is MemberAddedEvent -> addIfCurrentUserJoinedChannel(cachedChannel, event.member)
-            is MemberUpdatedEvent -> addIfMembershipUpdated(cachedChannel, event.member)
+            is MemberAddedEvent -> if (listsHiddenChannels) {
+                EventHandlingResult.Skip
+            } else {
+                addIfCurrentUserJoinedChannel(cachedChannel, event.member)
+            }
+            is MemberUpdatedEvent -> addIfMembershipUpdated(cachedChannel, event.member, listsHiddenChannels)
             else -> super.handleCidEvent(event, filter, cachedChannel)
         }
     }
@@ -75,15 +102,31 @@ public open class DefaultChatEventHandler(
      * - [NotificationRemovedFromChannelEvent] - removes the channel from the set if a current user left.
      * - [NotificationAddedToChannelEvent] - calls watch and adds the channel to the set if a current user was added.
      *
+     * In a set filtered on `hidden: true`, these events never add a channel, and [NotificationMessageNewEvent] removes
+     * the channel when the message shows it again.
+     *
      * @param event [ChatEvent] that may contain updates for the set of channels.
      * @param filter [FilterObject] associated with the set of channels. Can be used to define the result of handling.
 
      * @return [EventHandlingResult] Result of handling.
      */
     override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
+        val listsHiddenChannels = filter.listsHiddenChannels()
         return when (event) {
-            is NotificationMessageNewEvent -> EventHandlingResult.WatchAndAdd(event.cid)
-            is NotificationAddedToChannelEvent -> EventHandlingResult.WatchAndAdd(event.cid)
+            is NotificationMessageNewEvent -> if (listsHiddenChannels) {
+                removeIfMessageShowsChannel(
+                    event.cid,
+                    event.message,
+                    (channels.value?.get(event.cid) ?: event.channel).blocked,
+                )
+            } else {
+                EventHandlingResult.WatchAndAdd(event.cid)
+            }
+            is NotificationAddedToChannelEvent -> if (listsHiddenChannels) {
+                EventHandlingResult.Skip
+            } else {
+                EventHandlingResult.WatchAndAdd(event.cid)
+            }
             is NotificationRemovedFromChannelEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
             else -> super.handleChannelEvent(event, filter)
         }
@@ -106,13 +149,39 @@ public open class DefaultChatEventHandler(
         }
     }
 
-    private fun addIfMembershipUpdated(channel: Channel?, member: Member): EventHandlingResult {
-        // A membership update must not resurface a hidden channel
-        return if (channel?.membership?.getUserId() == member.getUserId() && channel.hidden != true) {
+    private fun addIfMembershipUpdated(
+        channel: Channel?,
+        member: Member,
+        listsHiddenChannels: Boolean,
+    ): EventHandlingResult {
+        // A membership update only adds a channel to the set it belongs to: hidden channels to a set of hidden channels
+        val belongsHere = (channel?.hidden == true) == listsHiddenChannels
+        return if (channel?.membership?.getUserId() == member.getUserId() && belongsHere) {
             EventHandlingResult.Add(
                 channel.updateMembership(member)
                     .updateMember(member),
             )
+        } else {
+            EventHandlingResult.Skip
+        }
+    }
+
+    /**
+     * Removes the channel from a set of hidden channels when the new [message] makes the server show it again.
+     *
+     * @param cid The full channel id, i.e. "messaging:123".
+     * @param message The new message.
+     * @param channelBlocked Whether the current user blocked the channel, when known.
+     *
+     * @return [EventHandlingResult] Result of handling.
+     */
+    private fun removeIfMessageShowsChannel(
+        cid: String,
+        message: Message,
+        channelBlocked: Boolean?,
+    ): EventHandlingResult {
+        return if (message.unhidesChannel(channelBlocked, blockedUserIds())) {
+            removeIfChannelExists(cid)
         } else {
             EventHandlingResult.Skip
         }
