@@ -626,6 +626,10 @@ public fun randomConfig(
     skipLastMsgUpdateForSystemMsgs: Boolean = randomBoolean(),
     sharedLocationsEnabled: Boolean = randomBoolean(),
     quotesEnabled: Boolean = randomBoolean(),
+    scheduledMessagesMaxPerChannel: Int? = null,
+    scheduledMessagesMaxPerUser: Int? = null,
+    scheduledMessagesMaxLeadTimeSeconds: Int? = null,
+    scheduledMessagesMinLeadTimeSeconds: Int? = null,
 ): Config = Config(
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -653,6 +657,10 @@ public fun randomConfig(
     skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
     sharedLocationsEnabled = sharedLocationsEnabled,
     quotesEnabled = quotesEnabled,
+    scheduledMessagesMaxPerChannel = scheduledMessagesMaxPerChannel,
+    scheduledMessagesMaxPerUser = scheduledMessagesMaxPerUser,
+    scheduledMessagesMaxLeadTimeSeconds = scheduledMessagesMaxLeadTimeSeconds,
+    scheduledMessagesMinLeadTimeSeconds = scheduledMessagesMinLeadTimeSeconds,
 )
 
 public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =

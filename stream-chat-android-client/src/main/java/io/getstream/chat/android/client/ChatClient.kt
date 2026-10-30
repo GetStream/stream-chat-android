@@ -182,6 +182,7 @@ import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChatPreferences
+import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.CreatePollParams
@@ -5227,8 +5228,11 @@ internal constructor(
      * [ScheduledMessageStatus.Failed], and [ScheduledMessage.failure] says why. When [scheduledAt] has passed by then,
      * the server sends it right away as a normal message.
      *
-     * The message is refused before it is saved when it starts with `/` in a channel that has commands, or when it
-     * quotes a message that was deleted, as known from the channel config and messages saved on this device.
+     * The message is refused before it is saved when it starts with `/` in a channel that has commands, when it
+     * quotes a message that was deleted, when [scheduledAt] is further ahead than
+     * [Config.scheduledMessagesMaxLeadTimeSeconds], or when the user already has as many pending scheduled messages as
+     * [Config.scheduledMessagesMaxPerChannel] in the channel or [Config.scheduledMessagesMaxPerUser] in all channels,
+     * as known from the channel config and messages saved on this device.
      *
      * @param channelType The type of the channel.
      * @param channelId The ID of the channel.
@@ -5289,10 +5293,11 @@ internal constructor(
      * locally first, and sent to the server like a new scheduled message (see [scheduleMessage]). An edit made
      * before the message reached the server goes out with it.
      *
-     * The edit is refused before it is saved when the message starts with `/` in a channel that has commands, or when
-     * it quotes a message that was deleted, as known from the channel config and messages saved on this device. A
-     * message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be edited: the server
-     * rejects the edit, so delete it and schedule a new message instead.
+     * The edit is refused before it is saved when the message starts with `/` in a channel that has commands, when it
+     * quotes a message that was deleted, or when [scheduledAt] is further ahead than
+     * [Config.scheduledMessagesMaxLeadTimeSeconds], as known from the channel config and messages saved on this
+     * device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be edited:
+     * the server rejects the edit, so delete it and schedule a new message instead.
      *
      * @param id The ID of the scheduled message.
      * @param message The new content, which replaces the whole content of the scheduled message. The
@@ -5318,7 +5323,8 @@ internal constructor(
      * Changes the date when a scheduled message is sent. The change is saved locally first, and sent to the server
      * like a new scheduled message (see [scheduleMessage]).
      *
-     * It is refused before it is saved when the message quotes a message that was deleted, as known from the messages
+     * It is refused before it is saved when the message quotes a message that was deleted, or when [scheduledAt] is
+     * further ahead than [Config.scheduledMessagesMaxLeadTimeSeconds], as known from the channel config and messages
      * saved on this device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing])
      * can't be rescheduled: the server rejects it, so delete it and schedule a new message instead.
      *

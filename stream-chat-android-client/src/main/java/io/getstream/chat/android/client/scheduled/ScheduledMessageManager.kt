@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.events.ScheduledMessageDeletedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageFailedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageSentEvent
 import io.getstream.chat.android.client.events.ScheduledMessageUpdatedEvent
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage.PendingChange
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -66,6 +65,7 @@ internal class ScheduledMessageManager(
 ) {
 
     private val store = ScheduledMessageStore()
+    private val validator = ScheduledMessageValidator(getRepositoryFacade, now)
     private val sender = ScheduledMessageSender(store, api, attachmentUploader, clientState, onSentAsMessage)
     private val lifecycleMutex = Mutex()
     private var senderJob: Job? = null
@@ -115,7 +115,11 @@ internal class ScheduledMessageManager(
     }
 
     suspend fun schedule(cid: String, message: Message, scheduledAt: Date): Result<ScheduledMessage> {
-        validateContent(cid, message)?.let { return Result.Failure(it) }
+        val others = store.messages.value.values.filter { it.id != message.id }
+        val error = validator.validateContent(cid, message)
+            ?: validator.validateScheduledAt(cid, scheduledAt)
+            ?: validator.validateLimits(cid, others)
+        error?.let { return Result.Failure(it) }
         val now = now()
         val content = message.copy(
             cid = cid,
@@ -152,7 +156,9 @@ internal class ScheduledMessageManager(
 
     suspend fun update(id: String, message: Message, scheduledAt: Date?): Result<ScheduledMessage> {
         val current = store.messages.value[id] ?: return notFound(id)
-        validateContent(current.cid, message)?.let { return Result.Failure(it) }
+        val error = validator.validateContent(current.cid, message)
+            ?: scheduledAt?.let { validator.validateScheduledAt(current.cid, it) }
+        error?.let { return Result.Failure(it) }
         return change(id) { scheduled, now ->
             scheduled.copy(
                 message = message.copy(
@@ -168,13 +174,15 @@ internal class ScheduledMessageManager(
 
     suspend fun reschedule(id: String, scheduledAt: Date): Result<ScheduledMessage> {
         val current = store.messages.value[id] ?: return notFound(id)
-        validateQuote(current.message.replyMessageId)?.let { return Result.Failure(it) }
+        val error = validator.validateQuote(current.message.replyMessageId)
+            ?: validator.validateScheduledAt(current.cid, scheduledAt)
+        error?.let { return Result.Failure(it) }
         return change(id) { scheduled, _ -> scheduled.reschedule(scheduledAt) }
     }
 
     suspend fun sendNow(id: String): Result<ScheduledMessage> {
         val current = store.messages.value[id] ?: return notFound(id)
-        validateQuote(current.message.replyMessageId)?.let { return Result.Failure(it) }
+        validator.validateQuote(current.message.replyMessageId)?.let { return Result.Failure(it) }
         // A failure of the latest changes is cleared, so they are sent again before the message is sent now.
         return updateVisible(id) { it.copy(isPendingSendNow = true, localFailure = null) }
     }
@@ -291,28 +299,6 @@ internal class ScheduledMessageManager(
                 hasPendingScheduledAt = hasPendingScheduledAt || mayBeOnServer,
             )
         }
-
-    /**
-     * Refuses on the device what the server would reject: a slash command in a channel with commands, which the
-     * server never schedules, and a quote of a deleted message.
-     */
-    private suspend fun validateContent(cid: String, message: Message): Error? {
-        if (message.text.startsWith("/")) {
-            val channelType = cid.cidToTypeAndId().first
-            val commands = getRepositoryFacade().selectChannelConfig(channelType)?.config?.commands.orEmpty()
-            if (commands.isNotEmpty()) return Error.GenericError("Slash commands can't be scheduled.")
-        }
-        return validateQuote(message.replyMessageId)
-    }
-
-    private suspend fun validateQuote(replyMessageId: String?): Error? {
-        val quoted = replyMessageId?.let { getRepositoryFacade().selectMessage(it) }
-        return if (quoted?.deletedAt != null) {
-            Error.GenericError("The quoted message was deleted. Remove the quote and try again.")
-        } else {
-            null
-        }
-    }
 
     /**
      * Applies [transform] to the scheduled message with [id], unless it is deleted.

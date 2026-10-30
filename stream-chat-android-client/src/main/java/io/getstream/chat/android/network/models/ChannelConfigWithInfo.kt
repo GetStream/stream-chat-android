@@ -134,6 +134,18 @@ internal data class ChannelConfigWithInfo(
     @Json(name = "push_level")
     internal val pushLevel: PushLevel? = null,
 
+    @Json(name = "scheduled_messages_max_lead_time_seconds")
+    internal val scheduledMessagesMaxLeadTimeSeconds: Int? = null,
+
+    @Json(name = "scheduled_messages_max_per_channel")
+    internal val scheduledMessagesMaxPerChannel: Int? = null,
+
+    @Json(name = "scheduled_messages_max_per_user")
+    internal val scheduledMessagesMaxPerUser: Int? = null,
+
+    @Json(name = "scheduled_messages_min_lead_time_seconds")
+    internal val scheduledMessagesMinLeadTimeSeconds: Int? = null,
+
     @Json(name = "allowed_flag_reasons")
     internal val allowedFlagReasons: List<String>? = emptyList(),
 

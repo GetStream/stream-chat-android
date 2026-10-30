@@ -67,6 +67,7 @@ internal class ScheduledMessageManagerTest {
     private val manager = fixture.manager
     private val repositoryFacade: RepositoryFacade = fixture.repositoryFacade
     private val cid = randomCID()
+    private val later = Date(fixture.now.time + 3_600_000)
 
     @Test
     fun `schedule saves the message locally first, as the current user's`() = runTest {
@@ -120,6 +121,59 @@ internal class ScheduledMessageManagerTest {
 
         manager.scheduledMessages.value shouldBeEqualTo listOf(onServer)
         verifyNoInteractions(fixture.api)
+    }
+
+    @Test
+    fun `a date further ahead than the max lead time is refused on schedule, edit and reschedule`() = runTest {
+        givenConfig(Config(scheduledMessagesMaxLeadTimeSeconds = 60))
+        val onServer = givenScheduledOnServer(randomScheduledMessage(cid = cid))
+        // The server accepts a date up to the max lead time plus one minute, once rounded up to the minute.
+        val wholeMinute = fixture.now.time / 60_000 * 60_000
+        val tooFar = Date(wholeMinute + 180_000)
+        val inTime = Date(wholeMinute + 120_000)
+
+        manager.schedule(cid, Message(id = randomString()), tooFar).shouldBeInstanceOf<Result.Failure>()
+        manager.update(onServer.id, onServer.message, tooFar).shouldBeInstanceOf<Result.Failure>()
+        manager.reschedule(onServer.id, tooFar).shouldBeInstanceOf<Result.Failure>()
+        manager.scheduledMessages.value shouldBeEqualTo listOf(onServer)
+
+        manager.reschedule(onServer.id, inTime).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        manager.schedule(cid, Message(id = randomString()), inTime).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        verifyNoInteractions(fixture.api)
+    }
+
+    @Test
+    fun `the limit per channel refuses a new scheduled message, and failed ones don't count`() = runTest {
+        givenConfig(Config(scheduledMessagesMaxPerChannel = 1))
+        givenScheduledOnServer(
+            randomScheduledMessage(
+                cid = cid,
+                scheduledAt = later,
+                status = ScheduledMessageStatus.Failed,
+                failure = ServerFailedPublishing(null),
+            ),
+        )
+        givenScheduledOnServer(randomScheduledMessage(cid = randomCID(), scheduledAt = later))
+
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Failure>()
+    }
+
+    @Test
+    fun `the limits don't count a message whose date has passed, as the server most likely sent it`() = runTest {
+        givenConfig(Config(scheduledMessagesMaxPerChannel = 1))
+        givenScheduledOnServer(randomScheduledMessage(cid = cid, scheduledAt = Date(fixture.now.time - 60_000)))
+
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+    }
+
+    @Test
+    fun `the limit per user counts the pending messages of every channel`() = runTest {
+        givenConfig(Config(scheduledMessagesMaxPerUser = 2))
+        givenScheduledOnServer(randomScheduledMessage(cid = randomCID(), scheduledAt = later))
+
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        manager.schedule(cid, Message(id = randomString()), later).shouldBeInstanceOf<Result.Failure>()
     }
 
     @Test
@@ -562,6 +616,11 @@ internal class ScheduledMessageManagerTest {
     ): ScheduledMessage {
         manager.onEvent(scheduledMessageCreatedEvent(scheduledMessage))
         return scheduledMessage
+    }
+
+    private suspend fun givenConfig(config: Config) {
+        val channelType = cid.substringBefore(":")
+        whenever(repositoryFacade.selectChannelConfig(channelType)).thenReturn(ChannelConfig(channelType, config))
     }
 
     private fun sentEvent(scheduledMessage: ScheduledMessage) = ScheduledMessageSentEvent(

@@ -1564,6 +1564,10 @@ internal class DomainMapping(
         markMessagesPending = markMessagesPending,
         pushLevel = pushLevel?.value,
         quotesEnabled = quotes,
+        scheduledMessagesMaxPerChannel = scheduledMessagesMaxPerChannel,
+        scheduledMessagesMaxPerUser = scheduledMessagesMaxPerUser,
+        scheduledMessagesMaxLeadTimeSeconds = scheduledMessagesMaxLeadTimeSeconds,
+        scheduledMessagesMinLeadTimeSeconds = scheduledMessagesMinLeadTimeSeconds,
     )
 
     /**
