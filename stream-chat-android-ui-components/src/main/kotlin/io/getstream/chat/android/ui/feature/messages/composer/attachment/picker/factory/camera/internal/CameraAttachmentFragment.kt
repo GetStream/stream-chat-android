@@ -43,7 +43,8 @@ internal class CameraAttachmentFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val permissionChecker: PermissionChecker = PermissionChecker()
-    private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
+    private var activityResultLauncher: ActivityResultLauncher<CaptureMediaContract.Target>? = null
+    private var pickCaptureTarget: (() -> Unit)? = null
 
     /**
      * Style for the attachment picker dialog.
@@ -106,16 +107,24 @@ internal class CameraAttachmentFragment : Fragment() {
             ?.register(
                 LauncherRequestsKeys.CAPTURE_MEDIA,
                 CaptureMediaContract(style.pickerMediaMode.mode),
-            ) { file: File? ->
-                val result: List<AttachmentMetaData> = if (file == null) {
-                    emptyList()
-                } else {
-                    listOf(AttachmentMetaData(requireContext(), file))
-                }
+            ) { file: File? -> submitCapture(file) }
+        pickCaptureTarget = CaptureMediaTargetDialogFragment.register(
+            host = this,
+            mode = style.pickerMediaMode.mode,
+            onTargetPicked = { activityResultLauncher?.launch(it) },
+            onCancelled = { submitCapture(null) },
+        )
+    }
 
-                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
-                attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
-            }
+    private fun submitCapture(file: File?) {
+        val result: List<AttachmentMetaData> = if (file == null) {
+            emptyList()
+        } else {
+            listOf(AttachmentMetaData(requireContext(), file))
+        }
+
+        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
+        attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
     }
 
     private fun checkPermissions() {
@@ -133,7 +142,7 @@ internal class CameraAttachmentFragment : Fragment() {
     private fun onPermissionGranted() {
         _binding?.run {
             grantPermissionsInclude.grantPermissionsContainer.isVisible = false
-            activityResultLauncher?.launch(Unit)
+            pickCaptureTarget?.invoke()
         }
     }
 

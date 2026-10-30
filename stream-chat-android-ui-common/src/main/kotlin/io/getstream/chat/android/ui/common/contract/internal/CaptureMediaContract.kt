@@ -20,9 +20,11 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.annotation.StringRes
 import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
@@ -30,7 +32,12 @@ import io.getstream.chat.android.ui.common.internal.file.ShareableUriProvider
 import java.io.File
 
 /**
- * Activity result contract for capturing media (photos and/or videos) using the device camera.
+ * Activity result contract for capturing a photo or a video with a camera app.
+ *
+ * The caller lists the camera apps available for the [Mode] with [targets], lets the user pick one
+ * when there are several, and launches the contract with the picked [Target].
+ * Capture intents are launched directly rather than through `Intent.createChooser`: the Android 16
+ * share sheet crashes the system process when a target without a MIME type is picked.
  *
  * Files are created in external storage directories:
  * - Photos: `{externalFilesDir}/Pictures/`
@@ -44,6 +51,7 @@ import java.io.File
  * @param fileManager Manager for creating temporary files in external storage.
  * @param pictureFile Previously created photo file to restore after process death.
  * @param videoFile Previously created video file to restore after process death.
+ * @param uriProvider Provider of the content URI the camera app writes the capture to.
  */
 @InternalStreamChatApi
 public class CaptureMediaContract(
@@ -51,7 +59,8 @@ public class CaptureMediaContract(
     private val fileManager: StreamFileManager = StreamFileManager(),
     pictureFile: File? = null,
     videoFile: File? = null,
-) : ActivityResultContract<Unit, File?>() {
+    private val uriProvider: ShareableUriProvider = ShareableUriProvider(),
+) : ActivityResultContract<CaptureMediaContract.Target, File?>() {
 
     /**
      * The photo destination file created by [createIntent], or restored via constructor.
@@ -67,47 +76,46 @@ public class CaptureMediaContract(
     public var videoFile: File? = videoFile
         private set
 
-    override fun createIntent(context: Context, input: Unit): Intent {
-        val intents: List<Intent> = mode.intents(context)
-        val initialIntent = intents.lastOrNull() ?: Intent()
-        return Intent.createChooser(initialIntent, mode.label(context))
-            .apply {
-                putExtra(
-                    Intent.EXTRA_INITIAL_INTENTS,
-                    (intents - initialIntent).toTypedArray(),
-                )
-            }
+    /**
+     * Lists the camera apps that can capture the media allowed by the [Mode], photo targets first.
+     */
+    @InternalStreamChatApi
+    public fun targets(context: Context): List<Target> = when (mode) {
+        Mode.PHOTO -> queryTargets(context, Target.Kind.PHOTO)
+        Mode.VIDEO -> queryTargets(context, Target.Kind.VIDEO)
+        Mode.PHOTO_AND_VIDEO -> queryTargets(context, Target.Kind.PHOTO) + queryTargets(context, Target.Kind.VIDEO)
     }
 
-    private fun getRecordVideoIntents(context: Context): List<Intent> {
-        videoFile = fileManager.createVideoInExternalDir(context).getOrNull()
-        return videoFile
-            ?.let { createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it) }
-            ?: emptyList()
-    }
+    /**
+     * The title to show above the list of [targets].
+     */
+    @InternalStreamChatApi
+    public fun title(context: Context): String = context.getString(
+        when (mode) {
+            Mode.PHOTO -> R.string.stream_ui_message_composer_capture_media_take_photo
+            Mode.VIDEO -> R.string.stream_ui_message_composer_capture_media_video
+            Mode.PHOTO_AND_VIDEO -> R.string.stream_ui_message_composer_capture_media
+        },
+    )
 
-    private fun getTakePictureIntents(context: Context): List<Intent> {
-        pictureFile = fileManager.createPhotoInExternalDir(context).getOrNull()
-        return pictureFile?.let { createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it) }
-            ?: emptyList()
-    }
-
-    private fun createIntentList(
-        context: Context,
-        action: String,
-        destinationFile: File,
-    ): List<Intent> {
-        val destinationUri = ShareableUriProvider().getUriForFile(context, destinationFile)
-        val actionIntent = Intent(action)
-        return context.packageManager.queryIntentActivities(
-            actionIntent,
-            PackageManager.MATCH_DEFAULT_ONLY,
-        ).map {
-            Intent(actionIntent).apply {
-                putExtra(MediaStore.EXTRA_OUTPUT, destinationUri)
+    override fun createIntent(context: Context, input: Target): Intent {
+        val destinationFile = when (input.kind) {
+            Target.Kind.PHOTO -> fileManager.createPhotoInExternalDir(context).getOrNull()
+                .also {
+                    pictureFile = it
+                    videoFile = null
+                }
+            Target.Kind.VIDEO -> fileManager.createVideoInExternalDir(context).getOrNull()
+                .also {
+                    videoFile = it
+                    pictureFile = null
+                }
+        }
+        return Intent(input.kind.action).apply {
+            component = ComponentName(input.activityInfo.packageName, input.activityInfo.name)
+            if (destinationFile != null) {
+                putExtra(MediaStore.EXTRA_OUTPUT, uriProvider.getUriForFile(context, destinationFile))
                 flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                component = ComponentName(it.activityInfo.packageName, it.activityInfo.name)
-                `package` = it.activityInfo.packageName
             }
         }
     }
@@ -116,6 +124,11 @@ public class CaptureMediaContract(
         (pictureFile.takeIfCaptured() ?: videoFile.takeIfCaptured())
             .takeIf { resultCode == Activity.RESULT_OK }
 
+    private fun queryTargets(context: Context, kind: Target.Kind): List<Target> =
+        context.packageManager
+            .queryIntentActivities(Intent(kind.action), PackageManager.MATCH_DEFAULT_ONLY)
+            .map { Target(kind, it.activityInfo) }
+
     @InternalStreamChatApi
     public enum class Mode {
         PHOTO,
@@ -123,19 +136,29 @@ public class CaptureMediaContract(
         PHOTO_AND_VIDEO,
     }
 
-    private fun Mode.intents(context: Context): List<Intent> = when (this) {
-        Mode.PHOTO -> getTakePictureIntents(context)
-        Mode.VIDEO -> getRecordVideoIntents(context)
-        Mode.PHOTO_AND_VIDEO -> getTakePictureIntents(context) + getRecordVideoIntents(context)
+    /**
+     * A camera app activity that can capture one kind of media.
+     *
+     * @param kind The kind of media the activity captures.
+     * @param activityInfo The camera activity, also used to load its label and icon.
+     */
+    @InternalStreamChatApi
+    public data class Target(
+        val kind: Kind,
+        val activityInfo: ActivityInfo,
+    ) {
+        /**
+         * @property label The name of the capture to show under the camera app's name.
+         */
+        @InternalStreamChatApi
+        public enum class Kind(
+            internal val action: String,
+            @StringRes public val label: Int,
+        ) {
+            PHOTO(MediaStore.ACTION_IMAGE_CAPTURE, R.string.stream_ui_message_composer_capture_media_take_photo),
+            VIDEO(MediaStore.ACTION_VIDEO_CAPTURE, R.string.stream_ui_message_composer_capture_media_video),
+        }
     }
-
-    private fun Mode.label(context: Context): String = context.getString(
-        when (this) {
-            Mode.PHOTO -> R.string.stream_ui_message_composer_capture_media_take_photo
-            Mode.VIDEO -> R.string.stream_ui_message_composer_capture_media_video
-            Mode.PHOTO_AND_VIDEO -> R.string.stream_ui_message_composer_capture_media
-        },
-    )
 }
 
 private fun File?.takeIfCaptured(): File? = this?.takeIf { it.exists() && it.length() > 0 }
