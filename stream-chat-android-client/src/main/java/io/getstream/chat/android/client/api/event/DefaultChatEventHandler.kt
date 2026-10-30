@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.api.event
 
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.state.globalState
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
@@ -43,22 +41,11 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param channels The map of visible channels.
  * @param clientState The client state used to obtain current user.
- * @param blockedUserIds The ids of the users the current user blocked.
  */
-public open class DefaultChatEventHandler internal constructor(
+public open class DefaultChatEventHandler(
     protected val channels: StateFlow<Map<String, Channel>?>,
     protected val clientState: ClientState,
-    private val blockedUserIds: () -> Collection<String>,
 ) : BaseChatEventHandler() {
-
-    /**
-     * @param channels The map of visible channels.
-     * @param clientState The client state used to obtain current user.
-     */
-    public constructor(
-        channels: StateFlow<Map<String, Channel>?>,
-        clientState: ClientState,
-    ) : this(channels, clientState, { ChatClient.instance().globalState.blockedUserIds.value })
 
     /**
      * Handles additional events:
@@ -180,7 +167,8 @@ public open class DefaultChatEventHandler internal constructor(
         message: Message,
         channelBlocked: Boolean?,
     ): EventHandlingResult {
-        return if (message.unhidesChannel(channelBlocked, blockedUserIds())) {
+        val blockedUserIds = clientState.user.value?.blockedUserIds.orEmpty()
+        return if (message.unhidesChannel(channelBlocked, blockedUserIds)) {
             removeIfChannelExists(cid)
         } else {
             EventHandlingResult.Skip

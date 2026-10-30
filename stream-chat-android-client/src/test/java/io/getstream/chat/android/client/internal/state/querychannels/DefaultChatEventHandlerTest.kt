@@ -363,7 +363,7 @@ internal class DefaultChatEventHandlerTest {
         val author = randomUser()
         val event = randomNewMessageEvent(cid = channel.cid, message = randomMessage(type = "regular", user = author))
 
-        val result = eventHandler(channel, blockedUserIds = listOf(author.id))
+        val result = eventHandler(channel, currentUser = randomUser(blockedUserIds = listOf(author.id)))
             .handleChatEvent(event, hiddenChannelsFilter, cachedChannel = channel)
 
         result `should be equal to` EventHandlingResult.Skip
@@ -449,14 +449,10 @@ internal class DefaultChatEventHandlerTest {
     private fun eventHandler(
         vararg listed: Channel,
         currentUser: User = randomUser(),
-        blockedUserIds: List<String> = emptyList(),
     ): DefaultChatEventHandler {
         val clientState = mock<ClientState> {
             whenever(it.user) doReturn MutableStateFlow(currentUser)
         }
-        return DefaultChatEventHandler(
-            MutableStateFlow(listed.associateBy(Channel::cid)),
-            clientState,
-        ) { blockedUserIds }
+        return DefaultChatEventHandler(MutableStateFlow(listed.associateBy(Channel::cid)), clientState)
     }
 }
