@@ -477,6 +477,9 @@ internal class DomainMapping(
             ownCapabilities = ownCapabilities.orEmpty().mapTo(mutableSetOf(), ChannelOwnCapability::value),
             messageCount = messageCount,
             lastMessageAt = lastMessageAt,
+            truncatedBy = truncatedBy?.toDomain(),
+            autoTranslationEnabled = autoTranslationEnabled ?: false,
+            autoTranslationLanguages = autoTranslationLanguage.toTranslationLanguages(),
             extraData = custom.withDeclaredHidingStored(
                 CHANNEL_HIDDEN_CUSTOM_KEYS,
                 "auto_translation_enabled" to autoTranslationEnabled,
@@ -867,6 +870,8 @@ internal class DomainMapping(
             longitude = longitude,
             deviceId = createdByDeviceId,
             endAt = endAt,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
 
     /**
@@ -1086,6 +1091,7 @@ internal class DomainMapping(
             banExpires = banExpires,
             pinnedAt = pinnedAt,
             archivedAt = archivedAt,
+            deletedAt = deletedAt,
             extraData = custom.hoistingNestedMemberCustom().withDeclaredHidingStored(
                 MEMBER_HIDDEN_CUSTOM_KEYS,
                 "deleted_at" to deletedAt,
@@ -1153,6 +1159,13 @@ internal class DomainMapping(
         return (this - "custom") + nested.entries.associate { (key, value) -> key.toString() to value }
     }
 
+    /**
+     * The backend stores several translation languages in one comma-separated string, and reads it with whitespace
+     * trimmed and empty or duplicate entries dropped, keeping the order.
+     */
+    private fun String?.toTranslationLanguages(): Set<String> =
+        orEmpty().split(',').map(String::trim).filterTo(LinkedHashSet(), String::isNotEmpty)
+
     private fun Any?.isPresent(): Boolean = when (this) {
         null -> false
         is Collection<*> -> isNotEmpty()
@@ -1191,6 +1204,8 @@ internal class DomainMapping(
             longitude = longitude,
             deviceId = createdByDeviceId,
             endAt = endAt,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
 
     /**

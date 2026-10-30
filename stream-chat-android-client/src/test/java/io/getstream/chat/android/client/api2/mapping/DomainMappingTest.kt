@@ -160,6 +160,7 @@ import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -518,14 +519,16 @@ internal class DomainMappingTest {
         // Literal values rather than references: asserting against the same mapper would pass
         // even if a field were dropped, since both sides would change together.
         val endAt = randomDate()
+        val createdAt = Date(1000)
+        val updatedAt = Date(2000)
         val response = SharedLocationResponseData(
             channelCid = "messaging:general",
-            createdAt = randomDate(),
+            createdAt = createdAt,
             createdByDeviceId = "device-1",
             latitude = 1.5,
             longitude = 2.5,
             messageId = "message-1",
-            updatedAt = randomDate(),
+            updatedAt = updatedAt,
             userId = "jaewoong",
             endAt = endAt,
         )
@@ -541,6 +544,8 @@ internal class DomainMappingTest {
             longitude = 2.5,
             deviceId = "device-1",
             endAt = endAt,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -1018,6 +1023,25 @@ internal class DomainMappingTest {
             mapOf<String, Any>("color" to "teal"),
             channel.extraData - GENERATED_CHANNEL_EXTRA_DATA_KEYS - LEGACY_CHANNEL_EXTRA_DATA_KEYS,
         )
+    }
+
+    @Test
+    fun `ChannelResponse maps truncated_by and the auto-translation settings and keeps them in extraData`() {
+        val truncator = Mother.randomUserResponse()
+        val response = randomChannelResponse().copy(
+            truncatedBy = truncator,
+            autoTranslationEnabled = true,
+            autoTranslationLanguage = " fr, de,,fr ",
+        )
+        val sut = Fixture().get()
+
+        val channel = with(sut) { response.toDomain() }
+
+        assertEquals(truncator.id, channel.truncatedBy?.id)
+        assertTrue(channel.autoTranslationEnabled)
+        // Parsed the way the backend reads it: trimmed, without empty or duplicate entries, in order.
+        assertEquals(listOf("fr", "de"), channel.autoTranslationLanguages.toList())
+        assertTrue(channel.extraData.keys.containsAll(setOf("truncated_by", "auto_translation_enabled")))
     }
 
     @Test
@@ -1642,6 +1666,17 @@ internal class DomainMappingTest {
             extraData = mapOf("user_id" to memberResponse.userId!!),
         )
         assertEquals(expected, member)
+    }
+
+    @Test
+    fun `ChannelMemberResponse maps deleted_at to deletedAt and keeps it in extraData`() {
+        val memberResponse = randomChannelMemberResponse().copy(deletedAt = Date(9_000))
+        val sut = Fixture().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        assertEquals(Date(9_000), member.deletedAt)
+        assertTrue(member.extraData.containsKey("deleted_at"))
     }
 
     @Test

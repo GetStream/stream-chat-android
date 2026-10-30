@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.StreamWebSocket
-import io.getstream.chat.android.client.socket.V2SocketProtocol
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -92,7 +91,7 @@ internal class CurrentUserFetcherTests {
         userScope = UserTestScope(testCoroutines.scope)
         chatParser = mock()
         eventParser = mock()
-        streamWebSocket = StreamWebSocket(chatParser, V2SocketProtocol(authFrame = "{}", eventParser = eventParser)) {
+        streamWebSocket = StreamWebSocket(chatParser, eventParser, authFrame = "{}") {
             webSocketListener = it
             ws
         }
@@ -213,12 +212,10 @@ internal class CurrentUserFetcherTests {
         var listener: WebSocketListener? = null
         val v2Socket = StreamWebSocket(
             ParserFactory.createMoshiChatParser(),
-            V2SocketProtocol(
-                authFrame = "{}",
-                eventParser = V2EventParser(
-                    DomainMapping({ "filip" }, NoOpChannelTransformer, NoOpMessageTransformer, NoOpUserTransformer, true),
-                ),
+            V2EventParser(
+                DomainMapping({ "filip" }, NoOpChannelTransformer, NoOpMessageTransformer, NoOpUserTransformer, true),
             ),
+            authFrame = "{}",
         ) {
             listener = it
             ws

@@ -255,12 +255,7 @@ internal class ChannelStateLegacyImpl(
                     id = channelId,
                 )
             } else {
-                val result = if (users.containsKey(channelData.createdBy.id)) {
-                    channelData.copy(createdBy = users[channelData.createdBy.id] ?: channelData.createdBy)
-                } else {
-                    channelData
-                }
-                result
+                channelData.updateUsers(users)
             }
         }
 
@@ -570,8 +565,7 @@ internal class ChannelStateLegacyImpl(
         _members?.value?.get(user.id)?.copy(user = user)?.let { upsertMembers(listOf(it)) }
         user.takeIf { _watchers?.value?.any { it.key == user.id } == true }
             ?.let { upsertWatchers(listOf(it), watcherCount.value) }
-        _channelData?.value?.takeIf { it.createdBy.id == user.id }
-            ?.let { setChannelData(it.copy(createdBy = user)) }
+        _channelData?.update { it?.updateUsers(mapOf(user.id to user)) }
         _messages?.apply {
             value = value.values.updateUsers(mapOf(user.id to user)).associateBy { it.id }
         }

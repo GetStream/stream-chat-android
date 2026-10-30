@@ -28,6 +28,8 @@ import java.util.Date
  * @property latitude The latitude of the user's location.
  * @property longitude The longitude of the user's location.
  * @property deviceId The device ID from which the location is shared.
+ * @property createdAt The date and time when the location was first shared, or `null` until the server has it.
+ * @property updatedAt The date and time of the last location update, or `null` until the server has it.
  */
 public data class Location(
     val cid: String = "",
@@ -37,4 +39,6 @@ public data class Location(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val deviceId: String = "",
+    val createdAt: Date? = null,
+    val updatedAt: Date? = null,
 )

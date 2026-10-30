@@ -354,6 +354,48 @@ internal class ChannelTest {
     }
 
     @Test
+    fun `mergeChannelFromEvent should take truncatedBy from the latest truncation`() {
+        val earlier = Date(1000)
+        val later = Date(2000)
+        val original = randomUser()
+        val update = randomUser()
+
+        fun merge(originalAt: Date?, updateAt: Date?): User? =
+            randomChannel(truncatedAt = originalAt).copy(truncatedBy = original)
+                .mergeChannelFromEvent(randomChannel(truncatedAt = updateAt).copy(truncatedBy = update))
+                .truncatedBy
+
+        assertEquals(original, merge(originalAt = later, updateAt = earlier))
+        assertEquals(update, merge(originalAt = earlier, updateAt = later))
+        assertEquals(original, merge(originalAt = later, updateAt = null))
+        assertEquals(update, merge(originalAt = null, updateAt = later))
+        assertEquals(update, merge(originalAt = later, updateAt = later))
+    }
+
+    @Test
+    fun `mergeChannelFromEvent should keep truncatedBy when the same truncation comes without it`() {
+        val truncatedAt = Date(1000)
+        val truncator = randomUser()
+
+        val result = randomChannel(truncatedAt = truncatedAt).copy(truncatedBy = truncator)
+            .mergeChannelFromEvent(randomChannel(truncatedAt = truncatedAt).copy(truncatedBy = null))
+            .truncatedBy
+
+        assertEquals(truncator, result)
+    }
+
+    @Test
+    fun `mergeChannelFromEvent should take the auto-translation settings from the update`() {
+        val original = randomChannel().copy(autoTranslationEnabled = false, autoTranslationLanguages = emptySet())
+        val update = randomChannel().copy(autoTranslationEnabled = true, autoTranslationLanguages = setOf("fr"))
+
+        val result = original.mergeChannelFromEvent(update)
+
+        assertTrue(result.autoTranslationEnabled)
+        assertEquals(setOf("fr"), result.autoTranslationLanguages)
+    }
+
+    @Test
     @Suppress("DEPRECATION")
     fun `mergeChannelFromEvent should not merge connection specific fields`() {
         val original = randomChannel(

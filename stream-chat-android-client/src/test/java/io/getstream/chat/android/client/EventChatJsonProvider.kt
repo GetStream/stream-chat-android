@@ -834,6 +834,7 @@ internal fun createAIIndicatorUpdatedEventStringJson() =
             "cid": "channelType:channelId",
             "user": ${createCommonFieldsUserJsonString()},
             "ai_state": "AI_STATE_THINKING",
+            "ai_message": "Thinking about it",
             "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
         """.trimIndent(),
     )

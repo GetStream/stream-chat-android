@@ -18,6 +18,7 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.utils.date.after
 import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
@@ -68,6 +69,9 @@ import java.util.Date
  * @param disabled Whether the channel is disabled or not.
  * @param blocked Whether the channel is blocked or not. Note that the field is not provided by every endpoint, nor in
  * the events.
+ * @param truncatedBy The user who last truncated the channel, if it was truncated by a user.
+ * @param autoTranslationEnabled Whether messages in the channel are translated automatically.
+ * @param autoTranslationLanguages The language codes messages are translated to when [autoTranslationEnabled] is set.
  * @param scheduledMessages The current user's scheduled messages in the channel, pending ones first, each sorted by
  * [ScheduledMessage.scheduledAt]. A channel of the local state has the ones known on the device. A channel query with
  * `includeScheduledMessages` returns the ones the server has, unless the feature is off, the server could not read
@@ -120,6 +124,9 @@ public data class Channel(
     val truncatedAt: Date? = null,
     val disabled: Boolean = false,
     val blocked: Boolean? = null,
+    val truncatedBy: User? = null,
+    val autoTranslationEnabled: Boolean = false,
+    val autoTranslationLanguages: Set<String> = emptySet(),
     val scheduledMessages: List<ScheduledMessage> = emptyList(),
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
@@ -227,6 +234,9 @@ public data class Channel(
         private var truncatedAt: Date? = null
         private var disabled: Boolean = false
         private var blocked: Boolean? = null
+        private var truncatedBy: User? = null
+        private var autoTranslationEnabled: Boolean = false
+        private var autoTranslationLanguages: Set<String> = emptySet()
         private var scheduledMessages: List<ScheduledMessage> = emptyList()
         private var extraData: Map<String, Any> = mapOf()
 
@@ -267,6 +277,9 @@ public data class Channel(
             truncatedAt = channel.truncatedAt
             disabled = channel.disabled
             blocked = channel.blocked
+            truncatedBy = channel.truncatedBy
+            autoTranslationEnabled = channel.autoTranslationEnabled
+            autoTranslationLanguages = channel.autoTranslationLanguages
             scheduledMessages = channel.scheduledMessages
             extraData = channel.extraData
         }
@@ -331,6 +344,13 @@ public data class Channel(
         public fun withTruncatedAt(truncatedAt: Date?): Builder = apply { this.truncatedAt = truncatedAt }
         public fun withDisabled(disabled: Boolean): Builder = apply { this.disabled = disabled }
         public fun withBlocked(blocked: Boolean?): Builder = apply { this.blocked = blocked }
+        public fun withTruncatedBy(truncatedBy: User?): Builder = apply { this.truncatedBy = truncatedBy }
+        public fun withAutoTranslationEnabled(autoTranslationEnabled: Boolean): Builder = apply {
+            this.autoTranslationEnabled = autoTranslationEnabled
+        }
+        public fun withAutoTranslationLanguages(autoTranslationLanguages: Set<String>): Builder = apply {
+            this.autoTranslationLanguages = autoTranslationLanguages
+        }
         public fun withScheduledMessages(scheduledMessages: List<ScheduledMessage>): Builder = apply {
             this.scheduledMessages = scheduledMessages
         }
@@ -374,6 +394,9 @@ public data class Channel(
             truncatedAt = truncatedAt,
             disabled = disabled,
             blocked = blocked,
+            truncatedBy = truncatedBy,
+            autoTranslationEnabled = autoTranslationEnabled,
+            autoTranslationLanguages = autoTranslationLanguages,
             scheduledMessages = scheduledMessages,
             extraData = extraData,
         )
@@ -409,6 +432,9 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         // blocked is omitted by the events, and truncatedAt only ever moves forward
         blocked = that.blocked ?: blocked,
         truncatedAt = max(truncatedAt, that.truncatedAt),
+        truncatedBy = latestTruncatedBy(truncatedAt, truncatedBy, that.truncatedAt, that.truncatedBy),
+        autoTranslationEnabled = that.autoTranslationEnabled,
+        autoTranslationLanguages = that.autoTranslationLanguages,
         /* Do not merge (messages, watcherCount, watchers, read, ownCapabilities, membership, unreadCount) fields.
         messages = that.messages,
         watcherCount = that.watcherCount,
@@ -419,6 +445,17 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         unreadCount = that.unreadCount,
          */
     )
+}
+
+/**
+ * Returns the user of the latest of two truncations. On the same date, [thatBy] wins unless it is missing, since not
+ * every payload that carries the truncation date also carries the user.
+ */
+@InternalStreamChatApi
+public fun latestTruncatedBy(at: Date?, by: User?, thatAt: Date?, thatBy: User?): User? = when {
+    at after thatAt -> by
+    thatAt after at -> thatBy
+    else -> thatBy ?: by
 }
 
 /**
@@ -449,5 +486,8 @@ public fun Channel.toChannelData(): ChannelData {
         truncatedAt = truncatedAt,
         disabled = disabled,
         blocked = blocked,
+        truncatedBy = truncatedBy,
+        autoTranslationEnabled = autoTranslationEnabled,
+        autoTranslationLanguages = autoTranslationLanguages,
     )
 }

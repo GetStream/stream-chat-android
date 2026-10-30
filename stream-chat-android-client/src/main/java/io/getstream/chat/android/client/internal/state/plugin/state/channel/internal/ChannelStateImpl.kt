@@ -252,8 +252,7 @@ internal class ChannelStateImpl(
         if (data == null) {
             ChannelData(type = channelType, id = channelId)
         } else {
-            val createdBy = users[data.createdBy.id]
-            data.copy(createdBy = createdBy ?: data.createdBy)
+            data.updateUsers(users)
         }
     }
 
@@ -1475,11 +1474,8 @@ internal class ChannelStateImpl(
             )
         }
 
-        // Update channel data createdBy if needed
-        val currentChannelData = _channelData.value
-        if (currentChannelData != null && currentChannelData.createdBy.id == user.id) {
-            _channelData.value = currentChannelData.copy(createdBy = user)
-        }
+        // Update channel data createdBy and truncatedBy if needed
+        _channelData.update { it?.updateUsers(mapOf(user.id to user)) }
 
         // Update messages state
         _messages.update { current ->
