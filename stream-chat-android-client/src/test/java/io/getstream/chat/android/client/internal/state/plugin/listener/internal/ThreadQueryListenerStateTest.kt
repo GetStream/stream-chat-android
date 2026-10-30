@@ -142,7 +142,7 @@ internal class ThreadQueryListenerStateTest {
     fun `given a reply held on a jump page, it is kept when the newest page replaces the jump page`() = runTest {
         val parentId = randomString()
         val state = ThreadMutableState(parentId, backgroundScope)
-        val realThreadLogic = ThreadLogic(ThreadStateLogic(state))
+        val realThreadLogic = ThreadLogic(ThreadStateLogic(state), backgroundScope)
         val registry: LogicRegistry = mock { on(it.thread(parentId)) doReturn realThreadLogic }
         val listener = ThreadQueryListenerState(registry)
         val newestPage = listOf(reply(parentId, createdAt = 20))

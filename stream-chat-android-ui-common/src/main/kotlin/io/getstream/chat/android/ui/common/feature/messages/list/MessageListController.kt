@@ -145,6 +145,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
@@ -320,12 +321,25 @@ public class MessageListController(
         .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
 
     /**
-     * The list of typing users.
+     * The users typing in the channel, leaving out those typing in a thread.
      */
     @Suppress("DEPRECATION")
-    public val typingUsers: StateFlow<List<User>> = channelState.filterNotNull()
+    private val channelTypingUsers: StateFlow<List<User>> = channelState.filterNotNull()
         .flatMapLatest { it.typing }
         .map { it.users }
+        .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = emptyList())
+
+    /**
+     * The list of typing users: those typing in the channel, or in the thread while in [MessageMode.MessageThread].
+     */
+    @Suppress("DEPRECATION")
+    public val typingUsers: StateFlow<List<User>> = _mode
+        .flatMapLatest { mode ->
+            when (mode) {
+                is MessageMode.MessageThread -> mode.threadState?.typing?.map { it.users } ?: flowOf(emptyList())
+                is MessageMode.Normal -> channelTypingUsers
+            }
+        }
         .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = emptyList())
 
     /**
@@ -490,7 +504,7 @@ public class MessageListController(
                 _dateSeparatorHandler,
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
-                typingUsers,
+                channelTypingUsers,
                 focusedMessage,
                 channelState.endOfNewerMessages,
                 unreadLabelState,
@@ -817,6 +831,9 @@ public class MessageListController(
         val messages = threadState.messages
         val endOfOlderMessages = threadState.endOfOlderMessages
         val endOfNewerMessages = threadState.endOfNewerMessages
+
+        @Suppress("DEPRECATION")
+        val threadTypingUsers = threadState.typing.map { it.users }
         threadJob = scope.launch {
             user.onEach {
                 _threadListState.value = _threadListState.value.copy(currentUser = it)
@@ -843,7 +860,7 @@ public class MessageListController(
                 _threadDateSeparatorHandler,
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
-                typingUsers,
+                threadTypingUsers,
                 focusedMessage,
                 members,
                 ownCapabilities,

@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.CameraPicker
 import io.getstream.chat.android.compose.state.messages.attachments.CaptureMode
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.messages.attachments.media.CaptureMediaTargetSheet
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -85,7 +86,7 @@ internal fun AttachmentCameraPicker(
         if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
             showRequiredCameraPermission = false
             hasLaunched = true
-            captureMediaLauncher.launch(Unit)
+            captureMediaLauncher.launch()
         } else if (cameraPermissionState.status.shouldShowRationale) {
             showRequiredCameraPermission = true
         } else {
@@ -97,8 +98,9 @@ internal fun AttachmentCameraPicker(
     if (showRequiredCameraPermission) {
         RequiredCameraPermission()
     } else {
-        AttachmentCameraPickerContent { captureMediaLauncher?.launch(Unit) }
+        AttachmentCameraPickerContent { captureMediaLauncher.launch() }
     }
+    CaptureMediaTargetSheet(captureMediaLauncher)
 }
 
 @Composable

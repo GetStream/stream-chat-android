@@ -1769,6 +1769,31 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `Given thread mode When users type in the channel and in the thread Should report only the thread typers`() =
+        runTest {
+            val parentMessage = randomMessage()
+            val channelTyper = randomUser()
+            val threadTyper = randomUser()
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = emptyList(),
+                typing = MutableStateFlow(TypingEvent(CHANNEL_ID, listOf(threadTyper))),
+            )
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState(typingState = MutableStateFlow(TypingEvent(CHANNEL_ID, listOf(channelTyper))))
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .get()
+            controller.typingUsers.value `should be equal to` listOf(channelTyper)
+
+            controller.enterThreadMode(parentMessage)
+
+            controller.typingUsers.value `should be equal to` listOf(threadTyper)
+        }
+
+    @Test
     fun `Given the newest thread page is not loaded When the bottom end is reached Should load newer replies`() =
         runTest {
             val chatClient = mock<ChatClient>()
@@ -2103,6 +2128,7 @@ internal class MessageListControllerTests {
         endOfNewerMessages: MutableStateFlow<Boolean> = MutableStateFlow(false),
         isJumpPage: Boolean = false,
         oldestInThread: Message? = messages.firstOrNull(),
+        typing: MutableStateFlow<TypingEvent> = MutableStateFlow(TypingEvent(CHANNEL_ID, emptyList())),
     ): ThreadState = mock {
         on { it.parentId } doReturn parentMessage.id
         on { it.messages } doReturn MutableStateFlow(messages)
@@ -2112,6 +2138,7 @@ internal class MessageListControllerTests {
         on { it.oldestInThread } doReturn MutableStateFlow(oldestInThread)
         on { it.isJumpPage } doReturn isJumpPage
         on { it.newestInThread } doReturn MutableStateFlow(messages.lastOrNull())
+        on { it.typing } doReturn typing
     }
 
     private class Fixture(

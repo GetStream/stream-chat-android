@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.TypingEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,6 +43,7 @@ internal class ThreadMutableState(
     private var _endOfNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _oldestInThread: MutableStateFlow<Message?>? = MutableStateFlow(null)
     private var _newestInThread: MutableStateFlow<Message?>? = MutableStateFlow(null)
+    private val _typing = MutableStateFlow(TypingEvent(channelId = "", users = emptyList()))
 
     val rawMessage: StateFlow<Map<String, Message>> = _messages!!
     override val messages: StateFlow<List<Message>> = rawMessage
@@ -53,6 +55,7 @@ internal class ThreadMutableState(
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages!!
     override val oldestInThread: StateFlow<Message?> = _oldestInThread!!
     override val newestInThread: StateFlow<Message?> = _newestInThread!!
+    override val typing: StateFlow<TypingEvent> = _typing
 
     @Volatile
     override var isJumpPage: Boolean = false
@@ -73,6 +76,10 @@ internal class ThreadMutableState(
      */
     val parentMessage: Message?
         get() = _messages?.value?.get(parentId)
+
+    fun setTyping(typingEvent: TypingEvent) {
+        _typing.value = typingEvent
+    }
 
     fun setLoading(isLoading: Boolean) {
         _loading?.value = isLoading

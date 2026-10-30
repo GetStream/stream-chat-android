@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -33,6 +34,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.header.ChannelHeaderView
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -80,12 +82,20 @@ public class ChannelHeaderViewModel(
             }
         }.asLiveData()
 
+    private val activeThreadId = MutableStateFlow<String?>(null)
+
     /**
-     * A list of users who are currently typing.
+     * A list of users who are currently typing: in the active thread in thread mode, in the channel otherwise.
      */
     @Suppress("DEPRECATION")
     public val typingUsers: LiveData<List<User>> =
-        channelState.flatMapLatest { it.typing }.map { typingEvent ->
+        activeThreadId.flatMapLatest { parentId ->
+            if (parentId == null) {
+                channelState.flatMapLatest { it.typing }
+            } else {
+                chatClient.state.thread(parentId).typing
+            }
+        }.map { typingEvent ->
             typingEvent.users
         }.asLiveData()
 
@@ -122,6 +132,7 @@ public class ChannelHeaderViewModel(
      * @param message The original message on which the thread is based on.
      */
     public fun setActiveThread(message: Message) {
+        activeThreadId.value = message.id
         _activeThread.postValue(message)
     }
 
@@ -129,6 +140,7 @@ public class ChannelHeaderViewModel(
      *  Switches to normal (non-thread) mode.
      */
     public fun resetThread() {
+        activeThreadId.value = null
         _activeThread.postValue(null)
     }
 

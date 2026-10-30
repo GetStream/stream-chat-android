@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -45,7 +46,7 @@ internal class ThreadLogicJumpPageTest {
         threadStateLogic = mock()
         whenever(threadStateLogic.writeThreadState()).doReturn(threadMutableState)
         whenever(threadMutableState.heldReplies).doReturn(emptyMap())
-        threadLogic = ThreadLogic(threadStateLogic)
+        threadLogic = ThreadLogic(threadStateLogic, TestScope())
     }
 
     @Test
