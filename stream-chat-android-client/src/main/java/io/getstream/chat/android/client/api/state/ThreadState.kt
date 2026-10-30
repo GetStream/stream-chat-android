@@ -19,7 +19,9 @@ package io.getstream.chat.android.client.api.state
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.TypingEvent
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /** State container with reactive data of a thread.*/
 public interface ThreadState {
@@ -35,6 +37,7 @@ public interface ThreadState {
 
     /** The users currently typing a reply in this thread, other than the current user. */
     public val typing: StateFlow<TypingEvent>
+        get() = noTyping
 
     /** If we've reached the earliest point in this thread. */
     public val endOfOlderMessages: StateFlow<Boolean>
@@ -59,3 +62,6 @@ public interface ThreadState {
     public val isJumpPage: Boolean
         get() = false
 }
+
+private val noTyping: StateFlow<TypingEvent> =
+    MutableStateFlow(TypingEvent(channelId = "", users = emptyList())).asStateFlow()

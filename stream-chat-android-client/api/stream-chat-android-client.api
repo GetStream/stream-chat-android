@@ -993,7 +993,7 @@ public abstract interface class io/getstream/chat/android/client/api/state/Threa
 	public abstract fun getNewestInThread ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getOldestInThread ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getParentId ()Ljava/lang/String;
-	public abstract fun getTyping ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun getTyping ()Lkotlinx/coroutines/flow/StateFlow;
 }
 
 public final class io/getstream/chat/android/client/api/state/querychannels/GroupedQueryConfig {
