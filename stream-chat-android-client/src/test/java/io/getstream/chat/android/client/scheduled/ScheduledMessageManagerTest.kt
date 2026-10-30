@@ -82,6 +82,7 @@ internal class ScheduledMessageManagerTest {
         scheduled.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
         scheduled.message.user shouldBeEqualTo fixture.user
         scheduled.message.parentId shouldBeEqualTo message.parentId
+        scheduled.message.createdAt shouldBeEqualTo scheduledAt
         manager.scheduledMessages.value shouldBeEqualTo listOf(scheduled)
         repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single().id shouldBeEqualTo message.id
         verifyNoInteractions(fixture.api)
@@ -100,6 +101,7 @@ internal class ScheduledMessageManagerTest {
         updated.message.text shouldBeEqualTo edited.text
         updated.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
         rescheduled.scheduledAt shouldBeEqualTo scheduledAt
+        rescheduled.message.createdAt shouldBeEqualTo scheduledAt
         rescheduled.message.text shouldBeEqualTo edited.text
         manager.scheduledMessages.value shouldBeEqualTo listOf(rescheduled)
         verifyNoInteractions(fixture.api)

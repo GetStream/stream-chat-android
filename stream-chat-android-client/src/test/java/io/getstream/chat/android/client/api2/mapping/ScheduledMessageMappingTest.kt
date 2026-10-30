@@ -90,7 +90,7 @@ internal class ScheduledMessageMappingTest {
     }
 
     @Test
-    fun `The content of a scheduled message maps to a message with its id, channel, author and dates`() {
+    fun `The content of a scheduled message maps to a message with its id, channel and author, created at its date`() {
         val response = randomScheduledMessageResponse(id = "scheduled-1", cid = "messaging:general", message = CONTENT)
 
         val message = with(domainMapping) { response.toDomain() }.message
@@ -98,7 +98,7 @@ internal class ScheduledMessageMappingTest {
         message.id shouldBeEqualTo "scheduled-1"
         message.cid shouldBeEqualTo "messaging:general"
         message.user.id shouldBeEqualTo response.user.id
-        message.createdAt shouldBeEqualTo response.createdAt
+        message.createdAt shouldBeEqualTo response.scheduledAt
         message.updatedAt shouldBeEqualTo response.updatedAt
         message.text shouldBeEqualTo "Good morning team"
         message.html shouldBeEqualTo "<p>Good morning team</p>"

@@ -30,10 +30,10 @@ import java.util.Date
  * scheduled messages query, and the scheduled messages kept on the device keep the last one received, so it can be
  * null.
  * @property message The content that will be sent. It is not in the messages of the channel until it is sent, and has
- * no reactions, replies or read state. Its [Message.createdAt] and [Message.updatedAt] are the ones of the scheduled
- * message. The mentioned users and groups, the quoted message and the poll come as IDs only: in
- * [Message.mentionedUsersIds], [Message.mentionedGroups] (without names), [Message.replyMessageId] and the `poll_id`
- * of [Message.extraData].
+ * no reactions, replies or read state. Its [Message.createdAt] is [scheduledAt], so it can be shown like any other
+ * message, and its [Message.updatedAt] is the one of the scheduled message. The mentioned users and groups, the
+ * quoted message and the poll come as IDs only: in [Message.mentionedUsersIds], [Message.mentionedGroups] (without
+ * names), [Message.replyMessageId] and the `poll_id` of [Message.extraData].
  * @property scheduledAt The date when the server sends the message.
  * @property status Where the scheduled message is, from scheduling until it is sent.
  * @property failure Why the message could not be scheduled or sent, or null when nothing failed.

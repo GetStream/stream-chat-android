@@ -1736,8 +1736,9 @@ internal class DomainMapping(
 
     /**
      * Transforms the generated [ScheduledMessageResponse] into a domain [ScheduledMessage]. Its content becomes a
-     * [Message] with the ID, channel, author and dates of the scheduled message, and the declared fields a message
-     * request sends back from [Message.extraData] kept there, so the message can be passed back to an edit as it is.
+     * [Message] with the ID, channel, author and update date of the scheduled message, created at its scheduled date,
+     * and the declared fields a message request sends back from [Message.extraData] kept there, so the message can be
+     * passed back to an edit as it is.
      */
     internal fun ScheduledMessageResponse.toDomain(): ScheduledMessage = ScheduledMessage(
         id = id,
@@ -1749,7 +1750,7 @@ internal class DomainMapping(
             id = id,
             cid = cid,
             user = user.toDomain(),
-            createdAt = createdAt,
+            createdAt = scheduledAt,
             updatedAt = updatedAt,
         ),
         scheduledAt = scheduledAt,

@@ -726,7 +726,7 @@ internal class ScheduledMessageSenderTest {
         runCurrent()
 
         inOrder(api) {
-            verify(api).updateScheduledMessage(onServer.id, onServer.message, scheduledAt)
+            verify(api).updateScheduledMessage(onServer.id, onServer.message.copy(createdAt = scheduledAt), scheduledAt)
             verify(api).updateScheduledMessage(eq(onServer.id), argThat { text == edited.text }, eq(null))
         }
     }

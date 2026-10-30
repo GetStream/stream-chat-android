@@ -120,7 +120,7 @@ internal class ScheduledMessageManager(
         val content = message.copy(
             cid = cid,
             user = clientState.user.value ?: message.user,
-            createdAt = now,
+            createdAt = scheduledAt,
             updatedAt = now,
         )
         var exists = false
@@ -285,7 +285,11 @@ internal class ScheduledMessageManager(
         if (scheduledAt == null) {
             this
         } else {
-            copy(scheduledAt = scheduledAt, hasPendingScheduledAt = hasPendingScheduledAt || mayBeOnServer)
+            copy(
+                message = message.copy(createdAt = scheduledAt),
+                scheduledAt = scheduledAt,
+                hasPendingScheduledAt = hasPendingScheduledAt || mayBeOnServer,
+            )
         }
 
     /**
