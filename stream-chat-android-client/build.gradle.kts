@@ -51,6 +51,7 @@ baselineProfile {
     baselineProfileOutputDir = "."
     filter {
         include("io.getstream.chat.android.client.**")
+        include("io.getstream.chat.android.network.**")
     }
 }
 
