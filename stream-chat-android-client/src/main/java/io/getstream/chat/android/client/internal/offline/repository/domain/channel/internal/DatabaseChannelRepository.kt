@@ -359,6 +359,8 @@ internal class DatabaseChannelRepository(
             truncatedAt = listOfNotNull(truncatedAt, cachedChannel.truncatedAt).maxOrNull(),
             members = members,
             read = read,
+            // Only queries that ask for it carry the active member count, so keep the stored one
+            activeMemberCount = activeMemberCount ?: cachedChannel.activeMemberCount,
         ).syncUnreadCountWithReads()
     }
 

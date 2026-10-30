@@ -30,6 +30,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
@@ -88,6 +89,30 @@ internal class DatabaseChannelRepositoryCacheTest {
         val selected = sut.selectChannel(cached.cid)
         assertEquals(truncatedAt, selected?.truncatedAt)
         assertEquals(emptyList<String>(), selected?.messages?.map { it.id })
+    }
+
+    @Test
+    fun `inserting a channel without activeMemberCount keeps the stored count`() = testScope.runTest {
+        val cached = randomChannel(activeMemberCount = 7)
+        sut.insertChannel(cached)
+
+        sut.insertChannel(cached.copy(activeMemberCount = null, name = "renamed"))
+        advanceUntilIdle()
+
+        assertEquals(7, sut.selectChannel(cached.cid)?.activeMemberCount)
+        val written = argumentCaptor<List<ChannelEntity>>()
+        verify(channelDao, times(2)).insertMany(written.capture())
+        assertEquals(7, written.lastValue.single().activeMemberCount)
+    }
+
+    @Test
+    fun `inserting a channel with activeMemberCount replaces the stored count`() = testScope.runTest {
+        val cached = randomChannel(activeMemberCount = 7)
+        sut.insertChannel(cached)
+
+        sut.insertChannel(cached.copy(activeMemberCount = 5))
+
+        assertEquals(5, sut.selectChannel(cached.cid)?.activeMemberCount)
     }
 
     @Test
