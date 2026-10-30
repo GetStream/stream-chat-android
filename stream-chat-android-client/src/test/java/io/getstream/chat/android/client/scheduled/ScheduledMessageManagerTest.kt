@@ -262,6 +262,28 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `an event older than the local message does not replace it`() = runTest {
+        val now = Date()
+        val older = randomScheduledMessage(updatedAt = Date(now.time - 1_000))
+        val newer = older.copy(message = older.message.copy(text = randomString()), updatedAt = now)
+        givenScheduledOnServer(newer)
+
+        manager.onEvent(ScheduledMessageUpdatedEvent(EventType.SCHEDULED_MESSAGE_UPDATED, Date(), null, cid, "", "", older))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(newer)
+    }
+
+    @Test
+    fun `an event as recent as the local message replaces it, so a failure without a new date is saved`() = runTest {
+        val scheduled = givenScheduledOnServer()
+        val failed = scheduled.copy(status = ScheduledMessageStatus.Failed, failure = ServerFailedPublishing(null))
+
+        manager.onEvent(ScheduledMessageFailedEvent(EventType.SCHEDULED_MESSAGE_FAILED, Date(), null, cid, "", "", failed))
+
+        manager.scheduledMessages.value shouldBeEqualTo listOf(failed)
+    }
+
+    @Test
     fun `an event keeps the local content while it has changes the server does not have`() = runTest {
         fixture.connectionState.value = ConnectionState.Offline
         val onServer = givenScheduledOnServer()

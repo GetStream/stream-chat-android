@@ -47,6 +47,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.never
@@ -56,6 +57,7 @@ import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.Date
 
+@Suppress("LargeClass")
 internal class ScheduledMessageSenderTest {
 
     private val fixture = ScheduledMessageManagerFixture()
@@ -355,6 +357,48 @@ internal class ScheduledMessageSenderTest {
         runCurrent()
 
         verify(api, times(2)).deleteScheduledMessage(onServer.id)
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [400, 500])
+    fun `a delete while an edit is in flight is sent to the server when the edit fails`(statusCode: Int) = runTest {
+        val onServer = givenScheduledOnServer()
+        val edit = PendingCall<ScheduledMessage>()
+        whenever(api.updateScheduledMessage(any(), anyOrNull(), anyOrNull())).thenReturn(edit)
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Success(Unit)))
+        start()
+        manager.update(onServer.id, onServer.message.copy(text = randomString()), scheduledAt = null)
+        runCurrent()
+
+        manager.delete(onServer.id)
+        edit.result.complete(Result.Failure(serverError(code = 4, statusCode = statusCode)))
+        runCurrent()
+
+        verify(api).deleteScheduledMessage(onServer.id)
+        manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @Test
+    fun `a delete while an upload is in flight is sent to the server when the upload fails`() = runTest {
+        val onServer = givenScheduledOnServer()
+        val upload = CompletableDeferred<Result<Attachment>>()
+        whenever(fixture.attachmentUploader.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull()))
+            .doSuspendableAnswer { upload.await() }
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Success(Unit)))
+        start()
+        val attachment = Attachment(upload = File(randomString()))
+        manager.update(onServer.id, onServer.message.copy(attachments = listOf(attachment)), scheduledAt = null)
+        runCurrent()
+
+        manager.delete(onServer.id)
+        upload.complete(Result.Failure(serverError(code = 4)))
+        runCurrent()
+
+        verify(api).deleteScheduledMessage(onServer.id)
+        verify(api, never()).updateScheduledMessage(any(), anyOrNull(), anyOrNull())
+        manager.scheduledMessages.value.shouldBeEmpty()
         fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
     }
 

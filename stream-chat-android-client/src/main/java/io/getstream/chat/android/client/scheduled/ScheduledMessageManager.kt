@@ -246,8 +246,7 @@ internal class ScheduledMessageManager(
             store.update(server.id) { current ->
                 when {
                     current == null && server.id in knownBefore -> null
-                    current != null && current.pendingChange == null && server.updatedAt < current.updatedAt -> current
-                    else -> current.mergeServer(server)
+                    else -> current.mergeServerUnlessOlder(server)
                 }
             }
         }
@@ -265,7 +264,7 @@ internal class ScheduledMessageManager(
     }
 
     private suspend fun save(scheduledMessage: ScheduledMessage) {
-        store.update(scheduledMessage.id) { it.mergeServer(scheduledMessage) }
+        store.update(scheduledMessage.id) { it.mergeServerUnlessOlder(scheduledMessage) }
     }
 
     private suspend fun change(
@@ -326,3 +325,10 @@ internal class ScheduledMessageManager(
     private fun <T : Any> notFound(id: String): Result<T> =
         Result.Failure(Error.GenericError("There is no scheduled message with id: $id."))
 }
+
+/**
+ * Merges [server] into the local message, unless it is older than the local message with no pending changes, for
+ * example an event of an edit that arrives after the answer to a later edit.
+ */
+private fun LocalScheduledMessage?.mergeServerUnlessOlder(server: ScheduledMessage): LocalScheduledMessage =
+    if (this != null && pendingChange == null && server.updatedAt < updatedAt) this else mergeServer(server)

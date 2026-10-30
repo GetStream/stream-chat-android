@@ -133,8 +133,8 @@ internal class ScheduledMessageSender(
                 val failed = attachment.copy(uploadState = Attachment.UploadState.Failed(result.value))
                 store.update(message.id) {
                     it?.replaceAttachment(attachment, failed)
-                        ?.copy(
-                            localFailure = LocalDeviceFailedScheduling(
+                        ?.withFailure(
+                            LocalDeviceFailedScheduling(
                                 reason = LocalDeviceFailedScheduling.Reason.AttachmentUploadFailed,
                                 message = result.value.message,
                             ),
@@ -257,10 +257,8 @@ internal class ScheduledMessageSender(
             error.isWaitingForConnection() -> return false
             else -> store.update(sent.id) {
                 // A rejection means the server did not store a create.
-                it?.copy(
-                    localFailure = error.toScheduledMessageFailure(),
-                    isCreateSent = it.isCreateSent && !error.isRejection(),
-                )
+                it?.copy(isCreateSent = it.isCreateSent && !error.isRejection())
+                    ?.withFailure(error.toScheduledMessageFailure())
             }
         }
         return true
@@ -283,6 +281,10 @@ internal class ScheduledMessageSender(
     } else {
         LocalDeviceFailedScheduling(reason = LocalDeviceFailedScheduling.Reason.RequestFailed, message = message)
     }
+
+    /** Saves [failure], unless the message was deleted while the request ran: its delete is sent next instead. */
+    private fun LocalScheduledMessage.withFailure(failure: ScheduledMessageFailure): LocalScheduledMessage =
+        if (isDeleted) this else copy(localFailure = failure)
 
     private fun LocalScheduledMessage.replaceAttachment(old: Attachment, new: Attachment): LocalScheduledMessage =
         copy(message = message.copy(attachments = message.attachments.map { if (it == old) new else it }))
