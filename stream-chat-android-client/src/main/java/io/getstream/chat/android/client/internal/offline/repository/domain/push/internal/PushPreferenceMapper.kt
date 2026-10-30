@@ -18,6 +18,9 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.push
 
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
+import io.getstream.chat.android.models.PushSchedule
+import io.getstream.chat.android.models.QuietHoursDay
+import io.getstream.chat.android.models.QuietHoursRule
 
 /**
  * Maps [PushPreference] to [PushPreferenceEntity].
@@ -25,6 +28,7 @@ import io.getstream.chat.android.models.PushPreferenceLevel
 internal fun PushPreference.toEntity(): PushPreferenceEntity = PushPreferenceEntity(
     level = level?.value,
     disabledUntil = disabledUntil,
+    schedule = schedule?.toEntity(),
 )
 
 /**
@@ -33,4 +37,19 @@ internal fun PushPreference.toEntity(): PushPreferenceEntity = PushPreferenceEnt
 internal fun PushPreferenceEntity.toModel(): PushPreference = PushPreference(
     level = PushPreferenceLevel.fromValue(level),
     disabledUntil = disabledUntil,
+    schedule = schedule?.toModel(),
+)
+
+private fun PushSchedule.toEntity(): PushScheduleEntity = PushScheduleEntity(
+    timezone = timezone,
+    quietHours = quietHours.map { rule ->
+        QuietHoursRuleEntity(start = rule.start, end = rule.end, days = rule.days.map(QuietHoursDay::value))
+    },
+)
+
+private fun PushScheduleEntity.toModel(): PushSchedule = PushSchedule(
+    timezone = timezone,
+    quietHours = quietHours.map { rule ->
+        QuietHoursRule(start = rule.start, end = rule.end, days = rule.days.map(::QuietHoursDay))
+    },
 )

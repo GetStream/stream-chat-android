@@ -26,6 +26,9 @@ import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
+import io.getstream.chat.android.models.PushSchedule
+import io.getstream.chat.android.models.QuietHoursDay
+import io.getstream.chat.android.models.QuietHoursRule
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomDate
@@ -113,6 +116,84 @@ internal class ChatClientPushPreferencesApiTest : BaseChatClientTest() {
 
         // when
         val result = chatClient.snoozeUserPushNotifications(until).await()
+
+        // then
+        verifyNetworkError(result, errorCode)
+        verifyNoInteractions(mutableClientState)
+    }
+
+    @Test
+    fun `setUserPushSchedule success should return push preference and update user state`() = runTest {
+        // given
+        val schedule = PushSchedule(
+            timezone = "Europe/Amsterdam",
+            quietHours = listOf(QuietHoursRule(start = "22:00", end = "07:00", days = QuietHoursDay.weekdays)),
+        )
+        val pushPreference = PushPreference(level = null, disabledUntil = null, schedule = schedule)
+        val currentUser = User(id = "user1", name = "Test User")
+        val userStateFlow = MutableStateFlow(currentUser)
+
+        whenever(api.setUserPushSchedule(schedule))
+            .doReturn(RetroSuccess(pushPreference).toRetrofitCall())
+        whenever(mutableClientState.user).doReturn(userStateFlow)
+
+        // when
+        val result = chatClient.setUserPushSchedule(schedule).await()
+
+        // then
+        verifySuccess(result, pushPreference)
+        verify(mutableClientState).setUser(currentUser.copy(pushPreference = pushPreference))
+    }
+
+    @Test
+    fun `setUserPushSchedule error should return error`() = runTest {
+        // given
+        val schedule = PushSchedule(
+            timezone = "Europe/Amsterdam",
+            quietHours = listOf(QuietHoursRule(start = "00:00", end = "24:00")),
+        )
+        val errorCode = positiveRandomInt()
+
+        whenever(api.setUserPushSchedule(schedule))
+            .doReturn(RetroError<PushPreference>(errorCode).toRetrofitCall())
+
+        // when
+        val result = chatClient.setUserPushSchedule(schedule).await()
+
+        // then
+        verifyNetworkError(result, errorCode)
+        verifyNoInteractions(mutableClientState)
+    }
+
+    @Test
+    fun `removeUserPushSchedule success should return push preference and update user state`() = runTest {
+        // given
+        val pushPreference = PushPreference(level = null, disabledUntil = null, schedule = null)
+        val currentUser = User(id = "user1", name = "Test User")
+        val userStateFlow = MutableStateFlow(currentUser)
+
+        whenever(api.removeUserPushSchedule())
+            .doReturn(RetroSuccess(pushPreference).toRetrofitCall())
+        whenever(mutableClientState.user).doReturn(userStateFlow)
+
+        // when
+        val result = chatClient.removeUserPushSchedule().await()
+
+        // then
+        verifySuccess(result, pushPreference)
+        verify(mutableClientState).setUser(currentUser.copy(pushPreference = pushPreference))
+    }
+
+    @Test
+    fun `removeUserPushSchedule error should return error`() = runTest {
+        // given
+        val errorCode = positiveRandomInt()
+
+        whenever(api.removeUserPushSchedule())
+            .doReturn(RetroError<PushPreference>(errorCode).toRetrofitCall())
+
+        // when
+        val result = chatClient.removeUserPushSchedule().await()
 
         // then
         verifyNetworkError(result, errorCode)

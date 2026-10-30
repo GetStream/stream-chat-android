@@ -19,7 +19,9 @@ package io.getstream.chat.android.client.parser2.testdata
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.PushPreferenceInput
+import io.getstream.chat.android.network.models.PushScheduleInput
 import io.getstream.chat.android.network.models.QueryMembersPayload
+import io.getstream.chat.android.network.models.QuietHoursRuleInput
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import java.util.Date
@@ -80,4 +82,24 @@ internal object RequestBodiesTestData {
     const val setChatPreferencesJson =
         """{"preferences":[{"chat_preferences":{"default_preference":"all","direct_mentions":"all",""" +
             """"thread_replies":"none"}}]}"""
+
+    val setUserPushSchedule = UpsertPushPreferencesRequest(
+        preferences = listOf(
+            PushPreferenceInput(
+                removeSchedule = true,
+                schedule = PushScheduleInput(
+                    timezone = "Europe/Amsterdam",
+                    quietHours = listOf(
+                        QuietHoursRuleInput(end = "07:00", start = "22:00", days = listOf("fri")),
+                        QuietHoursRuleInput(end = "24:00", start = "00:00", days = emptyList()),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    const val setUserPushScheduleJson =
+        """{"preferences":[{"remove_schedule":true,"schedule":{"timezone":"Europe/Amsterdam",""" +
+            """"quiet_hours":[{"end":"07:00","start":"22:00","days":["fri"]},""" +
+            """{"end":"24:00","start":"00:00","days":[]}]}}]}"""
 }

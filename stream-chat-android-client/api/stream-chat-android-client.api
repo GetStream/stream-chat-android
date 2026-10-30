@@ -197,6 +197,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun removeSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun removeUserGroupMembers (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun removeUserGroupMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun removeUserPushSchedule ()Lio/getstream/result/call/Call;
 	public final fun searchMessages (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/result/call/Call;
 	public static synthetic fun searchMessages$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun searchRoles (Ljava/lang/String;Ljava/lang/Integer;Lio/getstream/chat/android/models/RoleType;Ljava/lang/Boolean;Ljava/lang/String;)Lio/getstream/result/call/Call;
@@ -227,6 +228,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static final fun setOFFLINE_SUPPORT_ENABLED (Z)V
 	public final fun setUserChatPreferences (Lio/getstream/chat/android/models/ChatPreferences;)Lio/getstream/result/call/Call;
 	public final fun setUserPushPreference (Lio/getstream/chat/android/models/PushPreferenceLevel;)Lio/getstream/result/call/Call;
+	public final fun setUserPushSchedule (Lio/getstream/chat/android/models/PushSchedule;)Lio/getstream/result/call/Call;
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun showChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
