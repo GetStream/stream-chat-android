@@ -63,6 +63,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -293,7 +295,8 @@ private fun ScheduledMessageItemIcon(isFailed: Boolean, isInProgress: Boolean) {
         isInProgress -> CircularProgressIndicator(
             modifier = Modifier
                 .size(20.dp)
-                .padding(2.dp),
+                .padding(2.dp)
+                .testTag("Stream_ScheduledMessageInProgress"),
             strokeWidth = 2.dp,
             color = ChatTheme.colors.textSecondary,
         )
@@ -322,7 +325,10 @@ private fun ScheduledMessageActionsSheet(
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(
-        modifier = Modifier.testTag("Stream_ScheduledMessageActions"),
+        // The sheet renders in its own window, which the app-level `testTagsAsResourceId` does not reach.
+        modifier = Modifier
+            .testTag("Stream_ScheduledMessageActions")
+            .semantics { testTagsAsResourceId = true },
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = ChatTheme.colors.backgroundCoreElevation1,
@@ -493,7 +499,8 @@ private fun ConfirmDialog(
     modifier: Modifier = Modifier,
 ) {
     AlertDialog(
-        modifier = modifier,
+        // The dialog renders in its own window, which the app-level `testTagsAsResourceId` does not reach.
+        modifier = modifier.semantics { testTagsAsResourceId = true },
         onDismissRequest = onDismiss,
         title = { Text(text = title) },
         text = { Text(text = text) },

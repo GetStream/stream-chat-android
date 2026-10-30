@@ -77,6 +77,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Date
 import io.getstream.chat.android.compose.R as ComposeR
 
@@ -112,7 +113,8 @@ internal fun ScheduledMessagesComposer(
     LaunchedEffect(requestedSheet) {
         val requested = requestedSheet ?: return@LaunchedEffect
         keyboardController?.hide()
-        snapshotFlow { isImeVisible }.first { !it }
+        // Bounded, as the keyboard insets reach this screen only on some API levels, and stay "visible" on the others.
+        withTimeoutOrNull(KeyboardHideTimeoutMs) { snapshotFlow { isImeVisible }.first { !it } }
         sheet = requested
         requestedSheet = null
     }
@@ -482,4 +484,5 @@ private fun ScheduledMessageEditHeader(title: String, text: String, onCancelClic
 }
 
 private const val BannerBackgroundAlpha = 0.08f
+private const val KeyboardHideTimeoutMs = 500L
 private val SnackbarBottomPadding = 72.dp
