@@ -21,14 +21,13 @@ import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class AppSettingsParsingTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
@@ -66,7 +65,7 @@ internal class AppSettingsParsingTest {
 
     @Test
     fun `deserializes the app settings wire shape and maps it to AppSettings`() {
-        val dto = parser.fromJson(json, GetApplicationResponse::class.java)
+        val dto = Serializer.moshi.adapter(GetApplicationResponse::class.java).fromJson(json)!!
 
         val appSettings = with(domainMapping) { dto.toDomain() }
 

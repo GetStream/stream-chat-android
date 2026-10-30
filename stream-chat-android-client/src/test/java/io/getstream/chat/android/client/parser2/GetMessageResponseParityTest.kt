@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.parser2.testdata.MessageFixtures
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GetMessageResponse
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.MessageWithChannelResponse
@@ -39,7 +40,6 @@ import org.junit.jupiter.params.provider.MethodSource
  */
 internal class GetMessageResponseParityTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "jaewoong" },
         channelTransformer = NoOpChannelTransformer,
@@ -50,8 +50,8 @@ internal class GetMessageResponseParityTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("io.getstream.chat.android.client.parser2.testdata.MessageFixtures#fixtures")
     fun `A message with its channel converts to the MessageResponse of its JSON`(name: String, json: String) {
-        val message = runCatching { parser.fromJson(json, MessageResponse::class.java) }.getOrNull() ?: return
-        val withChannel = parser.fromJson(json.withChannel(), MessageWithChannelResponse::class.java)
+        val message = runCatching { parse<MessageResponse>(json) }.getOrNull() ?: return
+        val withChannel = parse<MessageWithChannelResponse>(json.withChannel())
 
         // Compares every field, including the ones the message mapper doesn't read yet.
         assertFieldsEqual(name, message, with(mapping) { withChannel.toMessageResponse() })
@@ -66,11 +66,11 @@ internal class GetMessageResponseParityTest {
             "draft": {"channel_cid": "messaging:get-parity", "created_at": "2026-10-05T07:31:25.465Z",
             "message": {"id": "draft-1", "text": "draft"}},""",
         )
-        val withChannel = parser.fromJson(json.withChannel(), MessageWithChannelResponse::class.java)
+        val withChannel = parse<MessageWithChannelResponse>(json.withChannel())
 
         assertFieldsEqual(
             "extra fields",
-            parser.fromJson(json, MessageResponse::class.java),
+            parse<MessageResponse>(json),
             with(mapping) {
                 withChannel.toMessageResponse()
             },
@@ -88,11 +88,11 @@ internal class GetMessageResponseParityTest {
     }
 
     @Test
-    fun `A message with its channel reads null collections as empty`() {
+    fun `A message with its channel reads absent collections as empty`() {
         val nulls = NON_NULL_COLLECTIONS.associateWith { null }
         val json = mapAdapter.toJson(mapAdapter.fromJson(message().withChannel())!! + nulls)
 
-        val message = parser.fromJson(json, MessageWithChannelResponse::class.java)
+        val message = parse<MessageWithChannelResponse>(json)
 
         message.attachments shouldBeEqualTo emptyList()
         message.latestReactions shouldBeEqualTo emptyList()
@@ -106,10 +106,10 @@ internal class GetMessageResponseParityTest {
     @Test
     fun `A get message response without the channel or the duration is rejected`() {
         assertThrows<JsonDataException> {
-            parser.fromJson("""{"message": ${message().withChannel()}}""", GetMessageResponse::class.java)
+            parse<GetMessageResponse>("""{"message": ${message().withChannel()}}""")
         }
         assertThrows<JsonDataException> {
-            parser.fromJson(message(), MessageWithChannelResponse::class.java)
+            parse<MessageWithChannelResponse>(message())
         }
     }
 
@@ -118,7 +118,7 @@ internal class GetMessageResponseParityTest {
             Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java),
         )
 
-        /** The channel a get message response nests in its message, as the v1 backend sends it. */
+        /** The channel a get message response nests in its message. */
         private val CHANNEL = mapOf(
             "id" to "get-parity", "type" to "messaging", "cid" to "messaging:get-parity",
             "created_at" to "2026-10-05T07:31:24.840Z", "updated_at" to "2026-10-05T07:31:24.840Z",
@@ -135,20 +135,19 @@ internal class GetMessageResponseParityTest {
             "reaction_scores",
         )
 
-        private val parser = ParserFactory.createMoshiChatParser()
+        private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
         /** The first shared message fixture the generated [MessageResponse] accepts. */
         private fun message(): String = MessageFixtures.fixtures()
             .map { it.get()[1] as String }
-            .first { runCatching { parser.fromJson(it, MessageResponse::class.java) }.isSuccess }
+            .first { runCatching { parse<MessageResponse>(it) }.isSuccess }
 
         private fun String.withChannel(): String =
             mapAdapter.serializeNulls().toJson(mapAdapter.fromJson(this)!! + ("channel" to CHANNEL))
 
         /** A get message response built from a shared message fixture and its channel. */
-        fun getMessageResponse(): GetMessageResponse = parser.fromJson(
+        fun getMessageResponse(): GetMessageResponse = parse<GetMessageResponse>(
             """{"duration": "1ms", "message": ${message().withChannel()}}""",
-            GetMessageResponse::class.java,
         )
     }
 }

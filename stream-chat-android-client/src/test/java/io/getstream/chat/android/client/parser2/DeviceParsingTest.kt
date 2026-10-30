@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.DeviceResponse
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -34,7 +35,9 @@ import org.junit.jupiter.params.provider.MethodSource
 
 internal class DeviceParsingTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
+
+    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
@@ -47,14 +50,14 @@ internal class DeviceParsingTest {
 
     @Test
     fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(DeviceTestData.jsonAllFields, DeviceResponse::class.java)
+        val dto = parse<DeviceResponse>(DeviceTestData.jsonAllFields)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedDeviceAllFields, device)
     }
 
     @Test
     fun `DTO path - deserializes with optional field missing`() {
-        val dto = parser.fromJson(DeviceTestData.jsonOptionalFieldMissing, DeviceResponse::class.java)
+        val dto = parse<DeviceResponse>(DeviceTestData.jsonOptionalFieldMissing)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedDeviceOptionalMissing, device)
     }
@@ -65,7 +68,7 @@ internal class DeviceParsingTest {
 
     @Test
     fun `DTO path - deserializes with explicit null values`() {
-        val dto = parser.fromJson(DeviceTestData.jsonWithExplicitNulls, DeviceResponse::class.java)
+        val dto = parse<DeviceResponse>(DeviceTestData.jsonWithExplicitNulls)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedWithExplicitNulls, device)
     }
@@ -77,14 +80,14 @@ internal class DeviceParsingTest {
     @Test
     fun `DTO path - throws on missing id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(DeviceTestData.jsonMissingId, DeviceResponse::class.java)
+            parse<DeviceResponse>(DeviceTestData.jsonMissingId)
         }
     }
 
     @Test
     fun `DTO path - throws on missing push_provider`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(DeviceTestData.jsonMissingPushProvider, DeviceResponse::class.java)
+            parse<DeviceResponse>(DeviceTestData.jsonMissingPushProvider)
         }
     }
 
@@ -98,7 +101,7 @@ internal class DeviceParsingTest {
         wire: String,
         provider: CreateDeviceRequest.PushProvider,
     ) {
-        val json = parser.toJson(CreateDeviceRequest(id = "token1", pushProvider = provider))
+        val json = toJson(CreateDeviceRequest(id = "token1", pushProvider = provider))
         assertEquals("""{"id":"token1","push_provider":"$wire"}""", json)
     }
 
@@ -108,9 +111,8 @@ internal class DeviceParsingTest {
         wire: String,
         provider: CreateDeviceRequest.PushProvider,
     ) {
-        val request = parser.fromJson(
+        val request = parse<CreateDeviceRequest>(
             """{"id":"token1","push_provider":"$wire"}""",
-            CreateDeviceRequest::class.java,
         )
         assertEquals(provider, request.pushProvider)
     }

@@ -17,7 +17,9 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
@@ -29,6 +31,7 @@ internal class EventFixtureParsingTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
     private val fastParser = ParserFactory.createMoshiChatParser(fastEventParsing = true)
+    private val directParser = ParserFactory.createDirectEventParser()
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.parser.EventArguments#eventAdapterArgumentsList")
@@ -43,5 +46,7 @@ internal class EventFixtureParsingTest {
         expectedEvent: ChatEvent,
     ) {
         assertEquals(expectedEvent, fastParser.fromJson(eventData, ChatEvent::class.java))
+        // A frame the fast path can't read falls back to the generated models and would still pass above.
+        if (expectedEvent is NewMessageEvent) assertNotNull(directParser.parse(eventData))
     }
 }

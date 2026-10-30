@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -25,72 +26,7 @@ import org.junit.jupiter.api.Test
  * Tests for JSON deserialization of [GroupedQueryChannelsResponse] using Moshi.
  */
 internal class QueryGroupedChannelsResponseAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
-    @Language("JSON")
-    private val json = """
-        {
-          "groups": {
-            "all-open": {
-              "channels": [
-                {
-                  "channel": {
-                    "cid": "messaging:support-123",
-                    "id": "support-123",
-                    "type": "messaging",
-                    "name": "Support",
-                    "image": "https://getstream.imgix.net/images/random_svg/stream_logo.svg",
-                    "created_at": "2024-01-01T00:00:00.000Z",
-                    "updated_at": "2024-01-02T00:00:00.000Z",
-                    "frozen": false,
-                    "disabled": false,
-                    "config": {
-                      "typing_events": true,
-                      "delivery_events": true,
-                      "name": "messaging",
-                      "shared_locations": false,
-                      "skip_last_msg_update_for_system_msgs": false,
-                      "user_message_reminders": false,
-                      "read_events": true,
-                      "connect_events": true,
-                      "search": true,
-                      "reactions": true,
-                      "replies": true,
-                      "quotes": true,
-                      "reminders": false,
-                      "count_messages": true,
-                      "uploads": true,
-                      "url_enrichment": true,
-                      "custom_events": false,
-                      "push_notifications": true,
-                      "polls": false,
-                      "mutes": true,
-                      "message_retention": "infinite",
-                      "max_message_length": 5000,
-                      "automod": "disabled",
-                      "automod_behavior": "flag",
-                      "created_at": "2024-01-01T00:00:00.000Z",
-                      "updated_at": "2024-01-02T00:00:00.000Z",
-                      "commands": [],
-                      "mark_messages_pending": false
-                    },
-                    "own_capabilities": [],
-                    "member_count": 0
-                  },
-                  "members": [],
-                  "messages": [],
-                  "pinned_messages": [],
-                  "watchers": [],
-                  "watcher_count": 0,
-                  "read": []
-                }
-              ],
-              "unread_channels": 1
-            }
-          },
-          "duration": "12ms"
-        }
-    """.trimIndent()
+    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
     @Language("JSON")
     private val jsonWithoutUnreadCounters = """
@@ -156,7 +92,7 @@ internal class QueryGroupedChannelsResponseAdapterTest {
 
     @Test
     fun `Deserialize default unread counters when missing`() {
-        val response = parser.fromJson(jsonWithoutUnreadCounters, GroupedQueryChannelsResponse::class.java)
+        val response = parse<GroupedQueryChannelsResponse>(jsonWithoutUnreadCounters)
 
         assertEquals("12ms", response.duration)
         assertEquals(setOf("expired"), response.groups.keys)

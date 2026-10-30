@@ -32,20 +32,32 @@ internal object ParserFactory {
         apiModelTransformers: ApiModelTransformers = ApiModelTransformers(),
         fastEventParsing: Boolean = false,
     ): ChatParser {
-        val domainMapping = DomainMapping(
-            currentUserIdProvider = currentUserIdProvider,
-            channelTransformer = apiModelTransformers.incomingChannelTransformer,
-            messageTransformer = apiModelTransformers.incomingMessageTransformer,
-            userTransformer = apiModelTransformers.incomingUserTransformer,
-            hidesStoredDeclaredCustom = true,
-        )
-        val directEventParser = DirectEventParser(
-            messageTransformer = apiModelTransformers.incomingMessageTransformer,
-            userTransformer = apiModelTransformers.incomingUserTransformer,
-            mapping = domainMapping,
-        ).takeIf { fastEventParsing }
+        val domainMapping = createDomainMapping(currentUserIdProvider, apiModelTransformers)
+        val directEventParser = createDirectEventParser(domainMapping, apiModelTransformers)
+            .takeIf { fastEventParsing }
         return EventRoutingParser(MoshiChatParser(), V2EventParser(domainMapping, directEventParser))
     }
+
+    /** The fast event parser on its own, as [createMoshiChatParser] uses it with fast event parsing on. */
+    fun createDirectEventParser(
+        domainMapping: DomainMapping = createDomainMapping(),
+        apiModelTransformers: ApiModelTransformers = ApiModelTransformers(),
+    ): DirectEventParser = DirectEventParser(
+        messageTransformer = apiModelTransformers.incomingMessageTransformer,
+        userTransformer = apiModelTransformers.incomingUserTransformer,
+        mapping = domainMapping,
+    )
+
+    private fun createDomainMapping(
+        currentUserIdProvider: () -> String = { "" },
+        apiModelTransformers: ApiModelTransformers = ApiModelTransformers(),
+    ) = DomainMapping(
+        currentUserIdProvider = currentUserIdProvider,
+        channelTransformer = apiModelTransformers.incomingChannelTransformer,
+        messageTransformer = apiModelTransformers.incomingMessageTransformer,
+        userTransformer = apiModelTransformers.incomingUserTransformer,
+        hidesStoredDeclaredCustom = true,
+    )
 
     private class EventRoutingParser(
         private val rest: MoshiChatParser,

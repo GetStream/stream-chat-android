@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GetRepliesResponse
 import io.getstream.chat.android.network.models.SendReactionResponse
@@ -27,20 +28,19 @@ import org.junit.jupiter.api.assertThrows
 /** The replies, pinned messages and send reaction responses parsed through their generated models. */
 internal class MessageListResponseParsingTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
     @Test
     fun `Replies parse their messages`() {
-        val response = parser.fromJson("""{ "duration": "1ms", "messages": [$MESSAGE] }""", GetRepliesResponse::class.java)
+        val response = parse<GetRepliesResponse>("""{ "duration": "1ms", "messages": [$MESSAGE] }""")
 
         response.messages.map { it.id } shouldBeEqualTo listOf("message-id")
     }
 
     @Test
     fun `Pinned messages parse their messages`() {
-        val response = parser.fromJson(
+        val response = parse<GetPinnedMessagesResponse>(
             """{ "duration": "1ms", "messages": [$MESSAGE] }""",
-            GetPinnedMessagesResponse::class.java,
         )
 
         response.messages.map { it.id } shouldBeEqualTo listOf("message-id")
@@ -48,9 +48,8 @@ internal class MessageListResponseParsingTest {
 
     @Test
     fun `A send reaction response parses its reaction`() {
-        val response = parser.fromJson(
+        val response = parse<SendReactionResponse>(
             """{ "duration": "1ms", "message": $MESSAGE, "reaction": $REACTION }""",
-            SendReactionResponse::class.java,
         )
 
         response.reaction.type shouldBeEqualTo "like"
@@ -60,17 +59,17 @@ internal class MessageListResponseParsingTest {
     @Test
     fun `A response without a duration is rejected`() {
         assertThrows<JsonDataException> {
-            parser.fromJson("""{ "messages": [$MESSAGE] }""", GetRepliesResponse::class.java)
+            parse<GetRepliesResponse>("""{ "messages": [$MESSAGE] }""")
         }
         assertThrows<JsonDataException> {
-            parser.fromJson("""{ "messages": [$MESSAGE] }""", GetPinnedMessagesResponse::class.java)
+            parse<GetPinnedMessagesResponse>("""{ "messages": [$MESSAGE] }""")
         }
     }
 
     @Test
     fun `A send reaction response without its message is rejected`() {
         assertThrows<JsonDataException> {
-            parser.fromJson("""{ "duration": "1ms", "reaction": $REACTION }""", SendReactionResponse::class.java)
+            parse<SendReactionResponse>("""{ "duration": "1ms", "reaction": $REACTION }""")
         }
     }
 

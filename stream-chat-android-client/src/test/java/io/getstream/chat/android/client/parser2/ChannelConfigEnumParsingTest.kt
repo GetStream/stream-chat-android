@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -31,8 +32,6 @@ import org.junit.jupiter.api.Test
  * rather than being dropped or coerced.
  */
 internal class ChannelConfigEnumParsingTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { null },
@@ -49,7 +48,7 @@ internal class ChannelConfigEnumParsingTest {
 
     @Test
     fun `Unrecognised config modes are preserved as Unknown`() {
-        val config = parser.fromJson(configJsonWithUnknownEnums, ChannelConfigWithInfo::class.java)
+        val config = Serializer.moshi.adapter(ChannelConfigWithInfo::class.java).fromJson(configJsonWithUnknownEnums)!!
 
         assertEquals(ChannelConfigWithInfo.Automod.Unknown("future_mode"), config.automod)
         assertEquals(
@@ -64,7 +63,7 @@ internal class ChannelConfigEnumParsingTest {
 
     @Test
     fun `Unrecognised config modes reach the domain as the raw wire value`() {
-        val parsed = parser.fromJson(configJsonWithUnknownEnums, ChannelConfigWithInfo::class.java)
+        val parsed = Serializer.moshi.adapter(ChannelConfigWithInfo::class.java).fromJson(configJsonWithUnknownEnums)!!
 
         val config = with(domainMapping) { parsed.toDomain() }
 

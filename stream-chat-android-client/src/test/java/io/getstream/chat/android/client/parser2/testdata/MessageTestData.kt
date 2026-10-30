@@ -16,13 +16,7 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.models.ChannelInfo
-import io.getstream.chat.android.models.MemberInfo
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Reaction
-import io.getstream.chat.android.models.User
 import org.intellij.lang.annotations.Language
-import java.util.Date
 
 @Suppress("LargeClass")
 internal object MessageTestData {
@@ -30,8 +24,8 @@ internal object MessageTestData {
     /**
      * Truly all-fields fixture: every optional Message field is populated, plus
      * a poll whose updated_at is later than the message's updated_at (exercises
-     * the lastUpdateTime resolution), plus literal "extraData" and arbitrary
-     * top-level custom keys with mixed value types.
+     * the lastUpdateTime resolution), plus custom data with a literal "extraData"
+     * key and arbitrary keys of mixed value types.
      */
     @Language("JSON")
     val jsonAllFields = """{
@@ -50,9 +44,7 @@ internal object MessageTestData {
                 "asset_url": "https://example.com/image.png",
                 "image_url": "https://example.com/image.png",
                 "thumb_url": "https://example.com/thumb.png",
-                "name": "photo.png",
-                "file_size": 2048,
-                "mime_type": "image/png"
+                "custom": {"name": "photo.png", "file_size": 2048, "mime_type": "image/png"}
             }
         ],
         "latest_reactions": [
@@ -115,7 +107,7 @@ internal object MessageTestData {
             "name": "Favorite color",
             "description": "Choose your favorite color",
             "options": [
-                {"id": "option-1", "text": "Red", "option_custom_key": "option-custom-value"},
+                {"id": "option-1", "text": "Red", "custom": {"option_custom_key": "option-custom-value"}},
                 {"id": "option-2", "text": "Blue"}
             ],
             "voting_visibility": "public",
@@ -178,8 +170,7 @@ internal object MessageTestData {
             ],
             "created_by": {"id": "user-1", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
             "created_by_id": "user-1",
-            "poll_custom_key": "poll-custom-value",
-            "poll_null_key": null
+            "custom": {"poll_custom_key": "poll-custom-value", "poll_null_key": null}
         },
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T03:00:00.000Z",
@@ -231,18 +222,20 @@ internal object MessageTestData {
             "created_at": "2020-01-01T00:00:00.000Z",
             "updated_at": "2020-01-01T00:00:00.000Z"
         },
-        "extraData": {
-            "key1": "value1",
-            "key2": true,
-            "key3": {"key4": "val4"}
-        },
-        "customString": "customVal1",
-        "customBool": true,
-        "customNumber": 42,
-        "customArray": ["a", "b", "c"],
-        "customNestedObject": {
-            "outerKey": "outer",
-            "nested": {"deepKey": [1, 2, 3]}
+        "custom": {
+            "extraData": {
+                "key1": "value1",
+                "key2": true,
+                "key3": {"key4": "val4"}
+            },
+            "customString": "customVal1",
+            "customBool": true,
+            "customNumber": 42,
+            "customArray": ["a", "b", "c"],
+            "customNestedObject": {
+                "outerKey": "outer",
+                "nested": {"deepKey": [1, 2, 3]}
+            }
         }
     }"""
 
@@ -463,30 +456,6 @@ internal object MessageTestData {
         "silent": false
     }"""
 
-    val expectedOptionalFieldsMissing = Message(
-        id = "msg-1",
-        cid = "messaging:general",
-        text = "Hello world",
-        html = "<p>Hello world</p>",
-        type = "regular",
-        user = User(id = "user-1", role = "user", invisible = null, banned = false, online = true),
-        attachments = emptyList(),
-        latestReactions = emptyList(),
-        ownReactions = emptyList(),
-        mentionedUsersIds = emptyList(),
-        mentionedUsers = emptyList(),
-        replyCount = 0,
-        deletedReplyCount = 0,
-        createdAt = Date(1577836800000L),
-        updatedAt = Date(1577836800000L),
-        silent = false,
-        pinned = false,
-        shadowed = false,
-        showInChannel = false,
-        deletedForMe = false,
-        extraData = emptyMap(),
-    )
-
     @Language("JSON")
     val jsonWithExplicitNulls = """{
         "id": "msg-1",
@@ -515,37 +484,6 @@ internal object MessageTestData {
         "mentioned_groups": [],
         "mentioned_roles": ["admin", "moderator"]
     }"""
-
-    val expectedWithExplicitNulls = Message(
-        id = "msg-1",
-        cid = "messaging:general",
-        text = "Hello world",
-        html = "<p>Hello world</p>",
-        type = "regular",
-        user = User(id = "user-1", role = "user", invisible = null, banned = false, online = true),
-        attachments = emptyList(),
-        latestReactions = emptyList(),
-        ownReactions = emptyList(),
-        mentionedUsersIds = emptyList(),
-        mentionedUsers = emptyList(),
-        replyCount = 0,
-        deletedReplyCount = 0,
-        createdAt = Date(1577836800000L),
-        updatedAt = Date(1577836800000L),
-        silent = false,
-        pinned = false,
-        command = null,
-        parentId = null,
-        replyMessageId = null,
-        deletedForMe = false,
-        shadowed = false,
-        showInChannel = false,
-        mentionedHere = true,
-        mentionedChannel = true,
-        mentionedGroups = emptyList(),
-        mentionedRoles = listOf("admin", "moderator"),
-        extraData = emptyMap(),
-    )
 
     // region Quoted message with channel info (field-order independence test)
 
@@ -644,14 +582,6 @@ internal object MessageTestData {
         }
     }"""
 
-    val expectedChannelInfo = ChannelInfo(
-        cid = "messaging:general",
-        id = "general",
-        type = "messaging",
-        memberCount = 5,
-        name = "General",
-    )
-
     /**
      * Outer message has `channel`; the inner two messages (depth 1 and depth 2) do not.
      * Locks down the documented one-level depth limit of channelInfo propagation in the
@@ -717,57 +647,7 @@ internal object MessageTestData {
         }
     }"""
 
-    val expectedQuotedMessageWithChannel = Message(
-        id = "msg-parent",
-        cid = "messaging:general",
-        text = "Parent message",
-        html = "<p>Parent message</p>",
-        type = "regular",
-        user = User(id = "user-1", role = "user", invisible = null, banned = false, online = true),
-        attachments = emptyList(),
-        latestReactions = emptyList(),
-        ownReactions = emptyList(),
-        mentionedUsersIds = emptyList(),
-        mentionedUsers = emptyList(),
-        replyCount = 0,
-        deletedReplyCount = 0,
-        createdAt = Date(1577836800000L),
-        updatedAt = Date(1577836800000L),
-        silent = false,
-        pinned = false,
-        shadowed = false,
-        showInChannel = false,
-        deletedForMe = false,
-        channelInfo = expectedChannelInfo,
-        replyMessageId = "msg-quoted",
-        replyTo = Message(
-            id = "msg-quoted",
-            cid = "messaging:general",
-            text = "Quoted message",
-            html = "<p>Quoted message</p>",
-            type = "regular",
-            user = User(id = "user-2", role = "user", invisible = null, banned = false, online = true),
-            attachments = emptyList(),
-            latestReactions = emptyList(),
-            ownReactions = emptyList(),
-            mentionedUsersIds = emptyList(),
-            mentionedUsers = emptyList(),
-            replyCount = 0,
-            deletedReplyCount = 0,
-            createdAt = Date(1577836800000L),
-            updatedAt = Date(1577836800000L),
-            silent = false,
-            pinned = false,
-            shadowed = false,
-            showInChannel = false,
-            deletedForMe = false,
-            channelInfo = expectedChannelInfo,
-        ),
-        extraData = emptyMap(),
-    )
-
     // endregion
-
     // region Reactions filtered by messageId
 
     /**
@@ -845,126 +725,6 @@ internal object MessageTestData {
         "silent": false
     }"""
 
-    val expectedReactionsFiltered = Message(
-        id = "msg-A",
-        cid = "messaging:general",
-        text = "Hello",
-        html = "<p>Hello</p>",
-        type = "regular",
-        user = User(id = "user-1", role = "user", invisible = null, banned = false, online = true),
-        attachments = emptyList(),
-        latestReactions = listOf(
-            Reaction(
-                messageId = "msg-A",
-                type = "like",
-                score = 1,
-                userId = "user-2",
-                user = User(
-                    id = "user-2",
-                    role = "user",
-                    invisible = null,
-                    banned = false,
-                    online = true,
-                    language = "en",
-                    createdAt = Date(1577836800000L),
-                    updatedAt = Date(1577836800000L),
-                ),
-                createdAt = Date(1577840400000L),
-                updatedAt = Date(1577840400000L),
-            ),
-        ),
-        ownReactions = listOf(
-            Reaction(
-                messageId = "msg-A",
-                type = "love",
-                score = 1,
-                userId = "user-1",
-                user = User(
-                    id = "user-1",
-                    role = "user",
-                    invisible = null,
-                    banned = false,
-                    online = true,
-                    language = "en",
-                    createdAt = Date(1577836800000L),
-                    updatedAt = Date(1577836800000L),
-                ),
-                createdAt = Date(1577838600000L),
-                updatedAt = Date(1577838600000L),
-            ),
-        ),
-        mentionedUsersIds = emptyList(),
-        mentionedUsers = emptyList(),
-        replyCount = 0,
-        deletedReplyCount = 0,
-        createdAt = Date(1577836800000L),
-        updatedAt = Date(1577836800000L),
-        silent = false,
-        pinned = false,
-        shadowed = false,
-        showInChannel = false,
-        deletedForMe = false,
-        extraData = emptyMap(),
-    )
-
-    // endregion
-
-    // region Explicit-null collections (defaults must apply identically on both paths)
-
-    /** Collection fields set to explicit JSON null, which both paths coerce to empty defaults. */
-    @Language("JSON")
-    val jsonExplicitNullCollections = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello",
-        "html": "<p>Hello</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": null,
-        "latest_reactions": null,
-        "own_reactions": null,
-        "mentioned_users": null,
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false,
-        "reaction_counts": null,
-        "reaction_scores": null,
-        "reaction_groups": null,
-        "i18n": null,
-        "thread_participants": null,
-        "mentioned_groups": null,
-        "mentioned_roles": null
-    }"""
-
-    val expectedExplicitNullCollections = Message(
-        id = "msg-1",
-        cid = "messaging:general",
-        text = "Hello",
-        html = "<p>Hello</p>",
-        type = "regular",
-        user = User(id = "user-1", role = "user", invisible = null, banned = false, online = true),
-        attachments = emptyList(),
-        latestReactions = emptyList(),
-        ownReactions = emptyList(),
-        mentionedUsersIds = emptyList(),
-        mentionedUsers = emptyList(),
-        replyCount = 0,
-        deletedReplyCount = 0,
-        createdAt = Date(1577836800000L),
-        updatedAt = Date(1577836800000L),
-        silent = false,
-        pinned = false,
-        shadowed = false,
-        showInChannel = false,
-        deletedForMe = false,
-        reactionCounts = mutableMapOf(),
-        reactionScores = mutableMapOf(),
-        reactionGroups = emptyMap(),
-        extraData = emptyMap(),
-    )
-
     // endregion
     // region Member info (message.member)
 
@@ -993,18 +753,7 @@ internal object MessageTestData {
         "member": {"channel_role": "channel_member", "notifications_muted": false}
     }"""
 
-    /** API v1 inlines the projected member custom keys next to `channel_role`. */
-    @Language("JSON")
-    val jsonWithMemberCustomInlined = """{
-        $BASE_FIELDS,
-        "member": {
-            "channel_role": "channel_moderator",
-            "notifications_muted": true,
-            "flair": {"tier": "gold"}
-        }
-    }"""
-
-    /** API v2 nests the same keys under `custom`. */
+    /** The member with projected custom keys, nested under `custom`. */
     @Language("JSON")
     val jsonWithMemberCustomNested = """{
         $BASE_FIELDS,
@@ -1015,36 +764,10 @@ internal object MessageTestData {
         }
     }"""
 
-    val expectedMemberWithoutCustom = MemberInfo(
-        channelRole = "channel_member",
-        notificationsMuted = false,
-        extraData = emptyMap(),
-    )
-
-    val expectedMemberWithCustom = MemberInfo(
-        channelRole = "channel_moderator",
-        notificationsMuted = true,
-        extraData = mapOf("flair" to mapOf("tier" to "gold")),
-    )
-
     // endregion
     // region Mentioned channel members (message.mentioned_channel_members)
 
-    /** API v1 inlines the projected keys, the same way it does on `member`. */
-    @Language("JSON")
-    val jsonWithMentionedChannelMembersInlined = """{
-        $BASE_FIELDS,
-        "mentioned_channel_members": {
-            "user-42": {
-                "channel_role": "channel_moderator",
-                "notifications_muted": true,
-                "flair": {"tier": "gold"}
-            },
-            "user-7": {"channel_role": "channel_member", "notifications_muted": false}
-        }
-    }"""
-
-    /** API v2 nests them under `custom`. */
+    /** Mentioned members with projected custom keys, nested under `custom`. */
     @Language("JSON")
     val jsonWithMentionedChannelMembersNested = """{
         $BASE_FIELDS,
@@ -1064,11 +787,6 @@ internal object MessageTestData {
         $BASE_FIELDS,
         "mentioned_channel_members": {}
     }"""
-
-    val expectedMentionedChannelMembers = mapOf(
-        "user-42" to expectedMemberWithCustom,
-        "user-7" to expectedMemberWithoutCustom,
-    )
 
     // endregion
 }

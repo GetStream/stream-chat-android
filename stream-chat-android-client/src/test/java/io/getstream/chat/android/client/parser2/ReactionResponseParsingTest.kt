@@ -16,17 +16,16 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GetReactionsResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldHaveSize
 import org.junit.jupiter.api.Test
 
 internal class ReactionResponseParsingTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Deserialize a reactions response`() {
-        val reactions = parser.fromJson(REACTIONS_JSON, GetReactionsResponse::class.java).reactions
+        val reactions = Serializer.moshi.adapter(GetReactionsResponse::class.java).fromJson(REACTIONS_JSON)!!.reactions
 
         reactions shouldHaveSize 2
         reactions.first().type shouldBeEqualTo "smile"
@@ -47,8 +46,7 @@ internal class ReactionResponseParsingTest {
                         "score": 1,
                         "created_at": "2026-06-29T08:36:59.000Z",
                         "updated_at": "2026-06-29T08:36:59.000Z",
-                        "emoji_code": "😄",
-                        "weight": 3,
+                        "custom": { "emoji_code": "😄", "weight": 3 },
                         "user": {
                             "id": "leandro",
                             "role": "user",
@@ -77,28 +75,6 @@ internal class ReactionResponseParsingTest {
                         }
                     }
                 ]
-            }"""
-
-        // `copy` collides with the data class function of the same name, which is what
-        // CustomObjectDtoAdapter has to look past when it collects undeclared keys.
-        private const val SHADOWING_JSON =
-            """{
-                "message_id": "messageId",
-                "user_id": "leandro",
-                "type": "like",
-                "score": 1,
-                "created_at": "2026-06-29T08:36:59.000Z",
-                "updated_at": "2026-06-29T08:36:59.000Z",
-                "copy": "kept",
-                "user": {
-                    "id": "leandro",
-                    "role": "user",
-                    "language": "pt",
-                    "banned": false,
-                    "online": true,
-                    "created_at": "2021-07-20T14:17:07.000Z",
-                    "updated_at": "2026-07-31T11:38:42.000Z"
-                }
             }"""
     }
 }

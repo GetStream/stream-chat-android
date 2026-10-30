@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.PollResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -31,7 +32,7 @@ import org.junit.jupiter.api.assertThrows
 
 internal class PollParsingTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { null },
@@ -42,7 +43,7 @@ internal class PollParsingTest {
 
     @Test
     fun `Response path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(PollTestData.jsonOptionalFieldsMissing, PollResponseData::class.java)
+        val dto = parse<PollResponseData>(PollTestData.jsonOptionalFieldsMissing)
         val domain = with(domainMapping) { dto.toDomain() }
         assertEquals(PollTestData.expectedOptionalFieldsMissing, domain)
     }
@@ -53,7 +54,7 @@ internal class PollParsingTest {
 
     @Test
     fun `Response path - deserializes with explicit nulls`() {
-        val dto = parser.fromJson(PollTestData.jsonWithExplicitNulls, PollResponseData::class.java)
+        val dto = parse<PollResponseData>(PollTestData.jsonWithExplicitNulls)
         val domain = with(domainMapping) { dto.toDomain() }
         assertEquals(PollTestData.expectedWithExplicitNulls, domain)
     }
@@ -65,34 +66,34 @@ internal class PollParsingTest {
     @Test
     fun `Response path - throws on missing id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(PollTestData.jsonMissingId, PollResponseData::class.java)
+            parse<PollResponseData>(PollTestData.jsonMissingId)
         }
     }
 
     @Test
     fun `Response path - throws on missing name`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(PollTestData.jsonMissingName, PollResponseData::class.java)
+            parse<PollResponseData>(PollTestData.jsonMissingName)
         }
     }
 
     @Test
     fun `Response path - throws on missing description`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(PollTestData.jsonMissingDescription, PollResponseData::class.java)
+            parse<PollResponseData>(PollTestData.jsonMissingDescription)
         }
     }
 
     @Test
     fun `Response path - missing options is empty`() {
-        val dto = parser.fromJson(PollTestData.jsonMissingOptions, PollResponseData::class.java)
+        val dto = parse<PollResponseData>(PollTestData.jsonMissingOptions)
 
         assertEquals(emptyList<Option>(), with(domainMapping) { dto.toDomain() }.options)
     }
 
     @Test
     fun `Response path - missing own_votes is empty`() {
-        val dto = parser.fromJson(PollTestData.jsonMissingOwnVotes, PollResponseData::class.java)
+        val dto = parse<PollResponseData>(PollTestData.jsonMissingOwnVotes)
 
         assertEquals(emptyList<Vote>(), with(domainMapping) { dto.toDomain() }.ownVotes)
     }
@@ -100,7 +101,7 @@ internal class PollParsingTest {
     @Test
     fun `Response path - throws on missing enforce_unique_vote`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(PollTestData.jsonMissingEnforceUniqueVote, PollResponseData::class.java)
+            parse<PollResponseData>(PollTestData.jsonMissingEnforceUniqueVote)
         }
     }
 
@@ -111,7 +112,7 @@ internal class PollParsingTest {
     @Test
     fun `Response path - throws on malformed vote missing id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(PollTestData.jsonWithMalformedVoteMissingId, PollResponseData::class.java)
+            parse<PollResponseData>(PollTestData.jsonWithMalformedVoteMissingId)
         }
     }
 
@@ -121,7 +122,7 @@ internal class PollParsingTest {
 
     @Test
     fun `Response path - filters votes with is_answer=true and keeps only actual votes`() {
-        val dto = parser.fromJson(PollTestData.jsonWithMixedVotesAndAnswers, PollResponseData::class.java)
+        val dto = parse<PollResponseData>(PollTestData.jsonWithMixedVotesAndAnswers)
         val domain = with(domainMapping) { dto.toDomain() }
 
         // Verify only votes (is_answer != true) are in votes list

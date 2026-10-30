@@ -17,21 +17,22 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.SearchPayloadTestData
+import io.getstream.chat.android.network.infrastructure.Serializer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class SearchPayloadAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
+    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
 
     @Test
     fun `Serialize SearchPayload with all fields`() {
-        val json = parser.toJson(SearchPayloadTestData.searchPayload)
+        val json = toJson(SearchPayloadTestData.searchPayload)
         Assertions.assertEquals(SearchPayloadTestData.searchPayloadJson, json)
     }
 
     @Test
     fun `Serialize SearchPayload with default fields`() {
-        val json = parser.toJson(SearchPayloadTestData.searchPayloadWithDefaults)
+        val json = toJson(SearchPayloadTestData.searchPayloadWithDefaults)
         Assertions.assertEquals(SearchPayloadTestData.searchPayloadJsonWithDefaults, json)
     }
 }

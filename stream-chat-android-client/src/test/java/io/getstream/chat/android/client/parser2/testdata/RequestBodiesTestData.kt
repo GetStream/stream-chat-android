@@ -38,8 +38,7 @@ internal object RequestBodiesTestData {
         members = listOf(ChannelMemberRequest(userId = "amit", channelRole = "channel_moderator")),
     )
 
-    // The member carries no custom data, and the collecting adapter flattens custom to the root, so no
-    // `custom` key is emitted at all.
+    // The member carries no custom data, so no `custom` key is emitted at all.
     val queryMembersJson =
         """{"type":"messaging","filter_conditions":{"name":{"${'$'}autocomplete":"amit"}},"id":"channelId",""" +
             """"limit":30,"offset":10,"members":[{"channel_role":"channel_moderator","user_id":"amit"}],""" +

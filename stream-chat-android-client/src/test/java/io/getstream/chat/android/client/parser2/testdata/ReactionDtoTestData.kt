@@ -16,10 +16,7 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.network.models.ReactionRequest
-import io.getstream.chat.android.network.models.ReactionResponse
 import org.intellij.lang.annotations.Language
-import java.util.Date
 
 internal object ReactionDtoTestData {
 
@@ -38,46 +35,4 @@ internal object ReactionDtoTestData {
           "created_at": "2020-06-10T11:04:31.000Z",
           "updated_at": "2020-06-10T11:04:31.588Z"
         }""".withoutWhitespace()
-
-    val reactionResponse = ReactionResponse(
-        messageId = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "like",
-        score = 0,
-        user = UserDtoTestData.userResponse,
-        userId = "",
-        createdAt = Date(1591787071000),
-        updatedAt = Date(1591787071588),
-    )
-
-    @Language("JSON")
-    val upstreamJsonWithoutExtraData =
-        """{
-          "score": 0,
-          "type": "love"
-        }""".withoutWhitespace()
-    val upstreamReactionWithoutExtraData = ReactionRequest(
-        type = "love",
-        createdAt = null,
-        score = 0,
-        updatedAt = null,
-        custom = emptyMap(),
-    )
-
-    @Language("JSON")
-    val upstreamJson =
-        """{
-          "created_at": "2020-06-10T11:04:31.000Z",
-          "score": 4,
-          "type": "love",
-          "updated_at": "2020-06-10T11:04:31.588Z",
-          "emoji_code": "👍",
-          "other_score": 42
-        }""".withoutWhitespace()
-    val upstreamReaction = ReactionRequest(
-        type = "love",
-        createdAt = Date(1591787071000),
-        score = 4,
-        updatedAt = Date(1591787071588),
-        custom = mapOf("other_score" to 42, "emoji_code" to "👍"),
-    )
 }
