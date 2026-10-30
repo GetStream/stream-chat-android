@@ -2711,7 +2711,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
-    fun `channel state maps the scheduled messages, an absent field as empty`(
+    fun `channel state maps the scheduled messages, an absent field as null`(
         @Suppress("UNUSED_PARAMETER") path: String,
         stub: (ChannelApi, ChannelStateResponseFields) -> Unit,
         query: (MoshiChatApi) -> Call<List<Channel>>,
@@ -2726,10 +2726,10 @@ internal class MoshiChatApiTest {
             query(sut)
         }
 
-        scheduledMessagesOf(null).await().getOrThrow().single().scheduledMessages shouldBeEqualTo emptyList()
+        scheduledMessagesOf(null).await().getOrThrow().single().scheduledMessages shouldBeEqualTo null
         scheduledMessagesOf(emptyList()).await().getOrThrow().single().scheduledMessages shouldBeEqualTo emptyList()
         scheduledMessagesOf(listOf(scheduledMessage)).await().getOrThrow().single().scheduledMessages
-            .map { it.id } shouldBeEqualTo listOf(scheduledMessage.id)
+            ?.map { it.id } shouldBeEqualTo listOf(scheduledMessage.id)
     }
 
     @Test

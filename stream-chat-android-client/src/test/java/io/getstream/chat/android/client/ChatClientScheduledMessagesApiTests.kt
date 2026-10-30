@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
@@ -132,6 +133,54 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
         // then
         notIncluded.shouldBeEmpty()
         chatClient.scheduledMessages.value shouldBeEqualTo listOf(scheduledMessage)
+    }
+
+    @Test
+    fun channelQueriesRemoveTheScheduledMessagesTheServerNoLongerHasOnlyWhenItSendsThem() = runTest {
+        // given
+        val channel = randomChannel()
+        val scheduledMessage = randomScheduledMessage(cid = channel.cid)
+        val request = QueryChannelsRequest(Filters.neutral(), limit = 1).apply { includeScheduledMessages = true }
+        val queryWith = { scheduledMessages: List<ScheduledMessage>? ->
+            val result = QueryChannelsResult(listOf(channel.copy(scheduledMessages = scheduledMessages)), null)
+            whenever(api.queryChannels(any())).thenReturn(RetroSuccess(result).toRetrofitCall())
+            chatClient.queryChannelsInternal(request)
+        }
+        queryWith(listOf(scheduledMessage)).await()
+        // when
+        queryWith(null).await()
+        val notSent = chatClient.scheduledMessages.value
+        queryWith(emptyList()).await()
+        // then
+        notSent shouldBeEqualTo listOf(scheduledMessage)
+        chatClient.scheduledMessages.value.shouldBeEmpty()
+    }
+
+    @Test
+    fun channelQueriesRemoveOnlyFromTheChannelsReturnedWithTheirScheduledMessages() = runTest {
+        // given
+        val withField = randomChannel()
+        val withoutField = randomChannel()
+        val inWithField = randomScheduledMessage(cid = withField.cid)
+        val inWithoutField = randomScheduledMessage(cid = withoutField.cid)
+        val request = QueryChannelsRequest(Filters.neutral(), limit = 2).apply { includeScheduledMessages = true }
+        val queryWith = { channels: List<Channel> ->
+            whenever(api.queryChannels(any()))
+                .thenReturn(RetroSuccess(QueryChannelsResult(channels, predefinedFilter = null)).toRetrofitCall())
+            chatClient.queryChannelsInternal(request)
+        }
+        queryWith(
+            listOf(
+                withField.copy(scheduledMessages = listOf(inWithField)),
+                withoutField.copy(scheduledMessages = listOf(inWithoutField)),
+            ),
+        ).await()
+        // when
+        queryWith(
+            listOf(withField.copy(scheduledMessages = emptyList()), withoutField.copy(scheduledMessages = null)),
+        ).await()
+        // then
+        chatClient.scheduledMessages.value shouldBeEqualTo listOf(inWithoutField)
     }
 
     @Test

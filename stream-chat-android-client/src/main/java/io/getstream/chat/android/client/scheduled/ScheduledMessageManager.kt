@@ -220,44 +220,65 @@ internal class ScheduledMessageManager(
         limit: Int,
         next: String?,
     ): Result<QueryScheduledMessagesResult> {
-        val before = store.messages.value
-        val knownOnServer = before.values.filterNot(LocalScheduledMessage::isLocalOnly).map { it.id }
+        val known = known()
         val resetsBefore = hasLoadedAllResets.get()
         val result = api.queryScheduledMessages(cid, statuses, limit.coerceIn(1, MAX_QUERY_LIMIT), next).await()
         if (result is Result.Success) {
-            saveQueried(result.value.scheduledMessages, knownBefore = before.keys)
+            saveQueried(result.value.scheduledMessages, known)
             // Only a single page holds every scheduled message of the query, so only then are the others removed.
             val isComplete = statuses.isEmpty() && next == null && result.value.next == null
-            if (isComplete) {
-                val ids = result.value.scheduledMessages.map(ScheduledMessage::id).toSet()
-                val removed = knownOnServer.toSet() - ids
-                store.removeAll { (cid == null || it.cid == cid) && it.id in removed && !it.isLocalOnly }
-            }
+            if (isComplete) removeMissing(cid, result.value.scheduledMessages, known)
             if (isComplete && cid == null && hasLoadedAllResets.get() == resetsBefore) _hasLoadedAll.value = true
         }
         return result
     }
 
     /**
-     * The IDs of the scheduled messages known now, to pass to [saveQueried] once a query that starts now returns.
+     * The scheduled messages known now, to pass to [saveChannel] once a channel query that starts now returns.
      */
-    fun knownIds(): Set<String> = store.messages.value.keys
+    fun known(): KnownScheduledMessages {
+        val messages = store.messages.value
+        return KnownScheduledMessages(
+            ids = messages.keys,
+            onServerIds = messages.values
+                .filterNot(LocalScheduledMessage::isLocalOnly)
+                .mapTo(mutableSetOf(), LocalScheduledMessage::id),
+        )
+    }
+
+    /**
+     * Saves the scheduled messages of the channel with [cid] that a channel query returned, which are all the ones the
+     * server has, and removes the ones of the channel the server no longer has, as a full [query] does.
+     *
+     * @param known The scheduled messages from [known] when the query started.
+     */
+    suspend fun saveChannel(cid: String, scheduledMessages: List<ScheduledMessage>, known: KnownScheduledMessages) {
+        saveQueried(scheduledMessages, known)
+        removeMissing(cid, scheduledMessages, known)
+    }
 
     /**
      * Saves the scheduled messages a query returned. One removed while the query ran, for example sent or deleted, or
      * older than the local message, is not saved.
-     *
-     * @param knownBefore The IDs from [knownIds] when the query started.
      */
-    suspend fun saveQueried(scheduledMessages: List<ScheduledMessage>, knownBefore: Set<String>) {
+    private suspend fun saveQueried(scheduledMessages: List<ScheduledMessage>, known: KnownScheduledMessages) {
         scheduledMessages.forEach { server ->
             store.update(server.id) { current ->
                 when {
-                    current == null && server.id in knownBefore -> null
+                    current == null && server.id in known.ids -> null
                     else -> current.mergeServerUnlessOlder(server)
                 }
             }
         }
+    }
+
+    /**
+     * Removes the scheduled messages of the channel with [cid], or of every channel when null, that were on the server
+     * when the query started and are not in its complete result. The ones scheduled while it ran are kept.
+     */
+    private suspend fun removeMissing(cid: String?, result: List<ScheduledMessage>, known: KnownScheduledMessages) {
+        val removed = known.onServerIds - result.map(ScheduledMessage::id).toSet()
+        store.removeAll { (cid == null || it.cid == cid) && it.id in removed && !it.isLocalOnly }
     }
 
     suspend fun onEvent(event: ChatEvent) {
@@ -315,6 +336,14 @@ internal class ScheduledMessageManager(
     private fun <T : Any> notFound(id: String): Result<T> =
         Result.Failure(Error.GenericError("There is no scheduled message with id: $id."))
 }
+
+/**
+ * The scheduled messages known when a query started.
+ *
+ * @property ids The IDs of all of them.
+ * @property onServerIds The IDs of the ones the server had.
+ */
+internal class KnownScheduledMessages(val ids: Set<String>, val onServerIds: Set<String>)
 
 /** The largest page the server returns. */
 private const val MAX_QUERY_LIMIT = 100

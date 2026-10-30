@@ -1354,7 +1354,7 @@ constructor(
             hiddenMessagesBefore = state.hideMessagesBefore,
             draftMessage = state.draft?.toDomain(),
             activeLiveLocations = state.activeLiveLocations.orEmpty().map { it.toDomain() },
-            scheduledMessages = state.scheduledMessages.orEmpty().map { it.toDomain() },
+            scheduledMessages = state.scheduledMessages?.map { it.toDomain() },
         ).syncUnreadCountWithReads(currentUserIdProvider())
     }
 

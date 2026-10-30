@@ -143,6 +143,7 @@ import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.client.receipts.MessageReceiptReporter
+import io.getstream.chat.android.client.scheduled.KnownScheduledMessages
 import io.getstream.chat.android.client.scheduled.ScheduledMessageManager
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -3451,18 +3452,21 @@ internal constructor(
         .saveScheduledMessages(request.includeScheduledMessages, ::listOf)
 
     /**
-     * Saves the scheduled messages of the returned channels in [scheduledMessages] when [isIncluded].
+     * Saves the scheduled messages of the returned channels in [scheduledMessages] when [isIncluded]. A channel
+     * returned with them has all the ones the server has, so its others are removed.
      */
     private fun <T : Any> Call<T>.saveScheduledMessages(
         isIncluded: Boolean,
         channels: (T) -> List<Channel>,
     ): Call<T> {
         if (!isIncluded) return this
-        var knownIds = emptySet<String>()
-        return doOnStart(userScope) { knownIds = scheduledMessageManager.knownIds() }
+        var known = KnownScheduledMessages(ids = emptySet(), onServerIds = emptySet())
+        return doOnStart(userScope) { known = scheduledMessageManager.known() }
             .doOnResult(userScope) { result ->
                 result.onSuccessSuspend { value ->
-                    scheduledMessageManager.saveQueried(channels(value).flatMap(Channel::scheduledMessages), knownIds)
+                    channels(value).forEach { channel ->
+                        channel.scheduledMessages?.let { scheduledMessageManager.saveChannel(channel.cid, it, known) }
+                    }
                 }
             }
     }

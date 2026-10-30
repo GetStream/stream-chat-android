@@ -28,7 +28,8 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
 
     /**
      * Whether the channel is loaded with the current user's scheduled messages in it, in [Channel.scheduledMessages].
-     * They are also saved in `ChatClient.scheduledMessages`.
+     * They are also saved in `ChatClient.scheduledMessages`, where the ones of a returned channel that the server no
+     * longer has are removed. [Channel.scheduledMessages] is null when the server did not send them.
      * Defaults to false.
      */
     public var includeScheduledMessages: Boolean = false

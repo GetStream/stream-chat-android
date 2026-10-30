@@ -73,9 +73,11 @@ import java.util.Date
  * @param autoTranslationEnabled Whether messages in the channel are translated automatically.
  * @param autoTranslationLanguages The language codes messages are translated to when [autoTranslationEnabled] is set.
  * @param scheduledMessages The current user's scheduled messages in the channel, pending ones first, each sorted by
- * [ScheduledMessage.scheduledAt]. A channel of the local state has the ones known on the device. A channel query with
- * `includeScheduledMessages` returns the ones the server has, unless the feature is off, the server could not read
- * them, or they are more than one page. Empty does not tell whether they were loaded.
+ * [ScheduledMessage.scheduledAt], or null when they are not known. The channel state of a channel has the ones known
+ * on the device. A channel query with `includeScheduledMessages` returns all the ones the server has, or null when the
+ * server did not send them: the feature is off, the server could not read them, or they are more than 100 in the
+ * channel, or in all the channels of the page for a channels query. Other channels, for example from events or the
+ * offline storage, have null.
  */
 @Immutable
 public data class Channel(
@@ -127,7 +129,7 @@ public data class Channel(
     val truncatedBy: User? = null,
     val autoTranslationEnabled: Boolean = false,
     val autoTranslationLanguages: Set<String> = emptySet(),
-    val scheduledMessages: List<ScheduledMessage> = emptyList(),
+    val scheduledMessages: List<ScheduledMessage>? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -237,7 +239,7 @@ public data class Channel(
         private var truncatedBy: User? = null
         private var autoTranslationEnabled: Boolean = false
         private var autoTranslationLanguages: Set<String> = emptySet()
-        private var scheduledMessages: List<ScheduledMessage> = emptyList()
+        private var scheduledMessages: List<ScheduledMessage>? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -351,7 +353,7 @@ public data class Channel(
         public fun withAutoTranslationLanguages(autoTranslationLanguages: Set<String>): Builder = apply {
             this.autoTranslationLanguages = autoTranslationLanguages
         }
-        public fun withScheduledMessages(scheduledMessages: List<ScheduledMessage>): Builder = apply {
+        public fun withScheduledMessages(scheduledMessages: List<ScheduledMessage>?): Builder = apply {
             this.scheduledMessages = scheduledMessages
         }
 

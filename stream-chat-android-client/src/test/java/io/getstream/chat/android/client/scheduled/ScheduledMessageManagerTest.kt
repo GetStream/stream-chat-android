@@ -384,6 +384,21 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `a channel returned with its scheduled messages removes only its missing ones, not ones scheduled meanwhile`() =
+        runTest {
+            val sentElsewhere = givenScheduledOnServer(randomScheduledMessage(cid = cid))
+            val otherChannel = givenScheduledOnServer()
+            val known = manager.known()
+            val scheduledMeanwhile = givenScheduledOnServer(randomScheduledMessage(cid = cid))
+
+            manager.saveChannel(cid, emptyList(), known)
+
+            manager.scheduledMessages.value.map(ScheduledMessage::id) shouldContainSame
+                listOf(otherChannel.id, scheduledMeanwhile.id)
+            (sentElsewhere.id in manager.scheduledMessages.value.map(ScheduledMessage::id)) shouldBeEqualTo false
+        }
+
+    @Test
     fun `a full query keeps a message scheduled on the server while it ran`() = runTest {
         val scheduledMeanwhile = randomScheduledMessage()
         whenever(fixture.api.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).thenReturn(
