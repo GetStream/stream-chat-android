@@ -195,6 +195,17 @@ internal class QueryChannelsMutableStateTest {
         assertEquals(60, state.nextPageRequest.value?.offset)
     }
 
+    @Test
+    fun `nextPageRequest keeps includeScheduledMessages`() = runTest {
+        val request = QueryChannelsRequest(filter = filter, offset = 0, limit = 30, querySort = sort)
+            .apply { includeScheduledMessages = true }
+        state.setCurrentRequest(request)
+        state.setChannelsOffset(30)
+        advanceUntilIdle()
+
+        assertTrue(state.nextPageRequest.value?.includeScheduledMessages == true)
+    }
+
     // endregion
 
     // region currentLoading
