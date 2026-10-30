@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.querychannel
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.channel.isMultiMemberPlaceholderCid
 import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
@@ -55,6 +56,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -86,6 +88,7 @@ internal class LogicRegistry internal constructor(
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>?>, QueryThreadsLogic> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
+    private val placeholderCids: MutableSet<String> = Collections.newSetFromMap(ConcurrentHashMap())
 
     /**
      * Keeps the badge of a filtered group in [MutableGlobalState]: the unread channels not loaded yet plus the
@@ -179,6 +182,19 @@ internal class LogicRegistry internal constructor(
     fun channel(channelId: ChannelId): ChannelLogic = channels.getOrPut(channelId) {
         newChannelLogic(channelId.type, channelId.id)
     }
+
+    /**
+     * Records [cid] as a local placeholder for a channel the server has not created yet. The server rejects its id.
+     */
+    internal fun markPlaceholderChannel(cid: String) {
+        placeholderCids.add(cid)
+    }
+
+    /**
+     * Whether [cid] is a local placeholder: recorded with [markPlaceholderChannel] in this session, or named after
+     * several members, as placeholders stored by an earlier session are.
+     */
+    internal fun isPlaceholderChannel(cid: String): Boolean = cid in placeholderCids || isMultiMemberPlaceholderCid(cid)
 
     internal fun removeChannel(channelType: String, channelId: String) {
         val id = ChannelId.fromTypeAndId(channelType, channelId) ?: return
@@ -297,7 +313,7 @@ internal class LogicRegistry internal constructor(
         return threads.getOrPut(messageId) {
             val mutableState = stateRegistry.mutableThread(messageId)
             val stateLogic = ThreadStateLogic(mutableState)
-            ThreadLogic(stateLogic).also { threadLogic ->
+            ThreadLogic(stateLogic, coroutineScope).also { threadLogic ->
                 coroutineScope.launch {
                     val parentMessage = getMessageById(messageId) ?: repos.selectMessage(messageId)
                     parentMessage?.let { threadLogic.upsertMessage(it) }
@@ -347,6 +363,7 @@ internal class LogicRegistry internal constructor(
         channels.clear()
         queryThreads.clear()
         threads.clear()
+        placeholderCids.clear()
         mutableGlobalState.destroy()
     }
 

@@ -384,6 +384,51 @@ internal class ChannelDataTest {
     }
 
     @Test
+    fun `mergeFromEvent should take truncatedBy from the latest truncation`() {
+        val earlier = Date(1000)
+        val later = Date(2000)
+        val original = randomUser()
+        val update = randomUser()
+
+        fun merge(originalAt: Date?, updateAt: Date?): User? = ChannelData(
+            id = "123",
+            type = "messaging",
+            truncatedAt = originalAt,
+            truncatedBy = original,
+        ).mergeFromEvent(
+            ChannelData(id = "123", type = "messaging", truncatedAt = updateAt, truncatedBy = update),
+        ).truncatedBy
+
+        assertEquals(original, merge(originalAt = later, updateAt = earlier))
+        assertEquals(update, merge(originalAt = earlier, updateAt = later))
+        assertEquals(original, merge(originalAt = later, updateAt = null))
+        assertEquals(update, merge(originalAt = null, updateAt = later))
+        assertEquals(update, merge(originalAt = later, updateAt = later))
+    }
+
+    @Test
+    fun `mergeFromEvent should keep truncatedBy when the same truncation comes without it`() {
+        val truncatedAt = Date(1000)
+        val truncator = randomUser()
+
+        val result = ChannelData(id = "123", type = "messaging", truncatedAt = truncatedAt, truncatedBy = truncator)
+            .mergeFromEvent(ChannelData(id = "123", type = "messaging", truncatedAt = truncatedAt))
+            .truncatedBy
+
+        assertEquals(truncator, result)
+    }
+
+    @Test
+    fun `mergeFromEvent should take the auto-translation settings from the update`() {
+        val result = ChannelData(id = "123", type = "messaging").mergeFromEvent(
+            ChannelData(id = "123", type = "messaging", autoTranslationEnabled = true, autoTranslationLanguages = setOf("fr")),
+        )
+
+        assertTrue(result.autoTranslationEnabled)
+        assertEquals(setOf("fr"), result.autoTranslationLanguages)
+    }
+
+    @Test
     fun `mergeFromEvent should not merge ownCapabilities field`() {
         // given
         val original = ChannelData(

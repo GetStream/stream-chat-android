@@ -314,13 +314,14 @@ internal class ChannelEventHandlerImpl(
                 state.removeTruncatedMessages(event.truncatedBefore, systemMessage = null)
                 state.updateChannelData(event)
             }
-            // Typing events
+            // Typing events. Typing in a thread only shows in that thread.
             is TypingStartEvent -> {
-                if (event.user.id != getCurrentUserId()) {
+                if (event.parentId == null && event.user.id != getCurrentUserId()) {
                     typingEventPruner.processEvent(event.user.id, event)
                 }
             }
 
+            // A user types in one place at a time, so a stop clears them whichever thread it names
             is TypingStopEvent -> {
                 if (event.user.id != getCurrentUserId()) {
                     typingEventPruner.processEvent(event.user.id, null)

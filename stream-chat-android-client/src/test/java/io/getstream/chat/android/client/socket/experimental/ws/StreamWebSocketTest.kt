@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.socket.StreamWebSocket
 import io.getstream.chat.android.client.socket.StreamWebSocketEvent
-import io.getstream.chat.android.client.socket.V2SocketProtocol
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomInt
@@ -52,17 +51,16 @@ internal class StreamWebSocketTest {
     private val closeSocketReason = "Connection close by client"
     private val parser = mock<ChatParser>()
     private val eventParser = mock<V2EventParser>()
-    private val protocol = V2SocketProtocol(authFrame = "{}", eventParser = eventParser)
     private val webSocket = mock<WebSocket>()
     private lateinit var webSocketListener: WebSocketListener
-    private val streamWebSocket = StreamWebSocket(parser, protocol) {
+    private val streamWebSocket = StreamWebSocket(parser, eventParser, authFrame = "{}") {
         webSocketListener = it
         webSocket
     }
 
     @Test
     fun `Class can be created correctly with listener invoked during creation`() {
-        StreamWebSocket(parser, protocol, socketCreator = {
+        StreamWebSocket(parser, eventParser, authFrame = "{}", socketCreator = {
             it.onFailure(webSocket, IllegalStateException(), null)
             webSocket
         })

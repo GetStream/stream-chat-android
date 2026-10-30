@@ -408,6 +408,8 @@ internal fun randomLocationEntity(): LocationEntity =
         latitude = randomDouble(),
         longitude = randomDouble(),
         deviceId = randomString(),
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
     )
 
 internal fun randomThreadParticipantEntity(
@@ -480,6 +482,9 @@ internal fun randomChannelEntity(
     ownCapabilities: Set<String> = emptySet(),
     membership: MemberEntity? = null,
     messageCount: Int? = randomInt(),
+    truncatedByUserId: String? = null,
+    autoTranslationEnabled: Boolean = randomBoolean(),
+    autoTranslationLanguages: List<String> = listOf(randomString()),
 ): ChannelEntity = ChannelEntity(
     type = type,
     channelId = channelId,
@@ -510,6 +515,9 @@ internal fun randomChannelEntity(
     ownCapabilities = ownCapabilities,
     membership = membership,
     messageCount = messageCount,
+    truncatedByUserId = truncatedByUserId,
+    autoTranslationEnabled = autoTranslationEnabled,
+    autoTranslationLanguages = autoTranslationLanguages,
 )
 
 internal fun randomAnswerEntity(

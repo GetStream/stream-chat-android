@@ -354,6 +354,63 @@ internal val MEMBER_HIDDEN_CUSTOM_KEYS = setOf(
     "user_id",
 )
 
+/**
+ * The [MessageResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS], plus `channel`, which the search and get message
+ * responses declare and v1 hides too.
+ */
+internal val MESSAGE_HIDDEN_CUSTOM_KEYS = setOf(
+    "attachments",
+    "channel",
+    "cid",
+    "command",
+    "created_at",
+    "deleted_at",
+    "deleted_for_me",
+    "deleted_reply_count",
+    "draft",
+    "html",
+    "i18n",
+    "id",
+    "image_labels",
+    "latest_reactions",
+    "member",
+    "mentioned_channel",
+    "mentioned_channel_members",
+    "mentioned_group_ids",
+    "mentioned_groups",
+    "mentioned_here",
+    "mentioned_roles",
+    "mentioned_users",
+    "message_text_updated_at",
+    "mml",
+    "moderation",
+    "own_reactions",
+    "parent_id",
+    "pin_expires",
+    "pinned",
+    "pinned_at",
+    "pinned_by",
+    "poll",
+    "poll_id",
+    "quoted_message",
+    "quoted_message_id",
+    "reaction_counts",
+    "reaction_groups",
+    "reaction_scores",
+    "reminder",
+    "reply_count",
+    "restricted_visibility",
+    "shadowed",
+    "shared_location",
+    "show_in_channel",
+    "silent",
+    "text",
+    "thread_participants",
+    "type",
+    "updated_at",
+    "user",
+)
+
 /** V1 moderation is injected into the message custom data, not declared on the payload. */
 internal const val MODERATION_DETAILS_KEY = "moderation_details"
 
@@ -415,6 +472,9 @@ internal class DomainMapping(
             ownCapabilities = ownCapabilities.orEmpty().mapTo(mutableSetOf(), ChannelOwnCapability::value),
             messageCount = messageCount,
             lastMessageAt = lastMessageAt,
+            truncatedBy = truncatedBy?.toDomain(),
+            autoTranslationEnabled = autoTranslationEnabled ?: false,
+            autoTranslationLanguages = autoTranslationLanguage.toTranslationLanguages(),
             extraData = custom.withDeclaredHidingStored(
                 CHANNEL_HIDDEN_CUSTOM_KEYS,
                 "auto_translation_enabled" to autoTranslationEnabled,
@@ -505,6 +565,7 @@ internal class DomainMapping(
             text = message.text,
             command = message.custom[DRAFT_COMMAND_KEY] as? String,
             args = message.custom[DRAFT_ARGS_KEY] as? String,
+            createdAt = createdAt,
             extraData = message.custom
                 .filterKeys { it != DRAFT_COMMAND_KEY && it != DRAFT_ARGS_KEY }
                 .mapNotNull { (key, value) -> value?.let { key to it } }
@@ -770,7 +831,8 @@ internal class DomainMapping(
         pollId: String?,
         restrictedVisibility: List<String>,
     ): MutableMap<String, Any> =
-        custom.withDeclared(
+        custom.withDeclaredHidingStored(
+            MESSAGE_HIDDEN_CUSTOM_KEYS,
             "draft" to draft,
             "image_labels" to imageLabels,
             MENTIONED_GROUP_IDS_KEY to mentionedGroupIds,
@@ -802,6 +864,8 @@ internal class DomainMapping(
             longitude = longitude,
             deviceId = createdByDeviceId,
             endAt = endAt,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
 
     /**
@@ -1021,6 +1085,7 @@ internal class DomainMapping(
             banExpires = banExpires,
             pinnedAt = pinnedAt,
             archivedAt = archivedAt,
+            deletedAt = deletedAt,
             extraData = custom.hoistingNestedMemberCustom().withDeclaredHidingStored(
                 MEMBER_HIDDEN_CUSTOM_KEYS,
                 "deleted_at" to deletedAt,
@@ -1064,16 +1129,16 @@ internal class DomainMapping(
     }
 
     /**
-     * [withDeclared] for users, channels and members, whose declared fields apps have long sent back as custom data. A
-     * v1 response leaves out a custom value stored under a declared name, while v2 returns it under `custom`: with
-     * [hidesStoredDeclaredCustom] set, the [hidden] names give way to the fields, present or not, as on v1. The v1 lane
-     * keeps the default, since its custom data carries the fields' own wire values.
+     * [withDeclared] for users, channels, members and messages, whose declared fields apps have long sent back as
+     * custom data. A v1 response leaves out a custom value stored under a declared name, while v2 returns it under
+     * `custom`: with [hidesStoredDeclaredCustom] set, the [hidden] names give way to the fields, present or not, as on
+     * v1. The v1 lane keeps the default, since its custom data carries the fields' own wire values.
      */
     private fun Map<String, Any?>.withDeclaredHidingStored(
         hidden: Set<String>,
         vararg fields: Pair<String, Any?>,
     ): Map<String, Any?> {
-        val custom = if (hidesStoredDeclaredCustom && hidden.any { it in this }) this - hidden else this
+        val custom = if (hidesStoredDeclaredCustom && keys.any { it in hidden }) this - hidden else this
         return custom.withDeclared(*fields)
     }
 
@@ -1087,6 +1152,13 @@ internal class DomainMapping(
         if (!hidesStoredDeclaredCustom || nested == null) return this
         return (this - "custom") + nested.entries.associate { (key, value) -> key.toString() to value }
     }
+
+    /**
+     * The backend stores several translation languages in one comma-separated string, and reads it with whitespace
+     * trimmed and empty or duplicate entries dropped, keeping the order.
+     */
+    private fun String?.toTranslationLanguages(): Set<String> =
+        orEmpty().split(',').map(String::trim).filterTo(LinkedHashSet(), String::isNotEmpty)
 
     private fun Any?.isPresent(): Boolean = when (this) {
         null -> false
@@ -1126,6 +1198,8 @@ internal class DomainMapping(
             longitude = longitude,
             deviceId = createdByDeviceId,
             endAt = endAt,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
 
     /**
@@ -1483,6 +1557,7 @@ internal class DomainMapping(
         sharedLocationsEnabled = sharedLocations,
         markMessagesPending = markMessagesPending,
         pushLevel = pushLevel?.value,
+        quotesEnabled = quotes,
     )
 
     /**

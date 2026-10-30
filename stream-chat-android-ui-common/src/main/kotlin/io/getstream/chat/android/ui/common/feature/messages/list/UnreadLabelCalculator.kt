@@ -87,7 +87,8 @@ internal class UnreadLabelCalculator {
      *
      * ## Caller Responsibilities:
      * The caller ([MessageListController.observeUnreadLabelState]) is responsible for:
-     * - Checking if the lastReadMessageId has changed before calling this method
+     * - Checking if the read state moved the unread boundary (its lastReadMessageId, or its lastRead
+     *   with unread messages) before calling this method
      * - Managing state updates and update triggers
      * - Determining when calculation should be skipped (e.g., for threads)
      *

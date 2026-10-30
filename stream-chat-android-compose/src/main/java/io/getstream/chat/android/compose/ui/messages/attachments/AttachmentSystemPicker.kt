@@ -52,6 +52,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.MediaType
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
+import io.getstream.chat.android.compose.ui.messages.attachments.media.CaptureMediaTargetSheet
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
@@ -109,7 +110,7 @@ internal fun AttachmentSystemPicker(
     val requiresCameraPermission = remember { context.isPermissionDeclared(Manifest.permission.CAMERA) }
     val cameraPermissionState = if (requiresCameraPermission) {
         rememberPermissionState(Manifest.permission.CAMERA) { granted ->
-            if (granted) captureMediaLauncher?.launch(Unit)
+            if (granted) captureMediaLauncher?.launch()
         }
     } else {
         null
@@ -138,7 +139,7 @@ internal fun AttachmentSystemPicker(
 
                     is CameraPickerMode -> {
                         if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
-                            captureMediaLauncher?.launch(Unit)
+                            captureMediaLauncher?.launch()
                         } else if (cameraPermissionState.status.shouldShowRationale) {
                             showCameraPermissionDialog = true
                         } else {
@@ -167,6 +168,8 @@ internal fun AttachmentSystemPicker(
             onDismiss = { showCameraPermissionDialog = false },
         )
     }
+
+    captureMediaLauncher?.let { CaptureMediaTargetSheet(it) }
 
     if (showCreatePollDialog) {
         FullscreenDialog(

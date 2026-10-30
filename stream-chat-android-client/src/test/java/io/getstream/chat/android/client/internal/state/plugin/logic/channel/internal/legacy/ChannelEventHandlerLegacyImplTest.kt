@@ -96,6 +96,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -663,7 +664,7 @@ internal class ChannelEventHandlerLegacyImplTest {
     @Test
     fun `When TypingStartEvent is handled, Then typing is set`() {
         val user = randomUser()
-        val event = randomTypingStartEvent(cid = cid, user = user)
+        val event = randomTypingStartEvent(cid = cid, user = user, parentId = null)
 
         handler.handle(event)
 
@@ -676,6 +677,22 @@ internal class ChannelEventHandlerLegacyImplTest {
         val event = randomTypingStopEvent(cid = cid, user = user)
 
         handler.handle(event)
+
+        verify(stateLogic).setTyping(user.id, null)
+    }
+
+    @Test
+    fun `When a thread TypingStartEvent is handled, Then channel typing is not set`() {
+        handler.handle(randomTypingStartEvent(cid = cid, user = randomUser(), parentId = randomString()))
+
+        verify(stateLogic, never()).setTyping(any(), anyOrNull())
+    }
+
+    @Test
+    fun `When TypingStopEvent names a thread, Then channel typing is still cleared`() {
+        val user = randomUser()
+
+        handler.handle(randomTypingStopEvent(cid = cid, user = user, parentId = randomString()))
 
         verify(stateLogic).setTyping(user.id, null)
     }

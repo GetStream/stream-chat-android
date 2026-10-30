@@ -132,6 +132,7 @@ import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
+import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
@@ -159,6 +160,7 @@ import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -517,14 +519,16 @@ internal class DomainMappingTest {
         // Literal values rather than references: asserting against the same mapper would pass
         // even if a field were dropped, since both sides would change together.
         val endAt = randomDate()
+        val createdAt = Date(1000)
+        val updatedAt = Date(2000)
         val response = SharedLocationResponseData(
             channelCid = "messaging:general",
-            createdAt = randomDate(),
+            createdAt = createdAt,
             createdByDeviceId = "device-1",
             latitude = 1.5,
             longitude = 2.5,
             messageId = "message-1",
-            updatedAt = randomDate(),
+            updatedAt = updatedAt,
             userId = "jaewoong",
             endAt = endAt,
         )
@@ -540,6 +544,8 @@ internal class DomainMappingTest {
             longitude = 2.5,
             deviceId = "device-1",
             endAt = endAt,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -629,6 +635,7 @@ internal class DomainMappingTest {
                 showInChannel = true,
                 command = "giphy",
                 args = "cat",
+                createdAt = draftMessageResponse.createdAt,
             )
         }
 
@@ -804,6 +811,50 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `MessageResponse adds the declared fields v1 also keeps in custom, in their wire shape`() {
+        val messageResponse = Mother.randomMessageResponse().copy(
+            custom = mapOf("color" to "teal"),
+            imageLabels = mapOf("i.png" to listOf("cat")),
+            mml = "<mml/>",
+            pollId = "p1",
+            restrictedVisibility = listOf("filip"),
+            mentionedGroupIds = listOf("g1"),
+        )
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val message = with(sut) { messageResponse.toDomain() }
+
+        message.extraData["color"] shouldBeEqualTo "teal"
+        message.extraData["image_labels"] shouldBeEqualTo mapOf("i.png" to listOf("cat"))
+        message.extraData["mml"] shouldBeEqualTo "<mml/>"
+        message.extraData["poll_id"] shouldBeEqualTo "p1"
+        message.extraData["restricted_visibility"] shouldBeEqualTo listOf("filip")
+        message.extraData["mentioned_group_ids"] shouldBeEqualTo listOf("g1")
+    }
+
+    @Test
+    fun `On v2, ChannelMemberResponse adds the declared fields v1 also keeps in custom, in their wire shape`() {
+        val memberResponse = Mother.randomChannelMemberResponse().copy(
+            custom = mapOf("color" to "teal"),
+            deletedAt = Date(4_000),
+            deletedMessages = listOf("m1"),
+            isModerator = true,
+            role = "admin",
+            userId = "filip",
+        )
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        member.extraData["color"] shouldBeEqualTo "teal"
+        member.extraData["deleted_at"] shouldBeEqualTo "1970-01-01T00:00:04.000Z"
+        member.extraData["deleted_messages"] shouldBeEqualTo listOf("m1")
+        member.extraData["is_moderator"] shouldBeEqualTo true
+        member.extraData["role"] shouldBeEqualTo "admin"
+        member.extraData["user_id"] shouldBeEqualTo "filip"
+    }
+
+    @Test
     fun `ChannelResponse keeps the custom value of a declared field over the typed one`() {
         val channelResponse = Mother.randomChannelResponse(custom = mapOf("hidden" to "from-custom")).copy(hidden = true)
         val sut = Fixture().get()
@@ -819,6 +870,7 @@ internal class DomainMappingTest {
         FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<FullUserResponse>() - "custom" + USER_RECORD_ONLY_KEYS
         CHANNEL_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelResponse>() - "custom"
         MEMBER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelMemberResponse>() - "custom"
+        MESSAGE_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<MessageResponse>() - "custom" + "channel"
         OWN_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<OwnUserResponse>() - "custom"
         EVENT_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponsePrivacyFields>() - "custom"
         EVENT_USER_HIDDEN_CUSTOM_KEYS.containsAll(jsonNames<UserResponseCommonFields>() - "custom") shouldBeEqualTo true
@@ -891,6 +943,27 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `On v2, a message's custom value stored under a declared name gives way to the field, present or not`() {
+        val messageResponse = Mother.randomMessageResponse(
+            custom = mapOf(
+                // Copies older clients stored by sending the whole message back as custom data.
+                "image_labels" to mapOf("old.png" to emptyList<String>()),
+                "draft" to mapOf("message" to mapOf("text" to "stale")),
+                "channel" to mapOf("id" to "stale"),
+                "color" to "teal",
+            ),
+        ).copy(imageLabels = mapOf("new.png" to listOf("nudity")), draft = null)
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val message = with(sut) { messageResponse.toDomain() }
+
+        message.extraData["image_labels"] shouldBeEqualTo mapOf("new.png" to listOf("nudity"))
+        message.extraData.containsKey("draft") shouldBeEqualTo false
+        message.extraData.containsKey("channel") shouldBeEqualTo false
+        message.extraData["color"] shouldBeEqualTo "teal"
+    }
+
+    @Test
     fun `ChannelResponse maps every field onto the Channel`() {
         val creator = Mother.randomUserResponse()
         val member = Mother.randomChannelMemberResponse()
@@ -950,6 +1023,25 @@ internal class DomainMappingTest {
             mapOf<String, Any>("color" to "teal"),
             channel.extraData - GENERATED_CHANNEL_EXTRA_DATA_KEYS - LEGACY_CHANNEL_EXTRA_DATA_KEYS,
         )
+    }
+
+    @Test
+    fun `ChannelResponse maps truncated_by and the auto-translation settings and keeps them in extraData`() {
+        val truncator = Mother.randomUserResponse()
+        val response = randomChannelResponse().copy(
+            truncatedBy = truncator,
+            autoTranslationEnabled = true,
+            autoTranslationLanguage = " fr, de,,fr ",
+        )
+        val sut = Fixture().get()
+
+        val channel = with(sut) { response.toDomain() }
+
+        assertEquals(truncator.id, channel.truncatedBy?.id)
+        assertTrue(channel.autoTranslationEnabled)
+        // Parsed the way the backend reads it: trimmed, without empty or duplicate entries, in order.
+        assertEquals(listOf("fr", "de"), channel.autoTranslationLanguages.toList())
+        assertTrue(channel.extraData.keys.containsAll(setOf("truncated_by", "auto_translation_enabled")))
     }
 
     @Test
@@ -1107,6 +1199,7 @@ internal class DomainMappingTest {
             messageRemindersEnabled = true,
             sharedLocationsEnabled = true,
             markMessagesPending = true,
+            quotesEnabled = false,
         )
 
     @Test
@@ -1573,6 +1666,17 @@ internal class DomainMappingTest {
             extraData = mapOf("user_id" to memberResponse.userId!!),
         )
         assertEquals(expected, member)
+    }
+
+    @Test
+    fun `ChannelMemberResponse maps deleted_at to deletedAt and keeps it in extraData`() {
+        val memberResponse = randomChannelMemberResponse().copy(deletedAt = Date(9_000))
+        val sut = Fixture().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        assertEquals(Date(9_000), member.deletedAt)
+        assertTrue(member.extraData.containsKey("deleted_at"))
     }
 
     @Test

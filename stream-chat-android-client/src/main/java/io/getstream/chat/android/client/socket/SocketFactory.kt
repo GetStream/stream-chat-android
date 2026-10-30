@@ -63,8 +63,9 @@ internal class SocketFactory(
             .addHeader(X_STREAM_CLIENT, trackingHeaders)
             .build()
         logger.i { "new web socket: ${request.url}" }
-        val protocol = V2SocketProtocol(buildAuthFrame(connectionConf), eventParser)
-        return StreamWebSocket(parser, protocol) { httpClient.newWebSocket(request, it) }
+        return StreamWebSocket(parser, eventParser, buildAuthFrame(connectionConf)) {
+            httpClient.newWebSocket(request, it)
+        }
     }
 
     private fun buildAuthFrame(connectionConf: ConnectionConf): String {
@@ -81,7 +82,7 @@ internal class SocketFactory(
             "user_details" to connectionConf.reduceUserDetails(),
             "products" to listOf("chat"),
         )
-        return V2SocketProtocol.frameAdapter.toJson(frame)
+        return socketFrameAdapter.toJson(frame)
     }
 
     /**

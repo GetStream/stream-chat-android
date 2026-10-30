@@ -17,10 +17,8 @@ on:
         value: ${{ jobs.build.outputs.e2e_batches }}
 
 env:
-  BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
-  BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
-  BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
-  BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
+  # The Gradle build cache comes from the Actions cache below instead of S3.
+  GRADLE_LOCAL_BUILD_CACHE: 'true'
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
@@ -42,12 +40,39 @@ jobs:
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
+      # Pull requests and the merge queue restore the latest cache; scheduled and manual runs save a new one.
+      - name: Restore Gradle cache
+        id: gradle_cache
+        uses: actions/cache/restore@v4
         with:
-          cache-name: gradle-test
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-e2e-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-e2e-
       - name: Build apks
         run: bundle exec fastlane build_e2e_test coverage:${{ inputs.coverage }}
         timeout-minutes: 30
+      - name: Save Gradle cache
+        if: ${{ !inputs.coverage && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
+      # Keeps one snapshot per branch, so the nightly saves don't pile up in the repo's Actions cache.
+      # A failed save only warns, so the older snapshots stay unless the new one is listed.
+      - name: Remove older Gradle caches
+        if: ${{ !inputs.coverage && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEW_KEY: ${{ steps.gradle_cache.outputs.cache-primary-key }}
+        run: |
+          gh cache list -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF" --key "${{ runner.os }}-gradle-e2e-" --limit 100 --json id,key \
+            --jq 'if any(.[]; .key == env.NEW_KEY) then .[] | select(.key != env.NEW_KEY) | .id else empty end' \
+            | xargs -r -n1 gh cache delete -R "$GITHUB_REPOSITORY"
       - name: Select E2E Tests
         id: select_e2e_tests
         if: ${{ !inputs.coverage }}

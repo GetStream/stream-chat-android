@@ -160,4 +160,9 @@ public data class Config(
      * `"direct_mentions"`, `"none"`, or deprecated `"mentions"`.
      */
     val pushLevel: String? = null,
+
+    /**
+     * Determines if replying to a message with a quote is enabled. Enabled by default.
+     */
+    val quotesEnabled: Boolean = true,
 )

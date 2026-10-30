@@ -74,6 +74,13 @@ internal class ChannelUtilsTests {
         placeholder(id = "general", "user1", "user2").isLocalPlaceholder() shouldBeEqualTo false
     }
 
+    @Test
+    fun `a cid named after several members is a placeholder cid and a server distinct cid is not`() {
+        isMultiMemberPlaceholderCid("messaging:!members-a, b") shouldBeEqualTo true
+        isMultiMemberPlaceholderCid("messaging:!members-Zq3kP9xT2") shouldBeEqualTo false
+        isMultiMemberPlaceholderCid("messaging:general") shouldBeEqualTo false
+    }
+
     private fun placeholder(id: String, vararg memberIds: String) =
         randomChannel(id = id, members = memberIds.map { randomMember(user = randomUser(id = it)) })
 

@@ -2621,6 +2621,8 @@ internal class MoshiChatApiTest {
             longitude = 2.5,
             deviceId = "device-1",
             endAt = endAt,
+            createdAt = endAt,
+            updatedAt = endAt,
         )
         assertEquals(listOf(listOf(expected)), channels?.map(Channel::activeLiveLocations))
     }
@@ -3868,7 +3870,7 @@ internal class MoshiChatApiTest {
         val result = sut.updateLiveLocation(location).await()
 
         assertTrue(result is Result.Success)
-        assertEquals(location, result.getOrThrow())
+        assertEquals(location.copy(createdAt = response.createdAt, updatedAt = response.updatedAt), result.getOrThrow())
     }
 
     @ParameterizedTest
@@ -3887,7 +3889,7 @@ internal class MoshiChatApiTest {
         val result = sut.stopLiveLocation(location).await()
 
         assertTrue(result is Result.Success)
-        assertEquals(location, result.getOrThrow())
+        assertEquals(location.copy(createdAt = response.createdAt, updatedAt = response.updatedAt), result.getOrThrow())
     }
 
     @ParameterizedTest
