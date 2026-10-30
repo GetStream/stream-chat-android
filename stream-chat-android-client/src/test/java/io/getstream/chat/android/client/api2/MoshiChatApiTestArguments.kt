@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.parser2.GetMessageResponseParityTest
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
-import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
@@ -47,6 +46,7 @@ import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeleteMessageResponse
 import io.getstream.chat.android.network.models.DeleteReactionResponse
+import io.getstream.chat.android.network.models.DeleteReminderResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.GetOGResponse
@@ -757,23 +757,17 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun createReminderInput() =
-        responseArgs(CreateReminderResponse(randomString(), Mother.randomReminderResponseData()))
+        endpointArgs(CreateReminderResponse(randomString(), Mother.randomReminderResponseData()))
 
     @JvmStatic
     fun updateReminderInput() =
-        responseArgs(UpdateReminderResponse(randomString(), Mother.randomReminderResponseData()))
+        endpointArgs(UpdateReminderResponse(randomString(), Mother.randomReminderResponseData()))
 
     @JvmStatic
-    fun deleteReminderInput() = completableResponseArguments()
+    fun deleteReminderInput() = endpointArgs(DeleteReminderResponse(randomString()))
 
     @JvmStatic
-    fun queryRemindersInput() = listOf(
-        Arguments.of(
-            RetroSuccess(Mother.randomQueryRemindersResponse()).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<QueryRemindersResult>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun queryRemindersInput() = endpointArgs(Mother.randomQueryRemindersResponse())
 
     @JvmStatic
     fun updateLiveLocation() = listOf(
@@ -1109,6 +1103,12 @@ internal object MoshiChatApiTestArguments {
     private fun <T : Any> responseArgs(success: T) = listOf(
         Arguments.of(RetroSuccess(success).toRetrofitCall(), Result.Success::class),
         Arguments.of(RetroError<T>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    /** A response or the exception a generated suspend endpoint throws, with the result each must give. */
+    private fun <T : Any> endpointArgs(success: T) = listOf(
+        Arguments.of(success, Result.Success::class),
+        Arguments.of(RetroError<T>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     private fun userGroup() = Mother.randomUserGroupResponse()

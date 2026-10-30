@@ -16,12 +16,8 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatRequestError
-import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
@@ -64,20 +60,7 @@ internal class RetrofitCall<T : Any>(
             callback.onResult(result)
         }
 
-    private fun Throwable.toFailedResult(): Result<T> = Result.Failure(this.toFailedError())
-
-    private fun Throwable.toFailedError(): Error = when (this) {
-        is ChatRequestError -> Error.NetworkError(
-            serverErrorCode = streamCode,
-            message = message.toString(),
-            statusCode = statusCode,
-            cause = cause,
-        )
-        else -> Error.NetworkError.fromChatErrorCode(
-            chatErrorCode = ChatErrorCode.NETWORK_FAILED,
-            cause = this,
-        )
-    }
+    private fun Throwable.toFailedResult(): Result<T> = Result.Failure(toNetworkError())
 
     @Suppress("TooGenericExceptionCaught")
     private suspend fun retrofit2.Call<T>.getResult(): Result<T> = withContext(callScope.coroutineContext) {
@@ -97,13 +80,7 @@ internal class RetrofitCall<T : Any>(
                 t.toFailedResult()
             }
         } else {
-            val errorBody = errorBody()
-
-            if (errorBody != null) {
-                Result.Failure(parser.toError(errorBody))
-            } else {
-                Result.Failure(parser.toError(raw()))
-            }
+            Result.Failure(parser.toError(this@getResult))
         }
     }
 }

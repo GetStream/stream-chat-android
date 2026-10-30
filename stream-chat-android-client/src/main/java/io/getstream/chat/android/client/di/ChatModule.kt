@@ -52,7 +52,6 @@ import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
-import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
@@ -93,6 +92,7 @@ import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.UserId
+import io.getstream.chat.android.network.apis.ChatEndpoints
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.log.StreamLog
 import okhttp3.Interceptor
@@ -377,7 +377,9 @@ constructor(
             buildV2RetrofitApi<OpenGraphApi>(),
             buildV2RetrofitApi<ThreadsApi>(),
             buildV2RetrofitApi<PollsApi>(),
-            buildV2RetrofitApi<RemindersApi>(),
+            // Generated, so it carries no @AuthenticatedApi.
+            buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = false),
+            moshiParser,
             buildV2RetrofitApi<PushPreferencesApi>(),
             buildV2RetrofitApi<UserGroupApi>(),
             buildV2RetrofitApi<RoleApi>(),
@@ -413,6 +415,7 @@ constructor(
     private inline fun <reified T> buildV2RetrofitApi(
         endpoint: String = config.httpUrl,
         timeout: Long = BASE_TIMEOUT,
+        isAnonymousApi: Boolean = T::class.java.isAnonymousApi,
     ): T {
         val apiClass = T::class.java
         return buildRetrofit(
@@ -420,7 +423,7 @@ constructor(
             timeout,
             config,
             moshiParser,
-            apiClass.isAnonymousApi,
+            isAnonymousApi,
         ) { builder ->
             builder
                 .addConverterFactory(MoshiUrlQueryPayloadFactory(Serializer.moshi))

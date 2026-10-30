@@ -28,6 +28,7 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 
 internal class RetroError<T : Any>(
@@ -47,6 +48,9 @@ internal class RetroError<T : Any>(
             CoroutineScope(DispatcherProvider.IO),
         )
     }
+
+    /** The exception a generated suspend endpoint throws for this response. */
+    fun toHttpException(): HttpException = HttpException(execute())
 
     override fun enqueue(callback: Callback<T>) {
         callback.onResponse(this, execute())

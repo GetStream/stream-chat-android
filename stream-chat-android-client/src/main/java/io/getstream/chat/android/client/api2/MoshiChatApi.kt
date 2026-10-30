@@ -41,7 +41,6 @@ import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
-import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
@@ -57,10 +56,12 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.call.endpointCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
+import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.V2EventParser
@@ -117,6 +118,7 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.apis.ChatEndpoints
 import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
@@ -232,7 +234,8 @@ constructor(
     private val ogApi: OpenGraphApi,
     private val threadsApi: ThreadsApi,
     private val pollsApi: PollsApi,
-    private val remindersApi: RemindersApi,
+    private val chatEndpoints: ChatEndpoints,
+    private val parser: ChatParser,
     private val pushPreferencesApi: PushPreferencesApi,
     private val userGroupApi: UserGroupApi,
     private val roleApi: RoleApi,
@@ -1984,21 +1987,19 @@ constructor(
     }
 
     override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
-        return remindersApi.createReminder(
-            messageId = messageId,
-            body = CreateReminderRequest(remindAt = remindAt),
-        ).mapDomain { it.reminder.toDomain() }
+        return endpoint {
+            createReminder(messageId = messageId, createReminderRequest = CreateReminderRequest(remindAt = remindAt))
+        }.mapDomain { it.reminder.toDomain() }
     }
 
     override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
-        return remindersApi.updateReminder(
-            messageId = messageId,
-            body = UpdateReminderRequest(remindAt = remindAt),
-        ).mapDomain { it.reminder.toDomain() }
+        return endpoint {
+            updateReminder(messageId = messageId, updateReminderRequest = UpdateReminderRequest(remindAt = remindAt))
+        }.mapDomain { it.reminder.toDomain() }
     }
 
     override fun deleteReminder(messageId: String): Call<Unit> {
-        return remindersApi.deleteReminder(messageId).toUnitCall()
+        return endpoint { deleteReminder(messageId = messageId) }.toUnitCall()
     }
 
     override fun queryReminders(
@@ -2013,7 +2014,7 @@ constructor(
             next = next,
             sort = sort.toSortParams(),
         )
-        return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
+        return endpoint { queryReminders(queryRemindersRequest = body) }.mapDomain { it.toDomain() }
     }
 
     override fun queryActiveLocations(): Call<List<Location>> =
@@ -2052,7 +2053,10 @@ constructor(
         return callPostponeHelper.postponeCall(call)
     }
 
-    private fun <T : Any, R : Any> RetrofitCall<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
+    private fun <T : Any> endpoint(request: suspend ChatEndpoints.() -> T): Call<T> =
+        endpointCall(parser, coroutineScope) { chatEndpoints.request() }
+
+    private fun <T : Any, R : Any> Call<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
         map { domainMapping.transform(it) }
 
     private fun RetrofitCall<UpsertPushPreferencesResponse>.parseUserPushPreferencesResponse() = flatMapDomain {
