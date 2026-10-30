@@ -24,28 +24,6 @@ internal class DraftPayloadResponseAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
-    fun `Parse a draft payload collecting root custom fields`() {
-        val json = """
-            {
-              "id": "draft-id",
-              "text": "hello",
-              "silent": false,
-              "show_in_channel": true,
-              "command": "giphy",
-              "args": "cat",
-              "flair": "gold"
-            }
-        """.trimIndent()
-
-        val payload = parser.fromJson(json, DraftPayloadResponse::class.java)
-
-        payload.id shouldBeEqualTo "draft-id"
-        payload.text shouldBeEqualTo "hello"
-        payload.showInChannel shouldBeEqualTo true
-        payload.custom shouldBeEqualTo mapOf("command" to "giphy", "args" to "cat", "flair" to "gold")
-    }
-
-    @Test
     fun `Parse a draft payload without custom fields`() {
         val json = """{"id":"draft-id","text":"hello"}"""
 

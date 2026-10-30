@@ -82,6 +82,9 @@ internal class DtoMapping(
      * adapter flattens it to the root and v2 sends it nested, and the backend stores them as custom data either way.
      * `file_size` stays an Int here: parsing yields a Double for an undeclared number, and writing that would change
      * `1` to `1.0`.
+     *
+     * An extra data key named like a typed field fills that field when it is unset, and is never sent as custom data,
+     * which the backend rejects for the multi-word field names.
      */
     internal fun Attachment.toAttachmentRequest(): AttachmentRequest {
         val custom = extraData.toMutableMap()
@@ -98,19 +101,19 @@ internal class DtoMapping(
             actions = custom.takeList("actions", actionAdapter),
             fields = custom.takeList("fields", fieldAdapter),
             giphy = custom.takeTyped("giphy") { imagesAdapter.fromJsonValue(it) },
-            assetUrl = assetUrl,
-            authorName = authorName,
-            fallback = fallback,
-            imageUrl = imageUrl,
-            ogScrapeUrl = ogUrl,
-            text = text,
-            thumbUrl = thumbUrl,
-            title = title,
-            titleLink = titleLink,
-            authorLink = authorLink,
-            type = type,
-            originalHeight = originalHeight,
-            originalWidth = originalWidth,
+            assetUrl = custom.takeString("asset_url").let { assetUrl ?: it },
+            authorName = custom.takeString("author_name").let { authorName ?: it },
+            fallback = custom.takeString("fallback").let { fallback ?: it },
+            imageUrl = custom.takeString("image_url").let { imageUrl ?: it },
+            ogScrapeUrl = custom.takeString("og_scrape_url").let { ogUrl ?: it },
+            text = custom.takeString("text").let { text ?: it },
+            thumbUrl = custom.takeString("thumb_url").let { thumbUrl ?: it },
+            title = custom.takeString("title").let { title ?: it },
+            titleLink = custom.takeString("title_link").let { titleLink ?: it },
+            authorLink = custom.takeString("author_link").let { authorLink ?: it },
+            type = custom.takeString("type").let { type ?: it },
+            originalHeight = custom.takeInt("original_height").let { originalHeight ?: it },
+            originalWidth = custom.takeInt("original_width").let { originalWidth ?: it },
             custom = custom,
         )
     }
@@ -135,6 +138,8 @@ internal class DtoMapping(
 
     private fun MutableMap<String, Any>.takeString(key: String): String? = takeTyped(key) { it as? String }
 
+    private fun MutableMap<String, Any>.takeInt(key: String): Int? = takeTyped(key) { (it as? Number)?.toInt() }
+
     private fun MutableMap<String, Any>.takeStrings(key: String): List<String>? =
         takeTyped(key) { list -> (list as List<*>).map { it as String } }
 
@@ -143,13 +148,19 @@ internal class DtoMapping(
 
     /**
      * Maps the domain [MemberData] to the generated network [ChannelMemberRequest] model.
+     *
+     * A string `channel_role` in the extra data sets the member's role, as it does for the members in channel data,
+     * instead of being stored as custom data.
      */
-    internal fun MemberData.toChannelMemberRequest(): ChannelMemberRequest = ChannelMemberRequest(
-        userId = userId,
-        channelRole = null,
-        user = null,
-        custom = extraData - RESPONSE_ONLY_MEMBER_KEYS,
-    )
+    internal fun MemberData.toChannelMemberRequest(): ChannelMemberRequest {
+        val custom = (extraData - RESPONSE_ONLY_MEMBER_KEYS).toMutableMap()
+        return ChannelMemberRequest(
+            userId = userId,
+            channelRole = custom.takeString("channel_role"),
+            user = null,
+            custom = custom,
+        )
+    }
 
     /**
      * Maps the domain [Member] to the generated network [ChannelMemberRequest] model.

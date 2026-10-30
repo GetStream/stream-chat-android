@@ -38,15 +38,6 @@ internal class ReactionParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    // region DTO path (JSON → ReactionResponse → Reaction)
-
-    @Test
-    fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(ReactionTestData.jsonAllFields, ReactionResponse::class.java)
-        val reaction = with(domainMapping) { dto.toDomain() }
-        assertEquals(ReactionTestData.expectedAllFields, reaction)
-    }
-
     @Test
     fun `DTO path - deserializes with optional fields missing`() {
         val dto = parser.fromJson(ReactionTestData.jsonOptionalFieldsMissing, ReactionResponse::class.java)

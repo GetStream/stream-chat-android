@@ -22,6 +22,9 @@ import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.V2EventParser
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -37,13 +40,17 @@ private const val EVENTS_BUFFER_SIZE = 100
 private const val CLOSE_SOCKET_CODE = 1000
 private const val CLOSE_SOCKET_REASON = "Connection close by client"
 
+internal val socketFrameAdapter = Serializer.moshi.adapter(Any::class.java)
+
 /**
  * @param parser Parses the error frames.
- * @param protocol Authenticates the socket, parses its events and keeps it alive.
+ * @param eventParser Parses the events.
+ * @param authFrame Authenticates the socket once open.
  */
 internal class StreamWebSocket(
     private val parser: ChatParser,
-    private val protocol: V2SocketProtocol,
+    private val eventParser: V2EventParser,
+    private val authFrame: String,
     socketCreator: (WebSocketListener) -> WebSocket,
 ) {
     private val logger by taggedLogger("Chat:StreamWebSocket")
@@ -54,7 +61,7 @@ internal class StreamWebSocket(
 
     private val webSocket = socketCreator(object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            webSocket.send(protocol.authFrame)
+            webSocket.send(authFrame)
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -87,9 +94,16 @@ internal class StreamWebSocket(
         }
     })
 
-    /** Keeps the connection [connectedEvent] established alive with a health check. */
-    fun sendKeepAlive(connectedEvent: ConnectedEvent): Boolean =
-        webSocket.send(protocol.keepAliveFrame(connectedEvent))
+    /**
+     * Keeps the connection [connectedEvent] established alive with a minimal health check, which the server answers
+     * whatever the frame carries.
+     */
+    fun sendKeepAlive(connectedEvent: ConnectedEvent): Boolean = webSocket.send(
+        socketFrameAdapter.toJson(
+            listOf(mapOf("type" to EventType.HEALTH_CHECK, "client_id" to connectedEvent.connectionId)),
+        ),
+    )
+
     fun close(): Boolean = webSocket.close(CLOSE_SOCKET_CODE, CLOSE_SOCKET_REASON)
     fun listen(): Flow<StreamWebSocketEvent> = eventFlow.asSharedFlow()
 
@@ -100,7 +114,7 @@ internal class StreamWebSocket(
      */
     @Suppress("TooGenericExceptionCaught")
     private fun parseMessage(text: String): StreamWebSocketEvent? = try {
-        protocol.eventParser.parse(text)?.let { event ->
+        eventParser.parse(text)?.let { event ->
             if (event is ConnectedEvent) connected = true
             StreamWebSocketEvent.Message(event)
         }

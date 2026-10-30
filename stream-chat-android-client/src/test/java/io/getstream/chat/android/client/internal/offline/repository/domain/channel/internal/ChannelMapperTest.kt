@@ -51,6 +51,7 @@ internal class ChannelMapperTest {
             createdAt = randomDate(),
         )
         val membership = randomMember()
+        val truncatedByUser = randomUser()
 
         val channel = randomChannel(
             createdBy = createdByUser,
@@ -59,7 +60,7 @@ internal class ChannelMapperTest {
             read = reads,
             messages = listOf(lastMessage),
             membership = membership,
-        )
+        ).copy(truncatedBy = truncatedByUser, autoTranslationEnabled = true, autoTranslationLanguages = setOf("fr", "de"))
 
         val expectedChannelEntity = ChannelEntity(
             type = channel.type,
@@ -91,6 +92,9 @@ internal class ChannelMapperTest {
             ownCapabilities = channel.ownCapabilities,
             membership = membership.toEntity(),
             messageCount = channel.messageCount,
+            truncatedByUserId = truncatedByUser.id,
+            autoTranslationEnabled = true,
+            autoTranslationLanguages = listOf("fr", "de"),
             activeMemberCount = channel.activeMemberCount,
         )
 
@@ -176,6 +180,7 @@ internal class ChannelMapperTest {
         val lastMessage = randomMessage()
         val membership = randomMember()
         val draftMessage = randomDraftMessage()
+        val truncatedByUser = randomUser()
 
         val channelEntity = randomChannelEntity(
             // A random truncation date would randomly drop the last message, which this test is not about
@@ -186,6 +191,7 @@ internal class ChannelMapperTest {
             reads = reads.map { it.toEntity() }.associateBy { it.userId }.toMutableMap(),
             lastMessageId = lastMessage.id,
             membership = membership.toEntity(),
+            truncatedByUserId = truncatedByUser.id,
         )
 
         val expectedChannel = Channel(
@@ -219,6 +225,9 @@ internal class ChannelMapperTest {
             membership = membership,
             draftMessage = draftMessage,
             messageCount = channelEntity.messageCount,
+            truncatedBy = truncatedByUser,
+            autoTranslationEnabled = channelEntity.autoTranslationEnabled,
+            autoTranslationLanguages = channelEntity.autoTranslationLanguages.toSet(),
             activeMemberCount = channelEntity.activeMemberCount,
         )
 
@@ -231,6 +240,7 @@ internal class ChannelMapperTest {
                     in reads.map { it.user.id } -> reads.first { it.user.id == userId }.user
                     lastMessage.user.id -> lastMessage.user
                     membership.user.id -> membership.user
+                    truncatedByUser.id -> truncatedByUser
                     else -> throw IllegalArgumentException("Unknown user id: $userId")
                 }
             },

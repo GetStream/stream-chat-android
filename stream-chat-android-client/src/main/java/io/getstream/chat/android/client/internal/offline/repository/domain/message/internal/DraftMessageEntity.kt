@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.mess
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(
     tableName = DRAFT_MESSAGE_ENTITY_TABLE_NAME,
@@ -35,6 +36,7 @@ internal data class DraftMessageEntity(
     val command: String? = null,
     val args: String? = null,
     val extraData: Map<String, Any> = mapOf(),
+    val createdAt: Date? = null,
 )
 
 internal const val DRAFT_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_draft_message_entity"

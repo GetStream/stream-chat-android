@@ -233,8 +233,9 @@ internal class ChannelEventHandlerLegacyImpl(
                 stateLogic.removeTruncatedMessages(event.truncatedBefore)
                 stateLogic.updateChannelData(event)
             }
-            // Typing events
-            is TypingStartEvent -> stateLogic.setTyping(event.user.id, event)
+            // Typing events. Typing in a thread only shows in that thread.
+            is TypingStartEvent -> if (event.parentId == null) stateLogic.setTyping(event.user.id, event)
+            // A user types in one place at a time, so a stop clears them whichever thread it names
             is TypingStopEvent -> stateLogic.setTyping(event.user.id, null)
             // Read/delivery receipt events
             is MessageReadEvent -> {

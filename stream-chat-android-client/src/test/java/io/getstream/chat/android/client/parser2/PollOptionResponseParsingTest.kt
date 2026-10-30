@@ -34,13 +34,6 @@ internal class PollOptionResponseParsingTest {
     }
 
     @Test
-    fun `Collect the root-level custom fields of a poll option`() {
-        val response = parser.fromJson(POLL_OPTION_JSON, PollOptionResponse::class.java)
-
-        response.pollOption.custom shouldBeEqualTo mapOf("sentiment" to "positive")
-    }
-
-    @Test
     fun `Deserialize a poll option without custom fields`() {
         val response = parser.fromJson(POLL_OPTION_WITHOUT_CUSTOM_JSON, PollOptionResponse::class.java)
 

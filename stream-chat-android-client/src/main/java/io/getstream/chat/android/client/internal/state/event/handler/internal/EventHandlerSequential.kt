@@ -76,6 +76,8 @@ import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.ThreadUpdatedEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -586,6 +588,10 @@ internal class EventHandlerSequential(
             .forEach { (messageId, events) ->
                 logicRegistry.thread(messageId).handleReminderEvents(events)
             }
+        // A typing stop can name another thread than its start, so every active thread sees the typing events
+        sortedEvents.filter { it.isTypingFromOtherUser() }.takeIf { it.isNotEmpty() }?.let { events ->
+            logicRegistry.getActiveThreadsLogic().forEach { thread -> thread.handleTypingEvents(events) }
+        }
         sortedEvents.filterIsInstance<HasPoll>()
             .groupBy { it.messageId }
             .filterKeys { it != null && logicRegistry.isActiveThread(it) }
@@ -605,6 +611,12 @@ internal class EventHandlerSequential(
         }
 
         logger.v { "[updateThreadState] completed batchId: ${batchEvent.id}" }
+    }
+
+    private fun ChatEvent.isTypingFromOtherUser(): Boolean = when (this) {
+        is TypingStartEvent -> user.id != currentUserId
+        is TypingStopEvent -> user.id != currentUserId
+        else -> false
     }
 
     @Suppress("LongMethod", "LoopWithTooManyJumpStatements")

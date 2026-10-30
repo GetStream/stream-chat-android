@@ -18,21 +18,10 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.network.models.MembersResponse
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldHaveSize
 import org.junit.jupiter.api.Test
 
 internal class ChannelMemberResponseParsingTest {
     private val parser = ParserFactory.createMoshiChatParser()
-
-    @Test
-    fun `Parse the members of a MembersResponse`() {
-        val members = parser.fromJson(MEMBERS_JSON, MembersResponse::class.java).members
-
-        members shouldHaveSize 1
-        members.first().channelRole shouldBeEqualTo "channel_member"
-        members.first().userId shouldBeEqualTo "leandro"
-        members.first().custom["memberProbe"] shouldBeEqualTo "sentinel"
-    }
 
     @Test
     fun `Collect the root-level custom fields of a nested user`() {

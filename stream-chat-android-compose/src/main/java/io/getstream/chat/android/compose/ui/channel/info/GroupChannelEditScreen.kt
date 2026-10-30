@@ -70,6 +70,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.messages.attachments.media.CaptureMediaTargetSheet
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -179,7 +180,7 @@ internal fun ImagePickerSheet(
                 },
                 onTakePhotoClick = {
                     onDismiss()
-                    capturePhotoLauncher.launch(Unit)
+                    capturePhotoLauncher.launch()
                 },
                 onRemovePictureClick = {
                     onDismiss()
@@ -188,6 +189,7 @@ internal fun ImagePickerSheet(
             )
         }
     }
+    CaptureMediaTargetSheet(capturePhotoLauncher)
 }
 
 @Composable

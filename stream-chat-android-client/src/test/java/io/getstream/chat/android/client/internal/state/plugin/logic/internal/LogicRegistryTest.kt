@@ -1318,4 +1318,23 @@ internal class LogicRegistryTest {
         state.setChannels(mapOf(unread.cid to unread.copy(read = read.read), read.cid to read))
         verify(mutableGlobalState).setFilteredGroupedUnreadChannels("expired", 3)
     }
+
+    @Test
+    fun `a placeholder is a cid created this session or one named after several members`() {
+        logicRegistry.markPlaceholderChannel("messaging:!members-bob")
+
+        Assertions.assertTrue(logicRegistry.isPlaceholderChannel("messaging:!members-bob"))
+        Assertions.assertTrue(logicRegistry.isPlaceholderChannel("messaging:!members-a, b"))
+        Assertions.assertFalse(logicRegistry.isPlaceholderChannel("messaging:!members-Zq3kP9xT2"))
+        Assertions.assertFalse(logicRegistry.isPlaceholderChannel("messaging:general"))
+    }
+
+    @Test
+    fun `clearing the registry forgets the placeholders created this session`() {
+        logicRegistry.markPlaceholderChannel("messaging:!members-bob")
+
+        logicRegistry.clear()
+
+        Assertions.assertFalse(logicRegistry.isPlaceholderChannel("messaging:!members-bob"))
+    }
 }

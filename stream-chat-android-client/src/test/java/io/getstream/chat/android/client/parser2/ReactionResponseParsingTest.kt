@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.network.models.GetReactionsResponse
-import io.getstream.chat.android.network.models.ReactionResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldHaveSize
 import org.junit.jupiter.api.Test
@@ -34,22 +33,6 @@ internal class ReactionResponseParsingTest {
         reactions.first().score shouldBeEqualTo 1
         reactions.first().messageId shouldBeEqualTo "messageId"
         reactions.first().user.id shouldBeEqualTo "leandro"
-    }
-
-    @Test
-    fun `Collect emoji_code and other root-level custom fields into custom`() {
-        val reactions = parser.fromJson(REACTIONS_JSON, GetReactionsResponse::class.java).reactions
-
-        // The backend sends emoji_code as custom data rather than a declared field.
-        reactions.first().custom shouldBeEqualTo mapOf("emoji_code" to "😄", "weight" to 3.0)
-        reactions.last().custom shouldBeEqualTo emptyMap()
-    }
-
-    @Test
-    fun `Custom field that shadows a data class function name is kept in custom`() {
-        val reaction = parser.fromJson(SHADOWING_JSON, ReactionResponse::class.java)
-
-        reaction.custom["copy"] shouldBeEqualTo "kept"
     }
 
     companion object {

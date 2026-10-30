@@ -13,6 +13,7 @@ e2e_tests_path = "#{test_flavor}/src/androidTestE2eDebug/kotlin/io/getstream/cha
 e2e_coverage_dir = File.expand_path('test_output/e2e_coverage')
 e2e_coverage_map_path = File.expand_path('test_output/e2e_coverage_map.json')
 e2e_coverage_map_artifact = 'e2e-coverage-map'
+e2e_failed_tests_file = 'failed_tests.json'
 e2e_selection_path = File.expand_path('test_output/e2e_selection.json')
 is_localhost = !is_ci
 @force_check = false
@@ -141,10 +142,9 @@ lane :select_e2e_tests do |options|
   FileUtils.mkdir_p(File.dirname(e2e_selection_path))
   File.write(e2e_selection_path, JSON.pretty_generate(tests: tests, reasons: reasons))
 
-  # Up to 8 batches, none bigger than an eighth of the suite, so a small selection takes fewer runners.
+  # 8 batches, or one per test when fewer are selected, so the selection runs in parallel.
   max_batches = 8
-  batch_size = [(all_tests.size / max_batches.to_f).ceil, 1].max
-  batches = (0...[(tests.size / batch_size.to_f).ceil, max_batches].min).to_a
+  batches = (0...[tests.size, max_batches].min).to_a
   UI.important("E2E batches: #{batches.size}")
   File.write(ENV['GITHUB_OUTPUT'], "e2e_batches=#{batches.to_json}\n", mode: 'a') if ENV['GITHUB_OUTPUT']
   batches
@@ -221,21 +221,33 @@ lane :run_e2e_test do |options|
     sh("adb exec-out sh -c 'cd #{File.dirname(adb_coverage_path)} && tar cf - coverage' | tar xf - -C #{e2e_coverage_dir}")
     # The retry rule reruns a failed test in the same process, so a test fails here only when its last attempt failed.
     failed_tests = result.scan(/^\d+\) (\w+)\(([\w.$]+)\)\r?$/).map { |test, test_class| "#{test_class.split('.').last}/#{test}" }
-    build_e2e_coverage_map(failed_tests: failed_tests)
+    File.write(File.join(e2e_coverage_dir, e2e_failed_tests_file), JSON.generate(failed_tests))
+    # A batch holds only part of the tests, so the map is built once every batch is done, see build_e2e_coverage_map.
+    build_e2e_coverage_map unless options[:batch]
   end
 
   UI.user_error!('Tests have failed!') if result.include?('Failures')
 end
 
-private_lane :build_e2e_coverage_map do |options|
+desc 'Builds the e2e coverage map from the coverage in test_output/e2e_coverage, one folder per batch when batch_count is set'
+lane :build_e2e_coverage_map do |options|
   next UI.important('No e2e coverage was collected') if Dir.glob("#{e2e_coverage_dir}/**/*.ec").empty?
+
+  failed_tests_files = Dir.glob("#{e2e_coverage_dir}/**/#{e2e_failed_tests_file}")
+  batch_count = options[:batch_count].to_i
+  # The tests of a missing batch would leave the map and run on every pull request, so the previous map stays instead.
+  # A batch counts once it reported its failed tests and collected coverage.
+  covered_batches = failed_tests_files.count { |file| Dir.glob("#{File.dirname(file)}/**/*.ec").any? }
+  if batch_count.positive? && covered_batches < batch_count
+    next UI.important("Only #{covered_batches} of #{batch_count} batches collected coverage, keeping the previous map")
+  end
 
   build_test_coverage_map(
     coverage_dir: e2e_coverage_dir,
     class_dirs: e2e_class_dirs,
     output_path: e2e_coverage_map_path,
     previous_map_artifact: e2e_coverage_map_artifact,
-    failed_tests: options[:failed_tests]
+    failed_tests: failed_tests_files.flat_map { |file| JSON.parse(File.read(file)) }
   )
 end
 

@@ -36,9 +36,9 @@ internal class CreateChannelMembersSerializationTest {
     private val dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)
 
     @Test
-    fun `Serialize the channel data members with their extra data under custom`() {
+    fun `Serialize the channel data members with their role at the root and extra data under custom`() {
         val members = listOf(
-            MemberData(userId = "alice", extraData = mapOf("nickname" to "Al")),
+            MemberData(userId = "alice", extraData = mapOf("nickname" to "Al", "channel_role" to "channel_moderator")),
             MemberData(userId = "bob"),
         ).map { with(dtoMapping) { it.toChannelMemberRequest() } }
         val query = QueryChannelRequest()
@@ -58,7 +58,7 @@ internal class CreateChannelMembersSerializationTest {
               "members": {},
               "data": {
                 "members": [
-                  { "user_id": "alice", "custom": { "nickname": "Al" } },
+                  { "user_id": "alice", "channel_role": "channel_moderator", "custom": { "nickname": "Al" } },
                   { "user_id": "bob", "custom": {} }
                 ],
                 "custom": { "name": "Team" }

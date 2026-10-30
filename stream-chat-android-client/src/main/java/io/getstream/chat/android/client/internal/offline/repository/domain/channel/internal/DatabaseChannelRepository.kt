@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.latestTruncatedBy
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.sync.Mutex
@@ -357,6 +358,12 @@ internal class DatabaseChannelRepository(
             messages = messages,
             hiddenMessagesBefore = hideMessagesBefore,
             truncatedAt = listOfNotNull(truncatedAt, cachedChannel.truncatedAt).maxOrNull(),
+            truncatedBy = latestTruncatedBy(
+                at = cachedChannel.truncatedAt,
+                by = cachedChannel.truncatedBy,
+                thatAt = truncatedAt,
+                thatBy = truncatedBy,
+            ),
             members = members,
             read = read,
             // Only queries that ask for it carry the active member count, so keep the stored one

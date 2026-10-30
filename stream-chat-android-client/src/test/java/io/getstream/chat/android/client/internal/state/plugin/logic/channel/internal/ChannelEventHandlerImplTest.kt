@@ -1015,7 +1015,7 @@ internal class ChannelEventHandlerImplTest {
     fun `When TypingStartEvent from other user is handled, Then typing is set via pruner`() {
         val otherUserId = randomString()
         val user = randomUser(id = otherUserId)
-        val event = randomTypingStartEvent(cid = cid, user = user)
+        val event = randomTypingStartEvent(cid = cid, user = user, parentId = null)
 
         handler.handle(event)
 
@@ -1030,7 +1030,7 @@ internal class ChannelEventHandlerImplTest {
     @Test
     fun `When TypingStartEvent from current user is handled, Then typing is not set`() {
         val user = randomUser(id = currentUserId)
-        val event = randomTypingStartEvent(cid = cid, user = user)
+        val event = randomTypingStartEvent(cid = cid, user = user, parentId = null)
 
         handler.handle(event)
 
@@ -1042,7 +1042,7 @@ internal class ChannelEventHandlerImplTest {
         val otherUserId = randomString()
         val user = randomUser(id = otherUserId)
         // First send a start event to populate the typing state
-        val startEvent = randomTypingStartEvent(cid = cid, user = user)
+        val startEvent = randomTypingStartEvent(cid = cid, user = user, parentId = null)
         handler.handle(startEvent)
 
         // Then send a stop event
@@ -1061,6 +1061,25 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state, never()).setTyping(any())
+    }
+
+    @Test
+    fun `When TypingStartEvent from a thread is handled, Then channel typing is not set`() {
+        val event = randomTypingStartEvent(cid = cid, user = randomUser(), parentId = randomString())
+
+        handler.handle(event)
+
+        verify(state, never()).setTyping(any())
+    }
+
+    @Test
+    fun `When TypingStopEvent names a thread, Then channel typing is still cleared`() {
+        val user = randomUser()
+        handler.handle(randomTypingStartEvent(cid = cid, user = user, parentId = null))
+
+        handler.handle(randomTypingStopEvent(cid = cid, user = user, parentId = randomString()))
+
+        verify(state).setTyping(TypingEvent(cid.cidToTypeAndId().second, emptyList()))
     }
 
     // endregion

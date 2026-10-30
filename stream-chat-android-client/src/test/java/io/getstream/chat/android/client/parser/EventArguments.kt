@@ -403,6 +403,7 @@ internal object EventArguments {
         command = "giphy",
         args = "cat",
         extraData = mapOf("flair" to "gold"),
+        createdAt = date,
     )
 
     private val reminder = MessageReminder(
@@ -1112,6 +1113,7 @@ internal object EventArguments {
         channelId = channelId,
         aiState = "AI_STATE_THINKING",
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        aiMessage = "Thinking about it",
     )
     private val aiIndicatorClearEvent = AIIndicatorClearEvent(
         type = EventType.AI_TYPING_INDICATOR_CLEAR,

@@ -283,6 +283,7 @@ public fun randomDraftMessage(
     replyMessage: Message? = randomMessage(),
     command: String? = null,
     args: String? = null,
+    createdAt: Date? = null,
 ): DraftMessage = DraftMessage(
     id = id,
     cid = cid,
@@ -297,6 +298,7 @@ public fun randomDraftMessage(
     replyMessage = replyMessage,
     command = command,
     args = args,
+    createdAt = createdAt,
 )
 
 public fun randomQueryDraftsResult(
@@ -619,6 +621,9 @@ public fun randomConfig(
     commands: List<Command> = emptyList(),
     pollsEnabled: Boolean = randomBoolean(),
     pushLevel: String? = randomString(),
+    skipLastMsgUpdateForSystemMsgs: Boolean = randomBoolean(),
+    sharedLocationsEnabled: Boolean = randomBoolean(),
+    quotesEnabled: Boolean = randomBoolean(),
 ): Config = Config(
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -643,6 +648,9 @@ public fun randomConfig(
     commands = commands,
     pollsEnabled = pollsEnabled,
     pushLevel = pushLevel,
+    skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
+    sharedLocationsEnabled = sharedLocationsEnabled,
+    quotesEnabled = quotesEnabled,
 )
 
 public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =

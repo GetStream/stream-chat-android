@@ -92,6 +92,30 @@ internal class DatabaseChannelRepositoryCacheTest {
     }
 
     @Test
+    fun `inserting a channel keeps the cached truncator when the truncation carries none`() = testScope.runTest {
+        val truncator = randomUser()
+        val cached = randomChannel(messages = emptyList(), truncatedAt = Date(2_000), hiddenMessagesBefore = null)
+            .copy(truncatedBy = truncator)
+        sut.insertChannel(cached)
+
+        sut.insertChannel(cached.copy(truncatedBy = null))
+
+        assertEquals(truncator, sut.selectChannel(cached.cid)?.truncatedBy)
+    }
+
+    @Test
+    fun `inserting a channel with a later truncation takes its truncator`() = testScope.runTest {
+        val newTruncator = randomUser()
+        val cached = randomChannel(messages = emptyList(), truncatedAt = Date(2_000), hiddenMessagesBefore = null)
+            .copy(truncatedBy = randomUser())
+        sut.insertChannel(cached)
+
+        sut.insertChannel(cached.copy(truncatedAt = Date(3_000), truncatedBy = newTruncator))
+
+        assertEquals(newTruncator, sut.selectChannel(cached.cid)?.truncatedBy)
+    }
+
+    @Test
     fun `inserting a channel without activeMemberCount keeps the stored count`() = testScope.runTest {
         val cached = randomChannel(activeMemberCount = 7)
         sut.insertChannel(cached)
