@@ -51,6 +51,7 @@ import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearAndClick
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
+import org.junit.Assert.assertFalse
 
 class UserRobot {
 
@@ -105,6 +106,7 @@ class UserRobot {
                 return this
             }
         }
+        assertFalse(ScheduledMessagesPage.ScheduleSheet.view.isDisplayed())
         return this
     }
 
