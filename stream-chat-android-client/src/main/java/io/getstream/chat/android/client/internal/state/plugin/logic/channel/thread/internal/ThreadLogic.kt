@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.events.AnswerCastedEvent
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasPoll
 import io.getstream.chat.android.client.events.HasReminder
@@ -31,23 +32,32 @@ import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.TypingEventPruner
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
+import kotlinx.coroutines.CoroutineScope
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
+@Suppress("TooManyFunctions")
 internal class ThreadLogic(
     private val threadStateLogic: ThreadStateLogic,
+    private val coroutineScope: CoroutineScope,
 ) {
 
     private val mutableState: ThreadMutableState = threadStateLogic.writeThreadState()
+
+    // Created with the first typing start, which carries the channel id the typing state reports.
+    private var typingEventPruner: TypingEventPruner? = null
 
     fun isLoadingMessages(): Boolean = mutableState.loading.value
 
@@ -197,6 +207,28 @@ internal class ThreadLogic(
             }
         }
     }
+
+    /**
+     * Applies typing starts sent from this thread, and every typing stop. The caller leaves out the current user's own
+     * events.
+     */
+    internal fun handleTypingEvents(events: List<ChatEvent>) {
+        events.forEach { event ->
+            when (event) {
+                is TypingStartEvent -> if (event.parentId == mutableState.parentId) {
+                    typingEventPruner(event.channelId).processEvent(event.user.id, event)
+                }
+                // A user types in one place at a time, so a stop clears them whichever thread it names
+                is TypingStopEvent -> typingEventPruner?.processEvent(event.user.id, null)
+                else -> Unit
+            }
+        }
+    }
+
+    private fun typingEventPruner(channelId: String): TypingEventPruner = typingEventPruner
+        ?: TypingEventPruner(channelId, coroutineScope) { _, typingEvent ->
+            mutableState.setTyping(typingEvent)
+        }.also { typingEventPruner = it }
 
     internal fun handleReminderEvents(events: List<HasReminder>) {
         val messages = events.mapNotNull { event ->
