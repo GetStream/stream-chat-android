@@ -43,6 +43,7 @@ import io.getstream.chat.android.e2e.test.uiautomator.goToBackground
 import io.getstream.chat.android.e2e.test.uiautomator.goToForeground
 import io.getstream.chat.android.e2e.test.uiautomator.seconds
 import io.qameta.allure.kotlin.Allure.step
+import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 import java.util.Calendar
 import io.getstream.chat.android.compose.sample.R as SampleR
@@ -57,6 +58,7 @@ class ScheduledMessagesTests : StreamTestCase() {
     override var useScheduledMessages = true
     private val sampleText = "Scheduled"
 
+    @AllureId("12920")
     @Test
     fun test_scheduledMessageIsListedAndNotSent() {
         step("GIVEN user opens the channel") {
@@ -81,6 +83,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12921")
     @Test
     fun test_scheduledMessageIsSentNow() {
         step("GIVEN user schedules a message") {
@@ -102,6 +105,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12922")
     @Test
     fun test_scheduledMessageIsSentWhenItsTimeComes() {
         step("GIVEN user schedules a message") {
@@ -128,6 +132,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12923")
     @Test
     fun test_scheduledMessageIsEdited() {
         val editedText = "Edited"
@@ -159,6 +164,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12924")
     @Test
     fun test_scheduledMessageIsRescheduled() {
         step("GIVEN user schedules a message for tomorrow at 9:00") {
@@ -174,6 +180,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12925")
     @Test
     fun test_scheduledMessageIsDeleted() {
         step("GIVEN user schedules a message") {
@@ -199,6 +206,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12926")
     @Test
     fun test_scheduledThreadReplyIsSentInTheThread() {
         val parentText = "Parent"
@@ -228,6 +236,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12927")
     @Test
     fun test_scheduledMessageWithImageIsSentWithTheImage() {
         step("GIVEN user opens the channel") {
@@ -253,6 +262,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12928")
     @Test
     fun test_scheduledMessageWithFailedUploadIsRetried() {
         val uploadFailed = appContext.getString(SampleR.string.scheduled_messages_failure_attachment_upload)
@@ -294,6 +304,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12929")
     @Test
     fun test_messageScheduledOfflineIsScheduledOnceOnReconnect() {
         step("GIVEN user opens the channel") {
@@ -329,6 +340,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12930")
     @Test
     fun test_scheduledMessageSentInTheBackgroundLeavesTheList() {
         step("GIVEN user schedules a message") {
@@ -356,6 +368,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12931")
     @Test
     fun test_scheduledMessageFailedByTheServerCanOnlyBeScheduledAgainOrDeleted() {
         val banned = appContext.getString(SampleR.string.scheduled_messages_failure_banned)
@@ -388,6 +401,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12932")
     @Test
     fun test_scheduledMessageOverTheChannelLimitFailsWithoutRetry() {
         val limitReached = appContext.getString(SampleR.string.scheduled_messages_failure_limit_channel)
@@ -413,6 +427,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12933")
     @Test
     fun test_scheduleOptionIsHiddenWhenTheFeatureIsOff() {
         step("GIVEN scheduled messages are off for the app") {
@@ -431,6 +446,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12934")
     @Test
     fun test_messageScheduledOnAnotherDeviceIsListed() {
         step("GIVEN user opens the channel") {
