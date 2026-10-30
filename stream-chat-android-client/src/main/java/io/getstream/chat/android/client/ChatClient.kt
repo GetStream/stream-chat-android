@@ -5236,7 +5236,7 @@ internal constructor(
      * quotes a message that was deleted, when [scheduledAt] is further ahead than
      * [Config.scheduledMessagesMaxLeadTimeSeconds], or when the user already has as many pending scheduled messages as
      * [Config.scheduledMessagesMaxPerChannel] in the channel or [Config.scheduledMessagesMaxPerUser] in all channels,
-     * as known from the channel config and messages saved on this device.
+     * as known from the channel config and messages saved on this device. It is also refused when no user is set.
      *
      * @param channelType The type of the channel.
      * @param channelId The ID of the channel.
@@ -5255,6 +5255,8 @@ internal constructor(
     ): Call<ScheduledMessage> {
         val messageWithId = message.ensureId()
         return CoroutineCall(userScope) {
+            // Without a user, the message would be kept in memory and sent as the next user to connect.
+            if (!isUserSet()) return@CoroutineCall Result.Failure(Error.GenericError("User is not set, can't schedule"))
             scheduledMessageManager.schedule("$channelType:$channelId", messageWithId, scheduledAt)
         }
     }

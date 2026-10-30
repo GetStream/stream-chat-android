@@ -19,6 +19,7 @@ package io.getstream.chat.android.client
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
+import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -218,6 +219,20 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
         chatClient.scheduledMessages.value shouldBeEqualTo listOf(scheduledMessage)
         chatClient.scheduledMessages(cid, parentId).first() shouldBeEqualTo listOf(scheduledMessage)
         chatClient.scheduledMessages(cid).first().shouldBeEmpty()
+        verifyNoInteractions(api)
+    }
+
+    @Test
+    fun scheduleMessageFailsWithoutAUser() = runTest {
+        // given
+        whenever(mutableClientState.user).thenReturn(MutableStateFlow(randomUser()))
+        whenever(userStateService.state).thenReturn(UserState.NotSet)
+        // when
+        val result = chatClient.scheduleMessage("messaging", randomString(), Message(text = randomString()), randomDate())
+            .await()
+        // then
+        result.shouldBeInstanceOf<Result.Failure>()
+        chatClient.scheduledMessages.value.shouldBeEmpty()
         verifyNoInteractions(api)
     }
 
