@@ -38,7 +38,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -157,8 +156,6 @@ class UserLoginActivity : AppCompatActivity() {
                     DividerItem()
                 }
 
-                stagingUserItems(onUserItemClick)
-
                 item {
                     CustomLoginItem(onItemClick = onCustomLoginClick)
                 }
@@ -174,32 +171,6 @@ class UserLoginActivity : AppCompatActivity() {
     }
 
     /**
-     * The users of the staging app, under their own title, when the flavor has some.
-     */
-    private fun LazyListScope.stagingUserItems(onUserItemClick: (UserCredentials) -> Unit) {
-        if (PredefinedUserCredentials.stagingUsers.isEmpty()) return
-        item {
-            Text(
-                modifier = Modifier.padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 8.dp),
-                text = stringResource(R.string.user_login_staging_title),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = ChatTheme.colors.textSecondary,
-            )
-        }
-        items(items = PredefinedUserCredentials.stagingUsers) { userCredentials ->
-            UserLoginItem(
-                modifier = Modifier.testTag("Stream_StagingUserLoginItem"),
-                userCredentials = userCredentials,
-                subtitle = stringResource(R.string.user_login_staging_user_subtitle),
-                onItemClick = onUserItemClick,
-            )
-
-            DividerItem()
-        }
-    }
-
-    /**
      * Represents a user whose credentials will be used for login.
      */
     @Composable
@@ -207,7 +178,6 @@ class UserLoginActivity : AppCompatActivity() {
         modifier: Modifier,
         userCredentials: UserCredentials,
         onItemClick: (UserCredentials) -> Unit,
-        subtitle: String = stringResource(id = R.string.user_login_user_subtitle),
     ) {
         Row(
             modifier = modifier
@@ -240,7 +210,7 @@ class UserLoginActivity : AppCompatActivity() {
                 )
 
                 Text(
-                    text = subtitle,
+                    text = stringResource(id = R.string.user_login_user_subtitle),
                     fontSize = 12.sp,
                     color = ChatTheme.colors.textSecondary,
                 )
