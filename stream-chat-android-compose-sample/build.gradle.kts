@@ -61,15 +61,18 @@ android {
         }
     }
 
+    val e2eCoverage = providers.gradleProperty("e2eCoverage").isPresent
     buildTypes {
         getByName("debug") {
             versionNameSuffix = "-DEBUG"
             applicationIdSuffix = ".debug"
-            isDebuggable = true
+            // The e2e run on CI passes -Pe2eNonDebuggable: a debuggable app runs much slower on the emulators.
+            // The coverage build stays debuggable.
+            isDebuggable = !providers.gradleProperty("e2eNonDebuggable").isPresent || e2eCoverage
             isMinifyEnabled = false
             isShrinkResources = false
             // The nightly e2e run instruments the app and the SDK to map the code every test runs.
-            enableAndroidTestCoverage = providers.gradleProperty("e2eCoverage").isPresent
+            enableAndroidTestCoverage = e2eCoverage
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("Boolean", "BENCHMARK", "false")
         }
@@ -95,10 +98,13 @@ android {
     productFlavors {
         create("demo") {
             dimension = "version"
+            buildConfigField("Boolean", "STRICT_MODE", "true")
         }
         create("e2e") {
             dimension = "version"
             applicationIdSuffix = ".e2etest"
+            // StrictMode slows the e2e run down, and nobody reads its logs there.
+            buildConfigField("Boolean", "STRICT_MODE", "false")
         }
     }
 
@@ -114,7 +120,10 @@ android {
 
 androidComponents {
     beforeVariants { variantBuilder ->
-        if (variantBuilder.buildType != "debug" &&
+        // The e2e flavor only builds debug. A non-debuggable debug gets benchmarkDebug and nonMinifiedDebug variants
+        // from the baseline profile plugin, which fails the configuration when they are disabled.
+        val buildType = variantBuilder.buildType.orEmpty()
+        if (buildType != "debug" && !buildType.endsWith("Debug") &&
             variantBuilder.productFlavors.any { it.second.contains("e2e") }
         ) {
             variantBuilder.enable = false
