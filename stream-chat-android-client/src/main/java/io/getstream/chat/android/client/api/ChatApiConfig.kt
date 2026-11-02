@@ -34,10 +34,10 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
  * @param distinctApiCalls Controls whether [DistinctChatApi] is enabled or not.
  * @param debugRequests Controls whether requests can be recorded or not.
  * @param notificationConfig A notification config to be used by the client.
- * @param fastEventParsing Enables the fast event-parsing path for incoming WebSocket events.
- * When `true`, supported event types are parsed directly into domain models, bypassing the DTO
- * intermediate layer; unsupported event types fall back to the default DTO-based parser.
- * Currently supported event types: `message.new`. Disabled by default.
+ * @param fastEventParsing Enables the fast event-parsing path for events from the socket, `/sync` and sent events.
+ * When `true`, supported event types are parsed directly into domain models; other event types, and events the fast
+ * path cannot read, go through the generated-model parser. Currently supported event types: `message.new`. Disabled by
+ * default.
  */
 @Suppress("LongParameterList")
 internal class ChatApiConfig @JvmOverloads constructor(

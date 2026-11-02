@@ -32,12 +32,6 @@ internal object WireShape {
     /** A message payload, minus the root `channel` that the thread-replies and pinned-messages endpoints never send. */
     fun message(json: String): String = reshape(json) { it.minus("channel") }
 
-    /** A `message.new` payload, whose message never carries a `channel` of its own. */
-    fun newMessageEvent(json: String): String = reshape(json) { root ->
-        val message = root["message"] as? Map<*, *> ?: return@reshape root
-        root + ("message" to message.minus("channel"))
-    }
-
     private fun reshape(json: String, transform: (Map<String, Any?>) -> Map<String, Any?>): String {
         val root = mapAdapter.fromJson(json) ?: return json
 

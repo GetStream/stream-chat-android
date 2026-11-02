@@ -22,10 +22,6 @@ import org.intellij.lang.annotations.Language
 internal object OptionTestData {
 
     @Language("JSON")
-    val jsonAllFields =
-        """{"id":"option1","text":"First option","text_i18n":{"language":"en","it_text":"Prima opzione"},"custom_field":"custom_value"}"""
-
-    @Language("JSON")
     val jsonOptionalFieldsMissing =
         """{"id":"option1","text":"First option"}"""
 
@@ -36,13 +32,6 @@ internal object OptionTestData {
     @Language("JSON")
     val jsonMissingText =
         """{"id":"option1"}"""
-
-    val expectedAllFields = Option(
-        id = "option1",
-        text = "First option",
-        extraData = mapOf("custom_field" to "custom_value"),
-        textI18n = mapOf("language" to "en", "it_text" to "Prima opzione"),
-    )
 
     val expectedOptionalFieldsMissing = Option(
         id = "option1",

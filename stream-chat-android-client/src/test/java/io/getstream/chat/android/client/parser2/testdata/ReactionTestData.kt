@@ -48,19 +48,6 @@ internal object ReactionTestData {
     )
 
     @Language("JSON")
-    val jsonAllFields = """{
-        "message_id": "msg1",
-        "type": "like",
-        "score": 1,
-        "user_id": "user1",
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-02T00:00:00.000Z",
-        "user": $USER_JSON,
-        "emoji_code": "\uD83D\uDC4D",
-        "custom_field": "custom_value"
-    }"""
-
-    @Language("JSON")
     val jsonOptionalFieldsMissing = """{
         "message_id": "msg1",
         "type": "like",
@@ -150,20 +137,8 @@ internal object ReactionTestData {
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-02T00:00:00.000Z",
         "user": $USER_JSON,
-        "emoji_code": null
+        "custom": {"emoji_code": null}
     }"""
-
-    val expectedAllFields = Reaction(
-        messageId = "msg1",
-        type = "like",
-        score = 1,
-        userId = "user1",
-        createdAt = Date(1577836800000),
-        updatedAt = Date(1577923200000),
-        user = USER,
-        emojiCode = "\uD83D\uDC4D",
-        extraData = mapOf("custom_field" to "custom_value"),
-    )
 
     val expectedOptionalFieldsMissing = Reaction(
         messageId = "msg1",

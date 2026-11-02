@@ -16,20 +16,19 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 internal class CreateGuestResponseParsingTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Deserialize guest response and map the embedded user with custom fields`() {
-        val response = parser.fromJson(GUEST_JSON, CreateGuestResponse::class.java)
+        val response = Serializer.moshi.adapter(CreateGuestResponse::class.java).fromJson(GUEST_JSON)!!
 
         response.accessToken shouldBeEqualTo GUEST_TOKEN
-        response.duration shouldBeEqualTo "12.65ms"
-        response.user.id shouldBeEqualTo "guest-a9466182-3293-43f2-8d80-b3b9892e98d3-probe"
+        response.duration shouldBeEqualTo "8.13ms"
+        response.user.id shouldBeEqualTo "guest-99752477-4c60-4c6f-84fd-a27a869561f1-probe"
         response.user.name shouldBeEqualTo "Probe Guest"
         response.user.role shouldBeEqualTo "guest"
         response.user.language shouldBeEqualTo ""
@@ -41,27 +40,29 @@ internal class CreateGuestResponseParsingTest {
         private const val GUEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.redacted-payload.redacted-signature"
 
         /**
-         * Captured from `POST /guest`, with the access token replaced and the guest id shortened. Note the
-         * server sends an empty `language`, sends `name` at the root where the model declares it, and leaves
-         * `nickname` next to it for the custom sweep to collect.
+         * Captured from `POST /api/v2/guest`, with the access token replaced and the guest id shortened. Note the
+         * server sends an empty `language`, `name` at the root where the model declares it, and `nickname` under
+         * `custom`.
          */
         private const val GUEST_JSON =
             """{
                 "user": {
-                    "id": "guest-a9466182-3293-43f2-8d80-b3b9892e98d3-probe",
+                    "id": "guest-99752477-4c60-4c6f-84fd-a27a869561f1-probe",
                     "name": "Probe Guest",
+                    "custom": {
+                        "nickname": "Ghost"
+                    },
                     "language": "",
                     "role": "guest",
                     "teams": [],
-                    "created_at": "2026-08-18T13:44:19.149154Z",
-                    "updated_at": "2026-08-18T13:44:19.149154Z",
+                    "created_at": 1793188343331121000,
+                    "updated_at": 1793188343331121000,
                     "banned": false,
                     "online": false,
-                    "blocked_user_ids": [],
-                    "nickname": "Ghost"
+                    "blocked_user_ids": []
                 },
                 "access_token": "$GUEST_TOKEN",
-                "duration": "12.65ms"
+                "duration": "8.13ms"
             }"""
     }
 }

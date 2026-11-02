@@ -28,9 +28,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class ReactionParsingTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
-
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
         channelTransformer = NoOpChannelTransformer,
@@ -40,7 +37,7 @@ internal class ReactionParsingTest {
 
     @Test
     fun `DTO path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(ReactionTestData.jsonOptionalFieldsMissing, ReactionResponse::class.java)
+        val dto = parse<ReactionResponse>(ReactionTestData.jsonOptionalFieldsMissing)
         val reaction = with(domainMapping) { dto.toDomain() }
         assertEquals(ReactionTestData.expectedOptionalFieldsMissing, reaction)
     }
@@ -51,7 +48,7 @@ internal class ReactionParsingTest {
 
     @Test
     fun `DTO path - deserializes with explicit null values`() {
-        val dto = parser.fromJson(ReactionTestData.jsonWithExplicitNulls, ReactionResponse::class.java)
+        val dto = parse<ReactionResponse>(ReactionTestData.jsonWithExplicitNulls)
         val reaction = with(domainMapping) { dto.toDomain() }
         assertEquals(ReactionTestData.expectedWithExplicitNulls, reaction)
     }
@@ -63,49 +60,49 @@ internal class ReactionParsingTest {
     @Test
     fun `DTO path - throws on missing message_id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ReactionTestData.jsonMissingMessageId, ReactionResponse::class.java)
+            parse<ReactionResponse>(ReactionTestData.jsonMissingMessageId)
         }
     }
 
     @Test
     fun `DTO path - throws on missing type`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ReactionTestData.jsonMissingType, ReactionResponse::class.java)
+            parse<ReactionResponse>(ReactionTestData.jsonMissingType)
         }
     }
 
     @Test
     fun `DTO path - throws on missing score`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ReactionTestData.jsonMissingScore, ReactionResponse::class.java)
+            parse<ReactionResponse>(ReactionTestData.jsonMissingScore)
         }
     }
 
     @Test
     fun `DTO path - throws on missing user_id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ReactionTestData.jsonMissingUserId, ReactionResponse::class.java)
+            parse<ReactionResponse>(ReactionTestData.jsonMissingUserId)
         }
     }
 
     @Test
     fun `DTO path - throws on missing created_at`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ReactionTestData.jsonMissingCreatedAt, ReactionResponse::class.java)
+            parse<ReactionResponse>(ReactionTestData.jsonMissingCreatedAt)
         }
     }
 
     @Test
     fun `DTO path - throws on missing updated_at`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ReactionTestData.jsonMissingUpdatedAt, ReactionResponse::class.java)
+            parse<ReactionResponse>(ReactionTestData.jsonMissingUpdatedAt)
         }
     }
 
     @Test
     fun `DTO path - throws on missing user`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ReactionTestData.jsonMissingUser, ReactionResponse::class.java)
+            parse<ReactionResponse>(ReactionTestData.jsonMissingUser)
         }
     }
 

@@ -21,17 +21,15 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class UpdateChannelPartialRequestAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize UpdateChannelPartialRequest with all fields`() {
-        val json = parser.toJson(UpdateChannelPartialRequestTestData.updateChannelPartialRequest)
+        val json = toJson(UpdateChannelPartialRequestTestData.updateChannelPartialRequest)
         Assertions.assertEquals(UpdateChannelPartialRequestTestData.updateChannelPartialRequestJson, json)
     }
 
     @Test
     fun `Serialize UpdateChannelPartialRequest with default fields`() {
-        val json = parser.toJson(UpdateChannelPartialRequestTestData.updateChannelPartialRequestWithDefaults)
+        val json = toJson(UpdateChannelPartialRequestTestData.updateChannelPartialRequestWithDefaults)
         Assertions.assertEquals(UpdateChannelPartialRequestTestData.updateChannelPartialRequestJsonWithDefaults, json)
     }
 }

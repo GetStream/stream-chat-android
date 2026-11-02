@@ -21,17 +21,15 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class UpdateLiveLocationRequestAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize UpdateLiveLocationRequest with new coordinates`() {
-        val json = parser.toJson(UpdateLiveLocationRequestTestData.coordinateUpdate)
+        val json = toJson(UpdateLiveLocationRequestTestData.coordinateUpdate)
         Assertions.assertEquals(UpdateLiveLocationRequestTestData.coordinateUpdateJson, json)
     }
 
     @Test
     fun `Serialize UpdateLiveLocationRequest that stops sharing`() {
-        val json = parser.toJson(UpdateLiveLocationRequestTestData.stopSharing)
+        val json = toJson(UpdateLiveLocationRequestTestData.stopSharing)
         Assertions.assertEquals(UpdateLiveLocationRequestTestData.stopSharingJson, json)
     }
 }

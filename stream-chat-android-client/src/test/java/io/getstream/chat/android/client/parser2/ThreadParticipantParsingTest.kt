@@ -16,17 +16,18 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.ThreadParticipant
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 internal class ThreadParticipantParsingTest {
-    private val parser = ParserFactory.createMoshiChatParser()
+    private val adapter = Serializer.moshi.adapter(ThreadParticipant::class.java)
 
     @Test
     fun `Deserialize a thread participant as sent by the API`() {
-        val participant = parser.fromJson(THREAD_PARTICIPANT_JSON, ThreadParticipant::class.java)
+        val participant = adapter.fromJson(THREAD_PARTICIPANT_JSON)!!
 
         participant.userId shouldBeEqualTo "leandro"
         participant.channelCid shouldBeEqualTo "messaging:channelId"
@@ -35,8 +36,8 @@ internal class ThreadParticipantParsingTest {
     }
 
     @Test
-    fun `Deserialize the nested user with its custom fields collected`() {
-        val participant = parser.fromJson(THREAD_PARTICIPANT_JSON, ThreadParticipant::class.java)
+    fun `Deserialize the nested user with its custom fields`() {
+        val participant = adapter.fromJson(THREAD_PARTICIPANT_JSON)!!
 
         participant.user?.id shouldBeEqualTo "leandro"
         participant.user?.language shouldBeEqualTo "pt"
@@ -45,8 +46,8 @@ internal class ThreadParticipantParsingTest {
 
     companion object {
         /**
-         * Captured from `POST /threads`. The API sends `custom` as an explicit `null` here, which only
-         * parses thanks to [io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory].
+         * A thread participant as the v2 threads endpoints send it: an empty `custom` object even when the
+         * participant has no custom data, and the nested user's custom data under its own `custom`.
          */
         private const val THREAD_PARTICIPANT_JSON =
             """{
@@ -66,11 +67,11 @@ internal class ThreadParticipantParsingTest {
                     "banned": false,
                     "online": true,
                     "blocked_user_ids": [],
-                    "birthland": "Polis Massa"
+                    "custom": { "birthland": "Polis Massa" }
                 },
                 "created_at": "2026-07-03T12:53:25.510355Z",
                 "last_read_at": "2026-07-03T12:53:32.221127Z",
-                "custom": null
+                "custom": {}
             }"""
     }
 }

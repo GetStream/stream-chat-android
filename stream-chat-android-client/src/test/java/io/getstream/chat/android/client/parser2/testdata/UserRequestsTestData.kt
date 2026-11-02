@@ -16,13 +16,8 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.network.models.CreateGuestRequest
-import io.getstream.chat.android.network.models.PrivacySettingsResponse
-import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
-import io.getstream.chat.android.network.models.UpdateUsersRequest
-import io.getstream.chat.android.network.models.UserRequest
 import org.intellij.lang.annotations.Language
 
 internal object UserRequestsTestData {
@@ -51,71 +46,6 @@ internal object UserRequestsTestData {
                 id = "user1",
                 unset = listOf("age"),
                 set = mapOf("nickname" to "neo"),
-            ),
-        ),
-    )
-
-    // CreateGuestRequest (custom flattened onto the nested user object)
-
-    @Language("JSON")
-    val createGuestRequestJson =
-        """{
-          "user": {
-            "id": "user1",
-            "name": "Neo",
-            "customKey": "customValue"
-          }
-        }""".withoutWhitespace()
-
-    val createGuestRequest = CreateGuestRequest(
-        user = UserRequest(
-            id = "user1",
-            name = "Neo",
-            custom = mapOf("customKey" to "customValue"),
-        ),
-    )
-
-    @Language("JSON")
-    val createGuestRequestJsonWithoutCustom =
-        """{
-          "user": {
-            "id": "user1",
-            "name": "Neo"
-          }
-        }""".withoutWhitespace()
-
-    val createGuestRequestWithoutCustom = CreateGuestRequest(
-        user = UserRequest(id = "user1", name = "Neo"),
-    )
-
-    // UpdateUsersRequest (map of user id -> UserRequest, custom flattened onto each user)
-
-    @Language("JSON")
-    val updateUsersRequestJson =
-        """{
-          "users": {
-            "user1": {
-              "id": "user1",
-              "name": "Neo",
-              "privacy_settings": {
-                "read_receipts": {
-                  "enabled": true
-                }
-              },
-              "customKey": "customValue"
-            }
-          }
-        }""".withoutWhitespace()
-
-    val updateUsersRequest = UpdateUsersRequest(
-        users = mapOf(
-            "user1" to UserRequest(
-                id = "user1",
-                name = "Neo",
-                privacySettings = PrivacySettingsResponse(
-                    readReceipts = ReadReceiptsResponse(enabled = true),
-                ),
-                custom = mapOf("customKey" to "customValue"),
             ),
         ),
     )
