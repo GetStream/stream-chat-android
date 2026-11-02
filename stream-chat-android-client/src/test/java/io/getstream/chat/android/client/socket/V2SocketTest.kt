@@ -109,7 +109,7 @@ internal class V2SocketTest {
     fun `The first connection authenticates with the user details v2 reads, custom data nested`() {
         open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER))
 
-        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip",
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"event_protocol":3,"user_details":{"id":"filip",
             "name":"Chewbacca","image":"https://example.com/chewie.png","language":"en","invisible":true,
             "privacy_settings":{"typing_indicators":{"enabled":false}},"custom":{"flair":"gold"}}}"""
     }
@@ -125,7 +125,7 @@ internal class V2SocketTest {
         )
         open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, user))
 
-        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip",
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"event_protocol":3,"user_details":{"id":"filip",
             "name":"Chewbacca","image":"https://example.com/chewie.png","language":"en","invisible":true,
             "privacy_settings":{"delivery_receipts":{"enabled":false},"read_receipts":{"enabled":true}},
             "custom":{"flair":"gold"}}}"""
@@ -135,7 +135,7 @@ internal class V2SocketTest {
     fun `A reconnection authenticates with the user id only`() {
         open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER).asReconnectionConf())
 
-        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip"}}"""
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"event_protocol":3,"user_details":{"id":"filip"}}"""
     }
 
     @ParameterizedTest
@@ -162,7 +162,7 @@ internal class V2SocketTest {
         val user = User(id = "!anon", name = "Anonymous")
         open(SocketFactory.ConnectionConf.AnonymousConnectionConf(ENDPOINT, API_KEY, user).asReconnectionConf())
 
-        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"user_details":{"id":"anon"}}"""
+        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"event_protocol":3,"user_details":{"id":"anon"}}"""
     }
 
     @Test
@@ -171,7 +171,7 @@ internal class V2SocketTest {
         val (request, _) = open(SocketFactory.ConnectionConf.AnonymousConnectionConf(ENDPOINT, API_KEY, user))
 
         request.url.queryParameter("stream-auth-type") shouldBeEqualTo "anonymous"
-        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"user_details":{"id":"anon"}}"""
+        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"event_protocol":3,"user_details":{"id":"anon"}}"""
     }
 
     @Test

@@ -81,6 +81,8 @@ internal class SocketFactory(
             "token" to token,
             "user_details" to connectionConf.reduceUserDetails(),
             "products" to listOf("chat"),
+            // v3 leaves the members out of the events of large channels, which the SDK keeps from its own copy
+            "event_protocol" to EVENT_PROTOCOL,
         )
         return socketFrameAdapter.toJson(frame)
     }
@@ -146,5 +148,6 @@ internal class SocketFactory(
     companion object {
         private const val X_STREAM_CLIENT = "X-Stream-Client"
         private const val ANONYMOUS_TOKEN = "anon"
+        private const val EVENT_PROTOCOL = 3
     }
 }

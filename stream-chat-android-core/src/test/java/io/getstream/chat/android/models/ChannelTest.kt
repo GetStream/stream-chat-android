@@ -339,6 +339,28 @@ internal class ChannelTest {
     }
 
     @Test
+    fun `mergeChannelFromEvent should keep members when the update leaves them out`() {
+        val members = listOf(randomMember(), randomMember())
+        val original = randomChannel(members = members, memberCount = 2)
+        val update = randomChannel(members = emptyList(), memberCount = 150)
+
+        val merged = original.mergeChannelFromEvent(update)
+
+        assertEquals(members, merged.members)
+        assertEquals(150, merged.memberCount)
+    }
+
+    @Test
+    fun `mergeChannelFromEvent should clear members when the update has none left`() {
+        val original = randomChannel(members = listOf(randomMember()), memberCount = 1)
+        val update = randomChannel(members = emptyList(), memberCount = 0)
+
+        val merged = original.mergeChannelFromEvent(update)
+
+        assertEquals(emptyList<Member>(), merged.members)
+    }
+
+    @Test
     fun `mergeChannelFromEvent should always take disabled from the update`() {
         val original = randomChannel(disabled = true)
         val update = randomChannel(disabled = false)
