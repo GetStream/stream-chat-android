@@ -42,7 +42,7 @@ public fun CompoundComponentFactory(
     content: @Composable () -> Unit,
 ) {
     val currentComponentFactory = LocalComponentFactory.current
-    val compoundComponentFactory = remember(currentComponentFactory, factory, *keys) {
+    val compoundComponentFactory = remember(currentComponentFactory, factory, keys.toList()) {
         factory(currentComponentFactory)
     }
     CompositionLocalProvider(

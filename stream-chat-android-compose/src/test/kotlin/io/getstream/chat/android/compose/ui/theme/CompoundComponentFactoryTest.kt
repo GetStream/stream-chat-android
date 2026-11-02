@@ -40,6 +40,8 @@ internal class CompoundComponentFactoryTest {
     private val key = mutableIntStateOf(0)
     private val capturedState = mutableIntStateOf(0)
     private val useOtherContent = mutableStateOf(false)
+    private val extraKeys = mutableStateOf(listOf<Any?>(0))
+    private var providedFactory: ChatComponentFactory? = null
     private val builtFactories = mutableListOf<CapturingComponentFactory>()
 
     @Test
@@ -61,6 +63,17 @@ internal class CompoundComponentFactoryTest {
 
         assertEquals(2, builtFactories.size)
         assertEquals(1, builtFactories.last().capturedValue)
+    }
+
+    @Test
+    fun `factory is rebuilt when the number of keys changes`() {
+        setContent()
+
+        composeTestRule.runOnIdle { extraKeys.value = emptyList() }
+        composeTestRule.waitForIdle()
+
+        assertEquals(2, builtFactories.size)
+        assertSame(builtFactories.last(), providedFactory)
     }
 
     @Test
@@ -86,13 +99,14 @@ internal class CompoundComponentFactoryTest {
     }
 
     private fun setContent() {
-        val content: @Composable () -> Unit = {}
-        val otherContent: @Composable () -> Unit = {}
+        val content: @Composable () -> Unit = { providedFactory = LocalComponentFactory.current }
+        val otherContent: @Composable () -> Unit = { providedFactory = LocalComponentFactory.current }
         composeTestRule.setContent {
             CompositionLocalProvider(LocalComponentFactory provides baseFactory.value) {
                 val capturedValue = capturedState.intValue
                 CompoundComponentFactory(
                     key.intValue,
+                    *extraKeys.value.toTypedArray(),
                     factory = { currentComponentFactory ->
                         CapturingComponentFactory(currentComponentFactory, capturedValue).also(builtFactories::add)
                     },
