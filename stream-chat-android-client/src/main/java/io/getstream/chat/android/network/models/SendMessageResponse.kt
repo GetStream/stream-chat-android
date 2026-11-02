@@ -41,4 +41,7 @@ internal data class SendMessageResponse(
 
     @Json(name = "mentioned_members")
     internal val mentionedMembers: Map<String, Boolean>? = null,
+
+    @Json(name = "scheduled_message")
+    internal val scheduledMessage: io.getstream.chat.android.network.models.ScheduledMessageResponse? = null,
 )

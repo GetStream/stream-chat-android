@@ -21,41 +21,39 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class MessageAndReminderRequestAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize UpdateMessagePartialRequest with all fields`() {
-        val json = parser.toJson(MessageAndReminderRequestTestData.updateMessagePartialRequest)
+        val json = toJson(MessageAndReminderRequestTestData.updateMessagePartialRequest)
         Assertions.assertEquals(MessageAndReminderRequestTestData.updateMessagePartialRequestJson, json)
     }
 
     @Test
     fun `Serialize UpdateMessagePartialRequest with default fields`() {
-        val json = parser.toJson(MessageAndReminderRequestTestData.updateMessagePartialRequestWithDefaults)
+        val json = toJson(MessageAndReminderRequestTestData.updateMessagePartialRequestWithDefaults)
         Assertions.assertEquals(MessageAndReminderRequestTestData.updateMessagePartialRequestJsonWithDefaults, json)
     }
 
     @Test
     fun `Serialize CreateReminderRequest with remind at`() {
-        val json = parser.toJson(MessageAndReminderRequestTestData.createReminderRequest)
+        val json = toJson(MessageAndReminderRequestTestData.createReminderRequest)
         Assertions.assertEquals(MessageAndReminderRequestTestData.createReminderRequestJson, json)
     }
 
     @Test
     fun `Serialize CreateReminderRequest without remind at`() {
-        val json = parser.toJson(MessageAndReminderRequestTestData.createReminderRequestWithDefaults)
+        val json = toJson(MessageAndReminderRequestTestData.createReminderRequestWithDefaults)
         Assertions.assertEquals(MessageAndReminderRequestTestData.createReminderRequestJsonWithDefaults, json)
     }
 
     @Test
     fun `Serialize UpdateReminderRequest with remind at`() {
-        val json = parser.toJson(MessageAndReminderRequestTestData.updateReminderRequest)
+        val json = toJson(MessageAndReminderRequestTestData.updateReminderRequest)
         Assertions.assertEquals(MessageAndReminderRequestTestData.updateReminderRequestJson, json)
     }
 
     @Test
     fun `Serialize UpdateReminderRequest without remind at`() {
-        val json = parser.toJson(MessageAndReminderRequestTestData.updateReminderRequestWithDefaults)
+        val json = toJson(MessageAndReminderRequestTestData.updateReminderRequestWithDefaults)
         Assertions.assertEquals(MessageAndReminderRequestTestData.updateReminderRequestJsonWithDefaults, json)
     }
 }

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.extensions
 
+import io.getstream.chat.android.client.extensions.internal.isUploaded
 import io.getstream.chat.android.models.Attachment
 
 internal const val ATTACHMENT_TYPE_IMAGE = "image"
@@ -41,6 +42,11 @@ public const val EXTRA_WAVEFORM_DATA: String = "waveform_data"
  */
 internal val Attachment.isImage: Boolean
     get() = mimeType?.startsWith(ATTACHMENT_TYPE_IMAGE) ?: false
+
+/**
+ * Whether this attachment has a local file that is not uploaded yet.
+ */
+internal fun Attachment.needsUpload(): Boolean = upload != null && !isUploaded()
 
 /**
  * Retrieves the upload ID of the attachment.

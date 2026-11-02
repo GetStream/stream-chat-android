@@ -22,9 +22,11 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.AttachmentEntity.Companion.ATTACHMENT_ENTITY_TABLE_NAME
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MessageInnerEntity
 
+@JsonClass(generateAdapter = true)
 @Entity(
     tableName = ATTACHMENT_ENTITY_TABLE_NAME,
     foreignKeys = [
@@ -74,6 +76,7 @@ internal data class AttachmentEntity(
     }
 }
 
+@JsonClass(generateAdapter = true)
 internal data class UploadStateEntity(val statusCode: Int, val errorMessage: String?) {
     internal companion object {
         internal const val UPLOAD_STATE_SUCCESS = 1

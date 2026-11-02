@@ -20,7 +20,14 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.transformer.ApiModelTransformers
+import io.getstream.chat.android.network.infrastructure.Serializer
 import retrofit2.Retrofit
+
+/** Reads [json] into [T] with the serializer production uses for the generated models. */
+internal inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
+
+/** Writes [value] with the serializer production uses for the generated models. */
+internal inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
 
 internal object ParserFactory {
     /**
@@ -32,20 +39,32 @@ internal object ParserFactory {
         apiModelTransformers: ApiModelTransformers = ApiModelTransformers(),
         fastEventParsing: Boolean = false,
     ): ChatParser {
-        val domainMapping = DomainMapping(
-            currentUserIdProvider = currentUserIdProvider,
-            channelTransformer = apiModelTransformers.incomingChannelTransformer,
-            messageTransformer = apiModelTransformers.incomingMessageTransformer,
-            userTransformer = apiModelTransformers.incomingUserTransformer,
-            hidesStoredDeclaredCustom = true,
-        )
-        val directEventParser = DirectEventParser(
-            messageTransformer = apiModelTransformers.incomingMessageTransformer,
-            userTransformer = apiModelTransformers.incomingUserTransformer,
-            mapping = domainMapping,
-        ).takeIf { fastEventParsing }
+        val domainMapping = createDomainMapping(currentUserIdProvider, apiModelTransformers)
+        val directEventParser = createDirectEventParser(domainMapping, apiModelTransformers)
+            .takeIf { fastEventParsing }
         return EventRoutingParser(MoshiChatParser(), V2EventParser(domainMapping, directEventParser))
     }
+
+    /** The fast event parser on its own, as [createMoshiChatParser] uses it with fast event parsing on. */
+    fun createDirectEventParser(
+        domainMapping: DomainMapping = createDomainMapping(),
+        apiModelTransformers: ApiModelTransformers = ApiModelTransformers(),
+    ): DirectEventParser = DirectEventParser(
+        messageTransformer = apiModelTransformers.incomingMessageTransformer,
+        userTransformer = apiModelTransformers.incomingUserTransformer,
+        mapping = domainMapping,
+    )
+
+    private fun createDomainMapping(
+        currentUserIdProvider: () -> String = { "" },
+        apiModelTransformers: ApiModelTransformers = ApiModelTransformers(),
+    ) = DomainMapping(
+        currentUserIdProvider = currentUserIdProvider,
+        channelTransformer = apiModelTransformers.incomingChannelTransformer,
+        messageTransformer = apiModelTransformers.incomingMessageTransformer,
+        userTransformer = apiModelTransformers.incomingUserTransformer,
+        hidesStoredDeclaredCustom = true,
+    )
 
     private class EventRoutingParser(
         private val rest: MoshiChatParser,

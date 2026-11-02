@@ -11,6 +11,11 @@ on:
         required: false
         type: boolean
         default: false
+      cache_only:
+        description: 'Only build the apks to save the Gradle cache, without selecting tests or uploading artifacts'
+        required: false
+        type: boolean
+        default: false
     outputs:
       e2e_batches:
         description: 'JSON array of the batch indices the selected e2e tests need, empty when none'
@@ -40,7 +45,7 @@ jobs:
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      # Pull requests and the merge queue restore the latest cache; scheduled and manual runs save a new one.
+      # Pull requests and the merge queue restore the latest cache; pushes to develop, scheduled and manual runs save a new one.
       - name: Restore Gradle cache
         id: gradle_cache
         uses: actions/cache/restore@v4
@@ -62,22 +67,28 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
-      # Keeps one snapshot per branch, so the nightly saves don't pile up in the repo's Actions cache.
+      # Keeps one snapshot per branch, so the saves don't pile up in the repo's Actions cache.
       # A failed save only warns, so the older snapshots stay unless the new one is listed.
       - name: Remove older Gradle caches
         if: ${{ !inputs.coverage && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          PREFIX: ${{ runner.os }}-gradle-e2e-
           NEW_KEY: ${{ steps.gradle_cache.outputs.cache-primary-key }}
+        # Deletes only snapshots from earlier runs (the key ends in the run id), so a run that finishes
+        # late never removes a newer snapshot saved by a concurrent run.
         run: |
-          gh cache list -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF" --key "${{ runner.os }}-gradle-e2e-" --limit 100 --json id,key \
-            --jq 'if any(.[]; .key == env.NEW_KEY) then .[] | select(.key != env.NEW_KEY) | .id else empty end' \
+          gh cache list -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF" --key "$PREFIX" --limit 100 --json id,key \
+            --jq 'if any(.[]; .key == env.NEW_KEY)
+              then .[] | select((.key | ltrimstr(env.PREFIX) | tonumber) < (env.NEW_KEY | ltrimstr(env.PREFIX) | tonumber)) | .id
+              else empty end' \
             | xargs -r -n1 gh cache delete -R "$GITHUB_REPOSITORY"
       - name: Select E2E Tests
         id: select_e2e_tests
-        if: ${{ !inputs.coverage }}
+        if: ${{ !inputs.coverage && !inputs.cache_only }}
         run: bundle exec fastlane select_e2e_tests
       - name: Upload apks
+        if: ${{ !inputs.cache_only }}
         uses: actions/upload-artifact@v7.0.2
         with:
           name: apks${{ inputs.coverage && '-coverage' || '' }}
@@ -85,7 +96,7 @@ jobs:
             stream-chat-android-${{ inputs.app }}-sample/build/outputs/apk/e2e/debug/*.apk
             stream-chat-android-${{ inputs.app }}-sample/build/outputs/apk/androidTest/e2e/debug/*.apk
       - name: Upload e2e selection
-        if: ${{ !inputs.coverage }}
+        if: ${{ !inputs.coverage && !inputs.cache_only }}
         uses: actions/upload-artifact@v7.0.2
         with:
           name: e2e-selection

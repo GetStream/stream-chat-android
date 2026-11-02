@@ -21,11 +21,9 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class UserRequestsAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize UpdateUsersPartialRequest`() {
-        val json = parser.toJson(UserRequestsTestData.updateUsersPartialRequest)
+        val json = toJson(UserRequestsTestData.updateUsersPartialRequest)
         Assertions.assertEquals(UserRequestsTestData.updateUsersPartialRequestJson, json)
     }
 }

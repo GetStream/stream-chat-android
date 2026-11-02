@@ -28,9 +28,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class OptionParsingTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
-
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
         channelTransformer = NoOpChannelTransformer,
@@ -40,7 +37,7 @@ internal class OptionParsingTest {
 
     @Test
     fun `Response path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(OptionTestData.jsonOptionalFieldsMissing, PollOptionResponseData::class.java)
+        val dto = parse<PollOptionResponseData>(OptionTestData.jsonOptionalFieldsMissing)
         val domain = with(domainMapping) { dto.toOption() }
         assertEquals(OptionTestData.expectedOptionalFieldsMissing, domain)
     }
@@ -52,14 +49,14 @@ internal class OptionParsingTest {
     @Test
     fun `Response path - throws on missing id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(OptionTestData.jsonMissingId, PollOptionResponseData::class.java)
+            parse<PollOptionResponseData>(OptionTestData.jsonMissingId)
         }
     }
 
     @Test
     fun `Response path - throws on missing text`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(OptionTestData.jsonMissingText, PollOptionResponseData::class.java)
+            parse<PollOptionResponseData>(OptionTestData.jsonMissingText)
         }
     }
 

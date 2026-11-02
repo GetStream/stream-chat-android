@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
-import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -55,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,6 +65,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.component.MapWebView
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
@@ -112,7 +113,7 @@ private fun LocationPickerContent(
         Box {
             LocationButton(
                 enabled = location != null,
-                icon = Icons.Rounded.NearMe,
+                icon = ImageVector.vectorResource(R.drawable.ic_near_me),
                 label = "Share Live Location",
                 description = "Share your location in real-time",
                 isPrimary = true,

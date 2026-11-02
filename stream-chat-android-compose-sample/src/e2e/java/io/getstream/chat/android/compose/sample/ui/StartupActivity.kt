@@ -58,6 +58,9 @@ class StartupActivity : AppCompatActivity() {
             if (intent.hasExtra("MEMBER_NAME_SEARCH")) {
                 customSettings().isMemberNameSearchEnabled = intent.getBooleanExtra("MEMBER_NAME_SEARCH", false)
             }
+            if (intent.hasExtra("SCHEDULED_MESSAGES")) {
+                customSettings().isScheduledMessagesEnabled = intent.getBooleanExtra("SCHEDULED_MESSAGES", false)
+            }
 
             val initTestActivity = intent.getSerializableExtra("InitTestActivity") as? InitTestActivity
             if (initTestActivity != null) {

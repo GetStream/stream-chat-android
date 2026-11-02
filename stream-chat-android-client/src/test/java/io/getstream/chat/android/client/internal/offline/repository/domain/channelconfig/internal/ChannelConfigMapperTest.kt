@@ -67,5 +67,9 @@ internal class ChannelConfigMapperTest {
         markMessagesPending = true,
         pushLevel = "mentions",
         quotesEnabled = false,
+        scheduledMessagesMaxPerChannel = 10,
+        scheduledMessagesMaxPerUser = 100,
+        scheduledMessagesMaxLeadTimeSeconds = 10368000,
+        scheduledMessagesMinLeadTimeSeconds = 60,
     )
 }

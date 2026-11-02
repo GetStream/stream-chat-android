@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.chann
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.DatabaseMessageRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.DatabaseReactionRepository
+import io.getstream.chat.android.client.internal.offline.repository.domain.scheduled.internal.DatabaseScheduledMessageRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.DatabaseThreadsRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.DatabaseUserRepository
@@ -30,6 +31,7 @@ import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
+import io.getstream.chat.android.client.persistance.repository.ScheduledMessageRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.ThreadsRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
@@ -169,6 +171,21 @@ internal class DatabaseRepositoryFactory(
         return databaseSyncStateRepository ?: run {
             DatabaseSyncStateRepository(database.syncStateDao()).also { repository ->
                 repositoriesCache[SyncStateRepository::class.java] = repository
+            }
+        }
+    }
+
+    /**
+     * Creates the [ScheduledMessageRepository].
+     *
+     * @param getUser Function returning a [User] for a given ID.
+     */
+    fun createScheduledMessageRepository(getUser: suspend (userId: String) -> User): ScheduledMessageRepository {
+        val repository = repositoriesCache[ScheduledMessageRepository::class.java] as? ScheduledMessageRepository?
+
+        return repository ?: run {
+            DatabaseScheduledMessageRepository(database.scheduledMessageDao(), getUser).also {
+                repositoriesCache[ScheduledMessageRepository::class.java] = it
             }
         }
     }

@@ -48,6 +48,9 @@ abstract class StreamTestCase {
 
     /** Makes the channel search also match channels by the name of a member. */
     open var useMemberNameSearch = false
+
+    /** Turns on the sample's scheduled messages: a long press on send schedules a message. */
+    open var useScheduledMessages = false
     val userRobot = UserRobot()
     lateinit var backendRobot: BackendRobot
     lateinit var participantRobot: ParticipantRobot
@@ -101,6 +104,7 @@ abstract class StreamTestCase {
             it.putExtra("InitTestActivity", initTestActivity())
             it.putExtra("CHANNEL_SEARCH", useChannelSearch)
             it.putExtra("MEMBER_NAME_SEARCH", useMemberNameSearch)
+            it.putExtra("SCHEDULED_MESSAGES", useScheduledMessages)
             if (useMockServer) {
                 it.putExtra("BASE_URL", mockServer.url)
             }

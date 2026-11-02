@@ -43,8 +43,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.PhotoCamera
-import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -71,13 +69,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.component.PaneRow
 import io.getstream.chat.android.compose.sample.ui.component.PaneTitle
 import io.getstream.chat.android.compose.ui.components.BackButton
@@ -485,7 +486,7 @@ private fun UpdateProfilePicture(
             onClick = onChooseFromLibraryClick,
         ) {
             Icon(
-                imageVector = Icons.Rounded.PhotoLibrary,
+                imageVector = ImageVector.vectorResource(R.drawable.ic_photo_library),
                 contentDescription = null,
                 tint = ChatTheme.colors.textSecondary,
             )
@@ -502,7 +503,7 @@ private fun UpdateProfilePicture(
             onClick = onTakePhotoClick,
         ) {
             Icon(
-                imageVector = Icons.Rounded.PhotoCamera,
+                imageVector = ImageVector.vectorResource(R.drawable.ic_photo_camera),
                 contentDescription = null,
                 tint = ChatTheme.colors.textSecondary,
             )

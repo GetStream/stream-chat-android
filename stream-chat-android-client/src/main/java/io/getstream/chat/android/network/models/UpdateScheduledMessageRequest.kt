@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.parser2
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import io.getstream.chat.android.network.models.DraftPayloadResponse
-import org.amshove.kluent.shouldBeEqualTo
-import org.junit.jupiter.api.Test
+package io.getstream.chat.android.network.models
 
-internal class DraftPayloadResponseAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
+import com.squareup.moshi.Json
 
-    @Test
-    fun `Parse a draft payload without custom fields`() {
-        val json = """{"id":"draft-id","text":"hello"}"""
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UpdateScheduledMessageRequest(
+    @Json(name = "scheduled_at")
+    internal val scheduledAt: java.util.Date? = null,
 
-        val payload = parser.fromJson(json, DraftPayloadResponse::class.java)
-
-        payload.custom shouldBeEqualTo emptyMap()
-    }
-}
+    @Json(name = "message")
+    internal val message: io.getstream.chat.android.network.models.MessageRequest? = null,
+)

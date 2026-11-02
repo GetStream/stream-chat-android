@@ -60,6 +60,9 @@ internal data class ChannelStateResponseFields(
     @Json(name = "read")
     internal val read: List<io.getstream.chat.android.network.models.ReadStateResponse>? = null,
 
+    @Json(name = "scheduled_messages")
+    internal val scheduledMessages: List<io.getstream.chat.android.network.models.ScheduledMessageResponse>? = null,
+
     @Json(name = "watchers")
     internal val watchers: List<io.getstream.chat.android.network.models.UserResponse>? = null,
 

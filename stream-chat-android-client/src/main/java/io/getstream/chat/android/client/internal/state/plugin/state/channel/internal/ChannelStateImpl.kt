@@ -56,6 +56,7 @@ import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
@@ -81,6 +82,7 @@ import kotlin.math.max
  * latest user info retrieved from different, unrelated operations.
  * @property mutedUsers A [StateFlow] providing the list of muted users.
  * @property liveLocations A [StateFlow] providing the active live locations.
+ * @property scheduledMessages A [StateFlow] providing the current user's scheduled messages known on the device.
  * @property messageLimit The initial limit specifying how many of the visible messages should be kept in memory. If
  * null, no limit is enforced.
  * @property paginationManager The [MessagesPaginationManager] handling the pagination state tracking.
@@ -93,6 +95,7 @@ internal class ChannelStateImpl(
     private val latestUsers: StateFlow<Map<String, User>>,
     private val mutedUsers: StateFlow<List<Mute>>,
     private val liveLocations: StateFlow<List<Location>>,
+    private val scheduledMessages: StateFlow<List<ScheduledMessage>> = MutableStateFlow(emptyList()),
     private val messageLimit: Int?,
     val paginationManager: MessagesPaginationManager = MessagesPaginationManagerImpl(),
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
@@ -314,6 +317,7 @@ internal class ChannelStateImpl(
                 hidden = hidden.value,
                 pinnedMessages = pinnedMessages.value,
                 activeLiveLocations = activeLiveLocations.value,
+                scheduledMessages = scheduledMessages.value.filter { it.cid == cid },
             )
     }
 

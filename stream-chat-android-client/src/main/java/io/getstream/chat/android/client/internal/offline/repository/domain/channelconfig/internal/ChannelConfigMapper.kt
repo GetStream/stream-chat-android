@@ -51,6 +51,10 @@ internal fun ChannelConfig.toEntity(): ChannelConfigEntity = ChannelConfigEntity
             skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
             pollsEnabled = pollsEnabled,
             sharedLocationsEnabled = sharedLocationsEnabled,
+            scheduledMessagesMaxPerChannel = scheduledMessagesMaxPerChannel,
+            scheduledMessagesMaxPerUser = scheduledMessagesMaxPerUser,
+            scheduledMessagesMaxLeadTimeSeconds = scheduledMessagesMaxLeadTimeSeconds,
+            scheduledMessagesMinLeadTimeSeconds = scheduledMessagesMinLeadTimeSeconds,
         )
     },
     commands = config.commands.map { it.toEntity(type) },
@@ -88,6 +92,10 @@ internal fun ChannelConfigEntity.toModel(): ChannelConfig = ChannelConfig(
             skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
             pollsEnabled = pollsEnabled,
             sharedLocationsEnabled = sharedLocationsEnabled,
+            scheduledMessagesMaxPerChannel = scheduledMessagesMaxPerChannel,
+            scheduledMessagesMaxPerUser = scheduledMessagesMaxPerUser,
+            scheduledMessagesMaxLeadTimeSeconds = scheduledMessagesMaxLeadTimeSeconds,
+            scheduledMessagesMinLeadTimeSeconds = scheduledMessagesMinLeadTimeSeconds,
         )
     },
 )

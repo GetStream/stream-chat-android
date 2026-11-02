@@ -21,35 +21,33 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class RequestBodiesAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize the queryMembers payload`() {
-        val json = parser.toJson(RequestBodiesTestData.queryMembers)
+        val json = toJson(RequestBodiesTestData.queryMembers)
         Assertions.assertEquals(RequestBodiesTestData.queryMembersJson, json)
     }
 
     @Test
     fun `Serialize a push preference that snoozes notifications`() {
-        val json = parser.toJson(RequestBodiesTestData.snoozeUserPushPreferences)
+        val json = toJson(RequestBodiesTestData.snoozeUserPushPreferences)
         Assertions.assertEquals(RequestBodiesTestData.snoozeUserPushPreferencesJson, json)
     }
 
     @Test
     fun `Serialize a push preference that sets a channel level`() {
-        val json = parser.toJson(RequestBodiesTestData.setChannelPushPreference)
+        val json = toJson(RequestBodiesTestData.setChannelPushPreference)
         Assertions.assertEquals(RequestBodiesTestData.setChannelPushPreferenceJson, json)
     }
 
     @Test
     fun `Serialize a push preference carrying chat preference toggles`() {
-        val json = parser.toJson(RequestBodiesTestData.setChatPreferences)
+        val json = toJson(RequestBodiesTestData.setChatPreferences)
         Assertions.assertEquals(RequestBodiesTestData.setChatPreferencesJson, json)
     }
 
     @Test
     fun `Serialize a push preference that replaces the quiet-hours schedule`() {
-        val json = parser.toJson(RequestBodiesTestData.setUserPushSchedule)
+        val json = toJson(RequestBodiesTestData.setUserPushSchedule)
         Assertions.assertEquals(RequestBodiesTestData.setUserPushScheduleJson, json)
     }
 }

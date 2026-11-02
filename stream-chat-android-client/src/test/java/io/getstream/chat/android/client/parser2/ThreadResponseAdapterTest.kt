@@ -17,19 +17,17 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.ThreadDtoTestData
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.ThreadResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 internal class ThreadResponseAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Deserialize JSON thread info without custom fields`() {
-        val threadInfo = parser.fromJson(
+        val threadInfo = Serializer.moshi.adapter(ThreadResponse::class.java).fromJson(
             ThreadDtoTestData.downstreamThreadInfoJsonWithoutExtraData,
-            ThreadResponse::class.java,
-        )
+        )!!
         threadInfo shouldBeEqualTo ThreadDtoTestData.downstreamThreadInfoWithoutExtraData
     }
 }
