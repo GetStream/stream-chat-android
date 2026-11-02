@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.compose.sample.data.StagingEnvironment
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
@@ -63,13 +62,9 @@ object ChatHelper {
     }
 
     /**
-     * Initializes the SDK with the given API key, and the base URL of its app when it is not the default one.
+     * Initializes the SDK with the given API key.
      */
-    fun initializeSdk(
-        context: Context,
-        apiKey: String,
-        baseUrl: String? = StagingEnvironment.baseUrlOf(apiKey),
-    ) {
+    fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null) {
         this.apiKey = apiKey
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(

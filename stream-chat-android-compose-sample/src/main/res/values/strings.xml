@@ -24,8 +24,6 @@
     <string name="user_login_screen_title">Welcome to Stream Chat</string>
     <string name="user_login_screen_subtitle">Select a user to try the Compose SDK:</string>
     <string name="user_login_user_subtitle">Stream test account</string>
-    <string name="user_login_staging_title">US East staging</string>
-    <string name="user_login_staging_user_subtitle">Staging test account</string>
     <string name="user_login_advanced_options">Advanced options</string>
     <string name="user_login_custom_settings">Custom settings</string>
 
