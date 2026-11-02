@@ -26,9 +26,6 @@ import org.junit.jupiter.api.Test
 import java.util.Date
 
 internal class QueryGroupedChannelsRequestSerializationTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize group filters with a date cutoff, a relative cutoff, an empty filter and no filter`() {
         val request = GroupedQueryChannelsRequest(
@@ -44,7 +41,7 @@ internal class QueryGroupedChannelsRequestSerializationTest {
             sort = listOf(SortParamRequest(field = "query_timestamp", direction = -1)),
         )
 
-        val json = parser.toJson(request)
+        val json = toJson(request)
 
         assertEquals(
             "{\"limit\":10,\"presence\":false,\"watch\":true," +

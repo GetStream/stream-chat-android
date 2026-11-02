@@ -20,13 +20,13 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GetOGResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
 
 internal class GetOGResponseParsingTest {
-    private val parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "me" },
         channelTransformer = NoOpChannelTransformer,
@@ -36,7 +36,7 @@ internal class GetOGResponseParsingTest {
 
     @Test
     fun `An empty scrape maps to an attachment with domain defaults`() {
-        val response = parser.fromJson("""{"duration":"1ms"}""", GetOGResponse::class.java)
+        val response = Serializer.moshi.adapter(GetOGResponse::class.java).fromJson("""{"duration":"1ms"}""")!!
 
         val attachment = with(mapping) { response.toDomain() }
 
@@ -50,7 +50,7 @@ internal class GetOGResponseParsingTest {
     // are covered here instead. Same-named on both sides, which is exactly how a swap goes unnoticed.
     @Test
     fun `Author name and link are mapped from their own fields`() {
-        val response = parser.fromJson(
+        val response = Serializer.moshi.adapter(GetOGResponse::class.java).fromJson(
             """
             {
               "duration": "1ms",
@@ -60,8 +60,7 @@ internal class GetOGResponseParsingTest {
               "type": "video"
             }
             """.trimIndent(),
-            GetOGResponse::class.java,
-        )
+        )!!
 
         val attachment = with(mapping) { response.toDomain() }
 

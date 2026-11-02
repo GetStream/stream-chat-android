@@ -32,9 +32,6 @@ import org.junit.jupiter.api.Test
  * `active_live_locations` is sent next to `channel` in the channel state, not inside it.
  */
 internal class ChannelStateActiveLiveLocationsParsingTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
-
     private val channelState =
         """{"channel":$CHANNEL,"active_live_locations":[${LocationTestData.jsonAllFields}]}"""
 
@@ -53,7 +50,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
     @Test
     fun `query channel response`() {
-        val response = parser.fromJson(channelState.withDuration(), ChannelStateResponse::class.java)
+        val response = parse<ChannelStateResponse>(channelState.withDuration())
 
         assertEquals(expected, response.activeLiveLocations.orEmpty().toDomain())
     }
@@ -62,7 +59,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
     fun `query channels response`() {
         val json = """{"channels":[$channelState],"duration":"1ms"}"""
 
-        val response = parser.fromJson(json, QueryChannelsResponse::class.java)
+        val response = parse<QueryChannelsResponse>(json)
 
         assertEquals(expected, response.channels.single().activeLiveLocations.orEmpty().toDomain())
     }
@@ -71,7 +68,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
     fun `query grouped channels response`() {
         val json = """{"groups":{"all":{"channels":[$channelState]}},"duration":"1ms"}"""
 
-        val response = parser.fromJson(json, GroupedQueryChannelsResponse::class.java)
+        val response = parse<GroupedQueryChannelsResponse>(json)
 
         val state = response.groups.getValue("all").channels.single()
         assertEquals(expected, state.activeLiveLocations.orEmpty().toDomain())
@@ -79,7 +76,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
     @Test
     fun `missing field parses as null`() {
-        val response = parser.fromJson("""{"channel":$CHANNEL}""".withDuration(), ChannelStateResponse::class.java)
+        val response = parse<ChannelStateResponse>("""{"channel":$CHANNEL}""".withDuration())
 
         assertEquals(null, response.activeLiveLocations)
     }

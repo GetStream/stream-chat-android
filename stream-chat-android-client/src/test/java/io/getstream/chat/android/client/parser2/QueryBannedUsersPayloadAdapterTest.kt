@@ -21,17 +21,15 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class QueryBannedUsersPayloadAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize QueryBannedUsersPayload with all fields`() {
-        val json = parser.toJson(QueryBannedUsersPayloadTestData.payload)
+        val json = toJson(QueryBannedUsersPayloadTestData.payload)
         Assertions.assertEquals(QueryBannedUsersPayloadTestData.payloadJson, json)
     }
 
     @Test
     fun `Serialize QueryBannedUsersPayload with default fields`() {
-        val json = parser.toJson(QueryBannedUsersPayloadTestData.payloadWithDefaults)
+        val json = toJson(QueryBannedUsersPayloadTestData.payloadWithDefaults)
         Assertions.assertEquals(QueryBannedUsersPayloadTestData.payloadJsonWithDefaults, json)
     }
 }

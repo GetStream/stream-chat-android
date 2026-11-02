@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadThread
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,8 +31,6 @@ import org.junit.jupiter.api.Test
 import java.util.Date
 
 internal class UnreadCountsParsingTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
@@ -65,7 +64,7 @@ internal class UnreadCountsParsingTest {
 
     @Test
     fun `deserializes the unread counts wire shape and maps it to UnreadCounts`() {
-        val dto = parser.fromJson(json, WrappedUnreadCountsResponse::class.java)
+        val dto = Serializer.moshi.adapter(WrappedUnreadCountsResponse::class.java).fromJson(json)!!
 
         val unreadCounts = with(domainMapping) { dto.toDomain() }
 

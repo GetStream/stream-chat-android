@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -28,8 +29,6 @@ import org.junit.jupiter.api.Test
 import java.util.Date
 
 internal class BlockedUsersParsingTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
@@ -39,7 +38,7 @@ internal class BlockedUsersParsingTest {
     )
 
     // Each block carries two full UserResponse objects; this locks that the generated UserResponse
-    // (with its required non-null `language`) parses from the real wire shape.
+    // (with its required non-null `language`) parses from the real v2 wire shape.
     @Language("JSON")
     private val json =
         """{
@@ -48,16 +47,16 @@ internal class BlockedUsersParsingTest {
             {
               "user_id": "blocker-1",
               "blocked_user_id": "blocked-1",
-              "created_at": "1970-01-01T00:00:01.000Z",
+              "created_at": 1000000000,
               "user": {
                 "id": "blocker-1", "role": "user", "language": "en", "banned": false,
-                "online": true, "created_at": "2020-01-01T00:00:00.000Z",
-                "updated_at": "2020-01-01T00:00:00.000Z", "birthland": "Polis Massa"
+                "online": true, "created_at": 1577836800000000000,
+                "updated_at": 1577836800000000000, "custom": { "birthland": "Polis Massa" }
               },
               "blocked_user": {
                 "id": "blocked-1", "role": "user", "language": "", "banned": true,
-                "online": false, "created_at": "2020-01-01T00:00:00.000Z",
-                "updated_at": "2020-01-01T00:00:00.000Z"
+                "online": false, "created_at": 1577836800000000000,
+                "updated_at": 1577836800000000000, "custom": {}
               }
             }
           ]
@@ -65,13 +64,13 @@ internal class BlockedUsersParsingTest {
 
     @Test
     fun `deserializes the blocked-users wire shape and maps it to UserBlock`() {
-        val dto = parser.fromJson(json, GetBlockedUsersResponse::class.java)
+        val dto = Serializer.moshi.adapter(GetBlockedUsersResponse::class.java).fromJson(json)!!
 
         assertEquals("1ms", dto.duration)
         val block = dto.blocks.single()
         assertEquals("blocker-1", block.user.id)
         assertEquals("blocked-1", block.blockedUser.id)
-        // The adapter collects root-level custom data, and `language` is required non-null but arrives empty.
+        // Custom data arrives nested, and `language` is required non-null but arrives empty.
         assertEquals(mapOf("birthland" to "Polis Massa"), block.user.custom)
         assertEquals("en", block.user.language)
         assertEquals("", block.blockedUser.language)

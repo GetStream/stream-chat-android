@@ -22,45 +22,8 @@ import org.intellij.lang.annotations.Language
 internal object AttachmentTestData {
 
     @Language("JSON")
-    val jsonAllFields =
-        """{"asset_url":"https://example.com/asset.pdf","author_name":"John","author_link":"https://example.com","fallback":"alt text","file_size":1024,"image":"https://example.com/img.png","image_url":"https://example.com/img_url.png","mime_type":"image/png","name":"photo.png","og_scrape_url":"https://example.com/og","text":"description","thumb_url":"https://example.com/thumb.png","title":"My Attachment","title_link":"https://example.com/title","type":"image","original_height":600,"original_width":800,"custom_key":"custom_value"}"""
-
-    @Language("JSON")
     val jsonOptionalFieldsMissing =
         """{}"""
-
-    val expectedAllFields = Attachment(
-        assetUrl = "https://example.com/asset.pdf",
-        authorName = "John",
-        authorLink = "https://example.com",
-        fallback = "alt text",
-        fileSize = 1024,
-        image = "https://example.com/img.png",
-        imageUrl = "https://example.com/img_url.png",
-        mimeType = "image/png",
-        name = "photo.png",
-        ogUrl = "https://example.com/og",
-        text = "description",
-        thumbUrl = "https://example.com/thumb.png",
-        title = "My Attachment",
-        titleLink = "https://example.com/title",
-        type = "image",
-        originalHeight = 600,
-        originalWidth = 800,
-        extraData = mutableMapOf("custom_key" to "custom_value"),
-    )
-
-    @Language("JSON")
-    val jsonWithExtraDataFieldAndCustomKey =
-        """{"type":"image","extraData":{"nested":"val"},"customKey":"hello"}"""
-
-    val expectedWithExtraDataFieldAndCustomKey = Attachment(
-        type = "image",
-        extraData = mutableMapOf(
-            "extraData" to mapOf("nested" to "val"),
-            "customKey" to "hello",
-        ),
-    )
 
     val expectedOptionalFieldsMissing = Attachment(
         assetUrl = null,
@@ -89,7 +52,7 @@ internal object AttachmentTestData {
 
     @Language("JSON")
     val jsonWithFileSizeNull =
-        """{"file_size":null}"""
+        """{"custom":{"file_size":null}}"""
 
     val expectedWithExplicitNulls = Attachment(
         assetUrl = null,

@@ -23,13 +23,11 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
 internal class TranslateMessageRequestAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize TranslateMessageRequest with a language the models do not know`() {
         val language = TranslateMessageRequest.Language.fromString("xx")
 
-        val json = parser.toJson(TranslateMessageRequest(language))
+        val json = toJson(TranslateMessageRequest(language))
 
         Assertions.assertEquals("""{"language":"xx"}""", json)
     }
@@ -37,7 +35,7 @@ internal class TranslateMessageRequestAdapterTest {
     @ParameterizedTest
     @MethodSource("languages")
     fun `Serialize TranslateMessageRequest for every language the API accepts`(code: String) {
-        val json = parser.toJson(TranslateMessageRequest(TranslateMessageRequest.Language.fromString(code)))
+        val json = toJson(TranslateMessageRequest(TranslateMessageRequest.Language.fromString(code)))
 
         Assertions.assertEquals("""{"language":"$code"}""", json)
     }

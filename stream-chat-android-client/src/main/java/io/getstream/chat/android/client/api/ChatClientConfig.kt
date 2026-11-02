@@ -81,9 +81,10 @@ import io.getstream.chat.android.models.TimeDuration
  * @param ignoredOfflineChannelTypes Set of channel types to be ignored by offline support. Default is
  *   an empty set.
  *
- * @param fastEventParsing Enables the fast event-parsing path for incoming WebSocket events. When enabled, supported
- * event types are parsed directly into domain models, bypassing the DTO intermediate layer; unsupported event types
- * fall back to the default DTO-based parser, so behavior is preserved for events the fast path does not yet handle.
+ * @param fastEventParsing Enables the fast event-parsing path for events received over the WebSocket, returned by
+ * `/sync` (including [io.getstream.chat.android.client.ChatClient.getSyncHistory]), or returned when sending an event.
+ * When enabled, supported event types are parsed directly into domain models; other event types, and events the fast
+ * path cannot read, go through the default parser, so behavior is preserved for events the fast path does not handle.
  * Currently supported event types: `message.new`. Disabled by default. The set of supported event types may grow over
  * time.
  *

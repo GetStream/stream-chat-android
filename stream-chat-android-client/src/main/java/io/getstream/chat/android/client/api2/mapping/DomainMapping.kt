@@ -798,7 +798,7 @@ internal class DomainMapping(
     )
 
     // V1 moderation is injected into the message custom data by the auto-mod bounce path rather than
-    // declared on the payload, so it arrives flattened at the root and has to be read back out.
+    // declared on the payload, so it has to be read back out of `custom`.
     private fun MessageResponse.moderationDetailsFromCustom(): MessageModerationDetails? =
         messageModerationDetails(custom)
 
@@ -1339,10 +1339,10 @@ internal class DomainMapping(
     /**
      * Transforms the generated attachment model to [Attachment].
      *
-     * The spec does not declare `file_size`, `image`, `mime_type` and `name`, but the wire sends them at
-     * the root, so they arrive in the collected `custom` map. They are read back into their own fields and
-     * removed, otherwise an attachment loses its size, name and mime type and carries them under their
-     * wire names in `extraData` instead.
+     * The spec does not declare `file_size`, `image`, `mime_type` and `name`, so the backend stores them as
+     * custom data and they arrive in `custom`. They are read back into their own fields and removed, otherwise
+     * an attachment loses its size, name and mime type and carries them under their wire names in `extraData`
+     * instead.
      */
     internal fun io.getstream.chat.android.network.models.Attachment.toDomain(): Attachment = v2Attachment(
         assetUrl = assetUrl,
@@ -1432,9 +1432,9 @@ internal class DomainMapping(
     }
 
     /**
-     * The four fields the spec declares on no attachment shape. The wire sends them at the root, so they
-     * arrive in the collected custom data: they have to be read back out and removed, or an attachment
-     * loses its size, name and mime type and carries them under their wire names in `extraData` instead.
+     * The four fields the spec declares on no attachment shape. They arrive in the custom data: they have to
+     * be read back out and removed, or an attachment loses its size, name and mime type and carries them under
+     * their wire names in `extraData` instead.
      */
     private class UndeclaredAttachmentFields(
         val fileSize: Int,
