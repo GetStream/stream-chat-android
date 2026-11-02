@@ -73,10 +73,15 @@ jobs:
         if: ${{ !inputs.coverage && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          PREFIX: ${{ runner.os }}-gradle-e2e-
           NEW_KEY: ${{ steps.gradle_cache.outputs.cache-primary-key }}
+        # Deletes only snapshots from earlier runs (the key ends in the run id), so a run that finishes
+        # late never removes a newer snapshot saved by a concurrent run.
         run: |
-          gh cache list -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF" --key "${{ runner.os }}-gradle-e2e-" --limit 100 --json id,key \
-            --jq 'if any(.[]; .key == env.NEW_KEY) then .[] | select(.key != env.NEW_KEY) | .id else empty end' \
+          gh cache list -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF" --key "$PREFIX" --limit 100 --json id,key \
+            --jq 'if any(.[]; .key == env.NEW_KEY)
+              then .[] | select((.key | ltrimstr(env.PREFIX) | tonumber) < (env.NEW_KEY | ltrimstr(env.PREFIX) | tonumber)) | .id
+              else empty end' \
             | xargs -r -n1 gh cache delete -R "$GITHUB_REPOSITORY"
       - name: Select E2E Tests
         id: select_e2e_tests
