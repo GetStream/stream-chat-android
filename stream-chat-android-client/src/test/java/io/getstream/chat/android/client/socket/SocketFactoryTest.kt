@@ -226,6 +226,7 @@ internal class SocketFactoryTest {
                 "user_details" to userDetails,
                 "user_id" to userId,
                 "server_determines_connection_id" to true,
+                "event_protocol" to 3,
             )
 
         private fun encode(map: Map<String, Any>): String =

@@ -371,7 +371,8 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         syncStatus = that.syncStatus,
         hiddenMessagesBefore = that.hiddenMessagesBefore,
         memberCount = that.memberCount,
-        members = that.members,
+        // Events of large channels leave the members out, so a channel with members but none listed keeps its own
+        members = if (that.members.isEmpty() && that.memberCount > 0) members else that.members,
         createdAt = that.createdAt,
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,

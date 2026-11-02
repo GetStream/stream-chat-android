@@ -80,6 +80,8 @@ internal class SocketFactory(
             "user_details" to connectionConf.reduceUserDetails(),
             "user_id" to connectionConf.id,
             "server_determines_connection_id" to true,
+            // v3 leaves the members out of the events of large channels, which the SDK keeps from its own copy
+            "event_protocol" to EVENT_PROTOCOL,
         )
         return parser.toJson(data)
     }
@@ -149,5 +151,6 @@ internal class SocketFactory(
 
     companion object {
         private const val X_STREAM_CLIENT = "X-Stream-Client"
+        private const val EVENT_PROTOCOL = 3
     }
 }
