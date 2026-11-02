@@ -188,13 +188,7 @@ internal class QueryChannelsStateLogic(
             ChannelId.fromCid(channel.cid)?.let { it to channel }
         }
         mutableState.setCids(mutableState.queryChannelsSpec.cids + validated.map { (id, _) -> id.cid })
-        val existingChannels = mutableState.rawChannels.orEmpty()
-        mutableState.setChannels(
-            existingChannels + validated.associate { (id, channel) ->
-                id.cid to channel.joinMessages(existingChannels[id.cid])
-                    .joinMembers(existingChannels[id.cid])
-            },
-        )
+        val listed = listPage(validated)
         validated.map { (id, channel) ->
             coroutineScope.async {
                 logicRegistry.channel(id).stateLogic.updateDataForChannel(
@@ -204,6 +198,22 @@ internal class QueryChannelsStateLogic(
                 )
             }
         }.forEach { it.await() }
+        // A channel that changed since it was listed may hold a copy of a state that was not updated yet, so it is
+        // refreshed from its updated state. Ones removed since are left out.
+        val currentChannels = mutableState.rawChannels.orEmpty()
+        val changed = listed.filter { (cid, channel) -> currentChannels[cid]?.let { it != channel } == true }.keys
+        if (changed.isNotEmpty()) refreshChannels(changed)
+    }
+
+    /** Lists the [page]'s channels, joined with the ones already listed, and returns what it listed. */
+    private fun listPage(page: List<Pair<ChannelId, Channel>>): Map<String, Channel> {
+        val existingChannels = mutableState.rawChannels.orEmpty()
+        val pageChannels = page.associate { (id, channel) ->
+            id.cid to channel.joinMessages(existingChannels[id.cid])
+                .joinMembers(existingChannels[id.cid])
+        }
+        mutableState.setChannels(existingChannels + pageChannels)
+        return pageChannels
     }
 
     private fun Channel.joinMessages(existingChannel: Channel?): Channel {
