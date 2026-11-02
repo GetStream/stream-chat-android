@@ -358,6 +358,7 @@ public fun ChatsScreen(
             }
         }
         CompoundComponentFactory(
+            currentSelection,
             factory = { currentComponentFactory ->
                 CompoundComponentFactory(
                     currentComponentFactory = currentComponentFactory,
