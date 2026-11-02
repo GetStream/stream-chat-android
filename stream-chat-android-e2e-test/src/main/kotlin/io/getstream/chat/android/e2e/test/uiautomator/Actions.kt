@@ -84,8 +84,8 @@ public fun UiDevice.goToForeground() {
 }
 
 public fun UiDevice.enableInternetConnection() {
-    // Wi-Fi goes first. When mobile data connects first, Wi-Fi takes over the default network a few seconds later and
-    // slows down the requests the app has in flight.
+    // Wi-Fi goes first, and mobile data only once Wi-Fi is validated. Otherwise mobile data can be validated first and
+    // become the default network, and Wi-Fi then takes over and stalls the connections the app opened meanwhile.
     executeShellCommand("svc wifi enable")
     waitForInternetConnection()
     executeShellCommand("svc data enable")
@@ -104,9 +104,9 @@ public fun UiDevice.waitForInternetConnection(timeoutMs: Long = 10000, intervalM
     while (System.currentTimeMillis() - startTime < timeoutMs) {
         val activeNetwork = connectivityManager.activeNetwork
         val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
-        val hasInternet = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        val isValidated = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true
 
-        if (hasInternet) return
+        if (isValidated) return
         Thread.sleep(intervalMs)
     }
 

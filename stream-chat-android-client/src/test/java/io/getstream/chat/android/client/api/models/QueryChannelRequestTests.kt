@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.client.api.models.identifier.QueryChannelIdentifier
+import io.getstream.chat.android.client.api.models.identifier.QueryChannelsIdentifier
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.randomInt
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -53,6 +56,25 @@ internal class QueryChannelRequestTests {
         QueryChannelRequest().withWatchers(randomInt(), randomInt()).apply {
             state `should be equal to` true
         }
+    }
+
+    @Test
+    fun `ensure requests with and without scheduled messages are not the same call`() {
+        val withScheduledMessages = QueryChannelRequest().apply { includeScheduledMessages = true }
+
+        (withScheduledMessages == QueryChannelRequest()) `should be equal to` false
+        (
+            QueryChannelIdentifier("messaging", "123", withScheduledMessages) ==
+                QueryChannelIdentifier("messaging", "123", QueryChannelRequest())
+            ) `should be equal to` false
+    }
+
+    @Test
+    fun `ensure channel list requests with and without scheduled messages are not the same call`() {
+        val request = QueryChannelsRequest(filter = Filters.neutral(), limit = 30)
+        val withScheduledMessages = request.copy().apply { includeScheduledMessages = true }
+
+        (QueryChannelsIdentifier(withScheduledMessages) == QueryChannelsIdentifier(request)) `should be equal to` false
     }
 
     internal companion object {

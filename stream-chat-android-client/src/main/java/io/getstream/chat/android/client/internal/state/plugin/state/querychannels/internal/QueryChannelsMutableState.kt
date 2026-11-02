@@ -231,7 +231,10 @@ internal class QueryChannelsMutableState(
 
     override val nextPageRequest: StateFlow<QueryChannelsRequest?> =
         currentRequest.combine(channelsOffset) { currentRequest, currentOffset ->
-            currentRequest?.copy(offset = currentOffset)
+            // copy() resets the properties declared in the class body.
+            currentRequest?.copy(offset = currentOffset)?.apply {
+                includeScheduledMessages = currentRequest.includeScheduledMessages
+            }
         }.stateIn(scope, SharingStarted.Eagerly, null)
 
     /**
