@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.sample.feature.scheduled
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -55,7 +56,7 @@ class ScheduledMessagesActivity : ComponentActivity() {
                 parentMessageId = scheduledMessage.message.parentId,
                 scheduledMessageId = scheduledMessage.id,
                 isScheduledAgain = isScheduledAgain,
-            ),
+            ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), // Replaces the channel screen this one was opened from, if any.
         )
     }
 }

@@ -149,7 +149,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
         step("AND the list shows the new text") {
             userRobot
-                .pressBack()
+                .openScheduledMessagesFromBanner()
                 .assertScheduledMessage(editedText, time = tomorrowAt(9))
                 .assertScheduledMessageIsNotShown(sampleText)
         }
