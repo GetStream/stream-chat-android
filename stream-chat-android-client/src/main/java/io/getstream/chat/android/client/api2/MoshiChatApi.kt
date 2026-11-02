@@ -155,6 +155,7 @@ import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
 import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
+import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryMembersPayload
@@ -492,7 +493,7 @@ constructor(
         return deviceApi.addDevices(
             request = CreateDeviceRequest(
                 id = device.token,
-                pushProvider = CreateDeviceRequest.PushProvider.fromString(device.pushProvider.key),
+                pushProvider = PushProviderName.fromString(device.pushProvider.key),
                 pushProviderName = device.providerName,
             ),
         ).toUnitCall()

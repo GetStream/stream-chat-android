@@ -28,15 +28,14 @@ import com.squareup.moshi.Json
 /**
  * One recurring quiet window, expressed in local wall-clock time in the schedule's timezone.
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class QuietHoursRuleResponse(
     @Json(name = "end")
-    val end: kotlin.String,
+    internal val end: String,
 
     @Json(name = "start")
-    val start: kotlin.String,
+    internal val start: String,
 
     @Json(name = "days")
-    val days: kotlin.collections.List<kotlin.String>? = emptyList(),
+    internal val days: List<String>? = null,
 )

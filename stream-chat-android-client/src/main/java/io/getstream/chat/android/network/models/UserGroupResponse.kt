@@ -52,5 +52,5 @@ internal data class UserGroupResponse(
     internal val teamId: String? = null,
 
     @Json(name = "members")
-    internal val members: List<io.getstream.chat.android.network.models.UserGroupMember>? = emptyList(),
+    internal val members: List<io.getstream.chat.android.network.models.UserGroupMember>? = null,
 )

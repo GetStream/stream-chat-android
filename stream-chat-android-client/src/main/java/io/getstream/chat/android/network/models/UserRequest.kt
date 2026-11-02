@@ -46,7 +46,7 @@ internal data class UserRequest(
     internal val name: String? = null,
 
     @Json(name = "custom")
-    internal val custom: Map<String, Any?>? = emptyMap(),
+    internal val custom: Map<String, Any?>? = null,
 
     @Json(name = "privacy_settings")
     internal val privacySettings: io.getstream.chat.android.network.models.PrivacySettingsResponse? = null,

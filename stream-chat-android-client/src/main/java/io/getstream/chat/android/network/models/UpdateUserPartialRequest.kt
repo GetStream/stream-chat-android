@@ -34,8 +34,8 @@ internal data class UpdateUserPartialRequest(
     internal val id: String,
 
     @Json(name = "unset")
-    internal val unset: List<String>? = emptyList(),
+    internal val unset: List<String>? = null,
 
     @Json(name = "set")
-    internal val set: Map<String, Any?>? = emptyMap(),
+    internal val set: Map<String, Any?>? = null,
 )

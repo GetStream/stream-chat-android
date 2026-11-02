@@ -31,8 +31,8 @@ import com.squareup.moshi.Json
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class PushScheduleInput(
     @Json(name = "timezone")
-    internal val timezone: kotlin.String? = null,
+    internal val timezone: String? = null,
 
     @Json(name = "quiet_hours")
-    internal val quietHours: List<io.getstream.chat.android.network.models.QuietHoursRuleInput>? = emptyList(),
+    internal val quietHours: List<io.getstream.chat.android.network.models.QuietHoursRuleInput>? = null,
 )

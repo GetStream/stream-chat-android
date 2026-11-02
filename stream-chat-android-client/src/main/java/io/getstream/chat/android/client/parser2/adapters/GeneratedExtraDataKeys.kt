@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.api2.mapping.MENTIONED_GROUP_IDS_KEY
  */
 internal val GENERATED_USER_EXTRA_DATA_KEYS = setOf(
     "deleted_at",
-    "revoke_tokens_issued_before",
 )
 
 /**
@@ -35,7 +34,6 @@ internal val GENERATED_FULL_USER_EXTRA_DATA_KEYS = setOf(
     "shadow_banned",
     "ban_expires",
     "deleted_at",
-    "revoke_tokens_issued_before",
 )
 
 /**
@@ -45,7 +43,6 @@ internal val GENERATED_FULL_USER_EXTRA_DATA_KEYS = setOf(
 internal val GENERATED_OWN_USER_EXTRA_DATA_KEYS = setOf(
     "deleted_at",
     "latest_hidden_channels",
-    "revoke_tokens_issued_before",
     "total_unread_count_by_team",
 )
 

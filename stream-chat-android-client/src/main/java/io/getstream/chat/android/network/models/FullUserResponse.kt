@@ -108,15 +108,12 @@ internal data class FullUserResponse(
     @Json(name = "name")
     internal val name: String? = null,
 
-    @Json(name = "revoke_tokens_issued_before")
-    internal val revokeTokensIssuedBefore: java.util.Date? = null,
-
     @Json(name = "latest_hidden_channels")
-    internal val latestHiddenChannels: List<String>? = emptyList(),
+    internal val latestHiddenChannels: List<String>? = null,
 
     @Json(name = "privacy_settings")
     internal val privacySettings: io.getstream.chat.android.network.models.PrivacySettingsResponse? = null,
 
     @Json(name = "teams_role")
-    internal val teamsRole: Map<String, String>? = emptyMap(),
+    internal val teamsRole: Map<String, String>? = null,
 )

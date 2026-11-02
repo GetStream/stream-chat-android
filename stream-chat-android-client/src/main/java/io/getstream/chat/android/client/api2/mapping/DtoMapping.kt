@@ -471,9 +471,12 @@ internal val SENT_BACK_MESSAGE_KEYS = setOf(MML_KEY, POLL_ID_KEY, RESTRICTED_VIS
  */
 private val RESPONSE_ONLY_MESSAGE_KEYS = GENERATED_MESSAGE_EXTRA_DATA_KEYS - SENT_BACK_MESSAGE_KEYS
 
-/** The user counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: every declared user field the user adapters keep. */
-private val RESPONSE_ONLY_USER_KEYS =
-    GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS + GENERATED_OWN_USER_EXTRA_DATA_KEYS
+/**
+ * The user counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: every declared user field the user adapters keep, and
+ * [REVOKE_TOKENS_ISSUED_BEFORE_KEY], which older SDK versions kept in a stored user's extraData.
+ */
+private val RESPONSE_ONLY_USER_KEYS = GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS +
+    GENERATED_OWN_USER_EXTRA_DATA_KEYS + REVOKE_TOKENS_ISSUED_BEFORE_KEY
 
 /**
  * The channel counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: the declared channel fields the channel adapters keep,

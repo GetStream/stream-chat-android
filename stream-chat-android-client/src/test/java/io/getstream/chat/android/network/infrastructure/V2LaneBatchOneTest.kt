@@ -28,6 +28,7 @@ import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
+import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
@@ -112,7 +113,7 @@ internal class V2LaneBatchOneTest {
             """{"id":"token","push_provider":"firebase"}""",
             CreateDeviceRequest(
                 id = "token",
-                pushProvider = CreateDeviceRequest.PushProvider.fromString("firebase"),
+                pushProvider = PushProviderName.fromString("firebase"),
                 pushProviderName = null,
             ),
         )

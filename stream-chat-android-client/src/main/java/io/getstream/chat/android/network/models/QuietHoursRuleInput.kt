@@ -31,11 +31,11 @@ import com.squareup.moshi.Json
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class QuietHoursRuleInput(
     @Json(name = "end")
-    internal val end: kotlin.String,
+    internal val end: String,
 
     @Json(name = "start")
-    internal val start: kotlin.String,
+    internal val start: String,
 
     @Json(name = "days")
-    internal val days: List<kotlin.String>? = emptyList(),
+    internal val days: List<String>? = null,
 )

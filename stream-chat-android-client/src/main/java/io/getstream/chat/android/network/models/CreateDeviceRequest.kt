@@ -23,67 +23,25 @@
 
 package io.getstream.chat.android.network.models
 
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 
 /**
  * Create device request
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class CreateDeviceRequest(
     @Json(name = "id")
-    val id: kotlin.String,
+    internal val id: String,
 
     @Json(name = "push_provider")
-    val pushProvider: PushProvider,
+    internal val pushProvider: io.getstream.chat.android.network.models.PushProviderName,
 
     @Json(name = "hardware_id")
-    val hardwareId: kotlin.String? = null,
+    internal val hardwareId: String? = null,
 
     @Json(name = "push_provider_name")
-    val pushProviderName: kotlin.String? = null,
+    internal val pushProviderName: String? = null,
 
     @Json(name = "voip_token")
-    val voipToken: kotlin.Boolean? = null,
-) {
-
-    /**
-     * PushProvider Enum
-     */
-    sealed class PushProvider(val value: kotlin.String) {
-        override fun toString(): String = value
-
-        companion object {
-            fun fromString(s: kotlin.String): PushProvider = when (s) {
-                "apn" -> Apn
-                "firebase" -> Firebase
-                "huawei" -> Huawei
-                "xiaomi" -> Xiaomi
-                else -> Unknown(s)
-            }
-        }
-        object Apn : PushProvider("apn")
-        object Firebase : PushProvider("firebase")
-        object Huawei : PushProvider("huawei")
-        object Xiaomi : PushProvider("xiaomi")
-        data class Unknown(val unknownValue: kotlin.String) : PushProvider(unknownValue)
-
-        class PushProviderAdapter : JsonAdapter<PushProvider>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): PushProvider? {
-                val s = reader.nextString() ?: return null
-                return PushProvider.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: PushProvider?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-}
+    internal val voipToken: Boolean? = null,
+)
