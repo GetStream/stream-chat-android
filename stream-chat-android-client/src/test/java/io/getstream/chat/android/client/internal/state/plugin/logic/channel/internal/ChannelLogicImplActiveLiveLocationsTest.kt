@@ -18,19 +18,15 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.channel.int
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
-import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Result
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.mockito.kotlin.mock
 import java.util.Date
 
 internal class ChannelLogicImplActiveLiveLocationsTest {
@@ -45,7 +41,6 @@ internal class ChannelLogicImplActiveLiveLocationsTest {
         private const val CID = "messaging:123"
     }
 
-    private lateinit var globalState: MutableGlobalState
     private lateinit var channelState: ChannelStateImpl
     private lateinit var sut: ChannelLogicImpl
 
@@ -63,27 +58,9 @@ internal class ChannelLogicImplActiveLiveLocationsTest {
 
     @BeforeEach
     fun setUp() {
-        globalState = MutableGlobalState(CURRENT_USER_ID)
-        channelState = ChannelStateImpl(
-            channelType = "messaging",
-            channelId = "123",
-            currentUser = MutableStateFlow(User(id = CURRENT_USER_ID)),
-            latestUsers = MutableStateFlow(emptyMap()),
-            mutedUsers = MutableStateFlow(emptyList()),
-            liveLocations = globalState.activeLiveLocations,
-            messageLimit = null,
-        )
-        sut = ChannelLogicImpl(
-            cid = CID,
-            messagesUpdateLogic = mock(),
-            repository = mock(),
-            state = channelState,
-            mutableGlobalState = globalState,
-            userPresence = true,
-            coroutineScope = testCoroutines.scope,
-            getCurrentUserId = { CURRENT_USER_ID },
-            now = { System.currentTimeMillis() },
-        )
+        val channelLogic = ChannelLogicImplWithRealState("messaging", "123", CURRENT_USER_ID, testCoroutines.scope)
+        channelState = channelLogic.state
+        sut = channelLogic.logic
     }
 
     @Test
