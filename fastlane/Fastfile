@@ -85,7 +85,7 @@ lane :build_e2e_test do |options|
 
   gradle(
     tasks: [":#{test_flavor}:assembleE2eDebugAndroidTest", ":#{test_flavor}:assembleE2eDebug"],
-    flags: options[:coverage] ? '--scan -Pe2eCoverage' : '--scan'
+    flags: options[:coverage] ? '--scan -Pe2eCoverage' : '--scan -Pe2eNonDebuggable'
   )
 end
 

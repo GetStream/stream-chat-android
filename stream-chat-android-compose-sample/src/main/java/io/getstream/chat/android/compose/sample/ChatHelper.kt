@@ -109,7 +109,8 @@ object ChatHelper {
             isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
         )
 
-        val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
+        // The e2e app is not debuggable on CI, but failed tests attach its logcat.
+        val logLevel = if (BuildConfig.DEBUG || BuildConfig.FLAVOR == "e2e") ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
         ChatClient.Builder(apiKey, context)
             .notifications(notificationConfig, notificationHandler)

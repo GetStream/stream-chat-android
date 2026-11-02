@@ -45,7 +45,9 @@ class ChatApp : Application() {
             }
         }
 
-        enableStrictMode()
+        if (BuildConfig.STRICT_MODE) {
+            enableStrictMode()
+        }
     }
 
     private fun enableStrictMode() {
