@@ -159,6 +159,9 @@ public class StateRegistry(
         return channels.containsKey(channelId)
     }
 
+    /** Returns the channel's state if it has one, without creating it. */
+    internal fun activeChannel(channelId: ChannelId): ChannelState? = channels[channelId]
+
     private fun buildChannelState(channelType: String, channelId: String): ChannelMutableState {
         val baseMessageLimit = messageLimitConfig.channelMessageLimits
             .find { it.channelType == channelType }

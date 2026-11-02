@@ -47,6 +47,7 @@ import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
@@ -931,10 +932,10 @@ internal class EventHandlerSequentialTest {
             val channelMutableState: io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState =
                 mock {
                     on { toChannel() } doReturn cached
+                    on { channelData } doReturn MutableStateFlow(cached.toChannelData())
                 }
             val cachedChannelId = ChannelId.fromTypeAndId(channelType, channelId)!!
-            whenever(stateRegistry.isActiveChannel(cachedChannelId)) doReturn true
-            whenever(stateRegistry.channel(cachedChannelId)) doReturn channelMutableState
+            whenever(stateRegistry.activeChannel(cachedChannelId)) doReturn channelMutableState
         }
 
         fun get(scope: CoroutineScope) = EventHandlerSequential(
@@ -1200,6 +1201,7 @@ internal class EventHandlerSequentialTest {
                 initialTotalunreadCount,
                 initialChannelUnreadCount,
             ),
+            // A channel with no stored copy and no state has no read events capability, so the event's counts apply.
             Arguments.of(
                 listOf(
                     randomNotificationChannelDeletedEvent(
@@ -1211,8 +1213,8 @@ internal class EventHandlerSequentialTest {
                 initialTotalunreadCount,
                 initialChannelUnreadCount,
                 neutralPrepareFixture,
-                initialTotalunreadCount,
-                initialChannelUnreadCount,
+                totalUnreadCount,
+                0,
             ),
         )
 

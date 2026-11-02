@@ -88,8 +88,7 @@ internal class QueryChannelsStateLogicTest {
             on(it.toChannel()) doReturn channel
         }
 
-        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn true
-        whenever(stateRegistry.channel(testChannelId)) doReturn channelState
+        whenever(stateRegistry.activeChannel(testChannelId)) doReturn channelState
 
         queryChannelsStateLogic.refreshChannels(listOf(testCid))
 
@@ -105,8 +104,7 @@ internal class QueryChannelsStateLogicTest {
 
         val cidOutsideSpecs = randomCID()
 
-        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn true
-        whenever(stateRegistry.channel(testChannelId)) doReturn channelState
+        whenever(stateRegistry.activeChannel(testChannelId)) doReturn channelState
 
         queryChannelsStateLogic.refreshChannels(listOf(cidOutsideSpecs))
 
@@ -151,8 +149,7 @@ internal class QueryChannelsStateLogicTest {
             on(it.toChannel()) doReturn channel
         }
 
-        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn true
-        whenever(stateRegistry.channel(testChannelId)) doReturn channelState
+        whenever(stateRegistry.activeChannel(testChannelId)) doReturn channelState
 
         val result = queryChannelsStateLogic.getActiveChannelState(testCid)
 
