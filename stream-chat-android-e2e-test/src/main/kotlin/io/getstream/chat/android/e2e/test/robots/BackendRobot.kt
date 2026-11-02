@@ -149,6 +149,70 @@ public class BackendRobot(
         return this
     }
 
+    /**
+     * Makes every image and file upload fail, until it is called again with `false`.
+     *
+     * @param enabled Whether the uploads fail.
+     */
+    public fun failUploads(enabled: Boolean = true): BackendRobot {
+        waitForMockServerToStart()
+        mockServer.postRequest("fail_uploads?fail=$enabled")
+        return this
+    }
+
+    /**
+     * Sends every pending scheduled message of the app user, as when its time arrives. The app
+     * under test receives `message.new` and `scheduled_message.sent` for each one.
+     */
+    public fun sendScheduledMessages(): BackendRobot {
+        mockServer.postRequest("send_scheduled_messages")
+        return this
+    }
+
+    /**
+     * Fails the last pending scheduled message, as the server does when it cannot send it. The app
+     * under test receives `scheduled_message.failed`.
+     *
+     * @param failureReason Why it failed, for example `banned` or `no_permission`.
+     */
+    public fun failScheduledMessage(failureReason: String): BackendRobot {
+        mockServer.postRequest("fail_scheduled_message?failure_reason=$failureReason")
+        return this
+    }
+
+    /**
+     * Sets how many pending scheduled messages the app user can have in one channel. One more is
+     * rejected with `scheduled_limit_channel`.
+     *
+     * @param limit The limit per channel.
+     */
+    public fun setScheduledMessagesLimit(limit: Int): BackendRobot {
+        waitForMockServerToStart()
+        mockServer.postRequest("scheduled_messages_limit?limit=$limit")
+        return this
+    }
+
+    /**
+     * Turns scheduled messages off for the app: every channel loses the `schedule-message`
+     * capability. Call before the channels are loaded.
+     */
+    public fun disableScheduledMessages(): BackendRobot {
+        waitForMockServerToStart()
+        mockServer.postRequest("disable_scheduled_messages")
+        return this
+    }
+
+    /**
+     * Schedules a message in the currently open channel on the server side, as the app user does
+     * on another device. The app under test receives `scheduled_message.created`.
+     *
+     * @param text The text of the message.
+     */
+    public fun createScheduledMessage(text: String): BackendRobot {
+        mockServer.postRequest("create_scheduled_message?text=${URLEncoder.encode(text, "UTF-8")}")
+        return this
+    }
+
     public fun revokeToken(duration: Int = 5) {
         waitForMockServerToStart()
         mockServer.postRequest("jwt/revoke_token?duration=$duration")

@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.offline.repository.database.co
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.ThreadParticipantEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.UserMuteEntity
 
@@ -29,6 +30,7 @@ internal class ListConverter {
     private val channelUserReadListAdapter = moshi.adapter<List<ChannelUserReadEntity>>()
     private val threadParticipantListAdapter = moshi.adapter<List<ThreadParticipantEntity>>()
     private val userMuteListAdapter = moshi.adapter<List<UserMuteEntity>>()
+    private val attachmentListAdapter = moshi.adapter<List<AttachmentEntity>>()
 
     @TypeConverter
     fun toStringList(data: String?): List<String>? {
@@ -77,4 +79,16 @@ internal class ListConverter {
     @TypeConverter
     fun fromUserMuteList(entities: List<UserMuteEntity>?): String? =
         userMuteListAdapter.toJson(entities)
+
+    @TypeConverter
+    fun toAttachmentList(data: String?): List<AttachmentEntity>? {
+        if (data.isNullOrEmpty() || data == "null") {
+            return emptyList()
+        }
+        return attachmentListAdapter.fromJson(data)
+    }
+
+    @TypeConverter
+    fun fromAttachmentList(entities: List<AttachmentEntity>?): String? =
+        attachmentListAdapter.toJson(entities)
 }

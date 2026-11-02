@@ -122,6 +122,10 @@ androidComponents {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
 tasks.withType<KotlinCompile> {
     compilerOptions.freeCompilerArgs.addAll(
         listOf(
@@ -162,6 +166,16 @@ dependencies {
     implementation(libs.stream.push.firebase)
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics)
+
+    // Unit tests
+    testImplementation(project(":stream-chat-android-test"))
+    testImplementation(testFixtures(project(":stream-chat-android-core")))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.kluent)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 
     // Instrumentation tests
     "e2eImplementation"(libs.okhttp)

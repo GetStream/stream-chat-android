@@ -205,4 +205,30 @@ object PredefinedUserCredentials {
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8",
         ),
     )
+
+    /**
+     * The users of the [StagingEnvironment].
+     */
+    val stagingUsers: List<UserCredentials> = listOf(
+        UserCredentials(
+            apiKey = StagingEnvironment.API_KEY,
+            user = User(id = "alice", name = "Alice"),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImFsaWNlIn0.V2Yxh71BEqEAvhmTiCMNjCzgKQ1F1AixFgZuGuv8vqw",
+        ),
+        UserCredentials(
+            apiKey = StagingEnvironment.API_KEY,
+            user = User(id = "bob", name = "Bob"),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImJvYiJ9.0fUnI4398M0CxzmbyIrJ3xRG4H2vMQCXcS_1xu7bsOk",
+        ),
+        UserCredentials(
+            apiKey = StagingEnvironment.API_KEY,
+            user = User(id = "carol", name = "Carol"),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImNhcm9sIn0._Oe0Ne3nFJ0u_U-xQGhFZ42MwZT2oZl-Cmk08VALE7I",
+        ),
+        UserCredentials(
+            apiKey = StagingEnvironment.API_KEY,
+            user = User(id = "dave", name = "Dave"),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImRhdmUifQ.2eboGhGJVE03meTKfNVOgKsPTZ_QRIB5u-r9cjBQ40E",
+        ),
+    )
 }

@@ -499,7 +499,7 @@ internal class QueryChannelsLogic(
                 logger.v { "[queryFirstPage] no-op for Grouped identifier" }
                 return Result.Success(emptyList())
             }
-        }
+        }.apply { includeScheduledMessages = currentRequest?.includeScheduledMessages == true }
 
         queryChannelsStateLogic.setCurrentRequest(request)
 

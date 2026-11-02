@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser2.SyncedEvents
+import io.getstream.chat.android.client.scheduled.ScheduleMessageResult
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
@@ -60,10 +61,13 @@ import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -763,6 +767,31 @@ internal interface ChatApi {
         next: String?,
         sort: QuerySorter<MessageReminder>,
     ): Call<QueryRemindersResult>
+
+    @CheckResult
+    fun scheduleMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        scheduledAt: Date,
+    ): Call<ScheduleMessageResult>
+
+    @CheckResult
+    fun queryScheduledMessages(
+        cid: String?,
+        statuses: Set<ScheduledMessageQueryStatus>,
+        limit: Int,
+        next: String?,
+    ): Call<QueryScheduledMessagesResult>
+
+    @CheckResult
+    fun updateScheduledMessage(id: String, message: Message?, scheduledAt: Date?): Call<ScheduledMessage>
+
+    @CheckResult
+    fun deleteScheduledMessage(id: String): Call<Unit>
+
+    @CheckResult
+    fun sendScheduledMessageNow(id: String): Call<ScheduledMessage>
 
     @CheckResult
     fun queryActiveLocations(): Call<List<Location>>

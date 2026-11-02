@@ -30,6 +30,9 @@ import com.squareup.moshi.Json
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class QueryChannelsRequest(
+    @Json(name = "include_scheduled_messages")
+    internal val includeScheduledMessages: Boolean? = null,
+
     @Json(name = "limit")
     internal val limit: Int? = null,
 
