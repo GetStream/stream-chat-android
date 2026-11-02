@@ -108,6 +108,12 @@ private const val SYNC_EVENT_REPLAY_MAX_COUNT = 250
 private const val QUERY_CHANNELS_MAX_LIMIT = 30
 
 /**
+ * Maximum number of channels whose first load failed that are watched on a reconnect. The rest are
+ * queried with the other channels.
+ */
+private const val FAILED_FIRST_LOADS_TO_WATCH = 30
+
+/**
  * Age at which the last-synced date is abandoned instead of synced from.
  *
  * `/sync` cannot serve a range this old anyway, and without a ceiling a checkpoint that stops
@@ -621,8 +627,8 @@ internal class SyncManager(
      * when they are all here, since no other request updates the channels beyond its first page.
      * @param alreadyRefreshedCids Channel ids already brought up to date earlier in the recovery
      * flow, e.g. by the `/sync` event replay fallback. They are not queried a second time.
-     * @param failedFirstLoadCids The cids whose first load failed. Up to [QUERY_CHANNELS_MAX_LIMIT] are watched instead
-     * of queried, the rest are queried with the other channels.
+     * @param failedFirstLoadCids The cids whose first load failed. Up to [FAILED_FIRST_LOADS_TO_WATCH] are watched
+     * instead of queried, the rest are queried with the other channels.
      */
     private suspend fun restoreActiveChannels(
         syncedCids: Set<String>,
@@ -634,7 +640,7 @@ internal class SyncManager(
             "[restoreActiveChannels] recoverAll: $recoverAll, " +
                 "alreadyRefreshedCids.size: ${alreadyRefreshedCids.size}"
         }
-        val failedFirstLoadsToWatch = failedFirstLoadCids.take(QUERY_CHANNELS_MAX_LIMIT).toSet()
+        val failedFirstLoadsToWatch = failedFirstLoadCids.take(FAILED_FIRST_LOADS_TO_WATCH).toSet()
 
         val allLogics = logicRegistry.getActiveQueryChannelsLogic()
         val hasGroupedQueries = allLogics.any { it.groupKey() != null }
