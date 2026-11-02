@@ -27,8 +27,8 @@ import androidx.compose.runtime.remember
  * This is useful for creating custom components or modifying existing ones
  * without directly altering the original factory.
  *
- * The [factory] function is called once, and again only when one of the [keys] or the current
- * [ChatComponentFactory] changes.
+ * The [factory] function is called once, and again only when the current [ChatComponentFactory],
+ * the [factory] instance, or one of the [keys] changes.
  *
  * @param keys Optional keys for any state the [factory] function reads. If any of the keys change,
  * the [factory] function will be called again to create a new compound [ChatComponentFactory].
@@ -42,7 +42,9 @@ public fun CompoundComponentFactory(
     content: @Composable () -> Unit,
 ) {
     val currentComponentFactory = LocalComponentFactory.current
-    val compoundComponentFactory = remember(currentComponentFactory, *keys) { factory(currentComponentFactory) }
+    val compoundComponentFactory = remember(currentComponentFactory, factory, *keys) {
+        factory(currentComponentFactory)
+    }
     CompositionLocalProvider(
         value = LocalComponentFactory provides compoundComponentFactory,
         content = content,

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,17 +38,29 @@ internal class CompoundComponentFactoryTest {
 
     private val baseFactory = mutableStateOf<ChatComponentFactory>(object : ChatComponentFactory {})
     private val key = mutableIntStateOf(0)
-    private val callerState = mutableIntStateOf(0)
-    private val factoryCalls = mutableListOf<ChatComponentFactory>()
+    private val capturedState = mutableIntStateOf(0)
+    private val useOtherContent = mutableStateOf(false)
+    private val builtFactories = mutableListOf<CapturingComponentFactory>()
 
     @Test
-    fun `factory is not rebuilt when a value it captures changes`() {
+    fun `factory is not rebuilt when only the content changes`() {
         setContent()
 
-        composeTestRule.runOnIdle { callerState.intValue++ }
+        composeTestRule.runOnIdle { useOtherContent.value = true }
         composeTestRule.waitForIdle()
 
-        assertEquals(1, factoryCalls.size)
+        assertEquals(1, builtFactories.size)
+    }
+
+    @Test
+    fun `factory is rebuilt when a value it captures changes`() {
+        setContent()
+
+        composeTestRule.runOnIdle { capturedState.intValue++ }
+        composeTestRule.waitForIdle()
+
+        assertEquals(2, builtFactories.size)
+        assertEquals(1, builtFactories.last().capturedValue)
     }
 
     @Test
@@ -57,7 +70,7 @@ internal class CompoundComponentFactoryTest {
         composeTestRule.runOnIdle { key.intValue++ }
         composeTestRule.waitForIdle()
 
-        assertEquals(2, factoryCalls.size)
+        assertEquals(2, builtFactories.size)
     }
 
     @Test
@@ -68,27 +81,29 @@ internal class CompoundComponentFactoryTest {
         composeTestRule.runOnIdle { baseFactory.value = newBaseFactory }
         composeTestRule.waitForIdle()
 
-        assertEquals(2, factoryCalls.size)
-        assertSame(newBaseFactory, factoryCalls.last())
+        assertEquals(2, builtFactories.size)
+        assertSame(newBaseFactory, builtFactories.last().delegate)
     }
 
     private fun setContent() {
+        val content: @Composable () -> Unit = {}
+        val otherContent: @Composable () -> Unit = {}
         composeTestRule.setContent {
             CompositionLocalProvider(LocalComponentFactory provides baseFactory.value) {
-                val callerValue = callerState.intValue
+                val capturedValue = capturedState.intValue
                 CompoundComponentFactory(
                     key.intValue,
                     factory = { currentComponentFactory ->
-                        factoryCalls += currentComponentFactory
-                        CapturingComponentFactory(currentComponentFactory, callerValue)
+                        CapturingComponentFactory(currentComponentFactory, capturedValue).also(builtFactories::add)
                     },
-                ) {}
+                    content = if (useOtherContent.value) otherContent else content,
+                )
             }
         }
     }
 
     private class CapturingComponentFactory(
-        delegate: ChatComponentFactory,
+        val delegate: ChatComponentFactory,
         val capturedValue: Int,
     ) : ChatComponentFactory by delegate
 }
