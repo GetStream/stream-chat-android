@@ -83,6 +83,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 private const val QUERIES_TO_RETRY = 3
 private const val SYNC_MAX_CIDS = 100
+private const val FAILED_FIRST_LOADS_TO_WATCH = 30
 
 /**
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
@@ -441,13 +442,13 @@ internal class SyncManager(
     /**
      * @param syncedCids The cids whose events the reconnect sync received. A grouped list keeps its loaded pages only
      * when they are all here, since no other request updates the channels beyond its first page.
-     * @param failedFirstLoadCids The cids whose first load failed. Up to 30 are watched instead of queried, the rest
-     * are queried with the other channels.
+     * @param failedFirstLoadCids The cids whose first load failed. Up to [FAILED_FIRST_LOADS_TO_WATCH] are watched
+     * instead of queried, the rest are queried with the other channels.
      */
     private suspend fun restoreActiveChannels(syncedCids: Set<String>, failedFirstLoadCids: Set<String>) {
         val recoverAll = !isFirstConnect.compareAndSet(true, false)
         logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
-        val failedFirstLoadsToWatch = failedFirstLoadCids.take(n = 30).toSet()
+        val failedFirstLoadsToWatch = failedFirstLoadCids.take(FAILED_FIRST_LOADS_TO_WATCH).toSet()
 
         val allLogics = logicRegistry.getActiveQueryChannelsLogic()
         val hasGroupedQueries = allLogics.any { it.groupKey() != null }
