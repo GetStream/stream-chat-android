@@ -845,7 +845,7 @@ internal class SyncManagerTest {
         }
 
     @Test
-    fun `on connect, up to 30 channels whose first load failed are watched`() = runTest(testDispatcher) {
+    fun `on connect, up to 30 channels whose first load failed are watched and the rest are queried`() = runTest(testDispatcher) {
         givenReconnectSync()
         val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
         val failedStates = channelIds.associateWith { recoverableChannelState(it, createdAt = null) }
@@ -857,12 +857,22 @@ internal class SyncManagerTest {
         }
         // The value class reaches Mockito unboxed, as its cid.
         whenever(logicRegistry.channel(any<ChannelId>())).thenAnswer { logics.getValue(it.arguments[0] as String) }
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+            Result.Success(
+                QueryChannelsResult(
+                    channels = channelIds.drop(30).map { randomChannel(type = it.type, id = it.id) },
+                    predefinedFilter = null,
+                ),
+            ),
+        )
 
         buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(randomConnectedEvent(me = user))
 
         channelIds.take(30).forEach { verify(logics.getValue(it.cid)).watch(userPresence = true) }
         channelIds.drop(30).forEach { verify(logics.getValue(it.cid), never()).watch(any(), any()) }
-        verify(chatClient, never()).queryChannelsInternal(any())
+        val request = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient).queryChannelsInternal(request.capture())
+        assertEquals(Filters.`in`("cid", channelIds.drop(30).map(ChannelId::cid)), request.firstValue.filter)
     }
 
     @Test
