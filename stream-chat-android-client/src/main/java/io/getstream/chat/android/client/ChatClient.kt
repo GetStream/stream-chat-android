@@ -1742,14 +1742,7 @@ internal constructor(
     @CheckResult
     public fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference> {
         return api.setUserPushPreference(level)
-            .doOnResult(userScope) { result ->
-                // Note: Update local user state manually as we don't get WS events for push preference updates
-                if (result is Result.Success) {
-                    val currentUser = mutableClientState.user.value ?: return@doOnResult
-                    val updatedUser = currentUser.copy(pushPreference = result.value)
-                    mutableClientState.setUser(updatedUser)
-                }
-            }
+            .updateCurrentUserPushPreference()
     }
 
     /**
@@ -1770,14 +1763,7 @@ internal constructor(
     @CheckResult
     public fun snoozeUserPushNotifications(until: Date): Call<PushPreference> {
         return api.snoozeUserPushNotifications(until)
-            .doOnResult(userScope) { result ->
-                // Note: Update local user state manually as we don't get WS events for push preference updates
-                if (result is Result.Success) {
-                    val currentUser = mutableClientState.user.value ?: return@doOnResult
-                    val updatedUser = currentUser.copy(pushPreference = result.value)
-                    mutableClientState.setUser(updatedUser)
-                }
-            }
+            .updateCurrentUserPushPreference()
     }
 
     /**
@@ -1797,14 +1783,7 @@ internal constructor(
     @CheckResult
     public fun setUserPushSchedule(schedule: PushSchedule): Call<PushPreference> {
         return api.setUserPushSchedule(schedule)
-            .doOnResult(userScope) { result ->
-                // Note: Update local user state manually as we don't get WS events for push preference updates
-                if (result is Result.Success) {
-                    val currentUser = mutableClientState.user.value ?: return@doOnResult
-                    val updatedUser = currentUser.copy(pushPreference = result.value)
-                    mutableClientState.setUser(updatedUser)
-                }
-            }
+            .updateCurrentUserPushPreference()
     }
 
     /**
@@ -1816,15 +1795,20 @@ internal constructor(
     @CheckResult
     public fun removeUserPushSchedule(): Call<PushPreference> {
         return api.removeUserPushSchedule()
-            .doOnResult(userScope) { result ->
-                // Note: Update local user state manually as we don't get WS events for push preference updates
-                if (result is Result.Success) {
-                    val currentUser = mutableClientState.user.value ?: return@doOnResult
-                    val updatedUser = currentUser.copy(pushPreference = result.value)
-                    mutableClientState.setUser(updatedUser)
-                }
-            }
+            .updateCurrentUserPushPreference()
     }
+
+    /**
+     * Copies a successful result into the current user's [User.pushPreference]. Needed because push preference
+     * updates don't come with a WS event.
+     */
+    private fun Call<PushPreference>.updateCurrentUserPushPreference(): Call<PushPreference> =
+        doOnResult(userScope) { result ->
+            if (result is Result.Success) {
+                val currentUser = mutableClientState.user.value ?: return@doOnResult
+                mutableClientState.setUser(currentUser.copy(pushPreference = result.value))
+            }
+        }
 
     /**
      * Sets the push notification preference level for a specific channel.
@@ -1871,13 +1855,7 @@ internal constructor(
     @CheckResult
     public fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference> {
         return api.setUserChatPreferences(preferences)
-            .doOnResult(userScope) { result ->
-                if (result is Result.Success) {
-                    val currentUser = mutableClientState.user.value ?: return@doOnResult
-                    val updatedUser = currentUser.copy(pushPreference = result.value)
-                    mutableClientState.setUser(updatedUser)
-                }
-            }
+            .updateCurrentUserPushPreference()
     }
 
     /**
