@@ -52,19 +52,33 @@ public data class QuietHoursRule(
 )
 
 /**
- * A day of the week in a [QuietHoursRule]. Wraps the raw wire string so unknown values round-trip
- * without being lost.
+ * A day of the week in a [QuietHoursRule]. Use the constants, for example [QuietHoursDay.friday], or
+ * [QuietHoursDay.fromValue] for a raw value.
  */
 @Immutable
-public data class QuietHoursDay(public val value: String) {
+public data class QuietHoursDay internal constructor(public val value: String) {
 
     public companion object {
+
+        /** Monday, `mon` on the wire. */
         public val monday: QuietHoursDay = QuietHoursDay(value = "mon")
+
+        /** Tuesday, `tue` on the wire. */
         public val tuesday: QuietHoursDay = QuietHoursDay(value = "tue")
+
+        /** Wednesday, `wed` on the wire. */
         public val wednesday: QuietHoursDay = QuietHoursDay(value = "wed")
+
+        /** Thursday, `thu` on the wire. */
         public val thursday: QuietHoursDay = QuietHoursDay(value = "thu")
+
+        /** Friday, `fri` on the wire. */
         public val friday: QuietHoursDay = QuietHoursDay(value = "fri")
+
+        /** Saturday, `sat` on the wire. */
         public val saturday: QuietHoursDay = QuietHoursDay(value = "sat")
+
+        /** Sunday, `sun` on the wire. */
         public val sunday: QuietHoursDay = QuietHoursDay(value = "sun")
 
         /** Monday to Friday. */
@@ -73,5 +87,11 @@ public data class QuietHoursDay(public val value: String) {
 
         /** Saturday and Sunday. */
         public val weekend: List<QuietHoursDay> = listOf(saturday, sunday)
+
+        /**
+         * Returns the day for a raw value such as `mon`, or null when [value] is not one of the seven days.
+         */
+        public fun fromValue(value: String?): QuietHoursDay? =
+            (weekdays + weekend).firstOrNull { it.value == value }
     }
 }

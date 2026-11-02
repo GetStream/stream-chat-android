@@ -2189,10 +2189,7 @@ public final class io/getstream/chat/android/models/QueryThreadsResult {
 
 public final class io/getstream/chat/android/models/QuietHoursDay {
 	public static final field Companion Lio/getstream/chat/android/models/QuietHoursDay$Companion;
-	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/models/QuietHoursDay;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/QuietHoursDay;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/QuietHoursDay;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -2200,6 +2197,7 @@ public final class io/getstream/chat/android/models/QuietHoursDay {
 }
 
 public final class io/getstream/chat/android/models/QuietHoursDay$Companion {
+	public final fun fromValue (Ljava/lang/String;)Lio/getstream/chat/android/models/QuietHoursDay;
 	public final fun getFriday ()Lio/getstream/chat/android/models/QuietHoursDay;
 	public final fun getMonday ()Lio/getstream/chat/android/models/QuietHoursDay;
 	public final fun getSaturday ()Lio/getstream/chat/android/models/QuietHoursDay;

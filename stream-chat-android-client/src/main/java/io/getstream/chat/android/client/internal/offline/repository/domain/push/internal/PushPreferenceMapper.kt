@@ -50,6 +50,6 @@ private fun PushSchedule.toEntity(): PushScheduleEntity = PushScheduleEntity(
 private fun PushScheduleEntity.toModel(): PushSchedule = PushSchedule(
     timezone = timezone,
     quietHours = quietHours.map { rule ->
-        QuietHoursRule(start = rule.start, end = rule.end, days = rule.days.map(::QuietHoursDay))
+        QuietHoursRule(start = rule.start, end = rule.end, days = rule.days.mapNotNull(QuietHoursDay::fromValue))
     },
 )

@@ -1900,7 +1900,7 @@ internal class DomainMapping(
     internal fun QuietHoursRuleResponse.toDomain(): QuietHoursRule = QuietHoursRule(
         start = start,
         end = end,
-        days = days.orEmpty().map(::QuietHoursDay),
+        days = days.orEmpty().mapNotNull(QuietHoursDay::fromValue),
     )
 
     internal fun ChannelPushPreferencesResponse.toDomain(): PushPreference = PushPreference(
