@@ -753,13 +753,7 @@ internal class SyncManagerTest {
             givenReconnectSync()
             val failedChannelId = ChannelId.fromTypeAndId("messaging", "failed")!!
             val trackedChannelId = ChannelId.fromTypeAndId("messaging", "tracked")!!
-            var trackedRecovered = false
-            val trackedChannelState: ChannelState = mock {
-                on(it.recoveryNeeded) doAnswer { !trackedRecovered }
-                on(it.channelData) doReturn MutableStateFlow(
-                    ChannelData(id = trackedChannelId.id, type = trackedChannelId.type),
-                )
-            }
+            val trackedChannelState = recoverableChannelState(trackedChannelId, createdAt = null)
             val failedChannelState = recoverableChannelState(failedChannelId, createdAt = null)
             whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
                 failedChannelId to failedChannelState,
@@ -774,12 +768,9 @@ internal class SyncManagerTest {
             val failedLogic: ChannelLogic = mock {
                 onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel())
             }
-            // A successful watch recovers the channel state
+            // The channel still needs recovery after this watch fails
             val trackedLogic: ChannelLogic = mock {
-                onBlocking { it.watch(any(), any()) } doAnswer {
-                    trackedRecovered = true
-                    Result.Success(randomChannel())
-                }
+                onBlocking { it.watch(any(), any()) } doReturn Result.Failure(Error.GenericError("fail"))
             }
             whenever(logicRegistry.channel(failedChannelId)) doReturn failedLogic
             whenever(logicRegistry.channel(trackedChannelId)) doReturn trackedLogic
@@ -791,6 +782,88 @@ internal class SyncManagerTest {
             verify(trackedLogic).watch(userPresence = true)
             verify(chatClient, never()).queryChannelsInternal(any())
         }
+
+    @Test
+    fun `on connect, a channel whose first load failed is watched even when the sync filled its channel data`() =
+        runTest(testDispatcher) {
+            givenReconnectSync()
+            val failedChannelId = ChannelId.fromTypeAndId("messaging", "failed")!!
+            val failedChannelData = MutableStateFlow(ChannelData(id = failedChannelId.id, type = failedChannelId.type))
+            val failedChannelState: ChannelState = mock {
+                on(it.recoveryNeeded) doReturn true
+                on(it.channelData) doReturn failedChannelData
+            }
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(failedChannelId to failedChannelState)
+            val activeLogic: ChannelLogic = mock { on(it.cid) doReturn failedChannelId.cid }
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn listOf(activeLogic)
+            // A replayed channel event fills the channel data
+            whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doAnswer {
+                failedChannelData.value = failedChannelData.value.copy(createdAt = Date())
+                TestCall(Result.Success(emptyList()))
+            }
+            val failedLogic: ChannelLogic = mock {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel())
+            }
+            whenever(logicRegistry.channel(failedChannelId)) doReturn failedLogic
+
+            buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(randomConnectedEvent(me = user))
+
+            verify(chatClient).getSyncHistoryInternal(any(), any<String>(), any())
+            verify(failedLogic).watch(userPresence = true)
+            verify(chatClient, never()).queryChannelsInternal(any())
+        }
+
+    @Test
+    fun `on connect, a channel whose first load failed is not watched when it loaded during the reconnect`() =
+        runTest(testDispatcher) {
+            givenReconnectSync()
+            val failedChannelId = ChannelId.fromTypeAndId("messaging", "failed")!!
+            var recovered = false
+            val failedChannelState: ChannelState = mock {
+                on(it.recoveryNeeded) doAnswer { !recovered }
+                on(it.channelData) doReturn MutableStateFlow(
+                    ChannelData(id = failedChannelId.id, type = failedChannelId.type),
+                )
+            }
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(failedChannelId to failedChannelState)
+            val standardQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn null
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(true)
+                // The channel's own retry succeeds while the list refreshes
+                onBlocking { it.queryFirstPage() } doAnswer {
+                    recovered = true
+                    Result.Success(emptyList())
+                }
+            }
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(standardQuery)
+            val failedLogic: ChannelLogic = mock()
+            whenever(logicRegistry.channel(failedChannelId)) doReturn failedLogic
+
+            buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(randomConnectedEvent(me = user))
+
+            verify(failedLogic, never()).watch(any(), any())
+        }
+
+    @Test
+    fun `on connect, up to 30 channels whose first load failed are watched`() = runTest(testDispatcher) {
+        givenReconnectSync()
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        val failedStates = channelIds.associateWith { recoverableChannelState(it, createdAt = null) }
+        whenever(stateRegistry.getActiveChannelStates()) doReturn failedStates
+        val logics = channelIds.associate { id ->
+            id.cid to mock<ChannelLogic> {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel(id = id.id))
+            }
+        }
+        // The value class reaches Mockito unboxed, as its cid.
+        whenever(logicRegistry.channel(any<ChannelId>())).thenAnswer { logics.getValue(it.arguments[0] as String) }
+
+        buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(randomConnectedEvent(me = user))
+
+        channelIds.take(30).forEach { verify(logics.getValue(it.cid)).watch(userPresence = true) }
+        channelIds.drop(30).forEach { verify(logics.getValue(it.cid), never()).watch(any(), any()) }
+        verify(chatClient, never()).queryChannelsInternal(any())
+    }
 
     @Test
     fun `on reconnect, a channel state that was never loaded is queried instead of watched`() =
