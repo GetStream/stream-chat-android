@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upstreamMessageWithoutExtraData
+import io.getstream.chat.android.network.infrastructure.Serializer
+import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.UpdateMessageRequest
@@ -28,9 +30,6 @@ import org.junit.jupiter.api.Test
  * they are set. These pin the emitted JSON, which object equality in the api tests does not cover.
  */
 internal class MessageWriteRequestAdapterTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize a send message request with both flags set`() {
         val request = SendMessageRequest(
@@ -39,7 +38,7 @@ internal class MessageWriteRequestAdapterTest {
             skipEnrichUrl = true,
         )
 
-        parser.toJson(request).shouldEqualJson(
+        toJson(request).shouldEqualJson(
             """{
                 "message": $MESSAGE_JSON,
                 "skip_push": true,
@@ -56,7 +55,7 @@ internal class MessageWriteRequestAdapterTest {
     fun `Serialize a send message request without the flags`() {
         val request = SendMessageRequest(message = upstreamMessageWithoutExtraData)
 
-        parser.toJson(request).shouldEqualJson("""{"message": $MESSAGE_JSON}""")
+        toJson(request).shouldEqualJson("""{"message": $MESSAGE_JSON}""")
     }
 
     @Test
@@ -67,7 +66,7 @@ internal class MessageWriteRequestAdapterTest {
             skipPush = false,
         )
 
-        parser.toJson(request).shouldEqualJson(
+        toJson(request).shouldEqualJson(
             """{
                 "message": $MESSAGE_JSON,
                 "skip_enrich_url": false,
@@ -85,7 +84,7 @@ internal class MessageWriteRequestAdapterTest {
     fun `Serialize a truncate channel request with a system message`() {
         val request = TruncateChannelRequest(message = upstreamMessageWithoutExtraData)
 
-        parser.toJson(request).shouldEqualJson(
+        toJson(request).shouldEqualJson(
             """{
                 "message": $MESSAGE_JSON,
                 "member_ids": []
@@ -99,14 +98,14 @@ internal class MessageWriteRequestAdapterTest {
      */
     @Test
     fun `Serialize an empty truncate channel request`() {
-        parser.toJson(TruncateChannelRequest()).shouldEqualJson("""{"member_ids": []}""")
+        toJson(TruncateChannelRequest()).shouldEqualJson("""{"member_ids": []}""")
     }
 
     @Test
     fun `Serialize a hard truncate channel request that skips push`() {
         val request = TruncateChannelRequest(hardDelete = true, skipPush = true)
 
-        parser.toJson(request).shouldEqualJson(
+        toJson(request).shouldEqualJson(
             """{
                 "hard_delete": true,
                 "skip_push": true,
@@ -117,6 +116,6 @@ internal class MessageWriteRequestAdapterTest {
 
     private companion object {
         private val MESSAGE_JSON =
-            ParserFactory.createMoshiChatParser().toJson(upstreamMessageWithoutExtraData)
+            Serializer.moshi.adapter(MessageRequest::class.java).toJson(upstreamMessageWithoutExtraData)
     }
 }

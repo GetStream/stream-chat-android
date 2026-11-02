@@ -21,17 +21,15 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class SearchPayloadAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
-
     @Test
     fun `Serialize SearchPayload with all fields`() {
-        val json = parser.toJson(SearchPayloadTestData.searchPayload)
+        val json = toJson(SearchPayloadTestData.searchPayload)
         Assertions.assertEquals(SearchPayloadTestData.searchPayloadJson, json)
     }
 
     @Test
     fun `Serialize SearchPayload with default fields`() {
-        val json = parser.toJson(SearchPayloadTestData.searchPayloadWithDefaults)
+        val json = toJson(SearchPayloadTestData.searchPayloadWithDefaults)
         Assertions.assertEquals(SearchPayloadTestData.searchPayloadJsonWithDefaults, json)
     }
 }

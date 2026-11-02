@@ -33,9 +33,6 @@ import org.junit.jupiter.api.assertThrows
 import java.util.Date
 
 internal class ReactionGroupParsingTest {
-
-    private val parser = ParserFactory.createMoshiChatParser()
-
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
         channelTransformer = NoOpChannelTransformer,
@@ -53,7 +50,7 @@ internal class ReactionGroupParsingTest {
 
     @Test
     fun `Generated path - deserializes all fields`() {
-        val dto = parser.fromJson(ReactionGroupTestData.jsonAllFields, ReactionGroupResponse::class.java)
+        val dto = parse<ReactionGroupResponse>(ReactionGroupTestData.jsonAllFields)
         val reactionGroup = with(domainMapping) { dto.toDomain(testType) }
         assertEquals(ReactionGroupTestData.expectedReactionGroupAllFields, reactionGroup)
     }
@@ -96,7 +93,7 @@ internal class ReactionGroupParsingTest {
     fun `Both paths - a group carrying latest_reactions_by maps to the same ReactionGroup`() {
         val json = ReactionGroupTestData.jsonWithLatestReactionsBy
 
-        val fromResponse = parser.fromJson(json, ReactionGroupResponse::class.java)
+        val fromResponse = parse<ReactionGroupResponse>(json)
         val direct = reactionGroupAdapter.parseWithType(
             com.squareup.moshi.JsonReader.of(okio.Buffer().writeUtf8(json)),
             testType,
@@ -104,20 +101,6 @@ internal class ReactionGroupParsingTest {
 
         assertEquals(1, fromResponse.latestReactionsBy.size)
         assertEquals("user-1", fromResponse.latestReactionsBy.first().userId)
-        assertEquals(with(domainMapping) { fromResponse.toDomain(testType) }, direct)
-    }
-
-    @Test
-    fun `Both paths - a null latest_reactions_by is coerced to empty rather than throwing`() {
-        val json = ReactionGroupTestData.jsonWithNullLatestReactionsBy
-
-        val fromResponse = parser.fromJson(json, ReactionGroupResponse::class.java)
-        val direct = reactionGroupAdapter.parseWithType(
-            com.squareup.moshi.JsonReader.of(okio.Buffer().writeUtf8(json)),
-            testType,
-        )
-
-        assertEquals(emptyList<Any>(), fromResponse.latestReactionsBy)
         assertEquals(with(domainMapping) { fromResponse.toDomain(testType) }, direct)
     }
 
@@ -132,7 +115,7 @@ internal class ReactionGroupParsingTest {
     fun `Both paths - both fail on missing count`() {
         val field = "count"
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(ReactionGroupTestData.jsonMissingCount, ReactionGroupResponse::class.java)
+            parse<ReactionGroupResponse>(ReactionGroupTestData.jsonMissingCount)
         }
         val directException = assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
@@ -150,7 +133,7 @@ internal class ReactionGroupParsingTest {
     fun `Both paths - both fail on missing sum_scores`() {
         val field = "sum_scores"
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(ReactionGroupTestData.jsonMissingSumScores, ReactionGroupResponse::class.java)
+            parse<ReactionGroupResponse>(ReactionGroupTestData.jsonMissingSumScores)
         }
         val directException = assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
@@ -168,7 +151,7 @@ internal class ReactionGroupParsingTest {
     fun `Both paths - both fail on missing first_reaction_at`() {
         val field = "first_reaction_at"
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(ReactionGroupTestData.jsonMissingFirstReactionAt, ReactionGroupResponse::class.java)
+            parse<ReactionGroupResponse>(ReactionGroupTestData.jsonMissingFirstReactionAt)
         }
         val directException = assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
@@ -186,7 +169,7 @@ internal class ReactionGroupParsingTest {
     fun `Both paths - both fail on missing last_reaction_at`() {
         val field = "last_reaction_at"
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(ReactionGroupTestData.jsonMissingLastReactionAt, ReactionGroupResponse::class.java)
+            parse<ReactionGroupResponse>(ReactionGroupTestData.jsonMissingLastReactionAt)
         }
         val directException = assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(

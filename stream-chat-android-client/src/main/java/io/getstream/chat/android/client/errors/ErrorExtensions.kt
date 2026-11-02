@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.errors
 
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
 
@@ -52,3 +53,31 @@ internal fun Error.isMessageGoneError(): Boolean =
  */
 internal fun Error.deleteFailureSyncStatus(): SyncStatus =
     if (isMessageGoneError()) SyncStatus.COMPLETED else SyncStatus.SYNC_NEEDED
+
+/** The scheduled message rejections by their backend error code. */
+@Suppress("MagicNumber") // The numbers are the backend codes, listed once here.
+private val SCHEDULED_MESSAGE_REJECTION_REASONS = mapOf(
+    114 to ServerRejectedScheduling.Reason.ScheduledMessagesDisabled,
+    115 to ServerRejectedScheduling.Reason.ScheduledAtTooSoon,
+    116 to ServerRejectedScheduling.Reason.ScheduledAtTooFar,
+    117 to ServerRejectedScheduling.Reason.ScheduledLimitChannel,
+    118 to ServerRejectedScheduling.Reason.ScheduledLimitUser,
+    119 to ServerRejectedScheduling.Reason.ScheduledMessageIdTaken,
+    120 to ServerRejectedScheduling.Reason.ScheduledMessageNotEditable,
+    121 to ServerRejectedScheduling.Reason.ScheduledMessageSending,
+    122 to ServerRejectedScheduling.Reason.ScheduledMessageConflict,
+    123 to ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent,
+    124 to ServerRejectedScheduling.Reason.ScheduledMessageCanceled,
+)
+
+/** The reasons the server rejects a scheduled message request with. */
+internal val scheduledMessageRejectionReasons: Collection<ServerRejectedScheduling.Reason>
+    get() = SCHEDULED_MESSAGE_REJECTION_REASONS.values
+
+/**
+ * The reason the server rejected a scheduled message request with this error, or null when the error is not one of the
+ * scheduled message rejections. The reason is read from the numeric code: [Error.NetworkError] does not keep the
+ * reason name the server also sends.
+ */
+internal fun Error.scheduledMessageRejectionReason(): ServerRejectedScheduling.Reason? =
+    (this as? Error.NetworkError)?.let { SCHEDULED_MESSAGE_REJECTION_REASONS[it.serverErrorCode] }

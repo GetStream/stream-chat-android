@@ -69,6 +69,9 @@ public object ChannelCapabilities {
     /** Ability to receive delivery events. */
     public const val DELIVERY_EVENTS: String = "delivery-events"
 
+    /** Ability to schedule messages, sent by the server at a later date. */
+    public const val SCHEDULE_MESSAGE: String = "schedule-message"
+
     /** Ability to use message search. */
     public const val SEARCH_MESSAGES: String = "search-messages"
 

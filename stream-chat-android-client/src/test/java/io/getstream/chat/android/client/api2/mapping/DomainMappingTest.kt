@@ -1179,6 +1179,10 @@ internal class DomainMappingTest {
             userMessageReminders = true,
             sharedLocations = true,
             markMessagesPending = true,
+            scheduledMessagesMaxPerChannel = 10,
+            scheduledMessagesMaxPerUser = 100,
+            scheduledMessagesMaxLeadTimeSeconds = 10368000,
+            scheduledMessagesMinLeadTimeSeconds = 60,
         )
 
     private fun expectedAlternatingConfig(commands: List<Command>): Config =
@@ -1211,6 +1215,10 @@ internal class DomainMappingTest {
             sharedLocationsEnabled = true,
             markMessagesPending = true,
             quotesEnabled = false,
+            scheduledMessagesMaxPerChannel = 10,
+            scheduledMessagesMaxPerUser = 100,
+            scheduledMessagesMaxLeadTimeSeconds = 10368000,
+            scheduledMessagesMinLeadTimeSeconds = 60,
         )
 
     @Test

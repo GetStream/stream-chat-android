@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class MessageResponseParsingTest {
-    private val parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "user-1" },
         channelTransformer = NoOpChannelTransformer,
@@ -35,7 +34,7 @@ internal class MessageResponseParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    private fun message(extra: String) = parser.fromJson(
+    private fun message(extra: String) = parse<MessageResponse>(
         """
         {
           "id": "message-id",
@@ -59,12 +58,11 @@ internal class MessageResponseParsingTest {
           $extra
         }
         """.trimIndent(),
-        MessageResponse::class.java,
     )
 
     @Test
     fun `A message by a deleted user parses with the placeholder the backend sends`() {
-        val message = with(mapping) { parser.fromJson(MessageFixtures.DELETED_AUTHOR_JSON, MessageResponse::class.java).toDomain() }
+        val message = with(mapping) { parse<MessageResponse>(MessageFixtures.DELETED_AUTHOR_JSON).toDomain() }
 
         assertEquals("deleted-user", message.user.id)
         assertEquals("", message.user.language)

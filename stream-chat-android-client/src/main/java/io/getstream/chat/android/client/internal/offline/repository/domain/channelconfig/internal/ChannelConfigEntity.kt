@@ -55,6 +55,10 @@ internal data class ChannelConfigInnerEntity(
     val skipLastMsgUpdateForSystemMsgs: Boolean,
     val pollsEnabled: Boolean,
     val sharedLocationsEnabled: Boolean,
+    val scheduledMessagesMaxPerChannel: Int?,
+    val scheduledMessagesMaxPerUser: Int?,
+    val scheduledMessagesMaxLeadTimeSeconds: Int?,
+    val scheduledMessagesMinLeadTimeSeconds: Int?,
 )
 
 @Entity(

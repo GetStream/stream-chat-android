@@ -1,0 +1,29 @@
+name: E2E Gradle Cache
+
+on:
+  # Pull requests restore the newest develop snapshot, so it should come from the latest merge.
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - '**/*.md'
+
+  workflow_dispatch:
+
+# Not shared with the nightly run's group, so the two don't cancel each other.
+# A running build finishes and saves; only the newest pending push waits behind it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-compose-apks:
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    name: Build
+    uses: ./.github/workflows/e2e-build.yml
+    with:
+      app: compose
+      cache_only: true
