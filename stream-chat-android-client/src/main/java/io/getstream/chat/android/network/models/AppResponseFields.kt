@@ -26,29 +26,34 @@ package io.getstream.chat.android.network.models
 import com.squareup.moshi.Json
 
 /**
- *
+ * A type representing the app settings.
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class AppResponseFields(
     @Json(name = "async_url_enrich_enabled")
-    val asyncUrlEnrichEnabled: kotlin.Boolean,
+    internal val asyncUrlEnrichEnabled: Boolean,
 
     @Json(name = "auto_translation_enabled")
-    val autoTranslationEnabled: kotlin.Boolean,
+    internal val autoTranslationEnabled: Boolean,
 
     @Json(name = "id")
-    val id: kotlin.Int,
+    internal val id: Int,
 
     @Json(name = "name")
-    val name: kotlin.String,
+    internal val name: String,
 
     @Json(name = "placement")
-    val placement: kotlin.String,
+    internal val placement: String,
+
+    // Patched: the spec marks `defaults` required, but backends before v239.68.0 (CHA-5968, chat#18441) leave it out,
+    // and a parse failure fails the whole app settings response. On regen, make it required again only once every
+    // region runs v239.68.0 or later.
+    @Json(name = "defaults")
+    internal val defaults: io.getstream.chat.android.network.models.AppDefaults? = null,
 
     @Json(name = "file_upload_config")
-    val fileUploadConfig: io.getstream.chat.android.network.models.FileUploadConfig,
+    internal val fileUploadConfig: io.getstream.chat.android.network.models.FileUploadConfig,
 
     @Json(name = "image_upload_config")
-    val imageUploadConfig: io.getstream.chat.android.network.models.FileUploadConfig,
+    internal val imageUploadConfig: io.getstream.chat.android.network.models.FileUploadConfig,
 )

@@ -48,6 +48,9 @@ internal data class ChannelMemberResponse(
     @Json(name = "updated_at")
     internal val updatedAt: java.util.Date,
 
+    @Json(name = "user_id")
+    internal val userId: String,
+
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),
 
@@ -57,8 +60,14 @@ internal data class ChannelMemberResponse(
     @Json(name = "ban_expires")
     internal val banExpires: java.util.Date? = null,
 
+    @Json(name = "ban_from_future_channels")
+    internal val banFromFutureChannels: Boolean? = null,
+
     @Json(name = "deleted_at")
     internal val deletedAt: java.util.Date? = null,
+
+    @Json(name = "future_channel_ban_expires")
+    internal val futureChannelBanExpires: java.util.Date? = null,
 
     @Json(name = "invite_accepted_at")
     internal val inviteAcceptedAt: java.util.Date? = null,
@@ -81,11 +90,8 @@ internal data class ChannelMemberResponse(
     @Json(name = "status")
     internal val status: String? = null,
 
-    @Json(name = "user_id")
-    internal val userId: String? = null,
-
     @Json(name = "deleted_messages")
-    internal val deletedMessages: List<String>? = emptyList(),
+    internal val deletedMessages: List<String>? = null,
 
     @Json(name = "user")
     internal val user: io.getstream.chat.android.network.models.UserResponse? = null,

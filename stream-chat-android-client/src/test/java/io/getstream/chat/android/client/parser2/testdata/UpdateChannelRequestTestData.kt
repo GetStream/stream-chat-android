@@ -23,22 +23,17 @@ import io.getstream.chat.android.network.models.UpdateChannelRequest
 
 internal object UpdateChannelRequestTestData {
 
-    private const val EMPTY_LISTS =
-        """"add_filter_tags":[],"add_members":[],"add_moderators":[],"assign_roles":[],""" +
-            """"demote_moderators":[],"invites":[],"remove_filter_tags":[],"remove_members":[]"""
-
     val updateChannelRequest = UpdateChannelRequest(
         data = ChannelInputRequest(custom = mapOf("probe_key" to "probe_value")),
     )
-    const val updateChannelJson =
-        """{$EMPTY_LISTS,"data":{"invites":[],"members":[],"custom":{"probe_key":"probe_value"}}}"""
+    const val updateChannelJson = """{"data":{"custom":{"probe_key":"probe_value"}}}"""
 
     val acceptInviteRequest = UpdateChannelRequest(
         acceptInvite = true,
         message = MessageRequest(text = "accepting"),
     )
     const val acceptInviteJson =
-        """{"accept_invite":true,$EMPTY_LISTS,"message":{"text":"accepting","attachments":[],""" +
+        """{"accept_invite":true,"message":{"text":"accepting","attachments":[],""" +
             """"mentioned_group_ids":[],"mentioned_roles":[],"mentioned_users":[],"restricted_visibility":[],""" +
             """"custom":{}}}"""
 
@@ -46,23 +41,16 @@ internal object UpdateChannelRequestTestData {
         removeMembers = listOf("han"),
         skipPush = true,
     )
-    const val removeMembersJson =
-        """{"skip_push":true,"add_filter_tags":[],"add_members":[],"add_moderators":[],"assign_roles":[],""" +
-            """"demote_moderators":[],"invites":[],"remove_filter_tags":[],"remove_members":["han"]}"""
+    const val removeMembersJson = """{"skip_push":true,"remove_members":["han"]}"""
 
     val inviteMembersRequest = UpdateChannelRequest(
         invites = listOf(ChannelMemberRequest(userId = "han")),
         skipPush = true,
     )
-    const val inviteMembersJson =
-        """{"skip_push":true,"add_filter_tags":[],"add_members":[],"add_moderators":[],"assign_roles":[],""" +
-            """"demote_moderators":[],"invites":[{"user_id":"han"}],"remove_filter_tags":[],"remove_members":[]}"""
+    const val inviteMembersJson = """{"skip_push":true,"invites":[{"user_id":"han"}]}"""
 
     val rejectInviteRequest = UpdateChannelRequest(rejectInvite = true)
-    const val rejectInviteJson =
-        """{"reject_invite":true,"add_filter_tags":[],"add_members":[],"add_moderators":[],""" +
-            """"assign_roles":[],"demote_moderators":[],"invites":[],"remove_filter_tags":[],""" +
-            """"remove_members":[]}"""
+    const val rejectInviteJson = """{"reject_invite":true}"""
 
     val addMembersRequest = UpdateChannelRequest(
         addMembers = listOf(
@@ -76,9 +64,7 @@ internal object UpdateChannelRequestTestData {
         skipPush = true,
     )
     const val addMembersJson =
-        """{"skip_push":true,"add_filter_tags":[],"add_members":[{"channel_role":"moderator","user_id":"u1",""" +
-            """"custom":{"k":"v"}}],"add_moderators":[],"assign_roles":[],"demote_moderators":[],"invites":[],""" +
-            """"remove_filter_tags":[],"remove_members":[],"message":{"text":"added","type":"system",""" +
-            """"attachments":[],"mentioned_group_ids":[],"mentioned_roles":[],"mentioned_users":[],""" +
-            """"restricted_visibility":[],"custom":{"mk":"mv"}}}"""
+        """{"skip_push":true,"add_members":[{"channel_role":"moderator","user_id":"u1","custom":{"k":"v"}}],""" +
+            """"message":{"text":"added","type":"system","attachments":[],"mentioned_group_ids":[],""" +
+            """"mentioned_roles":[],"mentioned_users":[],"restricted_visibility":[],"custom":{"mk":"mv"}}}"""
 }

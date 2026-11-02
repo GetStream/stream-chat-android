@@ -53,12 +53,14 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.Attachment
+import io.getstream.chat.android.network.models.AutomodMode
 import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelModerationBehavior
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChannelStateResponse
@@ -403,8 +405,8 @@ internal object Mother {
         polls = randomBoolean(),
         messageRetention = randomString(),
         maxMessageLength = randomInt(),
-        automod = ChannelConfigWithInfo.Automod.Disabled,
-        automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
+        automod = AutomodMode.Disabled,
+        automodBehavior = ChannelModerationBehavior.Flag,
         commands = commands,
         userMessageReminders = randomBoolean(),
         sharedLocations = randomBoolean(),

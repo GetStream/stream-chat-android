@@ -49,28 +49,19 @@ internal data class UpdateChannelRequest(
     internal val skipPush: Boolean? = null,
 
     @Json(name = "add_filter_tags")
-    internal val addFilterTags: List<String>? = emptyList(),
+    internal val addFilterTags: List<String>? = null,
 
     @Json(name = "add_members")
-    internal val addMembers: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = emptyList(),
-
-    @Json(name = "add_moderators")
-    internal val addModerators: List<String>? = emptyList(),
-
-    @Json(name = "assign_roles")
-    internal val assignRoles: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = emptyList(),
-
-    @Json(name = "demote_moderators")
-    internal val demoteModerators: List<String>? = emptyList(),
+    internal val addMembers: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = null,
 
     @Json(name = "invites")
-    internal val invites: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = emptyList(),
+    internal val invites: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = null,
 
     @Json(name = "remove_filter_tags")
-    internal val removeFilterTags: List<String>? = emptyList(),
+    internal val removeFilterTags: List<String>? = null,
 
     @Json(name = "remove_members")
-    internal val removeMembers: List<String>? = emptyList(),
+    internal val removeMembers: List<String>? = null,
 
     @Json(name = "data")
     internal val data: io.getstream.chat.android.network.models.ChannelInputRequest? = null,

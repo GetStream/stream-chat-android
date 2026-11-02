@@ -239,13 +239,7 @@ internal class DtoMapping(
             members = shared.members ?: emptyList(),
             createdBy = shared.createdBy,
             configOverrides = custom.takeTyped("config_overrides") { value ->
-                val overrides = value as Map<*, *>
-                val read = configOverridesRequestAdapter.fromJsonValue(overrides)!!
-                // Its defaults would also send "commands":[] and "grants":{}, overriding what the caller left alone.
-                read.copy(
-                    commands = read.commands.takeIf { "commands" in overrides },
-                    grants = read.grants.takeIf { "grants" in overrides },
-                )
+                configOverridesRequestAdapter.fromJsonValue(value as Map<*, *>)!!
             },
             custom = custom,
         )

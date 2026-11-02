@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
+import io.getstream.chat.android.network.models.AutomodMode
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelModerationBehavior
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelResponse
 import org.intellij.lang.annotations.Language
@@ -89,9 +91,9 @@ internal object ChannelDtoTestData {
         skipLastMsgUpdateForSystemMsgs = false,
         polls = true,
         maxMessageLength = 500,
-        automod = ChannelConfigWithInfo.Automod.Disabled,
-        automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
-        blocklistBehavior = ChannelConfigWithInfo.BlocklistBehavior.Block,
+        automod = AutomodMode.Disabled,
+        automodBehavior = ChannelModerationBehavior.Flag,
+        blocklistBehavior = ChannelModerationBehavior.Block,
         commands = listOf(
             CommandDto(
                 name = "giphy",

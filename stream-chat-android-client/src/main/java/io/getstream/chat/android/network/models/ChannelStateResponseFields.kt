@@ -42,6 +42,9 @@ internal data class ChannelStateResponseFields(
     @Json(name = "threads")
     internal val threads: List<io.getstream.chat.android.network.models.ThreadStateResponse> = emptyList(),
 
+    @Json(name = "cooldown_remaining_ms")
+    internal val cooldownRemainingMs: Int? = null,
+
     @Json(name = "hidden")
     internal val hidden: Boolean? = null,
 

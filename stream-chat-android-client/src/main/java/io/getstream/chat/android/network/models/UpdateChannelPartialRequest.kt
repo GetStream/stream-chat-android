@@ -28,12 +28,11 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UpdateChannelPartialRequest(
     @Json(name = "unset")
-    internal val unset: List<String>? = emptyList(),
+    internal val unset: List<String>? = null,
 
     @Json(name = "set")
-    internal val set: Map<String, Any?>? = emptyMap(),
+    internal val set: Map<String, Any?>? = null,
 )

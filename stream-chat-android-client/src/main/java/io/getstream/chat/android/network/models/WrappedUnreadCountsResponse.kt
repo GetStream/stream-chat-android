@@ -26,7 +26,7 @@ package io.getstream.chat.android.network.models
 import com.squareup.moshi.Json
 
 /**
- * Basic response information
+ * The total unread information from the current user.
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class WrappedUnreadCountsResponse(
@@ -49,5 +49,5 @@ internal data class WrappedUnreadCountsResponse(
     internal val threads: List<io.getstream.chat.android.network.models.UnreadCountsThread> = emptyList(),
 
     @Json(name = "total_unread_count_by_team")
-    internal val totalUnreadCountByTeam: Map<String, Int>? = emptyMap(),
+    internal val totalUnreadCountByTeam: Map<String, Int>? = null,
 )

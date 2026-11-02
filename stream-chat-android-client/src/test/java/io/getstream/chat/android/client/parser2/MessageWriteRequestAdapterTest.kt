@@ -76,9 +76,8 @@ internal class MessageWriteRequestAdapterTest {
     }
 
     /**
-     * `member_ids` defaults to an empty list on the generated model rather than null, so truncate now
-     * sends it where it previously sent nothing. The backend branches on `len(MemberIDs) > 0`, so an
-     * empty array and an absent key both take the whole-channel path.
+     * Truncate leaves `member_ids` out when it targets no members. The backend branches on `len(MemberIDs) > 0`,
+     * so an absent key takes the whole-channel path, as an empty array does.
      */
     @Test
     fun `Serialize a truncate channel request with a system message`() {
@@ -86,8 +85,7 @@ internal class MessageWriteRequestAdapterTest {
 
         toJson(request).shouldEqualJson(
             """{
-                "message": $MESSAGE_JSON,
-                "member_ids": []
+                "message": $MESSAGE_JSON
             }""",
         )
     }
@@ -98,7 +96,7 @@ internal class MessageWriteRequestAdapterTest {
      */
     @Test
     fun `Serialize an empty truncate channel request`() {
-        toJson(TruncateChannelRequest()).shouldEqualJson("""{"member_ids": []}""")
+        toJson(TruncateChannelRequest()).shouldEqualJson("""{}""")
     }
 
     @Test
@@ -108,8 +106,7 @@ internal class MessageWriteRequestAdapterTest {
         toJson(request).shouldEqualJson(
             """{
                 "hard_delete": true,
-                "skip_push": true,
-                "member_ids": []
+                "skip_push": true
             }""",
         )
     }

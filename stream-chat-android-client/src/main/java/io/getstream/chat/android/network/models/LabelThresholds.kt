@@ -31,8 +31,8 @@ import com.squareup.moshi.Json
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class LabelThresholds(
     @Json(name = "block")
-    internal val block: Float? = null,
+    internal val block: Double? = null,
 
     @Json(name = "flag")
-    internal val flag: Float? = null,
+    internal val flag: Double? = null,
 )

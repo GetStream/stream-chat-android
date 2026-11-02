@@ -23,12 +23,7 @@
 
 package io.getstream.chat.android.network.models
 
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 
 /**
  * Channel configuration overrides
@@ -39,7 +34,7 @@ internal data class ConfigOverridesRequest(
     internal val blocklist: String? = null,
 
     @Json(name = "blocklist_behavior")
-    internal val blocklistBehavior: BlocklistBehavior? = null,
+    internal val blocklistBehavior: io.getstream.chat.android.network.models.BlocklistBehavior? = null,
 
     @Json(name = "count_messages")
     internal val countMessages: Boolean? = null,
@@ -48,7 +43,7 @@ internal data class ConfigOverridesRequest(
     internal val maxMessageLength: Int? = null,
 
     @Json(name = "push_level")
-    internal val pushLevel: PushLevel? = null,
+    internal val pushLevel: io.getstream.chat.android.network.models.PushLevel? = null,
 
     @Json(name = "quotes")
     internal val quotes: Boolean? = null,
@@ -75,80 +70,11 @@ internal data class ConfigOverridesRequest(
     internal val userMessageReminders: Boolean? = null,
 
     @Json(name = "commands")
-    internal val commands: List<String>? = emptyList(),
+    internal val commands: List<String>? = null,
 
     @Json(name = "chat_preferences")
     internal val chatPreferences: io.getstream.chat.android.network.models.ChatPreferences? = null,
 
     @Json(name = "grants")
-    internal val grants: Map<String, List<String>>? = emptyMap(),
-) {
-
-    /**
-     * BlocklistBehavior Enum
-     */
-    internal sealed class BlocklistBehavior(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): BlocklistBehavior = when (s) {
-                "block" -> Block
-                "flag" -> Flag
-                else -> Unknown(s)
-            }
-        }
-        internal object Block : BlocklistBehavior("block")
-        internal object Flag : BlocklistBehavior("flag")
-        internal data class Unknown(val unknownValue: String) : BlocklistBehavior(unknownValue)
-
-        internal class BlocklistBehaviorAdapter : JsonAdapter<BlocklistBehavior>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): BlocklistBehavior? {
-                val s = reader.nextString() ?: return null
-                return BlocklistBehavior.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: BlocklistBehavior?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-
-    /**
-     * PushLevel Enum
-     */
-    internal sealed class PushLevel(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): PushLevel = when (s) {
-                "all" -> All
-                "all_mentions" -> AllMentions
-                "direct_mentions" -> DirectMentions
-                "mentions" -> Mentions
-                "none" -> None
-                else -> Unknown(s)
-            }
-        }
-        internal object All : PushLevel("all")
-        internal object AllMentions : PushLevel("all_mentions")
-        internal object DirectMentions : PushLevel("direct_mentions")
-        internal object Mentions : PushLevel("mentions")
-        internal object None : PushLevel("none")
-        internal data class Unknown(val unknownValue: String) : PushLevel(unknownValue)
-
-        internal class PushLevelAdapter : JsonAdapter<PushLevel>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): PushLevel? {
-                val s = reader.nextString() ?: return null
-                return PushLevel.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: PushLevel?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-}
+    internal val grants: Map<String, List<String>>? = null,
+)

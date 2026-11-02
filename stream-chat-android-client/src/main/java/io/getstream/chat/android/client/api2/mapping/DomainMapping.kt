@@ -269,6 +269,7 @@ internal val CHANNEL_HIDDEN_CUSTOM_KEYS = setOf(
     "deleted_at",
     "disabled",
     "filter_tags",
+    "fork",
     "frozen",
     "hidden",
     "hide_messages_before",
@@ -348,11 +349,13 @@ internal val EVENT_USER_HIDDEN_CUSTOM_KEYS = setOf(
 internal val MEMBER_HIDDEN_CUSTOM_KEYS = setOf(
     "archived_at",
     "ban_expires",
+    "ban_from_future_channels",
     "banned",
     "channel_role",
     "created_at",
     "deleted_at",
     "deleted_messages",
+    "future_channel_ban_expires",
     "invite_accepted_at",
     "invite_rejected_at",
     "invited",
@@ -1081,7 +1084,7 @@ internal class DomainMapping(
 
     internal fun ChannelMemberResponse.toDomain(): Member =
         Member(
-            user = user?.toDomain() ?: User(id = userId.orEmpty()),
+            user = user?.toDomain() ?: User(id = userId),
             createdAt = createdAt,
             updatedAt = updatedAt,
             isInvited = invited,

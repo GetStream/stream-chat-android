@@ -46,10 +46,10 @@ internal data class ChannelInputRequest(
     internal val team: String? = null,
 
     @Json(name = "invites")
-    internal val invites: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = emptyList(),
+    internal val invites: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = null,
 
     @Json(name = "members")
-    internal val members: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = emptyList(),
+    internal val members: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = null,
 
     @Json(name = "config_overrides")
     internal val configOverrides: io.getstream.chat.android.network.models.ConfigOverridesRequest? = null,
@@ -58,5 +58,5 @@ internal data class ChannelInputRequest(
     internal val createdBy: io.getstream.chat.android.network.models.UserRequest? = null,
 
     @Json(name = "custom")
-    internal val custom: Map<String, Any?>? = emptyMap(),
+    internal val custom: Map<String, Any?>? = null,
 )
