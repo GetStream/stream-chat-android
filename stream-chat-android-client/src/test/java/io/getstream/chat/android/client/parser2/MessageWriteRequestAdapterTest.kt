@@ -30,9 +30,6 @@ import org.junit.jupiter.api.Test
  * they are set. These pin the emitted JSON, which object equality in the api tests does not cover.
  */
 internal class MessageWriteRequestAdapterTest {
-
-    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
-
     @Test
     fun `Serialize a send message request with both flags set`() {
         val request = SendMessageRequest(

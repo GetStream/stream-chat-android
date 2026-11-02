@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -24,8 +23,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
 internal class TranslateMessageRequestAdapterTest {
-    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
-
     @Test
     fun `Serialize TranslateMessageRequest with a language the models do not know`() {
         val language = TranslateMessageRequest.Language.fromString("xx")

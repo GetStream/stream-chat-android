@@ -21,15 +21,11 @@ import io.getstream.chat.android.client.parser2.testdata.AttachmentTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.network.infrastructure.Serializer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import io.getstream.chat.android.network.models.Attachment as NetworkAttachment
 
 internal class AttachmentParsingTest {
-
-    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
-
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
         channelTransformer = NoOpChannelTransformer,

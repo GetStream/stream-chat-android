@@ -20,7 +20,14 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.transformer.ApiModelTransformers
+import io.getstream.chat.android.network.infrastructure.Serializer
 import retrofit2.Retrofit
+
+/** Reads [json] into [T] with the serializer production uses for the generated models. */
+internal inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
+
+/** Writes [value] with the serializer production uses for the generated models. */
+internal inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
 
 internal object ParserFactory {
     /**

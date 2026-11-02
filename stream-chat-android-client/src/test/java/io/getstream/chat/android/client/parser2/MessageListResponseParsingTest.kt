@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GetRepliesResponse
 import io.getstream.chat.android.network.models.SendReactionResponse
@@ -27,9 +26,6 @@ import org.junit.jupiter.api.assertThrows
 
 /** The replies, pinned messages and send reaction responses parsed through their generated models. */
 internal class MessageListResponseParsingTest {
-
-    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
-
     @Test
     fun `Replies parse their messages`() {
         val response = parse<GetRepliesResponse>("""{ "duration": "1ms", "messages": [$MESSAGE] }""")

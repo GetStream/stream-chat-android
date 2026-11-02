@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.parser2.testdata.MessageFixtures
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GetMessageResponse
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.MessageWithChannelResponse
@@ -39,7 +38,6 @@ import org.junit.jupiter.params.provider.MethodSource
  * [MessageResponse] it extends.
  */
 internal class GetMessageResponseParityTest {
-
     private val mapping = DomainMapping(
         currentUserIdProvider = { "jaewoong" },
         channelTransformer = NoOpChannelTransformer,
@@ -134,8 +132,6 @@ internal class GetMessageResponseParityTest {
             "reaction_counts",
             "reaction_scores",
         )
-
-        private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
         /** The first shared message fixture the generated [MessageResponse] accepts. */
         private fun message(): String = MessageFixtures.fixtures()

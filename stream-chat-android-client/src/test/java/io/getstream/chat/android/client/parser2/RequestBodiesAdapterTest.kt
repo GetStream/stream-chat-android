@@ -17,13 +17,10 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.RequestBodiesTestData
-import io.getstream.chat.android.network.infrastructure.Serializer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class RequestBodiesAdapterTest {
-    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
-
     @Test
     fun `Serialize the queryMembers payload`() {
         val json = toJson(RequestBodiesTestData.queryMembers)

@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.parser2.testdata.LocationTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.QueryChannelsResponse
@@ -33,9 +32,6 @@ import org.junit.jupiter.api.Test
  * `active_live_locations` is sent next to `channel` in the channel state, not inside it.
  */
 internal class ChannelStateActiveLiveLocationsParsingTest {
-
-    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
-
     private val channelState =
         """{"channel":$CHANNEL,"active_live_locations":[${LocationTestData.jsonAllFields}]}"""
 

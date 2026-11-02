@@ -21,15 +21,12 @@ import io.getstream.chat.android.client.parser2.testdata.MessageFixtures
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.MessageResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class MessageResponseParsingTest {
-    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
-
     private val mapping = DomainMapping(
         currentUserIdProvider = { "user-1" },
         channelTransformer = NoOpChannelTransformer,

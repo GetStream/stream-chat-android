@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SearchResultMessage
@@ -36,15 +35,12 @@ import org.junit.jupiter.params.provider.MethodSource
  * extends.
  */
 internal class SearchResponseParityTest {
-
     private val mapping = DomainMapping(
         currentUserIdProvider = { "jaewoong" },
         channelTransformer = NoOpChannelTransformer,
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
     )
-
-    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("io.getstream.chat.android.client.parser2.testdata.MessageFixtures#fixtures")

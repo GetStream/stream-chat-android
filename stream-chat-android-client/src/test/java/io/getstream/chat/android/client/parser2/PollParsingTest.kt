@@ -24,16 +24,12 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.PollResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class PollParsingTest {
-
-    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
-
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { null },
         channelTransformer = NoOpChannelTransformer,

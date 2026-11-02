@@ -17,13 +17,10 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.MessageAndReminderRequestTestData
-import io.getstream.chat.android.network.infrastructure.Serializer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class MessageAndReminderRequestAdapterTest {
-    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
-
     @Test
     fun `Serialize UpdateMessagePartialRequest with all fields`() {
         val json = toJson(MessageAndReminderRequestTestData.updateMessagePartialRequest)

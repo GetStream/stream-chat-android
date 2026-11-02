@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.SortParamRequest
@@ -27,9 +26,6 @@ import org.junit.jupiter.api.Test
 import java.util.Date
 
 internal class QueryGroupedChannelsRequestSerializationTest {
-
-    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
-
     @Test
     fun `Serialize group filters with a date cutoff, a relative cutoff, an empty filter and no filter`() {
         val request = GroupedQueryChannelsRequest(

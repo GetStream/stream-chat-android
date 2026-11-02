@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -26,8 +25,6 @@ import org.junit.jupiter.api.Test
  * Tests for JSON deserialization of [GroupedQueryChannelsResponse] using Moshi.
  */
 internal class QueryGroupedChannelsResponseAdapterTest {
-    private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
-
     @Language("JSON")
     private val jsonWithoutUnreadCounters = """
         {

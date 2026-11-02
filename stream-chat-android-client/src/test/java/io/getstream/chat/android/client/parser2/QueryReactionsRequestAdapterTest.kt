@@ -23,8 +23,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class QueryReactionsRequestAdapterTest {
-    private inline fun <reified T> toJson(value: T): String = Serializer.moshi.adapter(T::class.java).toJson(value)
-
     @Test
     fun `Serialize QueryReactionsRequest with all fields`() {
         val json = toJson(QueryReactionsRequestTestData.queryReactionsRequest)
