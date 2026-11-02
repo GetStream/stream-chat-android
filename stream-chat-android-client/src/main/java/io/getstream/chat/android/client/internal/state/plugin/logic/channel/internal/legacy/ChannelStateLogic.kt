@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.keepingActiveMemberCountOf
 import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.TypingEventPruner
@@ -125,10 +126,7 @@ internal class ChannelStateLogic(
                 true -> it.copy(ownCapabilities = currentChannelData.ownCapabilities)
                 else -> it
             }
-        }.let {
-            // Only queries that ask for it carry the active member count, so keep the last known one
-            it.copy(activeMemberCount = it.activeMemberCount ?: currentChannelData.activeMemberCount)
-        }
+        }.keepingActiveMemberCountOf(currentChannelData)
         mutableState.setChannelData(newChannelData)
     }
 

@@ -191,6 +191,19 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
+        fun `should keep the last known activeMemberCount when the channel has none`() {
+            // Given
+            val channel = randomChannel(id = "123", type = "messaging", messages = emptyList(), activeMemberCount = null)
+            // When
+            sut.onQueryChannelResult(QueryChannelRequest().withMessages(30), Result.Success(channel))
+            // Then
+            val captor = argumentCaptor<(ChannelData?) -> ChannelData?>()
+            verify(stateImpl).updateChannelData(captor.capture())
+            val current = ChannelData(id = "123", type = "messaging", activeMemberCount = 7)
+            assertEquals(7, captor.firstValue(current)?.activeMemberCount)
+        }
+
+        @Test
         fun `should reset recovery state on success with message limit`() {
             // Given
             val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))

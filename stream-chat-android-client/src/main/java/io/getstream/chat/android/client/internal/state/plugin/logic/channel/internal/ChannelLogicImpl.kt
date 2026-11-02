@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.keepingActiveMemberCountOf
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
@@ -136,13 +137,14 @@ internal class ChannelLogicImpl(
                 val channel = result.value
                 // Update channel data
                 val channelData = channel.toChannelData()
-                state.updateChannelData {
+                state.updateChannelData { current ->
                     // Enrich own_capabilities
-                    if (channelData.ownCapabilities.isEmpty()) {
+                    val enriched = if (channelData.ownCapabilities.isEmpty()) {
                         channelData.copy(ownCapabilities = state.channelData.value.ownCapabilities)
                     } else {
                         channelData
                     }
+                    enriched.keepingActiveMemberCountOf(current)
                 }
                 // Update member/watcher data
                 state.setMemberCount(channel.memberCount)
@@ -318,8 +320,7 @@ internal class ChannelLogicImpl(
             } else {
                 channelData
             }
-            // Only queries that ask for it carry the active member count, so keep the last known one
-            enriched.copy(activeMemberCount = enriched.activeMemberCount ?: current?.activeMemberCount)
+            enriched.keepingActiveMemberCountOf(current)
         }
         // Update member/watcher data
         state.setMemberCount(channel.memberCount)

@@ -37,7 +37,9 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * When set, [filter] and [querySort] are ignored by the backend.
  * @property filterValues Values to interpolate into the predefined filter template.
  * @property sortValues Values to interpolate into the predefined sort template.
- * @property includeActiveMemberCount Whether to fill [Channel.activeMemberCount] on the returned channels.
+ * @property includeActiveMemberCount Whether to fill [Channel.activeMemberCount] on the returned channels. When set,
+ * the request fails if the returned channels have more than 50,000 members in total, so lower [limit] for large
+ * channels. The flag is kept for the next pages and for the refresh after a reconnect.
  */
 public data class QueryChannelsRequest @JvmOverloads constructor(
     public val filter: FilterObject,
@@ -63,7 +65,8 @@ public data class QueryChannelsRequest @JvmOverloads constructor(
      * @param offset Pagination offset.
      * @param messageLimit Number of messages in the response. When `null`, the server-side default is used.
      * @param memberLimit Number of members in the response. When `null`, the server-side default is used.
-     * @param includeActiveMemberCount Whether to fill [Channel.activeMemberCount] on the returned channels.
+     * @param includeActiveMemberCount Whether to fill [Channel.activeMemberCount] on the returned channels. When
+     * set, the request fails if the returned channels have more than 50,000 members in total.
      */
     @JvmOverloads
     public constructor(

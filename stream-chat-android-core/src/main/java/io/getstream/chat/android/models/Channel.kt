@@ -74,7 +74,9 @@ import java.util.Date
  * @param autoTranslationLanguages The language codes messages are translated to when [autoTranslationEnabled] is set.
  * @param activeMemberCount Number of members whose users are neither deactivated nor deleted. Only filled when
  * the channels are queried with `QueryChannelsRequest.includeActiveMemberCount`, and kept from the last such query
- * otherwise. Null when it was never requested, or when the server could not compute it in time.
+ * otherwise. Null when it was never requested, or when the server could not compute it in time. Use [memberCount]
+ * when it is null. Requesting it fails the whole query when the returned channels have more than 50,000 members in
+ * total.
  */
 @Immutable
 public data class Channel(
