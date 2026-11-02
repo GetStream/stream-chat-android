@@ -33,8 +33,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
-import androidx.compose.material.icons.rounded.NearMe
-import androidx.compose.material.icons.rounded.NearMeDisabled
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -45,9 +43,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
@@ -182,7 +183,7 @@ private fun LiveLocationSharing(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.NearMeDisabled,
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_near_me_disabled),
                     contentDescription = null,
                     tint = ChatTheme.colors.textSecondary,
                 )
@@ -200,7 +201,7 @@ private fun LiveLocationSharing(
                 ) {
                     if (!isOwnMessage) {
                         Icon(
-                            imageVector = Icons.Rounded.NearMe,
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_near_me),
                             contentDescription = null,
                             tint = ChatTheme.colors.accentPrimary,
                         )
