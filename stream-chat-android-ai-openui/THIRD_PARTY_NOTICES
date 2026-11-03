@@ -3,7 +3,9 @@ THIRD-PARTY SOFTWARE NOTICES
 This module ports OpenUI (https://github.com/thesysdev/openui) to Kotlin. The language runtime
 (package `lang`) is derived from the @openuidev/lang-core package and the OpenUI Lang 1.0
 specification, and the conformance fixtures in src/test/resources/fixtures were generated
-with them.
+with them. The component library definitions, their prompt examples and rules, and the system
+prompt text (package `library`) are derived from the @openuidev/react-ui and @openuidev/lang-core
+packages.
 OpenUI is distributed under the following license:
 
 --------------------------------------------------------------------------------
