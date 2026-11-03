@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.client.api2.mapping.USER_DEVICES_CUSTOM_KEY
+import io.getstream.chat.android.client.api2.mapping.requestCustom
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.token.TokenManager
@@ -97,7 +97,7 @@ internal class SocketFactory(
                 if (user.language.isNotBlank()) put("language", user.language)
                 user.invisible?.also { put("invisible", it) }
                 user.privacySettings?.also { put("privacy_settings", it.reducePrivacySettings()) }
-                val custom = user.extraData - USER_DEVICES_CUSTOM_KEY
+                val custom = user.requestCustom()
                 if (custom.isNotEmpty()) put("custom", custom)
             }
         }
