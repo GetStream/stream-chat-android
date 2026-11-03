@@ -40,7 +40,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,7 +63,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.LocalComponentFactory
+import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerSendButtonParams
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -119,28 +118,28 @@ internal fun ScheduledMessagesComposer(
         requestedSheet = null
     }
     val snackbarHostState = remember { SnackbarHostState() }
-    val base = LocalComponentFactory.current
-    // Remembered here, not with CompoundComponentFactory, so typing in the composer does not rebuild it.
-    val componentFactory = remember(base, composerViewModel, viewModel) {
-        ScheduledMessagesComponentFactory(
-            delegate = base,
-            composerViewModel = composerViewModel,
-            viewModel = viewModel,
-            onViewClick = onViewClick,
-            onSendLongClick = {
-                requestedSheet = when {
-                    viewModel.editedMessage.value == null -> ScheduleSheet.Quick
-                    viewModel.isScheduledAgain -> ScheduleSheet.ScheduleAgain
-                    else -> ScheduleSheet.Reschedule
-                }
-            },
-            onScheduleAgainClick = { requestedSheet = ScheduleSheet.ScheduleAgain },
-        )
-    }
     ThreadTracker(composerViewModel, viewModel)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        CompositionLocalProvider(LocalComponentFactory provides componentFactory, content = content)
+        CompoundComponentFactory(
+            factory = { base ->
+                ScheduledMessagesComponentFactory(
+                    delegate = base,
+                    composerViewModel = composerViewModel,
+                    viewModel = viewModel,
+                    onViewClick = onViewClick,
+                    onSendLongClick = {
+                        requestedSheet = when {
+                            viewModel.editedMessage.value == null -> ScheduleSheet.Quick
+                            viewModel.isScheduledAgain -> ScheduleSheet.ScheduleAgain
+                            else -> ScheduleSheet.Reschedule
+                        }
+                    },
+                    onScheduleAgainClick = { requestedSheet = ScheduleSheet.ScheduleAgain },
+                )
+            },
+            content = content,
+        )
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
