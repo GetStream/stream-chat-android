@@ -146,8 +146,12 @@ public class StateRegistry(
             buildChannelState(channelId.type, channelId.id)
         }
 
+    /**
+     * Marks the channel as read in its state, if it has one. A channel with no state has no messages to mark, and
+     * creating one here would leave a state that channel lists would copy as a channel with no members.
+     */
     internal fun markChannelAsRead(channelType: String, channelId: String): Boolean =
-        mutableChannel(channelType = channelType, channelId = channelId).markChannelAsRead()
+        ChannelId.fromTypeAndId(channelType, channelId)?.let { channels[it] }?.markChannelAsRead() == true
 
     /**
      * Checks if the channel is already present in the state.

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
@@ -27,6 +28,7 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.state.internal.WatchedChannelStateFlow
@@ -37,6 +39,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -347,5 +350,33 @@ internal class StateRegistryTest {
 
         assertEquals(1, stateRegistry.getActiveChannelStates().size)
         assertTrue(stateRegistry.isActiveChannel(messaging123))
+    }
+
+    @Test
+    fun `markChannelAsRead for a channel with no state does not create one`() {
+        val marked = stateRegistry.markChannelAsRead("messaging", "123")
+
+        assertFalse(marked)
+        assertFalse(stateRegistry.isActiveChannel(messaging123))
+    }
+
+    @Test
+    fun `markChannelAsRead marks a channel with a state as read`() {
+        stateRegistry.mutableChannel(messaging123).apply {
+            setChannelConfig(Config(readEventsEnabled = true))
+            upsertMessages(
+                listOf(
+                    randomMessage(
+                        cid = messaging123.cid,
+                        type = "regular",
+                        parentId = null,
+                        deletedAt = null,
+                        shadowed = false,
+                    ),
+                ),
+            )
+        }
+
+        assertTrue(stateRegistry.markChannelAsRead("messaging", "123"))
     }
 }
