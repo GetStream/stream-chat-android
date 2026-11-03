@@ -35,6 +35,7 @@ streamProject {
 
     coverage {
         includedModules = setOf(
+            "stream-chat-android-ai-a2ui",
             "stream-chat-android-ai-compose",
             "stream-chat-android-ai-ondevice",
             "stream-chat-android-client",

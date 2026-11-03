@@ -48,6 +48,14 @@ android {
             dimension = "sdk"
             minSdk = libs.versions.aiOnDeviceMinSdk.get().toInt()
         }
+        create("stream-chat-android-ai-a2ui-baseline") {
+            dimension = "sdk"
+            minSdk = libs.versions.aiComposeMinSdk.get().toInt()
+        }
+        create("stream-chat-android-ai-a2ui-stream") {
+            dimension = "sdk"
+            minSdk = libs.versions.aiComposeMinSdk.get().toInt()
+        }
     }
 }
 
@@ -86,4 +94,6 @@ dependencies {
     "stream-chat-android-ai-compose-streamImplementation"(project(":stream-chat-android-ai-compose"))
 
     "stream-chat-android-ai-ondevice-streamImplementation"(project(":stream-chat-android-ai-ondevice"))
+
+    "stream-chat-android-ai-a2ui-streamImplementation"(project(":stream-chat-android-ai-a2ui"))
 }
