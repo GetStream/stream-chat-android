@@ -18,10 +18,26 @@ The message processor also produces the renderer's other messages to the agent: 
 
 Parsing and processing are internal: the public API is the renderer, its catalog and the actions it sends.
 
+## The basic catalog in Compose
+
+`A2UICatalog.Basic` draws every component of the basic catalog with Material 3: text with simple Markdown, images, icons, video and audio, rows, columns, lists, cards, tabs, modals and dividers, and buttons, text fields, checkboxes, choice pickers, sliders and date and time inputs. Inputs write to the surface's data model as the person changes them, and a button's checks disable it until they pass.
+
+To draw a type your own way, give the catalog a renderer for it. A renderer reads its component through `A2UIComponentScope`, with bindings resolved, and draws its children with the same catalog:
+
+```kotlin
+val catalog = A2UICatalog.Basic.with("Card") { scope ->
+    BrandCard(modifier = scope.modifier) {
+        scope.child()?.let { scope.Child(it) }
+    }
+}
+```
+
+Agent-written content is untrusted: links in text don't open, images, video and audio load only over the web, and nothing on the device is read for them.
+
 ## Conformance
 
 The tests run the A2UI conformance suite (`conformance/core` of the A2UI repository) case by case, and every example published with the basic catalog. Cases for earlier protocol versions, and for what a renderer in a chat doesn't do, are skipped with the reason in `ConformanceSkips`.
 
 ## License
 
-A2UI is Apache 2.0 licensed. This module bundles its basic catalog and common types, and its tests use its conformance suite; see [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES).
+A2UI is Apache 2.0 licensed. This module bundles its basic catalog and common types, and its tests use its conformance suite. The icons the basic catalog names that `material-icons-core` lacks are copied from `material-icons-extended`, also Apache 2.0. See [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES).
