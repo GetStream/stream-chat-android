@@ -1,0 +1,181 @@
+{
+  "messages": [
+    {
+      "version": "1.0",
+      "createSurface": {
+        "surfaceId": "restaurant-finder",
+        "catalogId": "https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json"
+      }
+    },
+    {
+      "version": "1.0",
+      "updateComponents": {
+        "surfaceId": "restaurant-finder",
+        "components": [
+          {
+            "id": "root",
+            "component": "Column",
+            "children": [
+              "title_heading",
+              "restaurant_list"
+            ]
+          },
+          {
+            "id": "title_heading",
+            "component": "Text",
+            "text": {
+              "@call": "formatString",
+              "args": {
+                "value": "## ${/title}"
+              }
+            }
+          },
+          {
+            "id": "restaurant_list",
+            "component": "List",
+            "direction": "vertical",
+            "children": {
+              "componentId": "restaurant_card",
+              "path": "/items"
+            }
+          },
+          {
+            "id": "restaurant_card",
+            "component": "Card",
+            "child": "restaurant_card_body"
+          },
+          {
+            "id": "restaurant_card_body",
+            "component": "Row",
+            "children": [
+              "restaurant_image",
+              "restaurant_details"
+            ]
+          },
+          {
+            "id": "restaurant_image",
+            "component": "Image",
+            "weight": 1,
+            "url": {
+              "@path": "imageUrl"
+            },
+            "fit": "cover",
+            "variant": "smallFeature"
+          },
+          {
+            "id": "restaurant_details",
+            "component": "Column",
+            "weight": 2,
+            "children": [
+              "restaurant_name",
+              "restaurant_rating",
+              "restaurant_detail",
+              "restaurant_link",
+              "restaurant_book_button"
+            ]
+          },
+          {
+            "id": "restaurant_name",
+            "component": "Text",
+            "text": {
+              "@call": "formatString",
+              "args": {
+                "value": "#### ${name}"
+              }
+            }
+          },
+          {
+            "id": "restaurant_rating",
+            "component": "Text",
+            "text": {
+              "@path": "rating"
+            }
+          },
+          {
+            "id": "restaurant_detail",
+            "component": "Text",
+            "text": {
+              "@path": "detail"
+            }
+          },
+          {
+            "id": "restaurant_link",
+            "component": "Text",
+            "text": {
+              "@path": "infoLink"
+            }
+          },
+          {
+            "id": "restaurant_book_button",
+            "component": "Button",
+            "child": "book_now_text",
+            "variant": "primary",
+            "action": {
+              "event": {
+                "name": "book_restaurant",
+                "context": {
+                  "restaurantName": {
+                    "@path": "name"
+                  },
+                  "address": {
+                    "@path": "address"
+                  },
+                  "imageUrl": {
+                    "@path": "imageUrl"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "book_now_text",
+            "component": "Text",
+            "text": "Book Now"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0",
+      "updateDataModel": {
+        "surfaceId": "restaurant-finder",
+        "path": "/",
+        "value": {
+          "title": "Top 3 restaurants in New York",
+          "items": [
+            {
+              "id": "xian-famous-foods",
+              "name": "Xi'an Famous Foods",
+              "detail": "Hand-pulled noodles and bold Xi\u2019an-style spices served fast.",
+              "rating": "4.7 / 5",
+              "infoLink": "https://www.xianfoods.com/",
+              "imageUrl": "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=900&q=80",
+              "address": "81 St Marks Pl, New York, NY 10003",
+              "neighborhood": "East Village"
+            },
+            {
+              "id": "han-dynasty",
+              "name": "Han Dynasty",
+              "detail": "Classic Sichuan dishes with a cult following for peppercorn heat.",
+              "rating": "4.6 / 5",
+              "infoLink": "https://handynasty.net/",
+              "imageUrl": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80",
+              "address": "90 3rd Ave, New York, NY 10003",
+              "neighborhood": "East Village"
+            },
+            {
+              "id": "redfarm",
+              "name": "RedFarm",
+              "detail": "Modern Chinese small plates with playful presentation.",
+              "rating": "4.5 / 5",
+              "infoLink": "https://redfarmnyc.com/",
+              "imageUrl": "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+              "address": "529 Hudson St, New York, NY 10014",
+              "neighborhood": "West Village"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
