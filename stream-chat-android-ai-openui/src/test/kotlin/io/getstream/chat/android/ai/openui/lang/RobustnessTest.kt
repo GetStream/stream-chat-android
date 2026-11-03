@@ -58,6 +58,40 @@ internal class RobustnessTest {
     }
 
     @Test
+    fun `long operator and member chains do not overflow the stack`() {
+        val count = 20_000
+        val programs = listOf(
+            "root = Stack([TextContent(" + List(count) { "1" }.joinToString("+") + ")])",
+            "root = Stack([TextContent(x" + ".a".repeat(count) + ")])",
+            "root = Stack([TextContent(" + List(count) { "\$v" }.joinToString("+") + ")])",
+        )
+
+        programs.forEach { program ->
+            assertEquals("Stack", parser.parse(program).root?.typeName)
+        }
+    }
+
+    @Test
+    fun `statements that reference one another twice stay within bounds`() {
+        val levels = 40
+        val lines = listOf("root = Stack([a1])") +
+            (1..levels).map { "a$it = Stack([a${it + 1}, a${it + 1}])" } +
+            "a${levels + 1} = TextContent(\"x\")"
+
+        val result = parser.parse(lines.joinToString("\n"))
+
+        assertEquals("Stack", result.root?.typeName)
+    }
+
+    @Test
+    fun `a chain within the limits is kept`() {
+        val result = parser.parse("root = Stack([TextContent(" + List(100) { "\"a\"" }.joinToString("+") + ")])")
+
+        assertTrue(result.meta.errors.isEmpty())
+        assertEquals("Stack", result.root?.typeName)
+    }
+
+    @Test
     fun `nesting within the limits is kept`() {
         val program = "root = Stack([" + "Stack([".repeat(50) + "TextContent(\"deep\")" + "])".repeat(50) + "])"
 

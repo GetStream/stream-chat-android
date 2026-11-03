@@ -33,6 +33,10 @@ internal object Materializer {
      */
     internal const val MAX_DEPTH = 256
 
+    // More nodes than any real program has: statements that reference one another more than once
+    // would otherwise grow the work with every level.
+    internal const val MAX_NODES = 20_000
+
     /** Whether a prop value contains anything that needs runtime evaluation. */
     fun containsDynamicValue(value: OpenUIValue?): Boolean = when (value) {
         is OpenUIValue.Expression -> true
@@ -263,8 +267,9 @@ internal object Materializer {
      * `mappedProps` to catalog component and library calls. The structure is kept for the evaluator.
      */
     fun materializeExpression(node: ASTNode, context: MaterializeContext, scoped: Set<String> = emptySet()): ASTNode {
-        if (context.depth >= MAX_DEPTH) return ASTNode.Null
+        if (context.depth >= MAX_DEPTH || context.nodes >= MAX_NODES) return ASTNode.Null
         context.depth++
+        context.nodes++
         try {
             return lowerExpression(node, context, scoped)
         } finally {
@@ -320,8 +325,9 @@ internal object Materializer {
      * - `null` for placeholders and unresolved references
      */
     fun materializeValue(node: ASTNode, context: MaterializeContext): OpenUIValue {
-        if (context.depth >= MAX_DEPTH) return OpenUIValue.Null
+        if (context.depth >= MAX_DEPTH || context.nodes >= MAX_NODES) return OpenUIValue.Null
         context.depth++
+        context.nodes++
         try {
             return lowerValue(node, context)
         } finally {
