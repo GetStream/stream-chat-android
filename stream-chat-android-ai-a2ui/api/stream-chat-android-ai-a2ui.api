@@ -89,3 +89,24 @@ public final class io/getstream/chat/android/ai/a2ui/compose/ComposableSingleton
 	public final fun getLambda$-682726990$stream_chat_android_ai_a2ui_release ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/getstream/chat/android/ai/a2ui/generativeui/A2UIRenderer : io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer {
+	public static final field $stable I
+	public static final field BASIC_CATALOG_ID Ljava/lang/String;
+	public static final field Companion Lio/getstream/chat/android/ai/a2ui/generativeui/A2UIRenderer$Companion;
+	public static final field DEFAULT_CATALOG_ID Ljava/lang/String;
+	public static final field VERSION Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;Ljava/lang/String;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun capabilities (Ljava/util/List;)Ljava/util/Map;
+	public final fun getCatalog ()Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;
+	public final fun getCatalogId ()Ljava/lang/String;
+	public final fun getFence ()Ljava/lang/String;
+	public fun getFormat-cv5I8qU ()Ljava/lang/String;
+	public fun makeEngine (Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIEngine;
+	public fun supports (Ljava/lang/String;)Z
+}
+
+public final class io/getstream/chat/android/ai/a2ui/generativeui/A2UIRenderer$Companion {
+}
+

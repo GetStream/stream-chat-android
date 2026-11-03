@@ -1,0 +1,379 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.ai.a2ui.generativeui
+
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.ai.a2ui.core.A2UIJson
+import io.getstream.chat.android.ai.a2ui.core.DataPath
+import io.getstream.chat.android.ai.a2ui.core.Fixtures
+import io.getstream.chat.android.ai.compose.generativeui.AIUIAction
+import io.getstream.chat.android.ai.compose.generativeui.AIUIComponent
+import io.getstream.chat.android.ai.compose.generativeui.AIUIComponentDefinition
+import io.getstream.chat.android.ai.compose.generativeui.AIUIDocument
+import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
+import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
+import io.getstream.chat.android.ai.compose.generativeui.AIUIParameter
+import io.getstream.chat.android.ai.compose.generativeui.AIUIParameterType
+import io.getstream.chat.android.ai.compose.generativeui.AIUIView
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+internal class A2UIRendererTest {
+
+    @get:Rule
+    val rule = createComposeRule()
+
+    private val sent = mutableListOf<AIUIAction>()
+    private val opened = mutableListOf<String>()
+
+    private val placeCard = AIUIComponent(
+        AIUIComponentDefinition(
+            name = "place_card",
+            description = "A short summary of a place",
+            parameters = listOf(AIUIParameter.required("title", AIUIParameterType.String)),
+            events = listOf(AIUIComponentDefinition.Event("ask_about", "The person asks about the place")),
+        ),
+    ) { arguments, context ->
+        val title = arguments["title"] as? String ?: return@AIUIComponent
+        Text("Place: $title")
+        Text("Ask", modifier = Modifier.clickable { context.emit("ask_about", "Tell me about $title") })
+    }
+
+    // A component named like one of the basic catalog's, which mustn't replace it.
+    private val card = AIUIComponent(
+        AIUIComponentDefinition(name = "card", description = "Not the catalog's card"),
+    ) { _, _ ->
+        Text("App card")
+    }
+
+    private val renderer = A2UIRenderer()
+    private val host = AIUIHost(renderers = listOf(renderer), components = listOf(placeCard, card)) { sent.add(it) }
+
+    private fun document(content: Any?, isStreaming: Boolean = false, version: String? = "1.0") =
+        AIUIDocument(format = AIUIFormat.A2UI, version = version, isStreaming = isStreaming, content = content)
+
+    private fun message(type: String, body: Map<String, Any?>, version: String = "1.0") =
+        A2UIJson.write(mapOf("version" to version, type to body))
+
+    private fun surface(
+        vararg components: Map<String, Any?>,
+        data: Map<String, Any?> = emptyMap(),
+        catalogId: String? = null,
+    ) =
+        message(
+            "createSurface",
+            buildMap {
+                put("surfaceId", "s")
+                catalogId?.let { put("catalogId", it) }
+                put("components", components.toList())
+                put("dataModel", data)
+            },
+        )
+
+    private fun show(document: AIUIDocument, messageId: String = "m1") {
+        val uriHandler = object : UriHandler {
+            override fun openUri(uri: String) {
+                opened.add(uri)
+            }
+        }
+        rule.setContent {
+            CompositionLocalProvider(LocalUriHandler provides uriHandler) {
+                MaterialTheme { AIUIView(host, document, messageId) }
+            }
+        }
+    }
+
+    @Test
+    fun `it reads A2UI 1_0 under the names agents give it`() {
+        assertEquals(AIUIFormat.A2UI, renderer.format)
+        listOf(null, "1", "1.0", "1.0.0", "v1.0").forEach { assertTrue(it.toString(), renderer.supports(it)) }
+        listOf("0.9", "v0.9", "2.0").forEach { assertFalse(it, renderer.supports(it)) }
+    }
+
+    @Test
+    fun `its capabilities hold the fence and the catalog with the app's components`() {
+        val capabilities = renderer.capabilities(listOf(placeCard, card))
+
+        assertEquals("ui:a2ui@1.0", capabilities["fence"])
+        assertEquals("getstream.io:app-catalog", capabilities["catalog_id"])
+        val catalog = A2UIJson.map(capabilities["catalog"])!!
+        assertEquals("getstream.io:app-catalog", catalog["catalogId"])
+        val components = A2UIJson.map(catalog["components"])!!
+        assertTrue("PlaceCard" in components)
+        assertTrue("Text" in components)
+        assertFalse(A2UIJson.map(components["Card"])!!["description"] == "Not the catalog's card.")
+        val placeCardSchema = A2UIJson.map(components["PlaceCard"])!!
+        assertEquals("A short summary of a place. The person asks about the place.", placeCardSchema["description"])
+        assertEquals(listOf("title", "component"), placeCardSchema["required"])
+        assertTrue(catalog["instructions"].toString().contains("formatString"))
+    }
+
+    @Test
+    fun `a reply shows its surfaces from text with prose around the messages`() {
+        val text = "Here is your plan:\n" + surface(
+            mapOf("id" to "root", "component" to "Text", "text" to mapOf("@path" to "/title")),
+            data = mapOf("title" to "A weekend in Ohrid"),
+        ) + "\nEnjoy!"
+
+        show(document(text))
+
+        rule.onNodeWithText("A weekend in Ohrid").assertExists()
+    }
+
+    @Test
+    fun `a reply reads messages sent as JSON, in a wrapper, and with another spelling of the version`() {
+        val messages = listOf(
+            A2UIJson.parse(surface(mapOf("id" to "root", "component" to "Text", "text" to "From JSON"))),
+        ).map { (it as Map<*, *>) + ("version" to "v1") }
+
+        show(document(mapOf("messages" to messages)))
+
+        rule.onNodeWithText("From JSON").assertExists()
+    }
+
+    @Test
+    fun `a button sends its event as an action labelled with the button's text`() {
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Button", "child" to "label", "action" to bookEvent()),
+                    mapOf("id" to "label", "component" to "Text", "text" to "Book Now"),
+                    data = mapOf("name" to "Lake View"),
+                ),
+            ),
+        )
+
+        rule.onNodeWithText("Book Now").performClick()
+
+        val action = sent.single()
+        assertEquals("m1", action.messageId)
+        assertEquals(AIUIFormat.A2UI, action.format)
+        assertEquals("book", action.name)
+        assertEquals("Book Now", action.label)
+        assertEquals("s", action.payload["surfaceId"])
+        assertEquals("root", action.payload["sourceComponentId"])
+        assertEquals(mapOf("restaurant" to "Lake View"), action.payload["context"])
+    }
+
+    @Test
+    fun `an event's user message is the action's label`() {
+        val userMessage = mapOf("@call" to "formatString", "args" to mapOf("value" to "Book \${/name}"))
+        val event = mapOf("event" to mapOf("name" to "book", "userMessage" to userMessage))
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Button", "child" to "label", "action" to event),
+                    mapOf("id" to "label", "component" to "Text", "text" to "Go"),
+                    data = mapOf("name" to "Lake View"),
+                ),
+            ),
+        )
+
+        rule.onNodeWithText("Go").performClick()
+
+        assertEquals("Book Lake View", sent.single().label)
+    }
+
+    @Test
+    fun `the agent places the app's component, which reports its events`() {
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "PlaceCard", "title" to mapOf("@path" to "/place")),
+                    data = mapOf("place" to "St. Naum"),
+                    catalogId = A2UIRenderer.DEFAULT_CATALOG_ID,
+                ),
+            ),
+        )
+
+        rule.onNodeWithText("Place: St. Naum").assertExists()
+        rule.onNodeWithText("Ask").performClick()
+
+        val action = sent.single()
+        assertEquals("ask_about", action.name)
+        assertEquals("Tell me about St. Naum", action.label)
+        assertEquals("place_card", action.payload["component"])
+    }
+
+    @Test
+    fun `a component named like the catalog's keeps the catalog's look`() {
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Card", "child" to "text"),
+                    mapOf("id" to "text", "component" to "Text", "text" to "Inside the card"),
+                ),
+            ),
+        )
+
+        rule.onNodeWithText("Inside the card").assertExists()
+        rule.onNodeWithText("App card").assertDoesNotExist()
+    }
+
+    @Test
+    fun `a link opens through the host from a person's tap`() {
+        val action = openUrl("https://example.com/menu")
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Column", "children" to listOf("web", "bad")),
+                    mapOf("id" to "web", "component" to "Button", "child" to "web_label", "action" to action),
+                    mapOf("id" to "web_label", "component" to "Text", "text" to "Menu"),
+                    mapOf(
+                        "id" to "bad",
+                        "component" to "Button",
+                        "child" to "bad_label",
+                        "action" to openUrl("javascript:alert(1)"),
+                    ),
+                    mapOf("id" to "bad_label", "component" to "Text", "text" to "Bad"),
+                ),
+            ),
+        )
+
+        rule.onNodeWithText("Menu").performClick()
+        rule.onNodeWithText("Bad").performClick()
+
+        assertEquals(listOf("https://example.com/menu"), opened)
+        assertTrue(sent.isEmpty())
+    }
+
+    @Test
+    fun `a streaming reply grows, and a reply that changed starts again`() {
+        val create = surface(
+            mapOf("id" to "root", "component" to "Text", "text" to mapOf("@path" to "/status")),
+            data = mapOf("status" to "Looking…"),
+        )
+        val update = message(
+            "updateDataModel",
+            mapOf("surfaceId" to "s", "path" to "/status", "value" to "Found 3 places"),
+        )
+        var current by mutableStateOf(document(create, isStreaming = true))
+        rule.setContent { MaterialTheme { AIUIView(host, current, "m1") } }
+        rule.onNodeWithText("Looking…").assertExists()
+
+        rule.runOnIdle { current = document("$create\n$update", isStreaming = true) }
+        rule.onNodeWithText("Found 3 places").assertExists()
+
+        val edited = surface(mapOf("id" to "root", "component" to "Text", "text" to "Edited"))
+        rule.runOnIdle { current = document(edited, isStreaming = false) }
+        rule.onNodeWithText("Edited").assertExists()
+        rule.onNodeWithText("Found 3 places").assertDoesNotExist()
+    }
+
+    @Test
+    fun `a part the agent writes later comes in on its own, under the reply's own entrance`() {
+        val create = surface(
+            mapOf("id" to "root", "component" to "Column", "children" to listOf("first")),
+            mapOf("id" to "first", "component" to "Text", "text" to "First"),
+        )
+        val update = message(
+            "updateComponents",
+            mapOf(
+                "surfaceId" to "s",
+                "components" to listOf(
+                    mapOf("id" to "root", "component" to "Column", "children" to listOf("first", "second")),
+                    mapOf("id" to "second", "component" to "Text", "text" to "Second"),
+                ),
+            ),
+        )
+        var current by mutableStateOf(document(create, isStreaming = true))
+        rule.setContent { MaterialTheme { AIUIView(host, current, "m1") } }
+        rule.mainClock.advanceTimeBy(2_000)
+        rule.mainClock.autoAdvance = false
+
+        rule.runOnUiThread {
+            current = document("$create\n$update", isStreaming = true)
+            Snapshot.sendApplyNotifications()
+        }
+        repeat(3) { rule.mainClock.advanceTimeByFrame() }
+        val coming = top("second")
+        rule.mainClock.advanceTimeBy(2_000)
+
+        assertTrue("the new part rises into place", coming - top("second") > 8f)
+    }
+
+    // Where the top of a component is, in dp.
+    private fun top(tag: String): Float =
+        rule.onNodeWithTag(tag).fetchSemanticsNode().positionInRoot.y / rule.density.density
+
+    @Test
+    fun `a finished reply without a surface, or without A2UI, shows its text`() {
+        val engine = renderer.makeEngine(host)
+
+        assertNull(engine.content(document("Just text, no UI."), "m1"))
+        assertNull(engine.content(document(42), "m2"))
+        assertNotNull(engine.content(document("Thinking…", isStreaming = true), "m3"))
+    }
+
+    @Test
+    fun `the restaurant demo's reply shows through the host`() {
+        val messages = A2UIJson.list(A2UIJson.map(Fixtures.json("fixtures/restaurant-list.json"))!!["messages"])!!
+
+        show(document(messages))
+
+        rule.onNodeWithText("Han Dynasty").assertExists()
+    }
+
+    @Test
+    fun `a reply follows its messages while it is off screen`() {
+        val engine = renderer.makeEngine(host) as A2UIEngine
+        val create = surface(mapOf("id" to "root", "component" to "Text", "text" to mapOf("@path" to "/status")))
+        val update = message("updateDataModel", mapOf("surfaceId" to "s", "path" to "/status", "value" to "Booked"))
+        engine.content(document(create, isStreaming = true), "m1")
+
+        engine.receive(document("$create\n$update"), "m1")
+
+        val surface = engine.reply("m1")!!.processor.surface("s")!!
+        assertEquals("Booked", surface.dataModel.get(DataPath.parse("/status")))
+    }
+
+    @Test
+    fun `the app's component names become A2UI types`() {
+        assertEquals("PlaceCard", PortableComponents.typeName("place_card"))
+        assertEquals("WeatherWidget", PortableComponents.typeName("weather-widget"))
+        val invalid = AIUIComponent(AIUIComponentDefinition(name = "9 lives", description = "")) { _, _ -> }
+        assertNull(PortableComponents.definition(invalid))
+    }
+
+    private fun bookEvent() =
+        mapOf("event" to mapOf("name" to "book", "context" to mapOf("restaurant" to mapOf("@path" to "/name"))))
+
+    private fun openUrl(url: String) =
+        mapOf("functionCall" to mapOf("@call" to "openUrl", "args" to mapOf("url" to url)))
+}
