@@ -293,7 +293,8 @@ internal object AgentMessageDecoder {
             if (!DataPath.isValidSyntax(pointer)) {
                 throw DecodingException.InvalidField("path", "updateDataModel", "Invalid path syntax: '$pointer'.")
             }
-            path = DataPath.parse(pointer)
+            // An empty pointer is the whole document, as in JSON Pointer.
+            path = if (pointer.isEmpty()) DataPath.Root else DataPath.parse(pointer)
         }
         return AgentMessage.UpdateDataModel(surfaceId, path, payload["value"])
     }

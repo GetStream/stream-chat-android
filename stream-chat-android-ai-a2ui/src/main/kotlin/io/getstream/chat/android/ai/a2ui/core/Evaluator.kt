@@ -173,7 +173,8 @@ internal class Evaluator(
             return null
         }
         return try {
-            router.agentFunctionValue(name, catalogId, arguments, surfaceId)
+            // The agent learns the catalog the call resolved in, even when the call named none.
+            router.agentFunctionValue(name, catalog.catalogId, arguments, surfaceId)
         } catch (_: FunctionException) {
             failureCount++
             null
