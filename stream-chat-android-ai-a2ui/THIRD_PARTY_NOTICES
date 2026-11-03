@@ -5,6 +5,9 @@ published A2UI 1.0 basic catalog (catalogs/basic/v1/catalog.json) and common typ
 (specification/v1_0/json/common_types.json) as resources, and its tests use the A2UI
 conformance suite (conformance/core), its catalog fixtures and the basic catalog's examples,
 converted to JSON in src/test/resources.
+The icons in the compose/icons package that androidx.compose.material:material-icons-core lacks
+are copied from androidx.compose.material:material-icons-extended 1.7.8, Copyright 2025 The
+Android Open Source Project, distributed under the same Apache License, Version 2.0.
 A2UI is distributed under the following license:
 
 --------------------------------------------------------------------------------
