@@ -44,4 +44,31 @@
     <string name="stream_ai_openui_callout_success">Success</string>
     <string name="stream_ai_openui_callout_warning">Warning</string>
     <string name="stream_ai_openui_callout_error">Error</string>
+    <!-- Form fields. -->
+    <string name="stream_ai_openui_select_placeholder">Select…</string>
+    <string name="stream_ai_openui_date_picker_from">From</string>
+    <string name="stream_ai_openui_date_picker_to">To</string>
+    <string name="stream_ai_openui_date_picker_date">Date</string>
+    <string name="stream_ai_openui_date_picker_choose">Choose</string>
+    <!-- The ends of a range slider, read by TalkBack. %1$s is the slider's label. -->
+    <string name="stream_ai_openui_slider_lower">%1$s, minimum</string>
+    <string name="stream_ai_openui_slider_upper">%1$s, maximum</string>
+    <!-- Tables people edit. -->
+    <string name="stream_ai_openui_editable_table_reset">Reset</string>
+    <string name="stream_ai_openui_editable_table_save">Save Changes</string>
+    <plurals name="stream_ai_openui_editable_table_changes">
+        <item quantity="one">%d change</item>
+        <item quantity="other">%d changes</item>
+    </plurals>
+    <!-- Form validation. %1$s is the field's limit. -->
+    <string name="stream_ai_openui_validation_required">This field is required</string>
+    <string name="stream_ai_openui_validation_required_option">At least one option is required</string>
+    <string name="stream_ai_openui_validation_email">Please enter a valid email</string>
+    <string name="stream_ai_openui_validation_url">Please enter a valid URL</string>
+    <string name="stream_ai_openui_validation_numeric">Must be a number</string>
+    <string name="stream_ai_openui_validation_min">Must be at least %1$s</string>
+    <string name="stream_ai_openui_validation_max">Must be no more than %1$s</string>
+    <string name="stream_ai_openui_validation_min_length">Must be at least %1$s characters</string>
+    <string name="stream_ai_openui_validation_max_length">Must be no more than %1$s characters</string>
+    <string name="stream_ai_openui_validation_pattern">Invalid format</string>
 </resources>
