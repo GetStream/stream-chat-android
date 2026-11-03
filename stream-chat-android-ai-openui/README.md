@@ -27,10 +27,73 @@ The language runtime (package `io.getstream.chat.android.ai.openui.lang`) is por
 - Evaluation resolves `$variables`, references, `@` built-ins such as `@Count` and `@Each`, the library's own functions, and expressions, within a shared budget of work. A function's arguments and result are checked against its schema; a call with invalid arguments, or one that throws, is `null` and reports a runtime error. Actions evaluate to plans of steps (`@ToAssistant`, `@OpenUrl`, `@Set`, `@Reset`, `@Run` and the library's own actions); only real calls make custom steps, so data can't pose as one.
 - Each response keeps its own state: `$variables`, form values and the results of `Query()` and `Mutation()`. Queries start when streaming ends and refresh at most every five seconds, whatever interval the model writes. A tool is told whether the person asked for it: a `Query` runs by itself as the UI shows, a `Mutation` from a tap. Form fields validate with the rules the model writes. Responses are stored in the OpenUI 1.0 message protocol, with their state, and messages in the older XML envelope still read.
 - Libraries: the chat library (every answer is one `Card`) and the standard library (a `Stack` for full-screen surfaces) are defined like upstream's 1.0 libraries, each with the examples and rules upstream gives it. The system prompt lists the components' signatures and descriptions, how they're grouped, the library's functions and actions, and the tools `Query()` and `Mutation()` can run.
-- Components are Compose views that follow the response as it streams. Only web and email links open, since the model writes every link. Images load only from public hosts, each redirect checked the same way, at about the size they show at.
-- Forms validate their fields with the rules the model writes, and a form's submit button sends its values with the action. Sliders, text areas and the other fields keep the numbers the model writes within what they can draw.
-- Card blocks: text, icon and image rows, metric indicators, and the snippet, overview, context, composite and visual card blocks, whose item actions carry the tapped card's details. Gaps and image sizes stay within bounds, whatever the model writes.
-- Icons: the lucide names OpenUI uses map to Material icons, from `material-icons-core` where it has them and otherwise from copies of just the `material-icons-extended` icons the table uses. Markdown renders with `multiplatform-markdown-renderer`, the renderer `stream-chat-android-ai-compose` uses.
+
+## Show replies in a conversation
+
+`OpenUIRenderer` plugs OpenUI into the generative UI of `stream-chat-android-ai-compose`: give it to the conversation's `AIUIHost`, and a reply whose `ai_ui` document is in the `openui` format shows its UI in place of its text.
+
+```kotlin
+val ui = AIUIHost(
+    renderers = listOf(OpenUIRenderer()), // openuiChatLibrary with openuiChatPromptOptions by default
+    components = listOf(placeCard),       // the app's components, placeable as `PlaceCard(...)`
+    tools = listOf(calendar),             // what `Query()` and `Mutation()` run, on the device
+) { action ->
+    viewModelScope.launch { channel.sendMessage(Message(text = action.label, extraData = action.customData)) }
+}
+
+AIConversation(messages = messages, ui = ui)
+ui.capabilities // the fence and the system prompt, with the app's components, for the agent's backend
+```
+
+Each reply keeps its own runtime while the host is kept, so its forms and `$variables` survive scrolling, and its state is kept with the host's state for the reply. What the person does that is for the agent reaches the host's `send` as an `AIUIAction` named after OpenUI's action (`continue_conversation`, or one of the library's custom actions), with the action's `context`, its other `params`, the `form` and the form's `values` in its payload. An app component's events carry its OpenUI name under `component`. Links open through the host, which only opens `https` links unless the app lets others. An app component whose OpenUI name the library already has is left out, so it never replaces one of OpenUI's own; each part of a reply comes in as it shows, with `AIUIEntrance`. To render with another library, pass it with its prompt options: `OpenUIRenderer(library = openuiLibrary, promptOptions = openuiPromptOptions)`.
+
+## Libraries and the Compose renderer
+
+`openuiChatLibrary` (every answer is one `Card`) and `openuiLibrary` (a `Stack` for full-screen surfaces) pair the built-in libraries with Compose components that draw a response natively, following `@openuidev/react-ui` 1.0 (package `io.getstream.chat.android.ai.openui.rendering`). A library writes its system prompt and gives the schema a parser takes:
+
+```kotlin
+val prompt = openuiChatLibrary.prompt(openuiChatPromptOptions)
+openuiChatLibrary.toSpec()       // the PromptSpec generatePrompt takes, for a server
+openuiChatLibrary.toJSONSchema() // the JSON Schema createParser takes
+```
+
+Define your own components with `defineComponent`, with `PropField`s and `PropType`s for their props, and derive a library with `extend`, like upstream's `library.extend`: `add` lists new components, and a `SlottedComponent` also places one in content slots (`"Card"`, or `"Card.children"`); `override` replaces components by name; `remove` takes them out of the library and of every slot; `functions` and `actions` join the library's calls. `createLibrary` builds a library from scratch.
+
+```kotlin
+val placeCard = defineComponent(
+    name = "PlaceCard",
+    props = listOf(PropField.required("name", PropType.string), PropField.optional("rating", PropType.number)),
+    description = "A place with its rating",
+) { props -> PlaceCard(props.props.string("name").orEmpty(), props.props.number("rating")) }
+
+val library = openuiChatLibrary.extend(
+    LibraryExtension(add = listOf(SlottedComponent(placeCard, slots = listOf("Card"))), functions = listOf(percent)),
+)
+```
+
+A component's renderer gets `ComponentRenderProps`: its evaluated `props`, `RenderNode` for its children, `stateField` for a field bound to a `$variable` or its form, and `triggerAction` to run an action.
+
+`Renderer` draws a response and keeps its state, its `$variables`, forms and queries, while it stays in the composition:
+
+```kotlin
+Renderer(
+    response = text,
+    library = openuiChatLibrary,
+    isStreaming = streaming,
+    toolProvider = tools,
+    initialState = savedState,
+    onStateUpdate = { state -> savedState = state }, // persist it with the message
+    onAction = { event -> /* follow-ups, form submits, custom actions */ },
+)
+```
+
+It follows the response as it streams. Only web and email links open, through the platform's URI handler unless you pass `onOpenUrl`, since the model writes every link. The theme derives from `MaterialTheme`; wrap content in `ProvideOpenUITheme(theme)` to change it. Its texts are Android string resources named `stream_ai_openui_*`, which an app overrides or translates like its own.
+
+Forms validate their fields with the rules the model writes, and a form's submit button sends its values with the action. Sliders, text areas and the other fields keep the numbers the model writes within what they can draw.
+
+Charts are drawn with Compose Canvas, without a chart library; values a chart can't draw, such as ones that aren't finite, are left out.
+
+Icons: the lucide names OpenUI uses map to Material icons, from `material-icons-core` where it has them and otherwise from copies of just the `material-icons-extended` icons the table uses. Markdown renders with `multiplatform-markdown-renderer`, the renderer `stream-chat-android-ai-compose` uses.
 
 ## Known limitations
 

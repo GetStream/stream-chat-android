@@ -31,23 +31,26 @@ import kotlin.test.assertTrue
 internal class LibraryTest {
 
     private val chatRendered = setOf(
-        "Accordion", "BoldText", "Button", "Buttons", "Callout", "Card", "CardHeader", "Carousel", "CheckBoxGroup",
-        "Chips", "CodeBlock", "CompositeCardBlock", "ContextCardBlock", "DatePicker", "EditableTable", "EntityList",
-        "FollowUpBlock", "Form", "FormControl", "Icon", "IconButton", "IconText", "Image", "ImageBlock",
-        "ImageGallery", "ImageText", "ImageTextLarge", "InlineHeader", "Input", "Label", "ListBlock",
-        "MarkDownRenderer", "MetricIndicatorInline", "MetricIndicatorWithStrikethrough", "OptionCards",
-        "OverviewCardBlock", "RadioGroup", "SectionBlock", "Select", "Separator", "Slider", "SnippetCardBlock",
-        "Steps", "SwitchGroup", "Table", "Tabs", "Tag", "TagBlock", "Text", "TextArea", "TextCallout", "TextContent",
-        "VisualCardBlock",
+        "Accordion", "AreaChart", "BarChart", "BoldText", "Button", "Buttons", "Callout", "Card", "CardHeader",
+        "Carousel", "CheckBoxGroup", "Chips", "CodeBlock", "CompositeCardBlock", "ContextCardBlock", "DatePicker",
+        "EditableTable", "EntityList", "FollowUpBlock", "Form", "FormControl", "HorizontalBarChart", "Icon",
+        "IconButton", "IconText", "Image", "ImageBlock", "ImageGallery", "ImageText", "ImageTextLarge", "InlineHeader",
+        "Input", "Label", "LineChart", "ListBlock", "MarkDownRenderer", "MetricIndicatorInline",
+        "MetricIndicatorWithStrikethrough", "OptionCards", "OverviewCardBlock", "PieChart", "RadarChart",
+        "RadialChart", "RadioGroup", "ScatterChart", "SectionBlock", "Select", "Separator", "SingleStackedBarChart",
+        "Slider", "SnippetCardBlock", "Steps", "SwitchGroup", "Table", "Tabs", "Tag", "TagBlock", "Text", "TextArea",
+        "TextCallout", "TextContent", "VisualCardBlock",
     )
     private val standardRendered = setOf(
-        "Accordion", "BoldText", "Button", "Buttons", "Callout", "Card", "CardHeader", "Carousel", "CheckBoxGroup",
-        "Chips", "CodeBlock", "CompositeCardBlock", "ContextCardBlock", "DatePicker", "EditableTable", "EntityList",
-        "Form", "FormControl", "Icon", "IconButton", "IconText", "Image", "ImageBlock", "ImageGallery", "ImageText",
-        "ImageTextLarge", "InlineHeader", "Input", "Label", "ListBlock", "MarkDownRenderer", "MetricIndicatorInline",
-        "MetricIndicatorWithStrikethrough", "Modal", "OptionCards", "OverviewCardBlock", "RadioGroup", "Select",
-        "Separator", "Slider", "SnippetCardBlock", "Stack", "Steps", "SwitchGroup", "Table", "Tabs", "Tag", "TagBlock",
-        "Text", "TextArea", "TextCallout", "TextContent", "VisualCardBlock",
+        "Accordion", "AreaChart", "BarChart", "BoldText", "Button", "Buttons", "Callout", "Card", "CardHeader",
+        "Carousel", "CheckBoxGroup", "Chips", "CodeBlock", "CompositeCardBlock", "ContextCardBlock", "DatePicker",
+        "EditableTable", "EntityList", "Form", "FormControl", "HorizontalBarChart", "Icon", "IconButton", "IconText",
+        "Image", "ImageBlock", "ImageGallery", "ImageText", "ImageTextLarge", "InlineHeader", "Input", "Label",
+        "LineChart", "ListBlock", "MarkDownRenderer", "MetricIndicatorInline", "MetricIndicatorWithStrikethrough",
+        "Modal", "OptionCards", "OverviewCardBlock", "PieChart", "RadarChart", "RadialChart", "RadioGroup",
+        "ScatterChart", "Select", "Separator", "SingleStackedBarChart", "Slider", "SnippetCardBlock", "Stack", "Steps",
+        "SwitchGroup", "Table", "Tabs", "Tag", "TagBlock", "Text", "TextArea", "TextCallout", "TextContent",
+        "VisualCardBlock",
     )
 
     private fun rendered(library: Library) =

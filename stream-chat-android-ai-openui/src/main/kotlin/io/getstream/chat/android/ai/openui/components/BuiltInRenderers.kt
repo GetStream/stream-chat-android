@@ -24,7 +24,8 @@ internal object BuiltInRenderers {
 
     /** Renderers shared by both libraries. */
     private val shared: Map<String, ComponentRenderer>
-        get() = contentRenderers + tableRenderers + formRenderers + actionRenderers + layoutRenderers + cardRenderers
+        get() = contentRenderers + tableRenderers + chartRenderers + formRenderers + actionRenderers + layoutRenderers +
+            cardRenderers
 
     fun forLibrary(flavor: Flavor): Map<String, ComponentRenderer?> = when (flavor) {
         Flavor.Chat -> shared + chatContentRenderers + chatActionRenderers + chatLayoutRenderers

@@ -71,6 +71,8 @@ dependencies {
     testImplementation(libs.kotlin.test.junit5)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.kotlinx.coroutines.test)
+    // The JVM implementation of org.json, which android.jar only stubs in unit tests.
+    testImplementation(libs.org.json)
     testRuntimeOnly(libs.junit.jupiter.engine)
     // Compose UI tests run on Robolectric under JUnit 4.
     testImplementation(libs.junit)
