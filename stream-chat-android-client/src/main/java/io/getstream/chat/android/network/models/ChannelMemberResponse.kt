@@ -48,8 +48,11 @@ internal data class ChannelMemberResponse(
     @Json(name = "updated_at")
     internal val updatedAt: java.util.Date,
 
+    // Patched: the spec marks `user_id` required, but backends before v239.68.0 (CHA-3441, chat#18122) leave it out
+    // of `membership`, and a parse failure fails the whole channel query or watch. On regen, make it required again
+    // only once every region runs v239.68.0 or later.
     @Json(name = "user_id")
-    internal val userId: String,
+    internal val userId: String? = null,
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),
