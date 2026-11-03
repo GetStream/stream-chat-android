@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.ai.openui.lang
 
+import io.getstream.chat.android.ai.openui.library.DefinedAction
+import io.getstream.chat.android.ai.openui.library.DefinedFunction
+
 /** Tells the runtime which component props accept two-way `$variable` bindings. */
 internal fun interface ReactivePropResolver {
     /** Whether [prop] of [component] accepts a `$variable` binding. */
@@ -24,7 +27,7 @@ internal fun interface ReactivePropResolver {
 
 /**
  * What the language runtime needs to know about a component library: its JSON Schema, its root
- * component and which props take two-way `$variable` bindings.
+ * component, which props take two-way `$variable` bindings, and its own functions and actions.
  *
  * The renderer's component library provides one; [fromSpec] reads upstream's `LibrarySpec`
  * JSON (`library.toSpec()`), so a library defined with `@openuidev/react-lang` can be used as is.
@@ -36,9 +39,16 @@ internal class LibrarySchema(
     val root: String?,
     /** Which component props accept `$binding`s. */
     val reactiveProps: ReactivePropResolver = ReactivePropResolver { _, _ -> false },
+    /** The library's functions, called as `@Name(...)`. */
+    val functions: List<DefinedFunction> = emptyList(),
+    /** The library's action steps, used as `@Name(...)`. */
+    val customActions: List<DefinedAction> = emptyList(),
 ) {
-    /** Positional params per component and the calls programs can make, compiled once. */
-    val paramMap: ParamMap = Parser.compileSchema(jsonSchema)
+    /**
+     * Positional params per component and the calls programs can make, compiled once. Functions
+     * and actions the schema doesn't list are added from [functions] and [customActions].
+     */
+    val paramMap: ParamMap = Parser.compileSchema(withCalls(jsonSchema, functions, customActions))
 
     /** Component names in schema order. */
     val componentNames: List<String> get() = paramMap.names
@@ -51,13 +61,39 @@ internal class LibrarySchema(
 
     /** Factory for schemas from upstream library specs. */
     companion object {
+        private fun withCalls(
+            schema: OpenUIValue,
+            functions: List<DefinedFunction>,
+            actions: List<DefinedAction>,
+        ): OpenUIValue {
+            if (functions.isEmpty() && actions.isEmpty()) return schema
+            fun section(key: String, calls: List<Pair<String, OpenUIValue>>) = OpenUIValue.Obj(
+                OpenUIObject.build {
+                    calls.forEach { (name, params) -> this[name] = OpenUIValue.obj("params" to params) }
+                    schema[key].objectValue?.forEach { (name, call) -> this[name] = call }
+                },
+            )
+            return OpenUIValue.Obj(
+                OpenUIObject.build {
+                    schema.objectValue?.forEach { (key, value) -> this[key] = value }
+                    this["functions"] = section("functions", functions.map { it.name to it.paramsSchema })
+                    this["actions"] = section("actions", actions.map { it.name to it.paramsSchema })
+                },
+            )
+        }
+
         private val bindingPattern = Regex("(\\w+)\\??: \\\$binding<")
 
         /**
          * Reads a `LibrarySpec` (`{ root, components: { Name: { signature, description } }, schema }`).
-         * Reactive props are the ones whose signature type is `$binding<...>`.
+         * Reactive props are the ones whose signature type is `$binding<...>`. Pass the
+         * implementations of the library's [functions] and its [customActions].
          */
-        fun fromSpec(spec: OpenUIValue): LibrarySchema {
+        fun fromSpec(
+            spec: OpenUIValue,
+            functions: List<DefinedFunction> = emptyList(),
+            customActions: List<DefinedAction> = emptyList(),
+        ): LibrarySchema {
             val reactive = buildSet {
                 for ((name, component) in spec["components"].objectValue.orEmpty()) {
                     val signature = component["signature"].stringValue.orEmpty()
@@ -68,6 +104,8 @@ internal class LibrarySchema(
                 jsonSchema = spec["schema"] ?: OpenUIValue.Obj(OpenUIObject.Empty),
                 root = spec["root"].stringValue,
                 reactiveProps = { component, prop -> "$component.$prop" in reactive },
+                functions = functions,
+                customActions = customActions,
             )
         }
     }

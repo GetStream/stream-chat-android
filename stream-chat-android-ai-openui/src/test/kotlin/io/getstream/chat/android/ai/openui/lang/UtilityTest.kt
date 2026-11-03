@@ -128,6 +128,180 @@ internal class UtilityTest {
     }
 
     @Nested
+    inner class FormValidationRules {
+        @Test
+        fun `parses rules`() {
+            assertEquals(
+                listOf(
+                    ParsedRule("required"),
+                    ParsedRule("min", v(8)),
+                    ParsedRule("pattern", v("^[a-z]+$")),
+                ),
+                FormValidation.parseRules(v(listOf("required", "min:8", "pattern:^[a-z]+$", 5))),
+            )
+            assertEquals(
+                listOf(ParsedRule("required"), ParsedRule("minLength", v(3))),
+                FormValidation.parseStructuredRules(obj("required" to true, "email" to false, "minLength" to 3)),
+            )
+        }
+
+        @Test
+        fun `validators`() {
+            fun check(value: OpenUIValue?, rules: OpenUIValue) =
+                FormValidation.validate(value, FormValidation.rules(rules))
+            assertEquals("This field is required", check(null, obj("required" to true)))
+            assertEquals("This field is required", check(v(""), obj("required" to true)))
+            assertEquals(
+                "At least one option is required",
+                check(obj("a" to false, "b" to false), obj("required" to true)),
+            )
+            assertNull(check(obj("a" to true), obj("required" to true)))
+            assertEquals("Please enter a valid email", check(v("nope"), obj("email" to true)))
+            assertNull(check(v("me@example.com"), obj("email" to true)))
+            assertEquals("Must be at least 5 characters", check(v("abc"), obj("minLength" to 5)))
+            assertEquals("Must be at least 10", check(v("7"), obj("min" to 10)))
+            assertEquals("Must be no more than 10", check(v("12"), obj("max" to 10)))
+            assertNull(check(v("12a"), obj("numeric" to true)), "parseFloat semantics")
+            assertEquals("Must be a number", check(v("abc"), obj("numeric" to true)))
+            assertEquals("Invalid format", check(v("ABC"), obj("pattern" to "^[a-z]+$")))
+            assertEquals("Please enter a valid URL", check(v("not a url"), obj("url" to true)))
+            assertNull(check(v("https://openui.com"), obj("url" to true)))
+            assertNull(check(v(""), obj("email" to true, "minLength" to 3)), "empty optional fields pass")
+        }
+    }
+
+    @Nested
+    inner class MessageEnvelopes {
+        @Test
+        fun `builds and parses content, context and attributes`() {
+            val message = buildMessage(
+                content = "Submit",
+                context = v(listOf("User clicked: Submit", mapOf("form" to mapOf("a" to 1)))),
+                attributes = linkedMapOf("library" to "chat ui", "v" to "1&2"),
+                end = true,
+            )
+            assertEquals(
+                "]]>openui:content?library=chat+ui&v=1%262\nSubmit\n]]>openui:context\n" +
+                    "[\"User clicked: Submit\",{\"form\":{\"a\":1}}]\n]]>openui:end",
+                message,
+            )
+
+            val parsed = parseMessage(message)
+
+            assertEquals("Submit", parsed.content)
+            assertEquals(v(listOf("User clicked: Submit", mapOf("form" to mapOf("a" to 1)))), parsed.context)
+            assertEquals(mapOf("library" to "chat ui", "v" to "1&2"), parsed.attributes)
+            assertTrue(parsed.isEnded)
+        }
+
+        @Test
+        fun `a string context is written as is and non-JSON context reads as text`() {
+            val message = buildMessage(content = "x", context = v("not json"))
+
+            assertEquals("]]>openui:content\nx\n]]>openui:context\nnot json", message)
+            assertEquals(v("not json"), parseMessage(message).context)
+            assertEquals("]]>openui:content\nx", buildMessage(content = "x", context = OpenUIValue.Null))
+        }
+
+        @Test
+        fun `plain and legacy messages read`() {
+            assertEquals("root = Card([])", parseMessage("root = Card([])").content)
+            assertNull(parseMessage("root = Card([])").context)
+            val legacy = parseMessage("<content>root = Card([])</content><context>[1]</context>")
+            assertEquals("root = Card([])", legacy.content)
+            assertEquals(v(listOf(1)), legacy.context)
+            assertTrue(MessageEnvelope.hasLangSyntax("text\nroot = Card([])"))
+            assertFalse(MessageEnvelope.hasLangSyntax("plain markdown"))
+        }
+
+        @Test
+        fun `a complete message keeps content ending in a bracket`() {
+            assertEquals(
+                "cols = [\"a\", \"b\"]",
+                parseMessage("]]>openui:content\ncols = [\"a\", \"b\"]").content,
+            )
+            assertEquals("text [1]", parseMessage("text [1]").content)
+        }
+
+        @Test
+        fun `streaming holds back a marker cut mid-line`() {
+            assertEquals(
+                "root = Card([])",
+                parseMessage("]]>openui:content\nroot = Card([])\n]]>openui:con", isStreaming = true).content,
+            )
+            assertEquals(
+                "root = Card([])\nmore",
+                parseMessage("]]>openui:content\nroot = Card([])\nmore").content,
+            )
+            assertEquals(
+                "root = Card([]) ",
+                parseMessage("]]>openui:content\nroot = Card([]) ]]>openui:con", isStreaming = true).content,
+            )
+        }
+
+        @Test
+        fun `a regenerated response wins`() {
+            val parsed = parseMessage(
+                "]]>openui:content\nroot = Card([cut]]>openui:content\nroot = Card([])\n]]>openui:end",
+            )
+
+            assertEquals("root = Card([])", parsed.content)
+            assertTrue(parsed.isEnded)
+        }
+
+        @Test
+        fun `an end marker mid-line stays in the content`() {
+            val parsed = parseMessage("]]>openui:content\nhello ]]>openui:end there")
+
+            assertEquals("hello ]]>openui:end there", parsed.content)
+            assertFalse(parsed.isEnded)
+        }
+
+        @Test
+        fun `context of an earlier attempt is ignored`() {
+            val parsed = parseMessage(
+                "]]>openui:content\na\n]]>openui:context\n[1]\n]]>openui:end\n]]>openui:content\nb",
+            )
+
+            assertEquals("b", parsed.content)
+            assertNull(parsed.context)
+            assertFalse(parsed.isEnded)
+        }
+
+        @Test
+        fun `windows line endings read`() {
+            val parsed = parseMessage("]]>openui:content\r\nroot = Stack([])\r\n]]>openui:context\r\n[1]")
+
+            assertEquals("root = Stack([])", parsed.content)
+            assertEquals(v(listOf(1)), parsed.context)
+            assertEquals(
+                "root = Stack([])",
+                parseMessage("root = Stack([])\r\n]]>openui:context\r\n[]").content,
+            )
+        }
+
+        @Test
+        fun `action events carry any context and only web and email links`() {
+            val event = ActionEvent(
+                type = BuiltinActionType.CONTINUE_CONVERSATION,
+                params = OpenUIObject.of("context" to obj("orderId" to 42)),
+                humanFriendlyMessage = "Save",
+                formState = OpenUIObject.Empty,
+            )
+            val message = parseMessage(event.assistantMessage)
+            assertEquals("Save", message.content)
+            assertEquals(v(listOf("User clicked: Save", emptyMap<String, Any>(), mapOf("orderId" to 42))), message.context)
+
+            fun link(url: String) = ActionEvent(BuiltinActionType.OPEN_URL, OpenUIObject.of("url" to v(url)), "").url
+            assertEquals("https://getstream.io", link("https://getstream.io"))
+            assertEquals("mailto:a@b.co", link("mailto:a@b.co"))
+            assertNull(link("tel:+15550100"))
+            assertNull(link("otherapp://pay?to=x"))
+            assertNull(link("not a url"))
+        }
+    }
+
+    @Nested
     inner class IncrementalEditing {
         private val original = """
             root = Stack([header, tbl])
