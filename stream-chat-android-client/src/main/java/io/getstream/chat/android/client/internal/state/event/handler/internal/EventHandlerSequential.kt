@@ -652,6 +652,9 @@ internal class EventHandlerSequential(
         // actually fetch the data
         val batch = batchBuilder.build(mutableGlobalState, repos, currentUserId, isLocalUnreadCountEnabled)
 
+        // The current user as written by this batch, so later events merge into it rather than into older state
+        var ownUser: User? = null
+
         // step 2. second pass through the events, make a list of what we need to update
         for (event in events) {
             when (event) {
@@ -921,10 +924,18 @@ internal class EventHandlerSequential(
             when (event) {
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     repos.insertCurrentUser(event.me)
+                    ownUser = event.me
                 }
-                is HasOwnUser -> repos.insertCurrentUser(user = event.me)
+                is HasOwnUser -> {
+                    repos.insertCurrentUser(user = event.me)
+                    ownUser = event.me
+                }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    repos.insertCurrentUser(user = event.user)
+                    // The event's user has no own-user fields, such as mutes, so merge it into the current user
+                    val currentUser = ownUser ?: clientState.user.value?.takeIf { it.id == currentUserId }
+                    val updatedUser = currentUser?.mergePartially(event.user) ?: event.user
+                    repos.insertCurrentUser(user = updatedUser)
+                    ownUser = updatedUser
                 }
                 else -> Unit
             }

@@ -52,6 +52,7 @@ internal class UserUtilsTest {
 
         // then
         result.isEqualTo(thatUser)
+        assertEquals(thisUser.mutes, result.mutes)
     }
 
     @Test
@@ -78,6 +79,51 @@ internal class UserUtilsTest {
 
         // then
         result.isEqualTo(thatUser)
+        assertEquals(thisUser.mutes, result.mutes)
+    }
+
+    @Test
+    fun `mergePartially should keep the average response time when that has none`() {
+        // given
+        val thisUser = randomUser(updatedAt = Date(1_000)).copy(avgResponseTime = 42L)
+        val thatUser = randomUser(updatedAt = Date(2_000)).copy(avgResponseTime = null)
+
+        // when
+        val result = thisUser.mergePartially(thatUser)
+
+        // then
+        assertEquals(42L, result.avgResponseTime)
+    }
+
+    @Test
+    fun `mergePartially should copy the profile fields and keep the own-user fields`() {
+        // given
+        val thisUser = randomUser(
+            updatedAt = Date(1_000),
+            language = "en",
+            teams = listOf("red"),
+            mutes = List(3) { randomMute() },
+        )
+        val thatUser = randomUser(
+            updatedAt = Date(2_000),
+            language = "it",
+            teams = listOf("blue"),
+            mutes = emptyList(),
+        ).copy(
+            teamsRole = mapOf("blue" to "admin"),
+            deactivatedAt = Date(3_000),
+            avgResponseTime = 7L,
+        )
+
+        // when
+        val result = thisUser.mergePartially(thatUser)
+
+        // then
+        result.isEqualTo(thatUser)
+        assertEquals(thisUser.mutes, result.mutes)
+        assertEquals(thisUser.channelMutes, result.channelMutes)
+        assertEquals(thisUser.totalUnreadCount, result.totalUnreadCount)
+        assertEquals(thisUser.blockedUserIds, result.blockedUserIds)
     }
 
     @Test
@@ -139,9 +185,14 @@ private fun User.isEqualTo(that: User) {
     assertEquals(that.image, image)
     assertEquals(that.banned, banned)
     assertEquals(that.lastActive, lastActive)
+    assertEquals(that.online, online)
     assertEquals(that.createdAt, createdAt)
     assertEquals(that.updatedAt, updatedAt)
     assertEquals(that.privacySettings, privacySettings)
     assertEquals(that.extraData, extraData)
-    assertEquals(that.mutes, mutes)
+    assertEquals(that.language, language)
+    assertEquals(that.teams, teams)
+    assertEquals(that.teamsRole, teamsRole)
+    assertEquals(that.deactivatedAt, deactivatedAt)
+    assertEquals(that.avgResponseTime, avgResponseTime)
 }

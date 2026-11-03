@@ -21,7 +21,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 
 /**
- * Partially merges [that] user data into [this] user data if [that] is more up to date.
+ * Partially merges [that] user data into [this] user data if [that] is more up to date. Own-user fields, such as
+ * mutes, are kept from [this].
  */
 @InternalStreamChatApi
 public fun User.mergePartially(that: User): User =
@@ -31,12 +32,17 @@ public fun User.mergePartially(that: User): User =
             createdAt = that.createdAt,
             updatedAt = that.updatedAt,
             lastActive = that.lastActive,
+            online = that.online,
             banned = that.banned,
             name = that.name,
             image = that.image,
             privacySettings = that.privacySettings,
             extraData = that.extraData,
-            mutes = that.mutes,
+            language = that.language,
+            teams = that.teams,
+            teamsRole = that.teamsRole,
+            deactivatedAt = that.deactivatedAt,
+            avgResponseTime = that.avgResponseTime ?: avgResponseTime,
         )
     } else {
         this
