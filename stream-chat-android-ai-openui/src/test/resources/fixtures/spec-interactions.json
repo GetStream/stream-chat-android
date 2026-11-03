@@ -1,0 +1,340 @@
+[
+  {
+    "name": "actions/001-several-actions",
+    "program": "$n = 1\n$m = 7\nroot = Stack([bump, go])\nbump = Button(\"Bump\", Action([@Set($m, 9)]))\ngo = Button(\"Go\", Action([@Set($n, 5), @Reset($m), @ToAssistant(\"done\")]))\n",
+    "interactions": [
+      {
+        "click": "bump"
+      },
+      {
+        "click": "go"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "done"
+        }
+      ],
+      "state": {
+        "$n": 5,
+        "$m": 7
+      }
+    }
+  },
+  {
+    "name": "actions/002-one-action",
+    "program": "$sel = \"a\"\nroot = Stack([save, pick, docs, Text($sel)])\nsave = Button(\"Save\", @ToAssistant(\"Save order\"))\npick = Button(\"Pick B\", @Set($sel, \"b\"))\ndocs = Button(\"Docs\", @OpenUrl(\"https://openui.com\"))\n",
+    "interactions": [
+      {
+        "click": "save"
+      },
+      {
+        "click": "pick"
+      },
+      {
+        "click": "docs"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Save order"
+        },
+        {
+          "type": "open_url",
+          "humanFriendlyMessage": "",
+          "params": {
+            "url": "https://openui.com"
+          }
+        }
+      ],
+      "state": {
+        "$sel": "b"
+      }
+    }
+  },
+  {
+    "name": "actions/003-event-context-any-value",
+    "program": "root = Stack([save, zero])\nsave = Button(\"Save\", Action([@ToAssistant(\"Save order\", {orderId: 42, tags: [\"rush\"]})]))\nzero = Button(\"Zero\", Action([@ToAssistant(\"Pick zero\", 0)]))\n",
+    "interactions": [
+      {
+        "click": "save"
+      },
+      {
+        "click": "zero"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Save order",
+          "params": {
+            "context": {
+              "orderId": 42,
+              "tags": [
+                "rush"
+              ]
+            }
+          }
+        },
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Pick zero",
+          "params": {
+            "context": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "actions/004-event-form-state-per-action",
+    "program": "$note = \"old\"\nroot = Stack([send])\nsend = Button(\"Send\", Action([@Set($note, \"new\"), @ToAssistant(\"Send\")]))\n",
+    "interactions": [
+      {
+        "click": "send"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Send",
+          "formState": {
+            "$note": "new"
+          }
+        }
+      ],
+      "state": {
+        "$note": "new"
+      }
+    }
+  },
+  {
+    "name": "actions/006-query-rerun-on-state",
+    "program": "$status = \"open\"\nroot = Stack([filter, Metric(\"Tickets\", @Count(tickets.rows))])\nfilter = Input(\"status\", \"Status\", $status)\ntickets = Query(\"listTickets\", {status: $status}, {rows: []})\n",
+    "interactions": [
+      {
+        "tool": "listTickets",
+        "result": {
+          "rows": []
+        }
+      },
+      {
+        "type": [
+          "filter",
+          "closed"
+        ]
+      }
+    ],
+    "expected": {
+      "events": [],
+      "state": {
+        "$status": "closed"
+      },
+      "toolCalls": [
+        {
+          "tool": "listTickets",
+          "args": {
+            "status": "open"
+          }
+        },
+        {
+          "tool": "listTickets",
+          "args": {
+            "status": "closed"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "actions/007-mutation-run",
+    "program": "$title = \"Bug\"\nroot = Stack([create])\nnewTicket = Mutation(\"createTicket\", {title: $title})\ncreate = Button(\"Create\", Action([@Run(newTicket), @ToAssistant(\"Created\")]))\n",
+    "interactions": [
+      {
+        "tool": "createTicket",
+        "result": {
+          "id": 7
+        }
+      },
+      {
+        "click": "create"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Created"
+        }
+      ],
+      "toolCalls": [
+        {
+          "tool": "createTicket",
+          "args": {
+            "title": "Bug"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "actions/008-tool-not-found-stops-plan",
+    "program": "$title = \"Bug\"\nroot = Stack([create])\nnewTicket = Mutation(\"createTicket\", {title: $title})\ncreate = Button(\"Create\", Action([@Run(newTicket), @ToAssistant(\"Created\")]))\n",
+    "interactions": [
+      {
+        "click": "create"
+      }
+    ],
+    "expected": {
+      "events": [],
+      "toolCalls": []
+    }
+  },
+  {
+    "name": "actions/009-custom-action",
+    "program": "root = Stack([copy, both, share])\ncopy = Button(\"Copy\", @CopyToClipboard(\"hello\"))\nboth = Button(\"Both\", Action([@CopyToClipboard(\"a b\"), @ToAssistant(\"Copied\")]))\nshare = Button(\"Share\", null, null, @CopyToClipboard(\"link\"))\n",
+    "interactions": [
+      {
+        "click": "copy"
+      },
+      {
+        "click": "both"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "CopyToClipboard",
+          "params": {
+            "text": "hello"
+          },
+          "humanFriendlyMessage": ""
+        },
+        {
+          "type": "CopyToClipboard",
+          "params": {
+            "text": "a b"
+          },
+          "humanFriendlyMessage": ""
+        },
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Copied"
+        }
+      ]
+    }
+  },
+  {
+    "name": "actions/010-one-action-by-reference",
+    "program": "$mode = \"docs\"\nroot = Stack([go, ask])\ndocsStep = @OpenUrl(\"https://openui.com\")\ngo = Button(\"Go\", docsStep)\nask = Button(\"Ask\", $mode == \"docs\" ? @ToAssistant(\"Docs please\") : null)\n",
+    "interactions": [
+      {
+        "click": "go"
+      },
+      {
+        "click": "ask"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "open_url",
+          "humanFriendlyMessage": "",
+          "params": {
+            "url": "https://openui.com"
+          }
+        },
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Docs please"
+        }
+      ]
+    }
+  },
+  {
+    "name": "state/002-binding-two-way",
+    "program": "$query = \"\"\nroot = Stack([search, Text(\"You typed: \" + $query)])\nsearch = Input(\"search\", \"Search\", $query)\n",
+    "interactions": [
+      {
+        "type": [
+          "search",
+          "late"
+        ]
+      }
+    ],
+    "expected": {
+      "events": [],
+      "state": {
+        "$query": "late"
+      }
+    }
+  },
+  {
+    "name": "state/003-form-scope",
+    "program": "root = Stack([Form(\"contact\", [email, send])])\nemail = Input(\"email\", \"Email\")\nsend = Button(\"Send\", Action([@ToAssistant(\"Send\")]))\n",
+    "interactions": [
+      {
+        "type": [
+          "email",
+          "a@b.co"
+        ]
+      },
+      {
+        "click": "send"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Send",
+          "formName": "contact",
+          "formState": {
+            "contact": {
+              "email": {
+                "value": "a@b.co",
+                "componentType": "input"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "state/004-form-page-level",
+    "program": "root = Stack([note, send])\nnote = Input(\"note\", \"Note\")\nsend = Button(\"Send\", Action([@ToAssistant(\"Send\")]))\n",
+    "interactions": [
+      {
+        "type": [
+          "note",
+          "rush"
+        ]
+      },
+      {
+        "click": "send"
+      }
+    ],
+    "expected": {
+      "events": [
+        {
+          "type": "continue_conversation",
+          "humanFriendlyMessage": "Send",
+          "formName": null,
+          "formState": {
+            "note": {
+              "value": "rush",
+              "componentType": "input"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

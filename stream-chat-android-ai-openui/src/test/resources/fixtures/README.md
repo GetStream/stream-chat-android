@@ -9,6 +9,7 @@ iOS port (StreamChatOpenUI), generated with its `Scripts/openui-fixtures`, uncha
 | --- | --- |
 | `parser-conformance.json` | 193 programs (docs and prompt examples, benchmark samples, edge cases and the 1.0 cases): the one-shot `parse()` result, streaming-parser snapshots while the input arrives in pseudo-random chunks, and the result once the stream completes. |
 | `evaluator-conformance.json` | 190 programs with state and query results: the evaluated root (`evaluateRoot`), the evaluated `Query()` arguments and the runtime errors. |
+| `spec-interactions.json` | The 12 interaction cases of the specification's conformance suite (`spec/fixtures/1.0`, level 2): clicks, typing and tool results, with the events, state and tool calls they produce. |
 | `upstream-chat-library.spec.json`, `upstream-playground-library.spec.json` | The chat and standard libraries as `LibrarySpec` (signatures, descriptions, groups, JSON Schema). |
 | `spec-library.json` | The library of the OpenUI 1.0 specification's fixtures (`spec/fixtures/1.0`), with a library function and a custom action. |
 
