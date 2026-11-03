@@ -21,6 +21,7 @@ import io.getstream.chat.android.ai.openui.library.DefinedFunction
 import io.getstream.chat.android.ai.openui.library.PropField
 import io.getstream.chat.android.ai.openui.library.PropType
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -208,5 +209,31 @@ internal class EvaluatorTest {
     fun `built-ins take their arguments by name`() {
         val root = evaluate("root = Stack([Text(\"\" + @Round(3.14159, 2))])")!!
         assertEquals(v("3.14"), root.child(0).props["text"])
+    }
+
+    @Test
+    fun `Sort keeps every item and never throws on mixed numbers and text`() {
+        val sort = Builtins.definitionsByName.getValue("Sort").function
+        val random = Random(7)
+        val values = listOf<Any>(2.0, "10", "1a", "b", -3.0, "", "2")
+        repeat(200) {
+            val rows = List(64) { v(mapOf("k" to values.random(random))) }
+            listOf("asc", "desc").forEach { direction ->
+                val sorted = sort(listOf(OpenUIValue.Arr(rows), v("k"), v(direction))).arrayValue!!
+                assertEquals(rows.groupingBy { it }.eachCount(), sorted.groupingBy { it }.eachCount())
+            }
+        }
+    }
+
+    @Test
+    fun `Sort is stable`() {
+        val sort = Builtins.definitionsByName.getValue("Sort").function
+        val rows = listOf(3, 1, 3, 2, 1).mapIndexed { index, rank ->
+            v(mapOf("rank" to rank.toDouble(), "id" to index.toDouble()))
+        }
+
+        val sorted = sort(listOf(OpenUIValue.Arr(rows), v("rank"))).arrayValue!!
+
+        assertEquals(listOf(1.0, 4.0, 3.0, 0.0, 2.0), sorted.map { it["id"].numberValue })
     }
 }
