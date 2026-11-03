@@ -3,8 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.android.junit5)
 }
+
+apply(from = "$rootDir/scripts/detekt-compose.gradle")
 
 android {
     namespace = "io.getstream.chat.android.ai.openui"
@@ -22,6 +25,14 @@ android {
                 "proguard-rules.pro",
             )
         }
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
     }
 }
 
@@ -42,6 +53,17 @@ dependencies {
 
     // The generative UI layer this module plugs OpenUI into.
     api(project(":stream-chat-android-ai-compose"))
+
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    // Material icons stand in for the lucide icons OpenUI names; the ones missing from core are
+    // vendored in the icons package.
+    implementation(libs.androidx.compose.material.icons.core)
+    // The Markdown renderer stream-chat-android-ai-compose uses.
+    implementation(libs.markdown)
+    implementation(libs.markdown.renderer)
+    implementation(libs.markdown.renderer.m3)
 
     testImplementation(libs.kotlin.test.junit5)
     testImplementation(libs.junit.jupiter.api)

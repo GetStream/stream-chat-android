@@ -5,7 +5,8 @@ This module ports OpenUI (https://github.com/thesysdev/openui) to Kotlin. The la
 specification, and the conformance fixtures in src/test/resources/fixtures were generated
 with them. The component library definitions, their prompt examples and rules, and the system
 prompt text (package `library`) are derived from the @openuidev/react-ui and @openuidev/lang-core
-packages.
+packages. The Compose components (package `components`) follow the renderers of
+@openuidev/react-ui.
 OpenUI is distributed under the following license:
 
 --------------------------------------------------------------------------------
@@ -31,5 +32,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+The icons package (io.getstream.chat.android.ai.openui.icons) contains icon definitions copied from
+androidx.compose.material:material-icons-extended 1.7.8 (https://developer.android.com/jetpack/androidx/releases/compose-material),
+part of the Android Open Source Project, distributed under the following license:
+
+--------------------------------------------------------------------------------
+
+Copyright 2025 The Android Open Source Project
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 --------------------------------------------------------------------------------

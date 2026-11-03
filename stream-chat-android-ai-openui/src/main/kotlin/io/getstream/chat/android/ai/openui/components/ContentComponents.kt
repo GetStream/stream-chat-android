@@ -1,0 +1,569 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.ai.openui.components
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import io.getstream.chat.android.ai.openui.R
+import io.getstream.chat.android.ai.openui.icons.Circle
+import io.getstream.chat.android.ai.openui.icons.Dangerous
+import io.getstream.chat.android.ai.openui.lang.OpenUIObject
+import io.getstream.chat.android.ai.openui.lang.OpenUIValue
+import io.getstream.chat.android.ai.openui.lang.objectValue
+import io.getstream.chat.android.ai.openui.lang.stringValue
+import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
+import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
+import io.getstream.chat.android.ai.openui.rendering.OpenUICodeBlock
+import io.getstream.chat.android.ai.openui.rendering.OpenUIMarkdown
+import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
+import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
+import kotlinx.coroutines.delay
+
+private fun contentRenderer(block: ComponentRenderer): ComponentRenderer = block
+
+internal val contentRenderers: Map<String, ComponentRenderer> = mapOf(
+    "CardHeader" to contentRenderer { CardHeaderView(it) },
+    "TextContent" to contentRenderer { TextContentView(it) },
+    "MarkDownRenderer" to contentRenderer { MarkdownRendererView(it) },
+    "Callout" to contentRenderer { CalloutView(it) },
+    "TextCallout" to contentRenderer { TextCalloutView(it) },
+    "Image" to contentRenderer { ImageComponentView(it) },
+    "ImageBlock" to contentRenderer { ImageBlockView(it) },
+    "ImageGallery" to contentRenderer { ImageGalleryView(it) },
+    "CodeBlock" to contentRenderer { CodeBlockComponentView(it) },
+    "Separator" to contentRenderer { SeparatorView(it) },
+    "InlineHeader" to contentRenderer { InlineHeaderView(it) },
+    "Label" to contentRenderer { LabelView(it) },
+)
+
+internal val chatContentRenderers: Map<String, ComponentRenderer> = mapOf(
+    "Card" to contentRenderer { ChatCardView(it) },
+)
+
+internal val standardContentRenderers: Map<String, ComponentRenderer> = mapOf(
+    "Card" to contentRenderer { StandardCardView(it) },
+    "Stack" to contentRenderer { StackView(it) },
+)
+
+// Citations -----------------------------------------------------------------------------------
+
+/** Card sources keyed by their 1-based citation index, used to make `[n]` citations tappable. */
+internal val LocalCitationSources = compositionLocalOf<Map<Int, String>> { emptyMap() }
+
+internal object Citations {
+    private val pattern = Regex("""\[(\d{1,2})](?!\()""")
+
+    /** Turns `[1]` citations into Markdown links when a source URL exists for them. */
+    fun link(text: String, sources: Map<Int, String>): String {
+        if (sources.isEmpty() || '[' !in text) return text
+        return pattern.replace(text) { match ->
+            val number = match.groupValues[1].toIntOrNull() ?: 0
+            val url = sources[number] ?: return@replace match.value
+            "[[$number]](${encode(url)})"
+        }
+    }
+
+    // Keeps the URL one Markdown link destination (like `urlFragmentAllowed` percent-encoding).
+    private fun encode(url: String): String = buildString {
+        for (char in url) {
+            when (char) {
+                ' ' -> append("%20")
+                '(' -> append("%28")
+                ')' -> append("%29")
+                '<' -> append("%3C")
+                '>' -> append("%3E")
+                '"' -> append("%22")
+                else -> append(char)
+            }
+        }
+    }
+}
+
+// Cards and stacks ----------------------------------------------------------------------------
+
+/** Chat `Card(children, sources?)`: the vertical container for a whole response. */
+@Composable
+private fun ChatCardView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    val sources = context.props.array("sources").mapNotNull { it.objectValue }
+    val citations = sources
+        .withIndex()
+        .mapNotNull { (index, source) ->
+            source["url"].stringValue?.takeIf { it.isNotEmpty() }?.let { index + 1 to it }
+        }.toMap()
+    CompositionLocalProvider(LocalCitationSources provides citations) {
+        Column(
+            Modifier.fillMaxWidth().openUISurface("card"),
+            verticalArrangement = Arrangement.spacedBy(theme.spacing.m),
+        ) {
+            context.RenderProp("children")
+            if (sources.isNotEmpty()) SourcesStrip(sources, context)
+        }
+    }
+}
+
+@Composable
+private fun SourcesStrip(sources: List<OpenUIObject>, context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    Column(verticalArrangement = Arrangement.spacedBy(theme.spacing.s)) {
+        HorizontalDivider(color = theme.colors.border)
+        Text(
+            stringResource(R.string.stream_ai_openui_sources_title),
+            style = theme.typography.caption.copy(fontWeight = FontWeight.SemiBold),
+            color = theme.colors.textSecondary,
+        )
+        Row(
+            Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(theme.spacing.s),
+        ) {
+            sources.forEachIndexed { index, source ->
+                val url = source["url"].stringValue
+                Row(
+                    Modifier
+                        .width(180.dp)
+                        .clip(RoundedCornerShape(theme.radius.small))
+                        .background(theme.colors.sunkenSurface)
+                        .clickable(enabled = !url.isNullOrEmpty()) {
+                            context.triggerAction(
+                                label = "",
+                                action = OpenUIValue.obj(
+                                    "type" to OpenUIValue.Str("open_url"),
+                                    "url" to OpenUIValue.Str(url.orEmpty()),
+                                ),
+                            )
+                        }.padding(theme.spacing.s),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Box(
+                        Modifier.size(18.dp).background(theme.colors.accent, CircleShape),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            "${index + 1}",
+                            style = theme.typography.caption.copy(fontSize = 10.sp, fontWeight = FontWeight.Bold),
+                            color = theme.colors.onAccent,
+                        )
+                    }
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            source["title"].stringValue ?: stringResource(R.string.stream_ai_openui_sources_untitled),
+                            style = theme.typography.caption.copy(fontWeight = FontWeight.Medium),
+                            color = theme.colors.textPrimary,
+                            maxLines = 2,
+                        )
+                        Text(
+                            source["sourceName"].stringValue.orEmpty(),
+                            style = theme.typography.caption.copy(fontSize = 11.sp),
+                            color = theme.colors.textSecondary,
+                            maxLines = 1,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Standard `Card(children, variant?, direction?, gap?, align?, justify?, wrap?)`. */
+@Composable
+private fun StandardCardView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    val props = context.props
+    FlexContainer(
+        direction = props.string("direction") ?: "column",
+        gap = theme.spacing.value(props.string("gap"), theme.spacing.m),
+        align = props.string("align"),
+        justify = props.string("justify"),
+        wrap = props.bool("wrap") ?: false,
+        flexibleChildren = true,
+        itemCount = props.array("children").size,
+        modifier = Modifier.fillMaxWidth().openUISurface(props.string("variant") ?: "card"),
+    ) {
+        context.RenderProp("children")
+    }
+}
+
+private val stackFlexibleTypes = setOf("Card", "Stack", "MarkDownRenderer", "Callout", "TextCallout", "Form", "Table")
+
+/** `Stack(children, direction?, gap?, align?, justify?, wrap?)`. */
+@Composable
+private fun StackView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    val props = context.props
+    val children = props.elements("children")
+    val wrap = props.bool("wrap") ?: false
+    val justify = if (wrap && props.string("justify") == "between") "start" else props.string("justify")
+    FlexContainer(
+        direction = props.string("direction") ?: "column",
+        gap = theme.spacing.value(props.string("gap"), theme.spacing.m),
+        align = props.string("align"),
+        justify = justify,
+        wrap = wrap,
+        flexibleChildren = children.isNotEmpty() && children.all { it.typeName in stackFlexibleTypes },
+        itemCount = children.size,
+    ) {
+        context.RenderProp("children")
+    }
+}
+
+// Text ----------------------------------------------------------------------------------------
+
+/** `TextContent(text, size?)`: Markdown text. */
+@Composable
+private fun TextContentView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    val style = when (context.props.string("size")) {
+        "small" -> theme.typography.bodySmall
+        "large" -> theme.typography.bodyLarge
+        "small-heavy" -> theme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
+        "large-heavy" -> theme.typography.title.copy(fontWeight = FontWeight.Bold)
+        else -> theme.typography.body
+    }
+    SelectionContainer {
+        OpenUIMarkdown(
+            Citations.link(context.props.text("text").orEmpty(), LocalCitationSources.current),
+            style = style,
+        )
+    }
+}
+
+/** `MarkDownRenderer(textMarkdown, variant?)`. */
+@Composable
+private fun MarkdownRendererView(context: ComponentRenderProps) {
+    Box(Modifier.fillMaxWidth().openUISurface(context.props.string("variant") ?: "clear")) {
+        SelectionContainer {
+            OpenUIMarkdown(Citations.link(context.props.text("textMarkdown").orEmpty(), LocalCitationSources.current))
+        }
+    }
+}
+
+/** `CardHeader(title?, subtitle?)`. */
+@Composable
+private fun CardHeaderView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(theme.spacing.xs)) {
+        context.props.text("title")?.takeIf { it.isNotEmpty() }?.let {
+            Text(
+                inlineMarkdown(it, theme.colors.accent),
+                style = theme.typography.title,
+                color = theme.colors.textPrimary,
+            )
+        }
+        context.props.text("subtitle")?.takeIf { it.isNotEmpty() }?.let {
+            Text(
+                inlineMarkdown(it, theme.colors.accent),
+                style = theme.typography.bodySmall,
+                color = theme.colors.textSecondary,
+            )
+        }
+    }
+}
+
+/** `InlineHeader(heading, description?)`. */
+@Composable
+private fun InlineHeaderView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    Column(Modifier.fillMaxWidth().padding(top = theme.spacing.xs), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+            inlineMarkdown(context.props.text("heading").orEmpty(), theme.colors.accent),
+            style = theme.typography.heading,
+            color = theme.colors.textPrimary,
+        )
+        context.props.text("description")?.takeIf { it.isNotEmpty() }?.let {
+            Text(
+                inlineMarkdown(it, theme.colors.accent),
+                style = theme.typography.caption,
+                color = theme.colors.textSecondary,
+            )
+        }
+    }
+}
+
+/** `Label(text)`. */
+@Composable
+private fun LabelView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    Text(
+        context.props.text("text").orEmpty(),
+        style = theme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+        color = theme.colors.textPrimary,
+    )
+}
+
+// Callouts ------------------------------------------------------------------------------------
+
+/** `Callout(variant, title, description, visible?)`: auto-dismisses after 3s when `visible` is bound. */
+@Composable
+private fun CalloutView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    val field = context.stateField("visible", context.props["visible"])
+    val isVisible = if (field.isReactive) {
+        field.value == OpenUIValue.True ||
+            field.value == OpenUIValue.Str("true")
+    } else {
+        true
+    }
+    val currentField by rememberUpdatedState(field)
+    LaunchedEffect(field.isReactive && isVisible) {
+        if (!(field.isReactive && isVisible)) return@LaunchedEffect
+        delay(3_000)
+        currentField.setValue(OpenUIValue.False)
+    }
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn() + slideInVertically { -it / 2 },
+        exit = fadeOut() + slideOutVertically { -it / 2 },
+    ) {
+        val variant = context.props.string("variant") ?: "info"
+        val color = theme.colors.variant(variant)
+        Row(
+            Modifier.fillMaxWidth().tinted(color, theme.radius.medium).padding(theme.spacing.m),
+            horizontalArrangement = Arrangement.spacedBy(theme.spacing.m),
+        ) {
+            Icon(
+                when (variant) {
+                    "success" -> Icons.Rounded.CheckCircle
+                    "warning" -> Icons.Rounded.Warning
+                    "error", "danger" -> Icons.Rounded.Dangerous
+                    "neutral" -> Icons.Rounded.Circle
+                    else -> Icons.Rounded.Info
+                },
+                contentDescription = variant,
+                tint = color,
+                modifier = Modifier.size(20.dp),
+            )
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(theme.spacing.xs)) {
+                context.props.text("title")?.takeIf { it.isNotEmpty() }?.let {
+                    Text(
+                        it,
+                        style = theme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = theme.colors.textPrimary,
+                    )
+                }
+                context.props.text("description")?.takeIf { it.isNotEmpty() }?.let {
+                    OpenUIMarkdown(it, style = theme.typography.bodySmall, color = theme.colors.textSecondary)
+                }
+            }
+        }
+    }
+}
+
+/** `TextCallout(variant?, title?, description?)`. */
+@Composable
+private fun TextCalloutView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    val color = theme.colors.variant(context.props.string("variant") ?: "neutral")
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .clip(RoundedCornerShape(theme.radius.small))
+            .background(color.copy(alpha = 0.08f)),
+    ) {
+        Box(Modifier.width(3.dp).fillMaxHeight().background(color))
+        Column(
+            Modifier.weight(1f).padding(theme.spacing.m),
+            verticalArrangement = Arrangement.spacedBy(theme.spacing.xs),
+        ) {
+            context.props.text("title")?.takeIf { it.isNotEmpty() }?.let {
+                Text(
+                    it,
+                    style = theme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = theme.colors.textPrimary,
+                )
+            }
+            context.props.text("description")?.takeIf { it.isNotEmpty() }?.let {
+                Text(
+                    inlineMarkdown(it, theme.colors.accent),
+                    style = theme.typography.bodySmall,
+                    color = theme.colors.textSecondary,
+                )
+            }
+        }
+    }
+}
+
+// Images --------------------------------------------------------------------------------------
+
+/** `Image(alt, src?)`. */
+@Composable
+private fun ImageComponentView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    RemoteImage(
+        url = context.props.string("src"),
+        alt = context.props.text("alt"),
+        modifier = Modifier.fillMaxWidth().height(180.dp).clip(RoundedCornerShape(theme.radius.medium)),
+    )
+}
+
+/** `ImageBlock(src, alt?)`. */
+@Composable
+private fun ImageBlockView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    RemoteImage(
+        url = context.props.string("src"),
+        alt = context.props.text("alt"),
+        modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f).clip(RoundedCornerShape(theme.radius.medium)),
+    )
+}
+
+/** `ImageGallery(images)`: thumbnails with a full-screen preview. */
+@Composable
+private fun ImageGalleryView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    val images = context.props.array("images").mapNotNull { it.objectValue }
+    if (images.isEmpty()) return
+    var selection by remember { mutableStateOf<Int?>(null) }
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val spacing = theme.spacing.s
+        val columns = maxOf(1, ((maxWidth + spacing) / (100.dp + spacing)).toInt())
+        Column(verticalArrangement = Arrangement.spacedBy(spacing)) {
+            images.withIndex().chunked(columns).forEach { row ->
+                Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
+                    row.forEach { (index, image) ->
+                        RemoteImage(
+                            url = image["src"].stringValue,
+                            alt = image["alt"].stringValue,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp)
+                                .clip(RoundedCornerShape(theme.radius.small))
+                                .clickable { selection = index },
+                        )
+                    }
+                    repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+                }
+            }
+        }
+    }
+    selection?.let { initial -> GalleryPreview(images, initial) { selection = null } }
+}
+
+@Composable
+private fun GalleryPreview(images: List<OpenUIObject>, initial: Int, onDismiss: () -> Unit) {
+    val theme = OpenUITheme.current
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Surface(Modifier.fillMaxSize(), color = theme.colors.surface) {
+            Column {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    TextButton(onClick = onDismiss) { Text(stringResource(R.string.stream_ai_openui_gallery_done)) }
+                }
+                val pager = rememberPagerState(initialPage = initial) { images.size }
+                HorizontalPager(pager, Modifier.weight(1f)) { page ->
+                    val image = images[page]
+                    Column(
+                        Modifier.fillMaxSize().padding(bottom = theme.spacing.l),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(theme.spacing.m),
+                    ) {
+                        RemoteImage(
+                            url = image["src"].stringValue,
+                            alt = image["alt"].stringValue,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.fillMaxWidth().weight(1f),
+                        )
+                        (image["details"].stringValue ?: image["alt"].stringValue)?.let {
+                            Text(
+                                it,
+                                style = theme.typography.bodySmall,
+                                color = theme.colors.textSecondary,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(horizontal = theme.spacing.l),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Misc ----------------------------------------------------------------------------------------
+
+/** `CodeBlock(language, codeString)`. */
+@Composable
+private fun CodeBlockComponentView(context: ComponentRenderProps) {
+    OpenUICodeBlock(context.props.text("language"), context.props.text("codeString").orEmpty())
+}
+
+/** `Separator(orientation?, decorative?)`. */
+@Composable
+private fun SeparatorView(context: ComponentRenderProps) {
+    val theme = OpenUITheme.current
+    if (context.props.string("orientation") == "vertical") {
+        VerticalDivider(Modifier.height(24.dp), color = theme.colors.border)
+    } else {
+        HorizontalDivider(color = theme.colors.border)
+    }
+}
