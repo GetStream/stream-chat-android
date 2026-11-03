@@ -33,14 +33,17 @@ import io.getstream.chat.android.randomUserBlock
 import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 /**
  * Tests for the users functionalities of the [ChatClient].
@@ -246,11 +249,65 @@ internal class ChatClientUserApiTests : BaseChatClientTest() {
         val sut = Fixture()
             .givenPartialUpdateUserResult(RetroSuccess(listOf(user)).toRetrofitCall())
             .givenUserState(user)
+            .givenClientState(user)
             .get()
         // when
         val result = sut.partialUpdateUser(id, set, unset).await()
         // then
         verifySuccess(result, user)
+    }
+
+    @Test
+    fun partialUpdateUserSuccessUpdatesCurrentUser() = runTest {
+        // given
+        val id = randomString()
+        val currentUser = randomUser(id = id, name = "Old", updatedAt = Date(1_000))
+        val updatedUser = randomUser(id = id, name = "New", updatedAt = Date(2_000))
+        val sut = Fixture()
+            .givenPartialUpdateUserResult(RetroSuccess(listOf(updatedUser)).toRetrofitCall())
+            .givenUserState(currentUser)
+            .givenClientState(currentUser)
+            .get()
+        // when
+        sut.partialUpdateUser(id, mapOf("name" to "New")).await()
+        // then
+        val storedUser = argumentCaptor<User>().apply { verify(mutableClientState).setUser(capture()) }.firstValue
+        assertEquals("New", storedUser.name)
+        assertEquals(Date(2_000), storedUser.updatedAt)
+        verify(userStateService).onUserUpdated(storedUser)
+    }
+
+    @Test
+    fun partialUpdateUserKeepsCurrentUserWhenItChanged() = runTest {
+        // given
+        val id = randomString()
+        val updatedUser = randomUser(id = id, name = "New", updatedAt = Date(2_000))
+        val sut = Fixture()
+            .givenPartialUpdateUserResult(RetroSuccess(listOf(updatedUser)).toRetrofitCall())
+            .givenUserState(randomUser(id = id))
+            .givenClientState(randomUser()) // Another user was set while the request was in flight
+            .get()
+        // when
+        sut.partialUpdateUser(id, mapOf("name" to "New")).await()
+        // then
+        verify(userStateService, never()).onUserUpdated(any())
+        verify(mutableClientState, never()).setUser(any())
+    }
+
+    @Test
+    fun partialUpdateUserErrorKeepsCurrentUser() = runTest {
+        // given
+        val currentUser = randomUser()
+        val sut = Fixture()
+            .givenPartialUpdateUserResult(RetroError<List<User>>(positiveRandomInt()).toRetrofitCall())
+            .givenUserState(currentUser)
+            .givenClientState(currentUser)
+            .get()
+        // when
+        sut.partialUpdateUser(currentUser.id, mapOf("name" to "New")).await()
+        // then
+        verify(userStateService, never()).onUserUpdated(any())
+        verify(mutableClientState, never()).setUser(any())
     }
 
     @Test

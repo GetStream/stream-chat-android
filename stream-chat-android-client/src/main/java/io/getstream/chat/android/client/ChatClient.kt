@@ -4184,6 +4184,17 @@ internal constructor(
                     else -> CoroutineCall(userScope) { Result.Success(user) }
                 }
             }
+            .doOnResult(userScope) { result ->
+                if (result is Result.Success) {
+                    // Update local user state without waiting for the user.updated event
+                    val currentUser = mutableClientState.user.value ?: return@doOnResult
+                    if (currentUser.id == id) {
+                        val updatedCurrentUser = currentUser.mergePartially(result.value)
+                        userStateService.onUserUpdated(updatedCurrentUser)
+                        mutableClientState.setUser(updatedCurrentUser)
+                    }
+                }
+            }
     }
 
     /**
