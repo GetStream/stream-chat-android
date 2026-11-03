@@ -19,6 +19,7 @@ package io.getstream.chat.android.ai.compose.parts
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.json.JSONTokener
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
@@ -90,6 +91,25 @@ internal object Json {
         toKotlin(JSONObject(text)) as? Map<String, Any?> ?: emptyMap()
     } catch (_: JSONException) {
         emptyMap()
+    }
+
+    /**
+     * Parses JSON text into plain Kotlin values: maps, lists, strings, numbers, booleans and
+     * `null`. Throws [JSONException] when [text] is not JSON.
+     */
+    fun parse(text: String): Any? {
+        val tokener = JSONTokener(text)
+        val value = tokener.nextValue()
+        // JSONTokener reads one value and stops, so text after it would go unnoticed.
+        if (tokener.nextClean() != 0.toChar()) throw JSONException("Text after the JSON value")
+        return toKotlin(value)
+    }
+
+    /** Parses JSON text, or returns `null` when it is not JSON. */
+    fun parseOrNull(text: String): Any? = try {
+        parse(text)
+    } catch (_: JSONException) {
+        null
     }
 
     /** Writes [value] as JSON, with object keys sorted so equal values write equal text. */

@@ -145,4 +145,5 @@ internal class AIPendingMessageTracker {
 
 // A reply the agent has started but that has nothing to show yet.
 private val AIMessage.showsNothing: Boolean
-    get() = role != AIMessageRole.User && text.isEmpty() && parts.isEmpty() && attachments.isEmpty()
+    get() = role != AIMessageRole.User && text.isEmpty() && parts.isEmpty() && attachments.isEmpty() &&
+        uiDocument == null

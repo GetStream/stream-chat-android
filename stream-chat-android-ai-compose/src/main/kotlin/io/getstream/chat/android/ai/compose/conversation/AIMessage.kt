@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ai.compose.conversation
 
+import io.getstream.chat.android.ai.compose.generativeui.AIUIDocument
+import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.parts.AIMessagePart
 import io.getstream.chat.android.ai.compose.parts.AIReasoningPart
 
@@ -44,6 +46,12 @@ public interface AIMessage {
 
     /** What it carries besides its text, such as images and files. */
     public val attachments: List<AIMessageAttachment> get() = emptyList()
+
+    /**
+     * The UI the agent generated for a reply, shown in place of its text when the conversation's
+     * [AIUIHost] can, such as `AIUIDocument.from(message.extraData)`.
+     */
+    public val uiDocument: AIUIDocument? get() = null
 
     /**
      * The whole of a reasoning step's thinking when the app has it, such as from live updates.
