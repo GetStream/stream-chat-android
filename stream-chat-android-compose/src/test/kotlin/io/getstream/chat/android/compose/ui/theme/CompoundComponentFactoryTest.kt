@@ -18,8 +18,11 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
@@ -73,6 +76,28 @@ internal class CompoundComponentFactoryTest {
         composeTestRule.waitForIdle()
 
         assertEquals(2, builtFactories.size)
+        assertSame(builtFactories.last(), providedFactory)
+    }
+
+    @Test
+    fun `factory is rebuilt when compose state it reads changes`() {
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalComponentFactory provides baseFactory.value) {
+                val readValue by remember { derivedStateOf { capturedState.intValue } }
+                CompoundComponentFactory(
+                    factory = { currentComponentFactory ->
+                        CapturingComponentFactory(currentComponentFactory, readValue).also(builtFactories::add)
+                    },
+                ) {
+                    providedFactory = LocalComponentFactory.current
+                }
+            }
+        }
+
+        composeTestRule.runOnIdle { capturedState.intValue++ }
+        composeTestRule.waitForIdle()
+
+        assertEquals(1, builtFactories.last().capturedValue)
         assertSame(builtFactories.last(), providedFactory)
     }
 
