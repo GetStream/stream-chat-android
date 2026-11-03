@@ -448,7 +448,12 @@ internal class SyncManager(
     private suspend fun restoreActiveChannels(syncedCids: Set<String>, failedFirstLoadCids: Set<String>) {
         val recoverAll = !isFirstConnect.compareAndSet(true, false)
         logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
-        val failedFirstLoadsToWatch = failedFirstLoadCids.take(FAILED_FIRST_LOADS_TO_WATCH).toSet()
+        // The open channels first, so the cap never leaves them to a query without messages
+        val openCids = stateRegistry.getTrackedWatchedChannels()
+        val failedFirstLoadsToWatch = failedFirstLoadCids
+            .sortedBy { it !in openCids }
+            .take(FAILED_FIRST_LOADS_TO_WATCH)
+            .toSet()
 
         val allLogics = logicRegistry.getActiveQueryChannelsLogic()
         val hasGroupedQueries = allLogics.any { it.groupKey() != null }

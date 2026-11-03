@@ -876,6 +876,32 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `on connect, an open channel whose first load failed is watched before the others`() = runTest(testDispatcher) {
+        givenReconnectSync()
+        val channelIds = (1..40).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        val openChannelId = channelIds.last()
+        val failedStates = channelIds.associateWith { recoverableChannelState(it, createdAt = null) }
+        whenever(stateRegistry.getActiveChannelStates()) doReturn failedStates
+        whenever(stateRegistry.getTrackedWatchedChannels()) doReturn setOf(openChannelId.cid)
+        val logics = channelIds.associate { id ->
+            id.cid to mock<ChannelLogic> {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel(id = id.id))
+            }
+        }
+        // The value class reaches Mockito unboxed, as its cid.
+        whenever(logicRegistry.channel(any<ChannelId>())).thenAnswer { logics.getValue(it.arguments[0] as String) }
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+            Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+        )
+
+        buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(randomConnectedEvent(me = user))
+
+        val request = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient).queryChannelsInternal(request.capture())
+        assertEquals(Filters.`in`("cid", channelIds.drop(29).dropLast(1).map(ChannelId::cid)), request.firstValue.filter)
+    }
+
+    @Test
     fun `on reconnect, a channel state that was never loaded is queried instead of watched`() =
         runTest(testDispatcher) {
             whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
