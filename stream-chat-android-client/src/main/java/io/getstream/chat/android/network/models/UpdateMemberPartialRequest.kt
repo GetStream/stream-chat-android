@@ -24,18 +24,15 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.List
-import kotlin.collections.Map
 
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UpdateMemberPartialRequest(
     @Json(name = "unset")
-    val unset: kotlin.collections.List<kotlin.String>? = emptyList(),
+    internal val unset: List<String>? = null,
 
     @Json(name = "set")
-    val set: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
+    internal val set: Map<String, Any?>? = null,
 )

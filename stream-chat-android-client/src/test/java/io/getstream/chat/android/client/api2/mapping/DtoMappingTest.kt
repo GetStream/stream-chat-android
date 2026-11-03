@@ -36,7 +36,9 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.Action
+import io.getstream.chat.android.network.models.BlocklistBehavior
 import io.getstream.chat.android.network.models.ChannelMemberRequest
+import io.getstream.chat.android.network.models.ConfigOverridesRequest
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
@@ -310,6 +312,18 @@ internal class DtoMappingTest {
         input.configOverrides?.replies shouldBeEqualTo false
         input.configOverrides?.commands shouldBeEqualTo null
         input.configOverrides?.grants shouldBeEqualTo null
+    }
+
+    @Test
+    fun `Channel update data sends the blocklist behavior override as its wire value`() {
+        val data = mapOf("config_overrides" to mapOf("blocklist_behavior" to "flag"))
+        val mapping = Fixture().get()
+
+        val input = with(mapping) { data.toChannelInputRequest() }
+
+        input.configOverrides?.blocklistBehavior shouldBeEqualTo BlocklistBehavior.Flag
+        Serializer.moshi.adapter(ConfigOverridesRequest::class.java).toJson(input.configOverrides) shouldBeEqualTo
+            """{"blocklist_behavior":"flag"}"""
     }
 
     @Test

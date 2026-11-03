@@ -28,12 +28,11 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class MuteChannelRequest(
     @Json(name = "expiration")
     internal val expiration: Int? = null,
 
     @Json(name = "channel_cids")
-    internal val channelCids: List<String>? = emptyList(),
+    internal val channelCids: List<String>? = null,
 )

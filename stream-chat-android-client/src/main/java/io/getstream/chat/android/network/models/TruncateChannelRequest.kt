@@ -40,7 +40,7 @@ internal data class TruncateChannelRequest(
     internal val truncatedAt: java.util.Date? = null,
 
     @Json(name = "member_ids")
-    internal val memberIds: List<String>? = emptyList(),
+    internal val memberIds: List<String>? = null,
 
     @Json(name = "message")
     internal val message: io.getstream.chat.android.network.models.MessageRequest? = null,

@@ -22,7 +22,9 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.infrastructure.Serializer
+import io.getstream.chat.android.network.models.AutomodMode
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelModerationBehavior
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -50,13 +52,13 @@ internal class ChannelConfigEnumParsingTest {
     fun `Unrecognised config modes are preserved as Unknown`() {
         val config = Serializer.moshi.adapter(ChannelConfigWithInfo::class.java).fromJson(configJsonWithUnknownEnums)!!
 
-        assertEquals(ChannelConfigWithInfo.Automod.Unknown("future_mode"), config.automod)
+        assertEquals(AutomodMode.Unknown("future_mode"), config.automod)
         assertEquals(
-            ChannelConfigWithInfo.AutomodBehavior.Unknown("future_behavior"),
+            ChannelModerationBehavior.Unknown("future_behavior"),
             config.automodBehavior,
         )
         assertEquals(
-            ChannelConfigWithInfo.BlocklistBehavior.Unknown("future_blocklist"),
+            ChannelModerationBehavior.Unknown("future_blocklist"),
             config.blocklistBehavior,
         )
     }

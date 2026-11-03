@@ -71,8 +71,7 @@ internal class V2LaneBatchTenTest {
         )
 
         assertEquals(
-            """{"limit":5,"presence":true,"watch":true,"sort":[],"groups":{"new":{"limit":2,""" +
-                """"next":"cursor","filter_conditions":{}}}}""",
+            """{"limit":5,"presence":true,"watch":true,"groups":{"new":{"limit":2,"next":"cursor"}}}""",
             v2Body(request),
         )
     }

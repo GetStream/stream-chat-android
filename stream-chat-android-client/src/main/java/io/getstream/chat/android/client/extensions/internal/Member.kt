@@ -49,8 +49,8 @@ public fun Member.toMemberInfo(): MemberInfo = MemberInfo(
 
 /**
  * Keys that reach [Member.extraData] without being member custom data: the ones
- * [GENERATED_MEMBER_EXTRA_DATA_KEYS] keeps there even though `ChannelMemberResponse` declares them, plus the
- * fields it does not declare, which land there through the undeclared-key sweep.
+ * [GENERATED_MEMBER_EXTRA_DATA_KEYS] keeps there even though `ChannelMemberResponse` declares them, plus two fields
+ * a member stored by an older version may still carry there.
  */
 private val NON_CUSTOM_MEMBER_KEYS = GENERATED_MEMBER_EXTRA_DATA_KEYS + setOf(
     "ban_from_future_channels",

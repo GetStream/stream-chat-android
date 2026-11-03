@@ -120,8 +120,10 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.Action
+import io.getstream.chat.android.network.models.AutomodMode
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelModerationBehavior
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPartialUpdateResponse
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
@@ -135,6 +137,7 @@ import io.getstream.chat.android.network.models.Images
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.PushLevel
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
@@ -1173,10 +1176,10 @@ internal class DomainMappingTest {
             polls = true,
             messageRetention = "retention",
             maxMessageLength = 500,
-            automod = ChannelConfigWithInfo.Automod.AI,
-            automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
-            blocklistBehavior = ChannelConfigWithInfo.BlocklistBehavior.Block,
-            pushLevel = ChannelConfigWithInfo.PushLevel.Mentions,
+            automod = AutomodMode.AI,
+            automodBehavior = ChannelModerationBehavior.Flag,
+            blocklistBehavior = ChannelModerationBehavior.Block,
+            pushLevel = PushLevel.Mentions,
             commands = listOf(randomCommandDto(name = "giphy")),
             userMessageReminders = true,
             sharedLocations = true,

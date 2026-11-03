@@ -38,11 +38,7 @@ internal object UpdateChannelPartialRequestTestData {
     )
 
     @Language("JSON")
-    val updateChannelPartialRequestJsonWithDefaults =
-        """{
-          "unset": [],
-          "set": {}
-        }""".withoutWhitespace()
+    val updateChannelPartialRequestJsonWithDefaults = "{}"
 
     val updateChannelPartialRequestWithDefaults = UpdateChannelPartialRequest()
 }

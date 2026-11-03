@@ -37,5 +37,5 @@ internal data class ParsedPredefinedFilterResponse(
     internal val filter: Map<String, Any?> = emptyMap(),
 
     @Json(name = "sort")
-    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = emptyList(),
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
 )
