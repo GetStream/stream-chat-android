@@ -32,6 +32,9 @@ internal class MaterializeContext(
 
     /** How deep materializing has recursed, references included. */
     var depth = 0
+
+    /** How many nodes materializing has visited, each reference counted every time it is inlined. */
+    var nodes = 0
 }
 
 /** What validating a value against a schema fragment produced. */

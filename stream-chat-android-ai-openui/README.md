@@ -19,7 +19,7 @@ The entry statement is `root`. Without one, the first statement that calls the l
 
 While a response streams, keep one `createStreamingParser(schema, rootName)` and pass it the full text so far with `set(text)`; it only re-parses the statement that is still growing. Pass `complete = true` once the stream has ended: until then, a `$name` at the very end of the text may still be growing and isn't declared. `mergeStatements(existing, patch)` applies an edit-mode answer (only the statements that changed) to a previous program.
 
-Values follow JavaScript semantics, because the reference implementation is TypeScript: `OpenUIValue` is JSON plus elements and expressions, `undefined` is a Kotlin `null`, and conversions (number formatting, `Number()`, truthiness) follow JavaScript's. Model output can't crash the parser: nesting deeper than any real program reads as `null`, and non-finite numbers serialize as `null`.
+Values follow JavaScript semantics, because the reference implementation is TypeScript: `OpenUIValue` is JSON plus elements and expressions, `undefined` is a Kotlin `null`, and conversions (number formatting, `Number()`, truthiness) follow JavaScript's. Model output can't crash the parser: nesting or chains deeper than any real program, and references that would expand past any real program's size, read as `null`, and non-finite numbers serialize as `null`.
 
 ## Conformance
 

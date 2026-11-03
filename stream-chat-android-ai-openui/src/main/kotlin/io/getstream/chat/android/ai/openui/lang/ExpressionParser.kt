@@ -49,14 +49,22 @@ internal class ExpressionParser private constructor(private val tokens: List<Tok
             return ASTNode.Null
         }
         depth++
+        // Each link of a chain like `a + b + c` or `x.a.b` nests the expression one level deeper too.
+        var links = 0
         try {
             var left = parsePrefix()
             while (infixPrecedence(current().type) > minPrecedence) {
+                if (depth >= MAX_DEPTH) {
+                    pos = tokens.size
+                    return ASTNode.Null
+                }
+                depth++
+                links++
                 left = parseInfix(left)
             }
             return left
         } finally {
-            depth--
+            depth -= links + 1
         }
     }
 
