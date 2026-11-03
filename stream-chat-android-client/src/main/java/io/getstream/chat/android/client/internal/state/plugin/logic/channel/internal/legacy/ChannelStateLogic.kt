@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.keepingActiveMemberCountOf
 import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.TypingEventPruner
@@ -119,12 +120,13 @@ internal class ChannelStateLogic(
     fun writeChannelState(): ChannelStateLegacyImpl = mutableState
 
     private fun updateChannelData(channel: Channel) {
+        val currentChannelData = mutableState.channelData.value
         val newChannelData = channel.toChannelData().let {
             when (it.ownCapabilities.isEmpty()) {
-                true -> it.copy(ownCapabilities = mutableState.channelData.value.ownCapabilities)
+                true -> it.copy(ownCapabilities = currentChannelData.ownCapabilities)
                 else -> it
             }
-        }
+        }.keepingActiveMemberCountOf(currentChannelData)
         mutableState.setChannelData(newChannelData)
     }
 

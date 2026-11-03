@@ -1552,6 +1552,7 @@ constructor(
             watch = query.watch,
             presence = query.presence,
             includeScheduledMessages = query.includeScheduledMessages.takeIf { it },
+            includeActiveMemberCount = query.includeActiveMemberCount.takeIf { it },
         )
 
         val lazyQueryChannelsCall = {

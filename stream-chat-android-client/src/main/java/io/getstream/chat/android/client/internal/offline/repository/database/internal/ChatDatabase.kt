@@ -93,7 +93,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.user.
         DraftMessageEntity::class,
         ScheduledMessageEntity::class,
     ],
-    version = 211,
+    version = 212,
     exportSchema = false,
 )
 @TypeConverters(

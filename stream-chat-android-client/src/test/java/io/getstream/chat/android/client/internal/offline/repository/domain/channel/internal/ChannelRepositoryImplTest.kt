@@ -42,6 +42,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.reset
+import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -59,6 +60,8 @@ internal class ChannelRepositoryImplTest {
     @BeforeEach
     fun setup() {
         reset(channelDao)
+        // Room never returns null for a list query
+        channelDao.stub { onBlocking { select(any<List<String>>()) } doReturn emptyList() }
         channelRepository = DatabaseChannelRepository(
             testCoroutines.scope,
             channelDao,
@@ -71,8 +74,6 @@ internal class ChannelRepositoryImplTest {
 
     @Test
     fun `Given channel with recent lastMessage in DB, Should NOT insert channel`() = runTest {
-        reset(channelDao)
-
         val before = Date(1000)
         val after = Date(2000)
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)

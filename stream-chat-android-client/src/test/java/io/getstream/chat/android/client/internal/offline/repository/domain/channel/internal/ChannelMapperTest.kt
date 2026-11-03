@@ -95,6 +95,7 @@ internal class ChannelMapperTest {
             truncatedByUserId = truncatedByUser.id,
             autoTranslationEnabled = true,
             autoTranslationLanguages = listOf("fr", "de"),
+            activeMemberCount = channel.activeMemberCount,
         )
 
         val result = channel.toEntity()
@@ -227,6 +228,7 @@ internal class ChannelMapperTest {
             truncatedBy = truncatedByUser,
             autoTranslationEnabled = channelEntity.autoTranslationEnabled,
             autoTranslationLanguages = channelEntity.autoTranslationLanguages.toSet(),
+            activeMemberCount = channelEntity.activeMemberCount,
         )
 
         val result = channelEntity.toModel(

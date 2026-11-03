@@ -258,6 +258,28 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given a known activeMemberCount, When the channel data has none, Then the known count is kept`() {
+        _channelData.value = randomChannel(activeMemberCount = 7).toChannelData()
+
+        channelStateLogic.updateDataForChannel(randomChannel(activeMemberCount = null), messageLimit = 30)
+
+        val captor = argumentCaptor<ChannelData>()
+        verify(mutableState).setChannelData(captor.capture())
+        assertEquals(7, captor.firstValue.activeMemberCount)
+    }
+
+    @Test
+    fun `Given a known activeMemberCount, When the channel data has one, Then the new count is used`() {
+        _channelData.value = randomChannel(activeMemberCount = 7).toChannelData()
+
+        channelStateLogic.updateDataForChannel(randomChannel(activeMemberCount = 5), messageLimit = 30)
+
+        val captor = argumentCaptor<ChannelData>()
+        verify(mutableState).setChannelData(captor.capture())
+        assertEquals(5, captor.firstValue.activeMemberCount)
+    }
+
+    @Test
     fun `given channel data arrives, loading should end once the data is in the state`() {
         val channel = randomChannel()
 

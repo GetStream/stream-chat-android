@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.chan
 import android.util.LruCache
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.keepingActiveMemberCountOf
 import io.getstream.chat.android.client.extensions.internal.withoutTruncatedMessages
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
@@ -75,9 +76,16 @@ internal class DatabaseChannelRepository(
         val storedReadsByCid = channels
             .filter { it.isReadTrackedLocally() && channelCache[it.cid] == null }
             .associate { it.cid to channelDao.select(it.cid)?.reads?.values?.map { read -> read.toModel(getUser) } }
+        val storedActiveMemberCounts = channels
+            .filter { it.activeMemberCount == null && channelCache[it.cid] == null }
+            .map { it.cid }
+            .takeUnless { it.isEmpty() }
+            ?.let { cids -> channelDao.select(cids).associate { it.cid to it.activeMemberCount } }
+            .orEmpty()
         val channelsToInsert = cacheMutex.withLock {
             val updatedChannels = channels
                 .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
+                .map { it.copy(activeMemberCount = it.activeMemberCount ?: storedActiveMemberCounts[it.cid]) }
                 .map { it.withoutTruncatedMessages() }
                 .map { if (it.isReadTrackedLocally()) it.preserveLocallyTrackedReads(storedReadsByCid[it.cid]) else it }
                 // Cleared before the comparison below, as the cached copies hold no live locations.
@@ -366,7 +374,7 @@ internal class DatabaseChannelRepository(
             ),
             members = members,
             read = read,
-        ).syncUnreadCountWithReads()
+        ).keepingActiveMemberCountOf(cachedChannel).syncUnreadCountWithReads()
     }
 
     private fun Message.after(date: Date?): Boolean =

@@ -477,6 +477,7 @@ internal class QueryChannelsLogic(
         val currentRequest = queryChannelsStateLogic.getState().currentRequest.value
         val messageLimit = currentRequest?.messageLimit
         val memberLimit = currentRequest?.memberLimit
+        val includeActiveMemberCount = currentRequest?.includeActiveMemberCount ?: false
         val request = when (identifier) {
             is QueryChannelsIdentifier.Standard -> QueryChannelsRequest(
                 filter = identifier.filter,
@@ -485,6 +486,7 @@ internal class QueryChannelsLogic(
                 querySort = identifier.sort,
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
+                includeActiveMemberCount = includeActiveMemberCount,
             )
             is QueryChannelsIdentifier.Predefined -> QueryChannelsRequest(
                 predefinedFilter = identifier.name,
@@ -494,6 +496,7 @@ internal class QueryChannelsLogic(
                 offset = INITIAL_CHANNEL_OFFSET,
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
+                includeActiveMemberCount = includeActiveMemberCount,
             )
             is QueryChannelsIdentifier.Grouped -> {
                 logger.v { "[queryFirstPage] no-op for Grouped identifier" }

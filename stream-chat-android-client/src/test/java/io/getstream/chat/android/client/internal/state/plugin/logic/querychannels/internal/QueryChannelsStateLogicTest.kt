@@ -160,6 +160,19 @@ internal class QueryChannelsStateLogicTest {
     }
 
     @Test
+    fun `when adding a channel without activeMemberCount, the listed count is kept`() = runTest {
+        val listed = randomChannel(type = type, id = id, activeMemberCount = 7)
+        whenever(mutableState.rawChannels) doReturn mapOf(testCid to listed)
+        whenever(mutableState.queryChannelsSpec) doReturn queryChannelsSpec
+
+        queryChannelsStateLogic.addChannelsState(listOf(listed.copy(activeMemberCount = null)))
+
+        val captor = argumentCaptor<Map<String, io.getstream.chat.android.models.Channel>>()
+        verify(mutableState).setChannels(captor.capture())
+        assertEquals(7, captor.firstValue.getValue(testCid).activeMemberCount)
+    }
+
+    @Test
     fun `when adding channels with read events disabled and local unread count enabled, the channel is reconciled from the state`() =
         runTest {
             // The payload of a read-events-disabled channel carries read data the locally tracked
