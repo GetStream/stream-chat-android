@@ -680,6 +680,33 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `on connect, a channel whose first load failed is watched even when the retries filled its channel data`() =
+        runTest(testDispatcher) {
+            givenReconnectSync()
+            val failedChannelId = ChannelId.fromTypeAndId("messaging", "failed")!!
+            val failedChannelData = MutableStateFlow(ChannelData(id = failedChannelId.id, type = failedChannelId.type))
+            val failedChannelState: ChannelState = mock {
+                on(it.recoveryNeeded) doReturn true
+                on(it.channelData) doReturn failedChannelData
+            }
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(failedChannelId to failedChannelState)
+            // An event handled while the failed entities are retried fills the channel data
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doAnswer {
+                failedChannelData.value = failedChannelData.value.copy(createdAt = localDate())
+                emptyList()
+            }
+            val failedLogic: ChannelLogic = mock {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel())
+            }
+            whenever(logicRegistry.channel(failedChannelId)) doReturn failedLogic
+
+            buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(randomConnectedEvent(me = user))
+
+            verify(failedLogic).watch(userPresence = true)
+            verify(chatClient, never()).queryChannelsInternal(any())
+        }
+
+    @Test
     fun `on connect, a channel whose first load failed is watched even when a channel list refreshed it`() =
         runTest(testDispatcher) {
             givenReconnectSync()
@@ -896,6 +923,7 @@ internal class SyncManagerTest {
 
         buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(randomConnectedEvent(me = user))
 
+        verify(logics.getValue(openChannelId.cid)).watch(userPresence = true)
         val request = argumentCaptor<QueryChannelsRequest>()
         verify(chatClient).queryChannelsInternal(request.capture())
         assertEquals(Filters.`in`("cid", channelIds.drop(29).dropLast(1).map(ChannelId::cid)), request.firstValue.filter)
