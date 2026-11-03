@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
+
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.FromJson
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.ToJson
+
+/**
+ * [Type of a sort field. The empty value means string.]
+ */
+/**
+ * SortParamType Enum
+ */
+internal sealed class SortParamType(internal val value: String) {
+    override fun toString(): String = value
+
+    internal companion object {
+        internal fun fromString(s: String): SortParamType = when (s) {
+            "" -> Empty
+            "boolean" -> Boolean
+            "number" -> Number
+            else -> Unknown(s)
+        }
+    }
+
+    // Patched: the generator named the empty value with an empty identifier, which does not compile. Matches the
+    // fixed generator (chat#19868); on regen, take the file as generated once that is merged.
+    internal object Empty : SortParamType("")
+    internal object Boolean : SortParamType("boolean")
+    internal object Number : SortParamType("number")
+    internal data class Unknown(val unknownValue: String) : SortParamType(unknownValue)
+
+    internal class SortParamTypeAdapter : JsonAdapter<SortParamType>() {
+        @FromJson
+        override fun fromJson(reader: JsonReader): SortParamType? {
+            val s = reader.nextString() ?: return null
+            return SortParamType.fromString(s)
+        }
+
+        @ToJson
+        override fun toJson(writer: JsonWriter, value: SortParamType?) {
+            writer.value(value?.value)
+        }
+    }
+}

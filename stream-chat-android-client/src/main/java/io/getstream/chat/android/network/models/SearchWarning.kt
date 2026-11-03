@@ -40,5 +40,5 @@ internal data class SearchWarning(
     internal val channelSearchCount: Int? = null,
 
     @Json(name = "channel_search_cids")
-    internal val channelSearchCids: List<String>? = emptyList(),
+    internal val channelSearchCids: List<String>? = null,
 )

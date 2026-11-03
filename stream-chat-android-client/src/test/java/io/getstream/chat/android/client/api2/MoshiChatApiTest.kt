@@ -73,6 +73,7 @@ import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
@@ -116,6 +117,7 @@ import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateDraftRequest
 import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreateGuestResponse
@@ -293,6 +295,7 @@ import org.mockito.kotlin.whenever
 import kotlin.reflect.KClass
 import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
+import io.getstream.chat.android.network.models.VotingVisibility as VotingVisibilityDto
 
 @Suppress("LargeClass")
 internal class MoshiChatApiTest {
@@ -3292,7 +3295,7 @@ internal class MoshiChatApiTest {
         val pollId = randomString()
         val result = sut.closePoll(pollId).await()
         // then
-        val expectedRequest = UpdatePollPartialRequest(set = mapOf("is_closed" to true))
+        val expectedRequest = UpdatePollPartialRequest(set = mapOf("is_closed" to true), unset = emptyList())
         result `should be instance of` expected
         verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
     }
@@ -3380,8 +3383,8 @@ internal class MoshiChatApiTest {
                 )
             },
             votingVisibility = when (pollConfig.votingVisibility) {
-                VotingVisibility.PUBLIC -> CreatePollRequest.VotingVisibility.Public
-                VotingVisibility.ANONYMOUS -> CreatePollRequest.VotingVisibility.Anonymous
+                VotingVisibility.PUBLIC -> VotingVisibilityDto.Public
+                VotingVisibility.ANONYMOUS -> VotingVisibilityDto.Anonymous
             },
             enforceUniqueVote = pollConfig.enforceUniqueVote,
             maxVotesAllowed = pollConfig.maxVotesAllowed,
@@ -3440,7 +3443,7 @@ internal class MoshiChatApiTest {
                     custom = it.extraData,
                 )
             },
-            votingVisibility = UpdatePollRequestDto.VotingVisibility.Public,
+            votingVisibility = VotingVisibilityDto.Public,
             enforceUniqueVote = enforceUniqueVote,
             maxVotesAllowed = maxVotesAllowed,
             allowUserSuggestedOptions = allowUserSuggestedOptions,
@@ -4513,6 +4516,35 @@ internal class MoshiChatApiTest {
         wireBody(body.firstValue) shouldBeEqualTo
             """{"limit":1,"offset":0,"presence":false,"state":true,"watch":true,"sort":[],""" +
             """"filter_conditions":{"type":"messaging"}}"""
+    }
+
+    @Test
+    fun `An invite accepted with a message sends only its text`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.updateChannel(any(), any(), any())).doReturn(RetroError<UpdateChannelResponse>(500).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        sut.acceptInvite("messaging", "id", "Joined").await()
+
+        val body = argumentCaptor<UpdateChannelRequest>()
+        verify(api).updateChannel(eq("messaging"), eq("id"), body.capture())
+        wireBody(body.firstValue) shouldBeEqualTo """{"accept_invite":true,"message":{"text":"Joined"}}"""
+    }
+
+    @Test
+    fun `A draft leaves out the message fields it doesn't set`() = runTest {
+        val api = mock<DraftApi>()
+        whenever(api.createDraftMessage(any(), any(), any()))
+            .doReturn(RetroError<CreateDraftResponse>(500).toRetrofitCall())
+        val sut = Fixture().withDraftApi(api).get()
+
+        sut.createDraftMessage("messaging", "id", DraftMessage(id = "d", cid = "messaging:id", text = "Draft")).await()
+
+        val body = argumentCaptor<CreateDraftRequest>()
+        verify(api).createDraftMessage(eq("messaging"), eq("id"), body.capture())
+        wireBody(body.firstValue) shouldBeEqualTo
+            """{"message":{"id":"d","show_in_channel":false,"silent":false,"text":"Draft","type":"regular",""" +
+            """"attachments":[],"mentioned_users":[],"custom":{}}}"""
     }
 
     private inline fun <reified T> wireBody(request: T): String =

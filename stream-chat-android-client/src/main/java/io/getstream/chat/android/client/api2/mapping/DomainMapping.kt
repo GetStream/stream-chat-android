@@ -1239,7 +1239,7 @@ internal class DomainMapping(
             name = name,
             description = description,
             options = options.map { it.toOption() },
-            votingVisibility = votingVisibility.toVotingVisibility(),
+            votingVisibility = votingVisibility.value.toVotingVisibility(),
             enforceUniqueVote = enforceUniqueVote,
             maxVotesAllowed = maxVotesAllowed,
             allowUserSuggestedOptions = allowUserSuggestedOptions,

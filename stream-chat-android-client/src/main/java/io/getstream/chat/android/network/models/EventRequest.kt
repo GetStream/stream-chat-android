@@ -28,7 +28,6 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class EventRequest(
     @Json(name = "type")
@@ -38,5 +37,5 @@ internal data class EventRequest(
     internal val parentId: String? = null,
 
     @Json(name = "custom")
-    internal val custom: Map<String, Any?>? = emptyMap(),
+    internal val custom: Map<String, Any?>? = null,
 )

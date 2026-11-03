@@ -47,11 +47,7 @@ internal object MessageAndReminderRequestTestData {
     )
 
     @Language("JSON")
-    val updateMessagePartialRequestJsonWithDefaults =
-        """{
-          "unset": [],
-          "set": {}
-        }""".withoutWhitespace()
+    val updateMessagePartialRequestJsonWithDefaults = "{}"
 
     val updateMessagePartialRequestWithDefaults = UpdateMessagePartialRequest()
 

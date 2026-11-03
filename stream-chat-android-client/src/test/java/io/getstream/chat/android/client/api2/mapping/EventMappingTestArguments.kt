@@ -417,7 +417,7 @@ internal object EventMappingTestArguments {
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
-        lastDeliveredAt = DATE_STRING,
+        lastDeliveredAt = DATE,
         lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
     )
 

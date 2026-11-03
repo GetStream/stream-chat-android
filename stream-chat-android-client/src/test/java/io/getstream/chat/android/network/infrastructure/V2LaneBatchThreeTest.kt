@@ -158,7 +158,7 @@ internal class V2LaneBatchThreeTest {
         assertBody("""{"vote":{"option_id":"a"}}""", CastPollVoteRequest(VoteData(optionId = "a")))
         assertBody("""{"vote":{"answer_text":"answer"}}""", CastPollVoteRequest(VoteData(answerText = "answer")))
         assertBody(
-            """{"limit":1,"sort":[],"filter":{"id":"poll"}}""",
+            """{"limit":1,"filter":{"id":"poll"}}""",
             QueryPollsRequest(filter = mapOf("id" to "poll"), limit = 1),
         )
     }

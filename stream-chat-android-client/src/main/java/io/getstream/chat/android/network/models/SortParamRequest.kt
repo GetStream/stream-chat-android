@@ -28,15 +28,14 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class SortParamRequest(
     @Json(name = "direction")
-    val direction: kotlin.Int? = null,
+    internal val direction: Int? = null,
 
     @Json(name = "field")
-    val field: kotlin.String? = null,
+    internal val field: String? = null,
 
     @Json(name = "type")
-    val type: kotlin.String? = null,
+    internal val type: io.getstream.chat.android.network.models.SortParamType? = null,
 )

@@ -34,5 +34,5 @@ internal data class PollOptionInput(
     internal val text: String? = null,
 
     @Json(name = "custom")
-    internal val custom: Map<String, Any?>? = emptyMap(),
+    internal val custom: Map<String, Any?>? = null,
 )
