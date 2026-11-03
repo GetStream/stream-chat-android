@@ -13,6 +13,27 @@ The language runtime (package `io.getstream.chat.android.ai.openui.lang`) is por
 - Parsing: the entry statement is `root`. Without one, the first statement that calls the library's root component renders, with a `no-root` warning; with neither, nothing renders. While a response streams, the parser only re-parses the statement that is still growing, and a `$name` at the very end of the text isn't declared until the stream ends. An edit-mode answer, with only the statements that changed, applies to the previous program.
 - Values follow JavaScript semantics, because the reference implementation is TypeScript: `undefined` is a Kotlin `null`, and conversions (number formatting, `Number()`, truthiness) follow JavaScript's. Model output can't crash the parser: nesting or chains deeper than any real program, and references that would expand past any real program's size, read as `null`, and non-finite numbers serialize as `null`.
 
+## Functions and actions
+
+Evaluation turns a parsed response into concrete values: `$variables`, references, `@` built-ins such as `@Count` and `@Each`, and expressions. A library adds its own functions and action steps, defined like upstream's:
+
+```kotlin
+val percent = defineFunction(
+    name = "Percent",
+    description = "Share of a total, in percent",
+    params = listOf(PropField.required("part", PropType.number), PropField.required("total", PropType.number)),
+    returns = PropType.number,
+) { args -> OpenUIValue.Num(args["part"].numberValue!! / args["total"].numberValue!! * 100) }
+
+val copy = defineAction(
+    name = "CopyToClipboard",
+    description = "Copies text to the clipboard",
+    params = listOf(PropField.required("text", PropType.string)),
+)
+```
+
+`PropType` and `PropField` stand in for the Zod schemas upstream defines params and props with. A function's arguments and result are checked against them; a call with invalid arguments, or one that throws, is `null` and reports a runtime error. Actions evaluate to plans of steps (`@ToAssistant`, `@OpenUrl`, `@Set`, `@Reset`, `@Run` and the library's own actions): a bare step is a one-step plan, `Action([...])` flattens, and an invalid step does nothing. Only real calls make custom steps, so data can't pose as one.
+
 ## Known limitations
 
 These follow upstream 1.0.1 as-is:

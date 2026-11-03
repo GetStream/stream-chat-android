@@ -152,7 +152,12 @@ internal val OpenUIValue.plainJson: OpenUIValue
         is OpenUIValue.Num -> if (value.isFinite()) this else OpenUIValue.Null
         OpenUIValue.Null, is OpenUIValue.Bool, is OpenUIValue.Str -> this
         is OpenUIValue.Arr -> OpenUIValue.Arr(items.map { it.plainJson })
-        is OpenUIValue.Obj -> OpenUIValue.Obj(fields.mapValues { it.plainJson })
+        // The token that marks custom steps real calls made never leaves the runtime.
+        is OpenUIValue.Obj -> OpenUIValue.Obj(
+            OpenUIObject.build {
+                for ((key, value) in fields) if (key != ActionPlan.CALL_TOKEN_KEY) this[key] = value.plainJson
+            },
+        )
         is OpenUIValue.Element -> node.jsonValue
         is OpenUIValue.Expression -> node.jsonValue
     }

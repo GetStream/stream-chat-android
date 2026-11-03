@@ -38,6 +38,9 @@ internal object ActionStepType {
 
     /** Restores `$variables` to their declared defaults (`@Reset`). */
     const val RESET: String = "reset"
+
+    /** A step of one of the library's custom actions. */
+    const val CUSTOM_ACTION: String = "custom_action"
 }
 
 /** The `@`-prefixed builtin functions and action steps of OpenUI Lang (port of `builtins.ts`). */
