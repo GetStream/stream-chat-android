@@ -282,11 +282,16 @@ internal class ChatClientUserApiTests : BaseChatClientTest() {
         // given
         val id = randomString()
         val updatedUser = randomUser(id = id, name = "New", updatedAt = Date(2_000))
+        val clientStateUser = MutableStateFlow(randomUser(id = id))
         val sut = Fixture()
-            .givenPartialUpdateUserResult(RetroSuccess(listOf(updatedUser)).toRetrofitCall())
             .givenUserState(randomUser(id = id))
-            .givenClientState(randomUser()) // Another user was set while the request was in flight
             .get()
+        whenever(mutableClientState.user) doReturn clientStateUser
+        whenever(api.partialUpdateUser(any(), any(), any())).thenAnswer {
+            // Another user is set while the request is in flight
+            clientStateUser.value = randomUser()
+            RetroSuccess(listOf(updatedUser)).toRetrofitCall()
+        }
         // when
         sut.partialUpdateUser(id, mapOf("name" to "New")).await()
         // then
