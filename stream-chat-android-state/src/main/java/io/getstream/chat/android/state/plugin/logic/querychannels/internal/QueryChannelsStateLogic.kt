@@ -47,6 +47,13 @@ internal class QueryChannelsStateLogic(
 
     private val logger by taggedLogger("QueryChannelsStateLogic")
 
+    /**
+     * Guards every change to the listed channels and their cids, including replacing the spec that holds the cids.
+     * Events, query results and message listeners change them from different threads, and each change reads the
+     * current value before writing the new one, so without it one change can overwrite another.
+     */
+    private val listLock = Any()
+
     internal fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
         return mutableState.handleChatEvent(event, cachedChannel)
     }
@@ -105,7 +112,7 @@ internal class QueryChannelsStateLogic(
      * queries (server-resolved values or DB rehydration); a no-op for standard queries since the
      * values already match the constructor arguments.
      */
-    internal fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
+    internal fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) = synchronized(listLock) {
         mutableState.applyResolvedSpec(filter, sort)
     }
 
@@ -140,7 +147,7 @@ internal class QueryChannelsStateLogic(
         mutableState.setNextCursor(cursor)
     }
 
-    internal fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+    internal fun setGroupedQueryConfig(config: GroupedQueryConfig) = synchronized(listLock) {
         mutableState.setGroupedQueryConfig(config)
     }
 
@@ -158,12 +165,19 @@ internal class QueryChannelsStateLogic(
 
     internal fun getLoadedChannelsShownNow(): List<Channel> = mutableState.loadedChannelsShownNow()
 
-    internal fun restoreGroupedQueryConfig(filter: FilterObject, sort: QuerySorter<Channel>) {
+    internal fun restoreGroupedQueryConfig(filter: FilterObject, sort: QuerySorter<Channel>) = synchronized(listLock) {
         mutableState.restoreGroupedQueryConfig(filter, sort)
     }
 
-    internal fun setCids(cids: Set<String>) {
-        mutableState.setCids(cids)
+    /**
+     * Removes the [droppedCids] before a first page is added, and tracks exactly the channels left listed, so the ones
+     * still listed keep getting updates until the page lists them again.
+     */
+    internal fun resetToPage(droppedCids: Set<String>) = synchronized(listLock) {
+        val remaining = mutableState.rawChannels?.let { existing ->
+            (existing - droppedCids).also { if (it.size != existing.size) mutableState.setChannels(it) }
+        }
+        mutableState.setCids(remaining?.keys?.toSet().orEmpty())
     }
 
     /**
@@ -187,8 +201,10 @@ internal class QueryChannelsStateLogic(
         val validated = channels.mapNotNull { channel ->
             ChannelId.fromCid(channel.cid)?.let { it to channel }
         }
-        mutableState.setCids(mutableState.queryChannelsSpec.cids + validated.map { (id, _) -> id.cid })
-        val listed = listPage(validated)
+        val listed = synchronized(listLock) {
+            mutableState.setCids(mutableState.queryChannelsSpec.cids + validated.map { (id, _) -> id.cid })
+            listPage(validated)
+        }
         validated.map { (id, channel) ->
             coroutineScope.async {
                 logicRegistry.channel(id).stateLogic.updateDataForChannel(
@@ -200,9 +216,11 @@ internal class QueryChannelsStateLogic(
         }.forEach { it.await() }
         // A channel that changed since it was listed may hold a copy of a state that was not updated yet, so it is
         // refreshed from its updated state. Ones removed since are left out.
-        val currentChannels = mutableState.rawChannels.orEmpty()
-        val changed = listed.filter { (cid, channel) -> currentChannels[cid]?.let { it != channel } == true }.keys
-        if (changed.isNotEmpty()) refreshChannels(changed)
+        synchronized(listLock) {
+            val currentChannels = mutableState.rawChannels.orEmpty()
+            val changed = listed.filter { (cid, channel) -> currentChannels[cid]?.let { it != channel } == true }.keys
+            if (changed.isNotEmpty()) refreshChannels(changed)
+        }
     }
 
     /** Lists the [page]'s channels, joined with the ones already listed, and returns what it listed. */
@@ -244,11 +262,11 @@ internal class QueryChannelsStateLogic(
     /**
      * Remove channels to state.
      */
-    internal fun removeChannels(cidSet: Set<String>) {
+    internal fun removeChannels(cidSet: Set<String>) = synchronized(listLock) {
         val existingChannels = mutableState.rawChannels
         if (existingChannels == null) {
             logger.w { "[removeChannels] rejected (existingChannels is null)" }
-            return
+            return@synchronized
         }
         mutableState.setCids(mutableState.queryChannelsSpec.cids - cidSet)
         mutableState.setChannels(existingChannels - cidSet)
@@ -258,7 +276,7 @@ internal class QueryChannelsStateLogic(
      * Initializes [QueryChannelsMutableState.rawChannels] with an empty map if it wasn't initialized yet.
      * This might happen when we don't have any channels in the offline storage and API request fails.
      */
-    internal fun initializeChannelsIfNeeded() {
+    internal fun initializeChannelsIfNeeded() = synchronized(listLock) {
         if (mutableState.rawChannels == null) {
             mutableState.setChannels(emptyMap())
         }
@@ -276,7 +294,7 @@ internal class QueryChannelsStateLogic(
      * A subsequent [refreshChannels] call will pull the authoritative per-channel state
      * into the query map.
      */
-    internal fun trackChannel(channel: Channel) {
+    internal fun trackChannel(channel: Channel) = synchronized(listLock) {
         mutableState.setCids(mutableState.queryChannelsSpec.cids + channel.cid)
         val existingChannels = mutableState.rawChannels ?: emptyMap()
         mutableState.setChannels(existingChannels + (channel.cid to channel))
@@ -288,11 +306,11 @@ internal class QueryChannelsStateLogic(
      *
      * @param cidList The channels to refresh.
      */
-    internal fun refreshChannels(cidList: Collection<String>) {
+    internal fun refreshChannels(cidList: Collection<String>) = synchronized(listLock) {
         val existingChannels = mutableState.rawChannels
         if (existingChannels == null) {
             logger.w { "[refreshChannels] rejected (existingChannels is null)" }
-            return
+            return@synchronized
         }
 
         val newChannels = existingChannels + mutableState.queryChannelsSpec.cids
@@ -325,13 +343,13 @@ internal class QueryChannelsStateLogic(
      *
      * @param newUser The user to refresh.
      */
-    internal fun refreshMembersStateForUser(newUser: User) {
+    internal fun refreshMembersStateForUser(newUser: User) = synchronized(listLock) {
         val userId = newUser.id
         val existingChannels = mutableState.rawChannels
 
         if (existingChannels == null) {
             logger.w { "[refreshMembersStateForUser] rejected (existingChannels is null)" }
-            return
+            return@synchronized
         }
 
         val affectedChannels = existingChannels
