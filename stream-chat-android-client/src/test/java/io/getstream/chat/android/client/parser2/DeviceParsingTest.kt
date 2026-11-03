@@ -22,9 +22,9 @@ import io.getstream.chat.android.client.parser2.testdata.DeviceTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.PushProviderName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -87,13 +87,13 @@ internal class DeviceParsingTest {
 
     // endregion
 
-    // region Request path (CreateDeviceRequest / PushProvider enum)
+    // region Request path (CreateDeviceRequest / PushProviderName enum)
 
     @ParameterizedTest
     @MethodSource("pushProviders")
     fun `Request path - serializes each PushProvider to its wire string`(
         wire: String,
-        provider: CreateDeviceRequest.PushProvider,
+        provider: PushProviderName,
     ) {
         val json = toJson(CreateDeviceRequest(id = "token1", pushProvider = provider))
         assertEquals("""{"id":"token1","push_provider":"$wire"}""", json)
@@ -103,7 +103,7 @@ internal class DeviceParsingTest {
     @MethodSource("pushProviders")
     fun `Request path - deserializes each push_provider to the typed PushProvider`(
         wire: String,
-        provider: CreateDeviceRequest.PushProvider,
+        provider: PushProviderName,
     ) {
         val request = parse<CreateDeviceRequest>(
             """{"id":"token1","push_provider":"$wire"}""",
@@ -116,11 +116,11 @@ internal class DeviceParsingTest {
     companion object {
         @JvmStatic
         fun pushProviders() = listOf(
-            Arguments.of("firebase", CreateDeviceRequest.PushProvider.Firebase),
-            Arguments.of("apn", CreateDeviceRequest.PushProvider.Apn),
-            Arguments.of("huawei", CreateDeviceRequest.PushProvider.Huawei),
-            Arguments.of("xiaomi", CreateDeviceRequest.PushProvider.Xiaomi),
-            Arguments.of("newfangled", CreateDeviceRequest.PushProvider.Unknown("newfangled")),
+            Arguments.of("firebase", PushProviderName.Firebase),
+            Arguments.of("apn", PushProviderName.Apn),
+            Arguments.of("huawei", PushProviderName.Huawei),
+            Arguments.of("xiaomi", PushProviderName.Xiaomi),
+            Arguments.of("newfangled", PushProviderName.Unknown("newfangled")),
         )
     }
 }

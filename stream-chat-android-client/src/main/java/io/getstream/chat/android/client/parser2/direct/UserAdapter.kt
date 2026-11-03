@@ -61,7 +61,6 @@ internal class UserAdapter(
         var avgResponseTime: Long? = null
         var customData: Map<String, Any?>? = null
         var deletedAt: Date? = null
-        var revokeTokensIssuedBefore: Date? = null
 
         while (reader.hasNext()) {
             when (reader.selectName(KEYS)) {
@@ -90,7 +89,6 @@ internal class UserAdapter(
                     customData = JsonParsingUtils.readJsonObject(reader)
                 }
                 16 -> deletedAt = dateAdapter.fromJson(reader)
-                17 -> revokeTokensIssuedBefore = dateAdapter.fromJson(reader)
                 else -> {
                     reader.skipName()
                     reader.skipValue()
@@ -125,7 +123,7 @@ internal class UserAdapter(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds.orEmpty(),
             avgResponseTime = avgResponseTime,
-            extraData = mapping.userExtraData(stored, hiddenKeys, deletedAt, revokeTokensIssuedBefore),
+            extraData = mapping.userExtraData(stored, hiddenKeys, deletedAt),
         ).let(userTransformer::transform)
     }
 
@@ -133,7 +131,7 @@ internal class UserAdapter(
         private val KEYS = JsonReader.Options.of(
             "avg_response_time", "banned", "blocked_user_ids", "created_at", "deactivated_at", "id", "image",
             "language", "last_active", "name", "online", "role", "teams", "teams_role", "updated_at", "custom",
-            "deleted_at", "revoke_tokens_issued_before",
+            "deleted_at",
         )
     }
 

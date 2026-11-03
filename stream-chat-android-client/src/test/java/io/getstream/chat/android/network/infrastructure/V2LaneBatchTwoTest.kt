@@ -129,6 +129,14 @@ internal class V2LaneBatchTwoTest {
     }
 
     @Test
+    fun `A guest request without custom data leaves custom out`() {
+        // The backend stores a missing custom as an empty one.
+        val request = CreateGuestRequest(UserRequest(id = "guest", name = "Guest"))
+
+        assertEquals("""{"user":{"id":"guest","name":"Guest"}}""", v2Body(request))
+    }
+
+    @Test
     fun `A partial user update keeps its v1 body`() {
         // Root keys of `set` are custom data on both versions.
         assertBody(

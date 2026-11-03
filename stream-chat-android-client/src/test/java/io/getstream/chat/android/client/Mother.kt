@@ -82,6 +82,7 @@ import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryRemindersResponse
@@ -626,7 +627,7 @@ internal object Mother {
 
     fun randomDeviceResponse(
         id: String = randomString(),
-        pushProvider: String = randomString(),
+        pushProvider: PushProviderName = PushProviderName.fromString(randomString()),
         pushProviderName: String = randomString(),
         createdAt: Date = randomDate(),
         userId: String = randomString(),

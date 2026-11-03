@@ -35,9 +35,6 @@ import com.squareup.moshi.ToJson
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class PushPreferenceInput(
-    @Json(name = "call_level")
-    internal val callLevel: CallLevel? = null,
-
     @Json(name = "channel_cid")
     internal val channelCid: String? = null,
 
@@ -46,9 +43,6 @@ internal data class PushPreferenceInput(
 
     @Json(name = "disabled_until")
     internal val disabledUntil: java.util.Date? = null,
-
-    @Json(name = "feeds_level")
-    internal val feedsLevel: FeedsLevel? = null,
 
     @Json(name = "remove_disable")
     internal val removeDisable: Boolean? = null,
@@ -62,45 +56,9 @@ internal data class PushPreferenceInput(
     @Json(name = "chat_preferences")
     internal val chatPreferences: io.getstream.chat.android.network.models.ChatPreferencesInput? = null,
 
-    @Json(name = "feeds_preferences")
-    internal val feedsPreferences: io.getstream.chat.android.network.models.FeedsPreferences? = null,
-
     @Json(name = "schedule")
     internal val schedule: io.getstream.chat.android.network.models.PushScheduleInput? = null,
 ) {
-
-    /**
-     * CallLevel Enum
-     */
-    internal sealed class CallLevel(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): CallLevel = when (s) {
-                "all" -> All
-                "default" -> Default
-                "none" -> None
-                else -> Unknown(s)
-            }
-        }
-        internal object All : CallLevel("all")
-        internal object Default : CallLevel("default")
-        internal object None : CallLevel("none")
-        internal data class Unknown(val unknownValue: String) : CallLevel(unknownValue)
-
-        internal class CallLevelAdapter : JsonAdapter<CallLevel>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): CallLevel? {
-                val s = reader.nextString() ?: return null
-                return CallLevel.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: CallLevel?) {
-                writer.value(value?.value)
-            }
-        }
-    }
 
     /**
      * ChatLevel Enum
@@ -136,39 +94,6 @@ internal data class PushPreferenceInput(
 
             @ToJson
             override fun toJson(writer: JsonWriter, value: ChatLevel?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-
-    /**
-     * FeedsLevel Enum
-     */
-    internal sealed class FeedsLevel(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): FeedsLevel = when (s) {
-                "all" -> All
-                "default" -> Default
-                "none" -> None
-                else -> Unknown(s)
-            }
-        }
-        internal object All : FeedsLevel("all")
-        internal object Default : FeedsLevel("default")
-        internal object None : FeedsLevel("none")
-        internal data class Unknown(val unknownValue: String) : FeedsLevel(unknownValue)
-
-        internal class FeedsLevelAdapter : JsonAdapter<FeedsLevel>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): FeedsLevel? {
-                val s = reader.nextString() ?: return null
-                return FeedsLevel.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: FeedsLevel?) {
                 writer.value(value?.value)
             }
         }

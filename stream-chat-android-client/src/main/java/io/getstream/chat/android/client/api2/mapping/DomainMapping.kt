@@ -188,10 +188,16 @@ internal const val MENTIONED_GROUP_IDS_KEY = "mentioned_group_ids"
 internal const val USER_DEVICES_CUSTOM_KEY = "devices"
 
 /**
+ * A user-record field the backend leaves out of client-side responses. v1 still hides a custom value stored under it.
+ */
+internal const val REVOKE_TOKENS_ISSUED_BEFORE_KEY = "revoke_tokens_issued_before"
+
+/**
  * Fields of the backend's user record that the generated user models leave out. v1 hides a custom value stored under
  * any field of that record, so the user hidden sets include these too.
  */
-internal val USER_RECORD_ONLY_KEYS = setOf("ban_expires", "invisible", "last_engaged_at", "privacy_settings")
+internal val USER_RECORD_ONLY_KEYS =
+    setOf("ban_expires", "invisible", "last_engaged_at", "privacy_settings", REVOKE_TOKENS_ISSUED_BEFORE_KEY)
 
 /**
  * The fields [UserResponse] declares. A v1 response leaves a custom value stored under any of these names out of
@@ -211,7 +217,6 @@ internal val USER_HIDDEN_CUSTOM_KEYS = setOf(
     "last_active",
     "name",
     "online",
-    "revoke_tokens_issued_before",
     "role",
     "teams",
     "teams_role",
@@ -239,7 +244,6 @@ internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "name",
     "online",
     "privacy_settings",
-    "revoke_tokens_issued_before",
     "role",
     "shadow_banned",
     "teams",
@@ -304,7 +308,6 @@ internal val OWN_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "online",
     "privacy_settings",
     "push_preferences",
-    "revoke_tokens_issued_before",
     "role",
     "teams",
     "teams_role",
@@ -314,7 +317,7 @@ internal val OWN_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "unread_count",
     "unread_threads",
     "updated_at",
-)
+) + USER_RECORD_ONLY_KEYS
 
 /**
  * The [UserResponsePrivacyFields] counterpart of [USER_HIDDEN_CUSTOM_KEYS], also used for [UserResponseCommonFields],
@@ -335,12 +338,11 @@ internal val EVENT_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "name",
     "online",
     "privacy_settings",
-    "revoke_tokens_issued_before",
     "role",
     "teams",
     "teams_role",
     "updated_at",
-)
+) + USER_RECORD_ONLY_KEYS
 
 /** The [ChannelMemberResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
 internal val MEMBER_HIDDEN_CUSTOM_KEYS = setOf(
@@ -908,14 +910,13 @@ internal class DomainMapping(
             teams = teams,
             teamsRole = teamsRole.orEmpty(),
             channelMutes = channelMutes.map { it.toDomain() },
-            blockedUserIds = blockedUserIds.orEmpty(),
+            blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
             pushPreference = pushPreferences?.toDomain(),
             extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
                 OWN_USER_HIDDEN_CUSTOM_KEYS,
                 "deleted_at" to deletedAt,
                 "latest_hidden_channels" to latestHiddenChannels,
-                "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
                 "total_unread_count_by_team" to totalUnreadCountByTeam,
             ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
         ).let(userTransformer::transform)
@@ -942,7 +943,6 @@ internal class DomainMapping(
             image = image,
             lastActive = lastActive,
             name = name,
-            revokeTokensIssuedBefore = revokeTokensIssuedBefore,
             teamsRole = teamsRole,
         ).toUser()
             .copy(invisible = invisible, privacySettings = privacySettings?.toDomain())
@@ -964,7 +964,7 @@ internal class DomainMapping(
         teamsRole = teamsRole.orEmpty(),
         blockedUserIds = blockedUserIds,
         avgResponseTime = avgResponseTime?.toLong(),
-        extraData = userExtraData(custom, EVENT_USER_HIDDEN_CUSTOM_KEYS, deletedAt, revokeTokensIssuedBefore),
+        extraData = userExtraData(custom, EVENT_USER_HIDDEN_CUSTOM_KEYS, deletedAt),
     )
 
     /**
@@ -975,11 +975,9 @@ internal class DomainMapping(
         custom: Map<String, Any?>,
         hiddenKeys: Set<String>,
         deletedAt: Date?,
-        revokeTokensIssuedBefore: Date?,
     ): Map<String, Any> = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
         hiddenKeys,
         "deleted_at" to deletedAt,
-        "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
     ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap()
 
     /**
@@ -1014,7 +1012,6 @@ internal class DomainMapping(
                 FULL_USER_HIDDEN_CUSTOM_KEYS,
                 "ban_expires" to banExpires,
                 "deleted_at" to deletedAt,
-                "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
                 "shadow_banned" to shadowBanned,
             ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
         ).let(userTransformer::transform)
@@ -1126,7 +1123,7 @@ internal class DomainMapping(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = userExtraData(custom, USER_HIDDEN_CUSTOM_KEYS, deletedAt, revokeTokensIssuedBefore),
+            extraData = userExtraData(custom, USER_HIDDEN_CUSTOM_KEYS, deletedAt),
         ).let(userTransformer::transform)
 
     /**
@@ -1582,7 +1579,7 @@ internal class DomainMapping(
      */
     internal fun DeviceResponse.toDomain(): Device = Device(
         token = id,
-        pushProvider = PushProvider.fromKey(pushProvider),
+        pushProvider = PushProvider.fromKey(pushProvider.value),
         providerName = pushProviderName,
     )
 

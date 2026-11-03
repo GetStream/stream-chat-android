@@ -42,9 +42,10 @@ internal object RequestBodiesTestData {
 
     // The member carries no custom data, so no `custom` key is emitted at all.
     val queryMembersJson =
-        """{"type":"messaging","filter_conditions":{"name":{"${'$'}autocomplete":"amit"}},"id":"channelId",""" +
-            """"limit":30,"offset":10,"members":[{"channel_role":"channel_moderator","user_id":"amit"}],""" +
-            """"sort":[{"direction":-1,"field":"created_at"}]}"""
+        """{"type":"messaging","id":"channelId","limit":30,"offset":10,""" +
+            """"members":[{"channel_role":"channel_moderator","user_id":"amit"}],""" +
+            """"sort":[{"direction":-1,"field":"created_at"}],""" +
+            """"filter_conditions":{"name":{"${'$'}autocomplete":"amit"}}}"""
 
     val snoozeUserPushPreferences = UpsertPushPreferencesRequest(
         preferences = listOf(PushPreferenceInput(disabledUntil = Date(1614218400000))),

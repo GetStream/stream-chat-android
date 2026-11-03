@@ -91,10 +91,16 @@ internal class V2LaneBatchSixTest {
             ),
         )
         assertBody(
-            """{"type":"messaging",""" +
-                """"filter_conditions":{"created_at":{"${'$'}gt":"2026-10-12T09:52:45.916Z"}},"id":"a",""" +
-                """"limit":2,"members":[],"sort":[{"direction":-1,"field":"created_at"}]}""",
-            QueryMembersPayload(type = "messaging", id = "a", filterConditions = since, limit = 2, sort = sort),
+            """{"type":"messaging","id":"a","limit":2,"members":[],"sort":[{"direction":-1,"field":"created_at"}],""" +
+                """"filter_conditions":{"created_at":{"${'$'}gt":"2026-10-12T09:52:45.916Z"}}}""",
+            QueryMembersPayload(
+                type = "messaging",
+                id = "a",
+                limit = 2,
+                members = emptyList(),
+                sort = sort,
+                filterConditions = since,
+            ),
         )
     }
 
@@ -103,10 +109,12 @@ internal class V2LaneBatchSixTest {
         val payload = QueryMembersPayload(
             type = "messaging",
             members = listOf(ChannelMemberRequest(userId = "amit", custom = mapOf("k" to "v"))),
+            sort = emptyList(),
+            filterConditions = emptyMap(),
         )
 
         assertEquals(
-            """{"type":"messaging","filter_conditions":{},"members":[{"user_id":"amit","custom":{"k":"v"}}],"sort":[]}""",
+            """{"type":"messaging","members":[{"user_id":"amit","custom":{"k":"v"}}],"sort":[],"filter_conditions":{}}""",
             v2Body(payload),
         )
     }

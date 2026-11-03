@@ -573,8 +573,9 @@ internal class DtoMappingTest {
 
     @Test
     fun `User sends back none of the declared fields the user adapters keep in extraData`() {
+        // The revocation date is no longer kept, but a user stored by an older version may still carry it.
         val kept = GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS +
-            GENERATED_OWN_USER_EXTRA_DATA_KEYS
+            GENERATED_OWN_USER_EXTRA_DATA_KEYS + REVOKE_TOKENS_ISSUED_BEFORE_KEY
         val user = randomUser(extraData = (kept.associateWith { "from a response" } + ("color" to "teal")).toMutableMap())
         val mapping = Fixture().get()
 

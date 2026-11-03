@@ -276,7 +276,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `An event user deleted with revoked tokens parses to its domain event`() {
+    fun `An event user deleted with revoked tokens parses to its domain event without the revocation date`() {
         v2 {
             event(
                 "user.updated",
@@ -289,12 +289,12 @@ internal class V2EventParserTest {
             type = "user.updated",
             createdAt = at(EVENT_AT),
             rawCreatedAt = RAW_EVENT_AT,
-            // The domain user has no property for either, so both stay in extraData as ISO strings.
+            // The domain user has no property for deleted_at, so it stays in extraData as an ISO string. The models no
+            // longer declare revoke_tokens_issued_before, which the backend leaves out of client-side responses.
             user = expectedUser(
                 extraData = mapOf(
                     "flair" to "gold",
                     "deleted_at" to "2026-10-14T11:13:20.100Z",
-                    "revoke_tokens_issued_before" to "2026-10-12T07:48:04.528Z",
                 ),
             ),
         )

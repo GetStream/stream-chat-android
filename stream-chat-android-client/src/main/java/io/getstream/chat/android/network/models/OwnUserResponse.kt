@@ -66,6 +66,9 @@ internal data class OwnUserResponse(
     @Json(name = "updated_at")
     internal val updatedAt: java.util.Date,
 
+    @Json(name = "blocked_user_ids")
+    internal val blockedUserIds: List<String> = emptyList(),
+
     @Json(name = "channel_mutes")
     internal val channelMutes: List<io.getstream.chat.android.network.models.ChannelMute> = emptyList(),
 
@@ -99,14 +102,8 @@ internal data class OwnUserResponse(
     @Json(name = "name")
     internal val name: String? = null,
 
-    @Json(name = "revoke_tokens_issued_before")
-    internal val revokeTokensIssuedBefore: java.util.Date? = null,
-
-    @Json(name = "blocked_user_ids")
-    internal val blockedUserIds: List<String>? = emptyList(),
-
     @Json(name = "latest_hidden_channels")
-    internal val latestHiddenChannels: List<String>? = emptyList(),
+    internal val latestHiddenChannels: List<String>? = null,
 
     @Json(name = "privacy_settings")
     internal val privacySettings: io.getstream.chat.android.network.models.PrivacySettingsResponse? = null,
@@ -115,8 +112,8 @@ internal data class OwnUserResponse(
     internal val pushPreferences: io.getstream.chat.android.network.models.PushPreferencesResponse? = null,
 
     @Json(name = "teams_role")
-    internal val teamsRole: Map<String, String>? = emptyMap(),
+    internal val teamsRole: Map<String, String>? = null,
 
     @Json(name = "total_unread_count_by_team")
-    internal val totalUnreadCountByTeam: Map<String, Int>? = emptyMap(),
+    internal val totalUnreadCountByTeam: Map<String, Int>? = null,
 )

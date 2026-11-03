@@ -166,6 +166,7 @@ import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.PushScheduleInput
 import io.getstream.chat.android.network.models.PushScheduleResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
@@ -600,7 +601,7 @@ internal class MoshiChatApiTest {
         // then
         val expectedRequest = CreateDeviceRequest(
             id = device.token,
-            pushProvider = CreateDeviceRequest.PushProvider.fromString(device.pushProvider.key),
+            pushProvider = PushProviderName.fromString(device.pushProvider.key),
             pushProviderName = device.providerName,
         )
         result `should be instance of` expected

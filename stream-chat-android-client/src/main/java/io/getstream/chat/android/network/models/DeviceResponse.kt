@@ -26,35 +26,34 @@ package io.getstream.chat.android.network.models
 import com.squareup.moshi.Json
 
 /**
- * Response for Device
+ * An object representing a device which can receive push notifications.
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class DeviceResponse(
     @Json(name = "created_at")
-    val createdAt: java.util.Date,
+    internal val createdAt: java.util.Date,
 
     @Json(name = "id")
-    val id: kotlin.String,
+    internal val id: String,
 
     @Json(name = "push_provider")
-    val pushProvider: kotlin.String,
+    internal val pushProvider: io.getstream.chat.android.network.models.PushProviderName,
 
     @Json(name = "user_id")
-    val userId: kotlin.String,
+    internal val userId: String,
 
     @Json(name = "disabled")
-    val disabled: kotlin.Boolean? = null,
+    internal val disabled: Boolean? = null,
 
     @Json(name = "disabled_reason")
-    val disabledReason: kotlin.String? = null,
+    internal val disabledReason: String? = null,
 
     @Json(name = "hardware_id")
-    val hardwareId: kotlin.String? = null,
+    internal val hardwareId: String? = null,
 
     @Json(name = "push_provider_name")
-    val pushProviderName: kotlin.String? = null,
+    internal val pushProviderName: String? = null,
 
     @Json(name = "voip")
-    val voip: kotlin.Boolean? = null,
+    internal val voip: Boolean? = null,
 )
