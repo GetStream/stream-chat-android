@@ -62,10 +62,13 @@ import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.PushSchedule
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
+import io.getstream.chat.android.models.QuietHoursDay
+import io.getstream.chat.android.models.QuietHoursRule
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.Role
@@ -127,9 +130,11 @@ import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.PushScheduleResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.QueryScheduledMessagesResponse
+import io.getstream.chat.android.network.models.QuietHoursRuleResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
@@ -248,6 +253,7 @@ internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
 
 /** The [ChannelResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
 internal val CHANNEL_HIDDEN_CUSTOM_KEYS = setOf(
+    "active_member_count",
     "auto_translation_enabled",
     "auto_translation_language",
     "blocked",
@@ -476,6 +482,7 @@ internal class DomainMapping(
             cooldown = cooldown ?: 0,
             ownCapabilities = ownCapabilities.orEmpty().mapTo(mutableSetOf(), ChannelOwnCapability::value),
             messageCount = messageCount,
+            activeMemberCount = activeMemberCount,
             lastMessageAt = lastMessageAt,
             truncatedBy = truncatedBy?.toDomain(),
             autoTranslationEnabled = autoTranslationEnabled ?: false,
@@ -1884,6 +1891,18 @@ internal class DomainMapping(
         level = PushPreferenceLevel.fromValue(chatLevel),
         disabledUntil = disabledUntil,
         chatPreferences = chatPreferences?.toDomain(),
+        schedule = schedule?.toDomain(),
+    )
+
+    internal fun PushScheduleResponse.toDomain(): PushSchedule = PushSchedule(
+        timezone = timezone,
+        quietHours = quietHours.map { it.toDomain() },
+    )
+
+    internal fun QuietHoursRuleResponse.toDomain(): QuietHoursRule = QuietHoursRule(
+        start = start,
+        end = end,
+        days = days.orEmpty().mapNotNull(QuietHoursDay::fromValue),
     )
 
     internal fun ChannelPushPreferencesResponse.toDomain(): PushPreference = PushPreference(

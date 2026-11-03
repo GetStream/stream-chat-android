@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.chan
 
 import io.getstream.chat.android.client.MockChatClientBuilder
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
+import io.getstream.chat.android.client.internal.offline.randomChannelEntity
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomLocation
@@ -30,10 +31,12 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.util.Date
@@ -112,6 +115,45 @@ internal class DatabaseChannelRepositoryCacheTest {
         sut.insertChannel(cached.copy(truncatedAt = Date(3_000), truncatedBy = newTruncator))
 
         assertEquals(newTruncator, sut.selectChannel(cached.cid)?.truncatedBy)
+    }
+
+    @Test
+    fun `inserting a channel without activeMemberCount keeps the stored count`() = testScope.runTest {
+        val cached = randomChannel(activeMemberCount = 7)
+        sut.insertChannel(cached)
+
+        sut.insertChannel(cached.copy(activeMemberCount = null, name = "renamed"))
+        advanceUntilIdle()
+
+        assertEquals(7, sut.selectChannel(cached.cid)?.activeMemberCount)
+        val written = argumentCaptor<List<ChannelEntity>>()
+        verify(channelDao, times(2)).insertMany(written.capture())
+        assertEquals(7, written.lastValue.single().activeMemberCount)
+    }
+
+    @Test
+    fun `inserting an uncached channel without activeMemberCount keeps the count stored on DB`() = testScope.runTest {
+        val channel = randomChannel(activeMemberCount = null)
+        val stored = randomChannelEntity(type = channel.type, channelId = channel.id, activeMemberCount = 7)
+        whenever(channelDao.select(listOf(channel.cid))) doReturn listOf(stored)
+
+        sut.insertChannel(channel)
+        advanceUntilIdle()
+
+        assertEquals(7, sut.selectChannel(channel.cid)?.activeMemberCount)
+        val written = argumentCaptor<List<ChannelEntity>>()
+        verify(channelDao).insertMany(written.capture())
+        assertEquals(7, written.firstValue.single().activeMemberCount)
+    }
+
+    @Test
+    fun `inserting a channel with activeMemberCount replaces the stored count`() = testScope.runTest {
+        val cached = randomChannel(activeMemberCount = 7)
+        sut.insertChannel(cached)
+
+        sut.insertChannel(cached.copy(activeMemberCount = 5))
+
+        assertEquals(5, sut.selectChannel(cached.cid)?.activeMemberCount)
     }
 
     @Test

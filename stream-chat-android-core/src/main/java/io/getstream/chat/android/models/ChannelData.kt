@@ -53,6 +53,7 @@ import java.util.Date
  * @param truncatedBy The user who last truncated the channel, if it was truncated by a user.
  * @param autoTranslationEnabled Whether messages in the channel are translated automatically.
  * @param autoTranslationLanguages The language codes messages are translated to when [autoTranslationEnabled] is set.
+ * @param activeMemberCount Number of members whose users are neither deactivated nor deleted, if known.
  */
 @Immutable
 public data class ChannelData(
@@ -82,6 +83,7 @@ public data class ChannelData(
     val truncatedBy: User? = null,
     val autoTranslationEnabled: Boolean = false,
     val autoTranslationLanguages: Set<String> = emptySet(),
+    val activeMemberCount: Int? = null,
 ) {
 
     /**
@@ -151,6 +153,7 @@ public data class ChannelData(
             truncatedBy = truncatedBy,
             autoTranslationEnabled = autoTranslationEnabled,
             autoTranslationLanguages = autoTranslationLanguages,
+            activeMemberCount = activeMemberCount,
         )
     }
 
@@ -195,6 +198,8 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         truncatedBy = latestTruncatedBy(this.truncatedAt, this.truncatedBy, that.truncatedAt, that.truncatedBy),
         autoTranslationEnabled = that.autoTranslationEnabled,
         autoTranslationLanguages = that.autoTranslationLanguages,
+        // events never carry the active member count
+        activeMemberCount = that.activeMemberCount ?: this.activeMemberCount,
         /* Do not merge (ownCapabilities, membership, pushPreference) fields, they are not updated in events
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,

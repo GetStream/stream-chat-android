@@ -53,6 +53,9 @@ internal data class PushPreferenceInput(
     @Json(name = "remove_disable")
     internal val removeDisable: Boolean? = null,
 
+    @Json(name = "remove_schedule")
+    internal val removeSchedule: Boolean? = null,
+
     @Json(name = "user_id")
     internal val userId: String? = null,
 
@@ -61,6 +64,9 @@ internal data class PushPreferenceInput(
 
     @Json(name = "feeds_preferences")
     internal val feedsPreferences: io.getstream.chat.android.network.models.FeedsPreferences? = null,
+
+    @Json(name = "schedule")
+    internal val schedule: io.getstream.chat.android.network.models.PushScheduleInput? = null,
 ) {
 
     /**

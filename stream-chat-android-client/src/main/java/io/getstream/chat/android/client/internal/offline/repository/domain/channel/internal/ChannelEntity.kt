@@ -64,6 +64,7 @@ import java.util.Date
  * @param truncatedByUserId Id of the user who last truncated the channel, if known.
  * @param autoTranslationEnabled If messages in the channel are translated automatically.
  * @param autoTranslationLanguages The language codes messages are translated to, in order.
+ * @param activeMemberCount Number of members whose users are neither deactivated nor deleted, if known.
  */
 @Entity(tableName = CHANNEL_ENTITY_TABLE_NAME, indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
@@ -99,6 +100,7 @@ internal data class ChannelEntity(
     val truncatedByUserId: String?,
     val autoTranslationEnabled: Boolean,
     val autoTranslationLanguages: List<String>,
+    val activeMemberCount: Int? = null,
 ) {
     /**
      * The channel id in the format messaging:123.

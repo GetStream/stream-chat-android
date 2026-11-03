@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.extensions.internal.keepingActiveMemberCountOf
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
@@ -220,6 +221,7 @@ internal class QueryChannelsStateLogic(
         val pageChannels = page.associate { (id, channel) ->
             id.cid to channel.joinMessages(existingChannels[id.cid])
                 .joinMembers(existingChannels[id.cid])
+                .keepingActiveMemberCountOf(existingChannels[id.cid])
         }
         mutableState.setChannels(existingChannels + pageChannels)
         return pageChannels

@@ -303,3 +303,24 @@ internal fun ChannelData.updateUsers(users: Map<String, User>): ChannelData = co
 @InternalStreamChatApi
 public fun Collection<Channel>.updateLiveLocations(locations: List<Location>): Collection<Channel> =
     map { channel -> channel.copy(activeLiveLocations = locations.filter { it.cid == channel.cid }) }
+
+/**
+ * Only queries that ask for it carry the active member count, so a channel without one keeps the count of
+ * [previous].
+ */
+internal fun Channel.keepingActiveMemberCountOf(previous: Channel?): Channel =
+    if (activeMemberCount != null || previous?.activeMemberCount == null) {
+        this
+    } else {
+        copy(activeMemberCount = previous.activeMemberCount)
+    }
+
+/**
+ * The [ChannelData] counterpart of [Channel.keepingActiveMemberCountOf].
+ */
+internal fun ChannelData.keepingActiveMemberCountOf(previous: ChannelData?): ChannelData =
+    if (activeMemberCount != null || previous?.activeMemberCount == null) {
+        this
+    } else {
+        copy(activeMemberCount = previous.activeMemberCount)
+    }

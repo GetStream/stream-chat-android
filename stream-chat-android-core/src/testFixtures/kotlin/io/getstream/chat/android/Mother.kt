@@ -512,6 +512,7 @@ public fun randomChannel(
     draftMessage: DraftMessage? = randomDraftMessageOrNull(),
     activeLiveLocations: List<Location> = emptyList(),
     messageCount: Int? = positiveRandomInt().takeIf { randomBoolean() },
+    activeMemberCount: Int? = positiveRandomInt().takeIf { randomBoolean() },
 ): Channel = Channel(
     id = id,
     name = name,
@@ -546,6 +547,7 @@ public fun randomChannel(
     draftMessage = draftMessage,
     activeLiveLocations = activeLiveLocations,
     messageCount = messageCount,
+    activeMemberCount = activeMemberCount,
 )
 
 public fun randomChannelUserRead(

@@ -78,6 +78,11 @@ import java.util.Date
  * server did not send them: the feature is off, the server could not read them, or they are more than 100 in the
  * channel, or in all the channels of the page for a channels query. Other channels, for example from events or the
  * offline storage, have null.
+ * @param activeMemberCount Number of members whose users are neither deactivated nor deleted. Only filled when
+ * the channels are queried with `QueryChannelsRequest.includeActiveMemberCount`, and kept from the last such query
+ * otherwise. Null when it was never requested, or when the server could not compute it in time. Use [memberCount]
+ * when it is null. Requesting it fails the whole query when the returned channels have more than 50,000 members in
+ * total.
  */
 @Immutable
 public data class Channel(
@@ -130,6 +135,7 @@ public data class Channel(
     val autoTranslationEnabled: Boolean = false,
     val autoTranslationLanguages: Set<String> = emptySet(),
     val scheduledMessages: List<ScheduledMessage>? = null,
+    val activeMemberCount: Int? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -240,6 +246,7 @@ public data class Channel(
         private var autoTranslationEnabled: Boolean = false
         private var autoTranslationLanguages: Set<String> = emptySet()
         private var scheduledMessages: List<ScheduledMessage>? = null
+        private var activeMemberCount: Int? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -273,6 +280,7 @@ public data class Channel(
             draft = channel.draftMessage
             activeLiveLocations = channel.activeLiveLocations
             messageCount = channel.messageCount
+            activeMemberCount = channel.activeMemberCount
             pushPreference = channel.pushPreference
             filterTags = channel.filterTags
             lastMessageAt = channel.lastMessageAt
@@ -357,6 +365,9 @@ public data class Channel(
             this.scheduledMessages = scheduledMessages
         }
 
+        public fun withActiveMemberCount(activeMemberCount: Int?): Builder = apply {
+            this.activeMemberCount = activeMemberCount
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         public fun build(): Channel = Channel(
@@ -400,6 +411,7 @@ public data class Channel(
             autoTranslationEnabled = autoTranslationEnabled,
             autoTranslationLanguages = autoTranslationLanguages,
             scheduledMessages = scheduledMessages,
+            activeMemberCount = activeMemberCount,
             extraData = extraData,
         )
     }
@@ -429,6 +441,8 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
         messageCount = that.messageCount ?: messageCount,
+        // events never carry the active member count
+        activeMemberCount = that.activeMemberCount ?: activeMemberCount,
         lastMessageAt = that.lastMessageAt,
         disabled = that.disabled,
         // blocked is omitted by the events, and truncatedAt only ever moves forward
@@ -491,5 +505,6 @@ public fun Channel.toChannelData(): ChannelData {
         truncatedBy = truncatedBy,
         autoTranslationEnabled = autoTranslationEnabled,
         autoTranslationLanguages = autoTranslationLanguages,
+        activeMemberCount = activeMemberCount,
     )
 }

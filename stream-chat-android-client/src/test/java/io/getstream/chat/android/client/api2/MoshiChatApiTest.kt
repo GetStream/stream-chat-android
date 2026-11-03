@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -86,6 +87,9 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreferenceLevel
+import io.getstream.chat.android.models.PushSchedule
+import io.getstream.chat.android.models.QuietHoursDay
+import io.getstream.chat.android.models.QuietHoursRule
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
@@ -162,6 +166,8 @@ import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.PushScheduleInput
+import io.getstream.chat.android.network.models.PushScheduleResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryChannelsResponse
@@ -179,6 +185,8 @@ import io.getstream.chat.android.network.models.QueryScheduledMessagesRequest
 import io.getstream.chat.android.network.models.QueryScheduledMessagesResponse
 import io.getstream.chat.android.network.models.QueryThreadsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
+import io.getstream.chat.android.network.models.QuietHoursRuleInput
+import io.getstream.chat.android.network.models.QuietHoursRuleResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
@@ -2216,6 +2224,24 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).queryChannels(connectionId, expectedPayload)
     }
 
+    @Test
+    fun `queryChannels sends include_active_member_count only when requested`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.queryChannels(any(), any()))
+            .doReturn(RetroSuccess(QueryChannelsResponse(duration = randomString())).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+        sut.setConnection(userId = randomString(), connectionId = randomString())
+        val filter = Filters.eq("type", "messaging")
+
+        sut.queryChannels(QueryChannelsRequest(filter = filter, limit = 10, includeActiveMemberCount = true)).await()
+        sut.queryChannels(QueryChannelsRequest(filter = filter, limit = 10)).await()
+
+        val captor = argumentCaptor<io.getstream.chat.android.network.models.QueryChannelsRequest>()
+        verify(api, times(2)).queryChannels(any(), captor.capture())
+        assertEquals(true, captor.firstValue.includeActiveMemberCount)
+        assertEquals(null, captor.secondValue.includeActiveMemberCount)
+    }
+
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryGroupedChannelsInput")
     fun testQueryGroupedChannels(
@@ -3937,6 +3963,85 @@ internal class MoshiChatApiTest {
         )
         Assertions.assertInstanceOf(Result.Success::class.java, result)
         verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
+    @Test
+    fun testSetUserPushSchedule() = runTest {
+        val userId = randomString()
+        val schedule = PushSchedule(
+            timezone = "Europe/Amsterdam",
+            quietHours = listOf(
+                QuietHoursRule(start = "18:00", end = "09:00", days = QuietHoursDay.weekdays),
+                QuietHoursRule(start = "00:00", end = "24:00"),
+            ),
+        )
+        val response = UpsertPushPreferencesResponse(
+            duration = randomString(),
+            userChannelPreferences = emptyMap(),
+            userPreferences = mapOf(
+                userId to PushPreferencesResponse(
+                    schedule = PushScheduleResponse(
+                        timezone = "Europe/Amsterdam",
+                        quietHours = listOf(
+                            QuietHoursRuleResponse(
+                                start = "18:00",
+                                end = "09:00",
+                                days = listOf("mon", "tue", "wed", "thu", "fri"),
+                            ),
+                            QuietHoursRuleResponse(start = "00:00", end = "24:00", days = null),
+                        ),
+                    ),
+                ),
+            ),
+        )
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withCurrentUserId(userId).withPushPreferencesApi(api).get()
+
+        val result = sut.setUserPushSchedule(schedule).await()
+
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                PushPreferenceInput(
+                    channelCid = null,
+                    removeSchedule = true,
+                    schedule = PushScheduleInput(
+                        timezone = "Europe/Amsterdam",
+                        quietHours = listOf(
+                            QuietHoursRuleInput(
+                                end = "09:00",
+                                start = "18:00",
+                                days = listOf("mon", "tue", "wed", "thu", "fri"),
+                            ),
+                            QuietHoursRuleInput(end = "24:00", start = "00:00", days = emptyList()),
+                        ),
+                    ),
+                ),
+            ),
+        )
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+        assertEquals(schedule, (result as Result.Success).value.schedule)
+    }
+
+    @Test
+    fun testRemoveUserPushSchedule() = runTest {
+        val userId = randomString()
+        val response = UpsertPushPreferencesResponse(
+            duration = randomString(),
+            userChannelPreferences = emptyMap(),
+            userPreferences = mapOf(userId to PushPreferencesResponse(chatLevel = "all")),
+        )
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withCurrentUserId(userId).withPushPreferencesApi(api).get()
+
+        val result = sut.removeUserPushSchedule().await()
+
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(PushPreferenceInput(channelCid = null, removeSchedule = true)),
+        )
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+        assertEquals(null, (result as Result.Success).value.schedule)
     }
 
     @Test

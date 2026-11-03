@@ -48,4 +48,7 @@ internal data class PushPreferencesResponse(
 
     @Json(name = "feeds_preferences")
     val feedsPreferences: io.getstream.chat.android.network.models.FeedsPreferencesResponse? = null,
+
+    @Json(name = "schedule")
+    val schedule: io.getstream.chat.android.network.models.PushScheduleResponse? = null,
 )

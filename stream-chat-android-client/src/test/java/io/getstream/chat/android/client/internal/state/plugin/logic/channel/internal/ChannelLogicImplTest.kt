@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MessagesPaginationManager
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.PushPreference
@@ -52,6 +53,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
@@ -186,6 +188,19 @@ internal class ChannelLogicImplTest {
                 verify(stateImpl).upsertMembers(channel.members)
                 verify(stateImpl).endFirstPageLoad()
             }
+        }
+
+        @Test
+        fun `should keep the last known activeMemberCount when the channel has none`() {
+            // Given
+            val channel = randomChannel(id = "123", type = "messaging", messages = emptyList(), activeMemberCount = null)
+            // When
+            sut.onQueryChannelResult(QueryChannelRequest().withMessages(30), Result.Success(channel))
+            // Then
+            val captor = argumentCaptor<(ChannelData?) -> ChannelData?>()
+            verify(stateImpl).updateChannelData(captor.capture())
+            val current = ChannelData(id = "123", type = "messaging", activeMemberCount = 7)
+            assertEquals(7, captor.firstValue(current)?.activeMemberCount)
         }
 
         @Test
@@ -1160,6 +1175,29 @@ internal class ChannelLogicImplTest {
             )
             // Then
             verify(stateImpl).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        }
+
+        @Test
+        fun `should keep the last known activeMemberCount when the channel has none`() = runTest {
+            val update = updateChannelDataFor(randomChannel(id = "123", activeMemberCount = null))
+
+            val current = ChannelData(id = "123", type = "messaging", activeMemberCount = 7)
+            assertEquals(7, update(current)?.activeMemberCount)
+        }
+
+        @Test
+        fun `should take activeMemberCount from the channel when present`() = runTest {
+            val update = updateChannelDataFor(randomChannel(id = "123", activeMemberCount = 5))
+
+            val current = ChannelData(id = "123", type = "messaging", activeMemberCount = 7)
+            assertEquals(5, update(current)?.activeMemberCount)
+        }
+
+        private suspend fun updateChannelDataFor(channel: Channel): (ChannelData?) -> ChannelData? {
+            sut.updateDataForChannel(channel = channel, messageLimit = 0)
+            val captor = argumentCaptor<(ChannelData?) -> ChannelData?>()
+            verify(stateImpl).updateChannelData(captor.capture())
+            return captor.firstValue
         }
 
         @Test
