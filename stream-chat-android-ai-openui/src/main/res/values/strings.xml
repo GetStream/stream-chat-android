@@ -71,4 +71,13 @@
     <string name="stream_ai_openui_validation_min_length">Must be at least %1$s characters</string>
     <string name="stream_ai_openui_validation_max_length">Must be no more than %1$s characters</string>
     <string name="stream_ai_openui_validation_pattern">Invalid format</string>
+    <!-- A metric's change, read by TalkBack. %1$s is the change in percent. -->
+    <string name="stream_ai_openui_trend_up">Up %1$s percent</string>
+    <string name="stream_ai_openui_trend_down">Down %1$s percent</string>
+    <!-- The message sent for a tapped card without a title. %1$s is its number. -->
+    <string name="stream_ai_openui_card_block_snippet">Snippet card %1$s</string>
+    <string name="stream_ai_openui_card_block_overview">Overview card %1$s</string>
+    <string name="stream_ai_openui_card_block_context">Context card %1$s</string>
+    <string name="stream_ai_openui_card_block_composite">Composite card %1$s</string>
+    <string name="stream_ai_openui_card_block_visual">Visual card %1$s</string>
 </resources>

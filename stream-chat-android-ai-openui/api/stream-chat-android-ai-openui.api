@@ -12,6 +12,23 @@ public final class io/getstream/chat/android/ai/openui/components/ComposableSing
 	public final fun getLambda$798673870$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/getstream/chat/android/ai/openui/components/ComposableSingletons$CardComponentsKt {
+	public static final field INSTANCE Lio/getstream/chat/android/ai/openui/components/ComposableSingletons$CardComponentsKt;
+	public fun <init> ()V
+	public final fun getLambda$-1057998791$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-1473440334$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-186958029$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-1908960715$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-622478410$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-940716783$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$1099524276$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$1514965819$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$1950486200$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$228483514$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$345765522$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$664003895$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+}
+
 public final class io/getstream/chat/android/ai/openui/components/ComposableSingletons$ContentComponentsKt {
 	public static final field INSTANCE Lio/getstream/chat/android/ai/openui/components/ComposableSingletons$ContentComponentsKt;
 	public fun <init> ()V

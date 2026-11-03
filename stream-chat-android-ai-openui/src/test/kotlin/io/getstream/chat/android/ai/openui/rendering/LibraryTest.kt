@@ -31,18 +31,23 @@ import kotlin.test.assertTrue
 internal class LibraryTest {
 
     private val chatRendered = setOf(
-        "Accordion", "Button", "Buttons", "Callout", "Card", "CardHeader", "Carousel", "CheckBoxGroup", "Chips",
-        "CodeBlock", "DatePicker", "EditableTable", "EntityList", "FollowUpBlock", "Form", "FormControl", "Icon",
-        "IconButton", "Image", "ImageBlock", "ImageGallery", "InlineHeader", "Input", "Label", "ListBlock",
-        "MarkDownRenderer", "OptionCards", "RadioGroup", "SectionBlock", "Select", "Separator", "Slider", "Steps",
-        "SwitchGroup", "Table", "Tabs", "Tag", "TagBlock", "TextArea", "TextCallout", "TextContent",
+        "Accordion", "BoldText", "Button", "Buttons", "Callout", "Card", "CardHeader", "Carousel", "CheckBoxGroup",
+        "Chips", "CodeBlock", "CompositeCardBlock", "ContextCardBlock", "DatePicker", "EditableTable", "EntityList",
+        "FollowUpBlock", "Form", "FormControl", "Icon", "IconButton", "IconText", "Image", "ImageBlock",
+        "ImageGallery", "ImageText", "ImageTextLarge", "InlineHeader", "Input", "Label", "ListBlock",
+        "MarkDownRenderer", "MetricIndicatorInline", "MetricIndicatorWithStrikethrough", "OptionCards",
+        "OverviewCardBlock", "RadioGroup", "SectionBlock", "Select", "Separator", "Slider", "SnippetCardBlock",
+        "Steps", "SwitchGroup", "Table", "Tabs", "Tag", "TagBlock", "Text", "TextArea", "TextCallout", "TextContent",
+        "VisualCardBlock",
     )
     private val standardRendered = setOf(
-        "Accordion", "Button", "Buttons", "Callout", "Card", "CardHeader", "Carousel", "CheckBoxGroup", "Chips",
-        "CodeBlock", "DatePicker", "EditableTable", "EntityList", "Form", "FormControl", "Icon", "IconButton", "Image",
-        "ImageBlock", "ImageGallery", "InlineHeader", "Input", "Label", "ListBlock", "MarkDownRenderer", "Modal",
-        "OptionCards", "RadioGroup", "Select", "Separator", "Slider", "Stack", "Steps", "SwitchGroup", "Table", "Tabs",
-        "Tag", "TagBlock", "TextArea", "TextCallout", "TextContent",
+        "Accordion", "BoldText", "Button", "Buttons", "Callout", "Card", "CardHeader", "Carousel", "CheckBoxGroup",
+        "Chips", "CodeBlock", "CompositeCardBlock", "ContextCardBlock", "DatePicker", "EditableTable", "EntityList",
+        "Form", "FormControl", "Icon", "IconButton", "IconText", "Image", "ImageBlock", "ImageGallery", "ImageText",
+        "ImageTextLarge", "InlineHeader", "Input", "Label", "ListBlock", "MarkDownRenderer", "MetricIndicatorInline",
+        "MetricIndicatorWithStrikethrough", "Modal", "OptionCards", "OverviewCardBlock", "RadioGroup", "Select",
+        "Separator", "Slider", "SnippetCardBlock", "Stack", "Steps", "SwitchGroup", "Table", "Tabs", "Tag", "TagBlock",
+        "Text", "TextArea", "TextCallout", "TextContent", "VisualCardBlock",
     )
 
     private fun rendered(library: Library) =
