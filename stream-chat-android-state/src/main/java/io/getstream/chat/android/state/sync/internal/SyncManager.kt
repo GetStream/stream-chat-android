@@ -83,6 +83,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 private const val QUERIES_TO_RETRY = 3
 private const val SYNC_MAX_CIDS = 100
+private const val FAILED_FIRST_LOADS_TO_WATCH = 30
 
 /**
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
@@ -247,6 +248,8 @@ internal class SyncManager(
         state.value = State.Syncing
         val online = clientState.isOnline
         logger.v { "[onConnectionEstablished] online: $online" }
+        // Taken first, since the retries, the sync and the refreshes can fill the channel data
+        val failedFirstLoadCids = failedFirstLoadCids()
         retryFailedEntities()
 
         if (syncState.value == null && syncState.value?.userId != userId) {
@@ -260,7 +263,7 @@ internal class SyncManager(
                 watch = !isFirstConnect.get() && groupedListsWatch(),
                 groupedListsFirst = true,
             )
-            restoreActiveChannels(syncedCids)
+            restoreActiveChannels(syncedCids, failedFirstLoadCids)
         } else {
             logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
         }
@@ -439,23 +442,32 @@ internal class SyncManager(
     /**
      * @param syncedCids The cids whose events the reconnect sync received. A grouped list keeps its loaded pages only
      * when they are all here, since no other request updates the channels beyond its first page.
+     * @param failedFirstLoadCids The cids whose first load failed. Up to [FAILED_FIRST_LOADS_TO_WATCH] are watched
+     * instead of queried, the rest are queried with the other channels.
      */
-    private suspend fun restoreActiveChannels(syncedCids: Set<String>) {
+    private suspend fun restoreActiveChannels(syncedCids: Set<String>, failedFirstLoadCids: Set<String>) {
         val recoverAll = !isFirstConnect.compareAndSet(true, false)
         logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
+        // The open channels first, so the cap never leaves them to a query without messages
+        val openCids = stateRegistry.getTrackedWatchedChannels()
+        val failedFirstLoadsToWatch = failedFirstLoadCids
+            .sortedBy { it !in openCids }
+            .take(FAILED_FIRST_LOADS_TO_WATCH)
+            .toSet()
 
         val allLogics = logicRegistry.getActiveQueryChannelsLogic()
         val hasGroupedQueries = allLogics.any { it.groupKey() != null }
         val hasStandardQueries = allLogics.any { it.groupKey() == null }
 
         // --- GroupedQueryChannels path ---
+        var rewatchedCids = emptySet<String>()
         val groupedHandledCids: Set<String> = if (hasGroupedQueries) {
             // Refresh first page of the queries populated via GroupedQueryChannels
             val refreshed = updateGroupedQueryChannels(recoverAll, syncedCids)
             // Re-watch tracked channels (specific for this path, where we don't re-watch the groups, just the manually
             // opened/tracked channels)
-            val rewatched = rewatchTrackedWatchedChannels()
-            refreshed + rewatched
+            rewatchedCids = rewatchTrackedWatchedChannels()
+            refreshed + rewatchedCids
         } else {
             emptySet()
         }
@@ -466,11 +478,10 @@ internal class SyncManager(
                 is Result.Success -> {
                     val updatedCids = result.value
                     logger.v { "[restoreActiveChannels] standardCids.size: ${result.value.size}" }
-                    updateActiveChannels(recoverAll, updatedCids + groupedHandledCids)
+                    updateActiveChannels(recoverAll, updatedCids + groupedHandledCids + failedFirstLoadsToWatch)
                 }
                 is Result.Failure -> {
                     logger.e { "[restoreActiveChannels] standard query failed: ${result.value}" }
-                    return
                 }
             }
         }
@@ -478,7 +489,33 @@ internal class SyncManager(
         // --- Active Channels created outside of QueryChannels requests
         if (!hasStandardQueries && !hasGroupedQueries) {
             // Check for active channels created outside of a QueryChannels requests
-            updateActiveChannels(recoverAll, cidsToExclude = emptySet())
+            updateActiveChannels(recoverAll, cidsToExclude = failedFirstLoadsToWatch)
+        }
+
+        watchFailedFirstLoads(failedFirstLoadsToWatch - rewatchedCids)
+    }
+
+    private fun failedFirstLoadCids(): Set<String> = stateRegistry.getActiveChannelStates()
+        .filter { (_, state) -> state.recoveryNeeded && state.channelData.value.createdAt == null }
+        .keys
+        .mapTo(mutableSetOf(), ChannelId::cid)
+
+    /**
+     * Watches the channels whose first load failed, even when a refresh already updated them, so they get their
+     * messages and pagination. Skips the ones a watch has recovered since.
+     */
+    private suspend fun watchFailedFirstLoads(failedFirstLoadCids: Set<String>) {
+        val online = clientState.isOnline
+        val channelIds = stateRegistry.getActiveChannelStates()
+            .filter { (id, state) -> id.cid in failedFirstLoadCids && state.recoveryNeeded }
+            .keys
+        logger.d { "[watchFailedFirstLoads] channelIds.size: ${channelIds.size}, online: $online" }
+        if (!online) return
+
+        channelIds.forEach { id ->
+            logicRegistry.channel(id).watch(userPresence = userPresence).onError {
+                logger.w { "[watchFailedFirstLoads] watch failed for ${id.cid}: $it" }
+            }
         }
     }
 
