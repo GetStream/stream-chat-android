@@ -82,7 +82,7 @@ This SDK consists of two low-level artifacts you can build on:
   - [Sample app](/stream-chat-android-ai-compose-sample)
 - [**On-device model**](/stream-chat-android-ai-ondevice): A model on the device, such as Gemini Nano, to answer when your agent can't.
 - [**A2UI**](/stream-chat-android-ai-a2ui): Shows the generative UI agents write in [A2UI](https://a2ui.org) 1.0.
-- [**OpenUI**](/stream-chat-android-ai-openui): Parses OpenUI Lang, the language models answer in to describe generative UI.
+- [**OpenUI**](/stream-chat-android-ai-openui): Parses and runs OpenUI Lang, the language models answer in to describe generative UI, and writes the system prompt that teaches it.
 
 Learn more about the modules by visiting [the documentation](https://getstream.io/chat/docs/sdk/android/).
 

@@ -319,6 +319,9 @@ internal data class PropField(
     }
 }
 
+/** A portable component definition OpenUI can't read. */
+internal class OpenUIPortableComponentException(message: String) : IllegalArgumentException(message)
+
 /** The schema of a component: its name, description and ordered (positional) props. */
 internal data class ComponentSchema(val name: String, val description: String, val props: List<PropField>) {
     /** Prompt signature: `Name(prop: type, optional?: type, ...)`. */
@@ -333,4 +336,7 @@ internal data class ComponentSchema(val name: String, val description: String, v
     /** A copy with the prop named [name] transformed. */
     fun updatingProp(name: String, update: (PropField) -> PropField): ComponentSchema =
         copy(props = props.map { if (it.name == name) update(it) else it })
+
+    /** Factories for schemas, such as [fromPortableDefinition]. */
+    companion object
 }
