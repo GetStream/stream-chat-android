@@ -46,6 +46,7 @@ include (
         ":stream-chat-android-ai-compose",
         ":stream-chat-android-ai-compose-sample",
         ":stream-chat-android-ai-ondevice",
+        ":stream-chat-android-ai-openui",
         ":stream-chat-android-ui-common",
 		":stream-chat-android-ui-components",
 		":stream-chat-android-ui-components-sample",

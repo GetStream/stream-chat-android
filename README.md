@@ -23,6 +23,7 @@
 ![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-13.37%20MB-lightgreen)
 ![stream-chat-android-ai-compose](https://img.shields.io/badge/stream--chat--android--ai--compose-2.20%20MB-lightgreen)
 ![stream-chat-android-ai-ondevice](https://img.shields.io/badge/stream--chat--android--ai--ondevice-1.66%20MB-lightgreen)
+![stream-chat-android-ai-openui](https://img.shields.io/badge/stream--chat--android--ai--openui-0.23%20MB-lightgreen)
 
 </div>
 
@@ -74,11 +75,12 @@ This SDK consists of two low-level artifacts you can build on:
   - [Sample app](/stream-chat-android-ui-components-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
 
-**For AI assistants** there are two separate artifacts. No other Chat SDK artifact depends on them:
+**For AI assistants** there are three separate artifacts. No other Chat SDK artifact depends on them:
 
 - [**AI Compose Components**](/stream-chat-android-ai-compose): Composables for AI replies: streaming text, reasoning and tool-call steps, tool approvals and a composer.
   - [Sample app](/stream-chat-android-ai-compose-sample)
 - [**On-device model**](/stream-chat-android-ai-ondevice): A model on the device, such as Gemini Nano, to answer when your agent can't.
+- [**OpenUI**](/stream-chat-android-ai-openui): Parses OpenUI Lang, the language models answer in to describe generative UI.
 
 Learn more about the modules by visiting [the documentation](https://getstream.io/chat/docs/sdk/android/).
 
