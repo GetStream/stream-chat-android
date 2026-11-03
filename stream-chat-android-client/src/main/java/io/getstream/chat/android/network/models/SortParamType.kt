@@ -40,17 +40,14 @@ internal sealed class SortParamType(internal val value: String) {
 
     internal companion object {
         internal fun fromString(s: String): SortParamType = when (s) {
-            "" -> Empty
             "boolean" -> Boolean
+            "" -> Empty
             "number" -> Number
             else -> Unknown(s)
         }
     }
-
-    // Patched: the generator named the empty value with an empty identifier, which does not compile. Matches the
-    // fixed generator (chat#19868); on regen, take the file as generated once that is merged.
-    internal object Empty : SortParamType("")
     internal object Boolean : SortParamType("boolean")
+    internal object Empty : SortParamType("")
     internal object Number : SortParamType("number")
     internal data class Unknown(val unknownValue: String) : SortParamType(unknownValue)
 
