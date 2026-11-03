@@ -22,6 +22,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -33,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.conversation.AIPendingMessage
+import io.getstream.chat.android.ai.compose.generativeui.AIUIEntranceStage
+import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIConversationEntry
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIPendingMessageTracker
 import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWriting
@@ -44,6 +47,13 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWri
  * answer is written out, [ChatAiComponentFactory.AIConversationReplyActions].
  *
  * A reply joins the list once it shows something; until then the list shows the agent thinking.
+ *
+ * Given a [ui] host, a reply whose [AIMessage.uiDocument] one of its renderers shows has that UI
+ * in place of its text, after its steps:
+ *
+ * ```
+ * AIConversation(messages = messages, ui = viewModel.ui)
+ * ```
  *
  * To float the composer over the list, pass the space it covers as [contentPadding]:
  *
@@ -86,6 +96,9 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWri
  * @param contentPadding Space at the edges of the list that something drawn over it covers, such as
  * a composer floating over its bottom. The messages scroll under it but stop clear of it, and the
  * list's own views show inside it.
+ * @param ui The conversation's generated UI: the renderers of the formats the agent writes, and
+ * the app's components. A reply whose UI none of them shows has its text. Keep the same host while
+ * the conversation shows, so each reply's UI keeps its state.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -101,10 +114,13 @@ public fun AIConversation(
     colors: AIConversationColors = AIConversationDefaults.colors(),
     icons: AIConversationIcons = AIConversationDefaults.icons(),
     contentPadding: PaddingValues = PaddingValues(),
+    ui: AIUIHost? = null,
 ) {
     val tracker = remember { AIPendingMessageTracker() }
     // A copy, so a list changed in place still counts as changed.
     val shown = messages.toList()
+    // The list composes only the replies on screen, so the engines take every reply's UI first.
+    ui?.receive(shown)
     val (entries, isAwaitingReply) = remember(tracker, shown, pendingMessage) {
         tracker.entries(shown, pendingMessage) to tracker.isAwaitingReply(shown, pendingMessage)
     }
@@ -121,8 +137,56 @@ public fun AIConversation(
         icons = icons,
         contentPadding = contentPadding,
     ) { entry ->
-        AIConversationEntryContent(entry = entry, approver = approver)
+        AIConversationEntryContent(entry = entry, approver = approver, ui = ui)
     }
+}
+
+/**
+ * The [AIConversation] signature without `ui`, kept so apps compiled against it keep working.
+ *
+ * @param messages The conversation, oldest message first.
+ * @param modifier The modifier to apply.
+ * @param pendingMessage A message the person sent that is not in [messages] yet.
+ * @param isThinking Whether the agent is answering the latest message and its reply shows nothing
+ * yet.
+ * @param approver Who answers tool calls' questions and sign-ins on this device, to ask them.
+ * @param loadOlderMessages Loads the messages before the first one.
+ * @param footer A view under the latest turn's messages.
+ * @param emptyContent What the list shows while there are no messages.
+ * @param colors The palette of the list's own views.
+ * @param icons The icons of the list's own views.
+ * @param contentPadding Space at the edges of the list that something drawn over it covers.
+ */
+@Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+@Suppress("LongParameterList")
+@Composable
+public fun AIConversation(
+    messages: List<AIMessage>,
+    modifier: Modifier = Modifier,
+    pendingMessage: AIPendingMessage? = null,
+    isThinking: Boolean = false,
+    approver: AIToolApprover? = null,
+    loadOlderMessages: (suspend () -> Unit)? = null,
+    footer: @Composable () -> Unit = {},
+    emptyContent: @Composable () -> Unit = {},
+    colors: AIConversationColors = AIConversationDefaults.colors(),
+    icons: AIConversationIcons = AIConversationDefaults.icons(),
+    contentPadding: PaddingValues = PaddingValues(),
+) {
+    AIConversation(
+        messages = messages,
+        modifier = modifier,
+        pendingMessage = pendingMessage,
+        isThinking = isThinking,
+        approver = approver,
+        loadOlderMessages = loadOlderMessages,
+        footer = footer,
+        emptyContent = emptyContent,
+        colors = colors,
+        icons = icons,
+        contentPadding = contentPadding,
+        ui = null,
+    )
 }
 
 /**
@@ -172,7 +236,7 @@ public fun AIConversation(
 }
 
 @Composable
-private fun AIConversationEntryContent(entry: AIConversationEntry, approver: AIToolApprover?) {
+private fun AIConversationEntryContent(entry: AIConversationEntry, approver: AIToolApprover?, ui: AIUIHost?) {
     val factory = LocalChatAiComponentFactory.current
     val message = entry.message
     val pending = entry.pending
@@ -192,23 +256,31 @@ private fun AIConversationEntryContent(entry: AIConversationEntry, approver: AIT
                 ),
             )
         }
-        else -> AIConversationReply(message = message, isLatestReply = entry.isLatestReply, approver = approver)
+        else -> AIConversationReply(
+            message = message,
+            isLatestReply = entry.isLatestReply,
+            approver = approver,
+            ui = ui,
+        )
     }
 }
 
 @Composable
-private fun AIConversationReply(message: AIMessage, isLatestReply: Boolean, approver: AIToolApprover?) {
+private fun AIConversationReply(message: AIMessage, isLatestReply: Boolean, approver: AIToolApprover?, ui: AIUIHost?) {
     val factory = LocalChatAiComponentFactory.current
     // Whether the reply's answer is still being written out, which its actions wait for so they
     // do not move down with it. Null while its view has not said.
     var isWriting by remember { mutableStateOf<Boolean?>(null) }
+    // The UI the agent generated for the reply, when one of the host's renderers shows it.
+    val document = message.uiDocument
+    val generated = if (ui != null && document != null) ui.content(document, message.id) else null
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         CompositionLocalProvider(LocalAnswerWriting provides { isWriting = it }) {
             with(factory) {
                 AIConversationAssistantMessage(
                     AIConversationAssistantMessageParams(
                         message = message,
-                        text = message.text,
+                        text = if (generated == null) message.text else "",
                         isGenerating = message.isGenerating,
                         parts = message.parts,
                         attachments = message.attachments,
@@ -218,8 +290,17 @@ private fun AIConversationReply(message: AIMessage, isLatestReply: Boolean, appr
                 )
             }
         }
+        if (generated != null && document != null) {
+            AIUIEntranceStage(isStreaming = document.isStreaming, modifier = Modifier.fillMaxWidth()) {
+                generated()
+            }
+        }
+        val isWritingUI = generated != null && document?.isStreaming == true
         AnimatedVisibility(
-            visible = !message.isGenerating && message.text.isNotEmpty() && isWriting != true,
+            visible = !message.isGenerating &&
+                (message.text.isNotEmpty() || generated != null) &&
+                isWriting != true &&
+                !isWritingUI,
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
