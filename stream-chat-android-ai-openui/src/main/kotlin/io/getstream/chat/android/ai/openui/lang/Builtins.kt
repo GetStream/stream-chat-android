@@ -248,17 +248,23 @@ internal object Builtins {
             return if (descending) -order else order
         }
 
-        // Stable, like Array.prototype.sort.
-        return OpenUIValue.Arr(
-            items.sortedWith { a, b ->
-                val order = compare(a, b)
-                when {
-                    order < 0 -> -1
-                    order > 0 -> 1
-                    else -> 0
-                }
-            },
-        )
+        return OpenUIValue.Arr(stableSort(items) { a, b -> compare(a, b) < 0 })
+    }
+
+    // A stable merge sort, like Array.prototype.sort. Unlike sortedWith it never throws when the
+    // comparison isn't consistent, as with numbers and text mixed in one field: some order comes out.
+    private fun <T> stableSort(items: List<T>, isBefore: (T, T) -> Boolean): List<T> {
+        if (items.size < 2) return items
+        val left = stableSort(items.subList(0, items.size / 2), isBefore)
+        val right = stableSort(items.subList(items.size / 2, items.size), isBefore)
+        val merged = ArrayList<T>(items.size)
+        var l = 0
+        var r = 0
+        // On a tie the left item goes first, which keeps the sort stable.
+        while (l < left.size || r < right.size) {
+            merged += if (r < right.size && (l >= left.size || isBefore(right[r], left[l]))) right[r++] else left[l++]
+        }
+        return merged
     }
 
     private fun filter(args: List<OpenUIValue?>): OpenUIValue {
