@@ -6,7 +6,8 @@ specification, and the conformance fixtures in src/test/resources/fixtures were 
 with them. The component library definitions, their prompt examples and rules, and the system
 prompt text (package `library`) are derived from the @openuidev/react-ui and @openuidev/lang-core
 packages. The Compose components (package `components`) follow the renderers of
-@openuidev/react-ui.
+@openuidev/react-ui. The icon table maps lucide icon names (https://lucide.dev, ISC license)
+to Material icons; no lucide artwork is included.
 OpenUI is distributed under the following license:
 
 --------------------------------------------------------------------------------

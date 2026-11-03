@@ -31,14 +31,18 @@ import kotlin.test.assertTrue
 internal class LibraryTest {
 
     private val chatRendered = setOf(
-        "Accordion", "Callout", "Card", "CardHeader", "Carousel", "CodeBlock", "Image", "ImageBlock", "ImageGallery",
-        "InlineHeader", "Label", "MarkDownRenderer", "SectionBlock", "Separator", "Steps", "Table", "Tabs",
-        "TextCallout", "TextContent",
+        "Accordion", "Button", "Buttons", "Callout", "Card", "CardHeader", "Carousel", "CheckBoxGroup", "Chips",
+        "CodeBlock", "DatePicker", "EditableTable", "EntityList", "FollowUpBlock", "Form", "FormControl", "Icon",
+        "IconButton", "Image", "ImageBlock", "ImageGallery", "InlineHeader", "Input", "Label", "ListBlock",
+        "MarkDownRenderer", "OptionCards", "RadioGroup", "SectionBlock", "Select", "Separator", "Slider", "Steps",
+        "SwitchGroup", "Table", "Tabs", "Tag", "TagBlock", "TextArea", "TextCallout", "TextContent",
     )
     private val standardRendered = setOf(
-        "Accordion", "Callout", "Card", "CardHeader", "Carousel", "CodeBlock", "Image", "ImageBlock", "ImageGallery",
-        "InlineHeader", "Label", "MarkDownRenderer", "Modal", "Separator", "Stack", "Steps", "Table", "Tabs",
-        "TextCallout", "TextContent",
+        "Accordion", "Button", "Buttons", "Callout", "Card", "CardHeader", "Carousel", "CheckBoxGroup", "Chips",
+        "CodeBlock", "DatePicker", "EditableTable", "EntityList", "Form", "FormControl", "Icon", "IconButton", "Image",
+        "ImageBlock", "ImageGallery", "InlineHeader", "Input", "Label", "ListBlock", "MarkDownRenderer", "Modal",
+        "OptionCards", "RadioGroup", "Select", "Separator", "Slider", "Stack", "Steps", "SwitchGroup", "Table", "Tabs",
+        "Tag", "TagBlock", "TextArea", "TextCallout", "TextContent",
     )
 
     private fun rendered(library: Library) =
