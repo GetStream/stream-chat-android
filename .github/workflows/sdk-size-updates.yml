@@ -17,7 +17,7 @@ jobs:
       contents: read
     uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@5821f7fdb8d656443b89fb0e28e219ba977cfe6a # v1.1.3
     with:
-      modules: "stream-chat-android-client stream-chat-android-ui-components stream-chat-android-compose stream-chat-android-ai-compose stream-chat-android-ai-ondevice stream-chat-android-ai-a2ui"
+      modules: "stream-chat-android-client stream-chat-android-ui-components stream-chat-android-compose stream-chat-android-ai-compose stream-chat-android-ai-ondevice stream-chat-android-ai-a2ui stream-chat-android-ai-openui"
       metrics-project: "stream-chat-android-metrics"
     secrets:
       GITHUB_PAT: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}

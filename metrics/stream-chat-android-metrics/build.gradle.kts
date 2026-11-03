@@ -56,6 +56,14 @@ android {
             dimension = "sdk"
             minSdk = libs.versions.aiComposeMinSdk.get().toInt()
         }
+        create("stream-chat-android-ai-openui-baseline") {
+            dimension = "sdk"
+            minSdk = libs.versions.aiComposeMinSdk.get().toInt()
+        }
+        create("stream-chat-android-ai-openui-stream") {
+            dimension = "sdk"
+            minSdk = libs.versions.aiComposeMinSdk.get().toInt()
+        }
     }
 }
 
@@ -99,4 +107,5 @@ dependencies {
     // The baseline carries ai-compose, so the number is the cost of A2UI on top of it.
     "stream-chat-android-ai-a2ui-baselineImplementation"(project(":stream-chat-android-ai-compose"))
     "stream-chat-android-ai-a2ui-streamImplementation"(project(":stream-chat-android-ai-a2ui"))
+    "stream-chat-android-ai-openui-streamImplementation"(project(":stream-chat-android-ai-openui"))
 }
