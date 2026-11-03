@@ -52,15 +52,16 @@ import java.util.UUID
  * @param renderers The renderer of each format the agent writes, the first one listed asked first.
  * @param components The app's views the agent can place.
  * @param tools The app's tools a reply's UI can run, to load data on this device.
- * @param linkSchemes The kinds of link a reply's UI may open. Only `https` by default: the agent
- * writes every link, so add another scheme, such as `mailto`, only when the app wants it.
+ * @param linkSchemes The kinds of link a reply's UI may open: web and email links by default
+ * (`http`, `https` and `mailto`). The agent writes every link, so add another scheme only when the
+ * app wants it.
  * @param send Sends what the person did to the agent, as their next message.
  */
 public class AIUIHost(
     public val renderers: List<AIUIRenderer>,
     public val components: List<AIUIComponent> = emptyList(),
     tools: List<AIClientTool> = emptyList(),
-    linkSchemes: Set<String> = setOf(HTTPS),
+    linkSchemes: Set<String> = setOf(HTTP, HTTPS, MAILTO),
     private val send: (AIUIAction) -> Unit,
 ) {
     private val tools: Map<String, AIClientTool> = tools.distinctBy { it.name }.associateBy { it.name }
@@ -117,8 +118,8 @@ public class AIUIHost(
     }
 
     /**
-     * Whether a reply's UI may open [url]: a link of one of the host's `linkSchemes`, `https` by
-     * default, with a host of its own when it is a web link.
+     * Whether a reply's UI may open [url]: a link of one of the host's `linkSchemes`, web and
+     * email links by default, with a host of its own when it is a web link.
      */
     public fun canOpen(url: String): Boolean {
         val scheme = url.substringBefore(':', missingDelimiterValue = "").lowercase(Locale.ROOT)
@@ -201,12 +202,11 @@ public class AIUIHost(
 
     // The engine of the renderer at this position, made the first time it is needed.
     private fun engine(position: Int): AIUIEngine = engines.getOrPut(position) { renderers[position].makeEngine(this) }
-
-    private companion object {
-        const val HTTPS = "https"
-        const val HTTP = "http"
-    }
 }
+
+private const val HTTPS = "https"
+private const val HTTP = "http"
+private const val MAILTO = "mailto"
 
 /**
  * A tool a reply's UI ran that the host has none of, or that failed.

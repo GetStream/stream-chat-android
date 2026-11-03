@@ -90,17 +90,16 @@ private fun Entrance(stage: AIUIStage?, animates: Boolean, modifier: Modifier, c
     var hasShown by remember { mutableStateOf(false) }
     val progress = remember { Animatable(if (animates) 0f else 1f) }
     val reduceMotion by rememberAnimationsOff()
-    if (!hasShown) {
-        if (animates && stage != null) {
-            LaunchedEffect(Unit) {
-                val wait = stage.cascade.delay()
-                hasShown = true
-                delay(wait)
-                progress.animateTo(1f, entranceSpec(reduceMotion))
-            }
-        } else {
-            SideEffect { hasShown = true }
+    if (animates && stage != null) {
+        // Outside the check on hasShown: setting it must not cancel the entrance under way.
+        LaunchedEffect(Unit) {
+            val wait = stage.cascade.delay()
+            hasShown = true
+            delay(wait)
+            progress.animateTo(1f, entranceSpec(reduceMotion))
         }
+    } else if (!hasShown) {
+        SideEffect { hasShown = true }
     }
     // What shows with the part while it first shows comes in with it.
     CompositionLocalProvider(LocalAIUIStage provides stage?.carrying(!hasShown)) {

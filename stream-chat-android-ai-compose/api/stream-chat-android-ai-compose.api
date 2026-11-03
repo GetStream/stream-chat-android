@@ -288,8 +288,6 @@ public final class io/getstream/chat/android/ai/compose/generativeui/AIUIFormat$
 
 public final class io/getstream/chat/android/ai/compose/generativeui/AIUIHost {
 	public static final field $stable I
-	public static final field HTTP Ljava/lang/String;
-	public static final field HTTPS Ljava/lang/String;
 	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun canOpen (Ljava/lang/String;)Z
