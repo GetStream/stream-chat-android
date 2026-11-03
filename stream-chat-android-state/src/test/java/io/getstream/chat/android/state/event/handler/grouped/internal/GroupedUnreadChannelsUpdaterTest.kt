@@ -184,7 +184,7 @@ internal class GroupedUnreadChannelsUpdaterTest {
 
     @Test
     fun `ChannelUpdatedEvent for inactive channel returns current map unchanged`() {
-        whenever(stateRegistry.isActiveChannel(ChannelId.fromTypeAndId(CHANNEL_TYPE, CHANNEL_ID)!!)) doReturn false
+        whenever(stateRegistry.activeChannel(ChannelId.fromTypeAndId(CHANNEL_TYPE, CHANNEL_ID)!!)) doReturn null
         val current = mapOf("a" to 5)
         val newChannel = channel(group = "b")
 
@@ -530,8 +530,7 @@ internal class GroupedUnreadChannelsUpdaterTest {
             on { toChannel() } doReturn cached
         }
         val cachedChannelId = ChannelId.fromTypeAndId(CHANNEL_TYPE, CHANNEL_ID)!!
-        whenever(stateRegistry.isActiveChannel(cachedChannelId)) doReturn true
-        whenever(stateRegistry.channel(cachedChannelId)) doReturn channelMutableState
+        whenever(stateRegistry.activeChannel(cachedChannelId)) doReturn channelMutableState
     }
 
     private fun channel(group: String?): Channel = randomChannel(

@@ -183,12 +183,6 @@ internal class GroupedUnreadChannelsUpdater(
         markAllReadApplied = false
     }
 
-    private fun cachedChannel(cid: String): Channel? {
-        val channelId = ChannelId.fromCid(cid) ?: return null
-        return if (stateRegistry.isActiveChannel(channelId)) {
-            stateRegistry.channel(channelId).toChannel()
-        } else {
-            null
-        }
-    }
+    private fun cachedChannel(cid: String): Channel? =
+        ChannelId.fromCid(cid)?.let(stateRegistry::activeChannel)?.toChannel()
 }
