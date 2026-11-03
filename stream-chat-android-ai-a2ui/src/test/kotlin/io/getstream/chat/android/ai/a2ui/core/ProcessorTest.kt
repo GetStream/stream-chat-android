@@ -253,4 +253,28 @@ internal class ProcessorTest {
         createSurface()
         assertEquals(emptyMap<String, Any?>(), processor.surface("s")!!.dataModel.snapshot)
     }
+
+    @Test
+    fun `an empty path replaces the whole data model, which must stay an object`() {
+        createSurface(data = mapOf("a" to "x"))
+        handle(mapOf("updateDataModel" to mapOf("surfaceId" to "s", "path" to "", "value" to "y")))
+
+        assertEquals(mapOf("a" to "x"), processor.surface("s")!!.dataModel.snapshot)
+        assertEquals(1, errors.size)
+
+        handle(mapOf("updateDataModel" to mapOf("surfaceId" to "s", "path" to "", "value" to mapOf("b" to "z"))))
+
+        assertEquals(mapOf("b" to "z"), processor.surface("s")!!.dataModel.snapshot)
+    }
+
+    @Test
+    fun `a call to the agent carries the catalog it resolved in`() {
+        createSurface(listOf(text(text = mapOf("@call" to "lookup", "args" to mapOf("q" to "ohrid")))))
+        val surface = processor.surface("s")!!
+        NodeContext(surface, surface.rootNode()!!).string("text")
+
+        val call = sent.filterIsInstance<RendererMessage.CallAgentFunction>().single().call
+        assertEquals("lookup", call.name)
+        assertEquals(A2UIProtocol.BASIC_CATALOG_ID, call.catalogId)
+    }
 }
