@@ -287,6 +287,8 @@ internal class SyncManager(
         val online = clientState.isOnline
         logger.v { "[onConnectionEstablished] online: $online" }
         markStoredPlaceholders()
+        // Taken first, since the retries, the sync and the refreshes can fill the channel data
+        val failedFirstLoadCids = failedFirstLoadCids()
         retryFailedEntities()
 
         if (syncState.value == null && syncState.value?.userId != userId) {
@@ -295,8 +297,6 @@ internal class SyncManager(
         }
         if (isAutomaticSyncOnReconnectEnabled) {
             logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
-            // Taken before the refreshes, which fill the channel data
-            val failedFirstLoadCids = failedFirstLoadCids()
             // The first connect does not refresh the grouped lists, so it has no kept pages to watch again.
             val outcome = performSync(
                 watch = !isFirstConnect.get() && groupedListsWatch(),
