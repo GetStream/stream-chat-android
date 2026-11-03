@@ -640,7 +640,12 @@ internal class SyncManager(
             "[restoreActiveChannels] recoverAll: $recoverAll, " +
                 "alreadyRefreshedCids.size: ${alreadyRefreshedCids.size}"
         }
-        val failedFirstLoadsToWatch = failedFirstLoadCids.take(FAILED_FIRST_LOADS_TO_WATCH).toSet()
+        // The open channels first, so the cap never leaves them to a query without messages
+        val openCids = trackedWatchedCidsToSync()
+        val failedFirstLoadsToWatch = failedFirstLoadCids
+            .sortedBy { it !in openCids }
+            .take(FAILED_FIRST_LOADS_TO_WATCH)
+            .toSet()
 
         val allLogics = logicRegistry.getActiveQueryChannelsLogic()
         val hasGroupedQueries = allLogics.any { it.groupKey() != null }
