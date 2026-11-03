@@ -24,11 +24,13 @@ import java.util.Date
  * @param level Coarse chat level. Ignored when [chatPreferences] is set.
  * @param disabledUntil Timestamp until which notifications are disabled. If null, notifications are not disabled.
  * @param chatPreferences Per-category toggles. Takes precedence over [level] when set.
+ * @param schedule The recurring quiet-hours schedule. Only set on the user-level preference.
  */
 public data class PushPreference(
     public val level: PushPreferenceLevel?,
     public val disabledUntil: Date?,
     public val chatPreferences: ChatPreferences? = null,
+    public val schedule: PushSchedule? = null,
 )
 
 /**

@@ -18,6 +18,9 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.push
 
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
+import io.getstream.chat.android.models.PushSchedule
+import io.getstream.chat.android.models.QuietHoursDay
+import io.getstream.chat.android.models.QuietHoursRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -155,5 +158,27 @@ internal class PushPreferenceMapperTest {
         // Then
         assertEquals(originalPreference.level, convertedBack.level)
         assertEquals(originalPreference.disabledUntil, convertedBack.disabledUntil)
+    }
+
+    @Test
+    fun `round trip conversion should preserve the schedule`() {
+        // Given
+        val originalPreference = PushPreference(
+            level = null,
+            disabledUntil = null,
+            schedule = PushSchedule(
+                timezone = "Europe/Amsterdam",
+                quietHours = listOf(
+                    QuietHoursRule(start = "18:00", end = "09:00", days = QuietHoursDay.weekdays),
+                    QuietHoursRule(start = "00:00", end = "24:00", days = QuietHoursDay.weekend),
+                ),
+            ),
+        )
+
+        // When
+        val convertedBack = originalPreference.toEntity().toModel()
+
+        // Then
+        assertEquals(originalPreference, convertedBack)
     }
 }

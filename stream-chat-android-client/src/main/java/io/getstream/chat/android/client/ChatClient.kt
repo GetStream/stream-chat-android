@@ -210,6 +210,7 @@ import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
+import io.getstream.chat.android.models.PushSchedule
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
@@ -1780,14 +1781,7 @@ internal constructor(
     @CheckResult
     public fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference> {
         return api.setUserPushPreference(level)
-            .doOnResult(userScope) { result ->
-                // Note: Update local user state manually as we don't get WS events for push preference updates
-                if (result is Result.Success) {
-                    val currentUser = mutableClientState.user.value ?: return@doOnResult
-                    val updatedUser = currentUser.copy(pushPreference = result.value)
-                    mutableClientState.setUser(updatedUser)
-                }
-            }
+            .updateCurrentUserPushPreference()
     }
 
     /**
@@ -1808,15 +1802,52 @@ internal constructor(
     @CheckResult
     public fun snoozeUserPushNotifications(until: Date): Call<PushPreference> {
         return api.snoozeUserPushNotifications(until)
-            .doOnResult(userScope) { result ->
-                // Note: Update local user state manually as we don't get WS events for push preference updates
-                if (result is Result.Success) {
-                    val currentUser = mutableClientState.user.value ?: return@doOnResult
-                    val updatedUser = currentUser.copy(pushPreference = result.value)
-                    mutableClientState.setUser(updatedUser)
-                }
-            }
+            .updateCurrentUserPushPreference()
     }
+
+    /**
+     * Sets a recurring quiet-hours schedule for the current user. While any of its windows is
+     * active, the server drops (does not delay) the user's push notifications for chat messages,
+     * calls (including ringing calls) and feeds. Reminder pushes are still delivered.
+     *
+     * The schedule replaces the stored one. It does not clear an active
+     * [snoozeUserPushNotifications] snooze.
+     *
+     * @param schedule The [PushSchedule] to set. Use `TimeZone.getDefault().id` for the device zone.
+     *
+     * @return Executable async [Call] responsible for setting the schedule.
+     * Returns a [PushPreference] object containing the updated preference settings on success.
+     * A [PushPreference.schedule] of `null` in the result means the server did not store it.
+     */
+    @CheckResult
+    public fun setUserPushSchedule(schedule: PushSchedule): Call<PushPreference> {
+        return api.setUserPushSchedule(schedule)
+            .updateCurrentUserPushPreference()
+    }
+
+    /**
+     * Removes the current user's quiet-hours schedule set with [setUserPushSchedule].
+     *
+     * @return Executable async [Call] responsible for removing the schedule.
+     * Returns a [PushPreference] object containing the updated preference settings on success.
+     */
+    @CheckResult
+    public fun removeUserPushSchedule(): Call<PushPreference> {
+        return api.removeUserPushSchedule()
+            .updateCurrentUserPushPreference()
+    }
+
+    /**
+     * Copies a successful result into the current user's [User.pushPreference]. Needed because push preference
+     * updates don't come with a WS event.
+     */
+    private fun Call<PushPreference>.updateCurrentUserPushPreference(): Call<PushPreference> =
+        doOnResult(userScope) { result ->
+            if (result is Result.Success) {
+                val currentUser = mutableClientState.user.value ?: return@doOnResult
+                mutableClientState.setUser(currentUser.copy(pushPreference = result.value))
+            }
+        }
 
     /**
      * Sets the push notification preference level for a specific channel.
@@ -1863,13 +1894,7 @@ internal constructor(
     @CheckResult
     public fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference> {
         return api.setUserChatPreferences(preferences)
-            .doOnResult(userScope) { result ->
-                if (result is Result.Success) {
-                    val currentUser = mutableClientState.user.value ?: return@doOnResult
-                    val updatedUser = currentUser.copy(pushPreference = result.value)
-                    mutableClientState.setUser(updatedUser)
-                }
-            }
+            .updateCurrentUserPushPreference()
     }
 
     /**

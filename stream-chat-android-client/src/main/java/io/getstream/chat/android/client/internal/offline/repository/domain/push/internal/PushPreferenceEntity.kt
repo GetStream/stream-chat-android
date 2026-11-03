@@ -26,4 +26,24 @@ import java.util.Date
 internal data class PushPreferenceEntity(
     val level: String?,
     val disabledUntil: Date?,
+    val schedule: PushScheduleEntity? = null,
+)
+
+/**
+ * DB entity holding a recurring quiet-hours schedule.
+ */
+@JsonClass(generateAdapter = true)
+internal data class PushScheduleEntity(
+    val timezone: String,
+    val quietHours: List<QuietHoursRuleEntity>,
+)
+
+/**
+ * DB entity holding one quiet window of a [PushScheduleEntity].
+ */
+@JsonClass(generateAdapter = true)
+internal data class QuietHoursRuleEntity(
+    val start: String,
+    val end: String,
+    val days: List<String>,
 )
