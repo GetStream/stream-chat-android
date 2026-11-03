@@ -16,6 +16,50 @@ The language runtime (package `io.getstream.chat.android.ai.openui.lang`) is por
 - Each response keeps its own state: `$variables`, form values and the results of `Query()` and `Mutation()`. Queries start when streaming ends and refresh at most every five seconds, whatever interval the model writes. A tool is told whether the person asked for it: a `Query` runs by itself as the UI shows, a `Mutation` from a tap. Form fields validate with the rules the model writes. Responses are stored in the OpenUI 1.0 message protocol, with their state, and messages in the older XML envelope still read.
 - Libraries: the chat library (every answer is one `Card`) and the standard library (a `Stack` for full-screen surfaces) are defined like upstream's 1.0 libraries, each with the examples and rules upstream gives it. The system prompt lists the components' signatures and descriptions, how they're grouped, the library's functions and actions, and the tools `Query()` and `Mutation()` can run.
 
+## Libraries and the Compose renderer
+
+`openuiChatLibrary` (every answer is one `Card`) and `openuiLibrary` (a `Stack` for full-screen surfaces) pair the built-in libraries with Compose components that draw a response natively, following `@openuidev/react-ui` 1.0 (package `io.getstream.chat.android.ai.openui.rendering`). A library writes its system prompt and gives the schema a parser takes:
+
+```kotlin
+val prompt = openuiChatLibrary.prompt(openuiChatPromptOptions)
+openuiChatLibrary.toSpec()       // the PromptSpec generatePrompt takes, for a server
+openuiChatLibrary.toJSONSchema() // the JSON Schema createParser takes
+```
+
+Define your own components with `defineComponent`, with `PropField`s and `PropType`s for their props, and derive a library with `extend`, like upstream's `library.extend`: `add` lists new components, and a `SlottedComponent` also places one in content slots (`"Card"`, or `"Card.children"`); `override` replaces components by name; `remove` takes them out of the library and of every slot; `functions` and `actions` join the library's calls. `createLibrary` builds a library from scratch.
+
+```kotlin
+val placeCard = defineComponent(
+    name = "PlaceCard",
+    props = listOf(PropField.required("name", PropType.string), PropField.optional("rating", PropType.number)),
+    description = "A place with its rating",
+) { props -> PlaceCard(props.props.string("name").orEmpty(), props.props.number("rating")) }
+
+val library = openuiChatLibrary.extend(
+    LibraryExtension(add = listOf(SlottedComponent(placeCard, slots = listOf("Card"))), functions = listOf(percent)),
+)
+```
+
+A component's renderer gets `ComponentRenderProps`: its evaluated `props`, `RenderNode` for its children, `stateField` for a field bound to a `$variable` or its form, and `triggerAction` to run an action.
+
+`Renderer` draws a response and keeps its state, its `$variables`, forms and queries, while it stays in the composition:
+
+```kotlin
+Renderer(
+    response = text,
+    library = openuiChatLibrary,
+    isStreaming = streaming,
+    toolProvider = tools,
+    initialState = savedState,
+    onStateUpdate = { state -> savedState = state }, // persist it with the message
+    onAction = { event -> /* follow-ups, form submits, custom actions */ },
+)
+```
+
+It follows the response as it streams. Only web and email links open, through the platform's URI handler unless you pass `onOpenUrl`, since the model writes every link. The theme derives from `MaterialTheme`; wrap content in `ProvideOpenUITheme(theme)` to change it. Its texts are Android string resources named `stream_ai_openui_*`, which an app overrides or translates like its own.
+
+Icons are Material icons, from `material-icons-core` where it has them and otherwise from copies of just the `material-icons-extended` icons the components use. Markdown renders with `multiplatform-markdown-renderer`, the renderer `stream-chat-android-ai-compose` uses.
+
 ## Known limitations
 
 These follow upstream 1.0.1 as-is:
@@ -31,4 +75,4 @@ The fixtures in `src/test/resources/fixtures` were generated with upstream's Typ
 
 ## License
 
-OpenUI is MIT licensed. This module's language runtime, component library definitions and prompt text are derived from it, and the conformance fixtures were generated with it; see [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES).
+OpenUI is MIT licensed. This module's language runtime, component library definitions, prompt text and components are derived from it, and the conformance fixtures were generated with it; see [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES).

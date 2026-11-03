@@ -240,6 +240,72 @@ internal class LibraryDefinition(
         )
     }
 
+    /**
+     * The library with upstream's `library.extend` applied: [add] new components (placed in the
+     * content slots given with them, if any), [override] components by name, [remove] components by
+     * name, and append [functions] and [actions].
+     *
+     * @throws IllegalArgumentException Like upstream, when an added component already exists, an
+     * overridden or removed one doesn't, the root or a slot's only type is removed, or a slot can't
+     * be resolved.
+     */
+    fun extended(
+        add: List<Pair<ComponentSchema, List<String>?>>,
+        override: List<ComponentSchema>,
+        remove: List<String>,
+        functions: List<DefinedFunction>,
+        actions: List<DefinedAction>,
+    ): LibraryDefinition {
+        val byName = LinkedHashMap<String, ComponentSchema>()
+        components.forEach { byName[it.name] = it }
+        val known = HashSet(byName.keys)
+        val touched = HashSet<String>()
+        val slotRequests = LinkedHashMap<String, List<String>>()
+        for ((schema, slots) in add) {
+            if (schema.name in byName) extendFailure("Component \"${schema.name}\" already exists. Use override.")
+            if (slots != null && slots.isEmpty()) {
+                extendFailure("\"slots\" for \"${schema.name}\" is empty. Omit it to only list it.")
+            }
+            byName[schema.name] = schema
+            touched += schema.name
+            slots?.let { slotRequests[schema.name] = it }
+        }
+        val overridden = HashSet<String>()
+        for (schema in override) {
+            if (schema.name !in byName) {
+                extendFailure("Cannot override \"${schema.name}\": not in the library. Use add.")
+            }
+            if (!overridden.add(schema.name)) extendFailure("Component \"${schema.name}\" is overridden twice.")
+            byName[schema.name] = schema
+            touched += schema.name
+        }
+        known += byName.keys
+        val removed = remove.toSet()
+        for (name in removed) {
+            if (name in touched) extendFailure("Cannot remove \"$name\": it is added or overridden in the same call.")
+            if (byName.remove(name) == null) extendFailure("Cannot remove \"$name\": not in the library.")
+            if (name == root) extendFailure("Cannot remove \"$name\": it is the library root.")
+        }
+        val placements = placeInSlots(slotRequests, byName, known)
+        val rebuilt = byName.values.map { schema ->
+            schema.copy(
+                props = schema.props.map { prop ->
+                    val path = "${schema.name}.${prop.name}"
+                    prop.copy(type = prop.type.rebound(path, placements[path].orEmpty(), removed, known))
+                },
+            )
+        }
+        val groups = componentGroups.mapNotNull { group ->
+            group.components.filter { it !in removed }.takeIf { it.isNotEmpty() }?.let { group.copy(components = it) }
+        }
+        return copy(
+            components = rebuilt,
+            componentGroups = groups,
+            functions = this.functions + functions,
+            customActions = customActions + actions,
+        )
+    }
+
     /** A copy with different default prompt options. */
     fun withPromptOptions(options: PromptOptions): LibraryDefinition = copy(defaultPromptOptions = options)
 
@@ -368,5 +434,85 @@ internal class LibraryDefinition(
                 },
             )
         }
+    }
+}
+
+private fun extendFailure(message: String): Nothing = throw IllegalArgumentException("[extend] $message")
+
+/** Whether [type] is a content slot: a union of [known] components, or an array of one. */
+private fun isContentSlot(type: PropType, known: Set<String>): Boolean = when (val kind = type.kind) {
+    is PropType.Kind.ArrayOf -> isContentSlot(kind.items, known)
+    is PropType.Kind.Union -> kind.options.any { (it.kind as? PropType.Kind.Component)?.name in known }
+    else -> false
+}
+
+/** The content slot each requested component joins: `"Card.children"` -> the components placed there. */
+private fun placeInSlots(
+    requests: Map<String, List<String>>,
+    byName: Map<String, ComponentSchema>,
+    known: Set<String>,
+): Map<String, List<String>> {
+    val slots = byName.values.flatMap { schema ->
+        schema.props.filter { isContentSlot(it.type, known) }.map { "${schema.name}.${it.name}" }
+    }
+    val placements = LinkedHashMap<String, MutableList<String>>()
+    for ((name, requested) in requests) {
+        for (slot in requested) {
+            val placed = placements.getOrPut(resolveSlot(slot, name, slots, byName)) { mutableListOf() }
+            if (name !in placed) placed += name
+        }
+    }
+    return placements
+}
+
+/** `"Card.children"` stays; `"Card"` is `"Card.children"` when that is Card's only content slot. */
+private fun resolveSlot(slot: String, name: String, slots: List<String>, byName: Map<String, ComponentSchema>): String {
+    if (slot in slots) return slot
+    val parent = slot.substringBefore('.')
+    val candidates = slots.filter { it.startsWith("$parent.") }
+    if ('.' !in slot && candidates.size == 1) return candidates.single()
+    val what = "Slot \"$slot\" for \"$name\""
+    if (parent !in byName) extendFailure("$what: \"$parent\" is not in the library.")
+    if (candidates.isEmpty()) {
+        extendFailure(
+            "$what: \"$parent\" has no content slot (a prop that is a union of components, or an optional or " +
+                "array of one).",
+        )
+    }
+    extendFailure("$what must be one content slot. Candidates: ${candidates.joinToString(", ")}.")
+}
+
+/**
+ * The type of the prop at [path] with the [removed] components taken out of its unions and [added]
+ * joining its content-slot union.
+ */
+private fun PropType.rebound(path: String, added: List<String>, removed: Set<String>, known: Set<String>): PropType {
+    fun onlyType(name: String?): Nothing =
+        extendFailure("Cannot remove \"$name\": it is the only type allowed in $path.")
+    return when (val kind = kind) {
+        is PropType.Kind.Component -> if (kind.name in removed) onlyType(kind.name) else this
+        is PropType.Kind.Union -> {
+            val names = kind.options.map { (it.kind as? PropType.Kind.Component)?.name }
+            val kept = kind.options.filterIndexed { index, _ -> names[index] !in removed }
+                .map { it.rebound(path, emptyList(), removed, known) }
+            val holdsComponents = names.any { it in known }
+            val joining = if (holdsComponents) {
+                added.filter { name -> kept.none { (it.kind as? PropType.Kind.Component)?.name == name } }
+            } else {
+                emptyList()
+            }
+            if (kept.isEmpty() && joining.isEmpty()) onlyType(names.firstOrNull())
+            if (kept.size == kind.options.size && joining.isEmpty()) {
+                this
+            } else {
+                PropType.union(kept + joining.map(PropType::component))
+            }
+        }
+        is PropType.Kind.ArrayOf -> PropType.array(kind.items.rebound(path, added, removed, known), kind.minItems)
+        is PropType.Kind.RecordOf -> PropType.record(kind.value.rebound(path, emptyList(), removed, known))
+        is PropType.Kind.ObjectOf -> PropType.objectOf(
+            kind.fields.map { it.copy(type = it.type.rebound("$path.${it.name}", emptyList(), removed, known)) },
+        )
+        else -> this
     }
 }
