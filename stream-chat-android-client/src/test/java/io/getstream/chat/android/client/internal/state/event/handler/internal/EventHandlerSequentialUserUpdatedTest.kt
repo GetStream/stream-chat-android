@@ -91,12 +91,14 @@ internal class EventHandlerSequentialUserUpdatedTest {
             user = currentUser.copy(name = "New", updatedAt = Date(2_000), mutes = emptyList()),
         )
         val repos = mockRepos()
-        val handler = createEventHandler(scope = this, repos = repos, mutableGlobalState = MutableGlobalState(currentUser.id))
+        val mutableGlobalState = MutableGlobalState(currentUser.id)
+        val handler = createEventHandler(scope = this, repos = repos, mutableGlobalState = mutableGlobalState)
 
         // When
         handler.handleEvents(mutesUpdatedEvent, userUpdatedEvent)
 
         // Then
+        assertEquals(newMutes, mutableGlobalState.muted.value)
         val storedUser = argumentCaptor<User>().apply { verify(repos, times(2)).insertCurrentUser(capture()) }.lastValue
         assertEquals("New", storedUser.name)
         assertEquals(newMutes, storedUser.mutes)

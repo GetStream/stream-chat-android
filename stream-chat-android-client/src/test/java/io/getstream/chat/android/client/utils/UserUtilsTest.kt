@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomChannelMute
 import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomPrivacySettings
 import io.getstream.chat.android.randomString
@@ -103,12 +104,14 @@ internal class UserUtilsTest {
             language = "en",
             teams = listOf("red"),
             mutes = List(3) { randomMute() },
+            channelMutes = List(2) { randomChannelMute() },
         )
         val thatUser = randomUser(
             updatedAt = Date(2_000),
             language = "it",
             teams = listOf("blue"),
             mutes = emptyList(),
+            channelMutes = listOf(randomChannelMute()),
         ).copy(
             teamsRole = mapOf("blue" to "admin"),
             deactivatedAt = Date(3_000),
