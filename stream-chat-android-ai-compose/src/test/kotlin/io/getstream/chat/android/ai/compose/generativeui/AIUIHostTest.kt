@@ -179,22 +179,24 @@ internal class AIUIHostTest {
     }
 
     @Test
-    fun `only https links open, unless the app lets others`() {
+    fun `web and email links open, unless the app picks other schemes`() {
         val host = AIUIHost(emptyList()) {}
-        val withMail = AIUIHost(emptyList(), linkSchemes = setOf("https", "MAILTO")) {}
+        val httpsOnly = AIUIHost(emptyList(), linkSchemes = setOf("HTTPS")) {}
 
         assertTrue(host.canOpen("https://en.wikipedia.org/wiki/Ohrid"))
         assertTrue(host.canOpen("HTTPS://example.com"))
-        assertFalse(host.canOpen("http://example.com"))
+        assertTrue(host.canOpen("http://example.com"))
+        assertTrue(host.canOpen("mailto:ana@example.com"))
         assertFalse(host.canOpen("javascript:alert(1)"))
         assertFalse(host.canOpen("intent://scan/#Intent;scheme=zxing;end"))
         assertFalse(host.canOpen("file:///sdcard/secret.txt"))
-        assertFalse(host.canOpen("mailto:ana@example.com"))
         assertFalse(host.canOpen("https:example.com"))
         assertFalse(host.canOpen("https:///path"))
         assertFalse(host.canOpen("https://exa mple.com"))
         assertFalse(host.canOpen("/relative"))
-        assertTrue(withMail.canOpen("mailto:ana@example.com"))
+        assertTrue(httpsOnly.canOpen("https://example.com"))
+        assertFalse(httpsOnly.canOpen("http://example.com"))
+        assertFalse(httpsOnly.canOpen("mailto:ana@example.com"))
     }
 
     @Test
@@ -208,7 +210,7 @@ internal class AIUIHostTest {
         val host = AIUIHost(emptyList()) {}
 
         assertTrue(host.open("https://example.com", handler))
-        assertFalse(host.open("http://example.com", handler))
+        assertFalse(host.open("javascript:alert(1)", handler))
 
         assertEquals(listOf("https://example.com"), opened)
     }

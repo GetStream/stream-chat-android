@@ -194,7 +194,7 @@ internal class AIUIConversationTest {
                     "ask about $title",
                     modifier = Modifier.clickable { context.emit("ask_about", "Tell me more about $title") },
                 )
-                Text("open http", modifier = Modifier.clickable { context.openUrl("http://example.com") })
+                Text("open file", modifier = Modifier.clickable { context.openUrl("file:///sdcard/secret.txt") })
                 Text("open https", modifier = Modifier.clickable { context.openUrl("https://example.com") })
             }
         }
@@ -216,7 +216,7 @@ internal class AIUIConversationTest {
         rule.mainClock.advanceTimeBy(2_000)
 
         rule.onNodeWithText("ask about Ohrid").performClick()
-        rule.onNodeWithText("open http").performClick()
+        rule.onNodeWithText("open file").performClick()
         rule.onNodeWithText("open https").performClick()
 
         assertEquals(
