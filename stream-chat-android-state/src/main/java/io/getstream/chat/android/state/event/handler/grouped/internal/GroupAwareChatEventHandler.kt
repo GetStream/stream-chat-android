@@ -125,11 +125,15 @@ internal class GroupAwareChatEventHandler(
             cachedChannel?.hidden != true
         val isInList = channels.value?.containsKey(channel.cid) == true
         return when {
-            belongsHere && !isInList -> EventHandlingResult.Add(channel)
+            belongsHere && !isInList -> EventHandlingResult.Add(channel.withMembersOf(cachedChannel))
             !belongsHere && isInList -> EventHandlingResult.Remove(channel.cid)
             else -> EventHandlingResult.Skip
         }
     }
+
+    /** Events of large channels leave the members out, so a channel with members but none listed takes [other]'s. */
+    private fun Channel.withMembersOf(other: Channel?): Channel =
+        if (other != null && members.isEmpty() && memberCount > 0) copy(members = other.members) else this
 
     /**
      * Same checks as [routeByGroup], against [cachedChannel] with the partial update applied. The event's channel
