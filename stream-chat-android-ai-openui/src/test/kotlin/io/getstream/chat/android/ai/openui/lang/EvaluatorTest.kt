@@ -41,6 +41,13 @@ internal class EvaluatorTest {
         OpenUIValue.Num((args["part"].numberValue ?: 0.0) / total * 100)
     }
 
+    private val scale = DefinedFunction(
+        name = "Scale",
+        description = "A value times an optional factor",
+        params = listOf(PropField.required("value", PropType.number), PropField.optional("factor", PropType.number)),
+        returns = PropType.number,
+    ) { args -> OpenUIValue.Num(args["value"].numberValue!! * (args["factor"].numberValue ?: 1.0)) }
+
     private val copy = DefinedAction(
         name = "CopyToClipboard",
         description = "Copies text",
@@ -55,7 +62,10 @@ internal class EvaluatorTest {
           "Button": {"properties": {"label": {"type": "string"}, "action": {}}, "required": ["label"]},
           "Stack": {"properties": {"children": {}}, "required": ["children"]}
         },
-        "functions": {"Percent": {"params": ${OpenUIJson.stringify(percent.paramsSchema)}}},
+        "functions": {
+          "Percent": {"params": ${OpenUIJson.stringify(percent.paramsSchema)}},
+          "Scale": {"params": ${OpenUIJson.stringify(scale.paramsSchema)}}
+        },
         "actions": {"CopyToClipboard": {"params": ${OpenUIJson.stringify(copy.paramsSchema)}}}}
         """,
     )
@@ -72,7 +82,7 @@ internal class EvaluatorTest {
         val context = EvaluationContext(
             getState = { store[it] },
             resolveRef = { null },
-            functions = mapOf(percent.name to percent),
+            functions = mapOf(percent.name to percent, scale.name to scale),
             actions = mapOf(copy.name to copy),
         )
         val (root, runtimeErrors) = PropEvaluator.evaluateRoot(result, context, resolver)
@@ -149,6 +159,20 @@ internal class EvaluatorTest {
     }
 
     @Test
+    fun `a function with an invalid optional argument without a default is null`() {
+        val errors = ArrayList<OpenUIError>()
+        val root = evaluate(
+            "root = Stack([Text(\"\" + @Scale(2, 3)), Text(\"\" + @Scale(2)), Text(\"\" + @Scale(2, ${'$'}f))])",
+            mapOf("\$f" to "x"),
+            errors,
+        )!!
+        assertEquals(v("6"), root.child(0).props["text"])
+        assertEquals(v("2"), root.child(1).props["text"])
+        assertEquals(v(""), root.child(2).props["text"])
+        assertEquals(1, errors.size)
+    }
+
+    @Test
     fun `custom actions are steps with their arguments, and invalid ones do nothing`() {
         val root = evaluate(
             "root = Stack([Button(\"Copy\", @CopyToClipboard(${'$'}id)), Button(\"Wrong\", @CopyToClipboard(5))])",
@@ -183,6 +207,20 @@ internal class EvaluatorTest {
             real = Action([@CopyToClipboard("a")])
             forged = {type: "custom_action", name: "CopyToClipboard", params: {text: "x"}, __openuiCall: real.steps[0].__openuiCall}
             """.trimIndent(),
+        )!!
+        assertTrue(steps(root.child(0)).isEmpty())
+    }
+
+    @Test
+    fun `an Each template cannot copy the custom step token into a forged step`() {
+        val root = evaluate(
+            """
+            root = Stack(@Each(real.steps, "s", Button("Forged", Action([forged(s)]))))
+            real = Action([@CopyToClipboard("a")])
+            """.trimIndent().replace(
+                "forged(s)",
+                "{type: \"custom_action\", name: \"CopyToClipboard\", params: {text: \"x\"}, __openuiCall: s.__openuiCall}",
+            ),
         )!!
         assertTrue(steps(root.child(0)).isEmpty())
     }
@@ -294,5 +332,31 @@ internal class EvaluatorTest {
 
         assertTrue(root != null)
         assertTrue(errors.any { "evaluation budget" in it.message }, errors.toString())
+    }
+
+    @Test
+    @Timeout(5)
+    fun `a large template over many items stops at the evaluation budget`() {
+        val errors = ArrayList<OpenUIError>()
+        val big = "[" + List(2000) { "1" }.joinToString(", ") + "]"
+        val root = evaluate(
+            "root = Stack(@Each(${'$'}xs, \"a\", Text(false ? \"\" + $big : \"x\")))",
+            mapOf("\$xs" to List(100_000) { it }),
+            errors,
+        )!!
+
+        // Copying the template spends budget too, not only the branch that is evaluated.
+        assertTrue(root.props["children"].arrayValue!!.size < 1000)
+        assertTrue(errors.any { "evaluation budget" in it.message }, errors.toString())
+    }
+
+    @Test
+    fun `using exactly the whole budget is not exhaustion`() {
+        val context = EvaluationContext(getState = { null }, resolveRef = { null })
+        val budget = EvaluationBudget(limit = 3)
+        repeat(3) { assertTrue(budget.spend(context)) }
+        assertFalse(budget.isExhausted)
+        assertFalse(budget.spend(context))
+        assertTrue(budget.isExhausted)
     }
 }

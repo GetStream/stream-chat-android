@@ -28,8 +28,9 @@ import io.getstream.chat.android.ai.openui.library.PropField
 internal class EvaluationBudget(private val limit: Int = DEFAULT_LIMIT) {
     private var spent = 0
 
-    /** Whether evaluation ran out of budget. */
-    val isExhausted: Boolean get() = spent >= limit
+    /** Whether a spend was refused, so evaluation stopped short. */
+    var isExhausted: Boolean = false
+        private set
 
     /** Whether exhaustion has been reported already, so it is reported once. */
     internal var isReported: Boolean = false
@@ -43,6 +44,7 @@ internal class EvaluationBudget(private val limit: Int = DEFAULT_LIMIT) {
             spent++
             return true
         }
+        isExhausted = true
         if (!isReported) {
             context.reportError?.let { report ->
                 isReported = true
@@ -430,6 +432,11 @@ internal object Evaluator {
         if (missesRequired(raw, function.params)) return OpenUIValue.Null
         val checked = checkValue(OpenUIValue.Obj(raw), function.paramsSchema, function.name, "", context).objectValue
             ?: return OpenUIValue.Null
+        // Validation drops an invalid optional argument without a default; the call is null then.
+        val dropped = function.params.any { param ->
+            param.defaultValue == null && !JS.isNullish(raw[param.name]) && checked[param.name] == null
+        }
+        if (dropped) return OpenUIValue.Null
         val result = try {
             function.fn(checked)
         } catch (error: Exception) {
@@ -552,7 +559,7 @@ internal object Evaluator {
         for (item in items) {
             // Every item spends budget, so nested loops stop early once it runs out.
             if (!context.budget.spend(context)) break
-            val substituted = substituteRef(template, variable, item)
+            val substituted = substituteRef(template, variable, item, context)
             val childContext = context.copy(resolveRef = { ref ->
                 if (ref == variable) {
                     item
@@ -576,15 +583,26 @@ internal object Evaluator {
         return loopVariable == ASTNode.Ref(variable) || loopVariable == ASTNode.Str(variable)
     }
 
-    /** Replaces every `Ref(variable)` in `node` with the literal form of `value`. */
-    internal fun substituteRef(node: ASTNode, variable: String, value: OpenUIValue): ASTNode {
-        fun recurse(child: ASTNode) = substituteRef(child, variable, value)
+    /**
+     * Replaces every `Ref(variable)` in `node` with the literal form of `value`. Every node copied
+     * spends budget, so a large template over many items stops early once it runs out.
+     */
+    private fun substituteRef(
+        node: ASTNode,
+        variable: String,
+        value: OpenUIValue,
+        context: EvaluationContext,
+    ): ASTNode {
+        if (!context.budget.spend(context)) return ASTNode.Null
+        fun recurse(child: ASTNode) = substituteRef(child, variable, value, context)
         return when (node) {
             is ASTNode.Ref -> if (node.name == variable) ASTNode.literal(value) else node
             is ASTNode.Member -> {
-                // Member access on the loop variable resolves straight to the field's literal.
+                // Member access on the loop variable resolves straight to the field's literal, except
+                // for the custom step token, which falls through to the property read that hides it.
                 val obj = recurse(node.obj)
-                (obj as? ASTNode.Obj)?.entries?.firstOrNull { it.first == node.field }?.second ?: node.copy(obj = obj)
+                val literal = (obj as? ASTNode.Obj)?.takeIf { node.field != ActionPlan.CALL_TOKEN_KEY }
+                literal?.entries?.firstOrNull { it.first == node.field }?.second ?: node.copy(obj = obj)
             }
             is ASTNode.Index -> ASTNode.Index(recurse(node.obj), recurse(node.index))
             is ASTNode.BinOp -> node.copy(left = recurse(node.left), right = recurse(node.right))
