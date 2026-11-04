@@ -56,7 +56,10 @@ import kotlin.coroutines.cancellation.CancellationException
  *
  * @param renderers The renderer of each format the agent writes, the first one listed asked first.
  * @param components The app's views the agent can place.
- * @param tools The app's tools a reply's UI can run, to load data on this device.
+ * @param tools The app's tools a reply's UI can run on this device, which the agent's instructions
+ * list. They run without asking the person. One whose [AIClientTool.definition] says it is
+ * read-only runs whenever the UI asks, such as to load data while it shows; any other only when
+ * the person does something that runs it.
  * @param linkSchemes The kinds of link a reply's UI may open: web and email links by default
  * (`http`, `https` and `mailto`). The agent writes every link, so add another scheme only when the
  * app wants it.
@@ -125,12 +128,18 @@ public class AIUIHost(
      *
      * @param name The tool's name.
      * @param arguments Its arguments, as plain Kotlin values.
+     * @param userInitiated Whether the person asked for it, such as with a tap, rather than the UI
+     * while it shows. Only a read-only tool runs when they didn't.
      * @return The tool's output, as plain Kotlin values.
-     * @throws AIUIToolException When the host has no such tool, it fails or throws, or its output
-     * is not JSON.
+     * @throws AIUIToolException When the host has no such tool, it is not read-only and the person
+     * did not ask for it, it fails or throws, or its output is not JSON.
      */
-    public suspend fun runTool(name: String, arguments: Map<String, Any?> = emptyMap()): Any? {
-        val tool = tools[name]
+    public suspend fun runTool(
+        name: String,
+        arguments: Map<String, Any?> = emptyMap(),
+        userInitiated: Boolean = false,
+    ): Any? {
+        val tool = runnable(name, userInitiated)
         val call = AIToolCallPart(
             id = UUID.randomUUID().toString(),
             name = name,
@@ -138,7 +147,7 @@ public class AIUIHost(
             executor = AIToolCallPart.Executor.Client,
             arguments = Json.write(arguments),
         )
-        val result = if (tool == null) AIClientToolResult.failed("No tool named $name") else run(tool, call)
+        val result = run(tool, call)
         result.failure?.let { throw AIUIToolException(it) }
         val output = result.output ?: return null
         return try {
@@ -146,6 +155,16 @@ public class AIUIHost(
         } catch (_: JSONException) {
             throw AIUIToolException("$name returned output that is not JSON")
         }
+    }
+
+    // The tool of that name, when it may run: a read-only one whenever the UI asks, any other only
+    // when the person asked for it.
+    private fun runnable(name: String, userInitiated: Boolean): AIClientTool {
+        val tool = tools[name] ?: throw AIUIToolException("No tool named $name")
+        if (!userInitiated && !tool.definition.isReadOnly) {
+            throw AIUIToolException("$name isn't read-only, so it runs only when the person asks for it")
+        }
+        return tool
     }
 
     @Suppress("TooGenericExceptionCaught", "SwallowedException")

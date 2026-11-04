@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.UriHandler
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.parts.AIClientTool
+import io.getstream.chat.android.ai.compose.parts.AIClientToolDefinition
 import io.getstream.chat.android.ai.compose.parts.AIClientToolResult
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import kotlinx.coroutines.test.runTest
@@ -71,7 +72,7 @@ internal class AIUIHostTest {
         override fun supports(version: String?): Boolean = versions == null || version in versions
 
         override fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> =
-            mapOf("components" to components.map { it.name }, "tools" to tools.map { it.name })
+            mapOf("components" to components.map { it.name }, "tools" to tools.map { it.definition.toJson() })
 
         override fun makeEngine(host: AIUIHost): AIUIEngine = Engine(showsNothing).also { engines += it }
     }
@@ -86,9 +87,19 @@ internal class AIUIHostTest {
         override fun makeEngine(host: AIUIHost): AIUIEngine = Engine(showsNothing = false)
     }
 
-    private fun tool(name: String) = object : AIClientTool {
+    private fun tool(
+        name: String,
+        readOnly: Boolean = false,
+        ran: MutableList<String>? = null,
+    ) = object : AIClientTool {
         override val name: String = name
-        override suspend fun run(call: AIToolCallPart) = AIClientToolResult.completed("{}")
+        override val description: String = "The $name."
+        override val inputSchema: Map<String, Any?> = mapOf("type" to "object")
+        override val isReadOnly: Boolean = readOnly
+        override suspend fun run(call: AIToolCallPart): AIClientToolResult {
+            ran?.add(name)
+            return AIClientToolResult.completed("{}")
+        }
     }
 
     private fun document(text: String, format: AIUIFormat = AIUIFormat.OpenUI, version: String? = null) =
@@ -191,8 +202,8 @@ internal class AIUIHostTest {
         }
         val host = AIUIHost(emptyList(), tools = listOf(throwing, bare)) {}
 
-        assertFailure("contacts failed") { host.runTool("contacts") }
-        assertFailure("status returned output that is not JSON") { host.runTool("status") }
+        assertFailure("contacts failed") { host.runTool("contacts", userInitiated = true) }
+        assertFailure("status returned output that is not JSON") { host.runTool("status", userInitiated = true) }
     }
 
     @Test
@@ -223,6 +234,7 @@ internal class AIUIHostTest {
         val calls = mutableListOf<AIToolCallPart>()
         val tool = object : AIClientTool {
             override val name = "calendar"
+            override val isReadOnly = true
             override suspend fun run(call: AIToolCallPart): AIClientToolResult {
                 calls += call
                 return AIClientToolResult.completed("{\"events\":[\"Lunch\"]}")
@@ -239,7 +251,7 @@ internal class AIUIHostTest {
         assertEquals(mapOf("events" to listOf("Lunch")), output)
         assertEquals("{\"day\":\"2026-11-14\"}", calls.single().arguments)
         assertEquals(AIToolCallPart.Executor.Client, calls.single().executor)
-        assertFailure("Location not shared") { host.runTool("location") }
+        assertFailure("Location not shared") { host.runTool("location", userInitiated = true) }
         assertFailure("No tool named weather") { host.runTool("weather") }
     }
 
@@ -289,15 +301,22 @@ internal class AIUIHostTest {
         val host = AIUIHost(
             renderers = listOf(Renderer(AIUIFormat.OpenUI), ToolessRenderer()),
             components = listOf(component),
-            tools = listOf(tool("weather"), tool("contacts"), tool("weather")),
+            tools = listOf(tool("weather", readOnly = true), tool("contacts"), tool("weather")),
         ) {}
 
         assertEquals(
             mapOf(
                 "v" to 1,
                 "renderers" to listOf(
-                    // The renderer gets the host's tools, each once, by name.
-                    mapOf("format" to "openui", "components" to listOf("place_card"), "tools" to listOf("contacts", "weather")),
+                    // The renderer gets the host's tools, each once, by name, with their definitions.
+                    mapOf(
+                        "format" to "openui",
+                        "components" to listOf("place_card"),
+                        "tools" to listOf(
+                            AIClientToolDefinition("contacts", "The contacts.", mapOf("type" to "object")).toJson(),
+                            AIClientToolDefinition("weather", "The weather.", mapOf("type" to "object"), isReadOnly = true).toJson(),
+                        ),
+                    ),
                     mapOf("format" to "a2ui", "components" to 1),
                 ),
                 "components" to listOf(component.definition.toJson()),
@@ -306,6 +325,22 @@ internal class AIUIHostTest {
         )
         assertNotNull(host.component("place_card"))
         assertNull(host.component("map"))
+    }
+
+    @Test
+    fun `a read-only tool runs whenever the UI asks, any other only when the person asks`() = runTest {
+        val ran = mutableListOf<String>()
+        val host = AIUIHost(
+            emptyList(),
+            tools = listOf(tool("calendar", readOnly = true, ran = ran), tool("book", ran = ran)),
+        ) {}
+
+        assertEquals(emptyMap<String, Any?>(), host.runTool("calendar"))
+        assertFailure("book isn't read-only, so it runs only when the person asks for it") { host.runTool("book") }
+        assertEquals(listOf("calendar"), ran)
+
+        assertEquals(emptyMap<String, Any?>(), host.runTool("book", userInitiated = true))
+        assertEquals(listOf("calendar", "book"), ran)
     }
 
     private suspend fun assertFailure(message: String, block: suspend () -> Unit) {

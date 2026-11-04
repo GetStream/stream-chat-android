@@ -38,6 +38,31 @@ public interface AIClientTool {
     /** The tool's name, as the agent declared it. */
     public val name: String
 
+    /** What the tool does, for the agent. Empty by default. */
+    public val description: String get() = ""
+
+    /**
+     * The JSON Schema of the tool's arguments, as plain Kotlin values, or `null` when it describes
+     * none. `null` by default.
+     */
+    public val inputSchema: Map<String, Any?>? get() = null
+
+    /**
+     * Whether the tool only reads and changes nothing. A reply's UI runs only such a tool by
+     * itself, such as to load data while it shows; any other runs only when the person asks for it.
+     * `false` by default.
+     */
+    public val isReadOnly: Boolean get() = false
+
+    /** The tool's name, description, argument schema and read-only hint, as the agent sees them. */
+    public val definition: AIClientToolDefinition
+        get() = AIClientToolDefinition(
+            name = name,
+            description = description,
+            inputSchema = inputSchema,
+            isReadOnly = isReadOnly,
+        )
+
     /**
      * Runs one call.
      *

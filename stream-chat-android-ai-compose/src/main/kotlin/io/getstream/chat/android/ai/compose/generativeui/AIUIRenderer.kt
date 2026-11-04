@@ -43,7 +43,8 @@ public interface AIUIRenderer {
      * plain Kotlin values. By default, what the renderer gives for [components] alone.
      *
      * @param components The app's components the agent can place.
-     * @param tools The app's tools a reply's UI can run, by name.
+     * @param tools The app's tools a reply's UI can run. Each one's [AIClientTool.definition] has its
+     * name, description, argument schema and read-only hint, ready to list in the instructions.
      */
     public fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> =
         capabilities(components)
