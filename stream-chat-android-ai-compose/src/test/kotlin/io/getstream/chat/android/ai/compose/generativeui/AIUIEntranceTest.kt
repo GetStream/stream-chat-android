@@ -20,7 +20,10 @@ import android.graphics.Bitmap
 import android.view.View
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -49,6 +52,34 @@ internal class AIUIEntranceTest {
     @Test
     fun `a part of a finished reply shows at once`() {
         assertShowsAfterEntrance(isStreaming = false)
+    }
+
+    @Test
+    fun `a part brought in by a modifier keeps the weight its row gives it`() {
+        lateinit var view: View
+        rule.setContent {
+            view = LocalView.current
+            Row(modifier = Modifier.width((Size * 2).dp).background(Color.White)) {
+                AIUIEntranceStage(isStreaming = true) {
+                    Row {
+                        AIUIPartEntrance { entrance ->
+                            Box(modifier = Modifier.weight(1f).then(entrance).height(Size.dp).background(Color.Red))
+                        }
+                        AIUIPartEntrance { entrance ->
+                            Box(modifier = Modifier.weight(1f).then(entrance).height(Size.dp).background(Color.Blue))
+                        }
+                    }
+                }
+            }
+        }
+        rule.mainClock.advanceTimeBy(EntranceMillis)
+
+        val pixels = rule.runOnIdle {
+            val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            view.draw(android.graphics.Canvas(bitmap))
+            bitmap.getPixel(Size / 2, Size / 2) to bitmap.getPixel(Size * 3 / 2, Size / 2)
+        }
+        assertEquals(Color.Red.toArgb() to Color.Blue.toArgb(), pixels)
     }
 
     private fun assertShowsAfterEntrance(isStreaming: Boolean) {

@@ -51,6 +51,7 @@ tasks.withType<KotlinCompile>().configureEach {
                 "-Xexplicit-api=strict",
             ),
         )
+        optIn.add("io.getstream.chat.android.ai.compose.util.internal.InternalStreamAIApi")
     }
 }
 

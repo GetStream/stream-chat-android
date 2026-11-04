@@ -76,6 +76,9 @@ public class AIUIHost(
     public val components: List<AIUIComponent> = components.toList()
 
     private val tools: Map<String, AIClientTool> = tools.distinctBy { it.name }.associateBy { it.name }
+
+    // The app's tools a reply's UI can run, in a steady order for the agent's instructions.
+    private val toolList: List<AIClientTool> = this.tools.values.sortedBy { it.name }
     private val linkSchemes: Set<String> = linkSchemes.mapTo(mutableSetOf()) { it.lowercase(Locale.ROOT) }
     private val engines = mutableMapOf<Int, AIUIEngine>()
     private val states = mutableMapOf<String, Any?>()
@@ -249,13 +252,14 @@ public class AIUIHost(
 
     /**
      * What the agent's backend needs to write UI this app shows, as plain Kotlin values: each
-     * format it reads, with what its renderer adds, and the app's components.
+     * format it reads, with what its renderer adds, such as the instructions that list the app's
+     * tools, and the app's components.
      */
     public val capabilities: Map<String, Any?>
         get() = mapOf(
             "v" to 1,
             "renderers" to renderers.map { renderer ->
-                renderer.capabilities(components) + ("format" to renderer.format.rawValue)
+                renderer.capabilities(components, toolList) + ("format" to renderer.format.rawValue)
             },
             "components" to components.map { it.definition.toJson() },
         )

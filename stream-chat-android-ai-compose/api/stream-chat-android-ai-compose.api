@@ -363,6 +363,7 @@ public final class io/getstream/chat/android/ai/compose/generativeui/AIUIParamet
 
 public abstract interface class io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer {
 	public fun capabilities (Ljava/util/List;)Ljava/util/Map;
+	public fun capabilities (Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
 	public abstract fun getFormat-cv5I8qU ()Ljava/lang/String;
 	public abstract fun makeEngine (Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIEngine;
 	public fun supports (Ljava/lang/String;)Z
@@ -370,6 +371,7 @@ public abstract interface class io/getstream/chat/android/ai/compose/generativeu
 
 public final class io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer$DefaultImpls {
 	public static fun capabilities (Lio/getstream/chat/android/ai/compose/generativeui/AIUIRenderer;Ljava/util/List;)Ljava/util/Map;
+	public static fun capabilities (Lio/getstream/chat/android/ai/compose/generativeui/AIUIRenderer;Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
 	public static fun supports (Lio/getstream/chat/android/ai/compose/generativeui/AIUIRenderer;Ljava/lang/String;)Z
 }
 
@@ -1538,5 +1540,8 @@ public final class io/getstream/chat/android/ai/compose/ui/component/internal/Co
 	public final fun getLambda$-1485754247$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function4;
 	public final fun getLambda$1811339457$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$1855231261$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function3;
+}
+
+public abstract interface annotation class io/getstream/chat/android/ai/compose/util/internal/InternalStreamAIApi : java/lang/annotation/Annotation {
 }
 
