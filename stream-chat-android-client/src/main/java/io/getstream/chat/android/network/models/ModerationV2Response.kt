@@ -46,11 +46,11 @@ internal data class ModerationV2Response(
     internal val semanticFilterMatched: String? = null,
 
     @Json(name = "blocklists_matched")
-    internal val blocklistsMatched: List<String>? = emptyList(),
+    internal val blocklistsMatched: List<String>? = null,
 
     @Json(name = "image_harms")
-    internal val imageHarms: List<String>? = emptyList(),
+    internal val imageHarms: List<String>? = null,
 
     @Json(name = "text_harms")
-    internal val textHarms: List<String>? = emptyList(),
+    internal val textHarms: List<String>? = null,
 )

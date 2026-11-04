@@ -239,13 +239,7 @@ internal class DtoMapping(
             members = shared.members ?: emptyList(),
             createdBy = shared.createdBy,
             configOverrides = custom.takeTyped("config_overrides") { value ->
-                val overrides = value as Map<*, *>
-                val read = configOverridesRequestAdapter.fromJsonValue(overrides)!!
-                // Its defaults would also send "commands":[] and "grants":{}, overriding what the caller left alone.
-                read.copy(
-                    commands = read.commands.takeIf { "commands" in overrides },
-                    grants = read.grants.takeIf { "grants" in overrides },
-                )
+                configOverridesRequestAdapter.fromJsonValue(value as Map<*, *>)!!
             },
             custom = custom,
         )
@@ -430,7 +424,7 @@ internal class DtoMapping(
                     invisible = isInvisible,
                     language = language,
                     privacySettings = privacySettings?.toDto(),
-                    custom = extraData - RESPONSE_ONLY_USER_KEYS - USER_DEVICES_CUSTOM_KEY,
+                    custom = requestCustom(),
                 )
             }
 
@@ -471,9 +465,15 @@ internal val SENT_BACK_MESSAGE_KEYS = setOf(MML_KEY, POLL_ID_KEY, RESTRICTED_VIS
  */
 private val RESPONSE_ONLY_MESSAGE_KEYS = GENERATED_MESSAGE_EXTRA_DATA_KEYS - SENT_BACK_MESSAGE_KEYS
 
-/** The user counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: every declared user field the user adapters keep. */
-private val RESPONSE_ONLY_USER_KEYS =
-    GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS + GENERATED_OWN_USER_EXTRA_DATA_KEYS
+/**
+ * The user counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: every declared user field the user adapters keep, and
+ * [REVOKE_TOKENS_ISSUED_BEFORE_KEY], which older SDK versions kept in a stored user's extraData.
+ */
+private val RESPONSE_ONLY_USER_KEYS = GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS +
+    GENERATED_OWN_USER_EXTRA_DATA_KEYS + REVOKE_TOKENS_ISSUED_BEFORE_KEY
+
+/** The custom data a user sends: its extra data without the [RESPONSE_ONLY_USER_KEYS] and its devices. */
+internal fun User.requestCustom(): Map<String, Any> = extraData - RESPONSE_ONLY_USER_KEYS - USER_DEVICES_CUSTOM_KEY
 
 /**
  * The channel counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: the declared channel fields the channel adapters keep,

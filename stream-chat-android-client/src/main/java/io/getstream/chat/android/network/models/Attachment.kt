@@ -88,10 +88,10 @@ internal data class Attachment(
     internal val type: String? = null,
 
     @Json(name = "actions")
-    internal val actions: List<io.getstream.chat.android.network.models.Action>? = emptyList(),
+    internal val actions: List<io.getstream.chat.android.network.models.Action>? = null,
 
     @Json(name = "fields")
-    internal val fields: List<io.getstream.chat.android.network.models.Field>? = emptyList(),
+    internal val fields: List<io.getstream.chat.android.network.models.Field>? = null,
 
     @Json(name = "giphy")
     internal val giphy: io.getstream.chat.android.network.models.Images? = null,

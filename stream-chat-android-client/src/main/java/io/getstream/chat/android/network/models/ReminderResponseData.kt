@@ -45,6 +45,9 @@ internal data class ReminderResponseData(
     @Json(name = "user_id")
     internal val userId: String,
 
+    @Json(name = "expires_at")
+    internal val expiresAt: java.util.Date? = null,
+
     @Json(name = "remind_at")
     internal val remindAt: java.util.Date? = null,
 

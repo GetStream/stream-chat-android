@@ -74,12 +74,7 @@ internal object SearchPayloadTestData {
     )
 
     @Language("JSON")
-    val searchPayloadJsonWithDefaults =
-        """{
-          "filter_conditions": {},
-          "sort": [],
-          "message_filter_conditions": {}
-        }""".withoutWhitespace()
+    val searchPayloadJsonWithDefaults = """{"filter_conditions":{}}"""
 
     val searchPayloadWithDefaults = SearchPayload()
 }

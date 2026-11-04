@@ -64,22 +64,22 @@ internal data class PollResponseData(
     internal val voteCount: Int,
 
     @Json(name = "voting_visibility")
-    internal val votingVisibility: String,
+    internal val votingVisibility: io.getstream.chat.android.network.models.VotingVisibility,
 
     @Json(name = "latest_answers")
-    internal val latestAnswers: List<PollVoteResponseData> = emptyList(),
+    internal val latestAnswers: List<io.getstream.chat.android.network.models.PollVoteResponseData> = emptyList(),
 
     @Json(name = "options")
-    internal val options: List<PollOptionResponseData> = emptyList(),
+    internal val options: List<io.getstream.chat.android.network.models.PollOptionResponseData> = emptyList(),
 
     @Json(name = "own_votes")
-    internal val ownVotes: List<PollVoteResponseData> = emptyList(),
+    internal val ownVotes: List<io.getstream.chat.android.network.models.PollVoteResponseData> = emptyList(),
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),
 
     @Json(name = "latest_votes_by_option")
-    internal val latestVotesByOption: Map<String, List<PollVoteResponseData>> = emptyMap(),
+    internal val latestVotesByOption: Map<String, List<io.getstream.chat.android.network.models.PollVoteResponseData>> = emptyMap(),
 
     @Json(name = "vote_counts_by_option")
     internal val voteCountsByOption: Map<String, Int> = emptyMap(),
@@ -91,7 +91,7 @@ internal data class PollResponseData(
     internal val maxVotesAllowed: Int? = null,
 
     @Json(name = "created_by")
-    internal val createdBy: UserResponse? = null,
+    internal val createdBy: io.getstream.chat.android.network.models.UserResponse? = null,
 
     @Json(name = "description_i18n")
     internal val descriptionI18n: Map<String, String>? = null,

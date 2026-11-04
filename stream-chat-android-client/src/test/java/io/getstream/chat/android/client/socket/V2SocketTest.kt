@@ -115,6 +115,25 @@ internal class V2SocketTest {
     }
 
     @Test
+    fun `The first connection leaves out the server fields a user from a response keeps in its extra data`() {
+        val user = USER.copy(
+            extraData = USER.extraData + mapOf(
+                "deleted_at" to "2026-01-01T10:00:00.000Z",
+                "shadow_banned" to false,
+                "ban_expires" to "2026-01-02T10:00:00.000Z",
+                "latest_hidden_channels" to listOf("messaging:general"),
+                "total_unread_count_by_team" to mapOf("red" to 1.0),
+                "revoke_tokens_issued_before" to "2026-01-01T09:00:00.000Z",
+            ),
+        )
+        open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, user))
+
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip",
+            "name":"Chewbacca","image":"https://example.com/chewie.png","language":"en","invisible":true,
+            "privacy_settings":{"typing_indicators":{"enabled":false}},"custom":{"flair":"gold"}}}"""
+    }
+
+    @Test
     fun `The first connection sends every privacy setting it has, and leaves out the unset ones`() {
         val user = USER.copy(
             privacySettings = PrivacySettings(

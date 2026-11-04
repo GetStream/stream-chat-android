@@ -99,7 +99,8 @@ internal class EventUserParsingTest {
         user.language shouldBeEqualTo "en"
         user.devices shouldBeEqualTo emptyList()
         // Declared on the generated models but kept in extraData, since the domain has no property for them.
-        user.extraData.keys shouldBeEqualTo setOf("deleted_at", "revoke_tokens_issued_before", "flair")
+        // revoke_tokens_issued_before is no longer declared, so a backend still sending it is ignored.
+        user.extraData.keys shouldBeEqualTo setOf("deleted_at", "flair")
         user.extraData["flair"] shouldBeEqualTo "gold"
     }
 }

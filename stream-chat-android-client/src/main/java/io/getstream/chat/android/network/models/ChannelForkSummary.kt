@@ -24,35 +24,39 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.Map
 
 /**
- *
+ * A fork of an agent channel
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-internal data class FeedsPreferencesResponse(
-    @Json(name = "comment")
-    val comment: kotlin.String? = null,
+internal data class ChannelForkSummary(
+    @Json(name = "channel_cid")
+    internal val channelCid: String,
 
-    @Json(name = "comment_mention")
-    val commentMention: kotlin.String? = null,
+    @Json(name = "copied_message_count")
+    internal val copiedMessageCount: Int,
 
-    @Json(name = "comment_reaction")
-    val commentReaction: kotlin.String? = null,
+    @Json(name = "created_at")
+    internal val createdAt: java.util.Date,
 
-    @Json(name = "comment_reply")
-    val commentReply: kotlin.String? = null,
+    @Json(name = "source_channel_cid")
+    internal val sourceChannelCid: String,
 
-    @Json(name = "follow")
-    val follow: kotlin.String? = null,
+    @Json(name = "source_message_id")
+    internal val sourceMessageId: String,
 
-    @Json(name = "mention")
-    val mention: kotlin.String? = null,
+    @Json(name = "status")
+    internal val status: String,
 
-    @Json(name = "reaction")
-    val reaction: kotlin.String? = null,
+    @Json(name = "failed_reason")
+    internal val failedReason: String? = null,
 
-    @Json(name = "custom_activity_types")
-    val customActivityTypes: kotlin.collections.Map<kotlin.String, kotlin.String>? = emptyMap(),
+    @Json(name = "oldest_source_message_id")
+    internal val oldestSourceMessageId: String? = null,
+
+    @Json(name = "task_id")
+    internal val taskId: String? = null,
+
+    @Json(name = "truncated")
+    internal val truncated: Boolean? = null,
 )

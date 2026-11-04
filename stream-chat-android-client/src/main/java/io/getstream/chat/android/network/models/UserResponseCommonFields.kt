@@ -78,9 +78,6 @@ internal data class UserResponseCommonFields(
     @Json(name = "name")
     internal val name: String? = null,
 
-    @Json(name = "revoke_tokens_issued_before")
-    internal val revokeTokensIssuedBefore: java.util.Date? = null,
-
     @Json(name = "teams_role")
-    internal val teamsRole: Map<String, String>? = emptyMap(),
+    internal val teamsRole: Map<String, String>? = null,
 )

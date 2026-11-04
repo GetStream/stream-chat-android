@@ -33,8 +33,17 @@ internal data class QueryMembersPayload(
     @Json(name = "type")
     internal val type: String,
 
-    @Json(name = "filter_conditions")
-    internal val filterConditions: Map<String, Any?> = emptyMap(),
+    @Json(name = "created_at_after")
+    internal val createdAtAfter: java.util.Date? = null,
+
+    @Json(name = "created_at_after_or_equal")
+    internal val createdAtAfterOrEqual: java.util.Date? = null,
+
+    @Json(name = "created_at_before")
+    internal val createdAtBefore: java.util.Date? = null,
+
+    @Json(name = "created_at_before_or_equal")
+    internal val createdAtBeforeOrEqual: java.util.Date? = null,
 
     @Json(name = "id")
     internal val id: String? = null,
@@ -45,9 +54,24 @@ internal data class QueryMembersPayload(
     @Json(name = "offset")
     internal val offset: Int? = null,
 
+    @Json(name = "user_id_gt")
+    internal val userIdGt: String? = null,
+
+    @Json(name = "user_id_gte")
+    internal val userIdGte: String? = null,
+
+    @Json(name = "user_id_lt")
+    internal val userIdLt: String? = null,
+
+    @Json(name = "user_id_lte")
+    internal val userIdLte: String? = null,
+
     @Json(name = "members")
-    internal val members: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = emptyList(),
+    internal val members: List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = null,
 
     @Json(name = "sort")
-    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = emptyList(),
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
+
+    @Json(name = "filter_conditions")
+    internal val filterConditions: Map<String, Any?>? = null,
 )

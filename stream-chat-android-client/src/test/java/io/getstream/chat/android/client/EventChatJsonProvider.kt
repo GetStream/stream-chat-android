@@ -1061,6 +1061,7 @@ private fun createChannelInfoJsonString() =
 private fun createMemberJsonString() =
     """
         {
+            "user_id": "bender",
             "user": ${createNestedUserJsonString()},
             "channel_role": "channel_member",
             "created_at": "2020-06-29T06:14:28.000Z",

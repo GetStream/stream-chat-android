@@ -33,6 +33,18 @@ internal data class QueryUsersPayload(
     @Json(name = "filter_conditions")
     internal val filterConditions: Map<String, Any?> = emptyMap(),
 
+    @Json(name = "id_gt")
+    internal val idGt: String? = null,
+
+    @Json(name = "id_gte")
+    internal val idGte: String? = null,
+
+    @Json(name = "id_lt")
+    internal val idLt: String? = null,
+
+    @Json(name = "id_lte")
+    internal val idLte: String? = null,
+
     @Json(name = "include_deactivated_users")
     internal val includeDeactivatedUsers: Boolean? = null,
 
@@ -46,5 +58,5 @@ internal data class QueryUsersPayload(
     internal val presence: Boolean? = null,
 
     @Json(name = "sort")
-    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = emptyList(),
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
 )

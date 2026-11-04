@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 
 /**
@@ -27,8 +29,12 @@ import androidx.compose.runtime.remember
  * This is useful for creating custom components or modifying existing ones
  * without directly altering the original factory.
  *
- * @param keys Optional keys to control recomposition. If any of the keys change,
- * the [factory] function will be called again to create a new compound [ChatComponentFactory].
+ * The [factory] function is called once, and again only when the current [ChatComponentFactory],
+ * the [factory] instance, one of the [keys], or Compose state read inside [factory] changes.
+ *
+ * @param keys Optional keys for values the [factory] function reads that Compose does not track,
+ * such as plain fields. If any of the keys change, the [factory] function will be called again to
+ * create a new compound [ChatComponentFactory].
  * @param factory A function that takes the current [ChatComponentFactory] and returns a new [ChatComponentFactory].
  * @param content The composable content that will use the compound [ChatComponentFactory].
  */
@@ -39,7 +45,9 @@ public fun CompoundComponentFactory(
     content: @Composable () -> Unit,
 ) {
     val currentComponentFactory = LocalComponentFactory.current
-    val compoundComponentFactory = remember(keys) { factory(currentComponentFactory) }
+    val compoundComponentFactory by remember(currentComponentFactory, factory, keys.toList()) {
+        derivedStateOf { factory(currentComponentFactory) }
+    }
     CompositionLocalProvider(
         value = LocalComponentFactory provides compoundComponentFactory,
         content = content,

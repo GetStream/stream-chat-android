@@ -77,7 +77,6 @@ internal class OwnUserParsingTest {
         me.extraData.keys shouldBeEqualTo setOf(
             "deleted_at",
             "latest_hidden_channels",
-            "revoke_tokens_issued_before",
             "total_unread_count_by_team",
             "flair",
         )

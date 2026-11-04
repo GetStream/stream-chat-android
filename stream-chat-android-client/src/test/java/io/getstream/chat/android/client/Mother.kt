@@ -53,12 +53,14 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.Attachment
+import io.getstream.chat.android.network.models.AutomodMode
 import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelModerationBehavior
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChannelStateResponse
@@ -82,6 +84,7 @@ import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryRemindersResponse
@@ -130,6 +133,7 @@ import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningResponse
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
+import io.getstream.chat.android.network.models.VotingVisibility as VotingVisibilityDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -402,8 +406,8 @@ internal object Mother {
         polls = randomBoolean(),
         messageRetention = randomString(),
         maxMessageLength = randomInt(),
-        automod = ChannelConfigWithInfo.Automod.Disabled,
-        automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
+        automod = AutomodMode.Disabled,
+        automodBehavior = ChannelModerationBehavior.Flag,
         commands = commands,
         userMessageReminders = randomBoolean(),
         sharedLocations = randomBoolean(),
@@ -626,7 +630,7 @@ internal object Mother {
 
     fun randomDeviceResponse(
         id: String = randomString(),
-        pushProvider: String = randomString(),
+        pushProvider: PushProviderName = PushProviderName.fromString(randomString()),
         pushProviderName: String = randomString(),
         createdAt: Date = randomDate(),
         userId: String = randomString(),
@@ -1225,7 +1229,7 @@ internal object Mother {
         id: String = randomString(),
         name: String = randomString(),
         description: String = randomString(),
-        votingVisibility: String = "public",
+        votingVisibility: VotingVisibilityDto = VotingVisibilityDto.Public,
         enforceUniqueVote: Boolean = randomBoolean(),
         maxVotesAllowed: Int? = randomInt(),
         allowUserSuggestedOptions: Boolean = randomBoolean(),

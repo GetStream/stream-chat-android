@@ -36,7 +36,9 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.Action
+import io.getstream.chat.android.network.models.BlocklistBehavior
 import io.getstream.chat.android.network.models.ChannelMemberRequest
+import io.getstream.chat.android.network.models.ConfigOverridesRequest
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
@@ -313,6 +315,18 @@ internal class DtoMappingTest {
     }
 
     @Test
+    fun `Channel update data sends the blocklist behavior override as its wire value`() {
+        val data = mapOf("config_overrides" to mapOf("blocklist_behavior" to "flag"))
+        val mapping = Fixture().get()
+
+        val input = with(mapping) { data.toChannelInputRequest() }
+
+        input.configOverrides?.blocklistBehavior shouldBeEqualTo BlocklistBehavior.Flag
+        Serializer.moshi.adapter(ConfigOverridesRequest::class.java).toJson(input.configOverrides) shouldBeEqualTo
+            """{"blocklist_behavior":"flag"}"""
+    }
+
+    @Test
     fun `MemberData is correctly mapped to the generated request model`() {
         val memberData = randomMemberData(extraData = mapOf("sentinel" to "keep-me"))
         val mapping = Fixture().get()
@@ -573,8 +587,9 @@ internal class DtoMappingTest {
 
     @Test
     fun `User sends back none of the declared fields the user adapters keep in extraData`() {
+        // The revocation date is no longer kept, but a user stored by an older version may still carry it.
         val kept = GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS +
-            GENERATED_OWN_USER_EXTRA_DATA_KEYS
+            GENERATED_OWN_USER_EXTRA_DATA_KEYS + REVOKE_TOKENS_ISSUED_BEFORE_KEY
         val user = randomUser(extraData = (kept.associateWith { "from a response" } + ("color" to "teal")).toMutableMap())
         val mapping = Fixture().get()
 

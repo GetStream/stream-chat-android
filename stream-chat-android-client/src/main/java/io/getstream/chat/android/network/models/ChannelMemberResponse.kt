@@ -48,6 +48,12 @@ internal data class ChannelMemberResponse(
     @Json(name = "updated_at")
     internal val updatedAt: java.util.Date,
 
+    // Patched: the spec marks `user_id` required, but backends before v239.68.0 (CHA-3441, chat#18122) leave it out
+    // of `membership`, and a parse failure fails the whole channel query or watch. On regen, make it required again
+    // only once every region runs v239.68.0 or later.
+    @Json(name = "user_id")
+    internal val userId: String? = null,
+
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),
 
@@ -57,8 +63,14 @@ internal data class ChannelMemberResponse(
     @Json(name = "ban_expires")
     internal val banExpires: java.util.Date? = null,
 
+    @Json(name = "ban_from_future_channels")
+    internal val banFromFutureChannels: Boolean? = null,
+
     @Json(name = "deleted_at")
     internal val deletedAt: java.util.Date? = null,
+
+    @Json(name = "future_channel_ban_expires")
+    internal val futureChannelBanExpires: java.util.Date? = null,
 
     @Json(name = "invite_accepted_at")
     internal val inviteAcceptedAt: java.util.Date? = null,
@@ -81,11 +93,8 @@ internal data class ChannelMemberResponse(
     @Json(name = "status")
     internal val status: String? = null,
 
-    @Json(name = "user_id")
-    internal val userId: String? = null,
-
     @Json(name = "deleted_messages")
-    internal val deletedMessages: List<String>? = emptyList(),
+    internal val deletedMessages: List<String>? = null,
 
     @Json(name = "user")
     internal val user: io.getstream.chat.android.network.models.UserResponse? = null,

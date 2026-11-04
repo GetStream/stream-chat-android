@@ -57,11 +57,7 @@ internal object QueryPayloadRequestTestData {
     )
 
     @Language("JSON")
-    val queryDraftsRequestJsonWithDefaults =
-        """{
-          "sort": [],
-          "filter": {}
-        }""".withoutWhitespace()
+    val queryDraftsRequestJsonWithDefaults = "{}"
 
     val queryDraftsRequestWithDefaults = QueryDraftsRequest()
 
@@ -93,11 +89,7 @@ internal object QueryPayloadRequestTestData {
     )
 
     @Language("JSON")
-    val queryRemindersRequestJsonWithDefaults =
-        """{
-          "sort": [],
-          "filter": {}
-        }""".withoutWhitespace()
+    val queryRemindersRequestJsonWithDefaults = "{}"
 
     val queryRemindersRequestWithDefaults = QueryRemindersRequest()
 
@@ -137,11 +129,7 @@ internal object QueryPayloadRequestTestData {
     )
 
     @Language("JSON")
-    val queryThreadsRequestJsonWithDefaults =
-        """{
-          "sort": [],
-          "filter": {}
-        }""".withoutWhitespace()
+    val queryThreadsRequestJsonWithDefaults = "{}"
 
     val queryThreadsRequestWithDefaults = QueryThreadsRequest()
 
@@ -164,11 +152,7 @@ internal object QueryPayloadRequestTestData {
     )
 
     @Language("JSON")
-    val updateThreadPartialRequestJsonWithDefaults =
-        """{
-          "unset": [],
-          "set": {}
-        }""".withoutWhitespace()
+    val updateThreadPartialRequestJsonWithDefaults = "{}"
 
     val updateThreadPartialRequestWithDefaults = UpdateThreadPartialRequest()
 }

@@ -23,12 +23,7 @@
 
 package io.getstream.chat.android.network.models
 
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 
 /**
  *
@@ -36,10 +31,10 @@ import com.squareup.moshi.ToJson
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class ChannelConfigWithInfo(
     @Json(name = "automod")
-    internal val automod: Automod,
+    internal val automod: io.getstream.chat.android.network.models.AutomodMode,
 
     @Json(name = "automod_behavior")
-    internal val automodBehavior: AutomodBehavior,
+    internal val automodBehavior: io.getstream.chat.android.network.models.ChannelModerationBehavior,
 
     @Json(name = "connect_events")
     internal val connectEvents: Boolean,
@@ -117,13 +112,13 @@ internal data class ChannelConfigWithInfo(
     internal val userMessageReminders: Boolean,
 
     @Json(name = "commands")
-    internal val commands: List<Command> = emptyList(),
+    internal val commands: List<io.getstream.chat.android.network.models.Command> = emptyList(),
 
     @Json(name = "blocklist")
     internal val blocklist: String? = null,
 
     @Json(name = "blocklist_behavior")
-    internal val blocklistBehavior: BlocklistBehavior? = null,
+    internal val blocklistBehavior: io.getstream.chat.android.network.models.ChannelModerationBehavior? = null,
 
     @Json(name = "partition_size")
     internal val partitionSize: Int? = null,
@@ -132,7 +127,7 @@ internal data class ChannelConfigWithInfo(
     internal val partitionTtl: String? = null,
 
     @Json(name = "push_level")
-    internal val pushLevel: PushLevel? = null,
+    internal val pushLevel: io.getstream.chat.android.network.models.PushLevel? = null,
 
     @Json(name = "scheduled_messages_max_lead_time_seconds")
     internal val scheduledMessagesMaxLeadTimeSeconds: Int? = null,
@@ -147,154 +142,17 @@ internal data class ChannelConfigWithInfo(
     internal val scheduledMessagesMinLeadTimeSeconds: Int? = null,
 
     @Json(name = "allowed_flag_reasons")
-    internal val allowedFlagReasons: List<String>? = emptyList(),
+    internal val allowedFlagReasons: List<String>? = null,
 
     @Json(name = "blocklists")
-    internal val blocklists: List<BlockListOptions>? = emptyList(),
+    internal val blocklists: List<io.getstream.chat.android.network.models.BlockListOptions>? = null,
 
     @Json(name = "automod_thresholds")
-    internal val automodThresholds: Thresholds? = null,
+    internal val automodThresholds: io.getstream.chat.android.network.models.Thresholds? = null,
 
     @Json(name = "chat_preferences")
-    internal val chatPreferences: ChatPreferences? = null,
+    internal val chatPreferences: io.getstream.chat.android.network.models.ChatPreferences? = null,
 
     @Json(name = "grants")
-    internal val grants: Map<String, List<String>>? = emptyMap(),
-) {
-
-    /**
-     * Automod Enum
-     */
-    internal sealed class Automod(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): Automod = when (s) {
-                "AI" -> AI
-                "disabled" -> Disabled
-                "simple" -> Simple
-                else -> Unknown(s)
-            }
-        }
-        internal object AI : Automod("AI")
-        internal object Disabled : Automod("disabled")
-        internal object Simple : Automod("simple")
-        internal data class Unknown(val unknownValue: String) : Automod(unknownValue)
-
-        internal class AutomodAdapter : JsonAdapter<Automod>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): Automod? {
-                val s = reader.nextString() ?: return null
-                return Automod.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: Automod?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-
-    /**
-     * AutomodBehavior Enum
-     */
-    internal sealed class AutomodBehavior(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): AutomodBehavior = when (s) {
-                "block" -> Block
-                "flag" -> Flag
-                "shadow_block" -> ShadowBlock
-                else -> Unknown(s)
-            }
-        }
-        internal object Block : AutomodBehavior("block")
-        internal object Flag : AutomodBehavior("flag")
-        internal object ShadowBlock : AutomodBehavior("shadow_block")
-        internal data class Unknown(val unknownValue: String) : AutomodBehavior(unknownValue)
-
-        internal class AutomodBehaviorAdapter : JsonAdapter<AutomodBehavior>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): AutomodBehavior? {
-                val s = reader.nextString() ?: return null
-                return AutomodBehavior.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: AutomodBehavior?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-
-    /**
-     * BlocklistBehavior Enum
-     */
-    internal sealed class BlocklistBehavior(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): BlocklistBehavior = when (s) {
-                "block" -> Block
-                "flag" -> Flag
-                "shadow_block" -> ShadowBlock
-                else -> Unknown(s)
-            }
-        }
-        internal object Block : BlocklistBehavior("block")
-        internal object Flag : BlocklistBehavior("flag")
-        internal object ShadowBlock : BlocklistBehavior("shadow_block")
-        internal data class Unknown(val unknownValue: String) : BlocklistBehavior(unknownValue)
-
-        internal class BlocklistBehaviorAdapter : JsonAdapter<BlocklistBehavior>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): BlocklistBehavior? {
-                val s = reader.nextString() ?: return null
-                return BlocklistBehavior.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: BlocklistBehavior?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-
-    /**
-     * PushLevel Enum
-     */
-    internal sealed class PushLevel(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): PushLevel = when (s) {
-                "all" -> All
-                "all_mentions" -> AllMentions
-                "direct_mentions" -> DirectMentions
-                "mentions" -> Mentions
-                "none" -> None
-                else -> Unknown(s)
-            }
-        }
-        internal object All : PushLevel("all")
-        internal object AllMentions : PushLevel("all_mentions")
-        internal object DirectMentions : PushLevel("direct_mentions")
-        internal object Mentions : PushLevel("mentions")
-        internal object None : PushLevel("none")
-        internal data class Unknown(val unknownValue: String) : PushLevel(unknownValue)
-
-        internal class PushLevelAdapter : JsonAdapter<PushLevel>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): PushLevel? {
-                val s = reader.nextString() ?: return null
-                return PushLevel.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: PushLevel?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-}
+    internal val grants: Map<String, List<String>>? = null,
+)

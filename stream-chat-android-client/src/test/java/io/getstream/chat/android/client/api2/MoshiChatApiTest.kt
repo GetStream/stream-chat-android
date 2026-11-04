@@ -73,6 +73,7 @@ import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
@@ -116,6 +117,7 @@ import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateDraftRequest
 import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreateGuestResponse
@@ -166,6 +168,7 @@ import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.PushScheduleInput
 import io.getstream.chat.android.network.models.PushScheduleResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
@@ -205,6 +208,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.SyncRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.TranslateMessageResponse
+import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -291,6 +295,7 @@ import org.mockito.kotlin.whenever
 import kotlin.reflect.KClass
 import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
+import io.getstream.chat.android.network.models.VotingVisibility as VotingVisibilityDto
 
 @Suppress("LargeClass")
 internal class MoshiChatApiTest {
@@ -600,7 +605,7 @@ internal class MoshiChatApiTest {
         // then
         val expectedRequest = CreateDeviceRequest(
             id = device.token,
-            pushProvider = CreateDeviceRequest.PushProvider.fromString(device.pushProvider.key),
+            pushProvider = PushProviderName.fromString(device.pushProvider.key),
             pushProviderName = device.providerName,
         )
         result `should be instance of` expected
@@ -1724,8 +1729,8 @@ internal class MoshiChatApiTest {
             eq(channelId),
             check { body ->
                 body.addMembers?.map(ChannelMemberRequest::userId) shouldBeEqualTo members.map(MemberData::userId)
-                body.removeMembers shouldBeEqualTo emptyList()
-                body.invites shouldBeEqualTo emptyList()
+                body.removeMembers shouldBeEqualTo null
+                body.invites shouldBeEqualTo null
                 body.hideHistory shouldBeEqualTo hideHistory
                 body.hideHistoryBefore shouldBeEqualTo hideHistoryBefore
                 body.skipPush shouldBeEqualTo skipPush
@@ -1756,8 +1761,8 @@ internal class MoshiChatApiTest {
             eq(channelId),
             check { body ->
                 body.removeMembers shouldBeEqualTo members
-                body.addMembers shouldBeEqualTo emptyList()
-                body.invites shouldBeEqualTo emptyList()
+                body.addMembers shouldBeEqualTo null
+                body.invites shouldBeEqualTo null
                 body.skipPush shouldBeEqualTo skipPush
             },
         )
@@ -1786,8 +1791,8 @@ internal class MoshiChatApiTest {
             eq(channelId),
             check { body ->
                 body.invites shouldBeEqualTo members.map { ChannelMemberRequest(userId = it) }
-                body.addMembers shouldBeEqualTo emptyList()
-                body.removeMembers shouldBeEqualTo emptyList()
+                body.addMembers shouldBeEqualTo null
+                body.removeMembers shouldBeEqualTo null
                 body.skipPush shouldBeEqualTo skipPush
             },
         )
@@ -3290,7 +3295,7 @@ internal class MoshiChatApiTest {
         val pollId = randomString()
         val result = sut.closePoll(pollId).await()
         // then
-        val expectedRequest = UpdatePollPartialRequest(set = mapOf("is_closed" to true))
+        val expectedRequest = UpdatePollPartialRequest(set = mapOf("is_closed" to true), unset = emptyList())
         result `should be instance of` expected
         verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
     }
@@ -3378,8 +3383,8 @@ internal class MoshiChatApiTest {
                 )
             },
             votingVisibility = when (pollConfig.votingVisibility) {
-                VotingVisibility.PUBLIC -> CreatePollRequest.VotingVisibility.Public
-                VotingVisibility.ANONYMOUS -> CreatePollRequest.VotingVisibility.Anonymous
+                VotingVisibility.PUBLIC -> VotingVisibilityDto.Public
+                VotingVisibility.ANONYMOUS -> VotingVisibilityDto.Anonymous
             },
             enforceUniqueVote = pollConfig.enforceUniqueVote,
             maxVotesAllowed = pollConfig.maxVotesAllowed,
@@ -3438,7 +3443,7 @@ internal class MoshiChatApiTest {
                     custom = it.extraData,
                 )
             },
-            votingVisibility = UpdatePollRequestDto.VotingVisibility.Public,
+            votingVisibility = VotingVisibilityDto.Public,
             enforceUniqueVote = enforceUniqueVote,
             maxVotesAllowed = maxVotesAllowed,
             allowUserSuggestedOptions = allowUserSuggestedOptions,
@@ -4437,6 +4442,113 @@ internal class MoshiChatApiTest {
             nameGt = nameGt,
         )
     }
+
+    @Test
+    fun `Channel updates send only the member and invite lists they set`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.updateChannel(any(), any(), any())).doReturn(RetroError<UpdateChannelResponse>(500).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        sut.updateChannel("messaging", "id", mapOf("name" to "Room"), null).await()
+        sut.rejectInvite("messaging", "id").await()
+        sut.acceptInvite("messaging", "id", null).await()
+        sut.addMembers("messaging", "id", listOf(MemberData("u1")), null, null, null, null).await()
+        sut.removeMembers("messaging", "id", listOf("u1"), null, null).await()
+        sut.inviteMembers("messaging", "id", listOf("u1"), null, null).await()
+
+        val bodies = argumentCaptor<UpdateChannelRequest>()
+        verify(api, times(6)).updateChannel(eq("messaging"), eq("id"), bodies.capture())
+        // Channel data still sends its own invites and members, as before.
+        bodies.allValues.map(::wireBody) shouldBeEqualTo listOf(
+            """{"data":{"invites":[],"members":[],"custom":{"name":"Room"}}}""",
+            """{"reject_invite":true}""",
+            """{"accept_invite":true}""",
+            """{"add_members":[{"user_id":"u1","custom":{}}]}""",
+            """{"remove_members":["u1"]}""",
+            """{"invites":[{"user_id":"u1"}]}""",
+        )
+    }
+
+    @Test
+    fun `A channel truncate leaves member_ids out`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.truncateChannel(any(), any(), any()))
+            .doReturn(RetroError<TruncateChannelResponse>(500).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        sut.truncateChannel("messaging", "id", null, hardDelete = false, skipPush = false).await()
+
+        val body = argumentCaptor<TruncateChannelRequest>()
+        verify(api).truncateChannel(eq("messaging"), eq("id"), body.capture())
+        wireBody(body.firstValue) shouldBeEqualTo """{"hard_delete":false,"skip_push":false}"""
+    }
+
+    @Test
+    fun `Slow mode sends only the cooldown`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.updateChannelPartial(any(), any(), any()))
+            .doReturn(RetroError<UpdateChannelPartialResponse>(500).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        sut.enableSlowMode("messaging", "id", 10).await()
+
+        val body = argumentCaptor<UpdateChannelPartialRequest>()
+        verify(api).updateChannelPartial(eq("messaging"), eq("id"), body.capture())
+        wireBody(body.firstValue) shouldBeEqualTo """{"set":{"cooldown":10}}"""
+    }
+
+    @Test
+    fun `A channel query leaves member_custom_include out`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.queryChannels(any(), any())).doReturn(RetroError<QueryChannelsResponse>(500).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+        sut.setConnection(userId = "u1", connectionId = "connection")
+
+        sut.queryChannels(
+            io.getstream.chat.android.client.api.models.QueryChannelsRequest(
+                filter = Filters.eq("type", "messaging"),
+                limit = 1,
+            ),
+        ).await()
+
+        val body = argumentCaptor<io.getstream.chat.android.network.models.QueryChannelsRequest>()
+        verify(api).queryChannels(eq("connection"), body.capture())
+        wireBody(body.firstValue) shouldBeEqualTo
+            """{"limit":1,"offset":0,"presence":false,"state":true,"watch":true,"sort":[],""" +
+            """"filter_conditions":{"type":"messaging"}}"""
+    }
+
+    @Test
+    fun `An invite accepted with a message sends only its text`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.updateChannel(any(), any(), any())).doReturn(RetroError<UpdateChannelResponse>(500).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        sut.acceptInvite("messaging", "id", "Joined").await()
+
+        val body = argumentCaptor<UpdateChannelRequest>()
+        verify(api).updateChannel(eq("messaging"), eq("id"), body.capture())
+        wireBody(body.firstValue) shouldBeEqualTo """{"accept_invite":true,"message":{"text":"Joined"}}"""
+    }
+
+    @Test
+    fun `A draft leaves out the message fields it doesn't set`() = runTest {
+        val api = mock<DraftApi>()
+        whenever(api.createDraftMessage(any(), any(), any()))
+            .doReturn(RetroError<CreateDraftResponse>(500).toRetrofitCall())
+        val sut = Fixture().withDraftApi(api).get()
+
+        sut.createDraftMessage("messaging", "id", DraftMessage(id = "d", cid = "messaging:id", text = "Draft")).await()
+
+        val body = argumentCaptor<CreateDraftRequest>()
+        verify(api).createDraftMessage(eq("messaging"), eq("id"), body.capture())
+        wireBody(body.firstValue) shouldBeEqualTo
+            """{"message":{"id":"d","show_in_channel":false,"silent":false,"text":"Draft","type":"regular",""" +
+            """"attachments":[],"mentioned_users":[],"custom":{}}}"""
+    }
+
+    private inline fun <reified T> wireBody(request: T): String =
+        Serializer.moshi.adapter(T::class.java).toJson(request)
 
     private class Fixture {
 

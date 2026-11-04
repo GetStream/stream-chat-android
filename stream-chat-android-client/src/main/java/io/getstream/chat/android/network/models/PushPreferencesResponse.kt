@@ -26,29 +26,19 @@ package io.getstream.chat.android.network.models
 import com.squareup.moshi.Json
 
 /**
- *
+ * The push preference details.
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class PushPreferencesResponse(
-    @Json(name = "call_level")
-    val callLevel: kotlin.String? = null,
-
     @Json(name = "chat_level")
-    val chatLevel: kotlin.String? = null,
+    internal val chatLevel: String? = null,
 
     @Json(name = "disabled_until")
-    val disabledUntil: java.util.Date? = null,
-
-    @Json(name = "feeds_level")
-    val feedsLevel: kotlin.String? = null,
+    internal val disabledUntil: java.util.Date? = null,
 
     @Json(name = "chat_preferences")
-    val chatPreferences: io.getstream.chat.android.network.models.ChatPreferencesResponse? = null,
-
-    @Json(name = "feeds_preferences")
-    val feedsPreferences: io.getstream.chat.android.network.models.FeedsPreferencesResponse? = null,
+    internal val chatPreferences: io.getstream.chat.android.network.models.ChatPreferencesResponse? = null,
 
     @Json(name = "schedule")
-    val schedule: io.getstream.chat.android.network.models.PushScheduleResponse? = null,
+    internal val schedule: io.getstream.chat.android.network.models.PushScheduleResponse? = null,
 )

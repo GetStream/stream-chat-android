@@ -28,12 +28,11 @@ import com.squareup.moshi.Json
 /**
  * A recurring quiet-hours schedule: while any quiet window is active, push notifications for the user are suppressed. Suppressed notifications are dropped, not delayed.
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class PushScheduleResponse(
     @Json(name = "timezone")
-    val timezone: kotlin.String,
+    internal val timezone: String,
 
     @Json(name = "quiet_hours")
-    val quietHours: kotlin.collections.List<io.getstream.chat.android.network.models.QuietHoursRuleResponse> = emptyList(),
+    internal val quietHours: List<io.getstream.chat.android.network.models.QuietHoursRuleResponse> = emptyList(),
 )

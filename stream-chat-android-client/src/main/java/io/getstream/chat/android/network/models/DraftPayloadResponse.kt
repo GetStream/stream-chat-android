@@ -64,8 +64,8 @@ internal data class DraftPayloadResponse(
     internal val type: String? = null,
 
     @Json(name = "attachments")
-    internal val attachments: List<io.getstream.chat.android.network.models.Attachment>? = emptyList(),
+    internal val attachments: List<io.getstream.chat.android.network.models.Attachment>? = null,
 
     @Json(name = "mentioned_users")
-    internal val mentionedUsers: List<io.getstream.chat.android.network.models.UserResponse>? = emptyList(),
+    internal val mentionedUsers: List<io.getstream.chat.android.network.models.UserResponse>? = null,
 )

@@ -120,8 +120,10 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.Action
+import io.getstream.chat.android.network.models.AutomodMode
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelModerationBehavior
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPartialUpdateResponse
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
@@ -135,7 +137,9 @@ import io.getstream.chat.android.network.models.Images
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.PushLevel
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
 import io.getstream.chat.android.network.models.SharedLocationResponseData
@@ -871,8 +875,9 @@ internal class DomainMappingTest {
         CHANNEL_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelResponse>() - "custom"
         MEMBER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelMemberResponse>() - "custom"
         MESSAGE_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<MessageResponse>() - "custom" + "channel"
-        OWN_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<OwnUserResponse>() - "custom"
-        EVENT_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponsePrivacyFields>() - "custom"
+        OWN_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<OwnUserResponse>() - "custom" + USER_RECORD_ONLY_KEYS
+        EVENT_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo
+            jsonNames<UserResponsePrivacyFields>() - "custom" + USER_RECORD_ONLY_KEYS
         EVENT_USER_HIDDEN_CUSTOM_KEYS.containsAll(jsonNames<UserResponseCommonFields>() - "custom") shouldBeEqualTo true
     }
 
@@ -1171,10 +1176,10 @@ internal class DomainMappingTest {
             polls = true,
             messageRetention = "retention",
             maxMessageLength = 500,
-            automod = ChannelConfigWithInfo.Automod.AI,
-            automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
-            blocklistBehavior = ChannelConfigWithInfo.BlocklistBehavior.Block,
-            pushLevel = ChannelConfigWithInfo.PushLevel.Mentions,
+            automod = AutomodMode.AI,
+            automodBehavior = ChannelModerationBehavior.Flag,
+            blocklistBehavior = ChannelModerationBehavior.Block,
+            pushLevel = PushLevel.Mentions,
             commands = listOf(randomCommandDto(name = "giphy")),
             userMessageReminders = true,
             sharedLocations = true,
@@ -1914,17 +1919,16 @@ internal class DomainMappingTest {
         assertEquals(expected, command)
     }
 
-    @Test
-    fun `DeviceResponse is correctly mapped to Device`() {
-        val deviceDto = randomDeviceResponse()
+    @ParameterizedTest
+    @MethodSource("devicePushProviderArguments")
+    fun `DeviceResponse is correctly mapped to Device`(pushProvider: PushProviderName, expected: PushProvider) {
+        val deviceDto = randomDeviceResponse(pushProvider = pushProvider)
         val sut = Fixture().get()
         val device = with(sut) { deviceDto.toDomain() }
-        val expected = Device(
-            token = deviceDto.id,
-            pushProvider = PushProvider.fromKey(deviceDto.pushProvider),
-            providerName = deviceDto.pushProviderName,
+        assertEquals(
+            Device(token = deviceDto.id, pushProvider = expected, providerName = deviceDto.pushProviderName),
+            device,
         )
-        assertEquals(expected, device)
     }
 
     @Test
@@ -2357,6 +2361,15 @@ internal class DomainMappingTest {
     }
 
     companion object {
+        @JvmStatic
+        fun devicePushProviderArguments() = listOf(
+            Arguments.of(PushProviderName.Apn, PushProvider.UNKNOWN),
+            Arguments.of(PushProviderName.Firebase, PushProvider.FIREBASE),
+            Arguments.of(PushProviderName.Huawei, PushProvider.HUAWEI),
+            Arguments.of(PushProviderName.Xiaomi, PushProvider.XIAOMI),
+            Arguments.of(PushProviderName.Unknown("newfangled"), PushProvider.UNKNOWN),
+        )
+
         // Update responses send the members at the top level; truncate and delete only nest them in the channel.
         @JvmStatic
         fun channelMutationResponseArguments() = listOf(

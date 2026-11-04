@@ -133,31 +133,31 @@ internal data class MessageResponse(
     internal val showInChannel: Boolean? = null,
 
     @Json(name = "mentioned_group_ids")
-    internal val mentionedGroupIds: List<String>? = emptyList(),
+    internal val mentionedGroupIds: List<String>? = null,
 
     @Json(name = "mentioned_groups")
-    internal val mentionedGroups: List<io.getstream.chat.android.network.models.UserGroupResponse>? = emptyList(),
+    internal val mentionedGroups: List<io.getstream.chat.android.network.models.UserGroupResponse>? = null,
 
     @Json(name = "mentioned_roles")
-    internal val mentionedRoles: List<String>? = emptyList(),
+    internal val mentionedRoles: List<String>? = null,
 
     @Json(name = "thread_participants")
-    internal val threadParticipants: List<io.getstream.chat.android.network.models.UserResponse>? = emptyList(),
+    internal val threadParticipants: List<io.getstream.chat.android.network.models.UserResponse>? = null,
 
     @Json(name = "draft")
     internal val draft: io.getstream.chat.android.network.models.DraftResponse? = null,
 
     @Json(name = "i18n")
-    internal val i18n: Map<String, String>? = emptyMap(),
+    internal val i18n: Map<String, String>? = null,
 
     @Json(name = "image_labels")
-    internal val imageLabels: Map<String, List<String>>? = emptyMap(),
+    internal val imageLabels: Map<String, List<String>>? = null,
 
     @Json(name = "member")
     internal val member: io.getstream.chat.android.network.models.ChannelMemberPartialResponse? = null,
 
     @Json(name = "mentioned_channel_members")
-    internal val mentionedChannelMembers: Map<String, io.getstream.chat.android.network.models.ChannelMemberPartialResponse>? = emptyMap(),
+    internal val mentionedChannelMembers: Map<String, io.getstream.chat.android.network.models.ChannelMemberPartialResponse>? = null,
 
     @Json(name = "moderation")
     internal val moderation: io.getstream.chat.android.network.models.ModerationV2Response? = null,
@@ -172,7 +172,7 @@ internal data class MessageResponse(
     internal val quotedMessage: io.getstream.chat.android.network.models.MessageResponse? = null,
 
     @Json(name = "reaction_groups")
-    internal val reactionGroups: Map<String, io.getstream.chat.android.network.models.ReactionGroupResponse>? = emptyMap(),
+    internal val reactionGroups: Map<String, io.getstream.chat.android.network.models.ReactionGroupResponse>? = null,
 
     @Json(name = "reminder")
     internal val reminder: io.getstream.chat.android.network.models.ReminderResponseData? = null,

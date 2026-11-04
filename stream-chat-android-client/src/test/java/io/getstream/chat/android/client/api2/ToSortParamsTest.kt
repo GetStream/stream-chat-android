@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.SortParamType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -47,7 +48,18 @@ internal class ToSortParamsTest {
                         QuerySorter.KEY_TYPE to "number",
                     ),
                 ),
-                listOf(SortParamRequest(field = "created_at", direction = -1, type = "number")),
+                listOf(SortParamRequest(field = "created_at", direction = -1, type = SortParamType.Number)),
+            ),
+            // A type the SDK doesn't know is forwarded as is.
+            Arguments.of(
+                FakeSorter(
+                    mapOf(
+                        QuerySorter.KEY_FIELD_NAME to "created_at",
+                        QuerySorter.KEY_DIRECTION to 1,
+                        QuerySorter.KEY_TYPE to "date",
+                    ),
+                ),
+                listOf(SortParamRequest(field = "created_at", direction = 1, type = SortParamType.Unknown("date"))),
             ),
             // Custom sorter without a type: type stays null.
             Arguments.of(

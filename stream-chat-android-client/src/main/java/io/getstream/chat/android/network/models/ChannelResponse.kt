@@ -100,20 +100,23 @@ internal data class ChannelResponse(
     internal val truncatedAt: java.util.Date? = null,
 
     @Json(name = "filter_tags")
-    internal val filterTags: List<String>? = emptyList(),
+    internal val filterTags: List<String>? = null,
 
     @Json(name = "members")
-    internal val members: List<ChannelMemberResponse>? = emptyList(),
+    internal val members: List<io.getstream.chat.android.network.models.ChannelMemberResponse>? = null,
 
     @Json(name = "own_capabilities")
-    internal val ownCapabilities: List<ChannelOwnCapability>? = emptyList(),
+    internal val ownCapabilities: List<io.getstream.chat.android.network.models.ChannelOwnCapability>? = null,
 
     @Json(name = "config")
-    internal val config: ChannelConfigWithInfo? = null,
+    internal val config: io.getstream.chat.android.network.models.ChannelConfigWithInfo? = null,
 
     @Json(name = "created_by")
-    internal val createdBy: UserResponse? = null,
+    internal val createdBy: io.getstream.chat.android.network.models.UserResponse? = null,
+
+    @Json(name = "fork")
+    internal val fork: io.getstream.chat.android.network.models.ChannelForkSummary? = null,
 
     @Json(name = "truncated_by")
-    internal val truncatedBy: UserResponse? = null,
+    internal val truncatedBy: io.getstream.chat.android.network.models.UserResponse? = null,
 )

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.SortParamType
 import org.intellij.lang.annotations.Language
 
 internal object QueryReactionsRequestTestData {
@@ -48,7 +49,7 @@ internal object QueryReactionsRequestTestData {
             SortParamRequest(
                 direction = -1,
                 field = "created_at",
-                type = "reaction",
+                type = SortParamType.fromString("reaction"),
             ),
         ),
         filter = mapOf(
@@ -57,11 +58,7 @@ internal object QueryReactionsRequestTestData {
     )
 
     @Language("JSON")
-    val queryReactionsRequestJsonWithDefaults =
-        """{
-          "sort": [],
-          "filter": {}
-        }""".withoutWhitespace()
+    val queryReactionsRequestJsonWithDefaults = "{}"
 
     val queryReactionsRequestWithDefaults = QueryReactionsRequest()
 }

@@ -30,10 +30,11 @@ import com.squareup.moshi.Json
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class QueryChannelsRequest(
-    @Json(name = "include_scheduled_messages")
-    internal val includeScheduledMessages: Boolean? = null,
     @Json(name = "include_active_member_count")
     internal val includeActiveMemberCount: Boolean? = null,
+
+    @Json(name = "include_scheduled_messages")
+    internal val includeScheduledMessages: Boolean? = null,
 
     @Json(name = "limit")
     internal val limit: Int? = null,
@@ -60,17 +61,17 @@ internal data class QueryChannelsRequest(
     internal val watch: Boolean? = null,
 
     @Json(name = "member_custom_include")
-    internal val memberCustomInclude: List<String>? = emptyList(),
+    internal val memberCustomInclude: List<String>? = null,
 
     @Json(name = "sort")
-    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = emptyList(),
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
 
     @Json(name = "filter_conditions")
-    internal val filterConditions: Map<String, Any?>? = emptyMap(),
+    internal val filterConditions: Map<String, Any?>? = null,
 
     @Json(name = "filter_values")
-    internal val filterValues: Map<String, Any?>? = emptyMap(),
+    internal val filterValues: Map<String, Any?>? = null,
 
     @Json(name = "sort_values")
-    internal val sortValues: Map<String, Any?>? = emptyMap(),
+    internal val sortValues: Map<String, Any?>? = null,
 )

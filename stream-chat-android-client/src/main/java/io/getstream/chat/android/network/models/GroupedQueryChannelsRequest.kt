@@ -40,8 +40,8 @@ internal data class GroupedQueryChannelsRequest(
     internal val watch: Boolean? = null,
 
     @Json(name = "sort")
-    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = emptyList(),
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
 
     @Json(name = "groups")
-    internal val groups: Map<String, GroupedChannelsGroupRequest>? = emptyMap(),
+    internal val groups: Map<String, io.getstream.chat.android.network.models.GroupedChannelsGroupRequest>? = null,
 )

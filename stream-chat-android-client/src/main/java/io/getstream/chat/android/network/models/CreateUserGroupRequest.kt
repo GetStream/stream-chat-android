@@ -43,5 +43,5 @@ internal data class CreateUserGroupRequest(
     internal val teamId: String? = null,
 
     @Json(name = "member_ids")
-    internal val memberIds: List<String>? = emptyList(),
+    internal val memberIds: List<String>? = null,
 )

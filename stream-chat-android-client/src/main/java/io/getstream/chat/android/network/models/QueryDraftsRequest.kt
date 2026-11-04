@@ -24,27 +24,24 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.List
-import kotlin.collections.Map
 
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class QueryDraftsRequest(
     @Json(name = "limit")
-    val limit: kotlin.Int? = null,
+    internal val limit: Int? = null,
 
     @Json(name = "next")
-    val next: kotlin.String? = null,
+    internal val next: String? = null,
 
     @Json(name = "prev")
-    val prev: kotlin.String? = null,
+    internal val prev: String? = null,
 
     @Json(name = "sort")
-    val sort: kotlin.collections.List<SortParamRequest>? = emptyList(),
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
 
     @Json(name = "filter")
-    val filter: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
+    internal val filter: Map<String, Any?>? = null,
 )

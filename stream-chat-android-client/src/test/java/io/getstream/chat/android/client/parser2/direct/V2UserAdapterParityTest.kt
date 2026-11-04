@@ -79,7 +79,10 @@ internal class V2UserAdapterParityTest {
             // A custom value stored under a declared name is hidden, as v1 hides it.
             """{$REQUIRED, "custom": {"name": "stored", "banned": true, "flair": "gold"}}""",
             // Declared fields v1 also kept in custom data come back to extraData.
-            """{$REQUIRED, "deleted_at": 1791976405614650759, "revoke_tokens_issued_before": 1791976405614650759}""",
+            """{$REQUIRED, "deleted_at": 1791976405614650759}""",
+            // A field the models no longer declare is ignored, and a custom value stored under its name stays hidden.
+            """{$REQUIRED, "revoke_tokens_issued_before": 1791976405614650759}""",
+            """{$REQUIRED, "custom": {"revoke_tokens_issued_before": "stored", "flair": "gold"}}""",
             // An unknown root field is ignored, as the generated model ignores it.
             """{$REQUIRED, "unknown": "x"}""",
         )

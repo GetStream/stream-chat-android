@@ -97,21 +97,18 @@ internal class V2LaneBatchSevenTest {
         val data = mapOf("name" to "Channel", "frozen" to true, "k" to "v")
         val request = with(dtoMapping) { UpdateChannelRequest(data = data.toChannelInputRequest()) }
 
-        val lists = """"add_filter_tags":[],"add_members":[],"add_moderators":[],"assign_roles":[],""" +
-            """"demote_moderators":[],"invites":[],"remove_filter_tags":[],"remove_members":[]"""
         assertEquals(
-            """{$lists,"data":{"frozen":true,"invites":[],"members":[],"custom":{"name":"Channel","k":"v"}}}""",
+            """{"data":{"frozen":true,"invites":[],"members":[],"custom":{"name":"Channel","k":"v"}}}""",
             v2Body(request),
         )
     }
 
     @Test
-    fun `The other channel requests keep their v1 bodies`() {
+    fun `The other channel requests leave their unset collections out`() {
         val sort = listOf(SortParamRequest(field = "last_message_at", direction = -1))
         assertBody(
-            """{"limit":1,"member_custom_include":[],"sort":[{"direction":-1,""" +
-                """"field":"last_message_at"}],"filter_conditions":{"type":"messaging"},""" +
-                """"filter_values":{},"sort_values":{}}""",
+            """{"limit":1,"sort":[{"direction":-1,"field":"last_message_at"}],""" +
+                """"filter_conditions":{"type":"messaging"}}""",
             QueryChannelsRequest(filterConditions = mapOf("type" to "messaging"), sort = sort, limit = 1),
         )
         assertBody(
@@ -120,9 +117,9 @@ internal class V2LaneBatchSevenTest {
         )
         assertBody("""{"message_id":"m"}""", MarkReadRequest(messageId = "m"))
         assertBody("""{"message_id":"m"}""", MarkUnreadRequest(messageId = "m"))
-        assertBody("""{"latest_delivered_messages":[]}""", MarkDeliveredRequest())
+        assertBody("""{}""", MarkDeliveredRequest())
         assertBody("""{"clear_history":true}""", HideChannelRequest(clearHistory = true))
-        assertBody("""{"skip_push":true,"member_ids":[]}""", TruncateChannelRequest(skipPush = true))
+        assertBody("""{"skip_push":true}""", TruncateChannelRequest(skipPush = true))
         assertBody("""{}""", emptyMap<Any, Any>())
     }
 

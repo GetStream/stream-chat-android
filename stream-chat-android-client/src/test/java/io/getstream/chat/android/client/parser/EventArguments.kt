@@ -235,6 +235,8 @@ internal object EventArguments {
         banned = true,
         shadowBanned = true,
         notificationsMuted = true,
+        // The hand-written member DTO left user_id undeclared, so it stays in extraData.
+        extraData = mapOf("user_id" to "bender"),
     )
 
     private val giphyCommand = Command(
