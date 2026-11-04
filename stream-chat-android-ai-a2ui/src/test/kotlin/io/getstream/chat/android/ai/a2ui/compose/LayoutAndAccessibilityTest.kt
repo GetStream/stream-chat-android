@@ -56,6 +56,61 @@ internal class LayoutAndAccessibilityTest {
     private fun width(id: String): Float =
         rule.onNodeWithTag(id).fetchSemanticsNode().size.width / rule.density.density
 
+    // How tall a component is, in dp.
+    private fun height(id: String): Float =
+        rule.onNodeWithTag(id).fetchSemanticsNode().size.height / rule.density.density
+
+    @Test
+    fun `a stretched row with tabs in it settles`() {
+        surfaces.create(
+            listOf(
+                mapOf("id" to "root", "component" to "Row", "children" to listOf("tabs", "name")),
+                mapOf("id" to "tabs", "component" to "Tabs", "tabs" to listOf(mapOf("title" to "One", "child" to "one"))),
+                mapOf("id" to "one", "component" to "Text", "text" to "First"),
+                mapOf("id" to "name", "component" to "Text", "text" to "Ada"),
+            ),
+        )
+        surfaces.show()
+
+        rule.waitForIdle()
+
+        rule.onNodeWithText("First").assertExists()
+        assertEquals(height("tabs"), height("name"), 0.5f)
+    }
+
+    @Test
+    fun `a stretched row gives its children the tallest one's height`() {
+        surfaces.create(
+            listOf(
+                mapOf("id" to "root", "component" to "Column", "children" to listOf("row", "below")),
+                mapOf("id" to "row", "component" to "Row", "children" to listOf("short", "tall")),
+                mapOf("id" to "short", "component" to "Text", "text" to "One line"),
+                mapOf("id" to "tall", "component" to "Text", "text" to "One\n\nTwo\n\nThree\n\nFour"),
+                mapOf("id" to "below", "component" to "Text", "text" to "Below"),
+            ),
+        )
+        surfaces.show()
+
+        val tall = height("tall")
+        assertTrue("the tall child is taller than one line", tall > 2 * height("below"))
+        assertEquals(tall, height("short"), 0.5f)
+        assertEquals(tall, height("row"), 0.5f)
+    }
+
+    @Test
+    fun `a row that doesn't stretch keeps its children's own heights`() {
+        surfaces.create(
+            listOf(
+                mapOf("id" to "root", "component" to "Row", "children" to listOf("short", "tall"), "align" to "start"),
+                mapOf("id" to "short", "component" to "Text", "text" to "One line"),
+                mapOf("id" to "tall", "component" to "Text", "text" to "One\n\nTwo\n\nThree\n\nFour"),
+            ),
+        )
+        surfaces.show()
+
+        assertTrue(height("tall") > 2 * height("short"))
+    }
+
     @Test
     fun `entrances keep the weights of a row's children`() {
         surfaces.create(

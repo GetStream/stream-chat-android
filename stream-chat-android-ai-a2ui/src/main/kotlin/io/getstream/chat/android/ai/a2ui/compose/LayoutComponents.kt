@@ -21,11 +21,9 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -49,8 +47,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.LookaheadScope
+import androidx.compose.ui.layout.approachLayout
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.a2ui.R
 import io.getstream.chat.android.ai.a2ui.core.A2UIJson
@@ -61,35 +63,61 @@ import io.getstream.chat.android.ai.a2ui.core.A2UIJson
  *
  * A child without a weight gets at most an equal share of the width and keeps its own size in it,
  * so a child that fills the width, such as a text field, leaves room for the ones after it.
+ *
+ * With `align: stretch`, the default, every child gets the height of the tallest one.
  */
 @Composable
 internal fun A2UIRow(scope: A2UIComponentScope) {
     val justify = scope.hint("justify")
     val align = scope.hint("align") ?: "stretch"
-    Row(
-        modifier = scope.modifier
-            .fillMaxWidth()
-            .then(if (align == "stretch") Modifier.height(IntrinsicSize.Min) else Modifier),
-        horizontalArrangement = horizontalArrangement(justify),
-        verticalAlignment = when (align) {
-            "center" -> Alignment.CenterVertically
-            "end" -> Alignment.Bottom
-            else -> Alignment.Top
-        },
-    ) {
-        scope.children().forEach { child ->
-            key(child.key) {
-                val weight = child.weight ?: if (justify == "stretch") 1f else null
-                scope.Child(
-                    child = child,
-                    modifier = Modifier
-                        .weight(weight ?: 1f, fill = weight != null)
-                        .then(if (align == "stretch") Modifier.fillMaxHeight() else Modifier),
-                )
+    val stretch = align == "stretch"
+    val row = @Composable {
+        Row(
+            modifier = scope.modifier
+                .fillMaxWidth()
+                .then(if (stretch) Modifier.heightOfLookahead() else Modifier),
+            horizontalArrangement = horizontalArrangement(justify),
+            verticalAlignment = when (align) {
+                "center" -> Alignment.CenterVertically
+                "end" -> Alignment.Bottom
+                else -> Alignment.Top
+            },
+        ) {
+            scope.children().forEach { child ->
+                key(child.key) {
+                    val weight = child.weight ?: if (justify == "stretch") 1f else null
+                    scope.Child(
+                        child = child,
+                        modifier = Modifier
+                            .weight(weight ?: 1f, fill = weight != null)
+                            .then(if (stretch) Modifier.fillMaxHeight() else Modifier),
+                    )
+                }
             }
         }
     }
+    // The lookahead pass measures the row with its children at their own heights; the main pass
+    // then gives the row that height, which the children fill. Unlike intrinsic sizes, this
+    // works with children that subcompose, such as tabs and lazy lists. The scope adds no
+    // layout node, so the parent's weight still reaches the row.
+    if (stretch) LookaheadScope { row() } else row()
 }
+
+// The row's height in the lookahead pass is the tallest child's, measured with no height to
+// fill; the main pass fixes the row to that height.
+private fun Modifier.heightOfLookahead(): Modifier = this
+    .approachLayout(isMeasurementApproachInProgress = { true }) { measurable, constraints ->
+        val height = lookaheadSize.height.coerceIn(constraints.minHeight, constraints.maxHeight)
+        val placeable = measurable.measure(constraints.copy(minHeight = height, maxHeight = height))
+        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+    }
+    .layout { measurable, constraints ->
+        val placeable = measurable.measure(
+            if (isLookingAhead) constraints.copy(maxHeight = Constraints.Infinity) else constraints,
+        )
+        val height = placeable.height.coerceIn(constraints.minHeight, constraints.maxHeight)
+        layout(placeable.width, height) { placeable.place(0, 0) }
+    }
 
 /**
  * `Column`: children one below the other, with `justify` and `align`.
