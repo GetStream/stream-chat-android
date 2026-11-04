@@ -134,6 +134,8 @@ internal object ReactiveBinding {
 /** Evaluates AST nodes to runtime values with JavaScript semantics (port of `evaluator.ts`). */
 @Suppress("TooManyFunctions")
 internal object Evaluator {
+    // The arguments of a lazy builtin such as @Each: the array, the loop variable and the template.
+    private const val LAZY_BUILTIN_ARG_COUNT = 3
 
     /**
      * Evaluates an expression. Returns `null` for JavaScript `undefined`, and once the context's
@@ -144,7 +146,8 @@ internal object Evaluator {
         return evaluateNode(node, context, schema)
     }
 
-    @Suppress("ComplexCondition")
+    // One branch per node kind, so the dispatch reads as the grammar does.
+    @Suppress("ComplexCondition", "LongMethod")
     private fun evaluateNode(node: ASTNode, context: EvaluationContext, schema: ReactivePropResolver?): OpenUIValue? =
         when (node) {
             is ASTNode.Str -> OpenUIValue.Str(node.value)
@@ -535,7 +538,7 @@ internal object Evaluator {
         schema: ReactivePropResolver?,
     ): OpenUIValue {
         if (name != "Each") return OpenUIValue.Null
-        if (args.size < 3) return OpenUIValue.EmptyArray
+        if (args.size < LAZY_BUILTIN_ARG_COUNT) return OpenUIValue.EmptyArray
         val items = evaluate(args[0], context).arrayValue ?: return OpenUIValue.EmptyArray
         val variable = when (val arg = args[1]) {
             is ASTNode.Ref -> arg.name
@@ -568,7 +571,7 @@ internal object Evaluator {
     }
 
     private fun shadows(node: ASTNode.Comp, variable: String): Boolean {
-        if (node.name !in Builtins.lazyNames || node.args.size < 3) return false
+        if (node.name !in Builtins.lazyNames || node.args.size < LAZY_BUILTIN_ARG_COUNT) return false
         val loopVariable = node.args[1]
         return loopVariable == ASTNode.Ref(variable) || loopVariable == ASTNode.Str(variable)
     }

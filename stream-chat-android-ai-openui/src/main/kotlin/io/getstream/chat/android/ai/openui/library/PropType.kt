@@ -28,7 +28,7 @@ import io.getstream.chat.android.ai.openui.lang.openUIValueOf
  * and the type annotation shown to the model in the generated system prompt. Create one with the
  * factories in the companion, such as [PropType.string] or [PropType.array].
  */
-public class PropType private constructor(internal val kind: Kind) {
+internal class PropType private constructor(internal val kind: Kind) {
 
     internal sealed interface Kind {
         data object Str : Kind
@@ -47,7 +47,7 @@ public class PropType private constructor(internal val kind: Kind) {
     }
 
     /** The JSON Schema for this type (matches Zod's `toJSONSchema` output). */
-    public val jsonSchema: OpenUIValue
+    val jsonSchema: OpenUIValue
         get() = when (val kind = kind) {
             Kind.Str -> obj("type" to "string")
             Kind.Num -> obj("type" to "number")
@@ -75,7 +75,7 @@ public class PropType private constructor(internal val kind: Kind) {
         }
 
     /** The type annotation used in prompt signatures (e.g. `string`, `Series[]`, `(A | B)[]`). */
-    public val signature: String
+    val signature: String
         get() = when (val kind = kind) {
             Kind.Str -> "string"
             Kind.Num -> "number"
@@ -154,54 +154,54 @@ public class PropType private constructor(internal val kind: Kind) {
     override fun toString(): String = signature
 
     /** Factories for prop types. */
-    public companion object {
+    companion object {
         internal const val ACTION_EXPRESSION: String = "ActionExpression"
 
         /** A string. */
-        public val string: PropType = PropType(Kind.Str)
+        val string: PropType = PropType(Kind.Str)
 
         /** A number. */
-        public val number: PropType = PropType(Kind.Num)
+        val number: PropType = PropType(Kind.Num)
 
         /** A boolean. */
-        public val boolean: PropType = PropType(Kind.Bool)
+        val boolean: PropType = PropType(Kind.Bool)
 
         /** Anything (`{}` in JSON Schema). */
-        public val any: PropType = PropType(Kind.Anything)
+        val any: PropType = PropType(Kind.Anything)
 
         /** An action: one `@step`, or `Action([...])` with several (`ActionExpression` in signatures). */
-        public val action: PropType = PropType(Kind.Action)
+        val action: PropType = PropType(Kind.Action)
 
         /** One of a fixed set of strings: `"a" | "b"`. */
-        public fun enumeration(values: List<String>): PropType = PropType(Kind.Enumeration(values))
+        fun enumeration(values: List<String>): PropType = PropType(Kind.Enumeration(values))
 
         /** A single string literal: `"open_url"`. */
-        public fun literal(value: String): PropType = PropType(Kind.Literal(value))
+        fun literal(value: String): PropType = PropType(Kind.Literal(value))
 
         /** An array; [minItems] adds a JSON Schema length constraint. */
-        public fun array(items: PropType, minItems: Int? = null): PropType = PropType(Kind.ArrayOf(items, minItems))
+        fun array(items: PropType, minItems: Int? = null): PropType = PropType(Kind.ArrayOf(items, minItems))
 
         /** A nested object with named fields. */
-        public fun objectOf(fields: List<PropField>): PropType = PropType(Kind.ObjectOf(fields))
+        fun objectOf(fields: List<PropField>): PropType = PropType(Kind.ObjectOf(fields))
 
         /** `Record<string, Value>`. */
-        public fun record(value: PropType): PropType = PropType(Kind.RecordOf(value))
+        fun record(value: PropType): PropType = PropType(Kind.RecordOf(value))
 
         /** A reference to another component in the library (its name in signatures). */
-        public fun component(name: String): PropType = PropType(Kind.Component(name))
+        fun component(name: String): PropType = PropType(Kind.Component(name))
 
         /** Any of several types: `A | B`. */
-        public fun union(options: List<PropType>): PropType = PropType(Kind.Union(options))
+        fun union(options: List<PropType>): PropType = PropType(Kind.Union(options))
 
         /** A union of component references. */
-        public fun components(names: List<String>): PropType = union(names.map(::component))
+        fun components(names: List<String>): PropType = union(names.map(::component))
 
         /**
          * An action slot that takes only the listed steps, such as `listOf("CopyToClipboard", "OpenUrl")`
          * (`@CopyToClipboard | @OpenUrl` in signatures). Built-in steps with a JSON shape are
          * `OpenUrl` and `ToAssistant`; any other name is one of the library's custom actions.
          */
-        public fun actions(names: List<String>): PropType = PropType(Kind.Actions(names))
+        fun actions(names: List<String>): PropType = PropType(Kind.Actions(names))
 
         /** The JSON shape of `@OpenUrl` (`$defs.OpenUrl`). */
         internal val openUrlSchema: OpenUIValue
@@ -256,7 +256,7 @@ internal fun obj(vararg pairs: Pair<String, Any?>): OpenUIValue =
     OpenUIValue.Obj(OpenUIObject.build { for ((key, value) in pairs) this[key] = openUIValueOf(value) })
 
 /** A named prop (or nested object field) with its type and modifiers. */
-public data class PropField(
+internal data class PropField(
     val name: String,
     val type: PropType,
     /** Optional props may be omitted from the end of a positional call. */
@@ -282,7 +282,7 @@ public data class PropField(
         }
 
     /** `name: type`, `name?: type`, or `name?: $binding<type>`. */
-    public val signature: String
+    val signature: String
         get() {
             val base = type.signature
             val annotation = if (isReactive) "\$binding<$base>" else base
@@ -290,19 +290,19 @@ public data class PropField(
         }
 
     /** Factories for props. */
-    public companion object {
+    companion object {
         /** A required prop. */
-        public fun required(name: String, type: PropType): PropField = PropField(name, type)
+        fun required(name: String, type: PropType): PropField = PropField(name, type)
 
         /** An optional prop. */
-        public fun optional(name: String, type: PropType): PropField = PropField(name, type, isOptional = true)
+        fun optional(name: String, type: PropType): PropField = PropField(name, type, isOptional = true)
 
         /** A prop with a default (optional for the model, always present after parsing). */
-        public fun defaulted(name: String, type: PropType, defaultValue: Any?): PropField =
+        fun defaulted(name: String, type: PropType, defaultValue: Any?): PropField =
             PropField(name, type, isOptional = true, defaultValue = openUIValueOf(defaultValue))
 
         /** An optional prop that accepts a `$variable` binding (port of `reactive`). */
-        public fun reactive(name: String, type: PropType): PropField =
+        fun reactive(name: String, type: PropType): PropField =
             PropField(name, type, isOptional = true, isReactive = true)
 
         internal fun objectSchema(fields: List<PropField>, description: String?): OpenUIValue = OpenUIValue.Obj(
