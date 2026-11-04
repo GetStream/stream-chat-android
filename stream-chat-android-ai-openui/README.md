@@ -29,6 +29,7 @@ The language runtime (package `io.getstream.chat.android.ai.openui.lang`) is por
 - Libraries: the chat library (every answer is one `Card`) and the standard library (a `Stack` for full-screen surfaces) are defined like upstream's 1.0 libraries, each with the examples and rules upstream gives it. The system prompt lists the components' signatures and descriptions, how they're grouped, the library's functions and actions, and the tools `Query()` and `Mutation()` can run.
 - Components are Compose views that follow the response as it streams. Only web and email links open, since the model writes every link. Images load only from public hosts, each redirect checked the same way, at about the size they show at.
 - Forms validate their fields with the rules the model writes, and a form's submit button sends its values with the action. Sliders, text areas and the other fields keep the numbers the model writes within what they can draw.
+- Card blocks: text, icon and image rows, metric indicators, and the snippet, overview, context, composite and visual card blocks, whose item actions carry the tapped card's details. Gaps and image sizes stay within bounds, whatever the model writes.
 - Icons: the lucide names OpenUI uses map to Material icons, from `material-icons-core` where it has them and otherwise from copies of just the `material-icons-extended` icons the table uses. Markdown renders with `multiplatform-markdown-renderer`, the renderer `stream-chat-android-ai-compose` uses.
 
 ## Known limitations
