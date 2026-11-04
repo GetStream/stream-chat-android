@@ -172,8 +172,10 @@ internal class SpecInteractionTest {
             assertNull(firstDifference(actual, value), "${case.name}: state $key is $actual")
         }
         case.expected["toolCalls"]?.let { expectedCalls ->
-            val calls = tools.calls.filterIndexed { index, call -> index == 0 || call != tools.calls[index - 1] }
-            assertNull(firstDifference(OpenUIValue.Arr(calls), expectedCalls), "${case.name}: tool calls $calls")
+            assertNull(
+                firstDifference(OpenUIValue.Arr(tools.calls), expectedCalls),
+                "${case.name}: tool calls ${tools.calls}",
+            )
         }
     }
 }
