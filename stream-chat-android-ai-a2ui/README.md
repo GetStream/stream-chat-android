@@ -16,7 +16,7 @@ AIConversation(messages = messages, ui = ui)
 
 A reply's `ai_ui` document has the format `a2ui`, and its content holds the reply's A2UI messages: JSON objects one after another, as the agent writes them, or JSON. Each reply has a message processor of its own, kept while the host is, so what the person enters survives scrolling, and its surfaces draw as the messages arrive.
 
-- **Actions.** A button's event reaches the host as an `AIUIAction` named after the event. Its label is the event's `userMessage`, or else the button's text, and its payload holds the `surfaceId`, the `sourceComponentId` and the event's resolved `context`. An app component's events carry the component's name as `component`.
+- **Actions.** A button's event reaches the host as an `AIUIAction` named after the event. Its label is the text of the button the person tapped, or else the event's name, never the agent's words. Its payload holds the `surfaceId`, the `sourceComponentId`, the event's resolved `context`, the event's `userMessage` when it has one, and the surface's `dataModel` when the agent created the surface with `sendDataModel`. An app component's events carry the component's name as `component`.
 - **App components.** A component joins the catalog under its name in `PascalCase` (`place_card` is `PlaceCard`), with its parameters as its properties. The catalog with them goes by `getstream.io:app-catalog` (`A2UIRenderer.catalogId`); a surface that names the basic catalog's id shows them as well. A component named like one of the basic catalog's is left out.
 - **Links.** `openUrl` runs only from a person's tap, and opens through the host, which decides the kinds of link that open.
 - **Capabilities.** `capabilities` gives the agent's backend the fence the agent writes in (`fence`, `ui:a2ui@1.0`), the id of the catalog with the app's components (`catalog_id`), and the instructions its model needs to write UI with that catalog (`instructions`): how a reply carries A2UI, the protocol, the basic catalog's guidelines, and the catalog as an A2UI 1.0 catalog document, in Markdown.
@@ -33,7 +33,7 @@ The renderer reads the final A2UI 1.0 wire format:
 - the basic catalog: every component and function;
 - errors with the spec's codes and JSON Pointer paths.
 
-The message processor also produces the renderer's other messages to the agent: `callAgentFunction` for a function the catalogs lack, and `error`. A chat sends the agent only the actions a person takes; it logs the function calls and errors, so a value that needs a function of the agent's stays empty.
+The message processor also produces the renderer's other messages to the agent: `callAgentFunction` for a function the catalogs lack, and `error`. A chat sends the agent only the actions a person takes. A `callAgentFunction` runs the host's tool of that name on the device instead, and the tool's output is the function's value: a read-only tool runs while a surface renders, any other only from a person's tap, and a call no tool answers fails. Errors are logged.
 
 Parsing and processing are internal: the public API is the renderer, its catalog and the actions it sends.
 
