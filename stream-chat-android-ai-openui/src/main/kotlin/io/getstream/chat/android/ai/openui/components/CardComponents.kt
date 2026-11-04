@@ -19,13 +19,17 @@ package io.getstream.chat.android.ai.openui.components
 import android.content.res.Resources
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -52,7 +56,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -61,7 +64,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.openui.R
@@ -406,8 +408,13 @@ private fun CardTappable(
         Box(modifier) { content() }
         return
     }
+    val theme = OpenUITheme.current
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
+    // The press shows as the card shrinking, so there's no ripple; keyboard and switch-access focus
+    // shows as an outline.
+    val focused by interaction.collectIsFocusedAsState()
+    val shape = RoundedCornerShape(theme.radius.medium)
     Box(
         modifier
             .graphicsLayer {
@@ -415,9 +422,20 @@ private fun CardTappable(
                 scaleX = scale
                 scaleY = scale
                 alpha = if (pressed) 0.85f else 1f
-            }.clickable(interactionSource = interaction, indication = null, onClick = onTap),
+            }.border(2.dp, if (focused) theme.colors.accent else Color.Transparent, shape)
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                onClickLabel = stringResource(R.string.stream_ai_openui_card_block_click_label),
+                onClick = onTap,
+            ),
     ) { content() }
 }
+
+/** A card block's numeric `gap` in dp: kept between 0 and 48, or `null` when not finite. */
+internal fun cardBlockGap(gap: Double): Double? = gap.takeIf { it.isFinite() }?.coerceIn(0.0, MaxCardBlockGap)
+
+private const val MaxCardBlockGap = 48.0
 
 /** Common props of the five card blocks. */
 private class CardBlockProps(context: ComponentRenderProps, theme: OpenUITheme) {
@@ -425,7 +443,7 @@ private class CardBlockProps(context: ComponentRenderProps, theme: OpenUITheme) 
     val layout: String = context.props.string("layout") ?: "grid"
     val action: OpenUIValue? = context.props["action"]?.takeUnless { it is OpenUIValue.Null }
     val gap: Dp? = when (val value = context.props["gap"]) {
-        is OpenUIValue.Num -> value.value.dp
+        is OpenUIValue.Num -> cardBlockGap(value.value)?.dp
         is OpenUIValue.Str -> theme.spacing.value(value.value, theme.spacing.m)
         else -> null
     }
@@ -507,31 +525,22 @@ private fun SnippetCardBlockView(context: ComponentRenderProps) {
     }
 }
 
-/** Leading and trailing content in a row when they fit side by side, stacked otherwise (`ViewThatFits`). */
+/**
+ * Leading and trailing content side by side when they fit, the trailing one at the end, and wrapped
+ * onto the next line otherwise. Each is composed once.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CardFitsHorizontally(spacing: Dp, leading: @Composable () -> Unit, trailing: (@Composable () -> Unit)?) {
-    SubcomposeLayout(Modifier.fillMaxWidth()) { constraints ->
-        val probe = subcompose("probe") {
-            leading()
-            trailing?.invoke()
-        }.map { it.measure(Constraints()) }
-        val needed = probe.sumOf { it.width } + if (probe.size > 1) spacing.roundToPx() else 0
-        val horizontal = needed <= constraints.maxWidth
-        val placeable = subcompose(if (horizontal) "row" else "column") {
-            if (horizontal) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    leading()
-                    Spacer(Modifier.weight(1f).width(spacing))
-                    trailing?.invoke()
-                }
-            } else {
-                Column(verticalArrangement = Arrangement.spacedBy(spacing)) {
-                    leading()
-                    trailing?.invoke()
-                }
-            }
-        }.first().measure(constraints.copy(minWidth = 0))
-        layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(spacing),
+        itemVerticalAlignment = Alignment.CenterVertically,
+    ) {
+        // The end padding keeps the two apart when they share a line.
+        Box(Modifier.padding(end = if (trailing != null) spacing else 0.dp)) { leading() }
+        trailing?.invoke()
     }
 }
 
