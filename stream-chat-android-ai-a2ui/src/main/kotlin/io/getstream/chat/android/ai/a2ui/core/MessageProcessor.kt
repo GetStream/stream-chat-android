@@ -358,11 +358,13 @@ internal class MessageProcessor(
             )
             return
         }
-        if (A2UIJson.exceedsDepth(message.value, A2UIProtocol.MAX_NESTING_DEPTH)) {
+        // The value lands at the end of the path, so the path's segments count toward the limit.
+        val remainingDepth = A2UIProtocol.MAX_NESTING_DEPTH - message.path.segments.size
+        if (remainingDepth < 0 || A2UIJson.exceedsDepth(message.value, remainingDepth)) {
             report(
                 RendererError(
                     RendererError.RECURSION_LIMIT_EXCEEDED,
-                    "Global recursion limit exceeded: the value nests deeper than " +
+                    "Global recursion limit exceeded: the path and value nest deeper than " +
                         "${A2UIProtocol.MAX_NESTING_DEPTH} levels.",
                     message.surfaceId,
                     "/value",

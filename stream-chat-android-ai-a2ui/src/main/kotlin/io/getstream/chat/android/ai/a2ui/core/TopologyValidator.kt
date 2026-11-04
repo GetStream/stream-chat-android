@@ -89,35 +89,67 @@ internal class TopologyValidator(
         return errors
     }
 
-    // A cycle through the components [start] reaches, as the ids along it, or `null`.
+    // A cycle through the components [start] reaches, as the ids along it, or `null`. Iterative,
+    // so a long chain of components can't overflow the stack.
     private fun cycle(start: String, references: Map<String, List<Pair<String, String>>>): List<String>? {
         val done = HashSet<String>()
         val path = mutableListOf<String>()
-        fun visit(id: String): List<String>? {
-            if (id in done) return null
-            val index = path.indexOf(id)
-            if (index >= 0) return path.subList(index, path.size) + id
-            path.add(id)
-            for ((_, child) in references[id].orEmpty()) {
-                if (child != id) visit(child)?.let { return it }
+        val onPath = HashSet<String>()
+        val pending = ArrayDeque<Iterator<String>>()
+        path.add(start)
+        onPath.add(start)
+        pending.addLast(children(start, references).iterator())
+        while (pending.isNotEmpty()) {
+            val children = pending.last()
+            val child = if (children.hasNext()) children.next() else null
+            when {
+                child == null -> {
+                    pending.removeLast()
+                    val id = path.removeAt(path.lastIndex)
+                    onPath.remove(id)
+                    done.add(id)
+                }
+                child in done -> Unit
+                child in onPath -> return path.subList(path.indexOf(child), path.size) + child
+                else -> {
+                    path.add(child)
+                    onPath.add(child)
+                    pending.addLast(children(child, references).iterator())
+                }
             }
-            path.removeAt(path.lastIndex)
-            done.add(id)
-            return null
         }
-        return visit(start)
+        return null
     }
 
-    // How deep the tree under [id] goes; the tree has no cycle when this is asked.
-    private fun depth(
-        id: String,
-        references: Map<String, List<Pair<String, String>>>,
-        memo: HashMap<String, Int> = HashMap(),
-    ): Int =
-        memo[id] ?: run {
-            val children = references[id].orEmpty().map { it.second }.filter { it != id && references.containsKey(it) }
-            (1 + (children.maxOfOrNull { depth(it, references, memo) } ?: 0)).also { memo[id] = it }
+    // How deep the tree under [root] goes; the tree has no cycle when this is asked. Iterative,
+    // so a long chain of components can't overflow the stack.
+    private fun depth(root: String, references: Map<String, List<Pair<String, String>>>): Int {
+        val depths = HashMap<String, Int>()
+        val ids = ArrayDeque<String>()
+        val pending = ArrayDeque<Iterator<String>>()
+        fun enter(id: String) {
+            ids.addLast(id)
+            pending.addLast(children(id, references).filter(references::containsKey).iterator())
         }
+        enter(root)
+        while (pending.isNotEmpty()) {
+            val children = pending.last()
+            if (children.hasNext()) {
+                val child = children.next()
+                if (child !in depths) enter(child)
+                continue
+            }
+            pending.removeLast()
+            val id = ids.removeLast()
+            val deepest = children(id, references).filter(references::containsKey).maxOfOrNull { depths[it] ?: 0 }
+            depths[id] = 1 + (deepest ?: 0)
+        }
+        return depths[root] ?: 0
+    }
+
+    // The ids [id] refers to, leaving out references to itself.
+    private fun children(id: String, references: Map<String, List<Pair<String, String>>>): List<String> =
+        references[id].orEmpty().map { it.second }.filter { it != id }
 
     private fun reachable(root: String, references: Map<String, List<Pair<String, String>>>): Set<String> {
         val reached = LinkedHashSet<String>()

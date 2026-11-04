@@ -333,4 +333,66 @@ internal class ProcessorTest {
         assertEquals("lookup", call.name)
         assertEquals(A2UIProtocol.BASIC_CATALOG_ID, call.catalogId)
     }
+
+    @Test
+    fun `a very long data path is reported, not overflowing the stack`() {
+        createSurface()
+        val path = (1..10_000).joinToString("") { "/a" }
+        handle(mapOf("updateDataModel" to mapOf("surfaceId" to "s", "path" to path, "value" to 1)))
+
+        assertEquals(RendererError.RECURSION_LIMIT_EXCEEDED, errors.single().code)
+        assertEquals(emptyMap<String, Any?>(), processor.surface("s")!!.dataModel.snapshot)
+    }
+
+    @Test
+    fun `path segments count toward the nesting limit of a value`() {
+        createSurface()
+        val path = (1..30).joinToString("") { "/a" }
+        val value = (1..30).fold<Int, Any?>(1) { inner, _ -> mapOf("b" to inner) }
+        handle(mapOf("updateDataModel" to mapOf("surfaceId" to "s", "path" to path, "value" to value)))
+
+        assertEquals(RendererError.RECURSION_LIMIT_EXCEEDED, errors.single().code)
+    }
+
+    @Test
+    fun `a data model refuses a path longer than the nesting limit`() {
+        val model = DataModel()
+        val path = DataPath(List(10_000) { "a" }, isAbsolute = true)
+
+        val error = runCatching { model.set(path, 1) }.exceptionOrNull()
+
+        assertTrue(error is DataModelException)
+        assertEquals(emptyMap<String, Any?>(), model.snapshot)
+    }
+
+    @Test
+    fun `a very long component chain is reported, not overflowing the stack`() {
+        val count = 10_000
+        val components = (0 until count).map { index ->
+            val id = if (index == 0) "root" else "c$index"
+            val children = if (index < count - 1) listOf("c${index + 1}") else emptyList()
+            mapOf("id" to id, "component" to "Column", "children" to children)
+        }
+        createSurface(components)
+
+        val treeErrors = TopologyValidator().errors(processor.surface("s")!!)
+
+        assertEquals(RendererError.RECURSION_LIMIT_EXCEEDED, treeErrors.single().code)
+    }
+
+    @Test
+    fun `a very long component cycle is reported, not overflowing the stack`() {
+        val count = 10_000
+        val components = (0 until count).map { index ->
+            val id = if (index == 0) "root" else "c$index"
+            val next = if (index < count - 1) "c${index + 1}" else "root"
+            mapOf("id" to id, "component" to "Column", "children" to listOf(next))
+        }
+        createSurface(components)
+
+        val treeErrors = TopologyValidator().errors(processor.surface("s")!!)
+
+        assertEquals(RendererError.RECURSION_LIMIT_EXCEEDED, treeErrors.single().code)
+        assertTrue(treeErrors.single().message.startsWith("Circular reference detected: root -> c1"))
+    }
 }

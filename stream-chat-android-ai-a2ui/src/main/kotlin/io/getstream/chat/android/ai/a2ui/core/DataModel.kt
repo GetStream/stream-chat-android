@@ -103,10 +103,16 @@ internal class DataModel(initial: Any? = emptyMap<String, Any?>()) {
      * entry. Writing at the root replaces the whole data model.
      *
      * @throws DataModelException When the path goes through a value that isn't an object or a
-     * list, or names a list item that can't be.
+     * list, names a list item that can't be, or is longer than [A2UIProtocol.MAX_NESTING_DEPTH].
      */
     fun set(path: DataPath, value: Any?) {
         checkSegments(path)
+        // The write recurses once per segment, so the length is capped before it starts.
+        if (path.segments.size > A2UIProtocol.MAX_NESTING_DEPTH) {
+            throw DataModelException(
+                "Cannot set path '$path': it nests deeper than ${A2UIProtocol.MAX_NESTING_DEPTH} levels.",
+            )
+        }
         val newValue = A2UIJson.normalize(value)
         storage = if (path.segments.isEmpty()) {
             newValue ?: emptyMap<String, Any?>()
