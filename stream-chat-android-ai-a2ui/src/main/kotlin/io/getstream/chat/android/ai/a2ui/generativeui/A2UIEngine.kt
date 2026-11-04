@@ -29,6 +29,8 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
@@ -251,8 +253,8 @@ internal class A2UIEngine(
         // Whether the whole tree was checked since the agent last finished the reply.
         private var checked = false
 
-        /** Whether the agent is still writing the reply. */
-        var isStreaming: Boolean = false
+        /** Whether the agent is still writing the reply; the app's components recompose when it ends. */
+        var isStreaming: Boolean by mutableStateOf(false)
             private set
 
         /** How the reply's components look: the basic catalog's, and the app's drawing themselves. */

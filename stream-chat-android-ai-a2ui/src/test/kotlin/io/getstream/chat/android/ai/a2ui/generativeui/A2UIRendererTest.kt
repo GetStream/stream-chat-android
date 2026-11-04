@@ -609,6 +609,27 @@ internal class A2UIRendererTest {
         assertTrue("the new part rises into place", coming - top("second") > 8f)
     }
 
+    @Test
+    fun `the app's component learns when the reply finishes, with no new messages`() {
+        val status = AIUIComponent(
+            AIUIComponentDefinition(name = "reply_status", description = "Whether the reply is still coming"),
+        ) { _, context ->
+            Text(if (context.isStreaming) "Writing" else "Done")
+        }
+        val host = AIUIHost(renderers = listOf(A2UIRenderer()), components = listOf(status)) {}
+        val create = surface(
+            mapOf("id" to "root", "component" to "ReplyStatus"),
+            catalogId = A2UIRenderer.DEFAULT_CATALOG_ID,
+        )
+        var current by mutableStateOf(document(create, isStreaming = true))
+        rule.setContent { MaterialTheme { AIUIView(host, current, "m1") } }
+        rule.onNodeWithText("Writing").assertExists()
+
+        rule.runOnIdle { current = document(create, isStreaming = false) }
+
+        rule.onNodeWithText("Done").assertExists()
+    }
+
     // Where the top of a component is, in dp.
     private fun top(tag: String): Float =
         rule.onNodeWithTag(tag).fetchSemanticsNode().positionInRoot.y / rule.density.density
