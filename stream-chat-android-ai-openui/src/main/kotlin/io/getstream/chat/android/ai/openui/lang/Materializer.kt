@@ -216,25 +216,30 @@ internal object Materializer {
      * reference is `null`; in expression mode it is a placeholder.
      */
     private fun resolveRef(name: String, context: MaterializeContext, mode: Mode): OpenUIValue {
-        val target = context.symbols[name]
-        if (name in context.visited || target == null) {
+        val isCycle = name in context.visited
+        if (isCycle) context.cycles++
+        val target = if (isCycle) null else context.lookUp(name)
+        if (target == null) {
             context.unresolved += name
             return if (mode == Mode.Expression) OpenUIValue.Expression(ASTNode.Ph(name)) else OpenUIValue.Null
         }
-        context.unreached -= name
+        context.markReached(name)
         if (target is ASTNode.Comp && Builtins.isReservedCall(target.name)) {
             val refType = if (target.name == Builtins.MUTATION) RuntimeRefType.Mutation else RuntimeRefType.Query
             return OpenUIValue.Expression(ASTNode.RuntimeRef(name, refType))
         }
+        val expression = mode == Mode.Expression
+        context.reuse(name, expression)?.let { return it }
+        val start = context.startMaterializing()
         context.visited += name
         val previousStatementId = context.currentStatementId
         context.currentStatementId = name
-        try {
-            return when (mode) {
-                Mode.Value -> when (val result = materializeValue(target, context)) {
+        val result = try {
+            when (mode) {
+                Mode.Value -> when (val value = materializeValue(target, context)) {
                     // Tag elements with their source statement.
-                    is OpenUIValue.Element -> OpenUIValue.Element(result.node.copy(statementId = name))
-                    else -> result
+                    is OpenUIValue.Element -> OpenUIValue.Element(value.node.copy(statementId = name))
+                    else -> value
                 }
                 Mode.Expression -> OpenUIValue.Expression(materializeExpression(target, context))
             }
@@ -242,6 +247,8 @@ internal object Materializer {
             context.currentStatementId = previousStatementId
             context.visited -= name
         }
+        context.finishMaterializing(start, name, expression, result)
+        return result
     }
 
     /**
@@ -275,9 +282,7 @@ internal object Materializer {
      * `mappedProps` to catalog component and library calls. The structure is kept for the evaluator.
      */
     fun materializeExpression(node: ASTNode, context: MaterializeContext, scoped: Set<String> = emptySet()): ASTNode {
-        if (context.depth >= MAX_DEPTH || context.nodes >= MAX_NODES) return ASTNode.Null
-        context.depth++
-        context.nodes++
+        if (!context.spendNode()) return ASTNode.Null
         try {
             return lowerExpression(node, context, scoped)
         } finally {
@@ -333,9 +338,7 @@ internal object Materializer {
      * - `null` for placeholders and unresolved references
      */
     fun materializeValue(node: ASTNode, context: MaterializeContext): OpenUIValue {
-        if (context.depth >= MAX_DEPTH || context.nodes >= MAX_NODES) return OpenUIValue.Null
-        context.depth++
-        context.nodes++
+        if (!context.spendNode()) return OpenUIValue.Null
         try {
             return lowerValue(node, context)
         } finally {

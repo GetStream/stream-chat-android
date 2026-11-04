@@ -35,6 +35,37 @@ internal class MaterializeContext(
 
     /** How many nodes materializing has visited, each reference counted every time it is inlined. */
     var nodes = 0
+
+    /** Kept by the stream parser, with the logs below, to reuse what statements materialized to. */
+    var cache: MaterializationCache? = null
+    val reads = ArrayList<MaterializationCache.Read>()
+    val reachedLog = ArrayList<String>()
+    var cycles = 0
+    var truncations = 0
+
+    /** The deepest [depth] reached since the current statement started materializing. */
+    var deepest = 0
+
+    /** How many nodes this pass materialized afresh, not reused. */
+    var materialized = 0
+
+    fun markReached(id: String) {
+        if (cache != null) reachedLog += id
+        unreached -= id
+    }
+
+    /** Counts a node against the budget, or returns `false` when it is past the depth or the budget. */
+    fun spendNode(): Boolean {
+        if (depth >= Materializer.MAX_DEPTH || nodes >= Materializer.MAX_NODES) {
+            truncations++
+            return false
+        }
+        depth++
+        nodes++
+        materialized++
+        if (depth > deepest) deepest = depth
+        return true
+    }
 }
 
 /** What validating a value against a schema fragment produced. */
