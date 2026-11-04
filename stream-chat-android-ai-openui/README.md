@@ -21,6 +21,15 @@ While a response streams, keep one `createStreamingParser(schema, rootName)` and
 
 Values follow JavaScript semantics, because the reference implementation is TypeScript: `OpenUIValue` is JSON plus elements and expressions, `undefined` is a Kotlin `null`, and conversions (number formatting, `Number()`, truthiness) follow JavaScript's. Model output can't crash the parser: nesting or chains deeper than any real program, and references that would expand past any real program's size, read as `null`, and non-finite numbers serialize as `null`.
 
+## Known limitations
+
+These follow upstream 1.0.1 as-is:
+
+- `mergeStatements` ends a statement at every top-level newline, so a ternary written over several lines loses its branches.
+- `mergeStatements` keeps comments in a patch, so a commented-out `# title = ...` replaces `title` with a line that parses to nothing.
+- `mergeStatements` keeps every `$state` variable but drops statements that only a `$state` initializer references.
+- Validation errors in a `$state` initializer are reported against the entry statement rather than the `$state` declaration.
+
 ## Conformance
 
 The fixtures in `src/test/resources/fixtures` were generated with upstream's TypeScript implementation at OpenUI 1.0.1; see their README for what each one holds.

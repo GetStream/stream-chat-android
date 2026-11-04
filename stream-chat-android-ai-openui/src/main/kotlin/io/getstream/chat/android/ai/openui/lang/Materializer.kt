@@ -174,8 +174,14 @@ internal object Materializer {
                     )
                 } else {
                     val checked = if (def.isBuiltin) null else mapCallArgs(node.name, node.args, def, context)
-                    val named = (checked ?: nameArgs(node.args, def.params)).mapValues { recurse(it.value) }
-                    node.copy(args = node.args.map(::recurse), mappedProps = named)
+                    // Each arg is named once and shared with the mapped props: naming it again for
+                    // the props would double the work at every nesting level.
+                    val recursed = node.args.map(::recurse)
+                    val named = (checked ?: nameArgs(node.args, def.params)).mapValues { (_, value) ->
+                        val index = node.args.indexOfFirst { it === value }
+                        if (index == -1) value else recursed[index]
+                    }
+                    node.copy(args = recursed, mappedProps = named)
                 }
             }
             is ASTNode.Arr -> ASTNode.Arr(node.elements.map(::recurse))
