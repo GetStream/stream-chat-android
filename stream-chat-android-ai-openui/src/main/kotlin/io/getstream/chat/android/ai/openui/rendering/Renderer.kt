@@ -27,6 +27,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -173,6 +174,8 @@ public fun Renderer(
             runtime.update(response, isStreaming)
         }
     }
+    // Queries and mutations use the latest provider.
+    SideEffect { runtime.queryManager.toolProvider = toolProvider }
     DisposableEffect(runtime) { onDispose { runtime.dispose() } }
     LaunchedEffect(runtime, response, isStreaming) { runtime.update(response, isStreaming) }
     LaunchedEffect(runtime) {

@@ -240,7 +240,8 @@ internal class LibraryDefinition(
      *
      * @throws IllegalArgumentException Like upstream, when an added component already exists, an
      * overridden or removed one doesn't, the root or a slot's only type is removed, or a slot can't
-     * be resolved.
+     * be resolved. Also when an added component's name can't be called in a program, or is taken
+     * by a function or action.
      */
     fun extended(
         add: List<Pair<ComponentSchema, List<String>?>>,
@@ -254,8 +255,10 @@ internal class LibraryDefinition(
         val known = HashSet(byName.keys)
         val touched = HashSet<String>()
         val slotRequests = LinkedHashMap<String, List<String>>()
+        val callNames = (this.functions + functions).map { it.name } + (customActions + actions).map { it.name }
         for ((schema, slots) in add) {
             if (schema.name in byName) extendFailure("Component \"${schema.name}\" already exists. Use override.")
+            checkCallable(schema.name, callNames)
             if (slots != null && slots.isEmpty()) {
                 extendFailure("\"slots\" for \"${schema.name}\" is empty. Omit it to only list it.")
             }
@@ -432,6 +435,14 @@ internal class LibraryDefinition(
 
 private fun extendFailure(message: String): Nothing = throw IllegalArgumentException("[extend] $message")
 
+/** Fails unless programs can call a component named [name]: callable, and not taken by one of [callNames]. */
+private fun checkCallable(name: String, callNames: List<String>) {
+    if (!LibraryDefinition.isCallableName(name) || Builtins.isBuiltin(name) || Builtins.isReservedCall(name)) {
+        extendFailure("Component \"$name\" can't be called in a program. Use a PascalCase name.")
+    }
+    if (name in callNames) extendFailure("Component \"$name\" has the name of a function or action.")
+}
+
 /** Whether [type] is a content slot: a union of [known] components, or an array of one. */
 private fun isContentSlot(type: PropType, known: Set<String>): Boolean = when (val kind = type.kind) {
     is PropType.Kind.ArrayOf -> isContentSlot(kind.items, known)
@@ -486,7 +497,12 @@ private fun PropType.rebound(path: String, added: List<String>, removed: Set<Str
         is PropType.Kind.Component -> if (kind.name in removed) onlyType(kind.name) else this
         is PropType.Kind.Union -> {
             val names = kind.options.map { (it.kind as? PropType.Kind.Component)?.name }
-            val kept = kind.options.filterIndexed { index, _ -> names[index] !in removed }
+            // An option goes when every component it refers to is removed, such as `array(A)` without A.
+            val kept = kind.options
+                .filter { option ->
+                    val references = option.componentReferences
+                    references.isEmpty() || references.any { it !in removed }
+                }
                 .map { it.rebound(path, emptyList(), removed, known) }
             val holdsComponents = names.any { it in known }
             val joining = if (holdsComponents) {
@@ -494,8 +510,10 @@ private fun PropType.rebound(path: String, added: List<String>, removed: Set<Str
             } else {
                 emptyList()
             }
-            if (kept.isEmpty() && joining.isEmpty()) onlyType(names.firstOrNull())
-            if (kept.size == kind.options.size && joining.isEmpty()) {
+            if (kept.isEmpty() && joining.isEmpty()) {
+                onlyType(kind.options.firstNotNullOfOrNull { it.componentReferences.firstOrNull() })
+            }
+            if (kept == kind.options && joining.isEmpty()) {
                 this
             } else {
                 PropType.union(kept + joining.map(PropType::component))

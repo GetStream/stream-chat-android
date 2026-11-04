@@ -91,8 +91,9 @@ internal fun Modifier.tinted(color: Color, cornerRadius: Dp, alpha: Float = 0.12
 
 /**
  * Loads the images the model links to, over HTTP(S), with a small in-memory cache (no image
- * library needed). The model picks the server, so a download stops once it would go over
- * [MAX_BYTES], and images decode at no more than [MAX_PIXELS] on a side.
+ * library needed). The model picks the server, so only public hosts are reached (redirects
+ * included), a download stops once it would go over [MAX_BYTES], and images decode at no more
+ * than [MAX_PIXELS] on a side.
  */
 internal object ImageLoader {
     private const val MAX_BYTES = 20_000_000
@@ -102,6 +103,7 @@ internal object ImageLoader {
     private const val CONNECT_TIMEOUT_MILLIS = 10_000
     private const val READ_TIMEOUT_MILLIS = 15_000
     private const val BUFFER_SIZE = 16 * 1024
+    private const val MAX_REDIRECTS = 5
 
     private val cache = object : LruCache<String, ImageBitmap>(CACHE_BYTES) {
         override fun sizeOf(key: String, value: ImageBitmap): Int = value.width * value.height * BYTES_PER_PIXEL
@@ -120,19 +122,33 @@ internal object ImageLoader {
     }
 
     private fun download(url: String): ByteArray? {
-        val connection = URL(url).openConnection() as HttpURLConnection
-        connection.connectTimeout = CONNECT_TIMEOUT_MILLIS
-        connection.readTimeout = READ_TIMEOUT_MILLIS
-        connection.instanceFollowRedirects = true
-        connection.setRequestProperty("User-Agent", "OpenUI-Android")
-        try {
-            val status = connection.responseCode
-            if (status < HttpURLConnection.HTTP_OK || status >= HttpURLConnection.HTTP_MULT_CHOICE) return null
-            if (connection.contentLengthLong > MAX_BYTES) return null
-            return connection.inputStream.use(::readAtMost)
-        } finally {
-            connection.disconnect()
+        var target = URL(url)
+        repeat(MAX_REDIRECTS + 1) {
+            if (!OpenUILink.isPublicHost(target.host)) return null
+            val connection = target.openConnection() as HttpURLConnection
+            connection.connectTimeout = CONNECT_TIMEOUT_MILLIS
+            connection.readTimeout = READ_TIMEOUT_MILLIS
+            // Redirects are followed here, so each target's host is checked too.
+            connection.instanceFollowRedirects = false
+            connection.setRequestProperty("User-Agent", "OpenUI-Android")
+            try {
+                val status = connection.responseCode
+                if (status in HttpURLConnection.HTTP_MULT_CHOICE until HttpURLConnection.HTTP_BAD_REQUEST) {
+                    val location = connection.getHeaderField("Location") ?: return null
+                    target = this.url(runCatching { URL(target, location).toString() }.getOrNull())
+                        ?.let(::URL)
+                        ?: return null
+                } else {
+                    if (status < HttpURLConnection.HTTP_OK || status >= HttpURLConnection.HTTP_MULT_CHOICE) return null
+                    val length = connection.getHeaderField("Content-Length")?.trim()?.toLongOrNull()
+                    if (length != null && length > MAX_BYTES) return null
+                    return connection.inputStream.use(::readAtMost)
+                }
+            } finally {
+                connection.disconnect()
+            }
         }
+        return null
     }
 
     // The stream's bytes, or `null` once there are more than MAX_BYTES.
@@ -253,7 +269,12 @@ internal fun ResponsiveGrid(
 
 /** A row whose children share the width equally (cards in a row). */
 @Composable
-internal fun EqualWidthRow(modifier: Modifier = Modifier, spacing: Dp, content: @Composable () -> Unit) {
+internal fun EqualWidthRow(
+    modifier: Modifier = Modifier,
+    spacing: Dp,
+    verticalAlignment: Alignment.Vertical = Alignment.Top,
+    content: @Composable () -> Unit,
+) {
     Layout(content, modifier.fillMaxWidth()) { measurables, constraints ->
         val spacingPx = spacing.roundToPx()
         val count = maxOf(measurables.size, 1)
@@ -263,7 +284,8 @@ internal fun EqualWidthRow(modifier: Modifier = Modifier, spacing: Dp, content: 
         val height = placeables.maxOfOrNull { it.height } ?: 0
         layout(width, height) {
             placeables.forEachIndexed { index, placeable ->
-                placeable.placeRelative(index * (itemWidth + spacingPx), 0)
+                val y = verticalAlignment.align(placeable.height, height)
+                placeable.placeRelative(index * (itemWidth + spacingPx), y)
             }
         }
     }
@@ -301,7 +323,13 @@ internal fun FlexContainer(
                 horizontalArrangement = Arrangement.spacedBy(gap, justification(justify)),
                 verticalArrangement = Arrangement.spacedBy(gap),
             ) { content() }
-            flexibleChildren && (justify == null || justify == "start") -> EqualWidthRow(modifier, gap, content)
+            flexibleChildren && (justify == null || justify == "start") -> EqualWidthRow(
+                modifier,
+                gap,
+                // Unset and `stretch` keep the cards top-aligned.
+                verticalAlignment = if (align == "center" || align == "end") rowAlignment(align) else Alignment.Top,
+                content = content,
+            )
             else -> Row(
                 modifier.fillMaxWidth(),
                 horizontalArrangement = when (justify) {
@@ -312,11 +340,7 @@ internal fun FlexContainer(
                     "evenly" -> Arrangement.SpaceEvenly
                     else -> Arrangement.spacedBy(gap)
                 },
-                verticalAlignment = when (align) {
-                    "start", "baseline" -> Alignment.Top
-                    "end" -> Alignment.Bottom
-                    else -> Alignment.CenterVertically
-                },
+                verticalAlignment = rowAlignment(align),
             ) { content() }
         }
     } else {
@@ -330,6 +354,12 @@ internal fun FlexContainer(
             },
         ) { content() }
     }
+}
+
+private fun rowAlignment(align: String?): Alignment.Vertical = when (align) {
+    "start", "baseline" -> Alignment.Top
+    "end" -> Alignment.Bottom
+    else -> Alignment.CenterVertically
 }
 
 private fun justification(justify: String?): Alignment.Horizontal = when (justify) {

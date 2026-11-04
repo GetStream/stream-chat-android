@@ -24,6 +24,7 @@ import io.getstream.chat.android.ai.openui.lang.objectValue
 import io.getstream.chat.android.ai.openui.lang.v
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
@@ -239,6 +240,45 @@ internal class LibraryApiTest {
         }
         assertEquals(listOf("PlaceCard"), content.componentGroups.last().components)
         assertTrue("PlaceCard" in content.component("Card")!!.signature)
+    }
+
+    // Extending
+
+    @Test
+    fun `extending rejects component names programs can't call`() {
+        val library = SpecLibrary.library
+        listOf("placeCard", "Each", "Query", "Upper", "CopyToClipboard").forEach { name ->
+            assertFailsWith<IllegalArgumentException>(name) {
+                library.extended(
+                    add = listOf(ComponentSchema(name, "", emptyList()) to null),
+                    override = emptyList(),
+                    remove = emptyList(),
+                    functions = emptyList(),
+                    actions = emptyList(),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `extending drops union options that only hold a removed component`() {
+        val slot = PropType.union(listOf(PropType.array(PropType.component("A")), PropType.component("B")))
+        val library = LibraryDefinition(
+            root = "Root",
+            components = listOf(
+                ComponentSchema("Root", "", listOf(PropField.required("children", slot))),
+                ComponentSchema("A", "", emptyList()),
+                ComponentSchema("B", "", emptyList()),
+            ),
+        )
+
+        val extended = library.extended(emptyList(), emptyList(), listOf("A"), emptyList(), emptyList())
+
+        assertNull(extended.component("A"))
+        assertEquals(
+            PropType.union(listOf(PropType.component("B"))),
+            extended.component("Root")!!.props.single().type,
+        )
     }
 
     @Test

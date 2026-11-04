@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ai.openui.utils
 
+import java.net.InetAddress
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -44,5 +45,27 @@ internal class OpenUILinkTest {
     fun `links with spaces or control characters don't open`() {
         assertFalse(OpenUILink.isOpenable("https://example.com/a b"))
         assertFalse(OpenUILink.isOpenable("https://example.com/\u0000"))
+    }
+
+    @Test
+    fun `images load only from public addresses`() {
+        listOf("8.8.8.8", "93.184.216.34", "2606:4700::1111").forEach {
+            assertTrue(OpenUILink.isPublicAddress(InetAddress.getByName(it)), it)
+        }
+        listOf(
+            "127.0.0.1", "::1", "0.0.0.0", "10.0.0.2", "172.16.4.1", "192.168.1.1", "169.254.169.254",
+            "fe80::1", "fd12:3456::1", "224.0.0.1", "::ffff:192.168.1.1",
+        ).forEach {
+            assertFalse(OpenUILink.isPublicAddress(InetAddress.getByName(it)), it)
+        }
+    }
+
+    @Test
+    fun `hosts that are local or don't resolve are not public`() {
+        assertFalse(OpenUILink.isPublicHost("127.0.0.1"))
+        assertFalse(OpenUILink.isPublicHost("[::1]"))
+        assertFalse(OpenUILink.isPublicHost(""))
+        assertFalse(OpenUILink.isPublicHost(null))
+        assertTrue(OpenUILink.isPublicHost("8.8.8.8"))
     }
 }

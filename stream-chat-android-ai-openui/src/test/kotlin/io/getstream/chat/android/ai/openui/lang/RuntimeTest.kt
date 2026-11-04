@@ -175,6 +175,18 @@ internal class RuntimeTest {
         }
 
         @Test
+        fun `fetches with the latest tool provider`() = runTest {
+            val first = RecordingToolProvider { _, _, _ -> obj("from" to "first") }
+            val second = RecordingToolProvider { _, _, _ -> obj("from" to "second") }
+            val manager = QueryManager(first, this)
+            manager.toolProvider = second
+            manager.evaluateQueries(listOf(node("data")))
+            advanceUntilIdle()
+            assertEquals(obj("from" to "second"), manager.result("data"))
+            assertTrue(first.calls.isEmpty())
+        }
+
+        @Test
         fun `reports tool errors`() = runTest {
             val manager = QueryManager(FunctionToolProvider("other" to { _ -> OpenUIValue.Null }), this)
             manager.evaluateQueries(listOf(node("data")))

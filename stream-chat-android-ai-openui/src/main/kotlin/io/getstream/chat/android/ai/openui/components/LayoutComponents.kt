@@ -37,6 +37,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -69,6 +70,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -86,6 +89,7 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.OpenUIMarkdown
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
+import io.getstream.chat.android.ai.openui.utils.NumberFormatting
 import kotlinx.coroutines.launch
 
 internal val layoutRenderers: Map<String, ComponentRenderer> = mapOf(
@@ -173,7 +177,7 @@ private fun TabsComponent(context: ComponentRenderProps) {
                         .then(if (selected) Modifier.shadow(1.dp, RoundedCornerShape(theme.radius.pill)) else Modifier)
                         .clip(RoundedCornerShape(theme.radius.pill))
                         .then(if (selected) Modifier.background(theme.colors.surface) else Modifier)
-                        .clickable {
+                        .selectable(selected = selected, role = Role.Tab) {
                             userInteracted = true
                             selection = item.value
                         }.padding(horizontal = 14.dp, vertical = 7.dp),
@@ -203,7 +207,7 @@ private fun AccordionComponent(context: ComponentRenderProps) {
     // Auto-opens the newest item while it streams in (until the person interacts).
     val count = items.size
     LaunchedEffect(count) {
-        if (!userInteracted && count > previousCount) openItem = items.last().value
+        if (context.isStreaming && !userInteracted && count > previousCount) openItem = items.last().value
         previousCount = count
     }
 
@@ -305,7 +309,7 @@ private fun SectionBlockComponent(context: ComponentRenderProps) {
         if (sections.isNotEmpty()) {
             if (context.isStreaming && count > previousCount && !userInteracted) {
                 openItems = openItems + sections.last().value
-            } else if (openItems.isEmpty()) {
+            } else if (openItems.isEmpty() && !userInteracted) {
                 openItems = setOf(sections.first().value)
             }
         }
@@ -448,18 +452,32 @@ private fun CarouselComponent(context: ComponentRenderProps) {
                         modifier = Modifier.size(18.dp),
                     )
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    repeat(slides.size) { index ->
-                        Box(
-                            Modifier.size(6.dp).background(
-                                if (index == current) {
-                                    theme.colors.accent
-                                } else {
-                                    theme.colors.border
-                                },
-                                CircleShape,
-                            ),
-                        )
+                val spoken = stringResource(
+                    R.string.stream_ai_openui_carousel_position_accessibility,
+                    NumberFormatting.integer(current + 1),
+                    NumberFormatting.integer(slides.size),
+                )
+                // Weighted so the buttons keep their size; the dots scroll when there are many.
+                Box(
+                    Modifier.weight(1f, fill = false).semantics { contentDescription = spoken },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Row(
+                        Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        repeat(slides.size) { index ->
+                            Box(
+                                Modifier.size(6.dp).background(
+                                    if (index == current) {
+                                        theme.colors.accent
+                                    } else {
+                                        theme.colors.border
+                                    },
+                                    CircleShape,
+                                ),
+                            )
+                        }
                     }
                 }
                 FilledTonalIconButton(
