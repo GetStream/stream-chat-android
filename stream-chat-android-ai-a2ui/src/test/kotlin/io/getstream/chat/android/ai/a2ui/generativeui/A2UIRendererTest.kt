@@ -30,6 +30,8 @@ import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -587,6 +589,42 @@ internal class A2UIRendererTest {
 
         assertEquals(listOf("https://example.com/menu"), opened)
         assertTrue(sent.isEmpty())
+    }
+
+    private fun media(audioUrl: String) = surface(
+        mapOf("id" to "root", "component" to "Column", "children" to listOf("video", "audio", "image")),
+        mapOf("id" to "video", "component" to "Video", "url" to "app:clip.mp4", "posterUrl" to "app:poster.png"),
+        mapOf("id" to "audio", "component" to "AudioPlayer", "url" to audioUrl),
+        mapOf("id" to "image", "component" to "Image", "url" to "https://example.com/photo.png"),
+    )
+
+    @Test
+    fun `media load only from web links by default`() {
+        show(document(media(audioUrl = "file:///sdcard/track.mp3")))
+
+        rule.onNodeWithContentDescription("Play video").assertIsNotEnabled()
+        rule.onNodeWithContentDescription("Play").assertIsNotEnabled()
+    }
+
+    @Test
+    fun `the app resolves the URLs media load from`() {
+        val asked = mutableListOf<String>()
+        val renderer = A2UIRenderer(
+            mediaUrl = { url ->
+                asked.add(url)
+                url.takeIf { it.startsWith("app:") }?.let { "https://cdn.example.com/${it.removePrefix("app:")}" }
+            },
+        )
+
+        show(document(media(audioUrl = "https://example.com/track.mp3")), host = AIUIHost(renderers = listOf(renderer)) {})
+
+        rule.onNodeWithContentDescription("Play video").assertIsEnabled()
+        // The resolver turned down the web link, so it doesn't load.
+        rule.onNodeWithContentDescription("Play").assertIsNotEnabled()
+        assertEquals(
+            setOf("app:clip.mp4", "app:poster.png", "https://example.com/track.mp3", "https://example.com/photo.png"),
+            asked.toSet(),
+        )
     }
 
     @Test

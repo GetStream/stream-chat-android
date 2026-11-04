@@ -49,6 +49,8 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIPartEntrance
  *
  * @param entrances Whether the surface comes in as a part of a reply's generated UI does, and its
  * components with it: a component that shows after the one around it comes in on its own.
+ * @param mediaUrl The URL an image, video or audio clip loads from, given the one the agent wrote,
+ * or `null` to not load it. Without it, only web links load.
  */
 @Composable
 internal fun A2UISurfaceView(
@@ -57,12 +59,13 @@ internal fun A2UISurfaceView(
     modifier: Modifier = Modifier,
     catalog: A2UICatalog = A2UICatalog.Basic,
     entrances: Boolean = false,
+    mediaUrl: ((String) -> String?)? = null,
 ) {
     val root = surface.rootNode() ?: return
     // A tree that shares children so that it multiplies past the limit shows nothing.
     val fits = remember(surface, revision) { surface.fitsExpansionLimit() }
     if (!fits) return
-    val environment = SurfaceEnvironment(surface, catalog, entrances, revision)
+    val environment = SurfaceEnvironment(surface, catalog, entrances, revision, mediaUrl)
     Box(modifier = modifier.fillMaxWidth().testTag("a2ui:${surface.surfaceId}")) {
         if (entrances) {
             AIUIEntrance {

@@ -64,6 +64,11 @@ import io.getstream.chat.android.ai.compose.parts.definition
  * @param catalogId The id the agent names the catalog with the app's components by.
  * @param instructions What the agent's model is told before A2UI's own instructions, such as which
  * answers to write as UI and when to use the app's components.
+ * @param mediaUrl The URL an image, video or audio clip loads from, given the one the agent wrote,
+ * or `null` to not load it, such as to load media from the app's own storage or through its CDN.
+ * The agent writes these URLs, so return only ones the app trusts. It runs while the reply draws,
+ * on the main thread. Images load only from web links whatever it returns. Without it, only web
+ * links load.
  * @param onError Receives each problem with a reply's A2UI that A2UI reports to the agent, such as a
  * message that doesn't read, with the reply's message id. A chat has no channel for them, so forward
  * them to your backend if the agent should hear about them. Without it, the problems go to the log.
@@ -72,6 +77,7 @@ public class A2UIRenderer(
     public val catalog: A2UICatalog = A2UICatalog.Basic,
     public val catalogId: String = DEFAULT_CATALOG_ID,
     private val instructions: String? = null,
+    internal val mediaUrl: ((url: String) -> String?)? = null,
     private val onError: ((error: A2UIError, messageId: String) -> Unit)? = null,
 ) : AIUIRenderer {
     override val format: AIUIFormat = AIUIFormat.A2UI

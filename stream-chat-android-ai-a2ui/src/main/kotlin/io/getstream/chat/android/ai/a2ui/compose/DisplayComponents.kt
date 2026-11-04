@@ -100,7 +100,7 @@ internal fun A2UIText(scope: A2UIComponentScope) {
  */
 @Composable
 internal fun A2UIImage(scope: A2UIComponentScope) {
-    val url = scope.string("url")
+    val url = scope.mediaUrl("url")
     val variant = scope.hint("variant")
     val shape = if (variant == "avatar") CircleShape else RoundedCornerShape(ImageCorner)
     val size = when (variant) {

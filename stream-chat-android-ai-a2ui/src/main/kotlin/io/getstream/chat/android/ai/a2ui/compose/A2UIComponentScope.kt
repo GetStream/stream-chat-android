@@ -24,6 +24,7 @@ import io.getstream.chat.android.ai.a2ui.core.Node
 import io.getstream.chat.android.ai.a2ui.core.NodeContext
 import io.getstream.chat.android.ai.a2ui.core.Surface
 import io.getstream.chat.android.ai.a2ui.core.ValidationResult
+import io.getstream.chat.android.ai.compose.util.internal.AIImageLoader
 
 /**
  * One component of a surface as its renderer sees it: its properties, resolved against the
@@ -76,6 +77,16 @@ public class A2UIComponentScope internal constructor(
 
     /** Property [name] as a list of strings. */
     public fun stringList(name: String): List<String>? = context.stringList(name)
+
+    /**
+     * Property [name] as the URL an image, video or audio clip loads from: the one the agent wrote
+     * when it is a web link, or what the app's media URL resolver makes of it. `null` doesn't load.
+     */
+    internal fun mediaUrl(name: String): String? {
+        val url = string(name)?.takeIf { it.isNotEmpty() } ?: return null
+        val resolve = environment.mediaUrl ?: return url.takeIf(AIImageLoader::isLoadable)
+        return resolve(url)
+    }
 
     /** Property [name] as the agent wrote it, for a hint such as `variant`, which is never bound. */
     public fun hint(name: String): String? = context.literalString(name)
@@ -141,13 +152,15 @@ public class A2UIComponentScope internal constructor(
 
 /**
  * What every component of one surface draws with. [revision] is the surface's revision it was made
- * for: a new one makes every component draw again.
+ * for: a new one makes every component draw again. [mediaUrl] is the app's media URL resolver, or
+ * `null` to load media only from web links.
  */
 internal class SurfaceEnvironment(
     val surface: Surface,
     val catalog: A2UICatalog,
     val entrances: Boolean,
     val revision: Int,
+    val mediaUrl: ((String) -> String?)? = null,
 )
 
 /** A child of a component, ready to draw with [A2UIComponentScope.Child]. */

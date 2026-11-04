@@ -91,6 +91,8 @@ internal class A2UIEngine(
 
     private val defaultCatalogId = renderer.catalogId
 
+    private val mediaUrl = renderer.mediaUrl
+
     /** How the basic catalog's components look. */
     private val basicLook: A2UICatalog = renderer.catalog
 
@@ -136,6 +138,7 @@ internal class A2UIEngine(
                         revision = revision,
                         catalog = reply.catalog,
                         entrances = true,
+                        mediaUrl = mediaUrl,
                     )
                 }
             }

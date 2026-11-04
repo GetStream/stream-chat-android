@@ -53,17 +53,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import io.getstream.chat.android.ai.a2ui.R
 import io.getstream.chat.android.ai.a2ui.compose.icons.A2UIIcons
-import io.getstream.chat.android.ai.compose.util.internal.AIImageLoader
 import io.getstream.chat.android.ai.compose.util.internal.rememberAIImage
 
 /**
  * `Video`: the poster, or a placeholder, with a play icon; a tap plays the video in place, with
- * the platform's controls. Only web videos play.
+ * the platform's controls. Only web videos play, unless the app resolves media URLs.
  */
 @Composable
 internal fun A2UIVideo(scope: A2UIComponentScope) {
-    val url = scope.string("url")?.takeIf(AIImageLoader::isLoadable)
-    val posterUrl = scope.string("posterUrl")
+    val url = scope.mediaUrl("url")
+    val posterUrl = scope.mediaUrl("posterUrl")
     var playing by rememberSaveable(url) { mutableStateOf(false) }
     val playLabel = stringResource(R.string.stream_ai_a2ui_play_video)
     val modifier = scope.modifier
@@ -112,10 +111,13 @@ private fun Poster(url: String) {
     }
 }
 
-/** `AudioPlayer`: a play and pause button with the audio's description. Only web audio plays. */
+/**
+ * `AudioPlayer`: a play and pause button with the audio's description. Only web audio plays,
+ * unless the app resolves media URLs.
+ */
 @Composable
 internal fun A2UIAudioPlayer(scope: A2UIComponentScope) {
-    val url = scope.string("url")?.takeIf(AIImageLoader::isLoadable)
+    val url = scope.mediaUrl("url")
     val description = scope.string("description")
     var playing by remember(url) { mutableStateOf(false) }
     val player = remember(url) { AudioPlayback(url) { playing = false } }
