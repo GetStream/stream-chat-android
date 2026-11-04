@@ -48,6 +48,14 @@ android {
             dimension = "sdk"
             minSdk = libs.versions.aiOnDeviceMinSdk.get().toInt()
         }
+        create("stream-chat-android-ai-a2ui-baseline") {
+            dimension = "sdk"
+            minSdk = libs.versions.aiComposeMinSdk.get().toInt()
+        }
+        create("stream-chat-android-ai-a2ui-stream") {
+            dimension = "sdk"
+            minSdk = libs.versions.aiComposeMinSdk.get().toInt()
+        }
     }
 }
 
@@ -56,7 +64,8 @@ afterEvaluate {
         val flavorName = flavor.name
         // For compose flavors, we apply the compose plugin,
         // set up build features and add common compose dependencies.
-        if (flavorName.contains("compose")) {
+        // The ai-a2ui flavors are Compose too: A2UI renders through ai-compose.
+        if (flavorName.contains("compose") || flavorName.startsWith("stream-chat-android-ai-a2ui")) {
             val composePlugin = libs.plugins.kotlin.compose.get()
             plugins.apply(composePlugin.pluginId)
             android.buildFeatures.compose = true
@@ -86,4 +95,8 @@ dependencies {
     "stream-chat-android-ai-compose-streamImplementation"(project(":stream-chat-android-ai-compose"))
 
     "stream-chat-android-ai-ondevice-streamImplementation"(project(":stream-chat-android-ai-ondevice"))
+
+    // The baseline carries ai-compose, so the number is the cost of A2UI on top of it.
+    "stream-chat-android-ai-a2ui-baselineImplementation"(project(":stream-chat-android-ai-compose"))
+    "stream-chat-android-ai-a2ui-streamImplementation"(project(":stream-chat-android-ai-a2ui"))
 }
