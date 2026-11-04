@@ -22,10 +22,15 @@ import io.getstream.chat.android.ai.openui.lang.OpenUIValue
 import io.getstream.chat.android.ai.openui.lang.ToolProvider
 
 /**
- * Runs the tools of `Query()` and `Mutation()` with the host's tools, on the device. A tool the
- * host has none of, or that fails, throws `AIUIToolException`, which the query reports.
+ * Runs the tools of `Query()` and `Mutation()` with the host's tools, on the device. A `Query` runs
+ * by itself as the UI shows, so it runs only a read-only tool; a `Mutation`, from a tap, runs any of
+ * the host's. A tool the host has none of, that may not run, or that fails, throws
+ * `AIUIToolException`, which the query or mutation reports.
  */
 internal class HostToolProvider(private val host: AIUIHost) : ToolProvider {
     override suspend fun callTool(name: String, arguments: OpenUIObject): OpenUIValue =
-        openUIValue(host.runTool(name, arguments.plainValue))
+        callTool(name, arguments, userInitiated = false)
+
+    override suspend fun callTool(name: String, arguments: OpenUIObject, userInitiated: Boolean): OpenUIValue =
+        openUIValue(host.runTool(name, arguments.plainValue, userInitiated))
 }

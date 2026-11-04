@@ -101,11 +101,39 @@ internal class OpenUIRendererTest {
         val withTools = OpenUIRenderer().capabilities(emptyList(), listOf(tool))["instructions"] as String
         val withoutTools = OpenUIRenderer().capabilities(emptyList(), emptyList())["instructions"] as String
 
-        assertTrue("- get_weather" in withTools)
+        assertTrue("- get_weather(" in withTools)
         assertTrue("## Query — Live Data Fetching" in withTools)
         assertTrue("## Mutation — Write Operations" in withTools)
         assertFalse("get_weather" in withoutTools)
         assertFalse("## Available Tools" in withoutTools)
+    }
+
+    @Test
+    fun `the instructions describe each tool with its arguments and whether it only reads`() {
+        val weather = object : AIClientTool {
+            override val name = "get_weather"
+            override val description = "The weather in a city."
+            override val inputSchema = mapOf(
+                "type" to "object",
+                "properties" to mapOf("city" to mapOf("type" to "string"), "days" to mapOf("type" to "number")),
+                "required" to listOf("city"),
+            )
+            override val isReadOnly = true
+            override suspend fun run(call: AIToolCallPart) = AIClientToolResult.completed("{}")
+        }
+        val booking = object : AIClientTool {
+            override val name = "book_table"
+            override suspend fun run(call: AIToolCallPart) = AIClientToolResult.completed("{}")
+        }
+
+        val instructions = OpenUIRenderer().capabilities(emptyList(), listOf(weather, booking))["instructions"] as String
+
+        assertTrue("- get_weather(city: string, days?: number)" in instructions)
+        assertTrue("  The weather in a city. Read-only: use it in Query() or Mutation()." in instructions)
+        assertTrue("- book_table()" in instructions)
+        assertTrue(
+            "  It changes something: use it only in Mutation(), which runs when the person taps." in instructions,
+        )
     }
 
     @Test
