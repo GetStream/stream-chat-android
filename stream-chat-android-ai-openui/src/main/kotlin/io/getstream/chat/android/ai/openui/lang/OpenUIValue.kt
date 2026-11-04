@@ -142,6 +142,10 @@ public operator fun OpenUIValue?.get(index: Int): OpenUIValue? = JS.property(thi
 /**
  * This value with elements and expressions converted (deeply) to their plain JSON object shapes,
  * and non-finite numbers turned into `null`, matching `JSON.parse(JSON.stringify(value))`.
+ *
+ * In an expression, a call's named prop that is one of the call's own arguments is written once,
+ * in `args`, and referenced from `mappedProps` as `{"k": "Arg", "i": <index>}`, so the output
+ * stays proportional to the expression's size however deeply calls nest.
  */
 public val OpenUIValue.plainJson: OpenUIValue
     get() = when (this) {

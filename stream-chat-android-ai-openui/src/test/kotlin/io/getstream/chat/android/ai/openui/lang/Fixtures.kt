@@ -48,6 +48,29 @@ internal object Fixtures {
 }
 
 /**
+ * [value] in the reference implementation's shape: a call's mapped props that refer to its args
+ * (`{k: "Arg", i}`) are replaced by copies of those args, as upstream writes them. Fixtures only;
+ * the copies double at every nesting level.
+ */
+internal fun upstreamShape(value: OpenUIValue?): OpenUIValue? = when (value) {
+    is OpenUIValue.Arr -> OpenUIValue.Arr(value.items.map { upstreamShape(it)!! })
+    is OpenUIValue.Obj -> {
+        val fields = value.fields.mapValues { upstreamShape(it)!! }
+        val args = fields["args"].arrayValue
+        val props = fields["mappedProps"].objectValue
+        if (fields["k"].stringValue == "Comp" && args != null && props != null) {
+            val expanded = props.mapValues { prop ->
+                if (prop["k"].stringValue == ASTNode.ARG_KIND) args[prop["i"].numberValue!!.toInt()] else prop
+            }
+            OpenUIValue.Obj(fields.with("mappedProps", OpenUIValue.Obj(expanded)))
+        } else {
+            OpenUIValue.Obj(fields)
+        }
+    }
+    else -> value
+}
+
+/**
  * Describes the first structural difference between two values (`null` when equal). Objects are
  * compared without regard to key order, numbers by value (`-0 == 0`), like JSON round-trips.
  */

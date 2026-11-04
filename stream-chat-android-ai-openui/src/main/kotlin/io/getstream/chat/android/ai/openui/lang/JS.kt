@@ -279,7 +279,7 @@ internal object JS {
                 key,
             )?.let { index -> value.value.getOrNull(index)?.let { OpenUIValue.Str(it.toString()) } }
         }
-        is OpenUIValue.Element -> property(value.node.jsonValue, key)
+        is OpenUIValue.Element -> value.node.jsonField(key)
         else -> null
     }
 

@@ -36,15 +36,21 @@ public data class ElementNode internal constructor(
 ) {
     /** The JSON shape used by the reference implementation. */
     internal val jsonValue: OpenUIValue
-        get() = OpenUIValue.obj(
-            "type" to OpenUIValue.Str("element"),
-            "typeName" to OpenUIValue.Str(typeName),
-            "props" to OpenUIValue.Obj(props.mapValues { it.plainJson }),
-            "partial" to OpenUIValue.of(partial),
-            "hasDynamicProps" to hasDynamicProps?.let { OpenUIValue.of(it) },
-            "statementId" to statementId?.let { OpenUIValue.Str(it) },
-        )
+        get() = OpenUIValue.Obj(OpenUIObject.build { for (key in ELEMENT_JSON_KEYS) this[key] = jsonField(key) })
+
+    /** One field of [jsonValue], built on its own so reading a field doesn't convert the whole tree. */
+    internal fun jsonField(key: String): OpenUIValue? = when (key) {
+        "type" -> OpenUIValue.Str("element")
+        "typeName" -> OpenUIValue.Str(typeName)
+        "props" -> OpenUIValue.Obj(props.mapValues { it.plainJson })
+        "partial" -> OpenUIValue.of(partial)
+        "hasDynamicProps" -> hasDynamicProps?.let { OpenUIValue.of(it) }
+        "statementId" -> statementId?.let { OpenUIValue.Str(it) }
+        else -> null
+    }
 }
+
+private val ELEMENT_JSON_KEYS = listOf("type", "typeName", "props", "partial", "hasDynamicProps", "statementId")
 
 /**
  * A machine-readable validation error code, such as `missing-required`. A class rather than an
