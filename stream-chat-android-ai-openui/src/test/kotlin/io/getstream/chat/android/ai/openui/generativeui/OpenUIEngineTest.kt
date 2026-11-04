@@ -30,10 +30,12 @@ import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import io.getstream.chat.android.ai.openui.lang.ActionEvent
 import io.getstream.chat.android.ai.openui.lang.BuiltinActionType
 import io.getstream.chat.android.ai.openui.lang.ElementNode
+import io.getstream.chat.android.ai.openui.lang.OpenUIError
 import io.getstream.chat.android.ai.openui.lang.OpenUIObject
 import io.getstream.chat.android.ai.openui.lang.OpenUIRuntime
 import io.getstream.chat.android.ai.openui.lang.OpenUIValue
 import io.getstream.chat.android.ai.openui.lang.elementValue
+import io.getstream.chat.android.ai.openui.lang.get
 import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -44,6 +46,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
 internal class OpenUIEngineTest {
 
@@ -315,6 +318,7 @@ internal class OpenUIEngineTest {
     fun `queries run the host's tools`() = runTest {
         val tool = object : AIClientTool {
             override val name = "weather"
+            override val isReadOnly = true
             override suspend fun run(call: AIToolCallPart) = AIClientToolResult.completed("{\"temperature\":21.5}")
         }
         val provider = HostToolProvider(host(listOf(tool)))
@@ -322,5 +326,38 @@ internal class OpenUIEngineTest {
         val output = provider.callTool("weather", OpenUIObject.of("city" to OpenUIValue.Str("Ohrid")))
 
         assertEquals(OpenUIValue.obj("temperature" to OpenUIValue.Num(21.5)), output)
+    }
+
+    @Test
+    fun `a tool that changes something runs from a tapped Mutation, never from a Query`() = runTest {
+        var runs = 0
+        val tool = object : AIClientTool {
+            override val name = "save"
+            override suspend fun run(call: AIToolCallPart): AIClientToolResult {
+                runs++
+                return AIClientToolResult.completed("{\"saved\":true}")
+            }
+        }
+        val engine = engine(host(listOf(tool)))
+        val program = """
+            data = Query("save", {}, {saved: false})
+            act = Mutation("save", {})
+            root = Card([Button("Save", Action([@Run(act)]))])
+        """.trimIndent()
+        engine.content(reply(program), "m1")
+        val runtime = assertNotNull(engine.runtime("m1"))
+        // The runtime works in the background, so time is moved on by hand.
+        testScheduler.advanceTimeBy(1.seconds)
+        testScheduler.runCurrent()
+
+        assertEquals(0, runs)
+        val error = runtime.queryManager.snapshot.value.errors.single { it.source == OpenUIError.Source.Query }
+        assertEquals("save", error.toolName)
+        assertEquals(OpenUIValue.obj("saved" to OpenUIValue.Bool(false)), runtime.queryManager.result("data"))
+
+        runtime.triggerAction("Save", action = firstChild(runtime).props["action"])
+
+        assertEquals(1, runs)
+        assertEquals(OpenUIValue.Str("success"), runtime.queryManager.mutationResult("act")["status"])
     }
 }

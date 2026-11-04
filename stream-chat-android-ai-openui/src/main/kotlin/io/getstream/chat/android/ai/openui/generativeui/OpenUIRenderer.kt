@@ -23,12 +23,16 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
 import io.getstream.chat.android.ai.compose.parts.AIClientTool
+import io.getstream.chat.android.ai.compose.parts.AIClientToolDefinition
 import io.getstream.chat.android.ai.openui.lang.OpenUIError
+import io.getstream.chat.android.ai.openui.lang.OpenUIObject
+import io.getstream.chat.android.ai.openui.lang.OpenUIValue
 import io.getstream.chat.android.ai.openui.library.ComponentSchema
 import io.getstream.chat.android.ai.openui.library.LibraryDefinition
 import io.getstream.chat.android.ai.openui.library.OpenUIPortableComponentException
 import io.getstream.chat.android.ai.openui.library.PromptOptions
 import io.getstream.chat.android.ai.openui.library.ToolDescriptor
+import io.getstream.chat.android.ai.openui.library.ToolSpec
 import io.getstream.chat.android.ai.openui.library.fromPortableDefinition
 import io.getstream.chat.android.ai.openui.rendering.Library
 import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
@@ -49,8 +53,10 @@ import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
  * or a form's submit button, reaches the host as an `AIUIAction` named after OpenUI's action, with
  * the action's `context`, its other `params`, the `form` and the form's `values` in its payload.
  * A `Query` or `Mutation` runs one of the host's tools, on the device, and the model's
- * instructions list the host's tools by name. Links open through the host, which decides the kinds
- * of link that open.
+ * instructions describe each of the host's tools: what it does, its arguments, and whether it only
+ * reads. A `Query` runs by itself as the reply shows, so it runs only a read-only tool; a tool that
+ * changes something runs only from a `Mutation` the person starts with a tap. Links open through
+ * the host, which decides the kinds of link that open.
  *
  * An app component joins the library under its OpenUI name, its name in `PascalCase` (`place_card`
  * is `PlaceCard`). One whose name the library already has, or that can't be called in a program,
@@ -81,7 +87,8 @@ public class OpenUIRenderer(
      */
     override fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> {
         val schemas = placeable(components, library.definition).map { it.second }
-        val options = promptOptions.copy(tools = promptOptions.tools + tools.map { ToolDescriptor.Name(it.name) })
+        val specs = tools.map { ToolDescriptor.Spec(spec(it.definition)) }
+        val options = promptOptions.copy(tools = promptOptions.tools + specs)
         val prompt = library.definition.addingContent(schemas).systemPrompt(options)
         return mapOf(
             "fence" to Fence,
@@ -102,6 +109,23 @@ public class OpenUIRenderer(
     }
 
     internal companion object {
+        /**
+         * One of the host's tools as the model's instructions list it: its description, its
+         * arguments, and whether a `Query` can run it.
+         */
+        fun spec(tool: AIClientToolDefinition): ToolSpec {
+            val use = if (tool.isReadOnly) {
+                "Read-only: use it in Query() or Mutation()."
+            } else {
+                "It changes something: use it only in Mutation(), which runs when the person taps."
+            }
+            return ToolSpec(
+                name = tool.name,
+                description = listOf(tool.description, use).filter { it.isNotEmpty() }.joinToString(" "),
+                inputSchema = tool.inputSchema?.let(::openUIValue) ?: OpenUIValue.Obj(OpenUIObject.Empty),
+            )
+        }
+
         /** The OpenUI schema of an app's component. */
         fun schema(component: AIUIComponent): ComponentSchema? = try {
             ComponentSchema.fromPortableDefinition(openUIValue(component.definition.toJson()))
