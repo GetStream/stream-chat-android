@@ -336,11 +336,21 @@ internal class OpenUIRuntime(
         return unwrapFieldValue(store[formName].objectValue?.get(name))
     }
 
-    /** Writes a field value as `{ value, componentType }`. */
-    fun setFieldValue(formName: String?, componentType: String?, name: String, value: OpenUIValue?) {
+    /**
+     * Writes a field value as `{ value, componentType }`, marked `secret` when it holds what a
+     * password field does, so [withoutSecrets] leaves it out of what leaves the device.
+     */
+    fun setFieldValue(
+        formName: String?,
+        componentType: String?,
+        name: String,
+        value: OpenUIValue?,
+        isSecret: Boolean = false,
+    ) {
         val wrapped = OpenUIValue.obj(
             "value" to (value ?: OpenUIValue.Null),
             "componentType" to componentType?.let { OpenUIValue.Str(it) },
+            SecretKey to if (isSecret) OpenUIValue.of(true) else null,
         )
         if (formName == null) {
             store[name] = wrapped
@@ -356,9 +366,12 @@ internal class OpenUIRuntime(
         binding: OpenUIValue?,
         formName: String?,
         componentType: String? = null,
+        isSecret: Boolean = false,
     ): StateField {
         val target = ReactiveBinding.target(binding)
-        if (target != null) {
+        // A secret, such as a password, never goes in a `$variable`, where any expression could
+        // read it: it stays in the form's state, which leaves it out of what goes anywhere.
+        if (target != null && !isSecret) {
             val expression = ReactiveBinding.expression(binding)
             return StateField(name, store[target], isReactive = true) { newValue ->
                 val context = evaluationContext.copy(extraScope = mapOf("\$value" to (newValue ?: OpenUIValue.Null)))
@@ -366,12 +379,13 @@ internal class OpenUIRuntime(
             }
         }
         val current = fieldValue(formName, name)
-        val value = if (JS.isNullish(current)) binding ?: current else current
+        val fallback = if (target != null) null else binding
+        val value = if (JS.isNullish(current)) fallback ?: current else current
         return StateField(
             name,
             value,
             isReactive = false,
-        ) { newValue -> setFieldValue(formName, componentType, name, newValue) }
+        ) { newValue -> setFieldValue(formName, componentType, name, newValue, isSecret) }
     }
 
     /** The form state included with actions: `{ formName: fields }`, or the whole state. */
@@ -405,7 +419,7 @@ internal class OpenUIRuntime(
                     legacy["url"]?.takeIf(JS::isTruthy)?.let { this["url"] = it }
                     legacy["context"]?.takeIf(JS::isTruthy)?.let { this["context"] = it }
                 }.build()
-            onAction?.invoke(ActionEvent(type, params, label, formPayload(formName), formName))
+            onAction?.invoke(ActionEvent(type, params, label, formPayload(formName), formName, label))
             return
         }
         if (!ActionPlan.isPlan(action)) {
@@ -415,17 +429,18 @@ internal class OpenUIRuntime(
                     humanFriendlyMessage = label,
                     formState = formPayload(formName),
                     formName = formName,
+                    label = label,
                 ),
             )
             return
         }
         for (step in ActionPlan.steps(ActionPlan.ownSteps(action!!))) {
-            if (!runStep(step, formName)) return
+            if (!runStep(step, label, formName)) return
         }
     }
 
     /** Runs one step of a plan; `false` when a mutation failed and the plan halts. */
-    private suspend fun runStep(step: OpenUIValue, formName: String?): Boolean {
+    private suspend fun runStep(step: OpenUIValue, label: String, formName: String?): Boolean {
         when (step["type"].stringValue) {
             ActionStepType.RUN -> {
                 val statementId = step["statementId"].stringValue ?: return true
@@ -439,35 +454,23 @@ internal class OpenUIRuntime(
                 }
                 queryManager.invalidate(listOf(statementId))
             }
-            ActionStepType.CONTINUE_CONVERSATION -> onAction?.invoke(
-                ActionEvent(
-                    type = BuiltinActionType.CONTINUE_CONVERSATION,
-                    params = OpenUIObject.of("context" to step["context"]),
-                    humanFriendlyMessage = step["message"]?.let(JS::toString).orEmpty(),
-                    formState = formPayload(formName),
-                    formName = formName,
-                ),
+            ActionStepType.CONTINUE_CONVERSATION -> send(
+                type = BuiltinActionType.CONTINUE_CONVERSATION,
+                params = OpenUIObject.of("context" to step["context"]),
+                message = step["message"]?.let(JS::toString).orEmpty(),
+                label = label,
+                formName = formName,
             )
-            ActionStepType.OPEN_URL -> onAction?.invoke(
-                ActionEvent(
-                    type = BuiltinActionType.OPEN_URL,
-                    params = OpenUIObject.of("url" to (step["url"] ?: OpenUIValue.Str(""))),
-                    humanFriendlyMessage = "",
-                    formState = formPayload(formName),
-                    formName = formName,
-                ),
+            ActionStepType.OPEN_URL -> send(
+                type = BuiltinActionType.OPEN_URL,
+                params = OpenUIObject.of("url" to (step["url"] ?: OpenUIValue.Str(""))),
+                message = "",
+                label = "",
+                formName = formName,
             )
             ActionStepType.CUSTOM_ACTION -> {
                 val name = step["name"].stringValue ?: return true
-                onAction?.invoke(
-                    ActionEvent(
-                        type = name,
-                        params = step["params"].objectValue ?: OpenUIObject.Empty,
-                        humanFriendlyMessage = "",
-                        formState = formPayload(formName),
-                        formName = formName,
-                    ),
-                )
+                send(name, step["params"].objectValue ?: OpenUIObject.Empty, "", label, formName)
             }
             ActionStepType.SET -> {
                 val target = step["target"].stringValue ?: return true
@@ -484,6 +487,11 @@ internal class OpenUIRuntime(
         return true
     }
 
+    // Sends a step's event to the host, with the state of the form when it runs.
+    private fun send(type: String, params: OpenUIObject, message: String, label: String, formName: String?) {
+        onAction?.invoke(ActionEvent(type, params, message, formPayload(formName), formName, label))
+    }
+
     private companion object {
         /** Evaluation that keeps changing state settles within a few passes, or gives up. */
         const val MAX_RECOMPUTE_PASSES = 8
@@ -492,3 +500,22 @@ internal class OpenUIRuntime(
         fun unwrapFieldValue(value: OpenUIValue?): OpenUIValue? = value.objectValue?.get("value") ?: value
     }
 }
+
+// The mark of a field that holds a secret, such as a password.
+private const val SecretKey = "secret"
+
+/**
+ * The state without what password fields hold, at any depth: for anything that leaves the device,
+ * such as an action's form values or the state a host keeps.
+ */
+internal val OpenUIObject.withoutSecrets: OpenUIObject
+    get() = OpenUIObject.build {
+        this@withoutSecrets.forEach { (key, value) ->
+            val fields = (value as? OpenUIValue.Obj)?.fields
+            when {
+                fields == null -> this[key] = value
+                fields[SecretKey] == OpenUIValue.of(true) -> Unit
+                else -> this[key] = OpenUIValue.Obj(fields.withoutSecrets)
+            }
+        }
+    }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.ai.compose.generativeui.AIUIAction
 import io.getstream.chat.android.ai.compose.generativeui.AIUIComponent
 import io.getstream.chat.android.ai.compose.generativeui.AIUIComponentContext
@@ -30,10 +31,12 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIEngine
 import io.getstream.chat.android.ai.compose.generativeui.AIUIEntrance
 import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
+import io.getstream.chat.android.ai.openui.R
 import io.getstream.chat.android.ai.openui.lang.ActionEvent
+import io.getstream.chat.android.ai.openui.lang.OpenUIError
 import io.getstream.chat.android.ai.openui.lang.OpenUIRuntime
 import io.getstream.chat.android.ai.openui.lang.ToolProvider
-import io.getstream.chat.android.ai.openui.lang.stringValue
+import io.getstream.chat.android.ai.openui.lang.withoutSecrets
 import io.getstream.chat.android.ai.openui.library.ComponentSchema
 import io.getstream.chat.android.ai.openui.rendering.DefinedComponent
 import io.getstream.chat.android.ai.openui.rendering.Library
@@ -48,12 +51,14 @@ import kotlinx.coroutines.SupervisorJob
  * @param library The library the agent writes with, before the app's components join it.
  * @param host The conversation's host.
  * @param toolProvider Runs the tools of `Query()` and `Mutation()`.
+ * @param onError Receives each problem with a reply's program, with the reply's message id.
  * @param scope Where the runtimes run their tools: the main thread by default.
  */
 internal class OpenUIEngine(
     library: Library,
     private val host: AIUIHost,
     private val toolProvider: ToolProvider,
+    private val onError: (error: OpenUIError, messageId: String) -> Unit = { _, _ -> },
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
 ) : AIUIEngine {
 
@@ -65,6 +70,9 @@ internal class OpenUIEngine(
     )
 
     private val runtimes = mutableMapOf<String, OpenUIRuntime>()
+
+    // The person's message for a control without a label, from the app's resources once a reply shows.
+    private var untitledLabel: String = ""
 
     /** The runtime of a reply, once its UI first showed. */
     fun runtime(messageId: String): OpenUIRuntime? = runtimes[messageId]
@@ -106,7 +114,11 @@ internal class OpenUIEngine(
     @Composable
     private fun ReplyContent(runtime: OpenUIRuntime, messageId: String, program: String, isStreaming: Boolean) {
         val uriHandler = LocalUriHandler.current
-        SideEffect { runtime.update(program, isStreaming) }
+        val untitled = stringResource(R.string.stream_ai_openui_action_untitled)
+        SideEffect {
+            untitledLabel = untitled
+            runtime.update(program, isStreaming)
+        }
         CompositionLocalProvider(LocalReply provides Reply(messageId, uriHandler)) {
             OpenUIView(runtime, library = library, onOpenUrl = { url -> host.open(url, uriHandler) })
         }
@@ -117,7 +129,9 @@ internal class OpenUIEngine(
         val state = (host.state(messageId) as? Map<*, *>)?.let(::openUIObject)
         val runtime = OpenUIRuntime(library.schema, scope, toolProvider, state)
         runtime.onAction = { event -> handle(event, messageId) }
-        runtime.onStateUpdate = { snapshot -> host.setState(messageId, snapshot.plainValue) }
+        runtime.onError = { errors -> errors.forEach { onError(it, messageId) } }
+        // What password fields hold stays on the device.
+        runtime.onStateUpdate = { snapshot -> host.setState(messageId, snapshot.withoutSecrets.plainValue) }
         runtimes[messageId] = runtime
         runtime.update(program, isStreaming)
         return runtime
@@ -142,7 +156,7 @@ internal class OpenUIEngine(
 
     /** Sends what the person did that is for the agent to the host; links open in `OpenUIView`. */
     fun handle(event: ActionEvent, messageId: String) {
-        action(event, messageId)?.let(host::send)
+        action(event, messageId, untitledLabel)?.let(host::send)
     }
 
     /** Which reply a part of the UI is in, and the URI handler around it. */
@@ -152,20 +166,29 @@ internal class OpenUIEngine(
         private val LocalReply = staticCompositionLocalOf<Reply?> { null }
 
         /**
-         * The action an OpenUI event sends to the agent: named after OpenUI's action, with the
-         * action's `context`, its other `params`, the `form` and the form's `values`, each only when
-         * there is one. A link sends nothing.
+         * The action an OpenUI event sends to the agent: named after OpenUI's action and labeled
+         * with the control the person used ([untitled] when it has no label), with the action's
+         * `context`, its other `params`, the model's `message` for it, the `form` and the form's
+         * `values`, each only when there is one. A link sends nothing.
          */
-        fun action(event: ActionEvent, messageId: String): AIUIAction? {
+        fun action(event: ActionEvent, messageId: String, untitled: String): AIUIAction? {
             if (event.isOpenUrl) return null
             val params = event.params.without("context")
             val payload = buildMap {
                 event.context?.let { put("context", it.plainValue) }
                 if (params.isNotEmpty()) put("params", params.plainValue)
-                event.formName?.let { put("form", it) }
-                event.formState?.takeIf { it.isNotEmpty() }?.let { put("values", it.plainValue) }
+                // The person's message is the control they used; the model's words for it go to
+                // the agent only.
+                val message = event.humanFriendlyMessage
+                if (message.isNotEmpty() && message != event.label) put("message", message)
+                // Only the values of the form the action belongs to go, as the person's next
+                // message: outside a form the action carries none, and a password never.
+                event.formName?.let { form ->
+                    put("form", form)
+                    event.formState?.withoutSecrets?.takeIf { it.isNotEmpty() }?.let { put("values", it.plainValue) }
+                }
             }
-            val label = event.humanFriendlyMessage.ifEmpty { event.context.stringValue ?: event.type }
+            val label = event.label.ifEmpty { untitled }
             return AIUIAction(messageId, AIUIFormat.OpenUI, event.type, label, payload)
         }
     }

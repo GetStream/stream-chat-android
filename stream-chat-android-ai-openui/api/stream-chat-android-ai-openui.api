@@ -115,8 +115,8 @@ public final class io/getstream/chat/android/ai/openui/components/ComposableSing
 public final class io/getstream/chat/android/ai/openui/generativeui/OpenUIRenderer : io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/ai/openui/rendering/Library;Lio/getstream/chat/android/ai/openui/library/PromptOptions;Lio/getstream/chat/android/ai/openui/lang/ToolProvider;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/ai/openui/rendering/Library;Lio/getstream/chat/android/ai/openui/library/PromptOptions;Lio/getstream/chat/android/ai/openui/lang/ToolProvider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/ai/openui/rendering/Library;Lio/getstream/chat/android/ai/openui/library/PromptOptions;Lio/getstream/chat/android/ai/openui/lang/ToolProvider;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ai/openui/rendering/Library;Lio/getstream/chat/android/ai/openui/library/PromptOptions;Lio/getstream/chat/android/ai/openui/lang/ToolProvider;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun capabilities (Ljava/util/List;)Ljava/util/Map;
 	public fun getFormat-cv5I8qU ()Ljava/lang/String;
 	public final fun getLibrary ()Lio/getstream/chat/android/ai/openui/rendering/Library;
@@ -132,12 +132,14 @@ public final class io/getstream/chat/android/ai/openui/lang/ActionEvent {
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lio/getstream/chat/android/ai/openui/lang/OpenUIObject;
 	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAssistantMessage ()Ljava/lang/String;
 	public final fun getContext ()Lio/getstream/chat/android/ai/openui/lang/OpenUIValue;
 	public final fun getFormName ()Ljava/lang/String;
 	public final fun getFormState ()Lio/getstream/chat/android/ai/openui/lang/OpenUIObject;
 	public final fun getHumanFriendlyMessage ()Ljava/lang/String;
+	public final fun getLabel ()Ljava/lang/String;
 	public final fun getParams ()Lio/getstream/chat/android/ai/openui/lang/OpenUIObject;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUrl ()Ljava/lang/String;
@@ -928,6 +930,7 @@ public final class io/getstream/chat/android/ai/openui/rendering/Library {
 	public final fun getActions ()Ljava/util/Map;
 	public final fun getComponentGroups ()Ljava/util/List;
 	public final fun getComponents ()Ljava/util/Map;
+	public final fun getDefaultPromptOptions ()Lio/getstream/chat/android/ai/openui/library/PromptOptions;
 	public final fun getFunctions ()Ljava/util/Map;
 	public final fun getRoot ()Ljava/lang/String;
 	public final fun prompt (Lio/getstream/chat/android/ai/openui/library/PromptOptions;)Ljava/lang/String;

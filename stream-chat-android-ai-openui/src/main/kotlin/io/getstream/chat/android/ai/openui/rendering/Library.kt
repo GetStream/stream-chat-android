@@ -177,11 +177,23 @@ public class Library internal constructor(
     /** The library's action steps by name, used as `@Name(...)` in action props. */
     internal val actions: Map<String, DefinedAction> get() = definition.customActions.associateBy { it.name }
 
-    /** The system prompt for this library, with [options] (examples, rules, tools, modes). */
-    internal fun prompt(options: PromptOptions = PromptOptions()): String = definition.systemPrompt(options)
+    /**
+     * The prompt options made for this library: the examples and rules of [openuiChatLibrary] or
+     * [openuiLibrary], none for a library made with [createLibrary].
+     */
+    internal val defaultPromptOptions: PromptOptions get() = definition.defaultPromptOptions
 
-    /** What [io.getstream.chat.android.ai.openui.library.generatePrompt] needs for this library. */
-    internal fun toSpec(): PromptSpec = definition.promptSpec(PromptOptions())
+    /**
+     * The system prompt for this library, with [options] (examples, rules, tools, modes), the
+     * library's own [defaultPromptOptions] by default.
+     */
+    internal fun prompt(options: PromptOptions = defaultPromptOptions): String = definition.systemPrompt(options)
+
+    /**
+     * What [io.getstream.chat.android.ai.openui.library.generatePrompt] needs for this library, with
+     * its [defaultPromptOptions].
+     */
+    internal fun toSpec(): PromptSpec = definition.promptSpec(defaultPromptOptions)
 
     /** The library JSON Schema, which [io.getstream.chat.android.ai.openui.lang.createParser] takes. */
     internal fun toJSONSchema(): OpenUIValue = definition.jsonSchema

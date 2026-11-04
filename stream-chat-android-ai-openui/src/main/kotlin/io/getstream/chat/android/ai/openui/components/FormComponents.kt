@@ -217,10 +217,15 @@ internal fun TextInputComponent(ctx: ComponentRenderProps, multiline: Boolean) {
     val componentType = if (multiline) "TextArea" else "Input"
     val formName = LocalOpenUIFormName.current
     val validation = LocalFormValidation.current
-    val field = ctx.stateField(name, props["value"], componentType)
+    val type = props.string("type") ?: "text"
+    val isSecret = !multiline && type == "password"
+    val field = if (isSecret) {
+        ctx.secretStateField(name, props["value"], componentType)
+    } else {
+        ctx.stateField(name, props["value"], componentType)
+    }
     val rules = remember(props["rules"]) { FormValidation.rules(props["rules"]) }
     val placeholder = props.text("placeholder").orEmpty()
-    val type = props.string("type") ?: "text"
     var focused by remember { mutableStateOf(false) }
     var wasFocused by remember { mutableStateOf(false) }
     val textStyle = theme.typography.body.copy(color = theme.colors.textPrimary)
@@ -236,7 +241,7 @@ internal fun TextInputComponent(ctx: ComponentRenderProps, multiline: Boolean) {
         singleLine = !multiline,
         minLines = if (multiline) textAreaRows(props.number("rows")) else 1,
         cursorBrush = SolidColor(theme.colors.accent),
-        visualTransformation = if (!multiline && type == "password") {
+        visualTransformation = if (isSecret) {
             PasswordVisualTransformation()
         } else {
             VisualTransformation.None
@@ -269,7 +274,8 @@ internal fun TextInputComponent(ctx: ComponentRenderProps, multiline: Boolean) {
                     wasFocused = true
                     validation?.clearError(name)
                 } else if (wasFocused && rules.isNotEmpty()) {
-                    validation?.validateField(name, ctx.runtime.stateField(name, props["value"], formName).value, rules)
+                    val value = ctx.runtime.stateField(name, props["value"], formName, isSecret = isSecret).value
+                    validation?.validateField(name, value, rules)
                 }
             },
         decorationBox = { inner ->
@@ -280,7 +286,7 @@ internal fun TextInputComponent(ctx: ComponentRenderProps, multiline: Boolean) {
         },
     )
     RegisterValidation(validation, name, rules, ctx.isStreaming) {
-        ctx.runtime.stateField(name, props["value"], formName).value
+        ctx.runtime.stateField(name, props["value"], formName, isSecret = isSecret).value
     }
 }
 

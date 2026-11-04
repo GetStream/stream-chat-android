@@ -44,6 +44,23 @@ internal class ChartDataTest {
     }
 
     @Test
+    fun `a radar with tabular data takes its spokes from the rows and its series from the columns`() {
+        val labels = listOf(str("Skill"), str("Alice"))
+        val rows = listOf(
+            OpenUIValue.Arr(listOf(str("Speed"), num(3.0))),
+            OpenUIValue.Arr(listOf(str("Power"), num(5.0))),
+            OpenUIValue.Arr(listOf(str("Range"), num(4.0))),
+        )
+
+        val (points, series) = ChartData.points(labels, rows)
+
+        assertEquals(listOf("Speed", "Power", "Range"), ChartData.radarAxes(labels, rows))
+        assertEquals(listOf("Alice"), series)
+        assertEquals(listOf(0 to 3.0, 1 to 5.0, 2 to 4.0), points.map { it.order to it.value })
+        assertEquals(listOf("Skill", "Alice"), ChartData.radarAxes(labels, emptyList()))
+    }
+
+    @Test
     fun `chart heights are finite, positive and at most 1000`() {
         assertNull(chartHeight(null))
         assertNull(chartHeight(-1.0))

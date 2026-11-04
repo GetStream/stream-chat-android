@@ -29,18 +29,27 @@ import io.getstream.chat.android.ai.compose.parts.AIClientToolResult
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import io.getstream.chat.android.ai.openui.lang.ActionEvent
 import io.getstream.chat.android.ai.openui.lang.BuiltinActionType
+import io.getstream.chat.android.ai.openui.lang.ElementNode
 import io.getstream.chat.android.ai.openui.lang.OpenUIObject
+import io.getstream.chat.android.ai.openui.lang.OpenUIRuntime
 import io.getstream.chat.android.ai.openui.lang.OpenUIValue
+import io.getstream.chat.android.ai.openui.lang.elementValue
 import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 internal class OpenUIEngineTest {
+
+    private companion object {
+        const val Untitled = "Continue"
+    }
 
     private val sent = mutableListOf<AIUIAction>()
     private val placeCard = AIUIComponent(
@@ -51,8 +60,15 @@ internal class OpenUIEngineTest {
         ),
     ) { _, _ -> }
 
-    private fun TestScope.engine(host: AIUIHost = host()): OpenUIEngine =
-        OpenUIEngine(openuiChatLibrary, host, HostToolProvider(host), backgroundScope)
+    private val errors = mutableListOf<Pair<String, String>>()
+
+    private fun TestScope.engine(host: AIUIHost = host()): OpenUIEngine = OpenUIEngine(
+        openuiChatLibrary,
+        host,
+        HostToolProvider(host),
+        onError = { error, messageId -> errors += error.code to messageId },
+        scope = backgroundScope,
+    )
 
     private fun host(tools: List<AIClientTool> = emptyList()) =
         AIUIHost(renderers = listOf(OpenUIRenderer()), components = listOf(placeCard), tools = tools) { sent += it }
@@ -68,9 +84,10 @@ internal class OpenUIEngineTest {
             humanFriendlyMessage = "Book it",
             formState = OpenUIObject.of("booking" to OpenUIValue.obj("guests" to OpenUIValue.Num(3.0))),
             formName = "booking",
+            label = "Book it",
         )
 
-        val action = OpenUIEngine.action(event, "m1")
+        val action = OpenUIEngine.action(event, "m1", Untitled)
 
         assertEquals(
             AIUIAction(
@@ -90,7 +107,7 @@ internal class OpenUIEngineTest {
     }
 
     @Test
-    fun `an action without a label is named by its context, then its type`() {
+    fun `an action is labeled with the control, never its context or type`() {
         val withContext = ActionEvent(
             "continue_conversation",
             OpenUIObject.of("context" to OpenUIValue.Str("More")),
@@ -98,16 +115,86 @@ internal class OpenUIEngineTest {
         )
         val custom = ActionEvent("add_to_cart", OpenUIObject.of("sku" to OpenUIValue.Str("a1")), humanFriendlyMessage = "")
 
-        assertEquals("More", OpenUIEngine.action(withContext, "m1")?.label)
-        assertEquals(mapOf<String, Any?>("context" to "More"), OpenUIEngine.action(withContext, "m1")?.payload)
-        assertEquals("add_to_cart", OpenUIEngine.action(custom, "m1")?.label)
-        assertEquals(mapOf("params" to mapOf("sku" to "a1")), OpenUIEngine.action(custom, "m1")?.payload)
+        assertEquals(Untitled, OpenUIEngine.action(withContext, "m1", Untitled)?.label)
+        assertEquals(mapOf<String, Any?>("context" to "More"), OpenUIEngine.action(withContext, "m1", Untitled)?.payload)
+        assertEquals(Untitled, OpenUIEngine.action(custom, "m1", Untitled)?.label)
+        assertEquals(mapOf("params" to mapOf("sku" to "a1")), OpenUIEngine.action(custom, "m1", Untitled)?.payload)
+    }
+
+    @Test
+    fun `the model's words for an action go to the agent, the tapped control is the person's message`() = runTest {
+        val engine = engine()
+        engine.content(reply("root = Card([Button(\"Cancel\", @ToAssistant(\"Yes, book the flight\"))])"), "m1")
+        val runtime = assertNotNull(engine.runtime("m1"))
+
+        runtime.triggerAction("Cancel", action = firstChild(runtime).props["action"])
+
+        val action = sent.single()
+        assertEquals("Cancel", action.label)
+        assertEquals("Yes, book the flight", action.payload["message"])
     }
 
     @Test
     fun `a link is no action for the agent`() {
         val link = ActionEvent("open_url", OpenUIObject.of("url" to OpenUIValue.Str("https://example.com")), "")
-        assertNull(OpenUIEngine.action(link, "m1"))
+        assertNull(OpenUIEngine.action(link, "m1", Untitled))
+    }
+
+    @Test
+    fun `only the action's own form goes to the agent, without what password fields hold`() {
+        val state = OpenUIObject.of(
+            "login" to OpenUIValue.obj(
+                "email" to OpenUIValue.obj("value" to OpenUIValue.Str("ana@example.com")),
+                "password" to OpenUIValue.obj("value" to OpenUIValue.Str("hunter2"), "secret" to OpenUIValue.of(true)),
+            ),
+        )
+        val inForm = ActionEvent("continue_conversation", humanFriendlyMessage = "", formState = state, formName = "login")
+        val outside = ActionEvent("continue_conversation", humanFriendlyMessage = "", formState = state)
+
+        val values = OpenUIEngine.action(inForm, "m1", Untitled)?.payload?.get("values")
+        assertEquals(mapOf("login" to mapOf("email" to mapOf("value" to "ana@example.com"))), values)
+        assertEquals(emptyMap(), OpenUIEngine.action(outside, "m1", Untitled)?.payload)
+    }
+
+    @Test
+    fun `a password reaches neither the agent nor the host's state`() = runTest {
+        val host = host()
+        val engine = engine(host)
+        val program = "root = Card([Form(\"login\", Buttons([Button(\"Sign in\")]), " +
+            "[FormControl(\"Email\", Input(\"email\")), FormControl(\"Password\", Input(\"password\", \"\", \"password\"))])])"
+        engine.content(reply(program), "m1")
+        val runtime = assertNotNull(engine.runtime("m1"))
+        runtime.stateField("email", null, "login", "Input").setValue(OpenUIValue.Str("ana@example.com"))
+        runtime.stateField("password", null, "login", "Input", isSecret = true).setValue(OpenUIValue.Str("hunter2"))
+
+        runtime.triggerAction("Sign in", "login")
+
+        val state = host.state("m1").toString()
+        assertTrue("ana@example.com" in state)
+        assertFalse("hunter2" in state)
+        assertFalse("hunter2" in sent.single().json.toString())
+        assertTrue("ana@example.com" in sent.single().json.toString())
+    }
+
+    @Test
+    fun `a password bound to a variable stays out of it`() = runTest {
+        val engine = engine()
+        engine.content(reply("\$pass = \"\"\nroot = Card([Input(\"pass\", \"\", \"password\", null, \$pass)])"), "m1")
+        val runtime = assertNotNull(engine.runtime("m1"))
+        val binding = firstChild(runtime).props["value"]
+
+        runtime.stateField("pass", binding, null, "Input", isSecret = true).setValue(OpenUIValue.Str("hunter2"))
+
+        assertEquals(OpenUIValue.Str(""), runtime.store["\$pass"])
+    }
+
+    @Test
+    fun `a reply's problems reach the app with its message id`() = runTest {
+        val engine = engine()
+        assertNotNull(engine.content(reply("root = Card([Nope(\"x\")])"), "m1"))
+
+        assertTrue(errors.isNotEmpty())
+        assertTrue(errors.all { it.second == "m1" })
     }
 
     @Test
@@ -217,6 +304,11 @@ internal class OpenUIEngineTest {
             val renderer = engine.library.renderer(component.name)
             if (component.component == null) assertNull(renderer) else assertNotNull(renderer)
         }
+    }
+
+    private fun firstChild(runtime: OpenUIRuntime): ElementNode {
+        val card = assertNotNull(runtime.root)
+        return assertNotNull((card.props["children"] as OpenUIValue.Arr).items.first().elementValue)
     }
 
     @Test
