@@ -39,6 +39,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.ai.a2ui.compose.A2UICatalog
 import io.getstream.chat.android.ai.a2ui.core.A2UIJson
 import io.getstream.chat.android.ai.a2ui.core.DataPath
 import io.getstream.chat.android.ai.a2ui.core.Fixtures
@@ -175,6 +176,51 @@ internal class A2UIRendererTest {
         val placeCardSchema = A2UIJson.map(components["PlaceCard"])!!
         assertEquals("A short summary of a place. The person asks about the place.", placeCardSchema["description"])
         assertEquals(listOf("title", "component"), placeCardSchema["required"])
+    }
+
+    @Test
+    fun `a component removed from the catalog isn't in the catalog the agent is told about`() {
+        val renderer = A2UIRenderer(catalog = A2UICatalog.Basic.removing("Video", "Slider"))
+
+        val instructions = renderer.capabilities(emptyList(), emptyList())["instructions"] as String
+        val document = instructions.substringAfter("## The catalog `getstream.io:app-catalog`\n\n```json\n")
+            .substringBefore("\n```")
+        val components = A2UIJson.map(A2UIJson.map(A2UIJson.parse(document))!!["components"])!!
+        assertFalse("Video" in components)
+        assertFalse("Slider" in components)
+        assertTrue("Text" in components)
+        renderer.catalogs(emptyList()).forEach { catalog ->
+            assertEquals(catalog.catalogId, setOf("Text", "Image"), catalog.components.keys.intersect(setOf("Text", "Image", "Video", "Slider")))
+        }
+    }
+
+    @Test
+    fun `a reply that uses a removed component shows the rest and reports it like an unknown one`() {
+        val errors = mutableListOf<A2UIError>()
+        val renderer = A2UIRenderer(
+            catalog = A2UICatalog.Basic.removing("Video"),
+            onError = { error, _ -> errors.add(error) },
+        )
+        val host = AIUIHost(renderers = listOf(renderer)) {}
+
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Column", "children" to listOf("title", "clip", "other")),
+                    mapOf("id" to "title", "component" to "Text", "text" to "Highlights"),
+                    mapOf("id" to "clip", "component" to "Video", "url" to "https://example.com/clip.mp4"),
+                    mapOf("id" to "other", "component" to "Gallery"),
+                ),
+            ),
+            host = host,
+        )
+
+        rule.onNodeWithText("Highlights").assertExists()
+        rule.onNodeWithContentDescription("Play video").assertDoesNotExist()
+        val video = errors.single { "'Video'" in it.message }
+        val unknown = errors.single { "'Gallery'" in it.message }
+        assertEquals(unknown.code, video.code)
+        assertEquals(unknown.message.replace("Gallery", "Video"), video.message)
     }
 
     @Test

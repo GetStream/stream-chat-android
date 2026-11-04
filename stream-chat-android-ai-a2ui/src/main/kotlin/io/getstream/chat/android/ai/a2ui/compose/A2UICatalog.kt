@@ -34,7 +34,8 @@ public typealias A2UIComponentRenderer = @Composable (scope: A2UIComponentScope)
  * }
  * ```
  *
- * A type the catalog has no renderer for shows nothing.
+ * To keep the agent from using a type, remove it with [removing]. The agent is told about the basic
+ * catalog's types the catalog draws, and a type the catalog has no renderer for shows nothing.
  *
  * @param renderers The renderer of each type.
  */
@@ -47,6 +48,15 @@ public class A2UICatalog(public val renderers: Map<String, A2UIComponentRenderer
     /** A copy that draws [type] with [renderer]. */
     public fun with(type: String, renderer: A2UIComponentRenderer): A2UICatalog =
         A2UICatalog(renderers + (type to renderer))
+
+    /**
+     * A copy without [types], such as `Video`. The agent isn't told about a removed type of the
+     * basic catalog, and a reply that still uses one shows nothing for it, as for a type no catalog
+     * has.
+     *
+     * @param types The types to remove.
+     */
+    public fun removing(vararg types: String): A2UICatalog = A2UICatalog(renderers - types.toSet())
 
     /** A catalog with the renderers of both; the ones of [other] win. */
     public operator fun plus(other: A2UICatalog): A2UICatalog = A2UICatalog(renderers + other.renderers)

@@ -41,7 +41,6 @@ import io.getstream.chat.android.ai.a2ui.core.A2UIJson
 import io.getstream.chat.android.ai.a2ui.core.A2UIProtocol
 import io.getstream.chat.android.ai.a2ui.core.A2UIStream
 import io.getstream.chat.android.ai.a2ui.core.AgentMessage
-import io.getstream.chat.android.ai.a2ui.core.BasicCatalog
 import io.getstream.chat.android.ai.a2ui.core.ComponentDefinition
 import io.getstream.chat.android.ai.a2ui.core.DataContext
 import io.getstream.chat.android.ai.a2ui.core.DynamicValue
@@ -84,7 +83,7 @@ internal class A2UIEngine(
 ) : AIUIEngine {
 
     private val placeable: List<Pair<AIUIComponent, ComponentDefinition>> =
-        PortableComponents.placeable(host.components, BasicCatalog.catalog)
+        PortableComponents.placeable(host.components, renderer.basicCatalog)
 
     /** The catalogs every reply's processor reads, with the app's components joined. */
     private val catalogs = renderer.catalogs(host.components)

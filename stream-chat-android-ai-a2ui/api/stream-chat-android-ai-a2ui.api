@@ -5,6 +5,7 @@ public final class io/getstream/chat/android/ai/a2ui/compose/A2UICatalog {
 	public final fun get (Ljava/lang/String;)Lkotlin/jvm/functions/Function3;
 	public final fun getRenderers ()Ljava/util/Map;
 	public final fun plus (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;)Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;
+	public final fun removing ([Ljava/lang/String;)Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;
 	public final fun with (Ljava/lang/String;Lkotlin/jvm/functions/Function3;)Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;
 }
 

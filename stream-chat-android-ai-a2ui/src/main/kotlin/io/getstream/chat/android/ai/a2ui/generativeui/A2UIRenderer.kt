@@ -59,8 +59,9 @@ import io.getstream.chat.android.ai.compose.parts.definition
  * The catalog with the app's components goes by [catalogId], and the basic catalog's id shows them
  * as well.
  *
- * @param catalog How each component of the basic catalog looks; the app's components look as they
- * draw themselves.
+ * @param catalog How each component of the basic catalog looks, and which of them the agent can
+ * use: one removed with [A2UICatalog.removing] isn't in the catalog the agent is told about. The
+ * app's components look as they draw themselves.
  * @param catalogId The id the agent names the catalog with the app's components by.
  * @param instructions What the agent's model is told before A2UI's own instructions, such as which
  * answers to write as UI and when to use the app's components.
@@ -119,10 +120,15 @@ public class A2UIRenderer(
      * its own id, so a surface naming either one shows them.
      */
     internal fun catalogs(components: List<AIUIComponent>): List<Catalog> {
-        val definitions = PortableComponents.placeable(components, BasicCatalog.catalog).map { it.second }
-        val extended = BasicCatalog.catalog.adding(definitions, catalogId)
-        if (catalogId == BasicCatalog.catalog.catalogId) return listOf(extended)
-        return listOf(extended, BasicCatalog.catalog.adding(definitions))
+        val definitions = PortableComponents.placeable(components, basicCatalog).map { it.second }
+        val extended = basicCatalog.adding(definitions, catalogId)
+        if (catalogId == basicCatalog.catalogId) return listOf(extended)
+        return listOf(extended, basicCatalog.adding(definitions))
+    }
+
+    /** The basic catalog with only the components [catalog] draws, as the agent is told it. */
+    internal val basicCatalog: Catalog by lazy {
+        BasicCatalog.catalog.removing(BasicCatalog.catalog.components.keys - catalog.renderers.keys)
     }
 
     public companion object {

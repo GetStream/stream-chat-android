@@ -201,6 +201,9 @@ internal data class Catalog(
     fun adding(components: List<ComponentDefinition>, catalogId: String = this.catalogId): Catalog =
         copy(catalogId = catalogId, components = this.components + components.associateBy { it.name })
 
+    /** A copy without the components named [names]. */
+    fun removing(names: Set<String>): Catalog = copy(components = components - names)
+
     /** The catalog as an A2UI 1.0 catalog document, which an agent writes against. */
     fun toJson(): Map<String, Any?> = buildMap {
         put("\$schema", "https://json-schema.org/draft/2020-12/schema")
