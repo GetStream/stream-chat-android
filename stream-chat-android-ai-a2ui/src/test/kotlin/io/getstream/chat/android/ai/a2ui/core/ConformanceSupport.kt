@@ -39,9 +39,16 @@ internal class Harness(
     catalogs: List<Catalog>,
     defaultCatalogId: String? = null,
     services: RendererServices = testServices(),
+    strictMode: Boolean = false,
 ) {
     val sent = mutableListOf<RendererMessage>()
-    val processor = MessageProcessor(catalogs, defaultCatalogId, services, send = { sent.add(it) })
+    val processor = MessageProcessor(
+        catalogs,
+        defaultCatalogId,
+        services,
+        strictMode = strictMode,
+        send = { sent.add(it) },
+    )
 
     val errors: List<RendererError> get() = sent.filterIsInstance<RendererMessage.Error>().map { it.error }
 

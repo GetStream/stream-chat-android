@@ -156,6 +156,8 @@ internal class Surface(
  * @param services What functions need from the app.
  * @param schedule Runs a block after a delay, for timing out calls to the agent; none by default.
  * @param agentFunctionTimeoutMillis How long a call to the agent may go unanswered.
+ * @param strictMode Whether a call to a function its catalog doesn't declare is an error. Off by
+ * default, so such a call goes to the agent as a `callAgentFunction` when it's evaluated.
  * @param send Takes each message for the agent.
  */
 @Suppress("TooManyFunctions")
@@ -165,6 +167,7 @@ internal class MessageProcessor(
     val services: RendererServices = RendererServices(),
     private val schedule: ((Long, () -> Unit) -> Unit)? = null,
     private val agentFunctionTimeoutMillis: Long = DEFAULT_AGENT_FUNCTION_TIMEOUT_MILLIS,
+    private val strictMode: Boolean = false,
     private val send: (RendererMessage) -> Unit,
 ) : EvaluatorRouter {
     val catalogs: CatalogRegistry = CatalogRegistry(catalogs, defaultCatalogId)
@@ -559,7 +562,8 @@ internal class MessageProcessor(
         return errors
     }
 
-    // A call whose catalog doesn't resolve, or whose literal arguments break its function's schema.
+    // A call whose catalog doesn't resolve, whose function the catalog doesn't declare (in strict
+    // mode), or whose literal arguments break its function's schema.
     private fun callError(call: Map<String, Any?>, pointer: String, surface: Surface): RendererError? {
         val name = call[A2UIProtocol.CALL_KEY] as? String ?: return null
         if (name.startsWith(A2UIProtocol.SYSTEM_PREFIX)) return null
@@ -579,12 +583,13 @@ internal class MessageProcessor(
             surface.surfaceId,
             pointer,
         )
+        // Outside strict mode, a function the catalog doesn't declare is the agent's to answer.
         val function = catalog.function(name) ?: return RendererError(
             RendererError.VALIDATION_FAILED,
             "Unrecognized function '$name': catalog '${catalog.catalogId}' does not define it.",
             surface.surfaceId,
             pointer,
-        )
+        ).takeIf { strictMode }
         val schema = function.argumentsSchema ?: return null
         val (path, reason) = SchemaValidator.violation(
             value = A2UIJson.map(call["args"]).orEmpty(),

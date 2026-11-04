@@ -98,9 +98,11 @@ internal class ConformanceTest(
                 allowMissingRoot = flags["allowMissingRoot"] == true,
             )
         }
-        val strict = if (case["action"] == "validate") case["strictMode"] != false else case["strictMode"] == true
-        return if (strict) TopologyValidator() else null
+        return if (isStrict()) TopologyValidator() else null
     }
+
+    private fun isStrict(): Boolean =
+        if (case["action"] == "validate") case["strictMode"] != false else case["strictMode"] == true
 
     private fun touchedSurfaces(messages: List<Any?>): Set<String> = messages.flatMap { message ->
         val map = A2UIJson.map(message) ?: return@flatMap emptyList()
@@ -561,7 +563,7 @@ internal class ConformanceTest(
 
     // region Catalogs
 
-    private fun harness(): Harness = Harness(catalogsFor(case))
+    private fun harness(): Harness = Harness(catalogsFor(case), strictMode = isStrict())
 
     private fun catalogPaths(): List<Catalog?> =
         A2UIJson.list(case["catalogPaths"]).orEmpty().filterIsInstance<String>().map { path ->
