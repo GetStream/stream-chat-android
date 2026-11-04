@@ -74,8 +74,7 @@ internal class QueryChannelsLogicGroupedReconnectTest {
         logic.applyGroupedResult(group, isFirstPage = true, keepsLoadedPages = true)
 
         // Then
-        verify(queryChannelsStateLogic, never()).removeChannels(any())
-        verify(queryChannelsStateLogic, never()).setCids(any())
+        verify(queryChannelsStateLogic, never()).resetToPage(any())
         verify(queryChannelsStateLogic).setChannelsOffset(0)
         verify(queryChannelsStateLogic).setNextCursor("cursor-2")
         verify(queryChannelsStateLogic).setEndOfChannels(false)
@@ -94,8 +93,7 @@ internal class QueryChannelsLogicGroupedReconnectTest {
         logic.applyGroupedResult(group, isFirstPage = true, keepsLoadedPages = true)
 
         // Then
-        verify(queryChannelsStateLogic).removeChannels(existing.keys)
-        verify(queryChannelsStateLogic).setCids(emptySet())
+        verify(queryChannelsStateLogic).resetToPage(existing.keys)
     }
 
     @Test
@@ -110,8 +108,7 @@ internal class QueryChannelsLogicGroupedReconnectTest {
         logic.applyGroupedResult(group, isFirstPage = true, keepsLoadedPages = true)
 
         // Then
-        verify(queryChannelsStateLogic).removeChannels(setOf("messaging:old1"))
-        verify(queryChannelsStateLogic).setCids(emptySet())
+        verify(queryChannelsStateLogic).resetToPage(setOf("messaging:old1"))
     }
 
     @Test

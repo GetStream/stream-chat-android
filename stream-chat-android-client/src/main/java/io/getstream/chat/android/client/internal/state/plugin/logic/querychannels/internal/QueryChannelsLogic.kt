@@ -358,7 +358,12 @@ internal class QueryChannelsLogic(
             }
             if (isFirstPage) {
                 val keepsPages = keepsLoadedPages && group.next != null && existing.orEmpty().size > channels.size
-                if (!keepsPages) resetToPage(existing, channels)
+                // Only channels listed before the merge started are dropped; one an event listed since is newer than
+                // the page. Channels still in the page keep their copy, so messages only this device has survive.
+                if (!keepsPages) {
+                    val pageCids = channels.mapTo(mutableSetOf()) { it.cid }
+                    queryChannelsStateLogic.resetToPage(existing.orEmpty().keys - pageCids)
+                }
                 // Defensive: Grouped uses cursor pagination, not offset. Resetting guards against any
                 // future cross-path leakage from a Standard offset query mistakenly sharing this state.
                 queryChannelsStateLogic.setChannelsOffset(0)
@@ -379,19 +384,6 @@ internal class QueryChannelsLogic(
             queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
             queryChannelsDatabaseLogic.storeStateForChannels(group.channels.toSet())
         }
-    }
-
-    /** Leaves only the channels of [page] in the list, before they are added. */
-    private fun resetToPage(existing: Map<String, Channel>?, page: List<Channel>) {
-        if (!existing.isNullOrEmpty()) {
-            // Channels still in the page keep their copy, so messages only this device has survive the merge.
-            val returnedCids: Set<String> = page.mapTo(mutableSetOf()) { it.cid }
-            val droppedCids = existing.keys - returnedCids
-            if (droppedCids.isNotEmpty()) {
-                queryChannelsStateLogic.removeChannels(droppedCids)
-            }
-        }
-        queryChannelsStateLogic.setCids(emptySet())
     }
 
     /**
