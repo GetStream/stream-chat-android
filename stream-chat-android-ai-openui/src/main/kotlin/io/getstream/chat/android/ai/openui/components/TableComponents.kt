@@ -102,7 +102,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 import kotlin.math.ceil
 
 internal val tableRenderers: Map<String, ComponentRenderer> = mapOf(
@@ -603,17 +602,11 @@ internal object TableDateFormatting {
 
     fun string(date: Date): String = formatter().format(date)
 
+    // A date-time like `2026-11-04T10:00:00Z` reads as its date: the cell edits days only.
     fun date(string: String?): Date? {
         if (string.isNullOrEmpty()) return null
-        try {
-            return formatter().parse(string.take(10))
-        } catch (_: ParseException) {
-        }
         return try {
-            SimpleDateFormat(
-                "yyyy-MM-dd'T'HH:mm:ssXXX",
-                Locale.US,
-            ).apply { timeZone = TimeZone.getTimeZone("UTC") }.parse(string)
+            formatter().parse(string.take(10))
         } catch (_: ParseException) {
             null
         }
