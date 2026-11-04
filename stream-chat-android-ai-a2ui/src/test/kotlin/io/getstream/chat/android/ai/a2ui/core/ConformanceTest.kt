@@ -72,7 +72,10 @@ internal class ConformanceTest(
                 topology()?.let { validator -> harness.processor.validateTopology(validator) }
                 ErrorExpectations.assertMatches(expectError, harness.errors)
             } else {
+                harness.sent.clear()
                 harness.process(messages)
+                val reported = harness.errors
+                assertTrue("Unexpected errors: ${reported.map { it.toJson() }}", reported.isEmpty())
                 topology()?.let { validator ->
                     touchedSurfaces(messages).mapNotNull(harness.processor::surface).forEach { surface ->
                         val errors = validator.errors(surface)
@@ -584,7 +587,8 @@ internal class ConformanceTest(
             return if (spec.containsKey("components") || spec.containsKey("functions")) {
                 Catalog.fromJson(spec + ("catalogId" to catalogId))
             } else {
-                Catalog(catalogId, basic.components)
+                // A catalog the case names without a schema defines the components it is used for.
+                Catalog(catalogId, basic.components + componentsUsed(case, catalogId))
             }
         }
         A2UIJson.map(A2UIJson.map(case["catalog"])?.get("catalogSchema"))?.let { schema ->
@@ -623,6 +627,22 @@ internal class ConformanceTest(
         return catalogs.values.toList()
     }
 
+    // The components [value] places in [catalogId], each defined with the properties it is given.
+    private fun componentsUsed(value: Any?, catalogId: String): Map<String, ComponentDefinition> = when (value) {
+        is Map<*, *> -> {
+            val type = value["component"] as? String
+            val own = if (type != null && value["catalogId"] == catalogId) {
+                val properties = value.keys.filterIsInstance<String>().filter { it !in COMPONENT_KEYS }
+                mapOf(type to ComponentDefinition(type, properties = properties.associateWith { emptyMap() }))
+            } else {
+                emptyMap()
+            }
+            own + value.values.fold(emptyMap()) { found, item -> found + componentsUsed(item, catalogId) }
+        }
+        is List<*> -> value.fold(emptyMap()) { found, item -> found + componentsUsed(item, catalogId) }
+        else -> emptyMap()
+    }
+
     private fun createSurfaceCatalogIds(value: Any?): List<String> = when (value) {
         is Map<*, *> -> {
             val own = A2UIJson.map(value["createSurface"])?.get("catalogId") as? String
@@ -636,6 +656,7 @@ internal class ConformanceTest(
 
     companion object {
         private val OTHER_VERSIONS = setOf("v0.8", "v0.9", "v0.9.1")
+        private val COMPONENT_KEYS = setOf("id", "component", "catalogId")
 
         private val SUITES = listOf(
             "expressions",

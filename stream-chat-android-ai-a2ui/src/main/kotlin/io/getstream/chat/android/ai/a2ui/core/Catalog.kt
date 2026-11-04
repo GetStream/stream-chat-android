@@ -331,11 +331,17 @@ internal object CommonTypes {
     }
 }
 
-/** The JSON files bundled with the module. */
+/**
+ * The JSON files bundled with the module. They load by absolute path, so the lookup does not
+ * depend on the package of this class, which R8 may move with `-repackageclasses`.
+ */
 internal object Resources {
+    private const val DIRECTORY = "/io/getstream/chat/android/ai/a2ui/core/"
+
     fun read(name: String): String {
-        val stream = Resources::class.java.getResourceAsStream(name)
-            ?: error("The A2UI resource $name is missing")
+        val path = DIRECTORY + name
+        val stream = Resources::class.java.getResourceAsStream(path)
+            ?: error("The A2UI resource $path is missing")
         return stream.bufferedReader(Charsets.UTF_8).use { it.readText() }
     }
 }

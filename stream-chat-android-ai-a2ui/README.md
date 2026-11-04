@@ -10,9 +10,11 @@ The renderer reads the final A2UI 1.0 wire format:
 - the data model and its bindings: `{"@path": ...}` JSON Pointers, absolute or relative to a list template's item, written back by inputs;
 - function calls with `{"@call": ...}`, including the `@index` system function and `@@` escapes for literal `@` keys;
 - `formatString` templates (`${/path}`, `${relative}`, `${fn(arg: value)}`, `\${` for a literal);
-- function calls in both directions: the agent can call the renderer's functions, and a function the catalogs lack goes to the agent;
+- function calls from the agent: the agent can call the renderer's functions with `callRendererFunction`;
 - the basic catalog: every component and function;
-- errors reported to the agent with the spec's codes and JSON Pointer paths.
+- errors with the spec's codes and JSON Pointer paths.
+
+The message processor also produces the renderer's other messages to the agent: `callAgentFunction` for a function the catalogs lack, and `error`. A chat sends the agent only the actions a person takes; it logs the function calls and errors, so a value that needs a function of the agent's stays empty.
 
 Parsing and processing are internal: the public API is the renderer, its catalog and the actions it sends.
 
