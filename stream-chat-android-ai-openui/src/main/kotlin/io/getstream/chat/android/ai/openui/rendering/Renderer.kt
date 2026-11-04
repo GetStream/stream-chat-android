@@ -109,7 +109,7 @@ internal fun OpenUIView(
     }
 
     val root = state.root ?: return
-    val alpha by animateFloatAsState(if (state.isQueryLoading) 0.7f else 1f, label = "queryLoading")
+    val alpha by animateFloatAsState(if (state.isQueryLoading) QueryLoadingAlpha else 1f, label = "queryLoading")
     CompositionLocalProvider(
         // Resolved once here, so components don't each build a theme from MaterialTheme.
         LocalOpenUITheme provides (LocalOpenUITheme.current ?: OpenUITheme.fromMaterial()),
@@ -158,7 +158,7 @@ internal fun OpenUIView(
  * and decides which schemes it accepts. Defaults to the platform's URI handler for web and email links.
  */
 @Composable
-public fun Renderer(
+internal fun Renderer(
     response: String?,
     library: Library,
     modifier: Modifier = Modifier,
@@ -252,3 +252,6 @@ internal val LocalOpenUIFormName: ProvidableCompositionLocal<String?> = composit
 private class OpenUrlHandler(private val open: (String) -> Unit) : UriHandler {
     override fun openUri(uri: String) = open(uri)
 }
+
+// How faded a response is while its queries load.
+private const val QueryLoadingAlpha = 0.7f

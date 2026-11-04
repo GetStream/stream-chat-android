@@ -292,6 +292,8 @@ internal fun EqualWidthRow(
 }
 
 /** Flexbox-like container for `Stack` and the standard `Card` (direction, gap, align, justify, wrap). */
+// Each parameter is one flexbox property of `Stack` and the standard `Card`.
+@Suppress("LongParameterList")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun FlexContainer(

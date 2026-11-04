@@ -32,10 +32,10 @@ import kotlinx.coroutines.launch
 
 /** Read access to a component's evaluated props with lenient, JavaScript-like conversions. */
 @Stable
-public class ComponentProps internal constructor(public val values: OpenUIObject) {
+public class ComponentProps internal constructor(internal val values: OpenUIObject) {
 
     /** The raw value of prop [key]. */
-    public operator fun get(key: String): OpenUIValue? = values[key]
+    internal operator fun get(key: String): OpenUIValue? = values[key]
 
     /** The value if it is a string. */
     public fun string(key: String): String? = values[key].stringValue
@@ -59,20 +59,20 @@ public class ComponentProps internal constructor(public val values: OpenUIObject
     }
 
     /** The value as an array: arrays as they are, `null`/absent as empty, anything else wrapped. */
-    public fun array(key: String): List<OpenUIValue> = when (val value = values[key]) {
+    internal fun array(key: String): List<OpenUIValue> = when (val value = values[key]) {
         is OpenUIValue.Arr -> value.items
         null, OpenUIValue.Null -> emptyList()
         else -> listOf(value)
     }
 
     /** Elements in an array prop (non-elements are skipped). */
-    public fun elements(key: String): List<ElementNode> = array(key).mapNotNull { it.elementValue }
+    internal fun elements(key: String): List<ElementNode> = array(key).mapNotNull { it.elementValue }
 
     /** The value if it is an element. */
-    public fun element(key: String): ElementNode? = values[key].elementValue
+    internal fun element(key: String): ElementNode? = values[key].elementValue
 
     /** The value if it is an object. */
-    public fun obj(key: String): OpenUIObject? = values[key].objectValue
+    internal fun obj(key: String): OpenUIObject? = values[key].objectValue
 
     /** Strings (non-strings converted with `String(value)`). */
     public fun strings(key: String): List<String> = array(key).map { JS.toStringOrEmpty(it) }
@@ -83,8 +83,8 @@ public class ComponentProps internal constructor(public val values: OpenUIObject
 
 /**
  * What a component's renderer gets (port of `ComponentRenderProps`, with the context hooks
- * component renderers use): its evaluated [props], its [statementId], whether the response is
- * still streaming, and ways to render children, bind fields and fire actions.
+ * component renderers use): its evaluated [props], whether the response is still streaming, and
+ * ways to render its children and the library's own view of it.
  */
 @Stable
 public class ComponentRenderProps internal constructor(
@@ -97,6 +97,8 @@ public class ComponentRenderProps internal constructor(
     /** Whether the response is still streaming, so inputs stay disabled until it ends (`useIsStreaming`). */
     public val isStreaming: Boolean,
     private val scope: CoroutineScope,
+    /** The library's own view of the component, when an app replaced it. */
+    private val defaultRenderer: ComponentRenderer? = null,
 ) {
     /** The element's evaluated props. */
     public val props: ComponentProps = ComponentProps(element.props)
@@ -105,21 +107,35 @@ public class ComponentRenderProps internal constructor(
     internal val typeName: String get() = element.typeName
 
     /** The statement that declared the element, if any; `null` for inline components. */
-    public val statementId: String? get() = element.statementId
+    internal val statementId: String? get() = element.statementId
 
     /**
      * Renders a value: an element, an array of values (as siblings) or a primitive (as text), port
      * of `renderNode`.
      */
     @Composable
-    public fun RenderNode(value: OpenUIValue?) {
+    internal fun RenderNode(value: OpenUIValue?) {
         OpenUINode(value)
     }
 
-    /** Renders the prop named [key]. */
+    /**
+     * Renders the prop named [key] that holds components, such as a card's `children`.
+     *
+     * @param key The prop's name.
+     */
     @Composable
-    internal fun RenderProp(key: String) {
+    public fun RenderProp(key: String) {
         OpenUINode(element.props[key])
+    }
+
+    /**
+     * Renders the library's own view of the component, to wrap or restyle in a view that replaces
+     * it with [Library.replacingView]. It keeps the component's validation and actions. It renders
+     * nothing for a component that was not replaced.
+     */
+    @Composable
+    public fun DefaultView() {
+        defaultRenderer?.invoke(this)
     }
 
     /** Renders one element with its library renderer. */
@@ -133,7 +149,7 @@ public class ComponentRenderProps internal constructor(
      * state (port of `useStateField`). Reading it subscribes the caller to state changes.
      */
     @Composable
-    public fun stateField(name: String, binding: OpenUIValue?, componentType: String? = null): StateField {
+    internal fun stateField(name: String, binding: OpenUIValue?, componentType: String? = null): StateField {
         LocalOpenUIStoreSnapshot.current // Recompose when the store changes.
         return runtime.stateField(name, binding, LocalOpenUIFormName.current, componentType)
     }
@@ -142,13 +158,17 @@ public class ComponentRenderProps internal constructor(
      * Runs [action] (a step, `Action([...])` or a legacy action object) with the state of the form
      * [formName]; without one, continues the conversation with [label] (port of `useTriggerAction`).
      */
-    public fun triggerAction(label: String, formName: String? = null, action: OpenUIValue? = null) {
+    internal fun triggerAction(label: String, formName: String? = null, action: OpenUIValue? = null) {
         scope.launch { runtime.triggerAction(label, formName, action) }
     }
 
     /** A copy of the context for another element (used by parents to render data-only children). */
     internal fun forElement(element: ElementNode): ComponentRenderProps =
         ComponentRenderProps(element, runtime, library, isStreaming, scope)
+
+    /** A copy of the context whose [DefaultView] draws [renderer]. */
+    internal fun withDefaultView(renderer: ComponentRenderer): ComponentRenderProps =
+        ComponentRenderProps(element, runtime, library, isStreaming, scope, renderer)
 
     /** Helpers for parents that render their children. */
     internal companion object {

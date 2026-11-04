@@ -81,6 +81,21 @@ internal class LibraryTest {
     }
 
     @Test
+    fun `replacing a view keeps the schema and prompt`() {
+        val library = openuiChatLibrary.replacingView("Callout") { props -> props.DefaultView() }
+        assertEquals(openuiChatLibrary.componentNames, library.componentNames)
+        assertEquals(openuiChatLibrary.component("Callout")?.schema, library.component("Callout")?.schema)
+        assertEquals(openuiChatLibrary.systemPrompt(), library.systemPrompt())
+        assertTrue(library.renderer("Callout") !== openuiChatLibrary.renderer("Callout"))
+    }
+
+    @Test
+    fun `replacing the view of a component without one keeps the library`() {
+        assertSame(openuiChatLibrary, openuiChatLibrary.replacingView("Unknown") { })
+        assertSame(openuiChatLibrary, openuiChatLibrary.replacingView("Col") { })
+    }
+
+    @Test
     fun `adding a component of a name the library has keeps its renderer`() {
         val callout = openuiChatLibrary.component("Callout")!!
         val library = openuiChatLibrary.adding(listOf(DefinedComponent(callout.schema) { }))

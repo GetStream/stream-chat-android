@@ -90,6 +90,8 @@ private val TableCellMaxWidth = 260.dp
 private class TableColumn(val label: String, val data: List<OpenUIValue>, val isNumeric: Boolean)
 
 /** `Table(columns)` with `Col(label, data, type?)`: column-oriented, 10 rows per page. */
+// Sorting, paging and the loading state all feed the one grid it draws.
+@Suppress("LongMethod")
 @Composable
 private fun TableComponent(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
@@ -104,7 +106,7 @@ private fun TableComponent(context: ComponentRenderProps) {
     val rowCount = columns.maxOfOrNull { it.data.size } ?: 0
 
     if (context.runtime.isQueryLoading && rowCount == 0) {
-        TableSkeleton(maxOf(columns.size, 3))
+        TableSkeleton(maxOf(columns.size, SkeletonMinColumns))
         return
     }
     if (columns.isEmpty()) return
@@ -223,6 +225,8 @@ private fun TableCell(context: ComponentRenderProps, value: OpenUIValue?, numeri
  * their widest cell; spare width up to [minWidth] is shared out. Cells are measured once with
  * loose constraints (no intrinsics), then aligned inside their slot.
  */
+// The grid measures every cell and draws its header and dividers in one layout pass.
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun TableGrid(
     columns: Int,
@@ -307,7 +311,7 @@ private fun TableSkeleton(columns: Int) {
     val pulse by rememberInfiniteTransition(label = "skeleton").animateFloat(
         initialValue = 1f,
         targetValue = 0.5f,
-        animationSpec = infiniteRepeatable(tween(800), RepeatMode.Reverse),
+        animationSpec = infiniteRepeatable(tween(SkeletonPulseMillis), RepeatMode.Reverse),
         label = "pulse",
     )
     val loading = stringResource(R.string.stream_ai_openui_table_loading)
@@ -315,7 +319,7 @@ private fun TableSkeleton(columns: Int) {
         Modifier.fillMaxWidth().alpha(pulse).semantics { contentDescription = loading },
         verticalArrangement = Arrangement.spacedBy(theme.spacing.s),
     ) {
-        repeat(5) {
+        repeat(SkeletonRows) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(theme.spacing.m)) {
                 repeat(columns) {
                     Box(
@@ -328,3 +332,8 @@ private fun TableSkeleton(columns: Int) {
         }
     }
 }
+
+// The columns and rows a loading table shows, and how long one pulse of it takes.
+private const val SkeletonMinColumns = 3
+private const val SkeletonRows = 5
+private const val SkeletonPulseMillis = 800

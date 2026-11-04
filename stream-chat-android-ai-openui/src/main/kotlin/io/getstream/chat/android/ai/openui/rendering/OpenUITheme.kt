@@ -55,10 +55,10 @@ public data class OpenUITheme(
         /** Subtle fills (chips, tags, table headers). */
         val subtleFill: Color,
         val border: Color,
-        val success: Color = Color(0xFF219E5C),
-        val warning: Color = Color(0xFFDB8C14),
-        val danger: Color = Color(0xFFDB363D),
-        val info: Color = Color(0xFF2973E8),
+        val success: Color = Color(SuccessArgb),
+        val warning: Color = Color(WarningArgb),
+        val danger: Color = Color(DangerArgb),
+        val info: Color = Color(InfoArgb),
         val neutral: Color,
         /** Categorical chart colors. */
         val chartPalette: List<Color> = DefaultChartPalette,
@@ -177,3 +177,9 @@ internal val LocalOpenUITheme = staticCompositionLocalOf<OpenUITheme?> { null }
 public fun ProvideOpenUITheme(theme: OpenUITheme, content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalOpenUITheme provides theme, content = content)
 }
+
+// The default status colors, as ARGB.
+private const val SuccessArgb = 0xFF219E5C
+private const val WarningArgb = 0xFFDB8C14
+private const val DangerArgb = 0xFFDB363D
+private const val InfoArgb = 0xFF2973E8
