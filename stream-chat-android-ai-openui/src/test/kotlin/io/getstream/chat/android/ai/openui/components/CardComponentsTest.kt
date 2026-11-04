@@ -18,6 +18,7 @@ package io.getstream.chat.android.ai.openui.components
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 internal class CardComponentsTest {
 
@@ -28,5 +29,14 @@ internal class CardComponentsTest {
         assertEquals(8.0, imageTextSize(-5.0))
         assertEquals(200.0, imageTextSize(1e9))
         assertEquals(64.0, imageTextSize(64.0))
+    }
+
+    @Test
+    fun `card block gaps stay between 0 and 48`() {
+        assertEquals(48.0, cardBlockGap(100_000_000.0))
+        assertEquals(0.0, cardBlockGap(-8.0))
+        assertEquals(12.0, cardBlockGap(12.0))
+        assertNull(cardBlockGap(Double.POSITIVE_INFINITY))
+        assertNull(cardBlockGap(Double.NaN))
     }
 }
