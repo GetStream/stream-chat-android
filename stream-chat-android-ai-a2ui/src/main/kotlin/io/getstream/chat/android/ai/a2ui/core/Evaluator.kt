@@ -71,11 +71,20 @@ internal data class RendererServices(
 internal interface EvaluatorRouter {
     /**
      * The agent's answer to a call of a function the renderer doesn't have: `null` while the call
-     * is on its way, the value once the agent answered.
+     * is on its way, the value once the agent answered. A call a person's gesture started goes out
+     * every time, as each gesture asks again.
      *
+     * @param userActivated Whether a person's gesture started the call, rather than the surface
+     * while it renders.
      * @throws FunctionException When the agent answered with an error, or not in time.
      */
-    fun agentFunctionValue(name: String, catalogId: String?, arguments: Map<String, Any?>, surfaceId: String): Any?
+    fun agentFunctionValue(
+        name: String,
+        catalogId: String?,
+        arguments: Map<String, Any?>,
+        surfaceId: String,
+        userActivated: Boolean = false,
+    ): Any?
 
     /** Reports a problem to the agent. */
     fun report(error: RendererError)
@@ -174,7 +183,7 @@ internal class Evaluator(
         }
         return try {
             // The agent learns the catalog the call resolved in, even when the call named none.
-            router.agentFunctionValue(name, catalog.catalogId, arguments, surfaceId)
+            router.agentFunctionValue(name, catalog.catalogId, arguments, surfaceId, userActivation > 0)
         } catch (_: FunctionException) {
             failureCount++
             null

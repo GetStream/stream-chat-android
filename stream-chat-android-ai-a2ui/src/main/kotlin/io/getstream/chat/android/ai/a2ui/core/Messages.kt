@@ -404,11 +404,17 @@ internal sealed interface RendererMessage {
         val metadata: Map<String, Any?>? = null,
     ) : RendererMessage
 
-    /** Asks the agent to run a function the renderer doesn't have. */
+    /**
+     * Asks the agent to run a function the renderer doesn't have.
+     *
+     * @property userActivated Whether a person's gesture started the call, such as a button's
+     * action, rather than the surface while it renders. It stays on this device.
+     */
     data class CallAgentFunction(
         val surfaceId: String,
         val functionCallId: String,
         val call: FunctionCall,
+        val userActivated: Boolean = false,
     ) : RendererMessage
 
     /** Answers a `callRendererFunction`. */

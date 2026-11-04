@@ -238,6 +238,22 @@ internal class ProcessorTest {
     }
 
     @Test
+    fun `a call from a gesture says so and asks again each time`() {
+        createSurface(listOf(text(text = mapOf("@call" to "weather", "args" to mapOf("city" to "Ohrid")))))
+        val surface = processor.surface("s")!!
+        NodeContext(surface, surface.rootNode()!!).string("text")
+        val action = mapOf("functionCall" to mapOf("@call" to "weather", "args" to mapOf("city" to "Ohrid")))
+
+        surface.performRaw(action, "root", DataContext(surface.dataModel))
+        surface.performRaw(action, "root", DataContext(surface.dataModel))
+
+        val calls = sent.filterIsInstance<RendererMessage.CallAgentFunction>()
+        assertEquals(listOf(false, true, true), calls.map { it.userActivated })
+        assertEquals(3, calls.map { it.functionCallId }.toSet().size)
+        assertTrue(calls.none { "userActivated" in (it.toJson()["callAgentFunction"] as Map<*, *>) })
+    }
+
+    @Test
     fun `different arguments make a call of their own`() {
         createSurface(
             listOf(
