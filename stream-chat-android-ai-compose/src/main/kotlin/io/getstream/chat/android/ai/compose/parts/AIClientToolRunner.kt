@@ -54,15 +54,6 @@ public interface AIClientTool {
      */
     public val isReadOnly: Boolean get() = false
 
-    /** The tool's name, description, argument schema and read-only hint, as the agent sees them. */
-    public val definition: AIClientToolDefinition
-        get() = AIClientToolDefinition(
-            name = name,
-            description = description,
-            inputSchema = inputSchema,
-            isReadOnly = isReadOnly,
-        )
-
     /**
      * Runs one call.
      *
@@ -72,6 +63,19 @@ public interface AIClientTool {
      */
     public suspend fun run(call: AIToolCallPart): AIClientToolResult
 }
+
+/**
+ * The tool's name, description, argument schema and read-only hint, as the agent sees them. Made
+ * from [AIClientTool.name], [AIClientTool.description], [AIClientTool.inputSchema] and
+ * [AIClientTool.isReadOnly], so it always agrees with them.
+ */
+public val AIClientTool.definition: AIClientToolDefinition
+    get() = AIClientToolDefinition(
+        name = name,
+        description = description,
+        inputSchema = inputSchema,
+        isReadOnly = isReadOnly,
+    )
 
 /**
  * What a device reports for a call.

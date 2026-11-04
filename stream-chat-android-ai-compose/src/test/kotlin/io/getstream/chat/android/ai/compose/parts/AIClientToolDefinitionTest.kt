@@ -67,6 +67,24 @@ internal class AIClientToolDefinitionTest {
     }
 
     @Test
+    fun `a tool's definition always follows its properties`() {
+        val tool = object : AIClientTool {
+            override var name = "calendar"
+            override var description = ""
+            override var inputSchema: Map<String, Any?>? = null
+            override var isReadOnly = false
+            override suspend fun run(call: AIToolCallPart) = AIClientToolResult.completed("{}")
+        }
+
+        tool.name = "agenda"
+        tool.description = "The person's events."
+        tool.inputSchema = schema
+        tool.isReadOnly = true
+
+        assertEquals(AIClientToolDefinition("agenda", "The person's events.", schema, isReadOnly = true), tool.definition)
+    }
+
+    @Test
     fun `a definition reads back what it writes, and a tool described for MCP`() {
         val definition = AIClientToolDefinition("calendar", "Events.", schema, isReadOnly = true)
 

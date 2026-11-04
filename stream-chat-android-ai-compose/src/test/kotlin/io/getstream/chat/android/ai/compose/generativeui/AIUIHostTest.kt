@@ -25,6 +25,7 @@ import io.getstream.chat.android.ai.compose.parts.AIClientTool
 import io.getstream.chat.android.ai.compose.parts.AIClientToolDefinition
 import io.getstream.chat.android.ai.compose.parts.AIClientToolResult
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
+import io.getstream.chat.android.ai.compose.parts.definition
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

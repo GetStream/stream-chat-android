@@ -389,7 +389,6 @@ public final class io/getstream/chat/android/ai/compose/parts/AIClientIdentity {
 }
 
 public abstract interface class io/getstream/chat/android/ai/compose/parts/AIClientTool {
-	public fun getDefinition ()Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;
 	public fun getDescription ()Ljava/lang/String;
 	public fun getInputSchema ()Ljava/util/Map;
 	public abstract fun getName ()Ljava/lang/String;
@@ -398,7 +397,6 @@ public abstract interface class io/getstream/chat/android/ai/compose/parts/AICli
 }
 
 public final class io/getstream/chat/android/ai/compose/parts/AIClientTool$DefaultImpls {
-	public static fun getDefinition (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;
 	public static fun getDescription (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Ljava/lang/String;
 	public static fun getInputSchema (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Ljava/util/Map;
 	public static fun isReadOnly (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Z
@@ -463,6 +461,10 @@ public final class io/getstream/chat/android/ai/compose/parts/AIClientToolRunner
 	public final fun getUserId ()Ljava/lang/String;
 	public final fun run (Ljava/util/List;Lkotlin/jvm/functions/Function3;)V
 	public final fun setMaxAttempts (I)V
+}
+
+public final class io/getstream/chat/android/ai/compose/parts/AIClientToolRunnerKt {
+	public static final fun getDefinition (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;
 }
 
 public final class io/getstream/chat/android/ai/compose/parts/AIMessagePart {

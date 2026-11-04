@@ -57,9 +57,9 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param renderers The renderer of each format the agent writes, the first one listed asked first.
  * @param components The app's views the agent can place.
  * @param tools The app's tools a reply's UI can run on this device, which the agent's instructions
- * list. They run without asking the person. One whose [AIClientTool.definition] says it is
- * read-only runs whenever the UI asks, such as to load data while it shows; any other only when
- * the person does something that runs it.
+ * list. They run without asking the person. One that is [AIClientTool.isReadOnly] runs whenever
+ * the UI asks, such as to load data while it shows; any other only when the person does something
+ * that runs it.
  * @param linkSchemes The kinds of link a reply's UI may open: web and email links by default
  * (`http`, `https` and `mailto`). The agent writes every link, so add another scheme only when the
  * app wants it.
@@ -161,7 +161,7 @@ public class AIUIHost(
     // when the person asked for it.
     private fun runnable(name: String, userInitiated: Boolean): AIClientTool {
         val tool = tools[name] ?: throw AIUIToolException("No tool named $name")
-        if (!userInitiated && !tool.definition.isReadOnly) {
+        if (!userInitiated && !tool.isReadOnly) {
             throw AIUIToolException("$name isn't read-only, so it runs only when the person asks for it")
         }
         return tool

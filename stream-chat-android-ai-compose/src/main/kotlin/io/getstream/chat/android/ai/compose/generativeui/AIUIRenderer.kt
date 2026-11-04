@@ -18,6 +18,7 @@ package io.getstream.chat.android.ai.compose.generativeui
 
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.ai.compose.parts.AIClientTool
+import io.getstream.chat.android.ai.compose.parts.definition
 
 /**
  * Reads one format of generated UI and shows it. The SDK knows no format of its own: give a
