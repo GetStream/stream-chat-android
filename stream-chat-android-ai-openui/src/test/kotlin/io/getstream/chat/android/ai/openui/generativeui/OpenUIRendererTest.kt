@@ -60,9 +60,9 @@ internal class OpenUIRendererTest {
         val host = AIUIHost(renderers = listOf(OpenUIRenderer())) {}
         val reply = AIUIDocument(AIUIFormat.OpenUI, content = program)
 
-        assertTrue(host.reads(reply))
-        assertTrue(host.canShow(reply, "m1"))
-        assertFalse(host.reads(AIUIDocument(AIUIFormat.A2UI, content = program)))
+        assertTrue(host.canShow(reply))
+        assertTrue(host.showsUI(reply, "m1"))
+        assertFalse(host.canShow(AIUIDocument(AIUIFormat.A2UI, content = program)))
     }
 
     @Test
@@ -70,8 +70,8 @@ internal class OpenUIRendererTest {
         val host = AIUIHost(renderers = listOf(OpenUIRenderer())) {}
         val reply = AIUIDocument(AIUIFormat.OpenUI, content = mapOf("root" to "Card"))
 
-        assertTrue(host.reads(reply))
-        assertFalse(host.canShow(reply, "m1"))
+        assertTrue(host.canShow(reply))
+        assertFalse(host.showsUI(reply, "m1"))
     }
 
     @Test

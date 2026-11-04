@@ -80,6 +80,11 @@ internal class OpenUIEngine(
         runtimes[messageId]?.update(program, document.isStreaming)
     }
 
+    // A reply that left the conversation stops its runtime, with its queries' refreshes.
+    override fun remove(messageId: String) {
+        dispose(messageId)
+    }
+
     override fun content(document: AIUIDocument, messageId: String): (@Composable () -> Unit)? {
         val program = document.text ?: return null
         val runtime = runtimes[messageId]
