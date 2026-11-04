@@ -23,4 +23,7 @@ internal object OpenUIDimens {
 
     /** The size of the icon in an icon badge, as a share of the badge's size. */
     const val IconBadgeIconRatio: Float = 0.5f
+
+    /** The height, in dp, of a chart inside a card. */
+    const val CardChartHeight: Int = 180
 }
