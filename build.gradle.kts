@@ -38,6 +38,7 @@ streamProject {
             "stream-chat-android-ai-a2ui",
             "stream-chat-android-ai-compose",
             "stream-chat-android-ai-ondevice",
+            "stream-chat-android-ai-openui",
             "stream-chat-android-client",
             "stream-chat-android-compose",
             "stream-chat-android-core",

@@ -187,6 +187,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines"}
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines"}
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin"}
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin"}
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary"}
 markdown = { module = "org.jetbrains:markdown", version.ref = "markdown"}
 markdown-renderer = { module = "com.mikepenz:multiplatform-markdown-renderer", version.ref = "markdownRenderer"}

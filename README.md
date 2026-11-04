@@ -24,6 +24,7 @@
 ![stream-chat-android-ai-compose](https://img.shields.io/badge/stream--chat--android--ai--compose-2.23%20MB-lightgreen)
 ![stream-chat-android-ai-ondevice](https://img.shields.io/badge/stream--chat--android--ai--ondevice-1.66%20MB-lightgreen)
 ![stream-chat-android-ai-a2ui](https://img.shields.io/badge/stream--chat--android--ai--a2ui-.21%20MB-lightgreen)
+![stream-chat-android-ai-openui](https://img.shields.io/badge/stream--chat--android--ai--openui-0.23%20MB-lightgreen)
 
 </div>
 
@@ -81,6 +82,7 @@ This SDK consists of two low-level artifacts you can build on:
   - [Sample app](/stream-chat-android-ai-compose-sample)
 - [**On-device model**](/stream-chat-android-ai-ondevice): A model on the device, such as Gemini Nano, to answer when your agent can't.
 - [**A2UI**](/stream-chat-android-ai-a2ui): Shows the generative UI agents write in [A2UI](https://a2ui.org) 1.0.
+- [**OpenUI**](/stream-chat-android-ai-openui): Parses and runs OpenUI Lang, the language models answer in to describe generative UI, writes the system prompt that teaches it, and shows the answers with native Compose components: text, Markdown, layout (tabs, accordions, carousels), tables, forms, buttons, lists, follow-ups, card blocks and charts. `OpenUIRenderer` shows them in the generative UI of AI Compose Components.
 
 Learn more about the modules by visiting [the documentation](https://getstream.io/chat/docs/sdk/android/).
 
