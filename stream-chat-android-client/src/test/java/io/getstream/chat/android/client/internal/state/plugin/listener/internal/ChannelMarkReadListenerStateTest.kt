@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
@@ -65,11 +64,8 @@ internal class ChannelMarkReadListenerStateTest {
         markReadResult: MarkReadResult,
         activeQueryChannelsLogic: List<QueryChannelsLogic> = emptyList(),
     ): ChannelMarkReadListenerState {
-        val channelLogic: ChannelLogic = mock {
-            on { it.markRead() } doReturn markReadResult
-        }
         val logic: LogicRegistry = mock {
-            on { it.channel(channelType, channelId) } doReturn channelLogic
+            on { it.markRead(channelType, channelId) } doReturn markReadResult
             on { it.getActiveQueryChannelsLogic() } doReturn activeQueryChannelsLogic
         }
         return ChannelMarkReadListenerState(logic)

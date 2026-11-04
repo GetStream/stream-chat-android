@@ -176,6 +176,10 @@ public class StateRegistry @JvmOverloads constructor(
         }
     }
 
+    /** Returns the channel's state if it has one, without creating it. */
+    internal fun activeChannel(channelId: ChannelId): ChannelState? =
+        if (useLegacyChannelState) legacyChannels[channelId] else channels[channelId]
+
     private fun newChannelState(channelType: String, channelId: String): ChannelState =
         if (useLegacyChannelState) {
             buildLegacyChannelState(channelType, channelId)
