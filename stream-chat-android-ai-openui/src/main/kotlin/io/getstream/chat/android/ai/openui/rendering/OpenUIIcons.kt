@@ -53,6 +53,17 @@ internal object OpenUIIcons {
         return key in lucideIcons || looseCandidates(key).any { it in lucideIcons }
     }
 
+    /**
+     * The words a screen reader says for a lucide [name] ("trash-2" reads "trash", "arrow-up-right"
+     * reads "arrow up right"), or `null` when the name has none.
+     */
+    fun label(name: String?): String? = name.orEmpty()
+        .split('-', '_', ' ')
+        .filter { it.isNotBlank() && it.toIntOrNull() == null }
+        .joinToString(" ")
+        .lowercase()
+        .ifEmpty { null }
+
     internal fun looseCandidates(key: String): List<String> {
         val parts = key.split('-').toMutableList()
         val candidates = mutableListOf<String>()
@@ -66,19 +77,39 @@ internal object OpenUIIcons {
     }
 }
 
-/** An icon from a lucide name (or an `Icon(name, category)` element). */
+/**
+ * An icon from a lucide name (or an `Icon(name, category)` element). Screen readers say its name as
+ * words, unless it is [decorative]: next to text, or inside a control that has its own label.
+ */
 @Composable
 internal fun OpenUIIcon(
     name: String?,
     modifier: Modifier = Modifier,
     category: String? = null,
     tint: Color = LocalContentColor.current,
+    decorative: Boolean = false,
 ) {
-    Icon(OpenUIIcons.vector(name, category), contentDescription = name, modifier = modifier, tint = tint)
+    Icon(
+        OpenUIIcons.vector(name, category),
+        contentDescription = if (decorative) null else OpenUIIcons.label(name),
+        modifier = modifier,
+        tint = tint,
+    )
 }
 
 /** An icon from an `Icon(name, category)` element. */
 @Composable
-internal fun OpenUIIcon(element: ElementNode?, modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
-    OpenUIIcon(element?.props?.get("name").stringValue, modifier, element?.props?.get("category").stringValue, tint)
+internal fun OpenUIIcon(
+    element: ElementNode?,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current,
+    decorative: Boolean = false,
+) {
+    OpenUIIcon(
+        element?.props?.get("name").stringValue,
+        modifier,
+        element?.props?.get("category").stringValue,
+        tint,
+        decorative,
+    )
 }

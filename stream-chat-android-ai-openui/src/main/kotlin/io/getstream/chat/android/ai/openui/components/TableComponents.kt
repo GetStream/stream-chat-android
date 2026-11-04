@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ai.openui.components
 
-import android.app.DatePickerDialog
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -61,6 +60,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -72,7 +72,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -85,6 +84,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.openui.R
 import io.getstream.chat.android.ai.openui.lang.JS
 import io.getstream.chat.android.ai.openui.lang.OpenUIJson
+import io.getstream.chat.android.ai.openui.lang.OpenUIObject
 import io.getstream.chat.android.ai.openui.lang.OpenUIValue
 import io.getstream.chat.android.ai.openui.lang.arrayValue
 import io.getstream.chat.android.ai.openui.lang.get
@@ -97,10 +97,6 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import kotlin.math.ceil
 
@@ -368,9 +364,31 @@ private class EditableColumn(
     val type: String,
     val key: String,
     val header: String,
-    val width: Double?,
+    val width: Dp,
     val options: List<Pair<String, String>>,
 )
+
+/** Editable table helpers: column widths the model asks for, and rows kept across recreation. */
+internal object EditableTableSupport {
+    private const val DEFAULT_COLUMN_WIDTH = 150.0
+    private const val MIN_COLUMN_WIDTH = 48.0
+    private const val MAX_COLUMN_WIDTH = 600.0
+
+    /** The column width in dp: the model's when finite, kept within what a cell can show. */
+    fun columnWidth(width: Double?): Double =
+        width?.takeIf { it.isFinite() }?.coerceIn(MIN_COLUMN_WIDTH, MAX_COLUMN_WIDTH) ?: DEFAULT_COLUMN_WIDTH
+
+    /** Rows as JSON, for saving them while the table is off screen. */
+    fun encode(rows: List<Map<String, OpenUIValue>>): String =
+        OpenUIJson.stringify(OpenUIValue.Arr(rows.map { OpenUIValue.Obj(OpenUIObject(it)) }))
+
+    /** Rows saved by [encode]. */
+    fun decode(json: String): List<Map<String, OpenUIValue>> =
+        OpenUIJson.parseOrNull(json).arrayValue.orEmpty().mapNotNull { it.objectValue?.toMap() }
+
+    val RowsSaver: Saver<List<Map<String, OpenUIValue>>, String> =
+        Saver(save = { encode(it) }, restore = { decode(it) })
+}
 
 /** `EditableTable(name?, columns?, data?)`: inline editable cells, saved as a form field. */
 @Composable
@@ -382,16 +400,21 @@ private fun EditableTableComponent(context: ComponentRenderProps) {
             type = column["type"].stringValue ?: "text",
             key = column["key"].stringValue ?: "default",
             header = column["header"].stringValue.orEmpty(),
-            width = column["width"].numberValue,
+            width = EditableTableSupport.columnWidth(column["width"].numberValue).dp,
             options = column["options"].arrayValue.orEmpty().mapNotNull { option ->
                 val value = option["value"].stringValue ?: return@mapNotNull null
                 value to (option["label"].stringValue ?: value)
             },
         )
     }
-    var rows by remember { mutableStateOf(emptyList<Map<String, OpenUIValue>>()) }
-    var baseline by remember { mutableStateOf(emptyList<Map<String, OpenUIValue>>()) }
-    var loadedSignature by remember { mutableStateOf("") }
+    // Saved, so edits not yet saved survive the reply scrolling off screen.
+    var rows by rememberSaveable(stateSaver = EditableTableSupport.RowsSaver) {
+        mutableStateOf(emptyList<Map<String, OpenUIValue>>())
+    }
+    var baseline by rememberSaveable(stateSaver = EditableTableSupport.RowsSaver) {
+        mutableStateOf(emptyList<Map<String, OpenUIValue>>())
+    }
+    var loadedSignature by rememberSaveable { mutableStateOf("") }
 
     val dataSignature = OpenUIJson.stringify(context.props["data"]?.plainJson ?: OpenUIValue.Null)
     LaunchedEffect(dataSignature, columns.map { it.key }) {
@@ -436,7 +459,7 @@ private fun EditableTableComponent(context: ComponentRenderProps) {
                             color = theme.colors.textSecondary,
                             modifier = Modifier
                                 .padding(horizontal = theme.spacing.s, vertical = theme.spacing.s)
-                                .width((column.width ?: 150.0).dp),
+                                .width(column.width),
                         )
                     }
                 }
@@ -447,7 +470,7 @@ private fun EditableTableComponent(context: ComponentRenderProps) {
                             Box(
                                 Modifier
                                     .padding(horizontal = theme.spacing.s, vertical = theme.spacing.xs)
-                                    .width((column.width ?: 150.0).dp),
+                                    .width(column.width),
                             ) {
                                 val text = rows
                                     .getOrNull(rowIndex)
@@ -546,28 +569,23 @@ private fun EditableCell(column: EditableColumn, text: String, enabled: Boolean,
             }
         }
         "date-single" -> {
-            val context = LocalContext.current
+            val date = FormDateFormatting.millis(text)
+            var open by remember { mutableStateOf(false) }
             Text(
-                text.ifEmpty { column.header },
+                date?.let { FormDateFormatting.label(it, currentLocale()) } ?: text.ifEmpty { column.header },
                 style = theme.typography.bodySmall,
                 color = if (text.isEmpty()) theme.colors.textTertiary else theme.colors.textPrimary,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(enabled = enabled) {
-                        val calendar = Calendar.getInstance()
-                        TableDateFormatting.date(text)?.let { calendar.time = it }
-                        DatePickerDialog(
-                            context,
-                            { _, year, month, day ->
-                                val picked = Calendar.getInstance().apply { set(year, month, day) }
-                                onChange(TableDateFormatting.string(picked.time))
-                            },
-                            calendar.get(Calendar.YEAR),
-                            calendar.get(Calendar.MONTH),
-                            calendar.get(Calendar.DAY_OF_MONTH),
-                        ).show()
-                    }.padding(vertical = 6.dp),
+                    .clickable(enabled = enabled) { open = true }
+                    .padding(vertical = 6.dp),
             )
+            if (open) {
+                FormDatePickerDialog(date, minimum = null, onDismiss = { open = false }) { picked ->
+                    open = false
+                    onChange(FormDateFormatting.string(picked))
+                }
+            }
         }
         else -> BasicTextField(
             value = text,
@@ -593,23 +611,6 @@ private fun EditableCell(column: EditableColumn, text: String, enabled: Boolean,
                 }
             },
         )
-    }
-}
-
-/** `yyyy-MM-dd` date strings used by date cells. */
-internal object TableDateFormatting {
-    private fun formatter() = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-
-    fun string(date: Date): String = formatter().format(date)
-
-    // A date-time like `2026-11-04T10:00:00Z` reads as its date: the cell edits days only.
-    fun date(string: String?): Date? {
-        if (string.isNullOrEmpty()) return null
-        return try {
-            formatter().parse(string.take(10))
-        } catch (_: ParseException) {
-            null
-        }
     }
 }
 

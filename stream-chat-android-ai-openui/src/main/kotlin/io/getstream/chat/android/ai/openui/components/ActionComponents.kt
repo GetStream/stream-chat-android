@@ -298,7 +298,9 @@ internal fun IconButtonComponent(ctx: ComponentRenderProps) {
     }
     val onClick = { ctx.triggerAction(name, formName, props["action"]) }
     val modifier = Modifier.size(dimension).semantics { contentDescription = name }
-    val icon: @Composable () -> Unit = { OpenUIIcon(props.element("icon"), Modifier.size(20.dp)) }
+    val icon: @Composable () -> Unit = {
+        OpenUIIcon(props.element("icon"), Modifier.size(20.dp), decorative = name.isNotEmpty())
+    }
     when (variant) {
         "primary" -> FilledIconButton(
             onClick,
@@ -500,6 +502,7 @@ internal fun TagPill(text: String, icon: ElementNode? = null, size: String? = nu
                     },
                 ),
                 tint = color,
+                decorative = true,
             )
         }
         Text(
