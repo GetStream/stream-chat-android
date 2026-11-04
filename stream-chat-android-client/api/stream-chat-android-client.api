@@ -385,10 +385,12 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public fun <init> (ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZ)V
 	public fun <init> (ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;)V
 	public fun <init> (ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;Z)V
-	public synthetic fun <init> (ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;ZZ)V
+	public synthetic fun <init> (ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component10 ()Lio/getstream/chat/android/client/cache/StreamCacheConfig;
 	public final fun component11 ()Z
+	public final fun component12 ()Z
 	public final fun component2 ()Ljava/util/Set;
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -397,8 +399,8 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public final fun component7 ()Lio/getstream/chat/android/client/api/MessageLimitConfig;
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;Z)Lio/getstream/chat/android/client/api/ChatClientConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/ChatClientConfig;ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/ChatClientConfig;
+	public final fun copy (ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;ZZ)Lio/getstream/chat/android/client/api/ChatClientConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/ChatClientConfig;ZLjava/util/Set;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZZLio/getstream/chat/android/client/cache/StreamCacheConfig;ZZILjava/lang/Object;)Lio/getstream/chat/android/client/api/ChatClientConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCacheConfig ()Lio/getstream/chat/android/client/cache/StreamCacheConfig;
 	public final fun getFastEventParsing ()Z
@@ -411,6 +413,7 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public final fun getUserPresence ()Z
 	public fun hashCode ()I
 	public final fun isAutomaticSyncOnReconnectEnabled ()Z
+	public final fun isEventProtocolV3Enabled ()Z
 	public final fun isLocalUnreadCountEnabled ()Z
 	public fun toString ()Ljava/lang/String;
 }

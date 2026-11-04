@@ -66,7 +66,9 @@ internal class V2SocketTest {
     private val headersUtil: HeadersUtil = mock<HeadersUtil>().apply {
         whenever(buildSdkTrackingHeaders()) doReturn "stream-chat-android-v1.0"
     }
-    private val socketFactory = SocketFactory(
+    private val socketFactory = socketFactory()
+
+    private fun socketFactory(isEventProtocolV3Enabled: Boolean = false) = SocketFactory(
         parser = ParserFactory.createMoshiChatParser(),
         tokenManager = FakeTokenManager(TOKEN),
         headersUtil = headersUtil,
@@ -80,11 +82,15 @@ internal class V2SocketTest {
                 hidesStoredDeclaredCustom = true,
             ),
         ),
+        isEventProtocolV3Enabled = isEventProtocolV3Enabled,
     )
 
     /** Creates the socket, opens it and returns the request and the listener it was created with. */
-    private fun open(conf: SocketFactory.ConnectionConf): Pair<Request, WebSocketListener> {
-        socketFactory.createSocket(conf)
+    private fun open(
+        conf: SocketFactory.ConnectionConf,
+        factory: SocketFactory = socketFactory,
+    ): Pair<Request, WebSocketListener> {
+        factory.createSocket(conf)
         val request = argumentCaptor<Request>()
         val listener = argumentCaptor<WebSocketListener>()
         verify(httpClient).newWebSocket(request.capture(), listener.capture())
@@ -109,7 +115,7 @@ internal class V2SocketTest {
     fun `The first connection authenticates with the user details v2 reads, custom data nested`() {
         open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER))
 
-        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"event_protocol":3,"user_details":{"id":"filip",
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip",
             "name":"Chewbacca","image":"https://example.com/chewie.png","language":"en","invisible":true,
             "privacy_settings":{"typing_indicators":{"enabled":false}},"custom":{"flair":"gold"}}}"""
     }
@@ -125,17 +131,27 @@ internal class V2SocketTest {
         )
         open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, user))
 
-        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"event_protocol":3,"user_details":{"id":"filip",
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip",
             "name":"Chewbacca","image":"https://example.com/chewie.png","language":"en","invisible":true,
             "privacy_settings":{"delivery_receipts":{"enabled":false},"read_receipts":{"enabled":true}},
             "custom":{"flair":"gold"}}}"""
     }
 
     @Test
+    fun `A client with event protocol v3 enabled asks for it in the auth frame`() {
+        open(
+            SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER).asReconnectionConf(),
+            socketFactory(isEventProtocolV3Enabled = true),
+        )
+
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"event_protocol":3,"user_details":{"id":"filip"}}"""
+    }
+
+    @Test
     fun `A reconnection authenticates with the user id only`() {
         open(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER).asReconnectionConf())
 
-        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"event_protocol":3,"user_details":{"id":"filip"}}"""
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip"}}"""
     }
 
     @ParameterizedTest
@@ -162,7 +178,7 @@ internal class V2SocketTest {
         val user = User(id = "!anon", name = "Anonymous")
         open(SocketFactory.ConnectionConf.AnonymousConnectionConf(ENDPOINT, API_KEY, user).asReconnectionConf())
 
-        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"event_protocol":3,"user_details":{"id":"anon"}}"""
+        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"user_details":{"id":"anon"}}"""
     }
 
     @Test
@@ -171,7 +187,7 @@ internal class V2SocketTest {
         val (request, _) = open(SocketFactory.ConnectionConf.AnonymousConnectionConf(ENDPOINT, API_KEY, user))
 
         request.url.queryParameter("stream-auth-type") shouldBeEqualTo "anonymous"
-        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"event_protocol":3,"user_details":{"id":"anon"}}"""
+        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"user_details":{"id":"anon"}}"""
     }
 
     @Test

@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets
 
 /**
  * Opens the websocket on the v2 endpoint. [eventParser] parses its events, [parser] its error frames.
+ * [isEventProtocolV3Enabled] asks the server for event protocol v3.
  */
 internal class SocketFactory(
     private val parser: ChatParser,
@@ -39,6 +40,7 @@ internal class SocketFactory(
     private val headersUtil: HeadersUtil,
     private val eventParser: V2EventParser,
     private val httpClient: OkHttpClient = OkHttpClient(),
+    private val isEventProtocolV3Enabled: Boolean = false,
 ) {
     private val logger by taggedLogger("Chat:SocketFactory")
 
@@ -77,13 +79,13 @@ internal class SocketFactory(
                 tokenManager.getToken()
             }
         }
-        val frame = mapOf(
-            "token" to token,
-            "user_details" to connectionConf.reduceUserDetails(),
-            "products" to listOf("chat"),
+        val frame = buildMap<String, Any> {
+            put("token", token)
+            put("user_details", connectionConf.reduceUserDetails())
+            put("products", listOf("chat"))
             // v3 leaves the members out of the events of large channels, which the SDK keeps from its own copy
-            "event_protocol" to EVENT_PROTOCOL,
-        )
+            if (isEventProtocolV3Enabled) put("event_protocol", EVENT_PROTOCOL)
+        }
         return socketFrameAdapter.toJson(frame)
     }
 

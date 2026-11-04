@@ -95,6 +95,12 @@ import io.getstream.chat.android.models.TimeDuration
  * server-side read events are disabled ([io.getstream.chat.android.models.Config.readEventsEnabled] is `false`, typical
  * for livestream channels): incoming messages increment a local counter and marking the channel as read resets it
  * without a network request. Defaults to `false`.
+ *
+ * @param isEventProtocolV3Enabled When enabled, the client connects with WebSocket event protocol v3, which leaves
+ * `channel.members` out of `channel.updated`, `member.*`, `notification.message_new` and
+ * `notification.added_to_channel` events of channels with more than 100 members. The SDK keeps the members it already
+ * has, but [io.getstream.chat.android.models.Channel.members] on these events is empty, so read the members from the
+ * channel state and the count from [io.getstream.chat.android.models.Channel.memberCount]. Defaults to `false`.
  */
 public data class ChatClientConfig @JvmOverloads constructor(
     public val offlineEnabled: Boolean = true,
@@ -108,6 +114,7 @@ public data class ChatClientConfig @JvmOverloads constructor(
     public val fastEventParsing: Boolean = false,
     public val cacheConfig: StreamCacheConfig = StreamCacheConfig(),
     public val isLocalUnreadCountEnabled: Boolean = false,
+    public val isEventProtocolV3Enabled: Boolean = false,
 )
 
 /**
