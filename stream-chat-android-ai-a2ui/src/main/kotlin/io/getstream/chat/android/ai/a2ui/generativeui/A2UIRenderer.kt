@@ -28,6 +28,7 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
 import io.getstream.chat.android.ai.compose.parts.AIClientTool
 import io.getstream.chat.android.ai.compose.parts.AIClientToolDefinition
+import io.getstream.chat.android.ai.compose.parts.definition
 
 /**
  * Shows the replies an agent writes in [A2UI](https://a2ui.org) 1.0 in the generative UI of
@@ -94,10 +95,6 @@ public class A2UIRenderer(
             tools = tools.map { line(it.definition) },
         ).text,
     )
-
-    /** The capabilities with the app's [components] and none of its tools. */
-    override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> =
-        capabilities(components, emptyList())
 
     override fun makeEngine(host: AIUIHost): AIUIEngine = A2UIEngine(this, host)
 

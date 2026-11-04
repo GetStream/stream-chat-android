@@ -98,7 +98,6 @@ public final class io/getstream/chat/android/ai/a2ui/generativeui/A2UIRenderer :
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun capabilities (Ljava/util/List;)Ljava/util/Map;
 	public fun capabilities (Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
 	public final fun getCatalog ()Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;
 	public final fun getCatalogId ()Ljava/lang/String;

@@ -151,7 +151,7 @@ internal class A2UIRendererTest {
 
     @Test
     fun `its capabilities hold the fence, the catalog id and the instructions`() {
-        val capabilities = renderer.capabilities(listOf(placeCard, card))
+        val capabilities = renderer.capabilities(listOf(placeCard, card), emptyList())
 
         assertEquals(setOf("fence", "catalog_id", "instructions"), capabilities.keys)
         assertEquals("ui:a2ui@1.0", capabilities["fence"])
@@ -201,10 +201,9 @@ internal class A2UIRendererTest {
 
     @Test
     fun `its instructions list no tools when the host has none`() {
-        val instructions = renderer.capabilities(listOf(placeCard))["instructions"] as String
+        val instructions = renderer.capabilities(listOf(placeCard), emptyList())["instructions"] as String
 
         assertFalse(instructions.contains("## The app's tools"))
-        assertEquals(instructions, renderer.capabilities(listOf(placeCard), emptyList())["instructions"])
     }
 
     @Test
@@ -215,7 +214,7 @@ internal class A2UIRendererTest {
 
         val text = instructions["instructions"] as String
         assertTrue(text, text.startsWith("$preamble\n\n## Writing UI in A2UI"))
-        assertTrue((renderer.capabilities(emptyList())["instructions"] as String).startsWith("## Writing UI in A2UI"))
+        assertTrue((renderer.capabilities(emptyList(), emptyList())["instructions"] as String).startsWith("## Writing UI in A2UI"))
     }
 
     private val citySchema = mapOf("type" to "object", "properties" to mapOf("city" to mapOf("type" to "string")))
