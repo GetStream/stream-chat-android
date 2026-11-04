@@ -117,7 +117,6 @@ public final class io/getstream/chat/android/ai/openui/generativeui/OpenUIRender
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/ai/openui/rendering/Library;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/ai/openui/rendering/Library;Ljava/lang/String;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun capabilities (Ljava/util/List;)Ljava/util/Map;
 	public fun capabilities (Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
 	public fun getFormat-cv5I8qU ()Ljava/lang/String;
 	public final fun getLibrary ()Lio/getstream/chat/android/ai/openui/rendering/Library;

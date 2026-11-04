@@ -82,13 +82,13 @@ internal class OpenUIRendererTest {
     @Test
     fun `the capabilities give the fence and the instructions with the app's components`() {
         val renderer = OpenUIRenderer()
-        val capabilities = renderer.capabilities(listOf(placeCard))
+        val capabilities = renderer.capabilities(listOf(placeCard), emptyList())
         val instructions = capabilities["instructions"] as String
 
         assertEquals("openui-lang", capabilities["fence"])
         assertTrue("PlaceCard(" in instructions)
         assertTrue("A photo and a short summary of a place." in instructions)
-        assertEquals(openuiChatLibrary.prompt(openuiChatPromptOptions), renderer.capabilities(emptyList())["instructions"])
+        assertEquals(openuiChatLibrary.prompt(openuiChatPromptOptions), renderer.capabilities(emptyList(), emptyList())["instructions"])
     }
 
     @Test
@@ -151,7 +151,7 @@ internal class OpenUIRendererTest {
 
         assertEquals(openuiPromptOptions, standard.promptOptions)
         assertEquals(openuiChatPromptOptions, OpenUIRenderer().promptOptions)
-        assertEquals(openuiLibrary.prompt(openuiPromptOptions), standard.capabilities(emptyList())["instructions"])
+        assertEquals(openuiLibrary.prompt(openuiPromptOptions), standard.capabilities(emptyList(), emptyList())["instructions"])
         assertEquals(openuiLibrary.prompt(openuiPromptOptions), openuiLibrary.prompt())
     }
 
@@ -174,7 +174,7 @@ internal class OpenUIRendererTest {
         val placeable = OpenUIRenderer.placeable(listOf(card, placeCard, again, uncallable), openuiChatLibrary.definition)
 
         assertEquals(listOf("PlaceCard"), placeable.map { it.second.name })
-        val instructions = OpenUIRenderer().capabilities(listOf(card))["instructions"] as String
+        val instructions = OpenUIRenderer().capabilities(listOf(card), emptyList())["instructions"] as String
         assertFalse("Not OpenUI's card." in instructions)
     }
 

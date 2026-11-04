@@ -24,6 +24,7 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
 import io.getstream.chat.android.ai.compose.parts.AIClientTool
 import io.getstream.chat.android.ai.compose.parts.AIClientToolDefinition
+import io.getstream.chat.android.ai.compose.parts.definition
 import io.getstream.chat.android.ai.openui.lang.OpenUIError
 import io.getstream.chat.android.ai.openui.lang.OpenUIObject
 import io.getstream.chat.android.ai.openui.lang.OpenUIValue
@@ -95,10 +96,6 @@ public class OpenUIRenderer(
             "instructions" to listOfNotNull(instructions?.takeIf { it.isNotBlank() }, prompt).joinToString("\n\n"),
         )
     }
-
-    /** The capabilities for [components], with none of the host's tools. */
-    override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> =
-        capabilities(components, emptyList())
 
     override fun makeEngine(host: AIUIHost): AIUIEngine =
         OpenUIEngine(library, host, HostToolProvider(host), onError ?: ::log)
