@@ -172,7 +172,8 @@ internal class UtilityTest {
         @Test
         fun `patterns that can backtrack without end are rejected`() {
             listOf(
-                "(a?){25}a{25}", "^(a+)+$", "(a|aa)*", "(?:a*)*", "((a|b)c)+", "(a*b)?", "(?<x>a+){2}",
+                "(a?){25}", "(a?){25}a{25}", "(a+)+", "^(a+)+$", "(a|aa)*", "(?:a*)*", "((a|b)c)+", "(?<x>a+){2}",
+                "((a?)?)+", "(a{2,3}){2}", "(a{2,}){2}",
                 "^(a+)\\1$", "(a)\\k<x>", "a{1001}", "a{1,1001}", "a{99999999999}",
             ).forEach { assertFalse(PatternSafety.isSafe(it), it) }
         }
@@ -183,6 +184,8 @@ internal class UtilityTest {
                 "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", "^\\+?[0-9 ()-]{7,20}$", "^[A-Z]{2}\\d{4}$", "^[a-z]+$",
                 "^(foo|bar)$", "^(?:\\d{3})-\\d{4}$", "a{1000}", "[(a+)+]*", "\\(a+\\)+", "\\Q(a+)+\\E",
                 "\\p{L}{2,5}", "(?i)^abc+?$", "a*+b", "(?=a)b", "[]a]+",
+                "^[0-9]{5}(?:-[0-9]{4})?$", "(Mr|Mrs)?", "(?:-[0-9]{4})?", "(ab){3}", "(a*b)?", "(a+){1}",
+                "(a|b){0,1}", "((ab){2}){3}", "(a{2,2})+",
             ).forEach { assertTrue(PatternSafety.isSafe(it), it) }
         }
 

@@ -24,10 +24,14 @@ package io.getstream.chat.android.ai.openui.lang
  * on Android (the platform matcher copies the input and matches in native code), so instead of timing
  * the match, patterns are inspected before they are compiled. A pattern is unsafe when it has:
  *
- * - a quantifier (`*`, `+`, `?`, `{n,m}`) applied to a group that contains, at any depth, a quantifier
- *   or an alternation;
+ * - a quantifier that can repeat more than once (`*`, `+`, `{n}` with n > 1, `{n,}`, `{n,m}` with m > 1)
+ *   applied to a group that contains, at any depth, a variable quantifier (`*`, `+`, `?`, `{n,}`, or
+ *   `{n,m}` with n != m) or an alternation;
  * - a backreference (`\1`, `\k<name>`);
  * - a `{n,m}` count above [MAX_REPEAT].
+ *
+ * A group repeated at most once (`?`, `{0,1}`, `{1}`) is always allowed, so optional parts such as
+ * `(?:-[0-9]{4})?` and `(Mr|Mrs)?` pass. An exact count `{n}` never counts as variable, so `(ab){3}` passes.
  *
  * What remains is at most polynomial in the input length, which [MAX_INPUT_LENGTH] bounds.
  */
@@ -50,7 +54,7 @@ internal object PatternSafety {
         /** A character, class, escape or group without quantifiers or alternations. */
         SIMPLE,
 
-        /** A group that contains a quantifier or an alternation. */
+        /** A group that contains a variable quantifier or an alternation. */
         COMPLEX,
 
         /** A quantifier; a `?` or `+` right after it makes it lazy or possessive. */
@@ -59,7 +63,7 @@ internal object PatternSafety {
 
     /** What a group (or the whole pattern) contains so far. */
     private class Frame {
-        var quantified = false
+        var variable = false
         var alternation = false
     }
 
@@ -77,7 +81,8 @@ internal object PatternSafety {
                     '(' -> openGroup()
                     ')' -> closeGroup()
                     '|' -> alternation()
-                    '*', '+', '?' -> quantifier(length = 1)
+                    '*', '+' -> quantifier(length = 1, maxRepeat = UNBOUNDED, variable = true)
+                    '?' -> quantifier(length = 1, maxRepeat = 1, variable = true)
                     '{' -> braces()
                     else -> literal(length = 1)
                 }
@@ -169,9 +174,9 @@ internal object PatternSafety {
             }
             val group = frames.removeLast()
             val parent = frames.last()
-            parent.quantified = parent.quantified || group.quantified
+            parent.variable = parent.variable || group.variable
             parent.alternation = parent.alternation || group.alternation
-            last = if (group.quantified || group.alternation) Atom.COMPLEX else Atom.SIMPLE
+            last = if (group.variable || group.alternation) Atom.COMPLEX else Atom.SIMPLE
         }
 
         private fun braces() {
@@ -180,21 +185,31 @@ internal object PatternSafety {
                 literal(length = 1)
                 return
             }
-            val counts = match.groupValues.drop(1).filter { it.isNotEmpty() }
-            if (counts.any { (it.toIntOrNull() ?: Int.MAX_VALUE) > MAX_REPEAT }) {
+            val min = match.groupValues[1].toIntOrNull() ?: Int.MAX_VALUE
+            val upper = match.groups[2]?.value
+            val max = when {
+                upper == null -> min
+                upper.isEmpty() -> UNBOUNDED
+                else -> upper.toIntOrNull() ?: Int.MAX_VALUE
+            }
+            if (min > MAX_REPEAT || (max != UNBOUNDED && max > MAX_REPEAT)) {
                 safe = false
                 return
             }
-            quantifier(match.value.length)
+            quantifier(match.value.length, maxRepeat = max, variable = max != min)
         }
 
-        private fun quantifier(length: Int) {
+        /**
+         * Applies a quantifier of [length] characters that repeats at most [maxRepeat] times
+         * ([UNBOUNDED] for no limit) and, when [variable], matches a varying number of times.
+         */
+        private fun quantifier(length: Int, maxRepeat: Int, variable: Boolean) {
             val modifier = pattern[index] == '?' || pattern[index] == '+'
             when {
                 last == Atom.QUANTIFIER && modifier -> last = Atom.NONE
-                last == Atom.COMPLEX -> safe = false
+                last == Atom.COMPLEX && (maxRepeat == UNBOUNDED || maxRepeat > 1) -> safe = false
                 else -> {
-                    frames.last().quantified = true
+                    if (variable) frames.last().variable = true
                     last = Atom.QUANTIFIER
                 }
             }
@@ -214,6 +229,9 @@ internal object PatternSafety {
     private const val CONTROL_ESCAPE_LENGTH = 3
 
     private val LOOKBEHINDS = setOf('=', '!')
+
+    /** The repeat limit of `*`, `+` and `{n,}`. */
+    private const val UNBOUNDED = -1
 
     private val REPEAT = Regex("""\{(\d+)(?:,(\d*))?}""")
 }
