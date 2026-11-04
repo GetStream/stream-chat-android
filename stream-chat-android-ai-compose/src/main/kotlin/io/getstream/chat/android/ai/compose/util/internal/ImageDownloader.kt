@@ -24,22 +24,26 @@ import java.net.URL
 import java.util.Locale
 
 /**
- * Downloads the bytes of images whose links the model wrote, so only from public hosts: every
- * address a host resolves to must be public, and redirects are followed here, up to
- * [MaxRedirects], with each target checked the same way. Resolves host names, so call it off the
- * main thread.
+ * Downloads the bytes of images. Redirects are followed here, up to [MaxRedirects]. Links the
+ * model wrote download only from public hosts: every address a host resolves to must be public,
+ * and each redirect target is checked the same way. Links from the app's own messages, such as
+ * attachments, can be on any host, so an intranet or a local backend still loads. Resolves host
+ * names, so call it off the main thread.
  *
+ * @param publicHostsOnly Whether a link, and each redirect, must be on a public host.
  * @param resolve The addresses a host name resolves to.
  * @param open Opens a connection to a link.
  */
 internal class ImageDownloader(
+    private val publicHostsOnly: Boolean = true,
     private val resolve: (String) -> List<InetAddress> = { host -> InetAddress.getAllByName(host).toList() },
     private val open: (URL) -> HttpURLConnection = { url -> url.openConnection() as HttpURLConnection },
 ) {
 
     /**
-     * The bytes at [url], or `null` when it isn't a web link on a public host, redirects to one
-     * that isn't, redirects more than [MaxRedirects] times, fails, or is larger than [maxBytes].
+     * The bytes at [url], or `null` when it isn't a web link, isn't on a public host or redirects
+     * to one that isn't (when [publicHostsOnly]), redirects more than [MaxRedirects] times, fails,
+     * or is larger than [maxBytes].
      *
      * @param url The image's link.
      * @param maxBytes The most bytes it downloads.
@@ -47,12 +51,15 @@ internal class ImageDownloader(
     fun download(url: String, maxBytes: Int): ByteArray? {
         var target = webUrl(url) ?: return null
         repeat(MaxRedirects + 1) {
-            if (!isPublicHost(target.host)) return null
+            // The host is resolved here and again when connecting, so a DNS answer that changes
+            // between the two lookups isn't blocked. Pinning the checked address would need a
+            // resolver the connection uses, such as OkHttp's Dns, which this module doesn't use.
+            if (publicHostsOnly && !isPublicHost(target.host)) return null
             val connection = open(target)
             try {
                 connection.connectTimeout = TimeoutMs
                 connection.readTimeout = TimeoutMs
-                // Redirects are followed here, so each target's host is checked too.
+                // Redirects are followed here, so each target's host can be checked and the hops counted.
                 connection.instanceFollowRedirects = false
                 val status = connection.responseCode
                 if (status in HttpURLConnection.HTTP_MULT_CHOICE until HttpURLConnection.HTTP_BAD_REQUEST) {

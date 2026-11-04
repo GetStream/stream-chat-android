@@ -25,7 +25,9 @@ import io.getstream.chat.android.ai.compose.util.internal.AIImageLoader
  * Loads the images of messages' attachments at the size they show at, through [AIImageLoader], so
  * a message scrolled back into view shows its images at once.
  *
- * Images on this device are read through the content resolver; images on the web are downloaded.
+ * Images on this device are read through the content resolver; images on the web are downloaded
+ * from any host, since attachments come from the app's own messages and can be on an intranet or a
+ * local backend.
  */
 internal object AttachmentImageLoader {
 
@@ -35,7 +37,14 @@ internal object AttachmentImageLoader {
     /** The image at [uri], downsampled to about [targetSizePx], or null when it can't be read. */
     suspend fun load(context: Context, uri: Uri, targetSizePx: Int): Bitmap? {
         val source = uri.toString()
-        if (AIImageLoader.isLoadable(source)) return AIImageLoader.load(source, targetSizePx)
+        if (AIImageLoader.isLoadable(source)) {
+            return AIImageLoader.load(
+                url = source,
+                targetSizePx = targetSizePx,
+                maxBytes = AIImageLoader.MaxDownloadBytes,
+                downloader = AIImageLoader.anyHostDownloader,
+            )
+        }
         val resolver = context.contentResolver
         return AIImageLoader.load(AIImageLoader.key(source, targetSizePx)) {
             decodeSampledBitmap(resolver, uri, targetSizePx)

@@ -37,7 +37,10 @@ internal class ImageDownloaderTest {
     private val connections = mutableListOf<FakeConnection>()
     private val responses = mutableMapOf<String, Response>()
 
-    private val downloader = ImageDownloader(
+    private val downloader = downloader(publicHostsOnly = true)
+
+    private fun downloader(publicHostsOnly: Boolean) = ImageDownloader(
+        publicHostsOnly = publicHostsOnly,
         resolve = { host ->
             when (host) {
                 "cdn.example.com", "other.example.com" -> listOf(InetAddress.getByName("93.184.216.34"))
@@ -218,6 +221,22 @@ internal class ImageDownloaderTest {
         responses["https://cdn.example.com/a.png"] = Response(HttpURLConnection.HTTP_INTERNAL_ERROR, body = image)
 
         assertNull(downloader.download("https://cdn.example.com/a.png", maxBytes = 1024))
+    }
+
+    @Test
+    fun `without the host check, private hosts download and redirects stay capped`() {
+        val anyHost = downloader(publicHostsOnly = false)
+        responses["http://10.0.2.2:8080/a.png"] = redirect("http://router.example.com/b.png")
+        responses["http://router.example.com/b.png"] = Response(HttpURLConnection.HTTP_OK, body = image)
+
+        assertArrayEquals(image, anyHost.download("http://10.0.2.2:8080/a.png", maxBytes = 1024))
+        assertFalse(connections.last().instanceFollowRedirects)
+
+        opened.clear()
+        (0..ImageDownloader.MaxRedirects).forEach { responses[hop(it)] = redirect(hop(it + 1)) }
+        assertNull(anyHost.download(hop(0), maxBytes = 1024))
+        assertEquals(ImageDownloader.MaxRedirects + 1, opened.size)
+        assertNull(anyHost.download("file:///etc/hosts", maxBytes = 1024))
     }
 
     private fun hop(index: Int) = "https://cdn.example.com/hop/$index.png"

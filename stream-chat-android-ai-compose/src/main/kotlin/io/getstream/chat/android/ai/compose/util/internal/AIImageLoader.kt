@@ -73,6 +73,12 @@ public object AIImageLoader {
 
     private val downloader = ImageDownloader()
 
+    /**
+     * Downloads from any host, for links from the app's own messages, such as attachments, which
+     * can be on an intranet or a local backend.
+     */
+    internal val anyHostDownloader = ImageDownloader(publicHostsOnly = false)
+
     private val loads = SharedLoads<Bitmap?>(CoroutineScope(SupervisorJob() + Dispatchers.IO))
 
     /**
