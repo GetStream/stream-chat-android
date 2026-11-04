@@ -155,7 +155,7 @@ internal val OpenUIValue.plainJson: OpenUIValue
         // The token that marks custom steps real calls made never leaves the runtime.
         is OpenUIValue.Obj -> OpenUIValue.Obj(
             OpenUIObject.build {
-                for ((key, value) in fields) if (key != ActionPlan.CALL_TOKEN_KEY) this[key] = value.plainJson
+                for ((key, value) in fields) if (!ActionPlan.isCallToken(key, value)) this[key] = value.plainJson
             },
         )
         is OpenUIValue.Element -> node.jsonValue

@@ -267,10 +267,10 @@ internal object JS {
 
     // Property access ----------------------------------------------------------------------
 
-    /** `value[key]` for own properties (no prototype lookups). */
+    /** `value[key]` for own properties (no prototype lookups). The custom-step token reads as undefined. */
     @Suppress("NestedBlockDepth")
     internal fun property(value: OpenUIValue?, key: String): OpenUIValue? = when (value) {
-        is OpenUIValue.Obj -> value.fields[key]
+        is OpenUIValue.Obj -> value.fields[key]?.takeUnless { ActionPlan.isCallToken(key, it) }
         is OpenUIValue.Arr -> when {
             key == "length" -> OpenUIValue.Num(value.items.size.toDouble())
             else -> arrayIndex(key)?.let { value.items.getOrNull(it) }
@@ -318,6 +318,7 @@ internal object JS {
                 out.append('{')
                 var first = true
                 for ((key, item) in value.fields) {
+                    if (ActionPlan.isCallToken(key, item)) continue
                     if (!first) out.append(',')
                     first = false
                     writeJsonString(key, out)
