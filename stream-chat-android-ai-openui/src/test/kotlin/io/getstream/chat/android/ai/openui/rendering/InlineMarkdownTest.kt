@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.openui.rendering
 
 import androidx.compose.ui.text.LinkAnnotation
+import io.getstream.chat.android.ai.openui.utils.OpenUILink
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -43,5 +44,12 @@ internal class InlineMarkdownTest {
         assertEquals("call or site", text.text)
         val links = text.getLinkAnnotations(0, text.length).map { (it.item as LinkAnnotation.Url).url }
         assertEquals(listOf("https://getstream.io"), links)
+    }
+
+    @Test
+    fun `a host handler's links show as links`() {
+        val text = inlineMarkdown("[call](tel:123)", canOpen = OpenUILink::isWellFormed)
+        val links = text.getLinkAnnotations(0, text.length).map { (it.item as LinkAnnotation.Url).url }
+        assertEquals(listOf("tel:123"), links)
     }
 }

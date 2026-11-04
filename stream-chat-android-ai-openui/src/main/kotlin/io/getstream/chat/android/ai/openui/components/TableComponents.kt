@@ -47,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,13 +84,16 @@ internal val tableRenderers: Map<String, ComponentRenderer> = mapOf(
 
 private const val TablePageSize = 10
 
+/** The widest a cell grows; longer text wraps and wider elements scroll. */
+private val TableCellMaxWidth = 260.dp
+
 private class TableColumn(val label: String, val data: List<OpenUIValue>, val isNumeric: Boolean)
 
 /** `Table(columns)` with `Col(label, data, type?)`: column-oriented, 10 rows per page. */
 @Composable
 private fun TableComponent(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
-    var page by remember { mutableIntStateOf(0) }
+    var page by rememberSaveable { mutableIntStateOf(0) }
     val columns = context.props.elements("columns").map { column ->
         val props = ComponentProps(column.props)
         val data = props.array("data")
@@ -191,7 +195,11 @@ private fun TableComponent(context: ComponentRenderProps) {
 private fun TableCell(context: ComponentRenderProps, value: OpenUIValue?, numeric: Boolean) {
     val theme = OpenUITheme.current
     when {
+        // The grid scrolls horizontally, so cells get no width bound from it. Elements need one:
+        // anything that scrolls horizontally (code, tabs, carousels, tables) can't be measured
+        // with an infinite max width.
         value is OpenUIValue.Element || value is OpenUIValue.Arr -> Row(
+            modifier = Modifier.widthIn(max = TableCellMaxWidth),
             horizontalArrangement = Arrangement.spacedBy(theme.spacing.xs),
         ) {
             context.RenderNode(value)
@@ -204,7 +212,7 @@ private fun TableCell(context: ComponentRenderProps, value: OpenUIValue?, numeri
                 theme.typography.bodySmall
             },
             color = theme.colors.textPrimary,
-            modifier = Modifier.widthIn(max = 260.dp),
+            modifier = Modifier.widthIn(max = TableCellMaxWidth),
         )
         else -> Text("—", style = theme.typography.bodySmall, color = theme.colors.textTertiary)
     }

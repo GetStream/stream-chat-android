@@ -39,4 +39,9 @@
     <string name="stream_ai_openui_code_block_language_fallback">code</string>
     <string name="stream_ai_openui_code_block_copy">Copy</string>
     <string name="stream_ai_openui_code_block_copied">Copied</string>
+    <!-- Callouts: the icon's meaning, read by TalkBack. -->
+    <string name="stream_ai_openui_callout_info">Information</string>
+    <string name="stream_ai_openui_callout_success">Success</string>
+    <string name="stream_ai_openui_callout_warning">Warning</string>
+    <string name="stream_ai_openui_callout_error">Error</string>
 </resources>

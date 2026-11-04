@@ -33,6 +33,7 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
@@ -69,4 +70,12 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.kotlinx.coroutines.test)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    // Compose UI tests run on Robolectric under JUnit 4.
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.test.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -127,11 +128,21 @@ internal fun OpenUIMarkdown(
     )
 }
 
+/** [inlineMarkdown] with the links the enclosing view can open. */
+@Composable
+@ReadOnlyComposable
+internal fun inlineMarkdownText(text: String, linkColor: Color = Color.Unspecified): AnnotatedString =
+    inlineMarkdown(text, linkColor, LocalOpenUICanOpenUrl.current)
+
 /**
  * Inline Markdown (emphasis, strong, strikethrough, code spans, links) as an annotated string,
- * for one-line titles and labels. Block syntax is kept as text.
+ * for one-line titles and labels. Block syntax is kept as text, and so is a link [canOpen] rejects.
  */
-internal fun inlineMarkdown(text: String, linkColor: Color = Color.Unspecified): AnnotatedString {
+internal fun inlineMarkdown(
+    text: String,
+    linkColor: Color = Color.Unspecified,
+    canOpen: (String?) -> Boolean = OpenUILink::isOpenable,
+): AnnotatedString {
     if (text.none { it in "*_`[~" } && "://" !in text && "www." !in text) return AnnotatedString(text)
     val root = runCatching { MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(text) }.getOrNull()
         ?: return AnnotatedString(text)
@@ -165,7 +176,7 @@ internal fun inlineMarkdown(text: String, linkColor: Color = Color.Unspecified):
                         .firstOrNull { it.type == MarkdownElementTypes.LINK_DESTINATION }
                         ?.getTextInNode(text)
                         ?.toString()
-                    if (destination == null || !OpenUILink.isOpenable(destination)) {
+                    if (destination == null || !canOpen(destination)) {
                         // A link that can't open shows as its text.
                         label?.children.orEmpty().drop(1).dropLast(1).forEach(::append)
                         if (label == null) append(node.getTextInNode(text).toString())
@@ -185,7 +196,7 @@ internal fun inlineMarkdown(text: String, linkColor: Color = Color.Unspecified):
                 MarkdownTokenTypes.EOL -> append(" ")
                 GFMTokenTypes.GFM_AUTOLINK -> {
                     val url = node.getTextInNode(text).toString()
-                    if (OpenUILink.isOpenable(url)) withLink(LinkAnnotation.Url(url)) { append(url) } else append(url)
+                    if (canOpen(url)) withLink(LinkAnnotation.Url(url)) { append(url) } else append(url)
                 }
                 else -> if (node.children.isEmpty()) {
                     append(node.getTextInNode(text).toString())

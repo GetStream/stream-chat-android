@@ -50,6 +50,7 @@ import io.getstream.chat.android.ai.openui.lang.OpenUIRuntime
 import io.getstream.chat.android.ai.openui.lang.OpenUIValue
 import io.getstream.chat.android.ai.openui.lang.ParseResult
 import io.getstream.chat.android.ai.openui.lang.ToolProvider
+import io.getstream.chat.android.ai.openui.lang.stringValue
 import io.getstream.chat.android.ai.openui.utils.OpenUILink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -78,12 +79,17 @@ internal fun OpenUIView(
     val store by runtime.storeSnapshot.collectAsState()
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
-    val openUrl: (String) -> Unit = remember(onOpenUrl, uriHandler) {
+    // A host handler decides which schemes it opens; on its own the view opens web and email links.
+    val hostOpens = onOpenUrl != null
+    val canOpen: (String?) -> Boolean = remember(hostOpens) {
+        if (hostOpens) OpenUILink::isWellFormed else OpenUILink::isOpenable
+    }
+    val openUrl: (String) -> Unit = remember(onOpenUrl, uriHandler, canOpen) {
         val open = onOpenUrl ?: { url: String ->
             runCatching { uriHandler.openUri(url) }
             Unit
         }
-        { url: String -> if (OpenUILink.isOpenable(url)) open(url) }
+        { url: String -> if (canOpen(url)) open(url) }
     }
     val currentOnAction by rememberUpdatedState(onAction)
     val currentOpenUrl by rememberUpdatedState(openUrl)
@@ -94,7 +100,7 @@ internal fun OpenUIView(
         runtime.onAction = { event ->
             val action = currentOnAction
             when {
-                event.isOpenUrl -> event.url?.let(currentOpenUrl)
+                event.isOpenUrl -> event.params["url"].stringValue?.let(currentOpenUrl)
                 action != null -> action(event)
                 else -> previous?.invoke(event)
             }
@@ -105,12 +111,15 @@ internal fun OpenUIView(
     val root = state.root ?: return
     val alpha by animateFloatAsState(if (state.isQueryLoading) 0.7f else 1f, label = "queryLoading")
     CompositionLocalProvider(
+        // Resolved once here, so components don't each build a theme from MaterialTheme.
+        LocalOpenUITheme provides (LocalOpenUITheme.current ?: OpenUITheme.fromMaterial()),
         LocalOpenUIRuntime provides runtime,
         LocalComponentLibrary provides library,
         LocalOpenUIStreaming provides state.isStreaming,
         LocalOpenUIStoreSnapshot provides store,
         LocalOpenUIScope provides scope,
         LocalOpenUIOpenUrl provides openUrl,
+        LocalOpenUICanOpenUrl provides canOpen,
         // Markdown and inline links open the way the host asked.
         LocalUriHandler provides remember(openUrl) { OpenUrlHandler(openUrl) },
     ) {
@@ -131,7 +140,7 @@ internal fun OpenUIView(
  *
  * The renderer keeps the response's state, its `$variables`, forms and queries, for as long as it
  * stays in the composition, and follows [response] as it streams: partial programs render what
- * has parsed. Only web and email links open, since the model writes them.
+ * has parsed. The model writes every link, so without [onOpenUrl] only web and email links open.
  *
  * @param response The response text so far.
  * @param library The library the model was prompted with.
@@ -145,8 +154,8 @@ internal fun OpenUIView(
  * @param onParseResult Receives each new parse of the response.
  * @param toolProvider Runs the tools of `Query()` and `Mutation()`.
  * @param onError Receives the response's errors whenever they change, empty once there are none.
- * @param onOpenUrl Opens links (`@OpenUrl`, `open_url` actions, Markdown links and citations).
- * Defaults to the platform's URI handler.
+ * @param onOpenUrl Opens links (`@OpenUrl`, `open_url` actions, Markdown links and citations),
+ * and decides which schemes it accepts. Defaults to the platform's URI handler for web and email links.
  */
 @Composable
 public fun Renderer(
@@ -233,6 +242,9 @@ internal val LocalOpenUIScope = staticCompositionLocalOf<CoroutineScope?> { null
 
 /** Opens a URL the way the host asked. */
 internal val LocalOpenUIOpenUrl = staticCompositionLocalOf<(String) -> Unit> { {} }
+
+/** Whether a link can open: shown as a link and clickable only then. */
+internal val LocalOpenUICanOpenUrl = staticCompositionLocalOf<(String?) -> Boolean> { OpenUILink::isOpenable }
 
 /** The enclosing `Form`'s name (its fields are stored under it). */
 internal val LocalOpenUIFormName: ProvidableCompositionLocal<String?> = compositionLocalOf { null }
