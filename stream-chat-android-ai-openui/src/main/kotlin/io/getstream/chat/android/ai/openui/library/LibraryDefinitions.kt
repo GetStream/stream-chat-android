@@ -20,7 +20,7 @@ package io.getstream.chat.android.ai.openui.library
  * The prompt options for the chat library: its examples and additional rules (port of
  * `openuiChatPromptOptions`).
  */
-public val openuiChatPromptOptions: PromptOptions by lazy {
+internal val openuiChatPromptOptions: PromptOptions by lazy {
     PromptOptions(additionalRules = ChatLibraryDefinition.additionalRules, examples = ChatLibraryDefinition.examples)
 }
 
@@ -28,7 +28,7 @@ public val openuiChatPromptOptions: PromptOptions by lazy {
  * The prompt options for the standard library: its examples and additional rules (port of
  * `openuiPromptOptions`).
  */
-public val openuiPromptOptions: PromptOptions by lazy {
+internal val openuiPromptOptions: PromptOptions by lazy {
     PromptOptions(
         additionalRules = StandardLibraryDefinition.additionalRules,
         examples = StandardLibraryDefinition.examples,
@@ -36,10 +36,10 @@ public val openuiPromptOptions: PromptOptions by lazy {
 }
 
 internal object ChatLibraryDefinition {
-    public const val root: String = "Card"
+    const val root: String = "Card"
 
     // Components in library order.
-    public val schemas: List<ComponentSchema> = listOf(
+    val schemas: List<ComponentSchema> = listOf(
         ChatSchemas.card,
         CommonSchemas.cardHeader,
         CommonSchemas.textContent,
@@ -126,7 +126,7 @@ internal object ChatLibraryDefinition {
         CommonSchemas.visualCardBlock,
     )
 
-    public val componentGroups: List<ComponentGroup> = listOf(
+    val componentGroups: List<ComponentGroup> = listOf(
         ComponentGroup(
             name = "Content",
             components = listOf(
@@ -263,7 +263,7 @@ internal object ChatLibraryDefinition {
         ),
     )
 
-    public val examples: List<String> = listOf(
+    val examples: List<String> = listOf(
         "Example 1 — Informational response (the shape for \"tell me about X\" / explainer asks):\n\nroot = " +
             "Card([header, intro, highlights, statsHeader, statsCards, sectionsBlock, actionBtns], [src1, src2])\n" +
             "header = CardHeader(\"Paris\", \"The City of Light · France's Eternal Capital\")\nintro = " +
@@ -491,7 +491,7 @@ internal object ChatLibraryDefinition {
             "about Python\")\nfu2 = FollowUpItem(\"Show me a JavaScript comparison\")",
     )
 
-    public val additionalRules: List<String> = listOf(
+    val additionalRules: List<String> = listOf(
         "When asked about data, generate realistic/plausible data",
         "Every response is a single Card(children) — children stack vertically automatically. No layout params are " +
             "needed on Card.",
@@ -580,10 +580,10 @@ internal object ChatLibraryDefinition {
 }
 
 internal object StandardLibraryDefinition {
-    public const val root: String = "Stack"
+    const val root: String = "Stack"
 
     // Components in library order.
-    public val schemas: List<ComponentSchema> = listOf(
+    val schemas: List<ComponentSchema> = listOf(
         StandardSchemas.card,
         CommonSchemas.cardHeader,
         CommonSchemas.textContent,
@@ -668,7 +668,7 @@ internal object StandardLibraryDefinition {
         StandardSchemas.modal,
     )
 
-    public val componentGroups: List<ComponentGroup> = listOf(
+    val componentGroups: List<ComponentGroup> = listOf(
         ComponentGroup(
             name = "Layout",
             components = listOf(
@@ -826,7 +826,7 @@ internal object StandardLibraryDefinition {
         ),
     )
 
-    public val examples: List<String> = listOf(
+    val examples: List<String> = listOf(
         "Example 1 — Table (column-oriented):\n\nroot = Stack([title, tbl])\ntitle = TextContent(\"Top Languages\", " +
             "\"large-heavy\")\ntbl = Table([Col(\"Language\", langs), Col(\"Users (M)\", users), Col(\"Year\", " +
             "years)])\nlangs = [\"Python\", \"JavaScript\", \"Java\", \"TypeScript\", \"Go\"]\nusers = [15.7, 14.2, " +
@@ -893,7 +893,7 @@ internal object StandardLibraryDefinition {
             "Buttons([Button(\"Save\", @ToAssistant(\"Save preferences\"), \"primary\")])",
     )
 
-    public val additionalRules: List<String> = listOf(
+    val additionalRules: List<String> = listOf(
         "When asked about data, generate realistic/plausible data",
         "For grid-like layouts, use Stack with direction \"row\" and wrap=true. Avoid justify=\"between\" unless you " +
             "specifically want large gutters.",

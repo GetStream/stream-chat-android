@@ -18,7 +18,7 @@ package io.getstream.chat.android.ai.openui.library
 
 // Schemas specific to the standard library (`openuiLibrary`).
 internal object StandardSchemas {
-    public val card: ComponentSchema = ComponentSchema(
+    val card: ComponentSchema = ComponentSchema(
         "Card",
         description = "Styled container. variant: \"card\" (default, elevated) | \"sunk\" (recessed) | \"clear\" " +
             "(transparent). Always full width. Accepts all Stack flex params (default: direction \"column\"). Cards " +
@@ -34,7 +34,7 @@ internal object StandardSchemas {
         ),
     )
 
-    public val stack: ComponentSchema = ComponentSchema(
+    val stack: ComponentSchema = ComponentSchema(
         "Stack",
         description = "Flex container. direction: \"row\"|\"column\" (default \"column\"). gap: " +
             "\"none\"|\"xs\"|\"s\"|\"m\"|\"l\"|\"xl\"|\"2xl\" (default \"m\"). align: " +
@@ -50,7 +50,7 @@ internal object StandardSchemas {
         ),
     )
 
-    public val tabItem: ComponentSchema = ComponentSchema(
+    val tabItem: ComponentSchema = ComponentSchema(
         "TabItem",
         description = "value is unique id, trigger is tab label, content is array of components",
         props = listOf(
@@ -60,7 +60,7 @@ internal object StandardSchemas {
         ),
     )
 
-    public val accordionItem: ComponentSchema = ComponentSchema(
+    val accordionItem: ComponentSchema = ComponentSchema(
         "AccordionItem",
         description = "value is unique id, trigger is section title",
         props = listOf(
@@ -70,7 +70,7 @@ internal object StandardSchemas {
         ),
     )
 
-    public val carousel: ComponentSchema = ComponentSchema(
+    val carousel: ComponentSchema = ComponentSchema(
         "Carousel",
         description = "Horizontal scrollable carousel",
         props = listOf(
@@ -79,7 +79,7 @@ internal object StandardSchemas {
         ),
     )
 
-    public val modal: ComponentSchema = ComponentSchema(
+    val modal: ComponentSchema = ComponentSchema(
         "Modal",
         description = "Modal dialog. open is a reactive \$boolean binding — set to true to open, X/Escape/backdrop " +
             "auto-closes. Put Form with buttons inside children.",

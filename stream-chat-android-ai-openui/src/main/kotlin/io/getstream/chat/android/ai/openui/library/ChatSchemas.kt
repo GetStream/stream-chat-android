@@ -18,7 +18,7 @@ package io.getstream.chat.android.ai.openui.library
 
 // Schemas specific to the chat library (`openuiChatLibrary`).
 internal object ChatSchemas {
-    public val card: ComponentSchema = ComponentSchema(
+    val card: ComponentSchema = ComponentSchema(
         "Card",
         description = "Vertical container for all content in a chat response. Children stack top to bottom " +
             "automatically. Optional sources ([{ title, sourceName, url }]) render as a Sources strip at the bottom " +
@@ -35,26 +35,26 @@ internal object ChatSchemas {
         ),
     )
 
-    public val followUpBlock: ComponentSchema = ComponentSchema(
+    val followUpBlock: ComponentSchema = ComponentSchema(
         "FollowUpBlock",
         description = "List of clickable follow-up suggestions placed at the end of a response",
         props = listOf(required("items", array(component("FollowUpItem")))),
     )
 
-    public val followUpItem: ComponentSchema = ComponentSchema(
+    val followUpItem: ComponentSchema = ComponentSchema(
         "FollowUpItem",
         description = "Clickable follow-up suggestion — when clicked, sends text as user message",
         props = listOf(required("text", string)),
     )
 
-    public val sectionBlock: ComponentSchema = ComponentSchema(
+    val sectionBlock: ComponentSchema = ComponentSchema(
         "SectionBlock",
         description = "Collapsible accordion sections. Auto-opens sections as they stream in. Use SectionItem for " +
             "each section.",
         props = listOf(required("sections", array(component("SectionItem"))), optional("isFoldable", boolean)),
     )
 
-    public val sectionItem: ComponentSchema = ComponentSchema(
+    val sectionItem: ComponentSchema = ComponentSchema(
         "SectionItem",
         description = "Section with a label and collapsible content — used inside SectionBlock",
         props = listOf(
@@ -64,7 +64,7 @@ internal object ChatSchemas {
         ),
     )
 
-    public val tabItem: ComponentSchema = ComponentSchema(
+    val tabItem: ComponentSchema = ComponentSchema(
         "TabItem",
         description = "value is unique id, trigger is tab label, content is array of components",
         props = listOf(
@@ -74,7 +74,7 @@ internal object ChatSchemas {
         ),
     )
 
-    public val accordionItem: ComponentSchema = ComponentSchema(
+    val accordionItem: ComponentSchema = ComponentSchema(
         "AccordionItem",
         description = "value is unique id, trigger is section title",
         props = listOf(
@@ -84,7 +84,7 @@ internal object ChatSchemas {
         ),
     )
 
-    public val carousel: ComponentSchema = ComponentSchema(
+    val carousel: ComponentSchema = ComponentSchema(
         "Carousel",
         description = "Horizontal scrollable carousel",
         props = listOf(
