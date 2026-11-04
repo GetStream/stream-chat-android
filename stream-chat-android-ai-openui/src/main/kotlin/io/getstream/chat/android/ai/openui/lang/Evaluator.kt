@@ -20,6 +20,45 @@ import io.getstream.chat.android.ai.openui.library.DefinedAction
 import io.getstream.chat.android.ai.openui.library.DefinedFunction
 import io.getstream.chat.android.ai.openui.library.PropField
 
+/**
+ * Caps the work of one evaluation. `@Each` expands at runtime, so nested loops over large arrays
+ * can multiply far past the parsed tree's size; every node evaluated and every `@Each` item spends
+ * one unit, and once [limit] is spent evaluation stops early instead of blocking the caller.
+ */
+internal class EvaluationBudget(private val limit: Int = DEFAULT_LIMIT) {
+    private var spent = 0
+
+    /** Whether evaluation ran out of budget. */
+    val isExhausted: Boolean get() = spent >= limit
+
+    /** Whether exhaustion has been reported already, so it is reported once. */
+    internal var isReported: Boolean = false
+
+    /**
+     * Spends one unit. Returns `false`, reporting the exhaustion once through [context], when none
+     * is left.
+     */
+    fun spend(context: EvaluationContext): Boolean {
+        if (spent < limit) {
+            spent++
+            return true
+        }
+        if (!isReported) {
+            context.reportError?.let { report ->
+                isReported = true
+                report(EXHAUSTED_MESSAGE)
+            }
+        }
+        return false
+    }
+
+    internal companion object {
+        internal const val DEFAULT_LIMIT: Int = 200_000
+        internal const val EXHAUSTED_MESSAGE: String =
+            "evaluation budget of $DEFAULT_LIMIT steps exceeded; the output was cut short"
+    }
+}
+
 /** Resolves runtime values for the evaluator. */
 internal class EvaluationContext(
     /** Reads a `$variable` (`null` = undefined). */
@@ -34,6 +73,8 @@ internal class EvaluationContext(
     val actions: Map<String, DefinedAction> = emptyMap(),
     /** Reports a runtime error, such as a library function call that evaluated to null. */
     val reportError: ((String) -> Unit)? = null,
+    /** The work budget, shared by every context derived from this one with [copy]. */
+    val budget: EvaluationBudget = EvaluationBudget(),
 ) {
     /** Reports an error of one prop of an element, which [PropEvaluator] turns into [reportError]. */
     internal var reportPropError: ((component: String, statementId: String?, prop: String, message: String) -> Unit)? =
@@ -43,9 +84,11 @@ internal class EvaluationContext(
         resolveRef: (String) -> OpenUIValue? = this.resolveRef,
         extraScope: Map<String, OpenUIValue>? = this.extraScope,
         reportError: ((String) -> Unit)? = this.reportError,
-    ): EvaluationContext = EvaluationContext(getState, resolveRef, extraScope, functions, actions, reportError).also {
-        it.reportPropError = reportPropError
-    }
+        budget: EvaluationBudget = this.budget,
+    ): EvaluationContext =
+        EvaluationContext(getState, resolveRef, extraScope, functions, actions, reportError, budget).also {
+            it.reportPropError = reportPropError
+        }
 
     /** This context reporting the errors of [prop] of [element] through [reportPropError]. */
     internal fun forProp(element: ElementNode, prop: String): EvaluationContext {
@@ -92,9 +135,17 @@ internal object ReactiveBinding {
 @Suppress("TooManyFunctions")
 internal object Evaluator {
 
-    /** Evaluates an expression. Returns `null` for JavaScript `undefined`. */
+    /**
+     * Evaluates an expression. Returns `null` for JavaScript `undefined`, and once the context's
+     * [EvaluationBudget] is spent.
+     */
+    fun evaluate(node: ASTNode, context: EvaluationContext, schema: ReactivePropResolver? = null): OpenUIValue? {
+        if (!context.budget.spend(context)) return null
+        return evaluateNode(node, context, schema)
+    }
+
     @Suppress("ComplexCondition")
-    fun evaluate(node: ASTNode, context: EvaluationContext, schema: ReactivePropResolver? = null): OpenUIValue? =
+    private fun evaluateNode(node: ASTNode, context: EvaluationContext, schema: ReactivePropResolver?): OpenUIValue? =
         when (node) {
             is ASTNode.Str -> OpenUIValue.Str(node.value)
             is ASTNode.Num -> OpenUIValue.Num(node.value)
@@ -494,24 +545,26 @@ internal object Evaluator {
         if (variable.isNullOrEmpty()) return OpenUIValue.EmptyArray
         val template = args[2]
 
-        return OpenUIValue.Arr(
-            items.map { item ->
-                val substituted = substituteRef(template, variable, item)
-                val childContext = context.copy(resolveRef = { ref ->
-                    if (ref == variable) {
-                        item
-                    } else {
-                        context.resolveRef(ref)
-                    }
-                })
-                val result = evaluate(substituted, childContext, schema)
-                if (schema != null && result is OpenUIValue.Element) {
-                    OpenUIValue.Element(evaluateElementInline(result.node, childContext, schema))
+        val results = ArrayList<OpenUIValue>(items.size)
+        for (item in items) {
+            // Every item spends budget, so nested loops stop early once it runs out.
+            if (!context.budget.spend(context)) break
+            val substituted = substituteRef(template, variable, item)
+            val childContext = context.copy(resolveRef = { ref ->
+                if (ref == variable) {
+                    item
                 } else {
-                    result ?: OpenUIValue.Null
+                    context.resolveRef(ref)
                 }
-            },
-        )
+            })
+            val result = evaluate(substituted, childContext, schema)
+            results += if (schema != null && result is OpenUIValue.Element) {
+                OpenUIValue.Element(evaluateElementInline(result.node, childContext, schema))
+            } else {
+                result ?: OpenUIValue.Null
+            }
+        }
+        return OpenUIValue.Arr(results)
     }
 
     private fun shadows(node: ASTNode.Comp, variable: String): Boolean {
@@ -570,7 +623,8 @@ internal object PropEvaluator {
         schema: ReactivePropResolver,
     ): Pair<ElementNode?, List<OpenUIError>> {
         val errors = ArrayList<OpenUIError>()
-        val reporting = context.copy().apply {
+        // Each evaluation of the root gets its own budget.
+        val reporting = context.copy(budget = EvaluationBudget()).apply {
             reportPropError = { component, statementId, prop, message ->
                 errors += OpenUIError(
                     source = OpenUIError.Source.Runtime,
@@ -582,17 +636,34 @@ internal object PropEvaluator {
                 )
             }
         }
-        result?.root?.let { return evaluateElementProps(it, reporting, schema) to errors }
+        result?.root?.let { return evaluateElementProps(it, reporting, schema) to errors.withBudgetError(reporting) }
         val rootExpression = result?.rootExpression ?: return null to errors
         val element = Evaluator.evaluate(rootExpression, reporting, schema).elementValue
-        if (element != null) return evaluateElementProps(element, reporting, schema) to errors
+        if (element != null) {
+            return evaluateElementProps(element, reporting, schema) to errors.withBudgetError(reporting)
+        }
         errors += OpenUIError(
             source = OpenUIError.Source.Runtime,
             code = "no-root",
             message = "root does not evaluate to a component",
             statementId = "root",
         )
-        return null to errors
+        return null to errors.withBudgetError(reporting)
+    }
+
+    /** Adds the budget error when the budget ran out where no prop could report it. */
+    private fun ArrayList<OpenUIError>.withBudgetError(context: EvaluationContext): List<OpenUIError> {
+        val budget = context.budget
+        if (budget.isExhausted && !budget.isReported) {
+            budget.isReported = true
+            this += OpenUIError(
+                source = OpenUIError.Source.Runtime,
+                code = "runtime-error",
+                message = EvaluationBudget.EXHAUSTED_MESSAGE,
+                statementId = "root",
+            )
+        }
+        return this
     }
 
     /** Evaluates every dynamic prop of an element tree into concrete values. */

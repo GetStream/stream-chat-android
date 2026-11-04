@@ -281,4 +281,18 @@ internal class EvaluatorTest {
 
         assertEquals(listOf(v("3"), v("4")), (0..1).map { root.child(it).props["text"] })
     }
+
+    @Test
+    @Timeout(5)
+    fun `nested Each over many items stops at the evaluation budget and reports it`() {
+        val errors = ArrayList<OpenUIError>()
+        val root = evaluate(
+            "root = Stack(@Each(${'$'}xs, \"a\", Stack(@Each(${'$'}xs, \"b\", Text(\"x\")))))",
+            mapOf("\$xs" to List(1000) { it }),
+            errors,
+        )
+
+        assertTrue(root != null)
+        assertTrue(errors.any { "evaluation budget" in it.message }, errors.toString())
+    }
 }
