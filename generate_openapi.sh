@@ -14,7 +14,10 @@
 #   ./generate_openapi.sh --source=<path>             # an existing checkout of GetStream/chat, used as is
 #   ./generate_openapi.sh --repo-url=<url>            # fetch from another URL, e.g. over HTTPS
 #
-# Needs Go and access to GetStream/chat.
+# Needs Go and SSH access to the GetStream repos: the generator depends on private modules (GetStream/kit and others),
+# which Go fetches over HTTPS unless git rewrites it to SSH. The backend's `make setup` sets the rewrite:
+#   git config --global url."git@github.com:".insteadOf "https://github.com/"
+# GOPRIVATE='github.com/GetStream/*' also keeps Go from asking the public module proxy and checksum database for them.
 
 set -euo pipefail
 
@@ -68,7 +71,7 @@ mkdir -p "$GENERATED_DIR"
 
 # The same spec as the published releases/v2/chat-clientside-api. The unix-timestamp flag only retypes response dates
 # as numbers in the spec; the Kotlin output doesn't change.
-(cd "$SOURCE_PATH" && APP_CONFIG_FILE=configs/test.yaml "$BUILD_DIR/openapi" generate-spec \
+(cd "$SOURCE_PATH" && "$BUILD_DIR/openapi" generate-spec \
   -products chat,common,moderation \
   -version v2 \
   -clientside \
@@ -76,7 +79,7 @@ mkdir -p "$GENERATED_DIR"
   -output "$BUILD_DIR/spec") >"$BUILD_DIR/spec.log" 2>&1 ||
   { echo "Spec generation failed, see $BUILD_DIR/spec.log" >&2 && exit 1; }
 
-(cd "$SOURCE_PATH" && APP_CONFIG_FILE=configs/test.yaml "$BUILD_DIR/openapi" generate-client \
+(cd "$SOURCE_PATH" && "$BUILD_DIR/openapi" generate-client \
   --language kotlin \
   --spec "$BUILD_DIR/spec.yaml" \
   --opt api-service-class-name=ChatEndpoints \
