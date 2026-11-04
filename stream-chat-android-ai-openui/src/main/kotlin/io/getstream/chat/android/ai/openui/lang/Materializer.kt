@@ -41,8 +41,9 @@ internal object Materializer {
     fun containsDynamicValue(value: OpenUIValue?): Boolean = when (value) {
         is OpenUIValue.Expression -> true
         is OpenUIValue.Arr -> value.items.any(::containsDynamicValue)
+        // An element already knows: scanning its props again at every level would be quadratic.
         is OpenUIValue.Element ->
-            value.node.props.values
+            value.node.hasDynamicProps ?: value.node.props.values
                 .any(::containsDynamicValue)
         // A `{steps: [...]}` literal is evaluated too, so data can't pose as custom action steps.
         is OpenUIValue.Obj ->
@@ -167,22 +168,20 @@ internal object Materializer {
         return when (node) {
             is ASTNode.Comp -> {
                 val def = callDefs(context)[node.name]
-                if (def == null || def.isLazy) {
-                    node.copy(
-                        args = node.args.map(::recurse),
-                        mappedProps = node.mappedProps?.mapValues { recurse(it.value) },
-                    )
+                // Each arg is named once and shared with the mapped props: naming it again for the
+                // props would double the work at every nesting level.
+                val recursed = node.args.map(::recurse)
+                fun shared(prop: ASTNode, otherwise: (ASTNode) -> ASTNode): ASTNode {
+                    val index = node.argIndexOf(prop)
+                    return if (index == -1) otherwise(prop) else recursed[index]
+                }
+                val named = if (def == null || def.isLazy) {
+                    node.mappedProps?.mapValues { (_, prop) -> shared(prop, ::recurse) }
                 } else {
                     val checked = if (def.isBuiltin) null else mapCallArgs(node.name, node.args, def, context)
-                    // Each arg is named once and shared with the mapped props: naming it again for
-                    // the props would double the work at every nesting level.
-                    val recursed = node.args.map(::recurse)
-                    val named = (checked ?: nameArgs(node.args, def.params)).mapValues { (_, value) ->
-                        val index = node.args.indexOfFirst { it === value }
-                        if (index == -1) value else recursed[index]
-                    }
-                    node.copy(args = recursed, mappedProps = named)
+                    (checked ?: nameArgs(node.args, def.params)).mapValues { (_, prop) -> shared(prop) { it } }
                 }
+                node.copy(args = recursed, mappedProps = named)
             }
             is ASTNode.Arr -> ASTNode.Arr(node.elements.map(::recurse))
             is ASTNode.Obj -> ASTNode.Obj(node.entries.map { (key, value) -> key to recurse(value) })

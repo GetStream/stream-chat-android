@@ -42,13 +42,52 @@ internal sealed interface ASTNode {
     /**
      * A call. [mappedProps] holds the args named by the library schema (set by the materializer).
      * [isFunction] marks an `@Name(...)` call whose name is not a built-in.
+     *
+     * A mapped prop is usually one of the [args] themselves (the same instance). Comparing,
+     * hashing, printing and serializing visit such a prop once, as an index into [args]: following
+     * it again would double the work at every nesting level.
      */
     data class Comp(
         val name: String,
         val args: List<ASTNode>,
         val mappedProps: Map<String, ASTNode>? = null,
         val isFunction: Boolean = false,
-    ) : ASTNode
+    ) : ASTNode {
+        /** The index of the arg that [prop] is (the same instance), or -1 when it is a node of its own. */
+        fun argIndexOf(prop: ASTNode): Int = args.indexOfFirst { it === prop }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Comp) return false
+            if (name != other.name || isFunction != other.isFunction || args != other.args) return false
+            val props = mappedProps
+            val otherProps = other.mappedProps
+            if (props == null || otherProps == null) return props == null && otherProps == null
+            if (props.keys != otherProps.keys) return false
+            return props.all { (key, prop) ->
+                val otherProp = otherProps.getValue(key)
+                val index = argIndexOf(prop)
+                // The args are already known to be equal.
+                (index != -1 && index == other.argIndexOf(otherProp)) || prop == otherProp
+            }
+        }
+
+        // Mapped prop values are left out: a prop that is an arg is already hashed with the args.
+        override fun hashCode(): Int {
+            var result = name.hashCode()
+            result = 31 * result + args.hashCode()
+            result = 31 * result + (mappedProps?.keys?.hashCode() ?: 0)
+            return 31 * result + isFunction.hashCode()
+        }
+
+        override fun toString(): String {
+            val props = mappedProps?.entries?.joinToString(prefix = "{", postfix = "}") { (key, prop) ->
+                val index = argIndexOf(prop)
+                if (index == -1) "$key=$prop" else "$key=args[$index]"
+            }
+            return "Comp(name=$name, args=$args, mappedProps=$props, isFunction=$isFunction)"
+        }
+    }
 
     data class Str(val value: String) : ASTNode
     data class Num(val value: Double) : ASTNode
@@ -76,7 +115,12 @@ internal sealed interface ASTNode {
             else -> false
         }
 
-    /** The JSON shape used by the reference implementation (`{ k: "Comp", name, args, ... }`). */
+    /**
+     * The JSON shape of the reference implementation (`{ k: "Comp", name, args, ... }`), except
+     * that a mapped prop which is one of the call's args is written as a reference into `args`,
+     * `{ k: "Arg", i: <index> }`, rather than as a second copy of it. Copies would double the
+     * output at every nesting level.
+     */
     val jsonValue: OpenUIValue
         get() = when (this) {
             is Comp -> OpenUIValue.obj(
@@ -85,7 +129,14 @@ internal sealed interface ASTNode {
                 "args" to OpenUIValue.Arr(args.map { it.jsonValue }),
                 "fn" to if (isFunction) OpenUIValue.of(true) else null,
                 "mappedProps" to mappedProps?.let { props ->
-                    OpenUIValue.Obj(OpenUIObject(props.mapValues { it.value.jsonValue }))
+                    OpenUIValue.Obj(
+                        OpenUIObject(
+                            props.mapValues { (_, prop) ->
+                                val index = argIndexOf(prop)
+                                if (index == -1) prop.jsonValue else node(ARG_KIND, "i" to OpenUIValue.of(index))
+                            },
+                        ),
+                    )
                 },
             )
             is Str -> node("Str", "v" to OpenUIValue.Str(value))
@@ -129,7 +180,7 @@ internal sealed interface ASTNode {
                 args.forEach { it.walk(visit) }
                 // Mapped props mostly hold the args themselves; walking those twice would double the
                 // work at every nesting level.
-                mappedProps?.values?.forEach { prop -> if (args.none { it === prop }) prop.walk(visit) }
+                mappedProps?.values?.forEach { prop -> if (argIndexOf(prop) == -1) prop.walk(visit) }
             }
             is Arr -> elements.forEach { it.walk(visit) }
             is Obj -> entries.forEach { it.second.walk(visit) }
@@ -181,6 +232,9 @@ internal sealed interface ASTNode {
 
     /** Factory for literal nodes. */
     companion object {
+        /** The JSON kind of a mapped prop that refers to one of its call's args by index. */
+        const val ARG_KIND = "Arg"
+
         /** Converts a runtime value back into a literal AST node (`toLiteralAST`). */
         fun literal(value: OpenUIValue?): ASTNode = when (value) {
             null, OpenUIValue.Null -> Null

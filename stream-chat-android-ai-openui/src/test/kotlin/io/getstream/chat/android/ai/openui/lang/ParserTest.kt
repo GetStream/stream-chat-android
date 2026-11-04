@@ -376,6 +376,12 @@ internal class ParserTest {
         val call = (result.root?.props?.get("text") as OpenUIValue.Expression).node as ASTNode.Comp
         assertTrue(call.isFunction)
         assertEquals(mapOf("text" to ASTNode.Str("x")), call.mappedProps)
+        // A mapped prop that is an arg is written as a reference to it, not a second copy.
+        assertEquals(
+            """{"k":"Comp","name":"Upper","args":[{"k":"Str","v":"x"}],"fn":true,""" +
+                """"mappedProps":{"text":{"k":"Arg","i":0}}}""",
+            OpenUIJson.stringify(OpenUIValue.Expression(call)),
+        )
 
         val invalid = Parser(paramMap).parse("root = Title(@Upper(1))")
         assertEquals(listOf("type-mismatch"), invalid.meta.errors.map { it.code.wireName })

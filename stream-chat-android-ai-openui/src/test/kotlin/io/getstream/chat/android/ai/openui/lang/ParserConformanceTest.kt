@@ -32,6 +32,9 @@ import kotlin.test.assertTrue
  * and the OpenUI 1.0 cases). Each case records the one-shot `parse()` result, snapshots of the
  * streaming parser while the input is pushed in pseudo-random chunks, and the result once the
  * stream completes.
+ *
+ * Results are compared in upstream's shape ([upstreamShape]): production output refers to a
+ * call's args from its mapped props instead of copying them.
  */
 internal class ParserConformanceTest {
 
@@ -74,7 +77,7 @@ internal class ParserConformanceTest {
         // Most cases render a root, and a result never matches another program's expectation.
         assertTrue(cases.count { it.result["root"] !is OpenUIValue.Null } >= 80)
         val (paramMap, rootName) = Fixtures.libraries.getValue(cases[0].library)
-        val first = Parser(paramMap, rootName).parse(cases[0].input).jsonValue
+        val first = upstreamShape(Parser(paramMap, rootName).parse(cases[0].input).jsonValue)
         assertNotNull(
             firstDifference(
                 first,
@@ -95,7 +98,7 @@ internal class ParserConformanceTest {
             case.chunks.forEachIndexed { step, chunk ->
                 result = parser.push(chunk, complete = step == case.chunks.lastIndex)
             }
-            assertNull(firstDifference(result.jsonValue, case.completeResult), case.name)
+            assertNull(firstDifference(upstreamShape(result.jsonValue), case.completeResult), case.name)
         }
     }
 
@@ -103,7 +106,7 @@ internal class ParserConformanceTest {
     fun `one shot parse matches reference`(): List<DynamicTest> = cases.map { case ->
         DynamicTest.dynamicTest(case.name) {
             val (paramMap, rootName) = Fixtures.libraries.getValue(case.library)
-            val actual = Parser(paramMap, rootName).parse(case.input).jsonValue
+            val actual = upstreamShape(Parser(paramMap, rootName).parse(case.input).jsonValue)
             assertNull(firstDifference(actual, case.result), case.name)
         }
     }
@@ -118,7 +121,7 @@ internal class ParserConformanceTest {
                 val result = parser.push(chunk)
                 if (checkpoint < case.checkpoints.size && case.checkpoints[checkpoint] == step) {
                     assertNull(
-                        firstDifference(result.jsonValue, case.streamResults[checkpoint]),
+                        firstDifference(upstreamShape(result.jsonValue), case.streamResults[checkpoint]),
                         "${case.name} @ step $step",
                     )
                     checkpoint++

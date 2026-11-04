@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.openui.lang
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -107,6 +108,62 @@ internal class RobustnessTest {
     }
 
     @Test
+    @Timeout(10)
+    fun `nested calls in query args serialize in linear size`() {
+        val levels = 40
+        val program = "root = Stack([TextContent(\"x\")])\n" +
+            "q = Query(\"tool\", {n: " + "@Count(".repeat(levels) + "1" + ")".repeat(levels) + "})"
+        assertLinear(levels) { parser.parse(program).queryStatements.single().argsAST!! }
+    }
+
+    @Test
+    @Timeout(10)
+    fun `nested components in a runtime root serialize in linear size`() {
+        val levels = 40
+        val program = "root = \$flag ? " + "Stack([".repeat(levels) + "TextContent(\"x\")" + "])".repeat(levels) +
+            " : TextContent(\"y\")"
+        assertLinear(levels) { parser.parse(program).rootExpression!! }
+    }
+
+    @Test
+    @Timeout(10)
+    fun `nested calls in element props serialize in linear size`() {
+        val levels = 40
+        val program = "root = Stack([TextContent(" + "@Count(".repeat(levels) + "\$v" + ")".repeat(levels) + ")])"
+        val root = OpenUIValue.Element(parser.parse(program).root!!)
+
+        assertTrue(OpenUIJson.stringify(root).length < MAX_CHARS_PER_LEVEL * levels)
+        assertTrue(root.plainJson.toString().length < MAX_CHARS_PER_LEVEL * levels)
+        assertEquals(root, OpenUIValue.Element(parser.parse(program).root!!))
+    }
+
+    /** Serializing, printing, hashing and comparing what [parse] returns stays proportional to its size. */
+    private fun assertLinear(levels: Int, parse: () -> ASTNode) {
+        val node = parse()
+        // A separate parse, so comparing can't stop at the same instance.
+        val other = parse()
+        val expression = OpenUIValue.Expression(node)
+        val json = OpenUIJson.stringify(expression)
+
+        assertTrue(json.length < MAX_CHARS_PER_LEVEL * levels, "${json.length} chars")
+        assertEquals(json, expression.plainJson.toString())
+        assertEquals(json, expression.toString())
+        assertTrue(node.toString().length < MAX_CHARS_PER_LEVEL * levels)
+        assertEquals(node.hashCode(), other.hashCode())
+        assertEquals(node, other)
+        // Every mapped prop is the arg itself, not a copy of it.
+        var mapped = 0
+        node.walk { call ->
+            if (call !is ASTNode.Comp) return@walk
+            call.mappedProps?.values?.forEach {
+                assertTrue(call.argIndexOf(it) != -1)
+                mapped++
+            }
+        }
+        assertTrue(mapped >= levels)
+    }
+
+    @Test
     fun `a chain within the limits is kept`() {
         val result = parser.parse("root = Stack([TextContent(" + List(100) { "\"a\"" }.joinToString("+") + ")])")
 
@@ -145,5 +202,10 @@ internal class RobustnessTest {
 
         assertEquals("Stack", result.root?.typeName)
         assertTrue(!OpenUIJson.stringify(result.jsonValue).contains("Infinity"))
+    }
+
+    private companion object {
+        // A level writes a call, its args and a reference per mapped prop: about a hundred chars.
+        const val MAX_CHARS_PER_LEVEL = 200
     }
 }
