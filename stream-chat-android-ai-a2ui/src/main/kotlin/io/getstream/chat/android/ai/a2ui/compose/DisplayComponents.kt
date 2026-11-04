@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ai.a2ui.compose
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -34,16 +33,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
@@ -56,7 +49,7 @@ import com.mikepenz.markdown.m3.markdownColor
 import com.mikepenz.markdown.m3.markdownTypography
 import com.mikepenz.markdown.model.rememberMarkdownState
 import io.getstream.chat.android.ai.a2ui.compose.icons.A2UIIcons
-import io.getstream.chat.android.ai.a2ui.compose.internal.UrlImageLoader
+import io.getstream.chat.android.ai.compose.util.internal.rememberAIImage
 
 /**
  * `Text`: simple Markdown, in the `body` style or the smaller `caption` one. Markdown headings
@@ -127,11 +120,7 @@ internal fun A2UIImage(scope: A2UIComponentScope) {
         contentAlignment = Alignment.Center,
     ) {
         val targetPx = with(LocalDensity.current) { maxOf(maxWidth, maxHeight).roundToPx() }
-        var bitmap by remember(url) { mutableStateOf<Bitmap?>(url?.let { UrlImageLoader.cached(it, targetPx) }) }
-        if (url != null && bitmap == null) {
-            LaunchedEffect(url, targetPx) { bitmap = UrlImageLoader.load(url, targetPx) }
-        }
-        val image = bitmap
+        val image = url?.let { rememberAIImage(it, targetPx) }
         if (image == null) {
             Icon(
                 imageVector = A2UIIcons.vector("photo"),
@@ -140,7 +129,7 @@ internal fun A2UIImage(scope: A2UIComponentScope) {
             )
         } else {
             Image(
-                bitmap = image.asImageBitmap(),
+                bitmap = image,
                 contentDescription = scope.string("description"),
                 contentScale = when (scope.hint("fit")) {
                     "contain" -> ContentScale.Fit

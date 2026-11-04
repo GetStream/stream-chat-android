@@ -34,23 +34,20 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.ai.a2ui.compose.internal.ComponentEntrance
-import io.getstream.chat.android.ai.a2ui.compose.internal.SurfaceEntrances
 import io.getstream.chat.android.ai.a2ui.core.Accessibility
 import io.getstream.chat.android.ai.a2ui.core.Node
 import io.getstream.chat.android.ai.a2ui.core.NodeContext
 import io.getstream.chat.android.ai.a2ui.core.Surface
 import io.getstream.chat.android.ai.a2ui.core.rootNode
 import io.getstream.chat.android.ai.compose.generativeui.AIUIEntrance
+import io.getstream.chat.android.ai.compose.generativeui.AIUIPartEntrance
 
 /**
  * Draws a surface from its root, with [catalog]. [revision] changes whenever the surface's
  * components or data do, so the surface draws again.
  *
  * @param entrances Whether the surface comes in as a part of a reply's generated UI does, and its
- * components with it.
- * @param isWritten Whether the surface is still being written. Then a component that shows after
- * the one around it comes in on its own, after the ones that came in just before it.
+ * components with it: a component that shows after the one around it comes in on its own.
  */
 @Composable
 internal fun A2UISurfaceView(
@@ -59,16 +56,13 @@ internal fun A2UISurfaceView(
     modifier: Modifier = Modifier,
     catalog: A2UICatalog = A2UICatalog.Basic,
     entrances: Boolean = false,
-    isWritten: Boolean = false,
 ) {
     val root = surface.rootNode() ?: return
     val environment = SurfaceEnvironment(surface, catalog, entrances, revision)
     Box(modifier = modifier.fillMaxWidth().testTag("a2ui:${surface.surfaceId}")) {
         if (entrances) {
             AIUIEntrance {
-                SurfaceEntrances(isWritten) {
-                    RenderNode(environment, root, Modifier)
-                }
+                RenderNode(environment, root, Modifier)
             }
         } else {
             RenderNode(environment, root, Modifier)
@@ -90,7 +84,7 @@ internal fun RenderNode(environment: SurfaceEnvironment, node: Node, modifier: M
         environment = environment,
     )
     if (environment.entrances) {
-        ComponentEntrance { entrance -> renderer(scope(entrance)) }
+        AIUIPartEntrance { entrance -> renderer(scope(entrance)) }
     } else {
         renderer(scope(Modifier))
     }
