@@ -25,7 +25,7 @@ package io.getstream.chat.android.ai.openui.lang
  *
  * @param rootName The library's root component.
  */
-public fun createStreamingParser(schema: OpenUIValue, rootName: String? = null): StreamParser =
+internal fun createStreamingParser(schema: OpenUIValue, rootName: String? = null): StreamParser =
     StreamParser(schema, rootName)
 
 /**
@@ -42,7 +42,7 @@ public fun createStreamingParser(schema: OpenUIValue, rootName: String? = null):
  * ([Parser.compileSchema]), or `null` to parse without a library.
  * @param rootName The library's root component.
  */
-public class StreamParser internal constructor(
+internal class StreamParser internal constructor(
     internal val paramMap: ParamMap?,
     internal val rootName: String? = null,
 ) {
@@ -65,7 +65,7 @@ public class StreamParser internal constructor(
     private var completedCount = 0
 
     /** Appends the next chunk and returns the latest result. Pass [complete] once the stream has ended. */
-    public fun push(chunk: String, complete: Boolean = false): ParseResult {
+    fun push(chunk: String, complete: Boolean = false): ParseResult {
         buffer += chunk
         return getResult(complete)
     }
@@ -74,7 +74,7 @@ public class StreamParser internal constructor(
      * Sets the full text so far. Only the delta is consumed; if the text was replaced rather
      * than appended to, the parser starts over. Pass [complete] once the stream has ended.
      */
-    public fun set(fullText: String, complete: Boolean = false): ParseResult {
+    fun set(fullText: String, complete: Boolean = false): ParseResult {
         if (fullText.length < buffer.length || !fullText.startsWith(buffer)) reset()
         buffer += fullText.substring(buffer.length)
         return getResult(complete)
@@ -84,7 +84,7 @@ public class StreamParser internal constructor(
      * The latest result without consuming new data. Until [complete], a `$name` ending the text
      * may still be growing, so it isn't declared yet.
      */
-    public fun getResult(complete: Boolean = false): ParseResult {
+    fun getResult(complete: Boolean = false): ParseResult {
         refreshCleaned()
         val pendingStart = scanNewCompleted()
         val pendingText = JS.trim(cleaned.substring(pendingStart))
@@ -123,7 +123,7 @@ public class StreamParser internal constructor(
     }
 
     /** Clears all state. */
-    public fun reset() {
+    fun reset() {
         buffer = ""
         cleaned = ""
         completedEnd = 0

@@ -26,7 +26,7 @@ package io.getstream.chat.android.ai.openui.lang
  * and `id = null` deletes one. Statements no longer reachable from the root statement [rootId]
  * (`root` by default) are dropped; `$state` variables are always kept.
  */
-public fun mergeStatements(existing: String, patch: String, rootId: String = "root"): String =
+internal fun mergeStatements(existing: String, patch: String, rootId: String = "root"): String =
     StatementMerger.merge(existing, patch, rootId)
 
 /** The statement merge behind [mergeStatements] (port of `merge.ts`). */

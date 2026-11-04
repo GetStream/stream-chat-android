@@ -28,7 +28,7 @@ package io.getstream.chat.android.ai.openui.lang
  * @param rootName The library's root component. Without a `root` statement, the first statement
  * that calls it renders, with a `no-root` warning.
  */
-public fun createParser(schema: OpenUIValue, rootName: String? = null): Parser = Parser(schema, rootName)
+internal fun createParser(schema: OpenUIValue, rootName: String? = null): Parser = Parser(schema, rootName)
 
 /**
  * One-shot parser for OpenUI Lang (port of `Parser` / `parse` in `parser.ts`); create one with
@@ -38,7 +38,7 @@ public fun createParser(schema: OpenUIValue, rootName: String? = null): Parser =
  * or `null` to parse without a library.
  * @param rootName The library's root component.
  */
-public class Parser internal constructor(
+internal class Parser internal constructor(
     internal val paramMap: ParamMap?,
     internal val rootName: String? = null,
 ) {
@@ -46,7 +46,7 @@ public class Parser internal constructor(
     internal constructor(schema: OpenUIValue, rootName: String? = null) : this(compileSchema(schema), rootName)
 
     /** Parses a complete (or partial) program in one pass. */
-    public fun parse(input: String): ParseResult {
+    fun parse(input: String): ParseResult {
         val trimmed = Preprocessor.preprocess(input)
         if (trimmed.isEmpty()) return ParseResult.empty()
 
@@ -61,6 +61,9 @@ public class Parser internal constructor(
 
     /** Schema compilation. */
     internal companion object {
+        // The position of a Query's refresh interval among its arguments.
+        private const val QUERY_REFRESH_ARG = 3
+
         private const val ROOT_STATEMENT_ID = "root"
 
         /** The action `$defs` of every library: `action` props are `{"$ref": "#/$defs/ActionExpression"}`. */
@@ -220,7 +223,7 @@ public class Parser internal constructor(
                             toolAST = args.getOrNull(0),
                             argsAST = args.getOrNull(1),
                             defaultsAST = args.getOrNull(2),
-                            refreshAST = args.getOrNull(3),
+                            refreshAST = args.getOrNull(QUERY_REFRESH_ARG),
                             deps = statement.deps,
                             complete = true,
                         )
@@ -292,6 +295,8 @@ internal class PartialReference(private val name: String, private val statementI
 
 /** Cleans a model response before parsing: markdown fences, comments, whitespace. */
 internal object Preprocessor {
+    // The length of a code fence, "```".
+    private const val FENCE_LENGTH = 3
 
     fun preprocess(input: String): String = JS.trim(stripComments(stripFences(JS.trim(input))))
 
@@ -334,11 +339,11 @@ internal object Preprocessor {
             if (fenceStart == -1) break
 
             // Skip the language tag up to the newline.
-            var j = fenceStart + 3
+            var j = fenceStart + FENCE_LENGTH
             while (j < input.length && input[j] != '\n') j++
             if (j >= input.length) {
                 // No newline after the opening fence yet (streaming): nothing to take.
-                blocks += input.substring(fenceStart + 3).replace(Regex("^[^\n]*\n?"), "")
+                blocks += input.substring(fenceStart + FENCE_LENGTH).replace(Regex("^[^\n]*\n?"), "")
                 break
             }
             j++
@@ -359,7 +364,7 @@ internal object Preprocessor {
             }
             if (closePosition != -1) {
                 blocks += input.substring(j, closePosition)
-                i = closePosition + 3
+                i = closePosition + FENCE_LENGTH
             } else {
                 // No closing fence (streaming): take everything after the opening fence.
                 blocks += input.substring(minOf(j, input.length))
@@ -369,9 +374,9 @@ internal object Preprocessor {
         if (blocks.isNotEmpty()) return blocks.joinToString("\n")
 
         if (input.startsWith("```")) {
-            var j = 3
+            var j = FENCE_LENGTH
             while (j < input.length && input[j] != '\n') j++
-            val body = input.substring(if (j < input.length) j + 1 else 3)
+            val body = input.substring(if (j < input.length) j + 1 else FENCE_LENGTH)
             val trailingFence = body.lastIndexOf("```")
             return if (trailingFence != -1) body.substring(0, trailingFence) else body
         }

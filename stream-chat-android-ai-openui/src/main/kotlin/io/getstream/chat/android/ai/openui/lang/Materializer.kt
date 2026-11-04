@@ -25,6 +25,8 @@ package io.getstream.chat.android.ai.openui.lang
  */
 @Suppress("TooManyFunctions")
 internal object Materializer {
+    // The arguments of a lazy builtin such as @Each: the array, the loop variable and the template.
+    private const val LAZY_BUILTIN_ARG_COUNT = 3
 
     /**
      * How deep the materialized tree nests, references included. Materializing recurses for each
@@ -249,7 +251,8 @@ internal object Materializer {
     @Suppress("ComplexCondition")
     private fun materializeLazyBuiltin(node: ASTNode.Comp, context: MaterializeContext, scoped: Set<String>): ASTNode? {
         val def = callDefs(context)[node.name]
-        if (def == null || def.kind != CallDef.Kind.Function || !def.isLazy || node.args.size < 3) return null
+        val isLazyBuiltin = def != null && def.kind == CallDef.Kind.Function && def.isLazy
+        if (!isLazyBuiltin || node.args.size < LAZY_BUILTIN_ARG_COUNT) return null
         val variable = when (val arg = node.args[1]) {
             is ASTNode.Ref -> arg.name
             is ASTNode.Str -> arg.value
@@ -380,7 +383,8 @@ internal object Materializer {
         return materializeComponent(node, context)
     }
 
-    @Suppress("LoopWithTooManyJumpStatements")
+    // Resolves, validates and orders the props of one call in a single pass.
+    @Suppress("LongMethod", "LoopWithTooManyJumpStatements")
     private fun materializeComponent(node: ASTNode.Comp, context: MaterializeContext): OpenUIValue {
         val name = node.name
         val args = node.args

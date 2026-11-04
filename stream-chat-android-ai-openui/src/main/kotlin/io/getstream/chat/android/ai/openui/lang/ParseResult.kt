@@ -22,7 +22,7 @@ package io.getstream.chat.android.ai.openui.lang
  * The parser converts OpenUI Lang text into a tree of these nodes. Positional arguments are
  * mapped to named [props] in the order the library schema declares them.
  */
-public data class ElementNode internal constructor(
+internal data class ElementNode internal constructor(
     /** Component name as defined in the library, e.g. `Table`. */
     val typeName: String,
     /** Named props. Values may contain nested elements and runtime expressions. */
@@ -56,37 +56,37 @@ private val ELEMENT_JSON_KEYS = listOf("type", "typeName", "props", "partial", "
  * A machine-readable validation error code, such as `missing-required`. A class rather than an
  * enum so new codes can be added without breaking exhaustive `when`s.
  */
-public data class ValidationErrorCode(
+internal data class ValidationErrorCode(
     /** The code as the reference implementation writes it, e.g. `missing-required`. */
     val wireName: String,
 ) {
     override fun toString(): String = wireName
 
     /** The codes the parser reports. */
-    public companion object {
+    companion object {
         /** A required prop is missing. */
-        public val MissingRequired: ValidationErrorCode = ValidationErrorCode("missing-required")
+        val MissingRequired: ValidationErrorCode = ValidationErrorCode("missing-required")
 
         /** A required prop is `null`. */
-        public val NullRequired: ValidationErrorCode = ValidationErrorCode("null-required")
+        val NullRequired: ValidationErrorCode = ValidationErrorCode("null-required")
 
         /** A call to a component the library doesn't have. */
-        public val UnknownComponent: ValidationErrorCode = ValidationErrorCode("unknown-component")
+        val UnknownComponent: ValidationErrorCode = ValidationErrorCode("unknown-component")
 
         /** `Query()` or `Mutation()` used inline instead of as a statement. */
-        public val InlineReserved: ValidationErrorCode = ValidationErrorCode("inline-reserved")
+        val InlineReserved: ValidationErrorCode = ValidationErrorCode("inline-reserved")
 
         /** More positional args than the component has params. */
-        public val ExcessArgs: ValidationErrorCode = ValidationErrorCode("excess-args")
+        val ExcessArgs: ValidationErrorCode = ValidationErrorCode("excess-args")
 
         /** A value that doesn't match the prop's schema. */
-        public val TypeMismatch: ValidationErrorCode = ValidationErrorCode("type-mismatch")
+        val TypeMismatch: ValidationErrorCode = ValidationErrorCode("type-mismatch")
 
         /** An `@Name(...)` call that is not a built-in or one of the library's functions or actions. */
-        public val UnknownFunction: ValidationErrorCode = ValidationErrorCode("unknown-function")
+        val UnknownFunction: ValidationErrorCode = ValidationErrorCode("unknown-function")
 
         /** No entry statement, or one that doesn't render a component. */
-        public val NoRoot: ValidationErrorCode = ValidationErrorCode("no-root")
+        val NoRoot: ValidationErrorCode = ValidationErrorCode("no-root")
     }
 }
 
@@ -94,7 +94,7 @@ public data class ValidationErrorCode(
  * A prop validation error. Components with missing required props are dropped from the output
  * tree and their errors are recorded here.
  */
-public data class ValidationError internal constructor(
+internal data class ValidationError internal constructor(
     val code: ValidationErrorCode,
     /** Component type name, e.g. `Header`. */
     val component: String,
@@ -165,7 +165,7 @@ internal data class MutationStatementInfo(
  * While streaming, each chunk produces a new result; [root] progressively resolves from `null`
  * to a partial tree to the complete tree.
  */
-public data class ParseResult internal constructor(
+internal data class ParseResult internal constructor(
     /** The root element, or `null` if nothing can be rendered yet. */
     val root: ElementNode?,
     /** Set when the entry picks a component at runtime, such as `root = $dark ? a : b`. */
@@ -179,7 +179,7 @@ public data class ParseResult internal constructor(
     internal val mutationStatements: List<MutationStatementInfo>,
 ) {
     /** Parse diagnostics. */
-    public data class Meta internal constructor(
+    data class Meta internal constructor(
         /** True when the input was truncated (unclosed strings or brackets). */
         val incomplete: Boolean,
         /** References used but not (yet) defined. */
@@ -259,21 +259,21 @@ internal data class CallDef(
  */
 internal class ParamMap(
     /** Component name → ordered params, in library order. */
-    public val components: Map<String, List<ParamDef>>,
+    val components: Map<String, List<ParamDef>>,
     /** The built-in functions and steps, and the library's own functions and actions. */
-    public val callDefs: Map<String, CallDef> = Builtins.calls,
+    val callDefs: Map<String, CallDef> = Builtins.calls,
 ) {
     /** A map of [components] with only the built-in calls. */
-    public constructor(vararg components: Pair<String, List<ParamDef>>) : this(components.toMap())
+    constructor(vararg components: Pair<String, List<ParamDef>>) : this(components.toMap())
 
     /** The params of component [name], or `null` when the library has no such component. */
-    public operator fun get(name: String): List<ParamDef>? = components[name]
+    operator fun get(name: String): List<ParamDef>? = components[name]
 
     /** Whether the library has component [name]. */
-    public operator fun contains(name: String): Boolean = name in components
+    operator fun contains(name: String): Boolean = name in components
 
     /** Component names in library order. */
-    public val names: List<String> get() = components.keys.toList()
+    val names: List<String> get() = components.keys.toList()
 
     override fun equals(other: Any?): Boolean =
         other is ParamMap && components == other.components && callDefs == other.callDefs

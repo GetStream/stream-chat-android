@@ -26,32 +26,32 @@ import java.util.Collections
  * Re-assigning an existing key keeps its original position; removing a key drops it.
  * Equality is order-insensitive, like comparing two JavaScript objects' own properties.
  */
-public class OpenUIObject private constructor(private val storage: LinkedHashMap<String, OpenUIValue>) :
+internal class OpenUIObject private constructor(private val storage: LinkedHashMap<String, OpenUIValue>) :
     // An unmodifiable view, so a cast can't write through `entries` or `values`.
     Map<String, OpenUIValue> by Collections.unmodifiableMap(storage) {
 
     /** Creates an object from a map, keeping the map's iteration order. */
-    public constructor(map: Map<String, OpenUIValue> = emptyMap()) : this(LinkedHashMap(map))
+    constructor(map: Map<String, OpenUIValue> = emptyMap()) : this(LinkedHashMap(map))
 
     /** A copy with `key` set to `value` (`null` removes it, like `delete obj[key]`). */
-    public fun with(key: String, value: OpenUIValue?): OpenUIObject {
+    fun with(key: String, value: OpenUIValue?): OpenUIObject {
         val copy = LinkedHashMap(storage)
         if (value == null) copy.remove(key) else copy[key] = value
         return OpenUIObject(copy)
     }
 
     /** A copy without `key`. */
-    public fun without(key: String): OpenUIObject = with(key, null)
+    fun without(key: String): OpenUIObject = with(key, null)
 
     /** A copy with `other`'s entries assigned on top (like `{ ...this, ...other }`). */
-    public operator fun plus(other: Map<String, OpenUIValue>): OpenUIObject {
+    operator fun plus(other: Map<String, OpenUIValue>): OpenUIObject {
         val copy = LinkedHashMap(storage)
         copy.putAll(other)
         return OpenUIObject(copy)
     }
 
     /** A copy with every value transformed, keeping key order. */
-    public fun mapValues(transform: (OpenUIValue) -> OpenUIValue): OpenUIObject {
+    fun mapValues(transform: (OpenUIValue) -> OpenUIValue): OpenUIObject {
         val copy = LinkedHashMap<String, OpenUIValue>(storage.size)
         for ((key, value) in storage) copy[key] = transform(value)
         return OpenUIObject(copy)
@@ -62,35 +62,35 @@ public class OpenUIObject private constructor(private val storage: LinkedHashMap
     override fun toString(): String = JS.jsonStringify(OpenUIValue.Obj(this))!!
 
     /** Mutable builder that keeps JavaScript key-order semantics. */
-    public class Builder internal constructor() {
+    class Builder internal constructor() {
         private val storage = LinkedHashMap<String, OpenUIValue>()
 
         /** The value for [key], or `null` when absent. */
-        public operator fun get(key: String): OpenUIValue? = storage[key]
+        operator fun get(key: String): OpenUIValue? = storage[key]
 
         /** Whether [key] is set. */
-        public operator fun contains(key: String): Boolean = key in storage
+        operator fun contains(key: String): Boolean = key in storage
 
         /** Sets a value (`null` removes the key). */
-        public operator fun set(key: String, value: OpenUIValue?) {
+        operator fun set(key: String, value: OpenUIValue?) {
             if (value == null) storage.remove(key) else storage[key] = value
         }
 
         /** An immutable copy of the entries set so far. */
-        public fun build(): OpenUIObject = OpenUIObject(LinkedHashMap(storage))
+        fun build(): OpenUIObject = OpenUIObject(LinkedHashMap(storage))
     }
 
     /** Factories for objects. */
-    public companion object {
+    companion object {
         /** The empty object (`{}`). */
-        public val Empty: OpenUIObject = OpenUIObject()
+        val Empty: OpenUIObject = OpenUIObject()
 
         /** Builds an object from pairs; `null` values are skipped (JavaScript `undefined`). */
-        public fun of(vararg pairs: Pair<String, OpenUIValue?>): OpenUIObject = build {
+        fun of(vararg pairs: Pair<String, OpenUIValue?>): OpenUIObject = build {
             for ((key, value) in pairs) if (value != null) this[key] = value
         }
 
         /** Builds an object with a [Builder]. */
-        public fun build(block: Builder.() -> Unit): OpenUIObject = Builder().apply(block).build()
+        fun build(block: Builder.() -> Unit): OpenUIObject = Builder().apply(block).build()
     }
 }
