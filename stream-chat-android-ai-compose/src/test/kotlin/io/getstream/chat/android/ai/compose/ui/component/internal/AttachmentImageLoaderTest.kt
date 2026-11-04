@@ -23,6 +23,8 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.ai.compose.util.internal.AIImageLoader
+import io.getstream.chat.android.ai.compose.util.internal.ImageDownloader
 import io.getstream.chat.android.ai.compose.util.internal.decodeSampledBitmap
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -38,9 +40,11 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
+import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
+import java.net.URL
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
@@ -50,6 +54,13 @@ internal class AttachmentImageLoaderTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private lateinit var server: LocalHttpServer
+
+    // Resolves every host to a public address and connects to the local server, so links on public
+    // hosts reach it.
+    private val downloader = ImageDownloader(
+        resolve = { listOf(InetAddress.getByName("93.184.216.34")) },
+        open = { url -> URL("http", "127.0.0.1", url.port, url.file).openConnection() as HttpURLConnection },
+    )
 
     @Before
     fun setUp() {
@@ -83,8 +94,16 @@ internal class AttachmentImageLoaderTest {
     }
 
     @Test
+    fun `an image on this device's network isn't downloaded`() = runTest {
+        val uri = "http://127.0.0.1:${server.port}/photo.png".toUri()
+
+        assertNull(AttachmentImageLoader.load(context, uri, targetSizePx = 100))
+        assertEquals(0, server.requests.get())
+    }
+
+    @Test
     fun `an image on the web is downloaded and downsampled to the size it shows at`() = runTest {
-        val bitmap = AttachmentImageLoader.load(context, url("/photo.png"), targetSizePx = 100)
+        val bitmap = load(url("/photo.png"), targetSizePx = 100)
 
         assertNotNull(bitmap)
         assertEquals(200, bitmap!!.width)
@@ -97,8 +116,8 @@ internal class AttachmentImageLoaderTest {
         val uri = url("/photo.png")
         assertNull(AttachmentImageLoader.cached(uri, targetSizePx = 50))
 
-        val first = AttachmentImageLoader.load(context, uri, targetSizePx = 50)
-        val second = AttachmentImageLoader.load(context, uri, targetSizePx = 50)
+        val first = load(uri, targetSizePx = 50)
+        val second = load(uri, targetSizePx = 50)
 
         assertNotNull(first)
         assertSame(first, second)
@@ -111,18 +130,18 @@ internal class AttachmentImageLoaderTest {
     fun `a page that isn't found shows no image`() = runTest {
         val uri = url("/missing.png")
 
-        assertNull(AttachmentImageLoader.load(context, uri, targetSizePx = 100))
+        assertNull(load(uri, targetSizePx = 100))
         assertNull("a failure isn't kept", AttachmentImageLoader.cached(uri, targetSizePx = 100))
     }
 
     @Test
     fun `a response that isn't an image shows no image`() = runTest {
-        assertNull(AttachmentImageLoader.load(context, url("/not-an-image.png"), targetSizePx = 100))
+        assertNull(load(url("/not-an-image.png"), targetSizePx = 100))
     }
 
     @Test
     fun `a download that says it is too large isn't read`() = runTest {
-        assertNull(AttachmentImageLoader.load(context, url("/declared-too-large.png"), targetSizePx = 100))
+        assertNull(load(url("/declared-too-large.png"), targetSizePx = 100))
         assertEquals(1, server.requests.get())
     }
 
@@ -131,7 +150,7 @@ internal class AttachmentImageLoaderTest {
         val padded = png(width = 400, height = 200) + ByteArray(64 * 1024)
         assertNotNull("an image followed by padding decodes", decodeSampledBitmap(padded, targetSizePx = 100))
 
-        assertNull(AttachmentImageLoader.load(context, url("/streamed-too-large.png"), targetSizePx = 100))
+        assertNull(load(url("/streamed-too-large.png"), targetSizePx = 100))
         assertEquals(1, server.requests.get())
     }
 
@@ -142,7 +161,7 @@ internal class AttachmentImageLoaderTest {
         val uri = url("/unreachable.png")
         server.close()
 
-        assertNull(AttachmentImageLoader.load(context, uri, targetSizePx = 100))
+        assertNull(load(uri, targetSizePx = 100))
     }
 
     @Test
@@ -157,7 +176,11 @@ internal class AttachmentImageLoaderTest {
         assertEquals(40, bitmap.height)
     }
 
-    private fun url(path: String): Uri = "http://127.0.0.1:${server.port}$path".toUri()
+    // A link on a public host, which the downloader reaches at the local server.
+    private fun url(path: String): Uri = "http://images.example.com:${server.port}$path".toUri()
+
+    private suspend fun load(uri: Uri, targetSizePx: Int): Bitmap? =
+        AIImageLoader.load(uri.toString(), targetSizePx, MaxDownloadBytes, downloader)
 
     private fun OutputStream.head(code: Int, vararg headers: String) {
         val lines = listOf("HTTP/1.1 $code Status") + headers
