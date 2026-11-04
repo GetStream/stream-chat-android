@@ -44,10 +44,15 @@ internal class AIUIHostTest {
 
     private class Engine(val showsNothing: Boolean) : AIUIEngine {
         val received = mutableListOf<Pair<String, AIUIDocument>>()
+        val removed = mutableListOf<String>()
         val asked = mutableListOf<String>()
 
         override fun receive(document: AIUIDocument, messageId: String) {
             received += messageId to document
+        }
+
+        override fun remove(messageId: String) {
+            removed += messageId
         }
 
         override fun content(document: AIUIDocument, messageId: String): (@Composable () -> Unit)? {
@@ -83,9 +88,9 @@ internal class AIUIHostTest {
         val a2ui = Renderer(AIUIFormat.A2UI)
         val host = AIUIHost(listOf(old, current, a2ui)) {}
 
-        assertTrue(host.canShow(document("x", version = "1.0"), "m1"))
-        assertTrue(host.canShow(document("x", format = AIUIFormat.A2UI), "m2"))
-        assertTrue(host.canShow(document("x", version = "0.4"), "m3"))
+        assertTrue(host.showsUI(document("x", version = "1.0"), "m1"))
+        assertTrue(host.showsUI(document("x", format = AIUIFormat.A2UI), "m2"))
+        assertTrue(host.showsUI(document("x", version = "0.4"), "m3"))
 
         assertEquals(listOf("m3"), old.engines.single().asked)
         assertEquals(listOf("m1"), current.engines.single().asked)
@@ -96,10 +101,10 @@ internal class AIUIHostTest {
     fun `a document no renderer reads, or one whose renderer shows nothing, shows the reply's text`() {
         val host = AIUIHost(listOf(Renderer(AIUIFormat.OpenUI, showsNothing = true))) {}
 
-        assertFalse(host.reads(document("x", format = AIUIFormat("acme"))))
-        assertFalse(host.canShow(document("x", format = AIUIFormat("acme")), "m1"))
-        assertTrue(host.reads(document("x")))
-        assertFalse(host.canShow(document("x"), "m1"))
+        assertFalse(host.canShow(document("x", format = AIUIFormat("acme"))))
+        assertFalse(host.showsUI(document("x", format = AIUIFormat("acme")), "m1"))
+        assertTrue(host.canShow(document("x")))
+        assertFalse(host.showsUI(document("x"), "m1"))
     }
 
     @Test
@@ -108,9 +113,9 @@ internal class AIUIHostTest {
         val host = AIUIHost(listOf(renderer)) {}
 
         assertTrue(renderer.engines.isEmpty())
-        host.canShow(document("a"), "m1")
+        host.showsUI(document("a"), "m1")
         host.receive(listOf(Reply("m2", document("b"))))
-        host.canShow(document("c"), "m3")
+        host.showsUI(document("c"), "m3")
 
         assertEquals(1, renderer.engines.size)
     }
@@ -128,6 +133,51 @@ internal class AIUIHostTest {
             listOf("m1" to document("a"), "m3" to document("b"), "m3" to document("b2")),
             renderer.engines.single().received,
         )
+    }
+
+    @Test
+    fun `a reply that leaves the conversation, or whose UI does, is forgotten`() {
+        val renderer = Renderer(AIUIFormat.OpenUI)
+        val host = AIUIHost(listOf(renderer)) {}
+        host.receive(listOf(Reply("m1", document("a")), Reply("m2", document("b")), Reply("m3", document("c"))))
+        host.setState("m1", mapOf("name" to "Ana"))
+
+        host.receive(listOf(Reply("m2", null), Reply("m3", document("c"))))
+        host.receive(listOf(Reply("m1", document("a")), Reply("m3", document("c"))))
+
+        val engine = renderer.engines.single()
+        assertEquals(listOf("m1", "m2"), engine.removed)
+        assertNull(host.state("m1"))
+        assertEquals(listOf("m1", "m2", "m3", "m1"), engine.received.map { it.first })
+    }
+
+    @Test
+    fun `the host keeps its own copy of the renderers and components`() {
+        val renderers = mutableListOf<AIUIRenderer>(Renderer(AIUIFormat.OpenUI))
+        val components = mutableListOf(component)
+        val host = AIUIHost(renderers, components) {}
+
+        renderers.clear()
+        components.clear()
+
+        assertTrue(host.canShow(document("x")))
+        assertNotNull(host.component("place_card"))
+    }
+
+    @Test
+    fun `a tool that throws, or answers with text that is not JSON, fails`() = runTest {
+        val throwing = object : AIClientTool {
+            override val name = "contacts"
+            override suspend fun run(call: AIToolCallPart): AIClientToolResult = throw SecurityException("No access")
+        }
+        val bare = object : AIClientTool {
+            override val name = "status"
+            override suspend fun run(call: AIToolCallPart) = AIClientToolResult.completed("ok")
+        }
+        val host = AIUIHost(emptyList(), tools = listOf(throwing, bare)) {}
+
+        assertFailure("contacts failed") { host.runTool("contacts") }
+        assertFailure("status returned output that is not JSON") { host.runTool("status") }
     }
 
     @Test
@@ -192,6 +242,10 @@ internal class AIUIHostTest {
         assertFalse(host.canOpen("file:///sdcard/secret.txt"))
         assertFalse(host.canOpen("https:example.com"))
         assertFalse(host.canOpen("https:///path"))
+        assertFalse(host.canOpen("https://:443/path"))
+        assertFalse(host.canOpen("https://ana@:443"))
+        assertTrue(host.canOpen("https://example.com:8443/path"))
+        assertTrue(host.canOpen("https://[::1]:8443/"))
         assertFalse(host.canOpen("https://exa mple.com"))
         assertFalse(host.canOpen("/relative"))
         assertTrue(httpsOnly.canOpen("https://example.com"))

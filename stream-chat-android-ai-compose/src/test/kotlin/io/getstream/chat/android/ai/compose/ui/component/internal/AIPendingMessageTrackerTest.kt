@@ -20,6 +20,8 @@ import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.conversation.AIPendingMessage
+import io.getstream.chat.android.ai.compose.generativeui.AIUIDocument
+import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -32,6 +34,7 @@ internal class AIPendingMessageTrackerTest {
         override val role: AIMessageRole,
         override val text: String = "Text",
         override val isGenerating: Boolean = false,
+        override val uiDocument: AIUIDocument? = null,
     ) : AIMessage
 
     private val tracker = AIPendingMessageTracker()
@@ -52,6 +55,23 @@ internal class AIPendingMessageTrackerTest {
         )
 
         assertEquals(listOf("q1"), entries.map { it.id })
+    }
+
+    @Test
+    fun `a reply with only UI counts as something to show only when the host can show it`() {
+        val reply = Message(
+            "a1",
+            AIMessageRole.Assistant,
+            text = "",
+            isGenerating = true,
+            uiDocument = AIUIDocument(AIUIFormat.OpenUI, content = "root = Stack([])"),
+        )
+        val messages = listOf(question("q1"), reply)
+
+        assertEquals(listOf("q1"), tracker.entries(messages, null).map { it.id })
+        assertTrue(tracker.isAwaitingReply(messages, null))
+        assertEquals(listOf("q1", "a1"), tracker.entries(messages, null) { true }.map { it.id })
+        assertFalse(tracker.isAwaitingReply(messages, null) { true })
     }
 
     @Test

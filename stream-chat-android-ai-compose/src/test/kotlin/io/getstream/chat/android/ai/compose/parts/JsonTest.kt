@@ -81,4 +81,21 @@ internal class JsonTest {
         assertEquals("one", fields.nested("approval")?.string("1"))
         assertNull(fields.nested("missing"))
     }
+
+    @Test
+    fun `nesting deeper than the limit fails cleanly instead of overflowing the stack`() {
+        val deep = "[".repeat(100_000) + "]".repeat(100_000)
+
+        assertNull(Json.parseOrNull(deep))
+        assertEquals(emptyMap<String, Any?>(), Json.parseObject("{\"a\":$deep}"))
+        assertEquals(listOf(listOf("[")), Json.parse("[[\"[\"]]"))
+    }
+
+    @Test
+    fun `a bare word is not JSON, a quoted string is`() {
+        assertNull(Json.parseOrNull("ok"))
+        assertNull(Json.parseOrNull("'ok'"))
+        assertEquals("ok", Json.parse(" \"ok\""))
+        assertEquals(true, Json.parse("true"))
+    }
 }

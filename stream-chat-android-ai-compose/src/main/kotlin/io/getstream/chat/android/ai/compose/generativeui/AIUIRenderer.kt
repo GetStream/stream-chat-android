@@ -31,16 +31,24 @@ public interface AIUIRenderer {
     /**
      * Whether it reads documents of [version], or of no version when `null`. It reads every
      * version by default.
+     *
+     * @param version A document's version, or `null` when it has none.
      */
     public fun supports(version: String?): Boolean = true
 
     /**
      * What the agent's backend needs to have its model write UI this renderer shows with
      * [components], such as the model's instructions, as plain Kotlin values. None by default.
+     *
+     * @param components The app's components the agent can place.
      */
     public fun capabilities(components: List<AIUIComponent>): Map<String, Any?> = emptyMap()
 
-    /** Makes what shows the documents of one conversation, for [host]. */
+    /**
+     * Makes what shows the documents of one conversation, for [host].
+     *
+     * @param host The conversation's host.
+     */
     public fun makeEngine(host: AIUIHost): AIUIEngine
 }
 
@@ -57,14 +65,30 @@ public interface AIUIEngine {
      * reply is on screen, so a format whose later replies change an earlier one's UI can follow
      * them all. It comes while the conversation composes, before any reply's content is asked
      * for: keep what is on screen in snapshot state so it follows. Nothing by default.
+     *
+     * @param document The reply's document.
+     * @param messageId The reply's id.
      */
     public fun receive(document: AIUIDocument, messageId: String) {
         // Each reply's UI is its own.
     }
 
     /**
+     * Forgets a reply that left the conversation, or whose UI did, such as one that was deleted,
+     * so the engine can let go of what it kept for it. Nothing by default.
+     *
+     * @param messageId The reply's id.
+     */
+    public fun remove(messageId: String) {
+        // Nothing kept for the reply.
+    }
+
+    /**
      * The content of a reply's document, or `null` when it shows nothing of its own, such as a
      * reply that only changed an earlier one's UI, so the reply's text shows.
+     *
+     * @param document The reply's document.
+     * @param messageId The reply's id.
      */
     public fun content(document: AIUIDocument, messageId: String): (@Composable () -> Unit)?
 }

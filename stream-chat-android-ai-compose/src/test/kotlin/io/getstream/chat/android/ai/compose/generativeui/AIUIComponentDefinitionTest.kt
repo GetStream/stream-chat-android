@@ -46,6 +46,23 @@ internal class AIUIComponentDefinitionTest {
     )
 
     @Test
+    fun `of parameters with the same name, the first one counts`() {
+        val definition = AIUIComponentDefinition(
+            "rating",
+            "A rating.",
+            listOf(
+                AIUIParameter.required("stars", AIUIParameterType.Number),
+                AIUIParameter.optional("stars", AIUIParameterType.String),
+            ),
+        )
+        val schema = definition.parametersSchema
+
+        assertEquals(listOf("stars"), schema["x-order"])
+        assertEquals(listOf("stars"), schema["required"])
+        assertEquals(mapOf("stars" to mapOf("type" to "number")), schema["properties"])
+    }
+
+    @Test
     fun `parameters are a JSON Schema object that keeps their order`() {
         val schema = placeCard.parametersSchema
 
