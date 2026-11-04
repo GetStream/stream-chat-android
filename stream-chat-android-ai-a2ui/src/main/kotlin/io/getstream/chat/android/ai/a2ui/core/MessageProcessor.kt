@@ -44,6 +44,31 @@ internal class Surface(
 
     fun component(id: String): Component? = componentsById[id]
 
+    // The paths a person typed a secret into, such as a password in an `obscured` text field.
+    private val secretPaths = LinkedHashSet<DataPath>()
+
+    /** Marks [path] as holding a secret, which never goes to the agent. */
+    fun markSecret(path: DataPath) {
+        secretPaths.add(path)
+    }
+
+    /**
+     * The data model as the agent may see it: a copy without the secrets a person typed, or the
+     * data model itself when there are none.
+     */
+    fun dataModelWithoutSecrets(): DataModel {
+        if (secretPaths.isEmpty()) return dataModel
+        val copy = DataModel(dataModel.snapshot)
+        secretPaths.forEach { path ->
+            try {
+                copy.set(path, null)
+            } catch (_: DataModelException) {
+                // A path the data model no longer reaches holds nothing to remove.
+            }
+        }
+        return copy
+    }
+
     fun merge(components: List<Component>) {
         components.forEach { componentsById[it.id] = it }
     }
@@ -72,17 +97,21 @@ internal class Surface(
         userActivation: Boolean = true,
     ) {
         when (action) {
-            is ActionDefinition.Event -> dispatch(
-                RendererMessage.Action(
-                    name = action.name,
-                    userMessage = A2UIJson.string(evaluator.evaluate(action.userMessage, context)),
-                    surfaceId = surfaceId,
-                    sourceComponentId = componentId,
-                    timestamp = timestamp(evaluator.services.now()),
-                    context = action.context.mapValues { evaluator.evaluate(it.value, context) },
-                    metadata = metadata,
-                ),
-            )
+            is ActionDefinition.Event -> {
+                // An event goes to the agent, so it resolves without the secrets a person typed.
+                val shared = context.copy(model = dataModelWithoutSecrets())
+                dispatch(
+                    RendererMessage.Action(
+                        name = action.name,
+                        userMessage = A2UIJson.string(evaluator.evaluate(action.userMessage, shared)),
+                        surfaceId = surfaceId,
+                        sourceComponentId = componentId,
+                        timestamp = timestamp(evaluator.services.now()),
+                        context = action.context.mapValues { evaluator.evaluate(it.value, shared) },
+                        metadata = metadata,
+                    ),
+                )
+            }
             is ActionDefinition.Function -> if (userActivation) {
                 evaluator.withUserActivation { evaluator.invoke(action.call, context) }
             } else {
@@ -189,9 +218,12 @@ internal class MessageProcessor(
         listeners.add(listener)
     }
 
-    /** The data of the surfaces that asked for it to go with the person's messages. */
+    /**
+     * The data of the surfaces that asked for it to go with the person's messages, without the
+     * secrets a person typed.
+     */
     fun synchronizedDataModel(): Map<String, Any?> =
-        surfacesById.filterValues { it.sendDataModel }.mapValues { it.value.dataModel.snapshot }
+        surfacesById.filterValues { it.sendDataModel }.mapValues { it.value.dataModelWithoutSecrets().snapshot }
 
     /** Removes every surface. */
     fun clear() {

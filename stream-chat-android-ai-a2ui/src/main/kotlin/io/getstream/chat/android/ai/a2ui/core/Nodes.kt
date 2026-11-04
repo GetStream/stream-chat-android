@@ -72,6 +72,10 @@ internal class NodeContext(val surface: Surface, val node: Node) {
      */
     fun write(name: String, value: Any?) {
         val path = boundPath(name) ?: return
+        // What a person types into an obscured field, such as a password, stays on the device.
+        if (name == "value" && component.type == TEXT_FIELD && literalString("variant") == OBSCURED) {
+            surface.markSecret(path)
+        }
         try {
             surface.dataModel.set(path, value)
         } catch (error: DataModelException) {
@@ -147,6 +151,11 @@ internal class NodeContext(val surface: Surface, val node: Node) {
         // A component inside itself with the same data would repeat forever.
         if ((id to context.scope.toString()) in ancestors) return null
         return Node(component, context, key, node.depth + 1, ancestors)
+    }
+
+    private companion object {
+        const val TEXT_FIELD = "TextField"
+        const val OBSCURED = "obscured"
     }
 }
 

@@ -105,6 +105,92 @@ internal class NodesTest {
     }
 
     @Test
+    fun `what a person types into an obscured field never goes to the agent`() {
+        val sent = mutableListOf<RendererMessage>()
+        val formatted = mapOf("@call" to "formatString", "args" to mapOf("value" to "\${/user} \${/password}"))
+        val event = mapOf(
+            "event" to mapOf(
+                "name" to "sign_in",
+                "userMessage" to formatted,
+                "context" to mapOf(
+                    "user" to mapOf("@path" to "/user"),
+                    "password" to mapOf("@path" to "/password"),
+                    "all" to mapOf("@path" to "/"),
+                    "text" to formatted,
+                ),
+            ),
+        )
+        val processor = processor(
+            listOf(
+                mapOf("id" to "root", "component" to "Column", "children" to listOf("user", "password", "go")),
+                mapOf("id" to "user", "component" to "TextField", "label" to "User", "value" to mapOf("@path" to "/user")),
+                mapOf(
+                    "id" to "password",
+                    "component" to "TextField",
+                    "label" to "Password",
+                    "variant" to "obscured",
+                    "value" to mapOf("@path" to "/password"),
+                ),
+                mapOf("id" to "go", "component" to "Button", "child" to "go_text", "action" to event),
+                mapOf("id" to "go_text", "component" to "Text", "text" to "Go"),
+            ),
+            sendDataModel = true,
+            sent = sent,
+        )
+        val surface = processor.surface("s")!!
+        surface.context(surface.find("user")!!).write("value", "ada")
+        surface.context(surface.find("password")!!).write("value", "hunter2")
+
+        surface.context(surface.find("go")!!).performAction()
+
+        val action = sent.single() as RendererMessage.Action
+        assertEquals("ada", action.context["user"])
+        assertNull(action.context["password"])
+        assertEquals(mapOf("user" to "ada"), action.context["all"])
+        assertEquals("ada ", action.context["text"])
+        assertEquals("ada ", action.userMessage)
+        assertEquals(mapOf("s" to mapOf("user" to "ada")), processor.synchronizedDataModel())
+        // The field itself still shows what the person typed.
+        assertEquals("hunter2", surface.dataModel.get(DataPath.parse("/password")))
+    }
+
+    @Test
+    fun `an obscured field in a list item keeps its own item's value from the agent`() {
+        val sent = mutableListOf<RendererMessage>()
+        val submit = mapOf("event" to mapOf("name" to "submit", "context" to mapOf("all" to mapOf("@path" to "/"))))
+        val surface = surface(
+            listOf(
+                mapOf("id" to "root", "component" to "Column", "children" to listOf("list", "go")),
+                mapOf(
+                    "id" to "list",
+                    "component" to "List",
+                    "children" to mapOf("componentId" to "pin", "path" to "/accounts"),
+                ),
+                mapOf(
+                    "id" to "pin",
+                    "component" to "TextField",
+                    "label" to "PIN",
+                    "variant" to "obscured",
+                    "value" to mapOf("@path" to "pin"),
+                ),
+                mapOf("id" to "go", "component" to "Button", "child" to "go_text", "action" to submit),
+                mapOf("id" to "go_text", "component" to "Text", "text" to "Go"),
+            ),
+            data = mapOf("accounts" to listOf(mapOf("name" to "a"), mapOf("name" to "b"))),
+            sent = sent,
+        )
+        surface.context(surface.findAll("pin")[1]).write("value", "1234")
+
+        surface.context(surface.find("go")!!).performAction()
+
+        val action = sent.single() as RendererMessage.Action
+        assertEquals(
+            mapOf("accounts" to listOf(mapOf("name" to "a"), mapOf("name" to "b"))),
+            action.context["all"],
+        )
+    }
+
+    @Test
     fun `numbers are shown without a trailing zero when they are whole`() {
         val surface = surface(
             listOf(mapOf("id" to "root", "component" to "Text", "text" to mapOf("@path" to "/n"))),
@@ -258,8 +344,21 @@ internal class NodesTest {
         return processor.surfaces.values.single()
     }
 
-    private fun surface(components: List<Map<String, Any?>>, data: Map<String, Any?> = emptyMap()): Surface {
-        val processor = MessageProcessor(listOf(BasicCatalog.catalog), services = Harness.testServices()) { }
+    private fun surface(
+        components: List<Map<String, Any?>>,
+        data: Map<String, Any?> = emptyMap(),
+        sent: MutableList<RendererMessage> = mutableListOf(),
+    ): Surface = processor(components, data, sent = sent).surface("s")!!
+
+    private fun processor(
+        components: List<Map<String, Any?>>,
+        data: Map<String, Any?> = emptyMap(),
+        sendDataModel: Boolean = false,
+        sent: MutableList<RendererMessage> = mutableListOf(),
+    ): MessageProcessor {
+        val processor = MessageProcessor(listOf(BasicCatalog.catalog), services = Harness.testServices()) {
+            sent.add(it)
+        }
         processor.handle(
             mapOf(
                 "version" to "1.0",
@@ -268,9 +367,10 @@ internal class NodesTest {
                     "catalogId" to A2UIProtocol.BASIC_CATALOG_ID,
                     "components" to components,
                     "dataModel" to data,
+                    "sendDataModel" to sendDataModel,
                 ),
             ),
         )
-        return processor.surface("s")!!
+        return processor
     }
 }

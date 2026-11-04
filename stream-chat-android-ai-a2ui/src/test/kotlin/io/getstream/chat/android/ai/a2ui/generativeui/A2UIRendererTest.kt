@@ -35,6 +35,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.a2ui.core.A2UIJson
 import io.getstream.chat.android.ai.a2ui.core.DataPath
@@ -421,6 +422,39 @@ internal class A2UIRendererTest {
         val action = sent.single()
         assertEquals(emptyMap<String, Any?>(), action.payload["context"])
         assertEquals(mapOf("name" to "Ada", "time" to "19:30"), action.payload["dataModel"])
+    }
+
+    @Test
+    fun `what a person types into an obscured field stays out of the action`() {
+        val submit = mapOf(
+            "event" to mapOf("name" to "sign_in", "context" to mapOf("password" to mapOf("@path" to "/password"))),
+        )
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Column", "children" to listOf("user", "password", "go")),
+                    mapOf("id" to "user", "component" to "TextField", "label" to "User", "value" to mapOf("@path" to "/user")),
+                    mapOf(
+                        "id" to "password",
+                        "component" to "TextField",
+                        "label" to "Password",
+                        "variant" to "obscured",
+                        "value" to mapOf("@path" to "/password"),
+                    ),
+                    mapOf("id" to "go", "component" to "Button", "child" to "label", "action" to submit),
+                    mapOf("id" to "label", "component" to "Text", "text" to "Sign in"),
+                    sendDataModel = true,
+                ),
+            ),
+        )
+
+        rule.onNodeWithText("User").performTextInput("ada")
+        rule.onNodeWithText("Password").performTextInput("hunter2")
+        rule.onNodeWithText("Sign in").performClick()
+
+        val action = sent.single()
+        assertEquals(mapOf("password" to null), action.payload["context"])
+        assertEquals(mapOf("user" to "ada"), action.payload["dataModel"])
     }
 
     @Test

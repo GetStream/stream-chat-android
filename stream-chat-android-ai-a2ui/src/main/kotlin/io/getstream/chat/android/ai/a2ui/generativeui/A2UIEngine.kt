@@ -202,7 +202,8 @@ internal class A2UIEngine(
      * button, or else the event's name. The label is never the agent's words, which could say
      * something the person didn't choose. The payload holds its surface, its component, its
      * resolved context, the event's `userMessage`, and the surface's data model when the agent
-     * created the surface with `sendDataModel`.
+     * created the surface with `sendDataModel`. What a person typed into an `obscured` text field
+     * is in none of them.
      */
     fun action(message: RendererMessage.Action, reply: A2UIReply): AIUIAction = AIUIAction(
         messageId = reply.messageId,
@@ -218,14 +219,15 @@ internal class A2UIEngine(
         },
     )
 
-    // What the button the person tapped says. A path
+    // What the button the person tapped says, never a secret the person typed. A path
     // relative to a list item isn't read: the action doesn't say which item the button is in.
     private fun buttonText(message: RendererMessage.Action, reply: A2UIReply): String? {
         val surface = reply.processor.surface(message.surfaceId) ?: return null
         val childId = surface.component(message.sourceComponentId)?.properties?.get("child") as? String ?: return null
         val text = when (val value = surface.component(childId)?.dynamic("text")) {
             is DynamicValue.Literal -> value.value
-            is DynamicValue.Binding -> value.path.takeIf { it.isAbsolute }?.let(DataContext(surface.dataModel)::value)
+            is DynamicValue.Binding ->
+                value.path.takeIf { it.isAbsolute }?.let(DataContext(surface.dataModelWithoutSecrets())::value)
             else -> null
         }
         return A2UIJson.string(text)?.takeIf { it.isNotBlank() }
