@@ -21,6 +21,7 @@ import io.getstream.chat.android.ai.openui.library.DefinedFunction
 import io.getstream.chat.android.ai.openui.library.PropField
 import io.getstream.chat.android.ai.openui.library.PropType
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -266,5 +267,18 @@ internal class EvaluatorTest {
         val sorted = sort(listOf(OpenUIValue.Arr(rows), v("rank"))).arrayValue!!
 
         assertEquals(listOf(1.0, 4.0, 3.0, 0.0, 2.0), sorted.map { it["id"].numberValue })
+    }
+
+    @Test
+    @Timeout(10)
+    fun `a loop variable reaches deeply nested calls in its template in linear time`() {
+        val depth = 40
+        val nested = "@Abs(".repeat(depth) + "x" + ")".repeat(depth)
+        val root = evaluate(
+            "root = Stack(@Each(${'$'}items, \"x\", Text(\"\" + $nested)))",
+            mapOf("\$items" to listOf(-3, 4)),
+        )!!
+
+        assertEquals(listOf(v("3"), v("4")), (0..1).map { root.child(it).props["text"] })
     }
 }

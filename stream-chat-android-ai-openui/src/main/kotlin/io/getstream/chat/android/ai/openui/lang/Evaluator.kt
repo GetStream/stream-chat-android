@@ -536,14 +536,20 @@ internal object Evaluator {
             is ASTNode.Ternary -> ASTNode.Ternary(recurse(node.cond), recurse(node.then), recurse(node.otherwise))
             is ASTNode.Arr -> ASTNode.Arr(node.elements.map(::recurse))
             is ASTNode.Obj -> ASTNode.Obj(node.entries.map { (key, item) -> key to recurse(item) })
-            is ASTNode.Comp -> if (shadows(node, variable)) {
+            is ASTNode.Comp -> {
                 // An inner `@Each` with the same loop variable shadows this one in its template.
-                node.copy(args = node.args.mapIndexed { index, arg -> if (index == 0) recurse(arg) else arg })
-            } else {
-                node.copy(
-                    args = node.args.map(::recurse),
-                    mappedProps = node.mappedProps?.mapValues { recurse(it.value) },
-                )
+                val shadowed = shadows(node, variable)
+                val args = node.args.mapIndexed { index, arg -> if (shadowed && index > 0) arg else recurse(arg) }
+                // A prop that is one of the args reuses its substitution, so each arg is done once.
+                val mappedProps = node.mappedProps?.mapValues { (_, prop) ->
+                    val index = node.argIndexOf(prop)
+                    when {
+                        index >= 0 -> args[index]
+                        shadowed -> prop
+                        else -> recurse(prop)
+                    }
+                }
+                node.copy(args = args, mappedProps = mappedProps)
             }
             is ASTNode.Assign -> node.copy(value = recurse(node.value))
             else -> node
