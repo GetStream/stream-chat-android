@@ -66,7 +66,9 @@ internal class V2SocketTest {
     private val headersUtil: HeadersUtil = mock<HeadersUtil>().apply {
         whenever(buildSdkTrackingHeaders()) doReturn "stream-chat-android-v1.0"
     }
-    private val socketFactory = SocketFactory(
+    private val socketFactory = socketFactory()
+
+    private fun socketFactory(isEventProtocolV3Enabled: Boolean = false) = SocketFactory(
         parser = ParserFactory.createMoshiChatParser(),
         tokenManager = FakeTokenManager(TOKEN),
         headersUtil = headersUtil,
@@ -80,11 +82,15 @@ internal class V2SocketTest {
                 hidesStoredDeclaredCustom = true,
             ),
         ),
+        isEventProtocolV3Enabled = isEventProtocolV3Enabled,
     )
 
     /** Creates the socket, opens it and returns the request and the listener it was created with. */
-    private fun open(conf: SocketFactory.ConnectionConf): Pair<Request, WebSocketListener> {
-        socketFactory.createSocket(conf)
+    private fun open(
+        conf: SocketFactory.ConnectionConf,
+        factory: SocketFactory = socketFactory,
+    ): Pair<Request, WebSocketListener> {
+        factory.createSocket(conf)
         val request = argumentCaptor<Request>()
         val listener = argumentCaptor<WebSocketListener>()
         verify(httpClient).newWebSocket(request.capture(), listener.capture())
@@ -148,6 +154,16 @@ internal class V2SocketTest {
             "name":"Chewbacca","image":"https://example.com/chewie.png","language":"en","invisible":true,
             "privacy_settings":{"delivery_receipts":{"enabled":false},"read_receipts":{"enabled":true}},
             "custom":{"flair":"gold"}}}"""
+    }
+
+    @Test
+    fun `A client with event protocol v3 enabled asks for it in the auth frame`() {
+        open(
+            SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER).asReconnectionConf(),
+            socketFactory(isEventProtocolV3Enabled = true),
+        )
+
+        sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"event_protocol":3,"user_details":{"id":"filip"}}"""
     }
 
     @Test
