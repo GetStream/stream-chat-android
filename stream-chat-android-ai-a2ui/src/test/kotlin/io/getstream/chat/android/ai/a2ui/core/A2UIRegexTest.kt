@@ -69,6 +69,14 @@ internal class A2UIRegexTest {
         assertEquals(true, A2UIRegex.compile("^\\x41\\$\\/$").containsMatchIn("A$/"))
     }
 
+    @Test(timeout = 5_000)
+    fun `a match that runs past the deadline counts as no match`() {
+        // Outside the dialect, but it backtracks on every engine, so it runs into the deadline.
+        val backtracking = Regex("^(a+)+\\1$")
+        assertFalse(A2UIRegex.containsMatch(backtracking, "a".repeat(30) + "!"))
+        assertTrue(A2UIRegex.containsMatch(backtracking, "aa"))
+    }
+
     private fun assertRejected(pattern: String) {
         try {
             A2UIRegex.compile(pattern)

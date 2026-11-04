@@ -55,6 +55,16 @@ internal class EvaluationTest {
         assertEquals(RendererError.EXPRESSION_ERROR, errors.single().code)
     }
 
+    @Test(timeout = 5_000)
+    fun `regex finishes a bounded pattern that backtracks exponentially`() {
+        // Every quantifier is bounded, so the static check passes it; an engine that backtracks
+        // through every split stops at the deadline and reads as no match instead of hanging.
+        val result = call("regex", mapOf("pattern" to "(a?){25}a{25}", "value" to "a".repeat(25)))
+
+        assertTrue(A2UIJson.map(result)!!["valid"] is Boolean)
+        assertTrue(errors.isEmpty())
+    }
+
     @Test
     fun `regex does not match a value longer than 4096 code points`() {
         val result = call("regex", mapOf("pattern" to "a", "value" to "a".repeat(A2UIRegex.MAX_VALUE_LENGTH + 1)))

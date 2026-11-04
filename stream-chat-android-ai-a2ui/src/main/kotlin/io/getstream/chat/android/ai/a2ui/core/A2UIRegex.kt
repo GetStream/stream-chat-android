@@ -52,8 +52,48 @@ internal object A2UIRegex {
         }
     }
 
+    /**
+     * Whether [regex] finds a match in [value] within 100 ms. The static check doesn't bound every
+     * pattern's work (`(a?){25}a{25}` against 25 `a`s still backtracks for a long time), so running
+     * out of time counts as no match.
+     */
+    fun containsMatch(regex: Regex, value: CharSequence): Boolean = try {
+        regex.containsMatchIn(DeadlineCharSequence(value, System.nanoTime() + MATCH_TIMEOUT_NANOS))
+    } catch (@Suppress("SwallowedException") timeout: MatchTimeoutException) {
+        false
+    }
+
     private fun reject(reason: String): Nothing =
         throw FunctionException(RendererError.EXPRESSION_ERROR, "'regex' rejects the pattern: $reason")
+
+    /** How long a match may take: 100 ms. */
+    private const val MATCH_TIMEOUT_NANOS = 100_000_000L
+
+    private const val CLOCK_CHECK_MASK = 1023
+
+    /** Thrown by [DeadlineCharSequence] once its deadline passes, which ends the match. */
+    private class MatchTimeoutException : RuntimeException() {
+        // Thrown to unwind a match, not to be logged: skip the stack trace.
+        override fun fillInStackTrace(): Throwable = this
+    }
+
+    /** Text that throws [MatchTimeoutException] when read after [deadline] ([System.nanoTime]). */
+    private class DeadlineCharSequence(private val text: CharSequence, private val deadline: Long) : CharSequence {
+        private var reads = 0
+
+        override val length: Int get() = text.length
+
+        override fun get(index: Int): Char {
+            // Reading the clock on every char would slow the match down; every 1024th read is enough.
+            if (++reads and CLOCK_CHECK_MASK == 0 && System.nanoTime() - deadline > 0) throw MatchTimeoutException()
+            return text[index]
+        }
+
+        override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
+            DeadlineCharSequence(text.subSequence(startIndex, endIndex), deadline)
+
+        override fun toString(): String = text.toString()
+    }
 
     internal sealed interface Node
     internal class Alternation(val branches: List<Sequence>) : Node
