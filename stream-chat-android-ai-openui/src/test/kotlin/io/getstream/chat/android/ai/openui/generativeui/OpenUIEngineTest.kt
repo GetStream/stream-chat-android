@@ -417,6 +417,36 @@ internal class OpenUIEngineTest {
     }
 
     @Test
+    fun `a reply whose root waits on a query keeps its runtime until the result lands`() = runTest {
+        var runs = 0
+        val tool = object : AIClientTool {
+            override val name = "search"
+            override val isReadOnly = true
+            override suspend fun run(call: AIToolCallPart): AIClientToolResult {
+                runs++
+                return AIClientToolResult.completed("{\"items\":[\"a\"]}")
+            }
+        }
+        val engine = engine(host(listOf(tool)))
+        val program = """
+            data = Query("search", {}, {items: []})
+            root = data.items.length > 0 ? Card([TextContent("Found")]) : null
+        """.trimIndent()
+
+        // Each recomposition asks for the reply's content again, before and after the result lands.
+        val contents = List(3) {
+            engine.content(reply(program), "m1").also {
+                testScheduler.advanceTimeBy(1.seconds)
+                testScheduler.runCurrent()
+            }
+        }
+
+        assertEquals(1, runs)
+        assertTrue(contents.all { it != null })
+        assertEquals("Card", assertNotNull(engine.runtime("m1")?.root).typeName)
+    }
+
+    @Test
     fun `a tool that changes something runs from a tapped Mutation, never from a Query`() = runTest {
         var runs = 0
         val tool = object : AIClientTool {

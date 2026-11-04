@@ -99,7 +99,10 @@ internal class OpenUIEngine(
             ?.also { it.update(program, document.isStreaming) }
             ?: makeRuntime(messageId, program, document.isStreaming)
         // A finished program with nothing to draw, such as plain prose, leaves the reply's text showing.
-        if (!document.isStreaming && runtime.root == null) {
+        // One with queries keeps its runtime even without a root yet, since its root can depend on
+        // their results: they land in this runtime and draw it, and the tools don't run again.
+        val hasQueries = runtime.parseResult?.queryStatements.orEmpty().isNotEmpty()
+        if (!document.isStreaming && runtime.root == null && !hasQueries) {
             dispose(messageId)
             return null
         }
