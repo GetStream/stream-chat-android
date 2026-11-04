@@ -19,28 +19,28 @@ package io.getstream.chat.android.ai.openui.lang
 import java.net.URI
 
 /** A parsed validation rule, e.g. `required`, `minLength:3`, `pattern:^[a-z]+$` (port of `ParsedRule`). */
-public data class ParsedRule(val type: String, val argument: OpenUIValue? = null)
+internal data class ParsedRule(val type: String, val argument: OpenUIValue? = null)
 
 /** Validates a field value against a rule argument; returns an error message or `null` (port of `ValidatorFn`). */
-public typealias ValidatorFn = (value: OpenUIValue?, argument: OpenUIValue?) -> String?
+internal typealias ValidatorFn = (value: OpenUIValue?, argument: OpenUIValue?) -> String?
 
 /** The validators of the built-in rules, by rule type (port of `builtInValidators`). */
-public val builtInValidators: Map<String, ValidatorFn> get() = FormValidation.builtInValidators
+internal val builtInValidators: Map<String, ValidatorFn> get() = FormValidation.builtInValidators
 
 /** Parses an array of `"min:8"`-style rule strings; non-strings are ignored (port of `parseRules`). */
-public fun parseRules(rules: OpenUIValue?): List<ParsedRule> = FormValidation.parseRules(rules)
+internal fun parseRules(rules: OpenUIValue?): List<ParsedRule> = FormValidation.parseRules(rules)
 
 /**
  * Parses a structured rules object (`{required: true, minLength: 5}`); `false` and `null` keys are
  * skipped (port of `parseStructuredRules`).
  */
-public fun parseStructuredRules(rules: OpenUIValue?): List<ParsedRule> = FormValidation.parseStructuredRules(rules)
+internal fun parseStructuredRules(rules: OpenUIValue?): List<ParsedRule> = FormValidation.parseStructuredRules(rules)
 
 /**
  * Runs [rules] against [value], stopping at the first error, and returns its message or `null`.
  * [customValidators] take precedence over [builtInValidators] (port of `validate`).
  */
-public fun validate(
+internal fun validate(
     value: OpenUIValue?,
     rules: List<ParsedRule>,
     customValidators: Map<String, ValidatorFn> = emptyMap(),

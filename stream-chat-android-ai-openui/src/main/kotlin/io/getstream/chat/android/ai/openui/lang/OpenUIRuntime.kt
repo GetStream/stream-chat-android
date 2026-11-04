@@ -22,17 +22,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** A two-way bound form field (port of `resolveStateField`). */
-public class StateField internal constructor(
+internal class StateField internal constructor(
     /** The field name (the `$variable` name for reactive fields). */
-    public val name: String,
+    val name: String,
     /** Current value (`null` when unset). */
-    public val value: OpenUIValue?,
+    val value: OpenUIValue?,
     /** Whether the field is bound to a `$variable`. */
-    public val isReactive: Boolean,
+    val isReactive: Boolean,
     private val setter: (OpenUIValue?) -> Unit,
 ) {
     /** Writes [newValue] to the bound `$variable` or form field. */
-    public fun setValue(newValue: OpenUIValue?) {
+    fun setValue(newValue: OpenUIValue?) {
         setter(newValue)
     }
 }
