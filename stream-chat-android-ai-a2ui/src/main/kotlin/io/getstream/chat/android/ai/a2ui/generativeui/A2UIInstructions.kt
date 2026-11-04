@@ -27,7 +27,7 @@ import io.getstream.chat.android.ai.a2ui.core.Catalog
  * @param catalog The catalog the model writes with.
  * @param fence The info string of the fenced block a reply's UI is written in.
  * @param preamble What the app tells the model before A2UI's own instructions.
- * @param tools The names of the app's tools the UI can call.
+ * @param tools The app's tools the UI can call, each a line of Markdown.
  */
 internal class A2UIInstructions(
     private val catalog: Catalog,
@@ -43,7 +43,7 @@ internal class A2UIInstructions(
             add(writing())
             add(PROTOCOL_OVERVIEW)
             catalog.instructions?.takeIf { it.isNotEmpty() }?.let(::add)
-            if (tools.isNotEmpty()) add(TOOLS_INTRODUCTION + "\n\n" + tools.joinToString("\n") { "- `$it`" })
+            if (tools.isNotEmpty()) add(TOOLS_INTRODUCTION + "\n\n" + tools.joinToString("\n"))
             add("## The catalog `${catalog.catalogId}`\n\n```json\n${document()}\n```")
         }.joinToString("\n\n")
 
@@ -66,7 +66,7 @@ internal class A2UIInstructions(
         val TOOLS_INTRODUCTION = """
             ## The app's tools
 
-            These run on the person's device. Call one as you call a function the catalog doesn't define, with `{"@call": "<name>", "args": {…}}`, and its output is the call's value.
+            These run on the person's device. Call one as you call a function the catalog doesn't define, with `{"@call": "<name>", "args": {…}}`, and its output is the call's value. A read-only tool runs wherever you call it, such as in a binding that shows its output. Any other runs only from a button's `functionCall` action, when the person taps it.
         """.trimIndent()
 
         val PROTOCOL_OVERVIEW = """

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.a2ui.generativeui
 
 import io.getstream.chat.android.ai.a2ui.compose.A2UICatalog
+import io.getstream.chat.android.ai.a2ui.core.A2UIJson
 import io.getstream.chat.android.ai.a2ui.core.A2UIProtocol
 import io.getstream.chat.android.ai.a2ui.core.BasicCatalog
 import io.getstream.chat.android.ai.a2ui.core.Catalog
@@ -26,6 +27,7 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
 import io.getstream.chat.android.ai.compose.parts.AIClientTool
+import io.getstream.chat.android.ai.compose.parts.AIClientToolDefinition
 
 /**
  * Shows the replies an agent writes in [A2UI](https://a2ui.org) 1.0 in the generative UI of
@@ -44,8 +46,10 @@ import io.getstream.chat.android.ai.compose.parts.AIClientTool
  * named after the event, labelled with the button's text, and with its `surfaceId`,
  * `sourceComponentId`, resolved `context` and the event's `userMessage` in its payload, with the
  * surface's `dataModel` too when the agent created it with `sendDataModel`. The label is never the
- * agent's words, which could say something the person didn't choose. Links open through the host,
- * which decides the kinds of link that open.
+ * agent's words, which could say something the person didn't choose. A function the catalog
+ * doesn't define runs as one of the host's tools: a read-only one wherever the agent calls it, any
+ * other only from a person's tap, with its output as the function's value. Links open through the
+ * host, which decides the kinds of link that open.
  *
  * An app component joins the catalog under its A2UI name, its name in `PascalCase` (`place_card` is
  * `PlaceCard`), with its parameters as its properties. One whose name the basic catalog already
@@ -76,8 +80,9 @@ public class A2UIRenderer(
      * The fence the agent writes its UI in (`fence`), the id of the catalog with the app's
      * [components] (`catalog_id`), and the instructions its model needs to write UI with that
      * catalog and call the app's [tools] (`instructions`): the renderer's own `instructions` first,
-     * then how a reply carries A2UI, the protocol, the catalog's guidelines, the tools by name and
-     * the catalog itself, in Markdown.
+     * then how a reply carries A2UI, the protocol, the catalog's guidelines, each tool with whether
+     * it only reads, what it does and the schema of its arguments, and the catalog itself, in
+     * Markdown.
      */
     override fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> = mapOf(
         "fence" to fence,
@@ -86,7 +91,7 @@ public class A2UIRenderer(
             catalog = catalogs(components).first(),
             fence = fence,
             preamble = instructions,
-            tools = tools.map { it.name },
+            tools = tools.map { line(it.definition) },
         ).text,
     )
 
@@ -108,6 +113,15 @@ public class A2UIRenderer(
     }
 
     public companion object {
+        // A tool as the agent's instructions list it: its name, whether it only reads, what it does,
+        // and the schema of its arguments.
+        internal fun line(tool: AIClientToolDefinition): String = buildString {
+            append("- `").append(tool.name).append('`')
+            if (tool.isReadOnly) append(" (read-only)")
+            if (tool.description.isNotEmpty()) append(": ").append(tool.description)
+            tool.inputSchema?.let { append(" Arguments: `").append(A2UIJson.write(it, sortKeys = true)).append('`') }
+        }
+
         /** The version of A2UI it reads. */
         public const val VERSION: String = A2UIProtocol.VERSION
 

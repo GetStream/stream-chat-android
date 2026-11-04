@@ -128,7 +128,7 @@ internal class A2UIRendererTest {
             },
         )
 
-    private fun show(document: AIUIDocument, messageId: String = "m1") {
+    private fun show(document: AIUIDocument, messageId: String = "m1", host: AIUIHost = this.host) {
         val uriHandler = object : UriHandler {
             override fun openUri(uri: String) {
                 opened.add(uri)
@@ -174,20 +174,26 @@ internal class A2UIRendererTest {
     }
 
     @Test
-    fun `its instructions list the host's tools by name before the catalog`() {
+    fun `its instructions describe the host's tools before the catalog`() {
         val host = AIUIHost(
             renderers = listOf(renderer),
-            tools = listOf(tool("search_places"), tool("get_weather")),
+            tools = listOf(
+                tool("search_places", description = "Places near the person.", schema = citySchema),
+                tool("get_weather", readOnly = true),
+            ),
         ) {}
 
         val instructions = (host.capabilities["renderers"] as List<*>).filterIsInstance<Map<*, *>>()
             .single()["instructions"] as String
 
-        val tools = instructions.substringAfter("## The app's tools\n\n").substringBefore("\n\n")
-        assertTrue(tools, tools.contains("`{\"@call\": \"<name>\", \"args\": {…}}`"))
+        val introduction = instructions.substringAfter("## The app's tools\n\n").substringBefore("\n\n")
+        assertTrue(introduction, introduction.contains("`{\"@call\": \"<name>\", \"args\": {…}}`"))
+        assertTrue(introduction, introduction.contains("Any other runs only from a button's `functionCall` action"))
         assertEquals(
-            "- `get_weather`\n- `search_places`",
-            instructions.substringAfter(tools).substringAfter("\n\n").substringBefore("\n\n"),
+            "- `get_weather` (read-only)\n" +
+                "- `search_places`: Places near the person. Arguments: " +
+                "`{\"properties\":{\"city\":{\"type\":\"string\"}},\"type\":\"object\"}`",
+            instructions.substringAfter(introduction).substringAfter("\n\n").substringBefore("\n\n"),
         )
         assertTrue(instructions.indexOf("## The app's tools") < instructions.indexOf("## The catalog"))
     }
@@ -211,9 +217,91 @@ internal class A2UIRendererTest {
         assertTrue((renderer.capabilities(emptyList())["instructions"] as String).startsWith("## Writing UI in A2UI"))
     }
 
-    private fun tool(name: String) = object : AIClientTool {
+    private val citySchema = mapOf("type" to "object", "properties" to mapOf("city" to mapOf("type" to "string")))
+
+    private fun tool(
+        name: String,
+        description: String = "",
+        schema: Map<String, Any?>? = null,
+        readOnly: Boolean = false,
+        runs: MutableList<String> = mutableListOf(),
+        output: String = "{}",
+    ) = object : AIClientTool {
         override val name: String = name
-        override suspend fun run(call: AIToolCallPart): AIClientToolResult = AIClientToolResult.completed("{}")
+        override val description: String = description
+        override val inputSchema: Map<String, Any?>? = schema
+        override val isReadOnly: Boolean = readOnly
+        override suspend fun run(call: AIToolCallPart): AIClientToolResult {
+            runs.add(call.arguments.orEmpty())
+            return AIClientToolResult.completed(output)
+        }
+    }
+
+    private fun hostWith(vararg tools: AIClientTool) =
+        AIUIHost(renderers = listOf(renderer), tools = tools.toList()) { sent.add(it) }
+
+    private fun weatherText() = mapOf(
+        "id" to "root",
+        "component" to "Text",
+        "text" to mapOf("@call" to "weather", "args" to mapOf("city" to "Ohrid")),
+    )
+
+    @Test
+    fun `a read-only tool runs from a binding, and its output is the function's value`() {
+        val runs = mutableListOf<String>()
+        val host = hostWith(tool("weather", readOnly = true, runs = runs, output = "\"Sunny in Ohrid\""))
+
+        show(document(surface(weatherText())), host = host)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Sunny in Ohrid").assertExists()
+        assertEquals(1, runs.size)
+        assertEquals(mapOf("city" to "Ohrid"), A2UIJson.parseOrNull(runs.single()))
+    }
+
+    @Test
+    fun `a tool that isn't read-only doesn't run from a binding`() {
+        val runs = mutableListOf<String>()
+        val host = hostWith(tool("weather", runs = runs, output = "\"Sunny in Ohrid\""))
+
+        show(document(surface(weatherText())), host = host)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Sunny in Ohrid").assertDoesNotExist()
+        assertTrue(runs.isEmpty())
+    }
+
+    @Test
+    fun `a tool that isn't read-only runs from a person's tap, each tap again`() {
+        val runs = mutableListOf<String>()
+        val host = hostWith(tool("add_to_cart", runs = runs))
+        val action = mapOf("functionCall" to mapOf("@call" to "add_to_cart", "args" to mapOf("item" to "pizza")))
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Button", "child" to "label", "action" to action),
+                    mapOf("id" to "label", "component" to "Text", "text" to "Add"),
+                ),
+            ),
+            host = host,
+        )
+
+        rule.onNodeWithText("Add").performClick()
+        rule.onNodeWithText("Add").performClick()
+        rule.waitForIdle()
+
+        assertEquals(2, runs.size)
+        assertEquals(mapOf("item" to "pizza"), A2UIJson.parseOrNull(runs.first()))
+        assertTrue(sent.isEmpty())
+    }
+
+    @Test
+    fun `a function no tool answers fails without a crash`() {
+        show(document(surface(weatherText())), host = hostWith())
+        rule.waitForIdle()
+
+        rule.onNodeWithTag("a2ui:s").assertExists()
+        assertTrue(sent.isEmpty())
     }
 
     @Test

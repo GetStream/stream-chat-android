@@ -39,11 +39,14 @@ import io.getstream.chat.android.ai.a2ui.compose.A2UISurfaceView
 import io.getstream.chat.android.ai.a2ui.core.A2UIJson
 import io.getstream.chat.android.ai.a2ui.core.A2UIProtocol
 import io.getstream.chat.android.ai.a2ui.core.A2UIStream
+import io.getstream.chat.android.ai.a2ui.core.AgentMessage
 import io.getstream.chat.android.ai.a2ui.core.BasicCatalog
 import io.getstream.chat.android.ai.a2ui.core.ComponentDefinition
 import io.getstream.chat.android.ai.a2ui.core.DataContext
 import io.getstream.chat.android.ai.a2ui.core.DynamicValue
+import io.getstream.chat.android.ai.a2ui.core.FunctionResponse
 import io.getstream.chat.android.ai.a2ui.core.MessageProcessor
+import io.getstream.chat.android.ai.a2ui.core.RendererError
 import io.getstream.chat.android.ai.a2ui.core.RendererMessage
 import io.getstream.chat.android.ai.a2ui.core.RendererServices
 import io.getstream.chat.android.ai.a2ui.core.TopologyValidator
@@ -54,6 +57,11 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIDocument
 import io.getstream.chat.android.ai.compose.generativeui.AIUIEngine
 import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
+import io.getstream.chat.android.ai.compose.generativeui.AIUIToolException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 /**
  * The A2UI replies of one conversation, each with a message processor of its own, kept while the
@@ -62,11 +70,13 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
  * @param renderer The renderer that made it.
  * @param host The conversation's host.
  * @param schedule Runs a block on the main thread after a delay, for calls to the agent that time out.
+ * @param scope Runs the host's tools, answering on the main thread.
  */
 internal class A2UIEngine(
     renderer: A2UIRenderer,
     private val host: AIUIHost,
     private val schedule: (Long, () -> Unit) -> Unit = { delay, block -> MainHandler.postDelayed(block, delay) },
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
 ) : AIUIEngine {
 
     private val placeable: List<Pair<AIUIComponent, ComponentDefinition>> =
@@ -155,15 +165,35 @@ internal class A2UIEngine(
         Box(scope.modifier) { component.Content(arguments, context) }
     }
 
-    /** Sends what the person did to the host, and logs what a chat can't answer. */
+    /** Sends what the person did to the host, runs the host's tools, and logs what can't show. */
     fun handle(message: RendererMessage, reply: A2UIReply) {
         when (message) {
             is RendererMessage.Action -> host.send(action(message, reply))
             is RendererMessage.Error ->
                 Log.w(TAG, "A reply's A2UI can't show: ${message.error.code} ${message.error.message}")
-            is RendererMessage.CallAgentFunction ->
-                Log.w(TAG, "A reply's A2UI calls ${message.call.name}, which a chat can't answer")
+            is RendererMessage.CallAgentFunction -> run(message, reply)
             is RendererMessage.RendererFunctionResponse -> Unit
+        }
+    }
+
+    // A function the catalogs don't define runs as one of the host's tools, on this device, as a
+    // chat has no channel to ask the agent. While a surface renders only a read-only tool runs; any
+    // other only from a person's gesture. Without that tool the call fails at once, and the reply
+    // reads the failure as the function's.
+    private fun run(message: RendererMessage.CallAgentFunction, reply: A2UIReply) {
+        val call = message.call
+        scope.launch {
+            val response = try {
+                val output = host.runTool(call.name, call.arguments, userInitiated = message.userActivated)
+                FunctionResponse(message.functionCallId, value = A2UIJson.normalize(output))
+            } catch (error: AIUIToolException) {
+                val failure = FunctionResponse.Failure(RendererError.EXECUTION_ERROR, error.message.orEmpty())
+                FunctionResponse(message.functionCallId, error = failure)
+            }
+            // A reply that left the conversation meanwhile has no one to answer.
+            if (replies[reply.messageId] === reply) {
+                reply.processor.handle(AgentMessage.AgentFunctionResponse(response))
+            }
         }
     }
 
