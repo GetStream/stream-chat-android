@@ -25,6 +25,7 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIEngine
 import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
+import io.getstream.chat.android.ai.compose.parts.AIClientTool
 
 /**
  * Shows the replies an agent writes in [A2UI](https://a2ui.org) 1.0 in the generative UI of
@@ -55,10 +56,13 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
  * @param catalog How each component of the basic catalog looks; the app's components look as they
  * draw themselves.
  * @param catalogId The id the agent names the catalog with the app's components by.
+ * @param instructions What the agent's model is told before A2UI's own instructions, such as which
+ * answers to write as UI and when to use the app's components.
  */
 public class A2UIRenderer(
     public val catalog: A2UICatalog = A2UICatalog.Basic,
     public val catalogId: String = DEFAULT_CATALOG_ID,
+    private val instructions: String? = null,
 ) : AIUIRenderer {
     override val format: AIUIFormat = AIUIFormat.A2UI
 
@@ -71,14 +75,24 @@ public class A2UIRenderer(
     /**
      * The fence the agent writes its UI in (`fence`), the id of the catalog with the app's
      * [components] (`catalog_id`), and the instructions its model needs to write UI with that
-     * catalog (`instructions`): how a reply carries A2UI, the protocol, the catalog's guidelines
-     * and the catalog itself, in Markdown.
+     * catalog and call the app's [tools] (`instructions`): the renderer's own `instructions` first,
+     * then how a reply carries A2UI, the protocol, the catalog's guidelines, the tools by name and
+     * the catalog itself, in Markdown.
      */
-    override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> = mapOf(
+    override fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> = mapOf(
         "fence" to fence,
         "catalog_id" to catalogId,
-        "instructions" to A2UIInstructions(catalogs(components).first(), fence).text,
+        "instructions" to A2UIInstructions(
+            catalog = catalogs(components).first(),
+            fence = fence,
+            preamble = instructions,
+            tools = tools.map { it.name },
+        ).text,
     )
+
+    /** The capabilities with the app's [components] and none of its tools. */
+    override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> =
+        capabilities(components, emptyList())
 
     override fun makeEngine(host: AIUIHost): AIUIEngine = A2UIEngine(this, host)
 

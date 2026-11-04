@@ -48,6 +48,9 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIParameter
 import io.getstream.chat.android.ai.compose.generativeui.AIUIParameterType
 import io.getstream.chat.android.ai.compose.generativeui.AIUIView
+import io.getstream.chat.android.ai.compose.parts.AIClientTool
+import io.getstream.chat.android.ai.compose.parts.AIClientToolResult
+import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -168,6 +171,49 @@ internal class A2UIRendererTest {
         val placeCardSchema = A2UIJson.map(components["PlaceCard"])!!
         assertEquals("A short summary of a place. The person asks about the place.", placeCardSchema["description"])
         assertEquals(listOf("title", "component"), placeCardSchema["required"])
+    }
+
+    @Test
+    fun `its instructions list the host's tools by name before the catalog`() {
+        val host = AIUIHost(
+            renderers = listOf(renderer),
+            tools = listOf(tool("search_places"), tool("get_weather")),
+        ) {}
+
+        val instructions = (host.capabilities["renderers"] as List<*>).filterIsInstance<Map<*, *>>()
+            .single()["instructions"] as String
+
+        val tools = instructions.substringAfter("## The app's tools\n\n").substringBefore("\n\n")
+        assertTrue(tools, tools.contains("`{\"@call\": \"<name>\", \"args\": {…}}`"))
+        assertEquals(
+            "- `get_weather`\n- `search_places`",
+            instructions.substringAfter(tools).substringAfter("\n\n").substringBefore("\n\n"),
+        )
+        assertTrue(instructions.indexOf("## The app's tools") < instructions.indexOf("## The catalog"))
+    }
+
+    @Test
+    fun `its instructions list no tools when the host has none`() {
+        val instructions = renderer.capabilities(listOf(placeCard))["instructions"] as String
+
+        assertFalse(instructions.contains("## The app's tools"))
+        assertEquals(instructions, renderer.capabilities(listOf(placeCard), emptyList())["instructions"])
+    }
+
+    @Test
+    fun `the app's instructions come first`() {
+        val preamble = "Answer questions about places with UI."
+
+        val instructions = A2UIRenderer(instructions = preamble).capabilities(emptyList(), emptyList())
+
+        val text = instructions["instructions"] as String
+        assertTrue(text, text.startsWith("$preamble\n\n## Writing UI in A2UI"))
+        assertTrue((renderer.capabilities(emptyList())["instructions"] as String).startsWith("## Writing UI in A2UI"))
+    }
+
+    private fun tool(name: String) = object : AIClientTool {
+        override val name: String = name
+        override suspend fun run(call: AIToolCallPart): AIClientToolResult = AIClientToolResult.completed("{}")
     }
 
     @Test
