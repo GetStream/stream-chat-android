@@ -91,7 +91,7 @@ It follows the response as it streams. Only web and email links open, through th
 
 Forms validate their fields with the rules the model writes, and a form's submit button sends its values with the action. Sliders, text areas and the other fields keep the numbers the model writes within what they can draw.
 
-Charts are drawn with Compose Canvas, without a chart library; values a chart can't draw, such as ones that aren't finite, are left out.
+Charts are drawn with Compose Canvas, without a chart library. Values a chart can't draw, such as ones that aren't finite, are left out of bar, line, area, radar and scatter charts; pie, radial and single stacked bar charts keep such a slice in their legend with the value 0, and draw negative values as nothing.
 
 Icons: the lucide names OpenUI uses map to Material icons, from `material-icons-core` where it has them and otherwise from copies of just the `material-icons-extended` icons the table uses. Markdown renders with `multiplatform-markdown-renderer`, the renderer `stream-chat-android-ai-compose` uses.
 

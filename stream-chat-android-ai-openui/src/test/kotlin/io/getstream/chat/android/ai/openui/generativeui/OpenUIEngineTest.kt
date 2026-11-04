@@ -138,6 +138,27 @@ internal class OpenUIEngineTest {
     }
 
     @Test
+    fun `a finished reply with nothing to draw shows its text`() = runTest {
+        val engine = engine()
+        assertNotNull(engine.content(reply("Just prose, still coming", isStreaming = true), "m1"))
+
+        assertNull(engine.content(reply("Just prose, all of it"), "m1"))
+        assertNull(engine.runtime("m1"))
+        assertNull(engine.content(reply("\$x = 1\nroot = \$x"), "m2"))
+    }
+
+    @Test
+    fun `a reply that loses its program stops its runtime`() = runTest {
+        val engine = engine()
+        engine.content(reply("root = Card([])"), "m1")
+        assertNotNull(engine.runtime("m1"))
+
+        engine.receive(AIUIDocument(AIUIFormat.OpenUI, content = listOf(1)), "m1")
+
+        assertNull(engine.runtime("m1"))
+    }
+
+    @Test
     fun `a reply's state is kept by the host, and restored`() = runTest {
         val host = host()
         val program = "\$name = \"\"\nroot = Card([Input(\"name\", \"Your name\", \"text\", null, \$name)])"

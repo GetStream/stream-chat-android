@@ -71,14 +71,31 @@ internal class OpenUIEngine(
 
     override fun receive(document: AIUIDocument, messageId: String) {
         // A reply whose UI showed follows its program even while it is off screen.
-        val program = document.text ?: return
+        val program = document.text
+        if (program == null) {
+            // Without a program the reply shows its text, so its queries stop refreshing.
+            dispose(messageId)
+            return
+        }
         runtimes[messageId]?.update(program, document.isStreaming)
     }
 
     override fun content(document: AIUIDocument, messageId: String): (@Composable () -> Unit)? {
         val program = document.text ?: return null
-        val runtime = runtimes[messageId] ?: makeRuntime(messageId, program, document.isStreaming)
+        val runtime = runtimes[messageId]
+            ?.also { it.update(program, document.isStreaming) }
+            ?: makeRuntime(messageId, program, document.isStreaming)
+        // A finished program with nothing to draw, such as plain prose, leaves the reply's text showing.
+        if (!document.isStreaming && runtime.root == null) {
+            dispose(messageId)
+            return null
+        }
         return { ReplyContent(runtime, messageId, program, document.isStreaming) }
+    }
+
+    // Stops a reply's runtime, with its refresh timers, and forgets it.
+    private fun dispose(messageId: String) {
+        runtimes.remove(messageId)?.dispose()
     }
 
     @Composable

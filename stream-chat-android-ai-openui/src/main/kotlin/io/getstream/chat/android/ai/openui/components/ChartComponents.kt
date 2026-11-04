@@ -78,6 +78,8 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
+import java.math.BigDecimal
+import java.math.MathContext
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.cos
@@ -86,6 +88,7 @@ import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -159,18 +162,35 @@ internal object ChartData {
         }
     }
 
+    /** What a screen reader reads for a chart: each series with the values the chart draws. */
     fun summary(points: List<ChartPoint>, series: List<String>): String = series.joinToString(". ") { name ->
         "$name: " +
             points
-                .filter { it.series == name }
+                .filter { it.series == name && it.value.isFinite() }
                 .joinToString(", ") { "${it.category} ${NumberFormatting.decimal(it.value)}" }
     }
+
+    /** What a screen reader reads for a scatter chart: each series with its points as `(x, y)`. */
+    fun scatterSummary(points: List<ScatterPoint>, series: List<String>): String =
+        series.withIndex().joinToString(". ") { (index, name) ->
+            "$name: " +
+                points
+                    .filter { it.series == index }
+                    .joinToString(", ") { "(${NumberFormatting.decimal(it.x)}, ${NumberFormatting.decimal(it.y)})" }
+        }
+
+    /** The shares the proportional charts draw: negative values count as nothing. */
+    fun share(value: Double): Double = max(0.0, value.orZero())
 }
 
-/** A chart's `height` when the model gives a finite positive one, kept to at most 1000. */
+/**
+ * A chart's `height` when the model gives a finite positive one, kept between 60, room for the
+ * axis labels and a plot, and 1000.
+ */
 internal fun chartHeight(height: Double?): Double? =
-    height?.takeIf { it.isFinite() && it > 0 }?.coerceAtMost(MaxChartHeight)
+    height?.takeIf { it.isFinite() && it > 0 }?.coerceIn(MinChartHeight, MaxChartHeight)
 
+private const val MinChartHeight = 60.0
 private const val MaxChartHeight = 1000.0
 
 /** Round axis ticks covering `min..max` (the "nice numbers" algorithm). */
@@ -213,13 +233,14 @@ internal fun niceTicks(minValue: Double, maxValue: Double, count: Int = 4): List
     val ticks = mutableListOf<Double>()
     var value = start
     while (value <= end + step / 2 && ticks.size < 50) {
-        ticks += (value / step).roundToInt() * step
+        // A Double index: values far beyond Int's range still land on their tick.
+        ticks += round(value / step) * step
         value += step
     }
     return ticks.ifEmpty { listOf(low, high) }
 }
 
-/** Compact axis label: `1.2k`, `3M`, `0.25`. */
+/** Compact axis label: `1.2k`, `3M`, `0.25`, `0.0015`. */
 internal fun axisLabel(value: Double): String {
     val magnitude = abs(value)
     fun trim(number: Double): String {
@@ -230,9 +251,13 @@ internal fun axisLabel(value: Double): String {
         magnitude >= 1e9 -> trim(value / 1e9) + "B"
         magnitude >= 1e6 -> trim(value / 1e6) + "M"
         magnitude >= 1e4 -> trim(value / 1e3) + "k"
-        else -> trim(value)
+        magnitude >= 1 || magnitude == 0.0 || !value.isFinite() -> trim(value)
+        // Below 1, significant digits keep small ticks apart.
+        else -> JS.numberToString(BigDecimal(value).round(MathContext(AxisLabelDigits)).toDouble())
     }
 }
+
+private const val AxisLabelDigits = 3
 
 private fun Double.orZero(): Double = if (isFinite()) this else 0.0
 
@@ -281,7 +306,7 @@ private fun SeriesLegend(names: List<String>) {
 @Composable
 private fun SliceLegend(entries: List<ChartSlice>, showPercent: Boolean) {
     val theme = OpenUITheme.current
-    val total = entries.sumOf { it.value }
+    val total = entries.sumOf { ChartData.share(it.value) }
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         entries.forEachIndexed { index, entry ->
             Row(
@@ -304,7 +329,7 @@ private fun SliceLegend(entries: List<ChartSlice>, showPercent: Boolean) {
                 )
                 if (showPercent && total > 0) {
                     Text(
-                        NumberFormatting.percent((entry.value / total * 100).roundToInt().toDouble()),
+                        NumberFormatting.percent((ChartData.share(entry.value) / total * 100).roundToInt().toDouble()),
                         style = theme.typography.caption,
                         color = theme.colors.textSecondary,
                         textAlign = TextAlign.End,
@@ -664,7 +689,7 @@ private fun DrawScope.drawHorizontalBars(
 
 // Scatter --------------------------------------------------------------------------------------
 
-private data class ScatterPoint(val series: Int, val x: Double, val y: Double, val z: Double?)
+internal data class ScatterPoint(val series: Int, val x: Double, val y: Double, val z: Double?)
 
 /** `ScatterChart(datasets, xLabel?, yLabel?)` with `ScatterSeries(name, points)` and `Point(x, y, z?)`. */
 @Composable
@@ -676,19 +701,18 @@ private fun ScatterChart(context: ComponentRenderProps) {
         names += props["name"]?.let(JS::toString).orEmpty()
         for (point in props["points"].arrayValue.orEmpty()) {
             val pointProps = point.elementValue?.props ?: point.objectValue ?: OpenUIObject.Empty
-            val x = JS.toNumber(pointProps["x"])
-            val y = JS.toNumber(pointProps["y"])
-            if (!x.isFinite() || !y.isFinite()) continue
+            val x = ChartData.drawable(JS.toNumber(pointProps["x"]))
+            val y = ChartData.drawable(JS.toNumber(pointProps["y"]))
+            if (x.isNaN() || y.isNaN()) continue
             points +=
                 ScatterPoint(
                     names.lastIndex,
                     x,
                     y,
                     pointProps["z"]
-                        .takeUnless(JS::isNullish)?.let(JS::toNumber)
-                        ?.takeIf {
-                            it.isFinite()
-                        },
+                        .takeUnless(JS::isNullish)
+                        ?.let { ChartData.drawable(JS.toNumber(it)) }
+                        ?.takeIf { it.isFinite() },
                 )
         }
     }
@@ -701,7 +725,10 @@ private fun ScatterChart(context: ComponentRenderProps) {
     val colors = names.indices.map { theme.colors.chartColor(it) }
     val maxZ = max(points.mapNotNull { it.z }.maxOrNull() ?: 1.0, 1.0)
 
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(theme.spacing.s)) {
+    Column(
+        Modifier.fillMaxWidth().semantics { contentDescription = ChartData.scatterSummary(points, names) },
+        verticalArrangement = Arrangement.spacedBy(theme.spacing.s),
+    ) {
         ChartFrame(240.dp, context.props.text("xLabel"), context.props.text("yLabel")) {
             Canvas(Modifier.fillMaxWidth().height(240.dp)) {
                 fun padded(values: List<Double>): Pair<Double, Double> {
@@ -759,8 +786,8 @@ private fun ScatterChart(context: ComponentRenderProps) {
                     )
                 }
                 for (point in points) {
-                    // The bubble area grows with z, from 30 to 200 dp².
-                    val area = point.z?.let { 30 + 170 * it / maxZ } ?: 50.0
+                    // The bubble area grows with z, from 30 to 200 dp²; a negative z gets the least.
+                    val area = point.z?.let { 30 + 170 * max(0.0, it) / maxZ } ?: 50.0
                     val radius = (sqrt(area / Math.PI).toFloat() * progress.value).dp.toPx()
                     drawCircle(colors[point.series].copy(alpha = 0.8f), radius, Offset(px(point.x), py(point.y)))
                 }
@@ -789,7 +816,7 @@ private fun sectorPath(rect: Rect, start: Float, sweep: Float, innerRatio: Float
 @Composable
 private fun PieChart(context: ComponentRenderProps) {
     val slices = ChartData.slices(context.props.array("labels"), context.props.array("values"))
-    val total = slices.sumOf { max(0.0, it.value.orZero()) }
+    val total = slices.sumOf { ChartData.share(it.value) }
     if (total <= 0) return
     val theme = OpenUITheme.current
     val donut = context.props.string("variant") == "donut"
@@ -822,7 +849,7 @@ private fun PieChart(context: ComponentRenderProps) {
                 val rect = Rect(center, radius)
                 var before = 0.0
                 slices.forEachIndexed { index, slice ->
-                    val value = max(0.0, slice.value.orZero())
+                    val value = ChartData.share(slice.value)
                     val start = startOffset + (before / total * span).toFloat() * progress.value
                     val sweep = (value / total * span).toFloat() * progress.value
                     before += value
@@ -857,7 +884,10 @@ private fun PieChart(context: ComponentRenderProps) {
 /** `RadialChart(labels, values)`: one ring per category. */
 @Composable
 private fun RadialChart(context: ComponentRenderProps) {
-    val slices = ChartData.slices(context.props.array("labels"), context.props.array("values"))
+    // Only the rings that fit in the chart show, in the legend too.
+    val slices = ChartData
+        .slices(context.props.array("labels"), context.props.array("values"))
+        .take(RadialRingCount)
     val maximum = slices.maxOfOrNull { it.value.orZero() } ?: 0.0
     if (slices.isEmpty() || maximum <= 0) return
     val theme = OpenUITheme.current
@@ -873,15 +903,15 @@ private fun RadialChart(context: ComponentRenderProps) {
         verticalArrangement = Arrangement.spacedBy(theme.spacing.m),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Canvas(Modifier.size(180.dp)) {
-            val stroke = 11.dp.toPx()
+        Canvas(Modifier.size(RadialSize.dp)) {
+            val stroke = RadialStroke.dp.toPx()
             slices.forEachIndexed { index, slice ->
-                val inset = index * 16.dp.toPx() + stroke / 2
+                val inset = index * RadialStep.dp.toPx() + stroke / 2
                 if (inset * 2 >= size.minDimension) return@forEachIndexed
                 val topLeft = Offset(inset, inset)
                 val arcSize = Size(size.width - inset * 2, size.height - inset * 2)
                 drawArc(track, 0f, 360f, false, topLeft, arcSize, style = Stroke(stroke))
-                val sweep = (max(0.0, slice.value.orZero()) / maximum * 0.75 * 360).toFloat() * progress.value
+                val sweep = (ChartData.share(slice.value) / maximum * 0.75 * 360).toFloat() * progress.value
                 drawArc(
                     colors[index],
                     -90f,
@@ -897,11 +927,18 @@ private fun RadialChart(context: ComponentRenderProps) {
     }
 }
 
+private const val RadialSize = 180
+private const val RadialStroke = 11
+private const val RadialStep = 16
+
+// The rings that fit: each one's inset, `index * step + stroke / 2`, stays within half the size.
+private const val RadialRingCount = (RadialSize / 2 - RadialStroke / 2) / RadialStep + 1
+
 /** `SingleStackedBarChart(labels, values)`: one horizontal bar split by share. */
 @Composable
 private fun SingleStackedBarChart(context: ComponentRenderProps) {
     val slices = ChartData.slices(context.props.array("labels"), context.props.array("values"))
-    val total = slices.sumOf { max(0.0, it.value.orZero()) }
+    val total = slices.sumOf { ChartData.share(it.value) }
     if (total <= 0) return
     val theme = OpenUITheme.current
     val progress = rememberEntrance()
@@ -915,7 +952,8 @@ private fun SingleStackedBarChart(context: ComponentRenderProps) {
         verticalArrangement = Arrangement.spacedBy(theme.spacing.m),
     ) {
         Canvas(Modifier.fillMaxWidth().height(16.dp)) {
-            val gap = 2.dp.toPx()
+            // The gaps take at most half the bar, so the segments keep a width.
+            val gap = if (slices.size > 1) min(2.dp.toPx(), size.width / 2 / (slices.size - 1)) else 0f
             val available = (size.width - gap * (slices.size - 1)).coerceAtLeast(0f) * progress.value
             val clip = Path().apply {
                 addRoundRect(RoundRect(Rect(Offset.Zero, size), CornerRadius(size.height / 2)))
@@ -923,7 +961,7 @@ private fun SingleStackedBarChart(context: ComponentRenderProps) {
             clipPath(clip) {
                 var x = 0f
                 slices.forEachIndexed { index, slice ->
-                    val width = (available * max(0.0, slice.value.orZero()) / total).toFloat()
+                    val width = (available * ChartData.share(slice.value) / total).toFloat()
                     drawRect(colors[index], Offset(x, 0f), Size(width, size.height))
                     x += width + gap
                 }

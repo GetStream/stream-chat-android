@@ -50,6 +50,7 @@ internal class ChartDataTest {
         assertNull(chartHeight(Double.POSITIVE_INFINITY))
         assertEquals(1000.0, chartHeight(1e9))
         assertEquals(180.0, chartHeight(180.0))
+        assertEquals(60.0, chartHeight(5.0))
     }
 
     @Test
@@ -57,5 +58,41 @@ internal class ChartDataTest {
         assertEquals(listOf(0.0, 20.0, 40.0, 60.0, 80.0, 100.0), niceTicks(0.0, 100.0))
         assertEquals(listOf(0.0, 1.0), niceTicks(-1e308, 1e308))
         assertTrue(niceTicks(5.0, 5.0).isNotEmpty())
+    }
+
+    @Test
+    fun `axis ticks of large values with a narrow spread cover them`() {
+        val ticks = niceTicks(1e12, 1e12 + 10)
+        assertTrue(ticks.first() <= 1e12 && ticks.last() >= 1e12 + 10, "$ticks")
+        assertEquals(ticks.size, ticks.distinct().size)
+    }
+
+    @Test
+    fun `small axis ticks keep labels of their own`() {
+        val labels = listOf(0.0, 0.001, 0.002, 0.003, 0.098, 0.1, 0.102).map(::axisLabel)
+        assertEquals(listOf("0", "0.001", "0.002", "0.003", "0.098", "0.1", "0.102"), labels)
+        assertEquals(listOf("1.5", "12k", "3M", "-0.25"), listOf(1.5, 12000.0, 3e6, -0.25).map(::axisLabel))
+    }
+
+    @Test
+    fun `a summary reads only the values a chart draws`() {
+        val points = listOf(
+            ChartPoint("Mon", "Visits", 1.0, 0),
+            ChartPoint("Tue", "Visits", Double.NaN, 1),
+        )
+        assertEquals("Visits: Mon 1", ChartData.summary(points, listOf("Visits")))
+    }
+
+    @Test
+    fun `a scatter summary reads each series' points`() {
+        val points = listOf(ScatterPoint(0, 1.0, 2.0, null), ScatterPoint(1, 3.0, 4.5, 1.0))
+        assertEquals("A: (1, 2). B: (3, 4.5)", ChartData.scatterSummary(points, listOf("A", "B")))
+    }
+
+    @Test
+    fun `negative and undrawable values are no share`() {
+        assertEquals(10.0, ChartData.share(10.0))
+        assertEquals(0.0, ChartData.share(-5.0))
+        assertEquals(0.0, ChartData.share(Double.NaN))
     }
 }
