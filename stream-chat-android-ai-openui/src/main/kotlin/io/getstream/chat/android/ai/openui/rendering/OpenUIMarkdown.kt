@@ -221,7 +221,7 @@ internal fun OpenUICodeBlock(language: String?, code: String, modifier: Modifier
         ?: stringResource(R.string.stream_ai_openui_code_block_language_fallback)
     LaunchedEffect(copied) {
         if (copied) {
-            delay(1500)
+            delay(CopiedFeedbackMillis)
             copied = false
         }
     }
@@ -270,3 +270,6 @@ internal fun OpenUICodeBlock(language: String?, code: String, modifier: Modifier
 
 private val CopyLabel = R.string.stream_ai_openui_code_block_copy
 private val CopiedLabel = R.string.stream_ai_openui_code_block_copied
+
+// How long a code block shows that its code was copied.
+private const val CopiedFeedbackMillis = 1_500L

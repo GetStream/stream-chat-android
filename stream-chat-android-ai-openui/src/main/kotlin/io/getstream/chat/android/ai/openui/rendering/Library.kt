@@ -48,7 +48,7 @@ public typealias ComponentRenderer = @Composable (ComponentRenderProps) -> Unit
  * @param component Draws the component; `null` for data-only components their parent reads
  * (`SelectItem`, `Series`, ...).
  */
-public fun defineComponent(
+internal fun defineComponent(
     name: String,
     props: List<PropField>,
     description: String,
@@ -57,38 +57,38 @@ public fun defineComponent(
 
 /** A component of a library (port of `DefinedComponent`); create one with [defineComponent]. */
 @Immutable
-public class DefinedComponent internal constructor(
+internal class DefinedComponent internal constructor(
     /** The model-facing contract: name, props and description. */
     internal val schema: ComponentSchema,
     /** Draws the component; `null` for data-only components their parent reads. */
-    public val component: ComponentRenderer?,
+    val component: ComponentRenderer?,
 ) : ComponentAddition {
     /** The name programs call it by. */
-    public val name: String get() = schema.name
+    val name: String get() = schema.name
 
     /** Its positional props. */
-    public val props: List<PropField> get() = schema.props
+    val props: List<PropField> get() = schema.props
 
     /** What it is, for the prompt. */
-    public val description: String get() = schema.description
+    val description: String get() = schema.description
 }
 
 /**
  * A component [LibraryExtension.add] adds: a [DefinedComponent] that is only listed, or a
  * [SlottedComponent] that is also placed in content slots.
  */
-public sealed interface ComponentAddition
+internal sealed interface ComponentAddition
 
 /**
  * A component added to a library and placed in [slots] (the `{ component, slots }` form of
  * `LibraryExtension.components.add`). A slot is `"Parent.prop"`, or `"Parent"` when that component
  * has one content slot: a prop that takes a union of components, or an array of one.
  */
-public class SlottedComponent(
+internal class SlottedComponent(
     /** The component added. */
-    public val component: DefinedComponent,
+    val component: DefinedComponent,
     /** The content slots it joins, such as `"Card.children"` or `"Card"`. */
-    public val slots: List<String>,
+    val slots: List<String>,
 ) : ComponentAddition
 
 /**
@@ -100,12 +100,12 @@ public class SlottedComponent(
  * @param functions Functions that join the library and are listed in the prompt.
  * @param actions Action steps that join the library and are listed in the prompt.
  */
-public class LibraryExtension(
-    public val add: List<ComponentAddition> = emptyList(),
-    public val override: List<DefinedComponent> = emptyList(),
-    public val remove: List<String> = emptyList(),
-    public val functions: List<DefinedFunction> = emptyList(),
-    public val actions: List<DefinedAction> = emptyList(),
+internal class LibraryExtension(
+    val add: List<ComponentAddition> = emptyList(),
+    val override: List<DefinedComponent> = emptyList(),
+    val remove: List<String> = emptyList(),
+    val functions: List<DefinedFunction> = emptyList(),
+    val actions: List<DefinedAction> = emptyList(),
 )
 
 /**
@@ -114,7 +114,7 @@ public class LibraryExtension(
  *
  * @throws IllegalArgumentException When [root] is not one of [components].
  */
-public fun createLibrary(
+internal fun createLibrary(
     components: List<DefinedComponent>,
     root: String? = null,
     componentGroups: List<ComponentGroup> = emptyList(),
@@ -132,8 +132,8 @@ public fun createLibrary(
 )
 
 /**
- * The chat library (port of `openuiChatLibrary`): every response is a single vertical `Card`. Its
- * prompt options are [io.getstream.chat.android.ai.openui.library.openuiChatPromptOptions].
+ * The chat library (port of `openuiChatLibrary`): every response is a single vertical `Card`. Use
+ * it for assistant messages in a conversation.
  */
 public val openuiChatLibrary: Library by lazy {
     Library(LibraryDefinition.chat, BuiltInRenderers.forLibrary(BuiltInRenderers.Flavor.Chat))
@@ -141,8 +141,7 @@ public val openuiChatLibrary: Library by lazy {
 
 /**
  * The standard library (port of `openuiLibrary`): a `Stack` root with layouts, modals and cards,
- * for full-screen surfaces. Its prompt options are
- * [io.getstream.chat.android.ai.openui.library.openuiPromptOptions].
+ * for full-screen surfaces such as dashboards.
  */
 public val openuiLibrary: Library by lazy {
     Library(LibraryDefinition.standard, BuiltInRenderers.forLibrary(BuiltInRenderers.Flavor.Standard))
@@ -150,8 +149,8 @@ public val openuiLibrary: Library by lazy {
 
 /**
  * A component library: the components the model may use, how to render them, and what the system
- * prompt says about them (port of `Library`). Create one with [createLibrary], or derive one from
- * [openuiChatLibrary] or [openuiLibrary] with [extend].
+ * prompt says about them (port of `Library`). Start from [openuiChatLibrary] or [openuiLibrary],
+ * and restyle or drop components with [replacingView] and [removing].
  */
 @Immutable
 public class Library internal constructor(
@@ -162,30 +161,30 @@ public class Library internal constructor(
     private val renderers: Map<String, ComponentRenderer?> = renderers.toMap()
 
     /** The root component name. */
-    public val root: String? get() = definition.root
+    internal val root: String? get() = definition.root
 
     /** The components by name, in library order. */
-    public val components: Map<String, DefinedComponent> by lazy {
+    internal val components: Map<String, DefinedComponent> by lazy {
         definition.components.associate { it.name to DefinedComponent(it, renderers[it.name]) }
     }
 
     /** How the prompt groups the components. */
-    public val componentGroups: List<ComponentGroup> get() = definition.componentGroups
+    internal val componentGroups: List<ComponentGroup> get() = definition.componentGroups
 
     /** The library's functions by name, called as `@Name(...)` in programs. */
-    public val functions: Map<String, DefinedFunction> get() = definition.functions.associateBy { it.name }
+    internal val functions: Map<String, DefinedFunction> get() = definition.functions.associateBy { it.name }
 
     /** The library's action steps by name, used as `@Name(...)` in action props. */
-    public val actions: Map<String, DefinedAction> get() = definition.customActions.associateBy { it.name }
+    internal val actions: Map<String, DefinedAction> get() = definition.customActions.associateBy { it.name }
 
     /** The system prompt for this library, with [options] (examples, rules, tools, modes). */
-    public fun prompt(options: PromptOptions = PromptOptions()): String = definition.systemPrompt(options)
+    internal fun prompt(options: PromptOptions = PromptOptions()): String = definition.systemPrompt(options)
 
     /** What [io.getstream.chat.android.ai.openui.library.generatePrompt] needs for this library. */
-    public fun toSpec(): PromptSpec = definition.promptSpec(PromptOptions())
+    internal fun toSpec(): PromptSpec = definition.promptSpec(PromptOptions())
 
     /** The library JSON Schema, which [io.getstream.chat.android.ai.openui.lang.createParser] takes. */
-    public fun toJSONSchema(): OpenUIValue = definition.jsonSchema
+    internal fun toJSONSchema(): OpenUIValue = definition.jsonSchema
 
     /**
      * A library derived from this one with [extension] applied; this one stays as it is.
@@ -194,7 +193,7 @@ public class Library internal constructor(
      * has, overrides or removes one it doesn't, removes the root or a component that is the only
      * type a slot takes, or names a slot the library doesn't have.
      */
-    public fun extend(extension: LibraryExtension): Library {
+    internal fun extend(extension: LibraryExtension): Library {
         val added = extension.add.map { addition ->
             when (addition) {
                 is DefinedComponent -> addition to null
@@ -212,6 +211,39 @@ public class Library internal constructor(
         val kept = renderers + joined
         return Library(next, next.componentNames.associateWith { kept[it] })
     }
+
+    /** The names of the components, in library order. */
+    public val componentNames: List<String> get() = definition.componentNames
+
+    /**
+     * A library in which [view] draws the component named [name], which keeps its props, such as
+     * to restyle the chat library's buttons. [view] gets the component's props, and the library's
+     * own view of it, [ComponentRenderProps.DefaultView], to wrap or restyle. It is the same library
+     * when it has no such component, or when the component is data its parent reads.
+     *
+     * ```kotlin
+     * val library = openuiChatLibrary.replacingView("Button") { props ->
+     *     Box(Modifier.border(1.dp, Color.Red)) { props.DefaultView() }
+     * }
+     * OpenUIRenderer(library = library)
+     * ```
+     *
+     * @param name The component's name, such as `"Button"`.
+     * @param view Draws the component.
+     */
+    public fun replacingView(name: String, view: ComponentRenderer): Library {
+        val original = renderers[name] ?: return this
+        return replacingRenderer(name) { props -> view(props.withDefaultView(original)) }
+    }
+
+    /**
+     * A library without the components named [names]. They are also removed from every slot that
+     * takes several types, and groups left empty are dropped. The root component, and a component
+     * that is the only type a remaining slot takes, stay.
+     *
+     * @param names The names of the components to remove.
+     */
+    public fun removing(names: Set<String>): Library = joining(definition.removing(names), emptyList())
 
     /** What the parser and runtime need. */
     internal val schema: LibrarySchema get() = definition.schema
@@ -249,12 +281,6 @@ public class Library internal constructor(
         group: String = "App components",
         notes: List<String> = emptyList(),
     ): Library = joining(definition.addingContent(components.map { it.schema }, group, notes), components)
-
-    /**
-     * A library without the components named [names]. The root, and a component that is all a
-     * remaining slot takes, stay (see [LibraryDefinition.removing]).
-     */
-    internal fun removing(names: Set<String>): Library = joining(definition.removing(names), emptyList())
 
     // The library of [next], with the renderers of the components it keeps and of the ones of
     // [added] that joined it.

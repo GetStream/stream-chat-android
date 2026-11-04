@@ -212,6 +212,8 @@ private fun ChatCardView(context: ComponentRenderProps) {
     }
 }
 
+// The strip, its overflow sheet and their shared row read best as one composable.
+@Suppress("LongMethod")
 @Composable
 private fun SourcesStrip(sources: List<OpenUIObject>, context: ComponentRenderProps) {
     val theme = OpenUITheme.current
@@ -420,7 +422,7 @@ private fun CalloutView(context: ComponentRenderProps) {
     // Keyed on the binding too, so a callout bound to another `$variable` waits its own 3s.
     LaunchedEffect(ReactiveBinding.target(binding), field.isReactive && isVisible) {
         if (!(field.isReactive && isVisible)) return@LaunchedEffect
-        delay(3_000)
+        delay(CalloutDismissMillis)
         currentField.setValue(OpenUIValue.False)
     }
     AnimatedVisibility(
@@ -527,7 +529,7 @@ private fun ImageBlockView(context: ComponentRenderProps) {
     RemoteImage(
         url = context.props.string("src"),
         alt = context.props.text("alt"),
-        modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f).clip(RoundedCornerShape(theme.radius.medium)),
+        modifier = Modifier.fillMaxWidth().aspectRatio(ImageAspectRatio).clip(RoundedCornerShape(theme.radius.medium)),
     )
 }
 
@@ -620,3 +622,9 @@ private fun SeparatorView(context: ComponentRenderProps) {
         HorizontalDivider(color = theme.colors.border)
     }
 }
+
+// How long a callout bound to a `$variable` shows before it dismisses itself.
+private const val CalloutDismissMillis = 3_000L
+
+// The width-to-height ratio of an image block.
+private const val ImageAspectRatio = 16f / 9f

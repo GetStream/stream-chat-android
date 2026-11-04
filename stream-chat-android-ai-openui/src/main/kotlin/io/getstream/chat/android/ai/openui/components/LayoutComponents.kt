@@ -238,7 +238,7 @@ internal fun OpenUIDisclosureRow(
     content: @Composable () -> Unit,
 ) {
     val theme = OpenUITheme.current
-    val rotation by animateFloatAsState(if (expanded) 180f else 0f, label = "chevron")
+    val rotation by animateFloatAsState(if (expanded) ExpandedChevronDegrees else 0f, label = "chevron")
     val state = stringResource(
         if (expanded) R.string.stream_ai_openui_disclosure_expanded else R.string.stream_ai_openui_disclosure_collapsed,
     )
@@ -410,6 +410,8 @@ private fun StepsComponent(context: ComponentRenderProps) {
 // Carousel ------------------------------------------------------------------------------------
 
 /** `Carousel(children, variant?)`: horizontally paged slides. */
+// The pager, its page indicator and its arrows share state, so they stay in one composable.
+@Suppress("LongMethod")
 @Composable
 private fun CarouselComponent(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
@@ -542,3 +544,6 @@ private fun ModalComponent(context: ComponentRenderProps) {
         }
     }
 }
+
+// How far a disclosure's chevron turns when it expands.
+private const val ExpandedChevronDegrees = 180f
