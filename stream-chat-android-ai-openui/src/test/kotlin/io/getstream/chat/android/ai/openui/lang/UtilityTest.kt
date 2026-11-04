@@ -114,6 +114,20 @@ internal class UtilityTest {
     }
 
     @Nested
+    inner class Objects {
+        @Test
+        fun `objects can't be changed through their entries`() {
+            val fields = OpenUIObject.of("a" to OpenUIValue.of(1))
+
+            @Suppress("UNCHECKED_CAST")
+            val entry = fields.entries.first() as MutableMap.MutableEntry<String, OpenUIValue>
+
+            assertThrows<UnsupportedOperationException> { entry.setValue(OpenUIValue.of(2)) }
+            assertEquals(OpenUIValue.of(1), fields["a"])
+        }
+    }
+
+    @Nested
     inner class IncrementalEditing {
         private val original = """
             root = Stack([header, tbl])

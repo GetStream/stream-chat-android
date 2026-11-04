@@ -18,6 +18,7 @@ package io.getstream.chat.android.ai.openui.lang
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /** Model output that must not crash the parser or lose statements. */
@@ -81,6 +82,28 @@ internal class RobustnessTest {
         val result = parser.parse(lines.joinToString("\n"))
 
         assertEquals("Stack", result.root?.typeName)
+    }
+
+    @Test
+    fun `nested components in a runtime root stay within bounds`() {
+        val levels = 40
+        val program = "root = \$flag ? " + "Stack([".repeat(levels) + "TextContent(\"x\")" + "])".repeat(levels) +
+            " : TextContent(\"y\")"
+
+        val result = parser.parse(program)
+
+        assertNotNull(result.rootExpression)
+    }
+
+    @Test
+    fun `nested calls in query args stay within bounds`() {
+        val levels = 40
+        val program = "root = Stack([TextContent(\"x\")])\n" +
+            "q = Query(\"tool\", {n: " + "@Count(".repeat(levels) + "1" + ")".repeat(levels) + "})"
+
+        val result = parser.parse(program)
+
+        assertEquals(1, result.queryStatements.size)
     }
 
     @Test

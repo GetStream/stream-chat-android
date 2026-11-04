@@ -127,7 +127,9 @@ internal sealed interface ASTNode {
         when (this) {
             is Comp -> {
                 args.forEach { it.walk(visit) }
-                mappedProps?.values?.forEach { it.walk(visit) }
+                // Mapped props mostly hold the args themselves; walking those twice would double the
+                // work at every nesting level.
+                mappedProps?.values?.forEach { prop -> if (args.none { it === prop }) prop.walk(visit) }
             }
             is Arr -> elements.forEach { it.walk(visit) }
             is Obj -> entries.forEach { it.second.walk(visit) }

@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ai.openui.lang
 
+import java.util.Collections
+
 /**
  * An insertion-ordered, immutable string-keyed map, mirroring JavaScript object semantics.
  *
@@ -25,7 +27,8 @@ package io.getstream.chat.android.ai.openui.lang
  * Equality is order-insensitive, like comparing two JavaScript objects' own properties.
  */
 public class OpenUIObject private constructor(private val storage: LinkedHashMap<String, OpenUIValue>) :
-    Map<String, OpenUIValue> by storage {
+    // An unmodifiable view, so a cast can't write through `entries` or `values`.
+    Map<String, OpenUIValue> by Collections.unmodifiableMap(storage) {
 
     /** Creates an object from a map, keeping the map's iteration order. */
     public constructor(map: Map<String, OpenUIValue> = emptyMap()) : this(LinkedHashMap(map))
