@@ -62,6 +62,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.shadows.ShadowLog
 
+@Suppress("LargeClass")
 @RunWith(AndroidJUnit4::class)
 internal class A2UIRendererTest {
 
@@ -379,6 +380,40 @@ internal class A2UIRendererTest {
         rule.onNodeWithText("Reserve a table").performClick()
 
         assertEquals("Reserve a table", sent.single().label)
+    }
+
+    @Test
+    fun `a button without text is labelled with its event's name as words`() {
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Button", "child" to "icon", "action" to submitEvent()),
+                    mapOf("id" to "icon", "component" to "Icon", "name" to "send"),
+                ),
+            ),
+        )
+
+        rule.onNodeWithTag("root").performClick()
+
+        val action = sent.single()
+        assertEquals("submit_form", action.name)
+        assertEquals("Submit form", action.label)
+    }
+
+    @Test
+    fun `an event's name reads as words`() {
+        mapOf(
+            "submit_form" to "Submit form",
+            "submitForm" to "Submit form",
+            "book-a-table" to "Book a table",
+            "SubmitForm" to "Submit form",
+            "  open  menu " to "Open menu",
+            "loadURL" to "Load url",
+            "URLLoad" to "Urlload",
+            "go" to "Go",
+            "__" to "",
+            "" to "",
+        ).forEach { (name, words) -> assertEquals(name, words, A2UIEngine.words(name)) }
     }
 
     @Test
@@ -728,6 +763,8 @@ internal class A2UIRendererTest {
 
     private fun bookEvent() =
         mapOf("event" to mapOf("name" to "book", "context" to mapOf("restaurant" to mapOf("@path" to "/name"))))
+
+    private fun submitEvent() = mapOf("event" to mapOf("name" to "submit_form"))
 
     private fun openUrl(url: String) =
         mapOf("functionCall" to mapOf("@call" to "openUrl", "args" to mapOf("url" to url)))

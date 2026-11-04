@@ -64,6 +64,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 /**
  * The A2UI replies of one conversation, each with a message processor of its own, kept while the
@@ -201,17 +202,17 @@ internal class A2UIEngine(
 
     /**
      * The action a button's event sends: named after the event and labelled with the text of the
-     * button, or else the event's name. The label is never the agent's words, which could say
-     * something the person didn't choose. The payload holds its surface, its component, its
-     * resolved context, the event's `userMessage`, and the surface's data model when the agent
-     * created the surface with `sendDataModel`. What a person typed into an `obscured` text field
-     * is in none of them.
+     * button, or else the event's name as words, such as "Submit form" for `submit_form`. The label
+     * is never the agent's words, which could say something the person didn't choose. The payload
+     * holds its surface, its component, its resolved context, the event's `userMessage`, and the
+     * surface's data model when the agent created the surface with `sendDataModel`. What a person
+     * typed into an `obscured` text field is in none of them.
      */
     fun action(message: RendererMessage.Action, reply: A2UIReply): AIUIAction = AIUIAction(
         messageId = reply.messageId,
         format = AIUIFormat.A2UI,
         name = message.name,
-        label = buttonText(message, reply) ?: message.name,
+        label = buttonText(message, reply) ?: words(message.name),
         payload = buildMap {
             put("surfaceId", message.surfaceId)
             put("sourceComponentId", message.sourceComponentId)
@@ -334,6 +335,29 @@ internal class A2UIEngine(
                 list?.map { item -> A2UIJson.write(item) } ?: listOf(A2UIJson.write(content))
             }
             else -> null
+        }
+
+        /**
+         * An event's name as words, such as "Submit form" for `submit_form` or `submitForm`, for a
+         * button without text of its own. Underscores, hyphens and spaces separate words, as does
+         * an uppercase letter after a lowercase one; the words are lowercase but for the first letter.
+         */
+        fun words(name: String): String {
+            val words = mutableListOf<String>()
+            val word = StringBuilder()
+            for (char in name) {
+                val separates = char == '_' || char == '-' || char == ' '
+                val startsWord = char.isUpperCase() && word.lastOrNull()?.isLowerCase() == true
+                if (separates || startsWord) {
+                    if (word.isNotEmpty()) words.add(word.toString())
+                    word.clear()
+                    if (!separates) word.append(char)
+                } else {
+                    word.append(char)
+                }
+            }
+            if (word.isNotEmpty()) words.add(word.toString())
+            return words.joinToString(" ").lowercase(Locale.ROOT).replaceFirstChar { it.uppercase(Locale.ROOT) }
         }
 
         private fun normalizedVersion(json: Map<String, Any?>): Map<String, Any?> {
