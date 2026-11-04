@@ -16,6 +16,14 @@
 
 package io.getstream.chat.android.ai.openui.components
 
+import android.os.Build
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +31,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.ai.openui.R
 import io.getstream.chat.android.ai.openui.lang.FormValidation
@@ -31,6 +40,7 @@ import io.getstream.chat.android.ai.openui.lang.OpenUIValue
 import io.getstream.chat.android.ai.openui.lang.ParsedRule
 import io.getstream.chat.android.ai.openui.lang.stringValue
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -253,4 +263,45 @@ internal object SliderValues {
     /** The values as the slider stores them, rounded to three decimals. */
     fun stored(values: List<Double>): OpenUIValue =
         OpenUIValue.Arr(values.map { OpenUIValue.Num(round(it * ROUNDING) / ROUNDING) })
+}
+
+/** The locale the app's resources use, for showing dates. */
+@Composable
+internal fun currentLocale(): Locale {
+    val configuration = LocalConfiguration.current
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        configuration.locales[0]
+    } else {
+        @Suppress("DEPRECATION")
+        configuration.locale
+    } ?: Locale.getDefault()
+}
+
+/**
+ * The Material date picker dialog used by date fields and date cells, opening on [date] (or else
+ * [minimum], or else today) and allowing no day before [minimum]. Being part of the composition, it
+ * is dismissed with it.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun FormDatePickerDialog(date: Long?, minimum: Long?, onDismiss: () -> Unit, onConfirm: (Long) -> Unit) {
+    val state = rememberDatePickerState(
+        initialSelectedDateMillis = date ?: minimum ?: FormDateFormatting.today(),
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                minimum == null || utcTimeMillis >= minimum
+        },
+    )
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                val picked = state.selectedDateMillis
+                if (picked != null) onConfirm(picked) else onDismiss()
+            }) { Text(stringResource(android.R.string.ok)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) }
+        },
+    ) { DatePicker(state) }
 }

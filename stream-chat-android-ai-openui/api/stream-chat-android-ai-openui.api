@@ -44,13 +44,18 @@ public final class io/getstream/chat/android/ai/openui/components/ComposableSing
 	public final fun getLambda$-606845578$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-922238874$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$1115157108$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$1319801127$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$1550677489$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$1986197870$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$264195184$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$364243431$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$699715565$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$821244325$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+}
+
+public final class io/getstream/chat/android/ai/openui/components/ComposableSingletons$FormSupportKt {
+	public static final field INSTANCE Lio/getstream/chat/android/ai/openui/components/ComposableSingletons$FormSupportKt;
+	public fun <init> ()V
+	public final fun getLambda$-545309080$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$65959978$stream_chat_android_ai_openui_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/ai/openui/components/ComposableSingletons$LayoutComponentsKt {

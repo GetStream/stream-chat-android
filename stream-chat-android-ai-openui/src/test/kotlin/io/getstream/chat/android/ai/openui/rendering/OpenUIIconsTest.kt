@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ai.openui.components
+package io.getstream.chat.android.ai.openui.rendering
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-internal class TableDateFormattingTest {
+internal class OpenUIIconsTest {
 
     @Test
-    fun `a date or a date-time reads as its day`() {
-        val day = TableDateFormatting.date("2026-11-04")
-
-        assertEquals("2026-11-04", day?.let(TableDateFormatting::string))
-        assertEquals(day, TableDateFormatting.date("2026-11-04T10:00:00Z"))
-        assertEquals(day, TableDateFormatting.date("2026-11-04T23:30:00-05:30"))
+    fun `icon names read as words`() {
+        assertEquals("trash", OpenUIIcons.label("trash-2"))
+        assertEquals("arrow up right", OpenUIIcons.label("arrow-up-right"))
+        assertEquals("calendar", OpenUIIcons.label("Calendar"))
     }
 
     @Test
-    fun `text that is not a date reads as no date`() {
-        assertNull(TableDateFormatting.date("tomorrow"))
-        assertNull(TableDateFormatting.date(""))
-        assertNull(TableDateFormatting.date(null))
+    fun `names without words have no label`() {
+        assertNull(OpenUIIcons.label(null))
+        assertNull(OpenUIIcons.label(""))
+        assertNull(OpenUIIcons.label("2"))
+        assertNull(OpenUIIcons.label(" - "))
     }
 }

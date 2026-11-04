@@ -33,6 +33,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -41,8 +44,6 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,14 +52,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -112,6 +111,7 @@ import io.getstream.chat.android.ai.openui.rendering.OpenUIIcon
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -346,21 +346,33 @@ internal fun SelectComponent(ctx: ComponentRenderProps) {
 
 // Date picker ------------------------------------------------------------------------------------
 
-/** `yyyy-MM-dd` date strings used by date fields, in UTC (what the Material date picker selects). */
+/**
+ * `yyyy-MM-dd` date strings used by date fields and date cells. A date is the UTC midnight of its day
+ * (what the Material date picker selects), so the stored string never moves with the time zone.
+ */
 internal object FormDateFormatting {
-    private fun formatter() = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
+    private fun formatter(zone: TimeZone = UTC) = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
+        timeZone = zone
         isLenient = false
     }
 
     fun string(millis: Long): String = formatter().format(java.util.Date(millis))
 
+    // A date-time like `2026-11-04T10:00:00Z` reads as its date: the fields edit days only.
     fun millis(string: String?): Long? {
         if (string.isNullOrEmpty()) return null
         return runCatching { formatter().parse(string.take(10))?.time }.getOrNull()
     }
 
-    fun today(): Long = millis(string(System.currentTimeMillis()))!!
+    /** Today in the user's calendar ([zone]), as the UTC midnight of that day. */
+    fun today(now: Long = System.currentTimeMillis(), zone: TimeZone = TimeZone.getDefault()): Long =
+        millis(formatter(zone).format(java.util.Date(now)))!!
+
+    /** The day as people read it in [locale], such as "Nov 4, 2026". */
+    fun label(millis: Long, locale: Locale): String =
+        DateFormat.getDateInstance(DateFormat.MEDIUM, locale).apply { timeZone = UTC }.format(java.util.Date(millis))
+
+    private val UTC: TimeZone = TimeZone.getTimeZone("UTC")
 }
 
 /** `DatePicker(name, mode?, rules?, value?)`: stores `yyyy-MM-dd`, or `{from, to}` for ranges. */
@@ -421,7 +433,6 @@ internal fun DatePickerComponent(ctx: ComponentRenderProps) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FormDateRow(title: String, date: Long?, minimum: Long?, enabled: Boolean, onChange: (Long) -> Unit) {
     val theme = OpenUITheme.current
@@ -435,32 +446,18 @@ private fun FormDateRow(title: String, date: Long?, minimum: Long?, enabled: Boo
         )
         TextButton(onClick = { open = true }, enabled = enabled) {
             Text(
-                date?.let(FormDateFormatting::string) ?: stringResource(R.string.stream_ai_openui_date_picker_choose),
+                date?.let { FormDateFormatting.label(it, currentLocale()) }
+                    ?: stringResource(R.string.stream_ai_openui_date_picker_choose),
                 style = theme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
                 color = if (date == null) theme.colors.accent else theme.colors.textPrimary,
             )
         }
     }
     if (open) {
-        val state = rememberDatePickerState(
-            initialSelectedDateMillis = date ?: minimum ?: FormDateFormatting.today(),
-            selectableDates = object : SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long): Boolean =
-                    minimum == null || utcTimeMillis >= minimum
-            },
-        )
-        DatePickerDialog(
-            onDismissRequest = { open = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    state.selectedDateMillis?.let(onChange)
-                    open = false
-                }) { Text(stringResource(android.R.string.ok)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { open = false }) { Text(stringResource(android.R.string.cancel)) }
-            },
-        ) { DatePicker(state) }
+        FormDatePickerDialog(date, minimum, onDismiss = { open = false }) { picked ->
+            open = false
+            onChange(picked)
+        }
     }
 }
 
@@ -673,10 +670,12 @@ internal fun ToggleGroupComponent(ctx: ComponentRenderProps, isSwitch: Boolean) 
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .clickable(
+                    .toggleable(
+                        value = isOn,
                         enabled = !ctx.isStreaming,
                         role = if (isSwitch) Role.Switch else Role.Checkbox,
-                    ) { toggle(!isOn) }
+                        onValueChange = toggle,
+                    )
                     .padding(vertical = theme.spacing.s),
                 verticalAlignment = if (isSwitch) Alignment.CenterVertically else Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(theme.spacing.m),
@@ -689,14 +688,14 @@ internal fun ToggleGroupComponent(ctx: ComponentRenderProps, isSwitch: Boolean) 
                     )
                     Switch(
                         checked = isOn,
-                        onCheckedChange = toggle,
+                        onCheckedChange = null,
                         enabled = !ctx.isStreaming,
                         colors = SwitchDefaults.colors(checkedTrackColor = theme.colors.accent),
                     )
                 } else {
                     Checkbox(
                         checked = isOn,
-                        onCheckedChange = toggle,
+                        onCheckedChange = null,
                         enabled = !ctx.isStreaming,
                         modifier = Modifier.size(24.dp),
                         colors = CheckboxDefaults.colors(checkedColor = theme.colors.accent),
@@ -730,7 +729,7 @@ internal fun RadioGroupComponent(ctx: ComponentRenderProps) {
     if (items.isEmpty()) return
     val current = (field.value.takeUnless(JS::isNullish) ?: props["defaultValue"])?.let(JS::toString)
 
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(theme.spacing.s)) {
+    Column(Modifier.fillMaxWidth().selectableGroup(), verticalArrangement = Arrangement.spacedBy(theme.spacing.s)) {
         items.forEach { item ->
             val itemProps = ComponentProps(item.props)
             val value = itemProps.text("value").orEmpty()
@@ -740,13 +739,18 @@ internal fun RadioGroupComponent(ctx: ComponentRenderProps) {
                 if (rules.isNotEmpty()) validation?.validateField(name, OpenUIValue.Str(value), rules)
             }
             Row(
-                Modifier.fillMaxWidth().clickable(enabled = !ctx.isStreaming, role = Role.RadioButton) { select() },
+                Modifier.fillMaxWidth().selectable(
+                    selected = selected,
+                    enabled = !ctx.isStreaming,
+                    role = Role.RadioButton,
+                    onClick = select,
+                ),
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(theme.spacing.m),
             ) {
                 RadioButton(
                     selected = selected,
-                    onClick = { select() },
+                    onClick = null,
                     enabled = !ctx.isStreaming,
                     modifier = Modifier.size(24.dp),
                     colors = RadioButtonDefaults.colors(selectedColor = theme.colors.accent),
@@ -804,15 +808,23 @@ internal fun SelectionFieldComponent(ctx: ComponentRenderProps, isCards: Boolean
     }
 
     if (isCards) {
-        ResponsiveGrid(spacing = theme.spacing.s, minItemWidth = 140.dp, maxColumns = 3) {
-            items.forEach { item -> FormOptionCard(item, selection, enabled = !ctx.isStreaming) { toggle(item) } }
+        ResponsiveGrid(
+            modifier = if (single) Modifier.selectableGroup() else Modifier,
+            spacing = theme.spacing.s,
+            minItemWidth = 140.dp,
+            maxColumns = 3,
+        ) {
+            items.forEach { item ->
+                FormOptionCard(item, selection, single, enabled = !ctx.isStreaming) { toggle(item) }
+            }
         }
     } else {
         FlowRow(
+            modifier = if (single) Modifier.selectableGroup() else Modifier,
             horizontalArrangement = Arrangement.spacedBy(theme.spacing.s),
             verticalArrangement = Arrangement.spacedBy(theme.spacing.s),
         ) {
-            items.forEach { item -> FormChip(item, selection, enabled = !ctx.isStreaming) { toggle(item) } }
+            items.forEach { item -> FormChip(item, selection, single, enabled = !ctx.isStreaming) { toggle(item) } }
         }
     }
 
@@ -834,7 +846,13 @@ internal fun SelectionFieldComponent(ctx: ComponentRenderProps, isCards: Boolean
 }
 
 @Composable
-private fun FormChip(item: ElementNode, selection: List<String>, enabled: Boolean, onClick: () -> Unit) {
+private fun FormChip(
+    item: ElementNode,
+    selection: List<String>,
+    single: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
     val theme = OpenUITheme.current
     val props = ComponentProps(item.props)
     val value = JS.toString(item.props["value"])
@@ -848,12 +866,12 @@ private fun FormChip(item: ElementNode, selection: List<String>, enabled: Boolea
             .clip(shape)
             .background(if (selected) theme.colors.accent.copy(alpha = 0.14f) else theme.colors.sunkenSurface, shape)
             .border(1.dp, if (selected) theme.colors.accent else Color.Transparent, shape)
-            .clickable(enabled = enabled && !disabled, role = Role.Checkbox, onClick = onClick)
+            .selectionItem(selected, single, enabled = enabled && !disabled, onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        props.element("icon")?.let { OpenUIIcon(it, Modifier.size(14.dp), tint = content) }
+        props.element("icon")?.let { OpenUIIcon(it, Modifier.size(14.dp), tint = content, decorative = true) }
         Text(
             props.text("label") ?: value,
             style = theme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
@@ -864,7 +882,13 @@ private fun FormChip(item: ElementNode, selection: List<String>, enabled: Boolea
 }
 
 @Composable
-private fun FormOptionCard(item: ElementNode, selection: List<String>, enabled: Boolean, onClick: () -> Unit) {
+private fun FormOptionCard(
+    item: ElementNode,
+    selection: List<String>,
+    single: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
     val theme = OpenUITheme.current
     val props = ComponentProps(item.props)
     val value = JS.toString(item.props["value"])
@@ -879,7 +903,7 @@ private fun FormOptionCard(item: ElementNode, selection: List<String>, enabled: 
             .clip(shape)
             .background(if (selected) theme.colors.accent.copy(alpha = 0.08f) else theme.colors.sunkenSurface, shape)
             .border(1.5.dp, if (selected) theme.colors.accent else Color.Transparent, shape)
-            .clickable(enabled = enabled && !disabled, onClick = onClick),
+            .selectionItem(selected, single, enabled = enabled && !disabled, onClick = onClick),
     ) {
         Column(
             Modifier.fillMaxWidth().padding(theme.spacing.m),
@@ -910,6 +934,17 @@ private fun FormOptionCard(item: ElementNode, selection: List<String>, enabled: 
     }
 }
 
+/**
+ * One option of a selection field: a radio button when one option can be chosen, a checkbox when
+ * several can, so accessibility services read it as one control with its selected state.
+ */
+private fun Modifier.selectionItem(selected: Boolean, single: Boolean, enabled: Boolean, onClick: () -> Unit) =
+    if (single) {
+        selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick)
+    } else {
+        toggleable(value = selected, enabled = enabled, role = Role.Checkbox) { onClick() }
+    }
+
 /** A small rounded icon badge (`IconBadge` with the `sm` size, `soft` or `neutral` variant). */
 @Composable
 private fun FormIconBadge(icon: ElementNode, soft: Boolean) {
@@ -928,6 +963,7 @@ private fun FormIconBadge(icon: ElementNode, soft: Boolean) {
             icon,
             Modifier.size(dimension * 0.5f),
             tint = if (soft) theme.colors.accent else theme.colors.textPrimary,
+            decorative = true,
         )
     }
 }
