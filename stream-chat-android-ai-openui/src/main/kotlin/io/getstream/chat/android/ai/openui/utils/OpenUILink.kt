@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.ai.openui.utils
 
-import java.net.Inet6Address
-import java.net.InetAddress
 import java.util.Locale
 
 /**
@@ -42,29 +40,4 @@ internal object OpenUILink {
 
     private fun scheme(url: String?): String =
         url.orEmpty().substringBefore(':', missingDelimiterValue = "").lowercase(Locale.ROOT)
-
-    /**
-     * Whether every address [host] resolves to is public, so a link the model wrote can't reach
-     * the device itself or the local network. Resolves the name, so call it off the main thread.
-     */
-    fun isPublicHost(host: String?): Boolean {
-        if (host.isNullOrEmpty()) return false
-        val addresses = runCatching { InetAddress.getAllByName(host) }.getOrNull()
-        return !addresses.isNullOrEmpty() && addresses.all(::isPublicAddress)
-    }
-
-    /** Whether [address] is neither loopback, private, link-local, multicast nor unspecified. */
-    fun isPublicAddress(address: InetAddress): Boolean {
-        val local = address.isAnyLocalAddress ||
-            address.isLoopbackAddress ||
-            address.isLinkLocalAddress ||
-            address.isSiteLocalAddress ||
-            address.isMulticastAddress
-        // IPv6 unique local addresses (fc00::/7) are the private range Java doesn't flag.
-        val uniqueLocal = address is Inet6Address && (address.address[0].toInt() and UNIQUE_LOCAL_MASK) == UNIQUE_LOCAL
-        return !local && !uniqueLocal
-    }
-
-    private const val UNIQUE_LOCAL_MASK = 0xFE
-    private const val UNIQUE_LOCAL = 0xFC
 }
