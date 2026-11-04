@@ -24,7 +24,9 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIParameter
 import io.getstream.chat.android.ai.compose.generativeui.AIUIParameterType
 import io.getstream.chat.android.ai.openui.library.openuiChatPromptOptions
+import io.getstream.chat.android.ai.openui.library.openuiPromptOptions
 import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -84,6 +86,16 @@ internal class OpenUIRendererTest {
         assertTrue("PlaceCard(" in instructions)
         assertTrue("A photo and a short summary of a place." in instructions)
         assertEquals(openuiChatLibrary.prompt(openuiChatPromptOptions), renderer.capabilities(emptyList())["instructions"])
+    }
+
+    @Test
+    fun `the prompt is made with the library's own options by default`() {
+        val standard = OpenUIRenderer(library = openuiLibrary)
+
+        assertEquals(openuiPromptOptions, standard.promptOptions)
+        assertEquals(openuiChatPromptOptions, OpenUIRenderer().promptOptions)
+        assertEquals(openuiLibrary.prompt(openuiPromptOptions), standard.capabilities(emptyList())["instructions"])
+        assertEquals(openuiLibrary.prompt(openuiPromptOptions), openuiLibrary.prompt())
     }
 
     @Test

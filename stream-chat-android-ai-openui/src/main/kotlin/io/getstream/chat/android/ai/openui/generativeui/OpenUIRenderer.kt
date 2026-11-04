@@ -16,18 +16,19 @@
 
 package io.getstream.chat.android.ai.openui.generativeui
 
+import android.util.Log
 import io.getstream.chat.android.ai.compose.generativeui.AIUIComponent
 import io.getstream.chat.android.ai.compose.generativeui.AIUIEngine
 import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
+import io.getstream.chat.android.ai.openui.lang.OpenUIError
 import io.getstream.chat.android.ai.openui.lang.ToolProvider
 import io.getstream.chat.android.ai.openui.library.ComponentSchema
 import io.getstream.chat.android.ai.openui.library.LibraryDefinition
 import io.getstream.chat.android.ai.openui.library.OpenUIPortableComponentException
 import io.getstream.chat.android.ai.openui.library.PromptOptions
 import io.getstream.chat.android.ai.openui.library.fromPortableDefinition
-import io.getstream.chat.android.ai.openui.library.openuiChatPromptOptions
 import io.getstream.chat.android.ai.openui.rendering.Library
 import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
 
@@ -53,15 +54,19 @@ import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
  * is left out of both the instructions and the UI, so it never replaces one of OpenUI's own.
  *
  * @param library The library the agent writes with, the chat library by default.
- * @param promptOptions The examples and rules of the system prompt; pass the ones made for
- * [library] (`openuiPromptOptions` for `openuiLibrary`).
+ * @param promptOptions The examples and rules of the system prompt, the ones made for [library] by
+ * default.
  * @param toolProvider Runs the tools of `Query()` and `Mutation()`. By default they are the host's
  * tools, run on the device.
+ * @param onError Receives each problem with a reply's program, such as one the parser can't read
+ * or a tool that failed, with the reply's message id, once the reply is complete. Without it, the
+ * problems go to the log.
  */
 public class OpenUIRenderer(
     public val library: Library = openuiChatLibrary,
-    public val promptOptions: PromptOptions = openuiChatPromptOptions,
+    public val promptOptions: PromptOptions = library.defaultPromptOptions,
     private val toolProvider: ToolProvider? = null,
+    private val onError: ((error: OpenUIError, messageId: String) -> Unit)? = null,
 ) : AIUIRenderer {
     override val format: AIUIFormat = AIUIFormat.OpenUI
 
@@ -78,7 +83,12 @@ public class OpenUIRenderer(
     }
 
     override fun makeEngine(host: AIUIHost): AIUIEngine =
-        OpenUIEngine(library, host, toolProvider ?: HostToolProvider(host))
+        OpenUIEngine(library, host, toolProvider ?: HostToolProvider(host), onError ?: ::log)
+
+    // A reply's problem, for the log when the app takes none.
+    private fun log(error: OpenUIError, messageId: String) {
+        Log.e(LogTag, "The OpenUI of reply $messageId has a problem: ${error.code} ${error.message}")
+    }
 
     internal companion object {
         /** The OpenUI schema of an app's component. */
@@ -111,3 +121,5 @@ public class OpenUIRenderer(
 
 // The code fence agents write OpenUI Lang in.
 private const val Fence = "openui-lang"
+
+private const val LogTag = "OpenUIRenderer"

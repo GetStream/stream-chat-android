@@ -42,12 +42,20 @@ internal data class ActionEvent internal constructor(
     val type: String,
     /** Action-specific params: `url` for open-url, `context` for continue-conversation, a custom action's args. */
     val params: OpenUIObject = OpenUIObject.Empty,
-    /** Human readable label (e.g. the button label), shown as the user's message in a chat. */
+    /**
+     * The message the model wrote for the action, such as a `@ToAssistant` step's, or the label of
+     * the control when it wrote none.
+     */
     val humanFriendlyMessage: String,
     /** Raw form state when the step ran. */
     val formState: OpenUIObject? = null,
     /** The form that scoped the action, if any. */
     val formName: String? = null,
+    /**
+     * The label of the control the person used, such as a button's title. A chat shows it as their
+     * message, as the model's words could say something they never chose.
+     */
+    val label: String = "",
 ) {
     /** Whether this sends the user's intent back to the model. */
     val isContinueConversation: Boolean get() = type == BuiltinActionType.CONTINUE_CONVERSATION
@@ -73,7 +81,9 @@ internal data class ActionEvent internal constructor(
         get() {
             val items = buildList {
                 add(OpenUIValue.Str("User clicked: $humanFriendlyMessage"))
-                if (formState != null || context != null) add(OpenUIValue.Obj(formState ?: OpenUIObject.Empty))
+                if (formState != null || context != null) {
+                    add(OpenUIValue.Obj(formState?.withoutSecrets ?: OpenUIObject.Empty))
+                }
                 context?.let(::add)
             }
             val message = buildMessage(content = humanFriendlyMessage, context = OpenUIValue.Arr(items))

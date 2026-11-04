@@ -81,6 +81,8 @@
     <string name="stream_ai_openui_card_block_composite">Composite card %1$s</string>
     <string name="stream_ai_openui_card_block_visual">Visual card %1$s</string>
     <string name="stream_ai_openui_card_block_click_label">Select</string>
+    <!-- The person's message when they tap a control that has no label. -->
+    <string name="stream_ai_openui_action_untitled">Continue</string>
     <!-- The label under the sum in a donut chart. -->
     <string name="stream_ai_openui_chart_total">Total</string>
 </resources>

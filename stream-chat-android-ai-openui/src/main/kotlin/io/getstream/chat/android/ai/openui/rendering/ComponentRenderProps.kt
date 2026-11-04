@@ -155,6 +155,16 @@ public class ComponentRenderProps internal constructor(
     }
 
     /**
+     * A field that holds a secret, such as a password: kept in the enclosing form's state, never in
+     * a `$variable`, and left out of the state that leaves the device.
+     */
+    @Composable
+    internal fun secretStateField(name: String, binding: OpenUIValue?, componentType: String?): StateField {
+        LocalOpenUIStoreSnapshot.current // Recompose when the store changes.
+        return runtime.stateField(name, binding, LocalOpenUIFormName.current, componentType, isSecret = true)
+    }
+
+    /**
      * Runs [action] (a step, `Action([...])` or a legacy action object) with the state of the form
      * [formName]; without one, continues the conversation with [label] (port of `useTriggerAction`).
      */
