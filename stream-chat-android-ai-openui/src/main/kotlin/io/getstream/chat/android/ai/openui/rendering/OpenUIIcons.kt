@@ -36,6 +36,7 @@ import io.getstream.chat.android.ai.openui.lang.stringValue
  * numeric or variant suffixes), then the category's representative icon, then a generic one.
  */
 internal object OpenUIIcons {
+    private const val MAX_NAME_LENGTH = 64
 
     /** The icon for a lucide [name] and optional [category]. */
     fun vector(name: String?, category: String? = null): ImageVector {
@@ -65,6 +66,8 @@ internal object OpenUIIcons {
         .ifEmpty { null }
 
     internal fun looseCandidates(key: String): List<String> {
+        // Icon names are short; a longer one is no icon, and its prefixes would cost quadratic work.
+        if (key.length > MAX_NAME_LENGTH) return emptyList()
         val parts = key.split('-').toMutableList()
         val candidates = mutableListOf<String>()
         while (parts.size > 1) {

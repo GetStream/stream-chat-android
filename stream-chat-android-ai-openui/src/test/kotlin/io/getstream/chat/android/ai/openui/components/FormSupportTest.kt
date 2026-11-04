@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ai.openui.components
 
+import io.getstream.chat.android.ai.openui.lang.FormValidation
 import io.getstream.chat.android.ai.openui.lang.OpenUIValue
 import io.getstream.chat.android.ai.openui.lang.ParsedRule
 import kotlin.test.Test
@@ -100,6 +101,16 @@ internal class FormSupportTest {
         model.register("x", listOf(ParsedRule("required"))) { null }
         model.unregister("x")
         assertTrue(model.validateForm())
+    }
+
+    @Test
+    fun `slider rules check its first value`() {
+        val numeric = FormValidation.builtInValidators.getValue("numeric")
+        val stored = OpenUIValue.Arr(listOf(OpenUIValue.Num(5.0), OpenUIValue.Num(10.0)))
+
+        assertEquals(OpenUIValue.Num(5.0), SliderValues.validated(stored))
+        assertNull(numeric(SliderValues.validated(stored), null))
+        assertEquals(OpenUIValue.Num(3.0), SliderValues.validated(OpenUIValue.Num(3.0)))
     }
 
     @Test

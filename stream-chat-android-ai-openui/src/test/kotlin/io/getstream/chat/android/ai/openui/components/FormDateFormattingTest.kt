@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.ai.openui.components
 
+import io.getstream.chat.android.ai.openui.lang.OpenUIObject
+import io.getstream.chat.android.ai.openui.lang.OpenUIValue
+import io.getstream.chat.android.ai.openui.lang.stringValue
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.test.Test
@@ -39,6 +42,41 @@ internal class FormDateFormattingTest {
         assertNull(FormDateFormatting.millis("2026-13-40"))
         assertNull(FormDateFormatting.millis(""))
         assertNull(FormDateFormatting.millis(null))
+        assertNull(FormDateFormatting.millis("2026-11-04garbage"))
+        assertNull(FormDateFormatting.millis("2026-11-045"))
+    }
+
+    @Test
+    fun `picking the end of a range with a null start sets the start too`() {
+        val day = FormDateFormatting.millis("2026-11-04")!!
+        val range = OpenUIObject.of("from" to OpenUIValue.Null)
+
+        val picked = FormDateFormatting.withTo(range, day)
+
+        assertEquals("2026-11-04", picked["from"].stringValue)
+        assertEquals("2026-11-04", picked["to"].stringValue)
+    }
+
+    @Test
+    fun `the end of a range is never before its start`() {
+        val range = OpenUIObject.of("from" to OpenUIValue.Str("2026-11-10"), "to" to OpenUIValue.Str("2026-11-01"))
+
+        val picked = FormDateFormatting.withTo(range, FormDateFormatting.millis("2026-11-01")!!)
+        val start = FormDateFormatting.withFrom(range, FormDateFormatting.millis("2026-11-20")!!)
+
+        assertEquals("2026-11-10", picked["to"].stringValue)
+        assertEquals("2026-11-20", start["to"].stringValue)
+    }
+
+    @Test
+    fun `a picker opens on its date unless that is before the minimum`() {
+        val early = FormDateFormatting.millis("2026-11-01")!!
+        val late = FormDateFormatting.millis("2026-11-10")!!
+
+        assertEquals(late, FormDateFormatting.opening(early, late))
+        assertEquals(early, FormDateFormatting.opening(early, null))
+        assertEquals(late, FormDateFormatting.opening(late, early))
+        assertEquals(late, FormDateFormatting.opening(null, late))
     }
 
     @Test

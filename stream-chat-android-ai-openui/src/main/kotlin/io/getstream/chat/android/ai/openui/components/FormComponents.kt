@@ -97,7 +97,6 @@ import io.getstream.chat.android.ai.openui.lang.JS
 import io.getstream.chat.android.ai.openui.lang.OpenUIObject
 import io.getstream.chat.android.ai.openui.lang.OpenUIValue
 import io.getstream.chat.android.ai.openui.lang.StateField
-import io.getstream.chat.android.ai.openui.lang.arrayValue
 import io.getstream.chat.android.ai.openui.lang.boolValue
 import io.getstream.chat.android.ai.openui.lang.get
 import io.getstream.chat.android.ai.openui.lang.objectValue
@@ -361,10 +360,30 @@ internal object FormDateFormatting {
 
     fun string(millis: Long): String = formatter().format(java.util.Date(millis))
 
-    // A date-time like `2026-11-04T10:00:00Z` reads as its date: the fields edit days only.
+    // A date-time like `2026-11-04T10:00:00Z` reads as its date: the fields edit days only. Anything
+    // else after the date makes it no date, so a malformed value is never shown as a valid day.
     fun millis(string: String?): Long? {
         if (string.isNullOrEmpty()) return null
+        if (string.length > IsoDateLength && string[IsoDateLength] !in DateTimeSeparators) return null
         return runCatching { formatter().parse(string.take(IsoDateLength))?.time }.getOrNull()
+    }
+
+    /** The day a picker opens on: [date] unless it is before [minimum], then [minimum], then today. */
+    fun opening(date: Long?, minimum: Long?): Long =
+        date?.takeIf { minimum == null || it >= minimum } ?: minimum ?: today()
+
+    /** A `{from, to}` range with its start picked: an end before it moves to it. */
+    fun withFrom(range: OpenUIObject, date: Long): OpenUIObject {
+        val day = OpenUIValue.Str(string(date))
+        val to = millis(range["to"].stringValue)
+        return range.with("from", day).let { if (to != null && to < date) it.with("to", day) else it }
+    }
+
+    /** A `{from, to}` range with its end picked, never before its start; an unset start takes that day. */
+    fun withTo(range: OpenUIObject, date: Long): OpenUIObject {
+        val from = millis(range["from"].stringValue)
+        val day = OpenUIValue.Str(string(maxOf(date, from ?: date)))
+        return range.with("to", day).let { if (from == null) it.with("from", day) else it }
     }
 
     /** Today in the user's calendar ([zone]), as the UTC midnight of that day. */
@@ -411,14 +430,10 @@ internal fun DatePickerComponent(ctx: ComponentRenderProps) {
             val to = FormDateFormatting.millis(range["to"].stringValue)
             val enabled = !ctx.isStreaming
             FormDateRow(stringResource(R.string.stream_ai_openui_date_picker_from), from, null, enabled) { date ->
-                var next = range.with("from", OpenUIValue.Str(FormDateFormatting.string(date)))
-                if (to != null && to < date) next = next.with("to", OpenUIValue.Str(FormDateFormatting.string(date)))
-                update(OpenUIValue.Obj(next))
+                update(OpenUIValue.Obj(FormDateFormatting.withFrom(range, date)))
             }
             FormDateRow(stringResource(R.string.stream_ai_openui_date_picker_to), to, from, enabled) { date ->
-                var next = range.with("to", OpenUIValue.Str(FormDateFormatting.string(date)))
-                if (range["from"] == null) next = next.with("from", OpenUIValue.Str(FormDateFormatting.string(date)))
-                update(OpenUIValue.Obj(next))
+                update(OpenUIValue.Obj(FormDateFormatting.withTo(range, date)))
             }
         } else {
             FormDateRow(
@@ -489,7 +504,7 @@ internal fun SliderComponent(ctx: ComponentRenderProps) {
     val commit = { next: List<Double> ->
         val value = SliderValues.stored(next)
         field.setValue(value)
-        if (rules.isNotEmpty()) validation?.validateField(name, value.arrayValue?.firstOrNull(), rules)
+        if (rules.isNotEmpty()) validation?.validateField(name, SliderValues.validated(value), rules)
         draft = null
     }
 
@@ -525,7 +540,7 @@ internal fun SliderComponent(ctx: ComponentRenderProps) {
         }
     }
     RegisterValidation(validation, name, rules, ctx.isStreaming) {
-        ctx.runtime.stateField(name, props["value"], formName).value
+        SliderValues.validated(ctx.runtime.stateField(name, props["value"], formName).value)
     }
 }
 
@@ -980,6 +995,7 @@ private const val DisabledAlpha = 0.6f
 
 // The length of an ISO date, `yyyy-MM-dd`.
 private const val IsoDateLength = 10
+private const val DateTimeSeparators = "T "
 
 // How faded a disabled choice of a group is.
 private const val DisabledItemAlpha = 0.5f

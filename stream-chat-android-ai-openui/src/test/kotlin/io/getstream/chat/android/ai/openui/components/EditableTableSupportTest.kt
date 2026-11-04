@@ -33,6 +33,14 @@ internal class EditableTableSupportTest {
     }
 
     @Test
+    fun `number cells keep only finite numbers`() {
+        assertEquals(OpenUIValue.Num(12.5), EditableTableSupport.numberCell("12.5"))
+        assertEquals(OpenUIValue.Str("1e309"), EditableTableSupport.numberCell("1e309"))
+        assertEquals(OpenUIValue.Str("abc"), EditableTableSupport.numberCell("abc"))
+        assertEquals(OpenUIValue.Str(""), EditableTableSupport.numberCell(""))
+    }
+
+    @Test
     fun `saved rows restore unchanged`() {
         val rows = listOf(
             mapOf("id" to OpenUIValue.Str("1"), "name" to OpenUIValue.Str("Ada"), "age" to OpenUIValue.Num(36.0)),

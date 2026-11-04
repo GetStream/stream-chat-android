@@ -378,6 +378,12 @@ internal object EditableTableSupport {
     fun columnWidth(width: Double?): Double =
         width?.takeIf { it.isFinite() }?.coerceIn(MIN_COLUMN_WIDTH, MAX_COLUMN_WIDTH) ?: DEFAULT_COLUMN_WIDTH
 
+    /** A number cell's typed [text]: a finite number, or else the text as typed. */
+    fun numberCell(text: String): OpenUIValue {
+        val number = JS.stringToNumber(text)
+        return if (number.isFinite() && text.isNotEmpty()) OpenUIValue.Num(number) else OpenUIValue.Str(text)
+    }
+
     /** Rows as JSON, for saving them while the table is off screen. */
     fun encode(rows: List<Map<String, OpenUIValue>>): String =
         OpenUIJson.stringify(OpenUIValue.Arr(rows.map { OpenUIValue.Obj(OpenUIObject(it)) }))
@@ -435,7 +441,9 @@ private fun EditableTableComponent(context: ComponentRenderProps) {
             }
         }
         rows = parsed
-        if (baseline.isEmpty() || !context.isStreaming) baseline = parsed
+        // Cells can't be edited while streaming, so the rows just loaded are the baseline, also for
+        // the last streamed snapshot.
+        baseline = parsed
     }
 
     val changed = rows.withIndex().sumOf { (index, row) ->
@@ -481,12 +489,7 @@ private fun EditableTableComponent(context: ComponentRenderProps) {
                                     .orEmpty()
                                 EditableCell(column, text, enabled) { newValue ->
                                     val value = if (column.type == "number") {
-                                        val number = JS.stringToNumber(newValue)
-                                        if (number.isNaN() || newValue.isEmpty()) {
-                                            OpenUIValue.Str(newValue)
-                                        } else {
-                                            OpenUIValue.Num(number)
-                                        }
+                                        EditableTableSupport.numberCell(newValue)
                                     } else {
                                         OpenUIValue.Str(newValue)
                                     }

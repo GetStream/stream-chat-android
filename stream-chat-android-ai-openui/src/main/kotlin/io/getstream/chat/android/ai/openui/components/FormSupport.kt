@@ -219,6 +219,10 @@ internal object SliderValues {
     // Beyond this a Float can't tell a slider's positions apart.
     private const val LARGEST_BOUND = 1e15
 
+    /** The value a slider's rules check: its first number, on every change and on submit alike. */
+    fun validated(value: OpenUIValue?): OpenUIValue? =
+        if (value is OpenUIValue.Arr) value.items.firstOrNull() else value
+
     /** `min` to `max`, falling back to `0` and `100` when not finite, and at least one apart. */
     fun bounds(minimum: Double?, maximum: Double?): ClosedFloatingPointRange<Double> {
         val lower = minimum?.takeIf { it.isFinite() && abs(it) <= LARGEST_BOUND } ?: 0.0
@@ -286,7 +290,7 @@ internal fun currentLocale(): Locale {
 @Composable
 internal fun FormDatePickerDialog(date: Long?, minimum: Long?, onDismiss: () -> Unit, onConfirm: (Long) -> Unit) {
     val state = rememberDatePickerState(
-        initialSelectedDateMillis = date ?: minimum ?: FormDateFormatting.today(),
+        initialSelectedDateMillis = FormDateFormatting.opening(date, minimum),
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean =
                 minimum == null || utcTimeMillis >= minimum

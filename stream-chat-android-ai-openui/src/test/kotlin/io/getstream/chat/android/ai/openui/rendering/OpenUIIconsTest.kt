@@ -18,7 +18,9 @@ package io.getstream.chat.android.ai.openui.rendering
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 internal class OpenUIIconsTest {
 
@@ -27,6 +29,15 @@ internal class OpenUIIconsTest {
         assertEquals("trash", OpenUIIcons.label("trash-2"))
         assertEquals("arrow up right", OpenUIIcons.label("arrow-up-right"))
         assertEquals("calendar", OpenUIIcons.label("Calendar"))
+    }
+
+    @Test
+    fun `a name longer than any icon skips the loose match`() {
+        val long = List(5000) { "a" }.joinToString("-")
+
+        assertTrue(OpenUIIcons.looseCandidates(long).isEmpty())
+        assertFalse(OpenUIIcons.isKnown(long))
+        assertTrue(OpenUIIcons.isKnown("trash-2"))
     }
 
     @Test

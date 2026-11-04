@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.ai.openui.components
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -42,5 +45,26 @@ internal class TableComponentTest {
 
         compose.onNodeWithText("SNIPPET").assertExists()
         compose.onNodeWithText("val x = 1", substring = true).assertExists()
+    }
+
+    @Test
+    fun `an editable table that finishes streaming shows no unsaved changes`() {
+        val head = "root = EditableTable(\"roster\", [colName, colRole], [row1])\n" +
+            "colName = {type: \"text\", key: \"name\", header: \"Name\"}\n" +
+            "colRole = {type: \"text\", key: \"role\", header: \"Role\"}\n"
+        var response by mutableStateOf(head + "row1 = {id: \"1\", values: [\"Ann\"]}")
+        var isStreaming by mutableStateOf(true)
+        compose.setContent {
+            Renderer(response = response, library = openuiLibrary, isStreaming = isStreaming)
+        }
+        compose.waitForIdle()
+
+        response = head + "row1 = {id: \"1\", values: [\"Ann\", \"Dev\"]}"
+        compose.waitForIdle()
+        isStreaming = false
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Dev", substring = true).assertExists()
+        compose.onNodeWithText("Save Changes").assertDoesNotExist()
     }
 }
