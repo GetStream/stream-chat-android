@@ -28,12 +28,11 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class DeliveredMessagePayload(
     @Json(name = "cid")
-    val cid: kotlin.String? = null,
+    internal val cid: String? = null,
 
     @Json(name = "id")
-    val id: kotlin.String? = null,
+    internal val id: String? = null,
 )

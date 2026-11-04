@@ -58,5 +58,5 @@ internal data class PollVoteResponseData(
     internal val answerTextI18n: Map<String, String>? = null,
 
     @Json(name = "user")
-    internal val user: UserResponse? = null,
+    internal val user: io.getstream.chat.android.network.models.UserResponse? = null,
 )

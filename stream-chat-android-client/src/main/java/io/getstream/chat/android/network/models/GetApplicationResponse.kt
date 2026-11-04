@@ -28,12 +28,11 @@ import com.squareup.moshi.Json
 /**
  * Basic response information
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class GetApplicationResponse(
     @Json(name = "duration")
-    val duration: kotlin.String,
+    internal val duration: String,
 
     @Json(name = "app")
-    val app: io.getstream.chat.android.network.models.AppResponseFields,
+    internal val app: io.getstream.chat.android.network.models.AppResponseFields,
 )

@@ -25,8 +25,11 @@ package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
 
+/**
+ *
+ */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class CastPollVoteRequest(
     @Json(name = "vote")
-    val vote: VoteData? = null,
+    internal val vote: io.getstream.chat.android.network.models.VoteData? = null,
 )

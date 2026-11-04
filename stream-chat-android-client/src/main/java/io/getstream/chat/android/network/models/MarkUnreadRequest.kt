@@ -28,7 +28,6 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class MarkUnreadRequest(
     @Json(name = "message_id")

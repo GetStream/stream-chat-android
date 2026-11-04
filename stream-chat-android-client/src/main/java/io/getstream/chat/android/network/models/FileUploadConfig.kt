@@ -24,26 +24,24 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.List
 
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class FileUploadConfig(
     @Json(name = "size_limit")
-    val sizeLimit: kotlin.Int,
+    internal val sizeLimit: Int,
 
     @Json(name = "allowed_file_extensions")
-    val allowedFileExtensions: kotlin.collections.List<kotlin.String> = emptyList(),
+    internal val allowedFileExtensions: List<String> = emptyList(),
 
     @Json(name = "allowed_mime_types")
-    val allowedMimeTypes: kotlin.collections.List<kotlin.String> = emptyList(),
+    internal val allowedMimeTypes: List<String> = emptyList(),
 
     @Json(name = "blocked_file_extensions")
-    val blockedFileExtensions: kotlin.collections.List<kotlin.String> = emptyList(),
+    internal val blockedFileExtensions: List<String> = emptyList(),
 
     @Json(name = "blocked_mime_types")
-    val blockedMimeTypes: kotlin.collections.List<kotlin.String> = emptyList(),
+    internal val blockedMimeTypes: List<String> = emptyList(),
 )

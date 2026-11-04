@@ -34,5 +34,5 @@ internal data class UpdateMemberPartialResponse(
     internal val duration: String,
 
     @Json(name = "channel_member")
-    internal val channelMember: ChannelMemberResponse? = null,
+    internal val channelMember: io.getstream.chat.android.network.models.ChannelMemberResponse? = null,
 )

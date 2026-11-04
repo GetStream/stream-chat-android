@@ -28,24 +28,23 @@ import com.squareup.moshi.Json
 /**
  * Represents custom chat command
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class Command(
     @Json(name = "args")
-    val args: kotlin.String,
+    internal val args: String,
 
     @Json(name = "description")
-    val description: kotlin.String,
+    internal val description: String,
 
     @Json(name = "name")
-    val name: kotlin.String,
+    internal val name: String,
 
     @Json(name = "set")
-    val set: kotlin.String,
+    internal val set: String,
 
     @Json(name = "created_at")
-    val createdAt: java.util.Date? = null,
+    internal val createdAt: java.util.Date? = null,
 
     @Json(name = "updated_at")
-    val updatedAt: java.util.Date? = null,
+    internal val updatedAt: java.util.Date? = null,
 )

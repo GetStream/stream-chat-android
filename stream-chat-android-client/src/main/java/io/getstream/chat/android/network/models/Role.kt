@@ -24,26 +24,24 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.List
 
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class Role(
     @Json(name = "created_at")
-    val createdAt: java.util.Date,
+    internal val createdAt: java.util.Date,
 
     @Json(name = "custom")
-    val custom: kotlin.Boolean,
+    internal val custom: Boolean,
 
     @Json(name = "name")
-    val name: kotlin.String,
+    internal val name: String,
 
     @Json(name = "updated_at")
-    val updatedAt: java.util.Date,
+    internal val updatedAt: java.util.Date,
 
     @Json(name = "scopes")
-    val scopes: kotlin.collections.List<kotlin.String> = emptyList(),
+    internal val scopes: List<String> = emptyList(),
 )

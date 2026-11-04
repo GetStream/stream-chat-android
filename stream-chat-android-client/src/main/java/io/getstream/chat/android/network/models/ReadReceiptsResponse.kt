@@ -26,7 +26,7 @@ package io.getstream.chat.android.network.models
 import com.squareup.moshi.Json
 
 /**
- *
+ * The settings for the read receipt events.
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class ReadReceiptsResponse(
