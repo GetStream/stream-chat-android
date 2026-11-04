@@ -89,6 +89,21 @@ public final class io/getstream/chat/android/ai/a2ui/compose/ComposableSingleton
 	public final fun getLambda$-682726990$stream_chat_android_ai_a2ui_release ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/getstream/chat/android/ai/a2ui/generativeui/A2UIError {
+	public static final field $stable I
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getPath ()Ljava/lang/String;
+	public final fun getSurfaceId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ai/a2ui/generativeui/A2UIRenderer : io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer {
 	public static final field $stable I
 	public static final field BASIC_CATALOG_ID Ljava/lang/String;
@@ -96,8 +111,8 @@ public final class io/getstream/chat/android/ai/a2ui/generativeui/A2UIRenderer :
 	public static final field DEFAULT_CATALOG_ID Ljava/lang/String;
 	public static final field VERSION Ljava/lang/String;
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun capabilities (Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
 	public final fun getCatalog ()Lio/getstream/chat/android/ai/a2ui/compose/A2UICatalog;
 	public final fun getCatalogId ()Ljava/lang/String;

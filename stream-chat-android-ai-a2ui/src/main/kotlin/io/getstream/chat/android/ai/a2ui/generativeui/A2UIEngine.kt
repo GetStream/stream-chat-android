@@ -18,7 +18,6 @@ package io.getstream.chat.android.ai.a2ui.generativeui
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,12 +71,14 @@ import java.util.Locale
  *
  * @param renderer The renderer that made it.
  * @param host The conversation's host.
+ * @param onError Takes each problem with a reply's A2UI, with the reply's message id.
  * @param schedule Runs a block on the main thread after a delay, for calls to the agent that time out.
  * @param scope Runs the host's tools, answering on the main thread.
  */
 internal class A2UIEngine(
     renderer: A2UIRenderer,
     private val host: AIUIHost,
+    private val onError: (A2UIError, String) -> Unit,
     private val schedule: (Long, () -> Unit) -> Unit = { delay, block -> MainHandler.postDelayed(block, delay) },
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
 ) : AIUIEngine {
@@ -168,12 +169,11 @@ internal class A2UIEngine(
         Box(scope.modifier) { component.Content(arguments, context) }
     }
 
-    /** Sends what the person did to the host, runs the host's tools, and logs what can't show. */
+    /** Sends what the person did to the host, runs the host's tools, and reports what can't show. */
     fun handle(message: RendererMessage, reply: A2UIReply) {
         when (message) {
             is RendererMessage.Action -> host.send(action(message, reply))
-            is RendererMessage.Error ->
-                Log.w(TAG, "A reply's A2UI can't show: ${message.error.code} ${message.error.message}")
+            is RendererMessage.Error -> onError(A2UIError(message.error), reply.messageId)
             is RendererMessage.CallAgentFunction -> run(message, reply)
             is RendererMessage.RendererFunctionResponse -> Unit
         }
@@ -293,10 +293,11 @@ internal class A2UIEngine(
                 applied = emptyList()
                 checked = false
             }
-            for (raw in messages.drop(applied.size)) {
+            for ((index, raw) in messages.withIndex().drop(applied.size)) {
                 val json = A2UIJson.map(A2UIJson.parseOrNull(raw))
                 if (json == null) {
-                    Log.w(TAG, "A reply's A2UI message isn't a JSON object")
+                    val reason = "Message ${index + 1} of the reply isn't a JSON object."
+                    processor.report(RendererError(RendererError.VALIDATION_FAILED, reason))
                     continue
                 }
                 processor.handleAny(normalizedVersion(json))
@@ -314,7 +315,6 @@ internal class A2UIEngine(
     }
 
     internal companion object {
-        private const val TAG = "StreamA2UI"
         private const val COMPONENT_KEY = "component"
         private val SurfaceSpacing = 12.dp
         private val MainHandler by lazy { Handler(Looper.getMainLooper()) }

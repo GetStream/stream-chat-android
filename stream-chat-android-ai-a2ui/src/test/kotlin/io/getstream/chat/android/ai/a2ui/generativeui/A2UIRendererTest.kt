@@ -733,6 +733,34 @@ internal class A2UIRendererTest {
     }
 
     @Test
+    fun `the app's error handler gets each problem with the reply's message id, instead of the log`() {
+        ShadowLog.clear()
+        val errors = mutableListOf<Pair<A2UIError, String>>()
+        val renderer = A2UIRenderer(onError = { error, messageId -> errors.add(error to messageId) })
+        val engine = renderer.makeEngine(AIUIHost(renderers = listOf(renderer)) {})
+        val create = surface(mapOf("id" to "root", "component" to "Column", "children" to listOf("missing")))
+
+        engine.content(document(listOf(A2UIJson.parse(create), "oops")), "m1")
+
+        assertEquals(listOf("m1", "m1"), errors.map { it.second })
+        val (unread, missing) = errors.map { it.first }
+        assertEquals(A2UIError("VALIDATION_FAILED", "Message 2 of the reply isn't a JSON object."), unread)
+        assertEquals("s", missing.surfaceId)
+        assertTrue(missing.message, "missing" in missing.message)
+        assertTrue(ShadowLog.getLogsForTag("StreamA2UI").isEmpty())
+    }
+
+    @Test
+    fun `a message that isn't a JSON object is logged without an error handler`() {
+        ShadowLog.clear()
+        val engine = renderer.makeEngine(host)
+
+        engine.content(document(listOf("oops")), "m1")
+
+        assertTrue(ShadowLog.getLogsForTag("StreamA2UI").any { "m1" in it.msg && "VALIDATION_FAILED" in it.msg })
+    }
+
+    @Test
     fun `entries of a message list that aren't objects are kept, to be logged`() {
         val create = A2UIJson.parse(surface(mapOf("id" to "root", "component" to "Text", "text" to "Hi")))
 

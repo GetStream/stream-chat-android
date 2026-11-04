@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ai.a2ui.generativeui
 
+import android.util.Log
 import io.getstream.chat.android.ai.a2ui.compose.A2UICatalog
 import io.getstream.chat.android.ai.a2ui.core.A2UIJson
 import io.getstream.chat.android.ai.a2ui.core.A2UIProtocol
@@ -63,11 +64,15 @@ import io.getstream.chat.android.ai.compose.parts.definition
  * @param catalogId The id the agent names the catalog with the app's components by.
  * @param instructions What the agent's model is told before A2UI's own instructions, such as which
  * answers to write as UI and when to use the app's components.
+ * @param onError Receives each problem with a reply's A2UI that A2UI reports to the agent, such as a
+ * message that doesn't read, with the reply's message id. A chat has no channel for them, so forward
+ * them to your backend if the agent should hear about them. Without it, the problems go to the log.
  */
 public class A2UIRenderer(
     public val catalog: A2UICatalog = A2UICatalog.Basic,
     public val catalogId: String = DEFAULT_CATALOG_ID,
     private val instructions: String? = null,
+    private val onError: ((error: A2UIError, messageId: String) -> Unit)? = null,
 ) : AIUIRenderer {
     override val format: AIUIFormat = AIUIFormat.A2UI
 
@@ -96,7 +101,12 @@ public class A2UIRenderer(
         ).text,
     )
 
-    override fun makeEngine(host: AIUIHost): AIUIEngine = A2UIEngine(this, host)
+    override fun makeEngine(host: AIUIHost): AIUIEngine = A2UIEngine(this, host, onError ?: ::log)
+
+    // A reply's problem, for the log when the app takes none.
+    private fun log(error: A2UIError, messageId: String) {
+        Log.w(LOG_TAG, "The A2UI of reply $messageId can't show: ${error.code} ${error.message}")
+    }
 
     /**
      * The catalog with the app's [components] under [catalogId], and the basic catalog with them under
@@ -127,6 +137,8 @@ public class A2UIRenderer(
 
         /** The id of the A2UI 1.0 basic catalog. */
         public const val BASIC_CATALOG_ID: String = A2UIProtocol.BASIC_CATALOG_ID
+
+        private const val LOG_TAG = "StreamA2UI"
 
         // The spellings of 1.0 agents use, including ones prompted before the 1.0 release.
         private val SUPPORTED_VERSIONS = setOf("1", "1.0", "1.0.0", "v1", "v1.0")
