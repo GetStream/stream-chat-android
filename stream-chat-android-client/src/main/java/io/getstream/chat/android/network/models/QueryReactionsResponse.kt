@@ -34,7 +34,7 @@ internal data class QueryReactionsResponse(
     internal val duration: String,
 
     @Json(name = "reactions")
-    internal val reactions: List<ReactionResponse> = emptyList(),
+    internal val reactions: List<io.getstream.chat.android.network.models.ReactionResponse> = emptyList(),
 
     @Json(name = "next")
     internal val next: String? = null,

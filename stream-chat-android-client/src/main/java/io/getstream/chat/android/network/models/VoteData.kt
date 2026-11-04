@@ -25,11 +25,14 @@ package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
 
+/**
+ *
+ */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class VoteData(
     @Json(name = "answer_text")
-    val answerText: kotlin.String? = null,
+    internal val answerText: String? = null,
 
     @Json(name = "option_id")
-    val optionId: kotlin.String? = null,
+    internal val optionId: String? = null,
 )

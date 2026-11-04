@@ -28,7 +28,6 @@ import com.squareup.moshi.Json
 /**
  * Sync request
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class SyncRequest(
     @Json(name = "last_sync_at")

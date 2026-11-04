@@ -24,17 +24,15 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.List
 
 /**
  * List devices response
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class ListDevicesResponse(
     @Json(name = "duration")
-    val duration: kotlin.String,
+    internal val duration: String,
 
     @Json(name = "devices")
-    val devices: kotlin.collections.List<io.getstream.chat.android.network.models.DeviceResponse> = emptyList(),
+    internal val devices: List<io.getstream.chat.android.network.models.DeviceResponse> = emptyList(),
 )

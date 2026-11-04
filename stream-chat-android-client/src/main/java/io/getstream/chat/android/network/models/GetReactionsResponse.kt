@@ -34,5 +34,5 @@ internal data class GetReactionsResponse(
     internal val duration: String,
 
     @Json(name = "reactions")
-    internal val reactions: List<ReactionResponse> = emptyList(),
+    internal val reactions: List<io.getstream.chat.android.network.models.ReactionResponse> = emptyList(),
 )

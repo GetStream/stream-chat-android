@@ -28,9 +28,8 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UnblockUsersResponse(
     @Json(name = "duration")
-    val duration: kotlin.String,
+    internal val duration: String,
 )

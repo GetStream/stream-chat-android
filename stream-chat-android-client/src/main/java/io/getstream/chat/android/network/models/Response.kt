@@ -28,9 +28,8 @@ import com.squareup.moshi.Json
 /**
  * Basic response information
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class Response(
     @Json(name = "duration")
-    val duration: kotlin.String,
+    internal val duration: String,
 )

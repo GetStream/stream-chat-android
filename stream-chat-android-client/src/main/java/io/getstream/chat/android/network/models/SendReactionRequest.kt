@@ -25,14 +25,17 @@ package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
 
+/**
+ *
+ */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class SendReactionRequest(
     @Json(name = "reaction")
-    val reaction: ReactionRequest,
+    internal val reaction: io.getstream.chat.android.network.models.ReactionRequest,
 
     @Json(name = "enforce_unique")
-    val enforceUnique: kotlin.Boolean? = null,
+    internal val enforceUnique: Boolean? = null,
 
     @Json(name = "skip_push")
-    val skipPush: kotlin.Boolean? = null,
+    internal val skipPush: Boolean? = null,
 )

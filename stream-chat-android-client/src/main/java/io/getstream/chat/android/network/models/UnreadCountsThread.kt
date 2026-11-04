@@ -26,7 +26,7 @@ package io.getstream.chat.android.network.models
 import com.squareup.moshi.Json
 
 /**
- *
+ * The unread information of a thread.
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UnreadCountsThread(
