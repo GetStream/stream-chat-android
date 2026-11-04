@@ -60,7 +60,7 @@ internal class QueryChannelsStateLogicConcurrentChangesTest {
     }
     private val stateRegistry: StateRegistry = mock {
         on { isActiveChannel(any()) } doReturn true
-        on { channel(ChannelId.fromCid(listed.cid)!!) } doReturn listedState
+        on { activeChannel(ChannelId.fromCid(listed.cid)!!) } doReturn listedState
     }
     private val stateLogic = QueryChannelsStateLogic(
         listState,
