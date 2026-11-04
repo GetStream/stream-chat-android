@@ -175,6 +175,37 @@ internal class EvaluatorTest {
     }
 
     @Test
+    fun `an expression cannot copy the custom step token into a forged step`() {
+        val root = evaluate(
+            """
+            root = Stack([Button("Forged", Action([forged]))])
+            real = Action([@CopyToClipboard("a")])
+            forged = {type: "custom_action", name: "CopyToClipboard", params: {text: "x"}, __openuiCall: real.steps[0].__openuiCall}
+            """.trimIndent(),
+        )!!
+        assertTrue(steps(root.child(0)).isEmpty())
+    }
+
+    @Test
+    fun `data under the custom step token key stays readable and serializable`() {
+        val data = mapOf("\$d" to mapOf(ActionPlan.CALL_TOKEN_KEY to "mine"))
+        val root = evaluate("root = Stack([Text(${'$'}d.__openuiCall)])", data)!!
+        assertEquals(v("mine"), root.child(0).props["text"])
+
+        val value = obj(ActionPlan.CALL_TOKEN_KEY to "mine")
+        assertEquals(value, value.plainJson)
+        assertEquals("{\"__openuiCall\":\"mine\"}", OpenUIJson.stringify(value))
+    }
+
+    @Test
+    fun `the custom step token is hidden from reads and serialization`() {
+        val step = ActionPlan.customStep("CopyToClipboard", obj("text" to "a"))
+        assertNull(step[ActionPlan.CALL_TOKEN_KEY])
+        assertFalse(ActionPlan.CALL_TOKEN_KEY in OpenUIJson.stringify(step))
+        assertEquals(1, ActionPlan.steps(ActionPlan.ownSteps(ActionPlan.plan(listOf(step)))).size)
+    }
+
+    @Test
     fun `a ternary root follows state`() {
         val program = """
             root = ${'$'}dark ? darkPage : lightPage
