@@ -207,6 +207,7 @@ internal class ConformanceTest(
                 catalogId: String?,
                 arguments: Map<String, Any?>,
                 surfaceId: String,
+                userActivated: Boolean,
             ): Any? {
                 errors += RendererError(RendererError.EXPRESSION_ERROR, "Unrecognized function '$name'", surfaceId)
                 return null
@@ -477,7 +478,8 @@ internal class ConformanceTest(
         val surface = harness.processor.surface(surfaceId)!!
         val action = ActionDefinition.of(scenario["actionPayload"]) as ActionDefinition.Function
         val context = DataContext(surface.dataModel)
-        surface.perform(action, "button", context)
+        // A gesture asks the agent again each time, so the call runs outside one to read its answer back.
+        surface.perform(action, "button", context, userActivation = false)
         val call = harness.sent.filterIsInstance<RendererMessage.CallAgentFunction>().single()
         val expect = A2UIJson.map(case["expect"])!!
         assertContains(expect["outboundCall"], call.toJson())

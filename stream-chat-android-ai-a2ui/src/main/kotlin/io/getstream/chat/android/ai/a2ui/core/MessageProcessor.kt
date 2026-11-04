@@ -670,23 +670,26 @@ internal class MessageProcessor(
         catalogId: String?,
         arguments: Map<String, Any?>,
         surfaceId: String,
+        userActivated: Boolean,
     ): Any? {
-        val key = RemoteCallKey(surfaceId, name, catalogId, A2UIJson.write(arguments, sortKeys = true))
-        return when (val state = remoteCalls[key]) {
-            is RemoteCall.Resolved -> state.value
-            is RemoteCall.Pending -> null
-            is RemoteCall.Failed -> throw FunctionException(state.failure.code, state.failure.message)
-            null -> {
-                callCounter++
-                val callId = "$name-$callCounter"
-                remoteCalls[key] = RemoteCall.Pending(callId)
-                remoteCallIds[callId] = key
-                schedule?.invoke(agentFunctionTimeoutMillis) { timeOut(callId) }
-                val call = FunctionCall(name, catalogId, arguments)
-                sendMessage(RendererMessage.CallAgentFunction(surfaceId, callId, call))
-                null
+        val key = RemoteCallKey(surfaceId, name, catalogId, A2UIJson.write(arguments, sortKeys = true), userActivated)
+        // A gesture asks again each time, so only a call the surface makes while it renders reads its answer.
+        if (!userActivated) {
+            when (val state = remoteCalls[key]) {
+                is RemoteCall.Resolved -> return state.value
+                is RemoteCall.Pending -> return null
+                is RemoteCall.Failed -> throw FunctionException(state.failure.code, state.failure.message)
+                null -> Unit
             }
         }
+        callCounter++
+        val callId = "$name-$callCounter"
+        remoteCalls[key] = RemoteCall.Pending(callId)
+        remoteCallIds[callId] = key
+        schedule?.invoke(agentFunctionTimeoutMillis) { timeOut(callId) }
+        val call = FunctionCall(name, catalogId, arguments)
+        sendMessage(RendererMessage.CallAgentFunction(surfaceId, callId, call, userActivated))
+        return null
     }
 
     private fun timeOut(callId: String) {
@@ -702,6 +705,7 @@ internal class MessageProcessor(
         val name: String,
         val catalogId: String?,
         val arguments: String,
+        val userActivated: Boolean,
     )
 
     private sealed interface RemoteCall {
