@@ -39,7 +39,7 @@ internal class ProcessorTest {
         messages.forEach { processor.handle(it + ("version" to "1.0")) }
 
     private fun createSurface(
-        components: List<Map<String, Any?>> = emptyList(),
+        components: List<Any?> = emptyList(),
         data: Map<String, Any?> = emptyMap(),
         sendDataModel: Boolean = false,
     ) =
@@ -143,6 +143,62 @@ internal class ProcessorTest {
         assertEquals(RendererError.INVALID_FUNCTION_CALL, error.code)
         assertEquals("c1", error.functionCallId)
         assertNull(error.surfaceId)
+    }
+
+    @Test
+    fun `malformed renderer calls are each answered, even for the same reason`() {
+        listOf("a", "b").forEach { id ->
+            handle(mapOf("callRendererFunction" to mapOf("functionCallId" to id, "callFunction" to mapOf("@call" to "x"))))
+        }
+
+        assertEquals(listOf("a", "b"), errors.map { it.functionCallId })
+        assertTrue(errors.all { it.code == RendererError.INVALID_FUNCTION_CALL })
+    }
+
+    @Test
+    fun `a surface created again hears about a problem it was already told about`() {
+        repeat(2) {
+            createSurface()
+            handle(mapOf("updateDataModel" to mapOf("surfaceId" to "s", "path" to "", "value" to "y")))
+            handle(mapOf("updateDataModel" to mapOf("surfaceId" to "s", "path" to "", "value" to "y")))
+            handle(mapOf("deleteSurface" to mapOf("surfaceId" to "s")))
+        }
+
+        assertEquals(listOf(RendererError.DATA_ERROR, RendererError.DATA_ERROR), errors.map { it.code })
+    }
+
+    @Test
+    fun `component entries that are not components are reported where they are`() {
+        createSurface(
+            listOf(
+                "oops",
+                mapOf("component" to "Text", "text" to "No id"),
+                mapOf("id" to "typeless"),
+                text(text = "Hello"),
+                text("1bad", "Bad id"),
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                RendererError(
+                    RendererError.VALIDATION_FAILED,
+                    "Component entry 0 must be an object.",
+                    "s",
+                    "/components/0",
+                ),
+                RendererError(RendererError.VALIDATION_FAILED, "Component entry 1 has no 'id'.", "s", "/components/1/id"),
+                RendererError(
+                    RendererError.VALIDATION_FAILED,
+                    "Component 'typeless' has no 'component' type.",
+                    "s",
+                    "/components/2/component",
+                ),
+            ),
+            errors.take(3),
+        )
+        assertEquals("/components/4/id", errors.single { it.message.contains("'1bad'") }.path)
+        assertEquals(listOf("root", "1bad"), processor.surface("s")!!.components.keys.toList())
     }
 
     @Test
