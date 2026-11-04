@@ -48,6 +48,17 @@ internal class OpenUILinkTest {
     }
 
     @Test
+    fun `a host handler gets any well-formed link`() {
+        assertTrue(OpenUILink.isWellFormed("tel:+15550100"))
+        assertTrue(OpenUILink.isWellFormed("geo:0,0?q=Amsterdam"))
+        assertTrue(OpenUILink.isWellFormed("https://getstream.io"))
+        assertFalse(OpenUILink.isWellFormed("/relative/path"))
+        assertFalse(OpenUILink.isWellFormed("1tel:123"))
+        assertFalse(OpenUILink.isWellFormed("tel:+1 555"))
+        assertFalse(OpenUILink.isWellFormed(null))
+    }
+
+    @Test
     fun `images load only from public addresses`() {
         listOf("8.8.8.8", "93.184.216.34", "2606:4700::1111").forEach {
             assertTrue(OpenUILink.isPublicAddress(InetAddress.getByName(it)), it)

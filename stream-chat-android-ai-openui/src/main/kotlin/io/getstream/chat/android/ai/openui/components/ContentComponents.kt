@@ -85,11 +85,11 @@ import io.getstream.chat.android.ai.openui.lang.objectValue
 import io.getstream.chat.android.ai.openui.lang.stringValue
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
+import io.getstream.chat.android.ai.openui.rendering.LocalOpenUICanOpenUrl
 import io.getstream.chat.android.ai.openui.rendering.OpenUICodeBlock
 import io.getstream.chat.android.ai.openui.rendering.OpenUIMarkdown
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
-import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
-import io.getstream.chat.android.ai.openui.utils.OpenUILink
+import io.getstream.chat.android.ai.openui.rendering.inlineMarkdownText
 import kotlinx.coroutines.delay
 
 private fun contentRenderer(block: ComponentRenderer): ComponentRenderer = block
@@ -215,6 +215,7 @@ private fun ChatCardView(context: ComponentRenderProps) {
 @Composable
 private fun SourcesStrip(sources: List<OpenUIObject>, context: ComponentRenderProps) {
     val theme = OpenUITheme.current
+    val canOpen = LocalOpenUICanOpenUrl.current
     Column(verticalArrangement = Arrangement.spacedBy(theme.spacing.s)) {
         HorizontalDivider(color = theme.colors.border)
         Text(
@@ -233,7 +234,7 @@ private fun SourcesStrip(sources: List<OpenUIObject>, context: ComponentRenderPr
                         .width(180.dp)
                         .clip(RoundedCornerShape(theme.radius.small))
                         .background(theme.colors.sunkenSurface)
-                        .clickable(enabled = OpenUILink.isOpenable(url)) {
+                        .clickable(enabled = canOpen(url)) {
                             context.triggerAction(
                                 label = "",
                                 action = OpenUIValue.obj(
@@ -354,14 +355,14 @@ private fun CardHeaderView(context: ComponentRenderProps) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(theme.spacing.xs)) {
         context.props.text("title")?.takeIf { it.isNotEmpty() }?.let {
             Text(
-                inlineMarkdown(it, theme.colors.accent),
+                inlineMarkdownText(it, theme.colors.accent),
                 style = theme.typography.title,
                 color = theme.colors.textPrimary,
             )
         }
         context.props.text("subtitle")?.takeIf { it.isNotEmpty() }?.let {
             Text(
-                inlineMarkdown(it, theme.colors.accent),
+                inlineMarkdownText(it, theme.colors.accent),
                 style = theme.typography.bodySmall,
                 color = theme.colors.textSecondary,
             )
@@ -375,13 +376,13 @@ private fun InlineHeaderView(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
     Column(Modifier.fillMaxWidth().padding(top = theme.spacing.xs), verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(
-            inlineMarkdown(context.props.text("heading").orEmpty(), theme.colors.accent),
+            inlineMarkdownText(context.props.text("heading").orEmpty(), theme.colors.accent),
             style = theme.typography.heading,
             color = theme.colors.textPrimary,
         )
         context.props.text("description")?.takeIf { it.isNotEmpty() }?.let {
             Text(
-                inlineMarkdown(it, theme.colors.accent),
+                inlineMarkdownText(it, theme.colors.accent),
                 style = theme.typography.caption,
                 color = theme.colors.textSecondary,
             )
@@ -441,7 +442,7 @@ private fun CalloutView(context: ComponentRenderProps) {
                     "neutral" -> Icons.Rounded.Circle
                     else -> Icons.Rounded.Info
                 },
-                contentDescription = variant,
+                contentDescription = calloutDescription(variant),
                 tint = color,
                 modifier = Modifier.size(20.dp),
             )
@@ -459,6 +460,16 @@ private fun CalloutView(context: ComponentRenderProps) {
             }
         }
     }
+}
+
+/** What a callout's icon means, for TalkBack; `null` for a neutral or unknown variant. */
+@Composable
+private fun calloutDescription(variant: String): String? = when (variant) {
+    "info" -> stringResource(R.string.stream_ai_openui_callout_info)
+    "success" -> stringResource(R.string.stream_ai_openui_callout_success)
+    "warning" -> stringResource(R.string.stream_ai_openui_callout_warning)
+    "error", "danger" -> stringResource(R.string.stream_ai_openui_callout_error)
+    else -> null
 }
 
 /** `TextCallout(variant?, title?, description?)`. */
@@ -487,7 +498,7 @@ private fun TextCalloutView(context: ComponentRenderProps) {
             }
             context.props.text("description")?.takeIf { it.isNotEmpty() }?.let {
                 Text(
-                    inlineMarkdown(it, theme.colors.accent),
+                    inlineMarkdownText(it, theme.colors.accent),
                     style = theme.typography.bodySmall,
                     color = theme.colors.textSecondary,
                 )

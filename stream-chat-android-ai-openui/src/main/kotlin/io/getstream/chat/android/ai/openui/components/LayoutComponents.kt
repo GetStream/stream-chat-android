@@ -61,6 +61,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,7 +90,7 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.OpenUIMarkdown
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
-import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
+import io.getstream.chat.android.ai.openui.rendering.inlineMarkdownText
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
 import kotlinx.coroutines.launch
 
@@ -135,8 +137,8 @@ private class ContainerItem(val value: String, val trigger: String, val content:
 private fun TabsComponent(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
     val items = ContainerItem.list(context.props.elements("items"))
-    var selection by remember { mutableStateOf<String?>(null) }
-    var userInteracted by remember { mutableStateOf(false) }
+    var selection by rememberSaveable { mutableStateOf<String?>(null) }
+    var userInteracted by rememberSaveable { mutableStateOf(false) }
     val previousSizes = remember { mutableMapOf<String, Int>() }
     if (items.isEmpty()) return
 
@@ -199,9 +201,9 @@ private fun TabsComponent(context: ComponentRenderProps) {
 private fun AccordionComponent(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
     val items = ContainerItem.list(context.props.elements("items"))
-    var openItem by remember { mutableStateOf<String?>(null) }
-    var userInteracted by remember { mutableStateOf(false) }
-    var previousCount by remember { mutableIntStateOf(0) }
+    var openItem by rememberSaveable { mutableStateOf<String?>(null) }
+    var userInteracted by rememberSaveable { mutableStateOf(false) }
+    var previousCount by rememberSaveable { mutableIntStateOf(0) }
     if (items.isEmpty()) return
 
     // Auto-opens the newest item while it streams in (until the person interacts).
@@ -252,7 +254,7 @@ internal fun OpenUIDisclosureRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                inlineMarkdown(title, theme.colors.accent),
+                inlineMarkdownText(title, theme.colors.accent),
                 style = style ?: theme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                 color = theme.colors.textPrimary,
                 modifier = Modifier.weight(1f),
@@ -276,23 +278,26 @@ internal fun OpenUIDisclosureRow(
 
 // Sections ------------------------------------------------------------------------------------
 
+/** Saves the open sections as a list, which a `Bundle` can hold. */
+private val StringSetSaver = listSaver<Set<String>, String>(save = { it.toList() }, restore = { it.toSet() })
+
 /** `SectionBlock(sections, isFoldable?)` with `SectionItem(value, trigger, content)`. */
 @Composable
 private fun SectionBlockComponent(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
     val sections = ContainerItem.list(context.props.elements("sections"), requireValue = false)
     val foldable = context.props.bool("isFoldable") ?: true
-    var openItems by remember { mutableStateOf(emptySet<String>()) }
-    var userInteracted by remember { mutableStateOf(false) }
-    var previousCount by remember { mutableIntStateOf(0) }
-    var wasStreaming by remember { mutableStateOf(context.isStreaming) }
+    var openItems by rememberSaveable(stateSaver = StringSetSaver) { mutableStateOf(emptySet<String>()) }
+    var userInteracted by rememberSaveable { mutableStateOf(false) }
+    var previousCount by rememberSaveable { mutableIntStateOf(0) }
+    var wasStreaming by rememberSaveable { mutableStateOf(context.isStreaming) }
 
     if (!foldable) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(theme.spacing.l)) {
             sections.forEach { section ->
                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(theme.spacing.s)) {
                     Text(
-                        inlineMarkdown(section.trigger, theme.colors.accent),
+                        inlineMarkdownText(section.trigger, theme.colors.accent),
                         style = theme.typography.heading,
                         color = theme.colors.textPrimary,
                         modifier = Modifier.semantics { heading() },
@@ -383,7 +388,7 @@ private fun StepsComponent(context: ComponentRenderProps) {
                     verticalArrangement = Arrangement.spacedBy(theme.spacing.xs),
                 ) {
                     Text(
-                        inlineMarkdown(props.text("title").orEmpty(), theme.colors.accent),
+                        inlineMarkdownText(props.text("title").orEmpty(), theme.colors.accent),
                         style = theme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                         color = theme.colors.textPrimary,
                     )

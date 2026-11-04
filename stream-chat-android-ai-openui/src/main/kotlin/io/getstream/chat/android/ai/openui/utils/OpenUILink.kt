@@ -28,11 +28,20 @@ internal object OpenUILink {
     private val schemes = setOf("http", "https", "mailto")
 
     /** Whether [url] is a web or email link, without spaces or control characters. */
-    fun isOpenable(url: String?): Boolean {
+    fun isOpenable(url: String?): Boolean = isWellFormed(url) && scheme(url) in schemes
+
+    /**
+     * Whether [url] has a scheme and no spaces or control characters. Used when a host handler
+     * opens links, so the host decides which schemes it accepts.
+     */
+    fun isWellFormed(url: String?): Boolean {
         if (url.isNullOrEmpty() || url.any { it.isWhitespace() || it.isISOControl() }) return false
-        val scheme = url.substringBefore(':', missingDelimiterValue = "").lowercase(Locale.ROOT)
-        return scheme in schemes
+        val scheme = scheme(url)
+        return scheme.isNotEmpty() && scheme[0].isLetter() && scheme.all { it.isLetterOrDigit() || it in "+-." }
     }
+
+    private fun scheme(url: String?): String =
+        url.orEmpty().substringBefore(':', missingDelimiterValue = "").lowercase(Locale.ROOT)
 
     /**
      * Whether every address [host] resolves to is public, so a link the model wrote can't reach
