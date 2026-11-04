@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -58,6 +59,9 @@ internal fun A2UISurfaceView(
     entrances: Boolean = false,
 ) {
     val root = surface.rootNode() ?: return
+    // A tree that shares children so that it multiplies past the limit shows nothing.
+    val fits = remember(surface, revision) { surface.fitsExpansionLimit() }
+    if (!fits) return
     val environment = SurfaceEnvironment(surface, catalog, entrances, revision)
     Box(modifier = modifier.fillMaxWidth().testTag("a2ui:${surface.surfaceId}")) {
         if (entrances) {

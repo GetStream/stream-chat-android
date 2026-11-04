@@ -35,7 +35,10 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.a2ui.compose.icons.A2UIIcons
 import io.getstream.chat.android.ai.a2ui.core.A2UIJson
+import io.getstream.chat.android.ai.a2ui.core.A2UIProtocol
 import io.getstream.chat.android.ai.a2ui.core.BasicCatalog
+import io.getstream.chat.android.ai.a2ui.core.RendererError
+import io.getstream.chat.android.ai.a2ui.core.RendererMessage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -271,6 +274,41 @@ internal class SurfaceRenderingTest {
         )
 
         rule.onNodeWithText("Custom: Hello").assertExists()
+    }
+
+    @Test
+    fun `a tree whose shared children multiply past the limit shows nothing and is reported`() {
+        // Each level lists the next one twice: 2^30 components from 31 definitions.
+        val levels = (0 until 30).map { level ->
+            mapOf(
+                "id" to if (level == 0) "root" else "c$level",
+                "component" to "Column",
+                "children" to listOf("c${level + 1}", "c${level + 1}"),
+            )
+        } + mapOf("id" to "c30", "component" to "Text", "text" to "leaf")
+        surfaces.create(levels)
+
+        assertTrue(surfaces.surface.expandedSize(A2UIProtocol.MAX_EXPANDED_COMPONENTS) > A2UIProtocol.MAX_EXPANDED_COMPONENTS)
+        surfaces.show()
+
+        rule.onNodeWithTag("root").assertDoesNotExist()
+        val errors = surfaces.sent.filterIsInstance<RendererMessage.Error>().map { it.error.code }
+        assertEquals(listOf(RendererError.RECURSION_LIMIT_EXCEEDED), errors)
+    }
+
+    @Test
+    fun `an ordinary tree expands to its own size`() {
+        surfaces.create(
+            listOf(
+                mapOf("id" to "root", "component" to "Column", "children" to listOf("a", "b")),
+                mapOf("id" to "a", "component" to "Text", "text" to "a"),
+                mapOf("id" to "b", "component" to "Row", "children" to listOf("c")),
+                mapOf("id" to "c", "component" to "Text", "text" to "c"),
+            ),
+        ).show()
+
+        assertEquals(4, surfaces.surface.expandedSize(100))
+        rule.onNodeWithText("c").assertExists()
     }
 
     @Test

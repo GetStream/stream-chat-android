@@ -83,6 +83,50 @@ internal class Surface(
     }
 
     /**
+     * Whether the tree from the root expands to at most [A2UIProtocol.MAX_EXPANDED_COMPONENTS]
+     * components. A surface that expands to more is reported, and shows nothing.
+     */
+    fun fitsExpansionLimit(): Boolean {
+        val limit = A2UIProtocol.MAX_EXPANDED_COMPONENTS
+        if (expandedSize(limit) <= limit) return true
+        report(
+            RendererError(
+                RendererError.RECURSION_LIMIT_EXCEEDED,
+                "Surface '$surfaceId' expands to more than $limit components. " +
+                    "A component listed as a child more than once multiplies the components under it.",
+                surfaceId,
+            ),
+        )
+        return false
+    }
+
+    /**
+     * How many components the tree from the root expands to, up to `limit + 1`, counting a
+     * component once for each place it shows. A child that is one of its own ancestors counts
+     * nothing, as it doesn't show; a template counts once.
+     */
+    fun expandedSize(limit: Int): Int {
+        val sizes = HashMap<String, Int>()
+        val visiting = HashSet<String>()
+        fun size(componentId: String, depth: Int): Int {
+            sizes[componentId]?.let { return it }
+            val component = componentsById[componentId]
+            if (depth >= A2UIProtocol.MAX_NESTING_DEPTH || componentId in visiting || component == null) return 0
+            visiting.add(componentId)
+            val children = definition(component)?.childReferences(component).orEmpty()
+            var total = 1
+            for ((_, childId) in children) {
+                if (total > limit) break
+                total = minOf(total + size(childId, depth + 1), limit + 1)
+            }
+            visiting.remove(componentId)
+            sizes[componentId] = total
+            return total
+        }
+        return size(A2UIProtocol.ROOT_ID, 0)
+    }
+
+    /**
      * Runs [action] of [componentId] in [context]: sends its event to the agent, with its context
      * resolved now, or runs its function as a gesture of the person's.
      *

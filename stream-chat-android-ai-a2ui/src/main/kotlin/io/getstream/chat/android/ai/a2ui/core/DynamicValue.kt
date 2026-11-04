@@ -39,6 +39,12 @@ internal object A2UIProtocol {
     /** How deep components and JSON values may nest. */
     const val MAX_NESTING_DEPTH: Int = 50
 
+    /**
+     * The most components a surface may expand to, counting a component once for each place it
+     * shows, so a component listed as a child several times on each level can't build millions.
+     */
+    const val MAX_EXPANDED_COMPONENTS: Int = 5000
+
     /** How deep `@call`s may nest through their arguments. */
     const val MAX_CALL_DEPTH: Int = 5
 
