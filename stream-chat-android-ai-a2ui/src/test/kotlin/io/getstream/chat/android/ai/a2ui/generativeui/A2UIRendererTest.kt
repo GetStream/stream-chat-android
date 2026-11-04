@@ -22,13 +22,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -84,8 +87,19 @@ internal class A2UIRendererTest {
         Text("App card")
     }
 
+    // A component that remembers how often the person tapped it.
+    private val tapCounter = AIUIComponent(
+        AIUIComponentDefinition(name = "tap_counter", description = "Counts taps"),
+    ) { _, _ ->
+        var taps by remember { mutableIntStateOf(0) }
+        Text("Taps: $taps", modifier = Modifier.clickable { taps++ })
+    }
+
     private val renderer = A2UIRenderer()
-    private val host = AIUIHost(renderers = listOf(renderer), components = listOf(placeCard, card)) { sent.add(it) }
+    private val host = AIUIHost(
+        renderers = listOf(renderer),
+        components = listOf(placeCard, card, tapCounter),
+    ) { sent.add(it) }
 
     private fun document(content: Any?, isStreaming: Boolean = false, version: String? = "1.0") =
         AIUIDocument(format = AIUIFormat.A2UI, version = version, isStreaming = isStreaming, content = content)
@@ -97,12 +111,15 @@ internal class A2UIRendererTest {
         vararg components: Map<String, Any?>,
         data: Map<String, Any?> = emptyMap(),
         catalogId: String? = null,
+        surfaceId: String = "s",
+        sendDataModel: Boolean = false,
     ) =
         message(
             "createSurface",
             buildMap {
-                put("surfaceId", "s")
+                put("surfaceId", surfaceId)
                 catalogId?.let { put("catalogId", it) }
+                if (sendDataModel) put("sendDataModel", true)
                 put("components", components.toList())
                 put("dataModel", data)
             },
@@ -202,6 +219,8 @@ internal class A2UIRendererTest {
         assertEquals("s", action.payload["surfaceId"])
         assertEquals("root", action.payload["sourceComponentId"])
         assertEquals(mapOf("restaurant" to "Lake View"), action.payload["context"])
+        assertFalse("userMessage" in action.payload)
+        assertFalse("dataModel" in action.payload)
     }
 
     @Test
@@ -222,7 +241,7 @@ internal class A2UIRendererTest {
     }
 
     @Test
-    fun `an event's user message is the action's label`() {
+    fun `an event's user message goes in the payload, never in the label`() {
         val userMessage = mapOf("@call" to "formatString", "args" to mapOf("value" to "Book \${/name}"))
         val event = mapOf("event" to mapOf("name" to "book", "userMessage" to userMessage))
         show(
@@ -237,7 +256,30 @@ internal class A2UIRendererTest {
 
         rule.onNodeWithText("Go").performClick()
 
-        assertEquals("Book Lake View", sent.single().label)
+        val action = sent.single()
+        assertEquals("Go", action.label)
+        assertEquals("Book Lake View", action.payload["userMessage"])
+    }
+
+    @Test
+    fun `a form whose surface sends its data model sends its values with an empty context`() {
+        val submit = mapOf("event" to mapOf("name" to "submit"))
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Button", "child" to "label", "action" to submit),
+                    mapOf("id" to "label", "component" to "Text", "text" to "Send"),
+                    data = mapOf("name" to "Ada", "time" to "19:30"),
+                    sendDataModel = true,
+                ),
+            ),
+        )
+
+        rule.onNodeWithText("Send").performClick()
+
+        val action = sent.single()
+        assertEquals(emptyMap<String, Any?>(), action.payload["context"])
+        assertEquals(mapOf("name" to "Ada", "time" to "19:30"), action.payload["dataModel"])
     }
 
     @Test
@@ -259,6 +301,41 @@ internal class A2UIRendererTest {
         assertEquals("ask_about", action.name)
         assertEquals("Tell me about St. Naum", action.label)
         assertEquals("place_card", action.payload["component"])
+    }
+
+    @Test
+    fun `the agent's accessibility attributes apply to the app's component`() {
+        show(
+            document(
+                surface(
+                    mapOf(
+                        "id" to "root",
+                        "component" to "PlaceCard",
+                        "title" to "St. Naum",
+                        "accessibility" to mapOf("label" to "A monastery by the lake"),
+                    ),
+                    catalogId = A2UIRenderer.DEFAULT_CATALOG_ID,
+                ),
+            ),
+        )
+
+        rule.onNodeWithContentDescription("A monastery by the lake").assertExists()
+    }
+
+    @Test
+    fun `a surface made after one was deleted doesn't take over what it remembered`() {
+        val counter = mapOf("id" to "root", "component" to "TapCounter")
+        val first = surface(counter, catalogId = A2UIRenderer.DEFAULT_CATALOG_ID, surfaceId = "a")
+        val delete = message("deleteSurface", mapOf("surfaceId" to "a"))
+        val second = surface(counter, catalogId = A2UIRenderer.DEFAULT_CATALOG_ID, surfaceId = "b")
+        var current by mutableStateOf(document(first, isStreaming = true))
+        rule.setContent { MaterialTheme { AIUIView(host, current, "m1") } }
+        rule.onNodeWithText("Taps: 0").performClick()
+        rule.onNodeWithText("Taps: 1").assertExists()
+
+        rule.runOnIdle { current = document("$first\n$delete\n$second", isStreaming = true) }
+
+        rule.onNodeWithText("Taps: 0").assertExists()
     }
 
     @Test

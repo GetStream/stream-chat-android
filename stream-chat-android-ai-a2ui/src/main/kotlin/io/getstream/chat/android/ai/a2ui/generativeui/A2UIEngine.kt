@@ -20,12 +20,14 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -112,13 +114,16 @@ internal class A2UIEngine(
         SideEffect { reply.update(messages, isStreaming) }
         val revision by reply.revision
         Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(SurfaceSpacing)) {
+            // Keyed by id, so a surface never takes over what a deleted one remembered.
             reply.processor.surfaces.values.forEach { surface ->
-                A2UISurfaceView(
-                    surface = surface,
-                    revision = revision,
-                    catalog = reply.catalog,
-                    entrances = true,
-                )
+                key(surface.surfaceId) {
+                    A2UISurfaceView(
+                        surface = surface,
+                        revision = revision,
+                        catalog = reply.catalog,
+                        entrances = true,
+                    )
+                }
             }
         }
     }
@@ -146,7 +151,8 @@ internal class A2UIEngine(
             val details = payload + (COMPONENT_KEY to component.name)
             host.send(AIUIAction(reply.messageId, AIUIFormat.A2UI, event, label, details))
         }
-        component.Content(arguments, context)
+        // The parent's weight and the agent's accessibility attributes apply to it like to any other.
+        Box(scope.modifier) { component.Content(arguments, context) }
     }
 
     /** Sends what the person did to the host, and logs what a chat can't answer. */
@@ -162,23 +168,27 @@ internal class A2UIEngine(
     }
 
     /**
-     * The action a button's event sends: named after the event, labelled with the event's
-     * `userMessage`, or else the text of the button, with its surface, its component and its
-     * resolved context.
+     * The action a button's event sends: named after the event and labelled with the text of the
+     * button, or else the event's name. The label is never the agent's words, which could say
+     * something the person didn't choose. The payload holds its surface, its component, its
+     * resolved context, the event's `userMessage`, and the surface's data model when the agent
+     * created the surface with `sendDataModel`.
      */
     fun action(message: RendererMessage.Action, reply: A2UIReply): AIUIAction = AIUIAction(
         messageId = reply.messageId,
         format = AIUIFormat.A2UI,
         name = message.name,
-        label = message.userMessage?.takeIf { it.isNotBlank() } ?: buttonText(message, reply) ?: message.name,
-        payload = mapOf(
-            "surfaceId" to message.surfaceId,
-            "sourceComponentId" to message.sourceComponentId,
-            "context" to message.context,
-        ),
+        label = buttonText(message, reply) ?: message.name,
+        payload = buildMap {
+            put("surfaceId", message.surfaceId)
+            put("sourceComponentId", message.sourceComponentId)
+            put("context", message.context)
+            message.userMessage?.takeIf { it.isNotBlank() }?.let { put("userMessage", it) }
+            reply.processor.synchronizedDataModel()[message.surfaceId]?.let { put("dataModel", it) }
+        },
     )
 
-    // What the button the person tapped says, when its event has no words of its own. A path
+    // What the button the person tapped says. A path
     // relative to a list item isn't read: the action doesn't say which item the button is in.
     private fun buttonText(message: RendererMessage.Action, reply: A2UIReply): String? {
         val surface = reply.processor.surface(message.surfaceId) ?: return null

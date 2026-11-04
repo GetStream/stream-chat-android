@@ -40,9 +40,11 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
  * A reply's document holds its A2UI messages: as the agent wrote them, one JSON object after
  * another, or as JSON. Each reply has surfaces of its own, kept while the host is, so what the
  * person enters in them survives scrolling. A button's event reaches the host as an `AIUIAction`
- * named after the event, with the event's `userMessage`, or else the button's text, as its label,
- * and its `surfaceId`, `sourceComponentId` and resolved `context` in its payload. Links open through
- * the host, which decides the kinds of link that open.
+ * named after the event, labelled with the button's text, and with its `surfaceId`,
+ * `sourceComponentId`, resolved `context` and the event's `userMessage` in its payload, with the
+ * surface's `dataModel` too when the agent created it with `sendDataModel`. The label is never the
+ * agent's words, which could say something the person didn't choose. Links open through the host,
+ * which decides the kinds of link that open.
  *
  * An app component joins the catalog under its A2UI name, its name in `PascalCase` (`place_card` is
  * `PlaceCard`), with its parameters as its properties. One whose name the basic catalog already
