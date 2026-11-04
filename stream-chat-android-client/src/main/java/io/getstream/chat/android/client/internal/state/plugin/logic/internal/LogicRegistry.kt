@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.querychannel
 import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsDatabaseLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsStateLogic
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.toMutableState
@@ -181,6 +182,20 @@ internal class LogicRegistry internal constructor(
     /** Returns [ChannelLogic] for a validated [ChannelId], creating and caching it on first access. */
     fun channel(channelId: ChannelId): ChannelLogic = channels.getOrPut(channelId) {
         newChannelLogic(channelId.type, channelId.id)
+    }
+
+    /**
+     * Marks the channel as read in its state. A channel with no state gets the answer an empty state would give, but
+     * no state is created: channel lists would copy it as a channel with no members.
+     */
+    fun markRead(channelType: String, channelId: String): MarkReadResult {
+        val id = ChannelId.fromTypeAndId(channelType, channelId)
+        return when {
+            id == null || stateRegistry.isActiveChannel(id) -> channel(channelType, channelId).markRead()
+            // An empty legacy state has no message to mark; an empty state asks the server.
+            useLegacyChannelLogic -> MarkReadResult.NotNeeded
+            else -> MarkReadResult.RemoteRequired
+        }
     }
 
     /**

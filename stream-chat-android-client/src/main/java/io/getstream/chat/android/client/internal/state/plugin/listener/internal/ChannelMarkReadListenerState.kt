@@ -42,7 +42,7 @@ internal class ChannelMarkReadListenerState(private val logic: LogicRegistry) : 
      * @return [Result] with information if channel should be marked as read.
      */
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> {
-        return when (logic.channel(channelType, channelId).markRead()) {
+        return when (logic.markRead(channelType, channelId)) {
             MarkReadResult.RemoteRequired -> Result.Success(Unit)
             MarkReadResult.HandledLocally -> {
                 // No server read event follows a local mark-read; refresh the channel-list queries directly.

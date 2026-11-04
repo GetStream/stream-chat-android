@@ -300,10 +300,7 @@ internal class QueryChannelsStateLogic(
         val newChannels = existingChannels + mutableState.queryChannelsSpec.cids
             .intersect(cidList.toSet())
             .mapNotNull(ChannelId::fromCid)
-            .filter(stateRegistry::isActiveChannel)
-            .associate { id ->
-                id.cid to stateRegistry.channel(id).toChannel()
-            }
+            .mapNotNull { id -> stateRegistry.activeChannel(id)?.let { id.cid to it.toChannel() } }
 
         mutableState.setChannels(newChannels)
     }
@@ -316,11 +313,8 @@ internal class QueryChannelsStateLogic(
      * Returns the current [Channel] snapshot from the in-memory per-channel state if the
      * channel is active, or `null` otherwise.
      */
-    internal fun getActiveChannelState(cid: String): Channel? {
-        val id = ChannelId.fromCid(cid) ?: return null
-        if (!stateRegistry.isActiveChannel(id)) return null
-        return stateRegistry.channel(id).toChannel()
-    }
+    internal fun getActiveChannelState(cid: String): Channel? =
+        ChannelId.fromCid(cid)?.let(stateRegistry::activeChannel)?.toChannel()
 
     /**
      * Refreshes member state in all channels from this query.

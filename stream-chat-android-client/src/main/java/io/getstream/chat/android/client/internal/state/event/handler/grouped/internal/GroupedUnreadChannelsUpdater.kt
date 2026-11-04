@@ -182,13 +182,8 @@ internal class GroupedUnreadChannelsUpdater(
         markAllReadApplied = false
     }
 
-    private fun cachedChannel(cid: String): Channel? {
-        val channelId = io.getstream.chat.android.client.utils.internal.ChannelId.fromCid(cid)
-            ?: return null
-        return if (stateRegistry.isActiveChannel(channelId)) {
-            stateRegistry.channel(channelId.type, channelId.id).toChannel()
-        } else {
-            null
-        }
-    }
+    private fun cachedChannel(cid: String): Channel? =
+        io.getstream.chat.android.client.utils.internal.ChannelId.fromCid(cid)
+            ?.let(stateRegistry::activeChannel)
+            ?.toChannel()
 }

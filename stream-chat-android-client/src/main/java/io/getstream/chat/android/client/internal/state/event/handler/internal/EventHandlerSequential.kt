@@ -1032,7 +1032,8 @@ internal class EventHandlerSequential(
     /**
      * Checks if unread counts should be updated for particular channel.
      * It initially checks the offline storage for the channel's capabilities.
-     * If the channel is not found (not stored in the DB, or there is no offline support), it checks the local state.
+     * If the channel is not found (not stored in the DB, or there is no offline support), it checks the local state,
+     * without creating one: a channel with no state has no capability.
      * The unread counts should not be updated if the channel in the DB/state does not contain
      * the [ChannelCapabilities.READ_EVENTS] capability.
      *
@@ -1046,10 +1047,12 @@ internal class EventHandlerSequential(
         return if (offlineChannel != null) {
             offlineChannel.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
         } else {
-            // Check local state if channel is not found in offline storage
-            val (type, id) = cid.cidToTypeAndId()
-            val channelData = stateRegistry.channel(type, id).channelData.value
-            channelData.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
+            // Check local state if channel is not found in offline storage, without creating one: channel lists would
+            // copy an empty state as a channel with no members.
+            ChannelId.fromCid(cid)
+                ?.let(stateRegistry::activeChannel)
+                ?.channelData?.value?.ownCapabilities
+                ?.contains(ChannelCapabilities.READ_EVENTS) == true
         }
     }
 
@@ -1068,8 +1071,7 @@ internal class EventHandlerSequential(
                 }
             }
             .forEach { channelId ->
-                if (!stateRegistry.isActiveChannel(channelId)) return@forEach
-                val channelState = stateRegistry.channel(channelId)
+                val channelState = stateRegistry.activeChannel(channelId) ?: return@forEach
                 if (channelState.channelConfig.value.readEventsEnabled) return@forEach
                 val stateReads = channelState.reads.value
                 if (stateReads.isEmpty()) return@forEach
