@@ -35,14 +35,14 @@ import java.net.URLEncoder
  * A regenerated response writes a new content line after the cut-off one; the last content wins.
  * Messages in the older `<content>`/`<context>` XML envelope still read.
  */
-public fun parseMessage(raw: String, isStreaming: Boolean = false): ParsedMessage =
+internal fun parseMessage(raw: String, isStreaming: Boolean = false): ParsedMessage =
     MessageEnvelope.parse(raw, isStreaming)
 
 /**
  * Writes a message in the OpenUI message protocol, with its marker lines (port of `buildMessage`).
  * The [context] is written as is when it is a string, else as JSON, and left out when `null`.
  */
-public fun buildMessage(
+internal fun buildMessage(
     content: String,
     context: OpenUIValue? = null,
     attributes: Map<String, String> = emptyMap(),
@@ -50,7 +50,7 @@ public fun buildMessage(
 ): String = MessageEnvelope.build(content, context, attributes, end)
 
 /** The parts of a stored message (port of `ParsedMessage`). */
-public data class ParsedMessage internal constructor(
+internal data class ParsedMessage internal constructor(
     /** The body of the last `content` section, or the whole text when there is none. */
     val content: String,
     /** The body of the `context` section: parsed JSON, else the raw text. `null` when absent. */

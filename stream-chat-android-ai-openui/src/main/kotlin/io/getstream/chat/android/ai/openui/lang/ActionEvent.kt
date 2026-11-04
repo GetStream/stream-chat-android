@@ -20,12 +20,12 @@ import java.net.URI
 import java.net.URISyntaxException
 
 /** Built-in action types dispatched to the host (`BuiltinActionType`). */
-public object BuiltinActionType {
+internal object BuiltinActionType {
     /** Send the user's intent back to the model (`@ToAssistant`, follow-ups, plain buttons). */
-    public const val CONTINUE_CONVERSATION: String = "continue_conversation"
+    const val CONTINUE_CONVERSATION: String = "continue_conversation"
 
     /** Open a URL (`@OpenUrl`). */
-    public const val OPEN_URL: String = "open_url"
+    const val OPEN_URL: String = "open_url"
 }
 
 /**
@@ -34,7 +34,7 @@ public object BuiltinActionType {
  * `@Run`, `@Set` and `@Reset` steps are handled by the runtime; conversation and navigation
  * steps, and the library's custom actions, are forwarded to the host.
  */
-public data class ActionEvent internal constructor(
+internal data class ActionEvent internal constructor(
     /**
      * [BuiltinActionType.CONTINUE_CONVERSATION], [BuiltinActionType.OPEN_URL], or the name of one
      * of the library's custom actions.
