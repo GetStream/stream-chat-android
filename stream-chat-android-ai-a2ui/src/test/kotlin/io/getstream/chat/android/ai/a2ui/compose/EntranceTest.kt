@@ -27,8 +27,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * The components of a surface come in as they show while the surface is written. A component on
- * its way in sits lower than its place, so where it is tells whether it is coming in.
+ * The components of a surface come in as they show after the one around it, while the agent
+ * writes the reply. A component on its way in sits lower than its place, so where it is tells
+ * whether it is coming in.
  */
 @RunWith(AndroidJUnit4::class)
 internal class EntranceTest {
@@ -64,16 +65,17 @@ internal class EntranceTest {
 
     private fun settle() = rule.mainClock.advanceTimeBy(2_000)
 
-    private fun showWritten(isWritten: Boolean) {
+    private fun showStreaming() {
         surfaces.create(listOf(column("root", "first"), text("first", "First")))
         rule.mainClock.autoAdvance = false
-        surfaces.show(entrances = true, isWritten = isWritten)
-        frames()
+        surfaces.show(entrances = true, isStreaming = true)
+        // The reply's UI comes in first, with what shows with it.
+        settle()
     }
 
     @Test
     fun `a component that shows after the one around it comes in on its own, and what was there stays`() {
-        showWritten(isWritten = true)
+        showStreaming()
         val first = top("first")
 
         add(column("root", "first", "second"), text("second", "Second"))
@@ -87,7 +89,7 @@ internal class EntranceTest {
 
     @Test
     fun `a component that shows with a new one around it comes in with it`() {
-        showWritten(isWritten = true)
+        showStreaming()
 
         add(column("root", "first", "group"), column("group", "inner"), text("inner", "Inner"))
         frames()
@@ -97,17 +99,5 @@ internal class EntranceTest {
 
         assertTrue("the new group rises into place", groupComing - top("group") > 8f)
         assertEquals("its child moves with it", innerInGroup, top("inner") - top("group"), 0.5f)
-    }
-
-    @Test
-    fun `a surface that is no longer written shows what it gets at once`() {
-        showWritten(isWritten = false)
-
-        add(column("root", "first", "second"), text("second", "Second"))
-        frames()
-        val shown = top("second")
-        settle()
-
-        assertEquals(shown, top("second"), 0.5f)
     }
 }

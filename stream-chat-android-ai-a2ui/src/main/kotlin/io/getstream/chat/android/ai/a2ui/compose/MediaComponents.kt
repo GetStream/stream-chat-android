@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ai.a2ui.compose
 
-import android.graphics.Bitmap
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
@@ -37,7 +36,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -56,7 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import io.getstream.chat.android.ai.a2ui.R
 import io.getstream.chat.android.ai.a2ui.compose.icons.A2UIIcons
-import io.getstream.chat.android.ai.a2ui.compose.internal.UrlImageLoader
+import io.getstream.chat.android.ai.compose.util.internal.AIImageLoader
+import io.getstream.chat.android.ai.compose.util.internal.rememberAIImage
 
 /**
  * `Video`: the poster, or a placeholder, with a play icon; a tap plays the video in place, with
@@ -64,7 +62,7 @@ import io.getstream.chat.android.ai.a2ui.compose.internal.UrlImageLoader
  */
 @Composable
 internal fun A2UIVideo(scope: A2UIComponentScope) {
-    val url = scope.string("url")?.takeIf(UrlImageLoader::isLoadable)
+    val url = scope.string("url")?.takeIf(AIImageLoader::isLoadable)
     val posterUrl = scope.string("posterUrl")
     var playing by rememberSaveable(url) { mutableStateOf(false) }
     val playLabel = stringResource(R.string.stream_ai_a2ui_play_video)
@@ -104,11 +102,9 @@ internal fun A2UIVideo(scope: A2UIComponentScope) {
 
 @Composable
 private fun Poster(url: String) {
-    var bitmap by remember(url) { mutableStateOf<Bitmap?>(null) }
-    LaunchedEffect(url) { bitmap = UrlImageLoader.load(url, PosterSizePx) }
-    bitmap?.let {
+    rememberAIImage(url, PosterSizePx)?.let {
         Image(
-            bitmap = it.asImageBitmap(),
+            bitmap = it,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
@@ -119,7 +115,7 @@ private fun Poster(url: String) {
 /** `AudioPlayer`: a play and pause button with the audio's description. Only web audio plays. */
 @Composable
 internal fun A2UIAudioPlayer(scope: A2UIComponentScope) {
-    val url = scope.string("url")?.takeIf(UrlImageLoader::isLoadable)
+    val url = scope.string("url")?.takeIf(AIImageLoader::isLoadable)
     val description = scope.string("description")
     var playing by remember(url) { mutableStateOf(false) }
     val player = remember(url) { AudioPlayback(url) { playing = false } }

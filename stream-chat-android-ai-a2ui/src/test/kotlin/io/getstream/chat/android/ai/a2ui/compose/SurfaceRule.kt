@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import io.getstream.chat.android.ai.a2ui.core.A2UIJson
@@ -34,6 +35,12 @@ import io.getstream.chat.android.ai.a2ui.core.Harness
 import io.getstream.chat.android.ai.a2ui.core.MessageProcessor
 import io.getstream.chat.android.ai.a2ui.core.RendererMessage
 import io.getstream.chat.android.ai.a2ui.core.Surface
+import io.getstream.chat.android.ai.compose.generativeui.AIUIDocument
+import io.getstream.chat.android.ai.compose.generativeui.AIUIEngine
+import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
+import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
+import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
+import io.getstream.chat.android.ai.compose.generativeui.AIUIView
 
 /** One renderer's surfaces drawn by a compose test, with what they sent to the agent. */
 internal class SurfaceRule(private val rule: ComposeContentTestRule) {
@@ -68,17 +75,28 @@ internal class SurfaceRule(private val rule: ComposeContentTestRule) {
     /** The data model value at [path]. */
     fun data(path: String): Any? = surface.dataModel.get(DataPath.parse(path))
 
-    /** Draws every surface with [catalog]. */
-    fun show(catalog: A2UICatalog = A2UICatalog.Basic, entrances: Boolean = false, isWritten: Boolean = false) {
+    /**
+     * Draws every surface with [catalog]. With [entrances], they show as a reply's generated UI
+     * does, the agent still writing the reply while [isStreaming].
+     */
+    fun show(catalog: A2UICatalog = A2UICatalog.Basic, entrances: Boolean = false, isStreaming: Boolean = false) {
         rule.setContent {
             MaterialTheme {
-                Surfaces(catalog, entrances, isWritten)
+                if (entrances) {
+                    val host = remember {
+                        AIUIHost(renderers = listOf(SurfacesRenderer { Surfaces(catalog, entrances = true) })) {}
+                    }
+                    val document = AIUIDocument(AIUIFormat.A2UI, isStreaming = isStreaming, content = null)
+                    AIUIView(host = host, document = document, messageId = "m")
+                } else {
+                    Surfaces(catalog, entrances = false)
+                }
             }
         }
     }
 
     @Composable
-    private fun Surfaces(catalog: A2UICatalog, entrances: Boolean, isWritten: Boolean) {
+    private fun Surfaces(catalog: A2UICatalog, entrances: Boolean) {
         val current by revision
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             processor.surfaces.values.forEach { surface ->
@@ -87,9 +105,17 @@ internal class SurfaceRule(private val rule: ComposeContentTestRule) {
                     revision = current,
                     catalog = catalog,
                     entrances = entrances,
-                    isWritten = isWritten,
                 )
             }
         }
+    }
+}
+
+// Shows the surfaces as a reply's generated UI.
+private class SurfacesRenderer(private val content: @Composable () -> Unit) : AIUIRenderer {
+    override val format: AIUIFormat = AIUIFormat.A2UI
+
+    override fun makeEngine(host: AIUIHost): AIUIEngine = object : AIUIEngine {
+        override fun content(document: AIUIDocument, messageId: String): @Composable () -> Unit = content
     }
 }
