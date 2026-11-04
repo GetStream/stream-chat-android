@@ -116,6 +116,8 @@ private fun buttonMinHeight(size: String): Dp = when (size) {
 }
 
 /** A Material button in an OpenUI variant: primary (filled), secondary (tonal), tertiary/ghost (text). */
+// Each parameter is one of the button's OpenUI props or its Material slots.
+@Suppress("LongParameterList")
 @Composable
 private fun OpenUIVariantButton(
     variant: String,
@@ -202,12 +204,8 @@ internal fun ButtonComponent(ctx: ComponentRenderProps, sizeOverride: String? = 
         enabled = !ctx.isStreaming,
         onClick = {
             val action = props["action"]
-            if (validation != null &&
-                variant == "primary" &&
-                actionNeedsValidation(action) && !validation.validateForm()
-            ) {
-                return@OpenUIVariantButton
-            }
+            val validates = validation != null && variant == "primary" && actionNeedsValidation(action)
+            if (validates && !validation.validateForm()) return@OpenUIVariantButton
             ctx.triggerAction(label, formName, action)
         },
         modifier = if (variant == "tertiary" || variant == "ghost") Modifier else Modifier.fillMaxWidth(),
@@ -352,6 +350,8 @@ internal fun FollowUpBlockComponent(ctx: ComponentRenderProps) {
 }
 
 /** `ListBlock(items, variant?, size?)` with `ListItem(title, subtitle?, image?, actionLabel?, action?)`. */
+// The list, its rows and their actions share the variant and size they are drawn in.
+@Suppress("LongMethod")
 @Composable
 internal fun ListBlockComponent(ctx: ComponentRenderProps, sizeOverride: String? = null) {
     val theme = OpenUITheme.current

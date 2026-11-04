@@ -391,6 +391,8 @@ internal object EditableTableSupport {
 }
 
 /** `EditableTable(name?, columns?, data?)`: inline editable cells, saved as a form field. */
+// Loading, editing and saving the rows share the table's state, so they stay together.
+@Suppress("LongMethod")
 @Composable
 private fun EditableTableComponent(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
@@ -535,6 +537,8 @@ private fun EditableTableComponent(context: ComponentRenderProps) {
     }
 }
 
+// One branch per column type, each with its own editor.
+@Suppress("LongMethod")
 @Composable
 private fun EditableCell(column: EditableColumn, text: String, enabled: Boolean, onChange: (String) -> Unit) {
     val theme = OpenUITheme.current

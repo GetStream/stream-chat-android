@@ -107,6 +107,7 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.LocalOpenUIFormName
 import io.getstream.chat.android.ai.openui.rendering.LocalOpenUIStoreSnapshot
+import io.getstream.chat.android.ai.openui.rendering.OpenUIDimens
 import io.getstream.chat.android.ai.openui.rendering.OpenUIIcon
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
@@ -206,6 +207,8 @@ private const val MaxTextAreaRows = 100.0
 private const val DefaultTextAreaRows = 3
 
 /** `Input(name, placeholder?, type?, rules?, value?)` and `TextArea(name, placeholder?, rows?, rules?, value?)`. */
+// The field, its label, validation and keyboard options are one control.
+@Suppress("LongMethod")
 @Composable
 internal fun TextInputComponent(ctx: ComponentRenderProps, multiline: Boolean) {
     val theme = OpenUITheme.current
@@ -361,7 +364,7 @@ internal object FormDateFormatting {
     // A date-time like `2026-11-04T10:00:00Z` reads as its date: the fields edit days only.
     fun millis(string: String?): Long? {
         if (string.isNullOrEmpty()) return null
-        return runCatching { formatter().parse(string.take(10))?.time }.getOrNull()
+        return runCatching { formatter().parse(string.take(IsoDateLength))?.time }.getOrNull()
     }
 
     /** Today in the user's calendar ([zone]), as the UTC midnight of that day. */
@@ -399,7 +402,7 @@ internal fun DatePickerComponent(ctx: ComponentRenderProps) {
             .background(theme.colors.sunkenSurface, shape)
             .border(1.5.dp, if (validation?.error(name) != null) theme.colors.danger else Color.Transparent, shape)
             .padding(horizontal = theme.spacing.m, vertical = 6.dp)
-            .alpha(if (ctx.isStreaming) 0.6f else 1f),
+            .alpha(if (ctx.isStreaming) DisabledAlpha else 1f),
         verticalArrangement = Arrangement.spacedBy(theme.spacing.s),
     ) {
         if (isRange) {
@@ -527,6 +530,8 @@ internal fun SliderComponent(ctx: ComponentRenderProps) {
 }
 
 // One slider, or a range slider for two values, on a plain track: no dot per step.
+// Both slider kinds share the track, its labels and its callbacks, so they stay together.
+@Suppress("LongMethod", "LongParameterList")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SliderTrack(
@@ -632,6 +637,8 @@ private fun FormTitleSubtitle(title: String, subtitle: String?, modifier: Modifi
  * `CheckBoxGroup(name, items, rules?, value?)` and `SwitchGroup(name, items, variant?, value?)`: store
  * `{itemName: bool}`.
  */
+// Checkboxes, radios and switches share one item row and its validation.
+@Suppress("LongMethod")
 @Composable
 internal fun ToggleGroupComponent(ctx: ComponentRenderProps, isSwitch: Boolean) {
     val theme = OpenUITheme.current
@@ -862,7 +869,7 @@ private fun FormChip(
     val content = if (selected) theme.colors.accent else theme.colors.textPrimary
     Row(
         Modifier
-            .alpha(if (disabled) 0.5f else 1f)
+            .alpha(if (disabled) DisabledItemAlpha else 1f)
             .clip(shape)
             .background(if (selected) theme.colors.accent.copy(alpha = 0.14f) else theme.colors.sunkenSurface, shape)
             .border(1.dp, if (selected) theme.colors.accent else Color.Transparent, shape)
@@ -899,7 +906,7 @@ private fun FormOptionCard(
     Box(
         Modifier
             .fillMaxWidth()
-            .alpha(if (disabled) 0.5f else 1f)
+            .alpha(if (disabled) DisabledItemAlpha else 1f)
             .clip(shape)
             .background(if (selected) theme.colors.accent.copy(alpha = 0.08f) else theme.colors.sunkenSurface, shape)
             .border(1.5.dp, if (selected) theme.colors.accent else Color.Transparent, shape)
@@ -954,14 +961,14 @@ private fun FormIconBadge(icon: ElementNode, soft: Boolean) {
         Modifier
             .size(dimension)
             .background(
-                if (soft) theme.colors.accent.copy(alpha = 0.12f) else theme.colors.sunkenSurface,
-                RoundedCornerShape(dimension * 0.28f),
+                if (soft) theme.colors.accent.copy(alpha = SoftTintAlpha) else theme.colors.sunkenSurface,
+                RoundedCornerShape(dimension * OpenUIDimens.IconBadgeCornerRatio),
             ),
         contentAlignment = Alignment.Center,
     ) {
         OpenUIIcon(
             icon,
-            Modifier.size(dimension * 0.5f),
+            Modifier.size(dimension * OpenUIDimens.IconBadgeIconRatio),
             tint = if (soft) theme.colors.accent else theme.colors.textPrimary,
             decorative = true,
         )
@@ -970,3 +977,12 @@ private fun FormIconBadge(icon: ElementNode, soft: Boolean) {
 
 private val TabularNumbers = TextStyle(fontFeatureSettings = "tnum")
 private const val DisabledAlpha = 0.6f
+
+// The length of an ISO date, `yyyy-MM-dd`.
+private const val IsoDateLength = 10
+
+// How faded a disabled choice of a group is.
+private const val DisabledItemAlpha = 0.5f
+
+// The alpha of the accent behind a soft icon badge.
+private const val SoftTintAlpha = 0.12f
