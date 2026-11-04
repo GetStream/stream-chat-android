@@ -36,6 +36,10 @@ internal class Surface(
 ) {
     private val componentsById = LinkedHashMap<String, Component>()
 
+    init {
+        evaluator.withoutSecrets = { context -> context.copy(model = dataModelWithoutSecrets()) }
+    }
+
     /** The components by id, in the order they first arrived. */
     val components: Map<String, Component> get() = componentsById
 
@@ -140,10 +144,11 @@ internal class Surface(
         metadata: Map<String, Any?>? = null,
         userActivation: Boolean = true,
     ) {
+        // What an action resolves can leave the device, as an event to the agent, a link to open or
+        // a tool's arguments, so it resolves without the secrets a person typed.
+        val shared = context.copy(model = dataModelWithoutSecrets())
         when (action) {
             is ActionDefinition.Event -> {
-                // An event goes to the agent, so it resolves without the secrets a person typed.
-                val shared = context.copy(model = dataModelWithoutSecrets())
                 dispatch(
                     RendererMessage.Action(
                         name = action.name,
@@ -157,9 +162,9 @@ internal class Surface(
                 )
             }
             is ActionDefinition.Function -> if (userActivation) {
-                evaluator.withUserActivation { evaluator.invoke(action.call, context) }
+                evaluator.withUserActivation { evaluator.invoke(action.call, shared) }
             } else {
-                evaluator.invoke(action.call, context)
+                evaluator.invoke(action.call, shared)
             }
         }
     }
@@ -700,8 +705,10 @@ internal class MessageProcessor(
             )
         }
         var dataModel = DataModel()
+        // The answer goes to the agent, so the call reads the data model without the secrets a person typed.
         message.surfaceId?.let { surfaceId ->
-            dataModel = surfacesById[surfaceId]?.dataModel ?: return reject("Surface '$surfaceId' does not exist.")
+            dataModel = surfacesById[surfaceId]?.dataModelWithoutSecrets()
+                ?: return reject("Surface '$surfaceId' does not exist.")
         }
         val evaluator = Evaluator(catalogs, message.surfaceId.orEmpty(), catalog.catalogId, services)
         val context = DataContext(dataModel)

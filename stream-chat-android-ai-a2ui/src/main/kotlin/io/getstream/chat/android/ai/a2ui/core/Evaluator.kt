@@ -107,6 +107,12 @@ internal class Evaluator(
 
     private var userActivation = 0
 
+    /**
+     * [context] without the secrets a person typed, such as a password in an `obscured` text
+     * field, for a call that runs outside the renderer. The context itself until a surface sets it.
+     */
+    var withoutSecrets: (DataContext) -> DataContext = { it }
+
     /** What the last failed evaluation reported. */
     var lastFailure: String? = null
         private set
@@ -137,8 +143,18 @@ internal class Evaluator(
     }
 
     /** Runs [call] in [context], with its arguments evaluated first. */
-    fun invoke(call: FunctionCall, context: DataContext): Any? =
-        invoke(call.name, call.catalogId, resolveArguments(call.arguments, context), context)
+    fun invoke(call: FunctionCall, context: DataContext): Any? {
+        val scope = argumentScope(call.name, call.catalogId, context)
+        return invoke(call.name, call.catalogId, resolveArguments(call.arguments, scope), context)
+    }
+
+    // A call that runs outside the renderer, as the agent's function or one of the app's tools,
+    // reads its arguments without the secrets a person typed.
+    private fun argumentScope(name: String, catalogId: String?, context: DataContext): DataContext {
+        if (name.startsWith(A2UIProtocol.SYSTEM_PREFIX)) return context
+        val local = catalogs.resolve(catalogId, surfaceCatalogId)?.function(name)?.implementation != null
+        return if (local) context else withoutSecrets(context)
+    }
 
     /**
      * Runs a function with evaluated arguments: a system function, else the function of the
@@ -248,14 +264,17 @@ internal class Evaluator(
     fun evaluate(expression: Expression, context: DataContext): Any? = when (expression) {
         is Expression.Literal -> expression.value
         is Expression.Path -> context.value(expression.path)
-        is Expression.Call -> invoke(
-            expression.name,
-            null,
-            expression.arguments
-                .mapNotNull { (key, argument) -> evaluate(argument, context)?.let { key to it } }
-                .toMap(),
-            context,
-        )
+        is Expression.Call -> {
+            val scope = argumentScope(expression.name, null, context)
+            invoke(
+                expression.name,
+                null,
+                expression.arguments
+                    .mapNotNull { (key, argument) -> evaluate(argument, scope)?.let { key to it } }
+                    .toMap(),
+                context,
+            )
+        }
     }
 
     /**
