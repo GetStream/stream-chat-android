@@ -85,8 +85,9 @@ internal fun A2UIDateTimeInput(scope: A2UIComponentScope) {
     var picker by rememberSaveable { mutableStateOf(Picker.None) }
     var pickedDay by rememberSaveable { mutableStateOf<Long?>(null) }
 
-    Column(modifier = scope.modifier.fillMaxWidth().padding(LeafMargin)) {
-        DateTimeField(label, shown, kind) { picker = if (kind == DateTimeKind.Time) Picker.Time else Picker.Date }
+    Column(modifier = scope.layout.fillMaxWidth().padding(LeafMargin)) {
+        val open = { picker = if (kind == DateTimeKind.Time) Picker.Time else Picker.Date }
+        DateTimeField(label, shown, kind, Modifier.interactive(scope, open), open)
         ValidationMessages(scope.validationErrors)
     }
     fun close() {
@@ -119,7 +120,7 @@ internal fun A2UIDateTimeInput(scope: A2UIComponentScope) {
 
 // The field as a whole is one button that opens the picker; the text field only shows the value.
 @Composable
-private fun DateTimeField(label: String?, shown: String, kind: DateTimeKind, onClick: () -> Unit) {
+private fun DateTimeField(label: String?, shown: String, kind: DateTimeKind, modifier: Modifier, onClick: () -> Unit) {
     Box {
         // readOnly, rather than disabled, keeps an input's colors.
         OutlinedTextField(
@@ -140,6 +141,7 @@ private fun DateTimeField(label: String?, shown: String, kind: DateTimeKind, onC
         Box(
             modifier = Modifier
                 .matchParentSize()
+                .then(modifier)
                 .clickable(role = Role.Button, onClick = onClick)
                 .semantics { contentDescription = listOfNotNull(label, shown.ifEmpty { null }).joinToString(", ") },
         )

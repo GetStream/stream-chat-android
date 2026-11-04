@@ -38,21 +38,32 @@ import io.getstream.chat.android.ai.a2ui.core.ValidationResult
 @Stable
 public class A2UIComponentScope internal constructor(
     internal val context: NodeContext,
-    /**
-     * The modifier the parent gives this component, such as its weight in a `Row`. Apply it to the
-     * outermost element.
-     */
-    public val modifier: Modifier,
+    // What the parent gives the component, such as its weight in a `Row`, with its entrance.
+    internal val layout: Modifier,
+    // The agent's accessibility label, for the node a person interacts with.
+    internal val accessibility: Modifier,
+    // The agent's accessibility description: what using the component does.
+    internal val clickLabel: String?,
     internal val environment: SurfaceEnvironment,
 ) {
+    /**
+     * The modifier the parent gives this component, such as its weight in a `Row`, with the
+     * component's accessibility label. Apply it to the outermost element.
+     */
+    public val modifier: Modifier = layout.then(accessibility)
+
     /** The component's id, unique in its surface. */
     public val id: String get() = context.component.id
 
     /** The component's type, such as `Text`. */
     public val type: String get() = context.component.type
 
-    /** Property [name], resolved, or `null` when it is missing or not there yet. */
-    public fun value(name: String): Any? = context.value(name)
+    /**
+     * Property [name], resolved, or `null` when it is missing or not there yet. A list or an object
+     * the agent wrote resolves all the way down, so a binding or a call nested in it, such as an
+     * option's label, reads as its value. A value read from the data model is data, as it is.
+     */
+    public fun value(name: String): Any? = resolve(raw(name))
 
     /** Property [name] as text; numbers show without a needless `.0`. */
     public fun string(name: String): String? = context.string(name)

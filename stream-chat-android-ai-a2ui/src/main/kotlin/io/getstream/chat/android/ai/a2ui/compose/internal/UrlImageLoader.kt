@@ -43,6 +43,9 @@ internal object UrlImageLoader {
     private const val MAX_CACHE_BYTES = 16 * 1024 * 1024
     private const val CACHE_SHARE_OF_HEAP = 16
 
+    /** The most pixels an image decodes to: 2048 x 2048, 16 MB at 4 bytes a pixel. */
+    const val MAX_DECODED_PIXELS: Long = 2048L * 2048L
+
     private val cache = object : LruCache<String, Bitmap>(
         minOf(MAX_CACHE_BYTES.toLong(), Runtime.getRuntime().maxMemory() / CACHE_SHARE_OF_HEAP).toInt(),
     ) {
@@ -107,11 +110,20 @@ internal object UrlImageLoader {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
     }
 
-    /** The largest power of two to divide an image by that keeps both its sides at least [targetSizePx]. */
-    fun sampleSize(width: Int, height: Int, targetSizePx: Int): Int {
+    /**
+     * The power of two to divide an image by: the largest that keeps both its sides at least
+     * [targetSizePx], or a larger one when that would still decode more than [maxPixels]. A long
+     * panorama keeps its short side at the target, so its long side alone could need a bitmap too
+     * large to hold or draw.
+     */
+    fun sampleSize(width: Int, height: Int, targetSizePx: Int, maxPixels: Long = MAX_DECODED_PIXELS): Int {
         var sampleSize = 1
-        if (targetSizePx <= 0) return sampleSize
-        while (width / (sampleSize * 2) >= targetSizePx && height / (sampleSize * 2) >= targetSizePx) sampleSize *= 2
+        if (targetSizePx > 0) {
+            while (width / (sampleSize * 2) >= targetSizePx && height / (sampleSize * 2) >= targetSizePx) {
+                sampleSize *= 2
+            }
+        }
+        while ((width / sampleSize).toLong() * (height / sampleSize) > maxPixels) sampleSize *= 2
         return sampleSize
     }
 

@@ -27,7 +27,6 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -77,9 +76,12 @@ internal fun SurfaceEntrances(isWritten: Boolean, content: @Composable () -> Uni
  * while the surface is written: it fades in, rising into place and coming into focus, after the
  * components that came in just before it. What shows with it comes in with it. With the system's
  * animations off, it only fades.
+ *
+ * [content] gets the entrance as a modifier for its outermost element. It adds no layout of its
+ * own, so what the parent asks of the component, such as its weight in a `Row`, still applies.
  */
 @Composable
-internal fun ComponentEntrance(content: @Composable () -> Unit) {
+internal fun ComponentEntrance(content: @Composable (entrance: Modifier) -> Unit) {
     val stage = LocalEntranceStage.current
     val animates = remember { stage != null && stage.isWritten && !stage.isCarried }
     val progress = remember { Animatable(if (animates) 0f else 1f) }
@@ -92,9 +94,7 @@ internal fun ComponentEntrance(content: @Composable () -> Unit) {
     }
     Shows { hasShown ->
         CompositionLocalProvider(LocalEntranceStage provides stage?.copy(isCarried = !hasShown)) {
-            Box(modifier = Modifier.entrance(progress::value, moves = !reduceMotion)) {
-                content()
-            }
+            content(Modifier.entrance(progress::value, moves = !reduceMotion))
         }
     }
 }
