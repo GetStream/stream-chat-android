@@ -37,7 +37,7 @@ import io.getstream.chat.android.ai.openui.lang.OpenUIValue
  *
  * @param fn Runs the function with its arguments by name, schema defaults applied.
  */
-public fun defineFunction(
+internal fun defineFunction(
     name: String,
     description: String,
     params: List<PropField>,
@@ -49,17 +49,17 @@ public fun defineFunction(
  * A function of the app's, called as `@Name(...)` in programs (port of `DefinedFunction`); create
  * one with [defineFunction].
  */
-public class DefinedFunction internal constructor(
+internal class DefinedFunction internal constructor(
     /** The name programs call it by. */
-    public val name: String,
+    val name: String,
     /** What it does, for the prompt. */
-    public val description: String,
+    val description: String,
     /** Its positional parameters. */
-    public val params: List<PropField>,
+    val params: List<PropField>,
     /** Its result type, checked at runtime and shown in the prompt. */
-    public val returns: PropType? = null,
+    val returns: PropType? = null,
     /** Runs the function with its arguments by name. */
-    public val fn: (OpenUIObject) -> OpenUIValue,
+    val fn: (OpenUIObject) -> OpenUIValue,
 ) {
     internal val paramsSchema: OpenUIValue get() = PropField.objectSchema(params, description = null)
 
@@ -78,11 +78,11 @@ public class DefinedFunction internal constructor(
  * On click it reaches the action handler as an action event whose `type` is the action's name and
  * whose `params` are its arguments. A step with invalid arguments does nothing.
  */
-public fun defineAction(name: String, description: String, params: List<PropField>): DefinedAction =
+internal fun defineAction(name: String, description: String, params: List<PropField>): DefinedAction =
     DefinedAction(name, description, params)
 
 /** An action step of the app's (port of `DefinedAction`); create one with [defineAction]. */
-public data class DefinedAction internal constructor(
+internal data class DefinedAction internal constructor(
     /** The name programs use it by, and the `type` of its action events. */
     val name: String,
     /** What it does, for the prompt. */
