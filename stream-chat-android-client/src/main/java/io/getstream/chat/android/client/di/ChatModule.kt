@@ -184,7 +184,14 @@ constructor(
             directEventParser = directEventParser,
         )
     }
-    private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager, headersUtil) }
+    private val socketFactory: SocketFactory by lazy {
+        SocketFactory(
+            parser = moshiParser,
+            tokenManager = tokenManager,
+            headersUtil = headersUtil,
+            isEventProtocolV3Enabled = config.isEventProtocolV3Enabled,
+        )
+    }
 
     private val defaultNotifications by lazy { buildChatNotifications(notificationsHandler, config.notificationConfig) }
     private val defaultApi by lazy { buildApi(config) }
