@@ -130,7 +130,8 @@ internal class NodeContext(val surface: Surface, val node: Node) {
     }
 
     private fun childNode(id: String, context: DataContext, key: String): Node? {
-        if (node.depth >= A2UIProtocol.MAX_NESTING_DEPTH) {
+        // The root is the first level, so a child at depth MAX_NESTING_DEPTH would be one too many.
+        if (node.depth + 1 >= A2UIProtocol.MAX_NESTING_DEPTH) {
             surface.report(
                 RendererError(
                     RendererError.RECURSION_LIMIT_EXCEEDED,

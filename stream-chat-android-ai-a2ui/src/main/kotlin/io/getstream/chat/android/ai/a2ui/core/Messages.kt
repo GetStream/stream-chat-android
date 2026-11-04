@@ -298,7 +298,7 @@ internal object AgentMessageDecoder {
                 throw DecodingException.InvalidField("metadata$pointer", "createSurface", reason)
             }
         }
-        val (components, invalidComponents) = components(payload["components"])
+        val (components, invalidComponents) = components(payload["components"], "createSurface")
         return AgentMessage.CreateSurface(
             surfaceId = surfaceId,
             catalogId = payload["catalogId"] as? String,
@@ -315,7 +315,7 @@ internal object AgentMessageDecoder {
         if (A2UIJson.list(payload["components"]) == null) {
             throw DecodingException.MissingField("components", "updateComponents")
         }
-        val (components, invalidComponents) = components(payload["components"])
+        val (components, invalidComponents) = components(payload["components"], "updateComponents")
         return AgentMessage.UpdateComponents(surfaceId, components, invalidComponents)
     }
 
@@ -359,7 +359,11 @@ internal object AgentMessageDecoder {
     }
 
     // The entries that read as components, and the ones that don't.
-    private fun components(raw: Any?): Pair<List<Component>, List<InvalidComponent>> {
+    // A missing `components` is an empty list; one that isn't an array can't be read.
+    private fun components(raw: Any?, messageType: String): Pair<List<Component>, List<InvalidComponent>> {
+        if (raw != null && A2UIJson.list(raw) == null) {
+            throw DecodingException.InvalidField("components", messageType, "'components' must be an array.")
+        }
         val components = mutableListOf<Component>()
         val invalid = mutableListOf<InvalidComponent>()
         A2UIJson.list(raw).orEmpty().forEachIndexed { index, entry ->

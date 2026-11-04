@@ -125,8 +125,9 @@ internal class Evaluator(
             return when (val value = DynamicValue.of(raw)) {
                 is DynamicValue.Call -> invoke(value.call, context)
                 is DynamicValue.Binding -> context.value(value.path)
+                // An explicit `null` stays; an entry that resolves to nothing is left out.
                 is DynamicValue.Literal -> A2UIJson.map(value.value).orEmpty().mapNotNull { (key, item) ->
-                    evaluateRaw(item, context)?.let { key to it }
+                    if (item == null) key to null else evaluateRaw(item, context)?.let { key to it }
                 }.toMap()
                 DynamicValue.Missing -> null
             }

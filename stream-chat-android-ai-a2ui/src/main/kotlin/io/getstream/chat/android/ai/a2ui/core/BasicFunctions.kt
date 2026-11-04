@@ -25,7 +25,6 @@ import java.util.Date
 import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.TimeZone
-import java.util.regex.PatternSyntaxException
 import kotlin.math.abs
 
 /** The A2UI 1.0 basic catalog: the published catalog document, with its functions implemented. */
@@ -104,12 +103,9 @@ internal object BasicFunctions {
     private fun regex(invocation: FunctionInvocation): Any {
         val pattern = invocation.requireString("pattern")
         val value = invocation.string("value").orEmpty()
-        val regex = try {
-            Regex(pattern)
-        } catch (_: PatternSyntaxException) {
-            throw FunctionException(RendererError.EXPRESSION_ERROR, "'$pattern' is not a valid regular expression.")
-        }
+        val regex = A2UIRegex.compile(pattern)
         if (value.isEmpty()) return result(true)
+        if (value.codePointCount() > A2UIRegex.MAX_VALUE_LENGTH) return result(false)
         return result(regex.containsMatchIn(value))
     }
 
@@ -197,7 +193,9 @@ internal object BasicFunctions {
         if (!invocation.services.canOpenUrl(url)) {
             throw FunctionException(RendererError.EXPRESSION_ERROR, "Function 'openUrl' may not open '$url'.")
         }
-        invocation.services.openUrl(url)
+        if (!invocation.services.openUrl(url)) {
+            throw FunctionException(RendererError.EXECUTION_ERROR, "Function 'openUrl' could not open '$url'.")
+        }
         return null
     }
 
@@ -276,7 +274,7 @@ internal object A2UIDates {
     }
 
     private fun dateTime(groups: List<String>): ZonedMillis? {
-        val zone = zone(groups[GROUP_OFFSET])
+        val zone = zone(groups[GROUP_OFFSET]) ?: return null
         val fraction = groups[GROUP_FRACTION].padEnd(FRACTION_DIGITS, '0').take(FRACTION_DIGITS).ifEmpty { "0" }.toInt()
         val millis = calendar(
             zone = zone,
@@ -291,10 +289,14 @@ internal object A2UIDates {
         return ZonedMillis(millis, zone)
     }
 
-    private fun zone(offset: String): TimeZone {
+    // `null` for an offset no clock shows, such as +24:00 or +05:60.
+    private fun zone(offset: String): TimeZone? {
         if (offset.isEmpty() || offset == "Z" || offset == "z") return UTC
         val digits = offset.substring(1).replace(":", "")
-        val minutes = digits.take(2).toInt() * MINUTES_PER_HOUR + digits.drop(2).toInt()
+        val offsetHours = digits.take(2).toInt()
+        val offsetMinutes = digits.drop(2).toInt()
+        if (offsetHours > MAX_HOUR || offsetMinutes > MAX_MINUTE) return null
+        val minutes = offsetHours * MINUTES_PER_HOUR + offsetMinutes
         val sign = if (offset.startsWith("-")) -1 else 1
         val signText = if (sign < 0) "-" else "+"
         val name = "GMT%s%02d:%02d".format(

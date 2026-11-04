@@ -411,4 +411,41 @@ internal class ProcessorTest {
         assertEquals(RendererError.RECURSION_LIMIT_EXCEEDED, treeErrors.single().code)
         assertTrue(treeErrors.single().message.startsWith("Circular reference detected: root -> c1"))
     }
+
+    @Test
+    fun `a createSurface whose components are not an array is reported`() {
+        handle(mapOf("createSurface" to mapOf("surfaceId" to "s", "components" to mapOf("id" to "root"))))
+
+        assertEquals(RendererError.VALIDATION_FAILED, errors.single().code)
+        assertEquals("/components", errors.single().path)
+        assertNull(processor.surface("s"))
+    }
+
+    @Test
+    fun `the tree check and the node tree agree on the nesting limit`() {
+        fun chain(levels: Int) = (0 until levels).map { index ->
+            val id = if (index == 0) "root" else "c$index"
+            val children = if (index < levels - 1) listOf("c${index + 1}") else emptyList()
+            mapOf("id" to id, "component" to "Column", "children" to children)
+        }
+        val limit = A2UIProtocol.MAX_NESTING_DEPTH
+        for ((levels, allowed) in listOf(limit to true, limit + 1 to false)) {
+            sent.clear()
+            handle(mapOf("deleteSurface" to mapOf("surfaceId" to "s")))
+            createSurface(chain(levels))
+            val surface = processor.surface("s")!!
+
+            val treeErrors = TopologyValidator().errors(surface)
+            var node = surface.rootNode()
+            var depth = 0
+            while (node != null) {
+                node = NodeContext(surface, node).children().singleOrNull()
+                if (node != null) depth++
+            }
+
+            assertEquals("$levels levels", allowed, treeErrors.isEmpty())
+            assertEquals("$levels levels", allowed, errors.none { it.code == RendererError.RECURSION_LIMIT_EXCEEDED })
+            assertEquals("$levels levels", limit - 1, depth)
+        }
+    }
 }

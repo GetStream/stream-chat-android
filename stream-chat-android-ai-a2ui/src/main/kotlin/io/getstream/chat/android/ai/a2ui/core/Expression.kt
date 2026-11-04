@@ -132,6 +132,7 @@ internal object ExpressionParser {
                     scanner.peek() == '('.code -> parseCall(token, scanner, depth)
                     token.startsWith("@") -> throw ExpressionException("Expected '(' after function name '$token'")
                     token.isEmpty() -> null
+                    !DataPath.isValidSyntax(token) -> invalidPath(token)
                     else -> Expression.Path(DataPath.parse(token), token)
                 }
             }
@@ -254,7 +255,10 @@ internal object ExpressionParser {
             scanner.advance()
             return "@" + scanner.scan { it.isAsciiLetter() || it.isAsciiDigit() || it == '_'.code }
         }
-        return scanner.scan { isIdentifierCharacter(it) || it == '/'.code || it == '.'.code || it == '-'.code }
+        // `~` starts the JSON Pointer escapes `~0` and `~1`.
+        return scanner.scan {
+            isIdentifierCharacter(it) || it == '/'.code || it == '.'.code || it == '-'.code || it == '~'.code
+        }
     }
 
     private fun isIdentifierCharacter(codePoint: Int): Boolean = A2UIIdentifier.isContinue(codePoint)
@@ -262,6 +266,8 @@ internal object ExpressionParser {
     private fun Int.isAsciiDigit(): Boolean = this in '0'.code..'9'.code
 
     private fun Int.isAsciiLetter(): Boolean = this in 'a'.code..'z'.code || this in 'A'.code..'Z'.code
+
+    private fun invalidPath(path: String): Nothing = throw ExpressionException("Invalid path syntax: '$path'")
 
     private fun maxDepth() = ExpressionException("Max recursion depth reached in parse")
 
