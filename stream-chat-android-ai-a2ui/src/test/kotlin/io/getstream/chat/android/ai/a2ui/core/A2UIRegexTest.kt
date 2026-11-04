@@ -70,17 +70,42 @@ internal class A2UIRegexTest {
     }
 
     @Test
-    fun `a quantifier over a group with a quantifier or an alternation is rejected`() {
+    fun `a group that repeats with a variable quantifier or an alternation inside is rejected`() {
         listOf(
             "(a?){25}a{25}",
             "(a?){25}",
             "(a+)+",
             "(a|aa)*",
             "(?:a*)*",
-            "(?:a|b)?",
+            "((a|b)c)+",
             "(?:(a)b?)+",
-            "(?:ab{2})?",
+            "(?:a{2,3}){2}",
+            "(?:a{2,})*",
+            "(?:(?:a|b)c){0,2}",
         ).forEach(::assertRejected)
+    }
+
+    @Test
+    fun `a group that repeats at most once, or holds only exact counts, is accepted`() {
+        listOf(
+            "^[0-9]{5}(?:-[0-9]{4})?$",
+            "(Mr|Mrs)?",
+            "(?:-[0-9]{4})?",
+            "(ab){3}",
+            "(?:a|b)?",
+            "(?:ab{2})?",
+            "(?:a+){1}",
+            "(?:a*){0,1}",
+            "(?:ab{2})+",
+            "^(\\+\\d{1,3}\\s?)?\\d{10}$",
+        ).forEach { A2UIRegex.compile(it) }
+        val zip = A2UIRegex.compile("^[0-9]{5}(?:-[0-9]{4})?$")
+        assertTrue(A2UIRegex.containsMatch(zip, "12345"))
+        assertTrue(A2UIRegex.containsMatch(zip, "12345-6789"))
+        assertFalse(A2UIRegex.containsMatch(zip, "12345-67"))
+        val title = A2UIRegex.compile("^(Mr|Mrs)?\\.? [A-Z][a-z]+$")
+        assertTrue(A2UIRegex.containsMatch(title, "Mrs. Smith"))
+        assertTrue(A2UIRegex.containsMatch(title, " Smith"))
     }
 
     @Test
@@ -105,6 +130,12 @@ internal class A2UIRegexTest {
         val code = A2UIRegex.compile("^[A-Z]{2}\\d{4}$")
         assertTrue(A2UIRegex.containsMatch(code, "AB1234"))
         assertFalse(A2UIRegex.containsMatch(code, "AB123"))
+        val fullEmail = A2UIRegex.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+        assertTrue(A2UIRegex.containsMatch(fullEmail, "ada.lovelace+news@example.co.uk"))
+        val usPhone = A2UIRegex.compile("^\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$")
+        assertTrue(A2UIRegex.containsMatch(usPhone, "(555) 123-4567"))
+        val intlPhone = A2UIRegex.compile("^(\\+\\d{1,3}\\s?)?\\d{10}$")
+        assertTrue(A2UIRegex.containsMatch(intlPhone, "+389 7012345678"))
         listOf("^#[0-9a-fA-F]{6}$", "^@([^@]|$)", "^(?:abc)?x$", "^(a)+$").forEach { A2UIRegex.compile(it) }
     }
 

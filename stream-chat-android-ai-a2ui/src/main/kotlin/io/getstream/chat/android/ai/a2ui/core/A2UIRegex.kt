@@ -26,8 +26,11 @@ import java.util.regex.PatternSyntaxException
  * The static check is the only guard against catastrophic backtracking: the platform matcher
  * can't be interrupted, so the shapes that backtrack catastrophically are rejected before any
  * matching. The check rejects:
- * - a quantifier (`*`, `+`, `?` or `{n,m}`) applied to a group that contains a quantifier or an
- *   alternation, such as `(a?){25}`, `(a+)+`, `(a|aa)*` or `(?:a*)*`;
+ * - a group that repeats more than once, such as with `*`, `+` or `{2}`, whose contents, at any
+ *   depth, have a variable quantifier (`*`, `+`, `?`, `{n,m}` with n≠m, or `{n,}`) or an
+ *   alternation, such as `(a?){25}`, `(a+)+`, `(a|aa)*`, `(?:a*)*` or `((a|b)c)+`. A group that
+ *   repeats at most once, such as `(Mr|Mrs)?`, and an exact count `{n}` inside a group, such as
+ *   `(ab){3}`, are fine;
  * - two unbounded quantifiers over overlapping characters with only empty-matching items between
  *   them, such as `\d+\s*\d+`;
  * - backreferences;
@@ -406,8 +409,9 @@ internal object A2UIRegex {
                 }
                 is Group -> check(node.body)
                 is Repeat -> {
-                    if (node.node is Group && containsQuantifierOrAlternation(node.node.body)) {
-                        fail("A quantifier applies to a group that has a quantifier or an alternation.")
+                    val repeatsMoreThanOnce = node.max == null || node.max > 1
+                    if (repeatsMoreThanOnce && node.node is Group && isVariable(node.node.body)) {
+                        fail("A group that repeats has a variable quantifier or an alternation.")
                     }
                     check(node.node)
                 }
@@ -440,11 +444,13 @@ internal object A2UIRegex {
             return if (only is Repeat) only else unwrap(only).takeIf { it is Repeat } ?: node
         }
 
-        private fun containsQuantifierOrAlternation(node: Node): Boolean = when (node) {
-            is Repeat -> true
-            is Group -> containsQuantifierOrAlternation(node.body)
-            is Alternation -> node.branches.size > 1 || node.branches.any(::containsQuantifierOrAlternation)
-            is Sequence -> node.items.any(::containsQuantifierOrAlternation)
+        // Whether [node] has, at any depth, a quantifier whose count varies or an alternation. An
+        // exact count `{n}` doesn't vary.
+        private fun isVariable(node: Node): Boolean = when (node) {
+            is Repeat -> node.max != node.min || isVariable(node.node)
+            is Group -> isVariable(node.body)
+            is Alternation -> node.branches.size > 1 || node.branches.any(::isVariable)
+            is Sequence -> node.items.any(::isVariable)
             is Characters, is Assertion -> false
         }
 
