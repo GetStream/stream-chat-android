@@ -38,13 +38,15 @@ import kotlinx.coroutines.runInterruptible
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.Locale
 
 /**
  * Loads images from the web at the size they show at, and keeps the latest ones in memory, so what
  * scrolls back into view shows its images at once.
+ *
+ * The agent writes every link, so an image downloads only from a public host: every address the
+ * host resolves to must be public, so not the device itself or the local network, and each
+ * redirect, up to [ImageDownloader.MaxRedirects], is checked the same way.
  *
  * Each image downloads up to a number of bytes, and decodes upright, as its EXIF orientation says,
  * to no more than [MaxDecodedPixels]. Callers that ask for an image while it loads wait for the
@@ -60,7 +62,6 @@ public object AIImageLoader {
     /** The most pixels an image decodes to: 2048 x 2048, 16 MB at 4 bytes a pixel. */
     public const val MaxDecodedPixels: Long = 2048L * 2048L
 
-    private const val TimeoutMs = 15_000
     private const val MaxCacheBytes = 32 * 1024 * 1024
     private const val CacheShareOfHeap = 8
 
@@ -69,6 +70,8 @@ public object AIImageLoader {
     ) {
         override fun sizeOf(key: String, value: Bitmap): Int = value.byteCount
     }
+
+    private val downloader = ImageDownloader()
 
     private val loads = SharedLoads<Bitmap?>(CoroutineScope(SupervisorJob() + Dispatchers.IO))
 
@@ -100,9 +103,22 @@ public object AIImageLoader {
      * this large, unless it would decode to more than [MaxDecodedPixels].
      * @param maxBytes The most bytes it downloads.
      */
-    public suspend fun load(url: String, targetSizePx: Int, maxBytes: Int = MaxDownloadBytes): Bitmap? {
+    public suspend fun load(url: String, targetSizePx: Int, maxBytes: Int = MaxDownloadBytes): Bitmap? =
+        load(url, targetSizePx, maxBytes, downloader)
+
+    /**
+     * The image at [url], downloaded with [downloader], sampled down to about [targetSizePx].
+     *
+     * @param url The image's link.
+     * @param targetSizePx The size it shows at, in pixels.
+     * @param maxBytes The most bytes it downloads.
+     * @param downloader Downloads it.
+     */
+    internal suspend fun load(url: String, targetSizePx: Int, maxBytes: Int, downloader: ImageDownloader): Bitmap? {
         if (!isLoadable(url)) return null
-        return load(key(url, targetSizePx)) { download(url, targetSizePx, maxBytes) }
+        return load(key(url, targetSizePx)) {
+            downloader.download(url, maxBytes)?.let { decodeSampledBitmap(it, targetSizePx) }
+        }
     }
 
     /**
@@ -134,22 +150,6 @@ public object AIImageLoader {
      * @param targetSizePx The size it shows at, in pixels.
      */
     internal fun key(source: String, targetSizePx: Int) = "$targetSizePx:$source"
-
-    private fun download(url: String, targetSizePx: Int, maxBytes: Int): Bitmap? {
-        val connection = URL(url).openConnection() as HttpURLConnection
-        try {
-            connection.connectTimeout = TimeoutMs
-            connection.readTimeout = TimeoutMs
-            if (connection.responseCode !in HttpURLConnection.HTTP_OK until HttpURLConnection.HTTP_MULT_CHOICE) {
-                return null
-            }
-            if (connection.contentLength > maxBytes) return null
-            val bytes = connection.inputStream.use { it.readAtMost(maxBytes) } ?: return null
-            return decodeSampledBitmap(bytes, targetSizePx)
-        } finally {
-            connection.disconnect()
-        }
-    }
 }
 
 /**
