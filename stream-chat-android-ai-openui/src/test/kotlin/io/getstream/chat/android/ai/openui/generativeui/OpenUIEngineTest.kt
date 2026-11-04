@@ -159,6 +159,17 @@ internal class OpenUIEngineTest {
     }
 
     @Test
+    fun `a reply that leaves the conversation stops its runtime`() = runTest {
+        val engine = engine()
+        engine.content(reply("root = Card([])"), "m1")
+        assertNotNull(engine.runtime("m1"))
+
+        engine.remove("m1")
+
+        assertNull(engine.runtime("m1"))
+    }
+
+    @Test
     fun `a reply's state is kept by the host, and restored`() = runTest {
         val host = host()
         val program = "\$name = \"\"\nroot = Card([Input(\"name\", \"Your name\", \"text\", null, \$name)])"
