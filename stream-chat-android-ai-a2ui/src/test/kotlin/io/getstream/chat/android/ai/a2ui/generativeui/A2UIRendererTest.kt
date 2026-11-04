@@ -159,6 +159,17 @@ internal class A2UIRendererTest {
     }
 
     @Test
+    fun `a reply that leaves the conversation lets go of its surfaces`() {
+        val engine = renderer.makeEngine(host) as A2UIEngine
+        engine.content(document(surface(mapOf("id" to "root", "component" to "Text", "text" to "Hi"))), "m1")
+        assertNotNull(engine.reply("m1"))
+
+        engine.remove("m1")
+
+        assertNull(engine.reply("m1"))
+    }
+
+    @Test
     fun `a reply reads messages sent as JSON, in a wrapper, and with another spelling of the version`() {
         val messages = listOf(
             A2UIJson.parse(surface(mapOf("id" to "root", "component" to "Text", "text" to "From JSON"))),

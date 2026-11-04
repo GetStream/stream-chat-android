@@ -88,6 +88,11 @@ internal class A2UIEngine(
         replies[messageId]?.update(messages(document), document.isStreaming)
     }
 
+    // A reply that left the conversation lets go of its surfaces and their data.
+    override fun remove(messageId: String) {
+        replies.remove(messageId)
+    }
+
     override fun content(document: AIUIDocument, messageId: String): (@Composable () -> Unit)? {
         val messages = messages(document) ?: return null
         val reply = replies[messageId] ?: makeReply(messageId, messages, document.isStreaming)
