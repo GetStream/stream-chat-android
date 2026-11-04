@@ -27,7 +27,7 @@ import io.getstream.chat.android.ai.openui.lang.objectValue
 import io.getstream.chat.android.ai.openui.lang.stringValue
 
 /** A tool the model can call through `Query()`/`Mutation()` (shaped like an MCP tool). */
-public data class ToolSpec(
+internal data class ToolSpec(
     val name: String,
     val description: String? = null,
     val inputSchema: OpenUIValue = OpenUIValue.Obj(OpenUIObject.Empty),
@@ -35,19 +35,23 @@ public data class ToolSpec(
 )
 
 /** A tool listed in the prompt: just a name, or a full spec. */
-public sealed interface ToolDescriptor {
+internal sealed interface ToolDescriptor {
     /** A tool listed by name only. */
-    public data class Name(val name: String) : ToolDescriptor
+    data class Name(val name: String) : ToolDescriptor
 
     /** A tool listed with its description and schemas. */
-    public data class Spec(val spec: ToolSpec) : ToolDescriptor
+    data class Spec(val spec: ToolSpec) : ToolDescriptor
 }
 
 /** A named group of components in the prompt, with optional usage notes. */
-public data class ComponentGroup(val name: String, val components: List<String>, val notes: List<String> = emptyList())
+internal data class ComponentGroup(
+    val name: String,
+    val components: List<String>,
+    val notes: List<String> = emptyList(),
+)
 
 /** Options for system prompt generation (mirrors `PromptOptions` in `@openuidev/lang-core`). */
-public data class PromptOptions(
+internal data class PromptOptions(
     /** Replaces the default preamble. */
     val preamble: String? = null,
     val additionalRules: List<String> = emptyList(),
@@ -72,10 +76,10 @@ public data class PromptOptions(
  * A component, function or action as the prompt lists it: `signature — description` (port of
  * `ComponentPromptSpec`).
  */
-public data class ComponentPromptSpec(val name: String, val signature: String, val description: String? = null)
+internal data class ComponentPromptSpec(val name: String, val signature: String, val description: String? = null)
 
 /** Everything needed to render a system prompt (port of `PromptSpec`). */
-public data class PromptSpec(
+internal data class PromptSpec(
     val root: String?,
     val components: List<ComponentPromptSpec>,
     val componentGroups: List<ComponentGroup> = emptyList(),
@@ -112,7 +116,7 @@ public data class PromptSpec(
 }
 
 /** Generates the OpenUI Lang system prompt for [spec] (port of `generatePrompt`). */
-public fun generatePrompt(spec: PromptSpec): String = PromptGenerator.generate(spec)
+internal fun generatePrompt(spec: PromptSpec): String = PromptGenerator.generate(spec)
 
 /** The system prompt generator behind [generatePrompt] (port of `prompt.ts`). */
 @Suppress("TooManyFunctions")
@@ -243,7 +247,7 @@ internal object PromptGenerator {
                 "silently breaks",
             "7. Optional arguments can be omitted from the end",
         )
-        var ruleNumber = 8
+        var ruleNumber = lines.count { it.firstOrNull()?.isDigit() == true } + 1
         if (bindings) {
             lines +=
                 "$ruleNumber. Declare mutable state with `\$varName = defaultValue`. Components marked with " +

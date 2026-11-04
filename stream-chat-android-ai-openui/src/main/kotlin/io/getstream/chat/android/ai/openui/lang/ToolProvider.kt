@@ -55,7 +55,7 @@ internal class ToolNotFoundException(
 )
 
 /** Thrown when an MCP tool call returns `isError: true`. */
-internal class McpToolException(public val toolErrorText: String) :
+internal class McpToolException(val toolErrorText: String) :
     Exception("MCP tool error: ${toolErrorText.ifEmpty { "Unknown error" }}")
 
 /**
@@ -118,7 +118,7 @@ internal fun interface McpClientLike {
 }
 
 /** Adapts an [McpClientLike] to [ToolProvider]: Kotlin's form of passing an `McpClientLike` as the tool provider. */
-internal class McpToolProvider(public val client: McpClientLike) : ToolProvider {
+internal class McpToolProvider(val client: McpClientLike) : ToolProvider {
     override suspend fun callTool(name: String, arguments: OpenUIObject): OpenUIValue =
         client.callTool(name, arguments).extractedValue()
 }
