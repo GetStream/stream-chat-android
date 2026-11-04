@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions") // Every card block lives here, each a few small composables.
+
 package io.getstream.chat.android.ai.openui.components
 
 import android.content.res.Resources
@@ -81,6 +83,7 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.LocalOpenUIFormName
+import io.getstream.chat.android.ai.openui.rendering.OpenUIDimens
 import io.getstream.chat.android.ai.openui.rendering.OpenUIElement
 import io.getstream.chat.android.ai.openui.rendering.OpenUIIcon
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
@@ -169,10 +172,12 @@ private fun CardIconBadge(icon: ElementNode?, variant: String?, size: String?) {
         else -> theme.colors.sunkenSurface
     }
     Box(
-        Modifier.size(dimension).background(background, RoundedCornerShape(dimension * 0.28f)),
+        Modifier
+            .size(dimension)
+            .background(background, RoundedCornerShape(dimension * OpenUIDimens.IconBadgeCornerRatio)),
         contentAlignment = Alignment.Center,
     ) {
-        OpenUIIcon(icon, Modifier.size(dimension * 0.5f), tint = tint)
+        OpenUIIcon(icon, Modifier.size(dimension * OpenUIDimens.IconBadgeIconRatio), tint = tint)
     }
 }
 
@@ -358,6 +363,8 @@ private fun MetricStrikethroughView(props: ComponentProps) {
 // Card blocks ---------------------------------------------------------------------------------
 
 /** Shared layout for card blocks: a responsive grid or a horizontal carousel of tappable cards. */
+// Each parameter is a layout choice the card blocks make differently.
+@Suppress("LongParameterList")
 @Composable
 private fun CardBlockLayout(
     count: Int,
@@ -418,10 +425,10 @@ private fun CardTappable(
     Box(
         modifier
             .graphicsLayer {
-                val scale = if (pressed) 0.98f else 1f
+                val scale = if (pressed) PressedScale else 1f
                 scaleX = scale
                 scaleY = scale
-                alpha = if (pressed) 0.85f else 1f
+                alpha = if (pressed) PressedAlpha else 1f
             }.border(2.dp, if (focused) theme.colors.accent else Color.Transparent, shape)
             .clickable(
                 interactionSource = interaction,
@@ -795,7 +802,7 @@ private fun compositeNormalized(element: ElementNode, inBody: Boolean): ElementN
     fun override(vararg pairs: Pair<String, OpenUIValue>) = ComponentRenderProps.overriding(element, mapOf(*pairs))
     return when (element.typeName) {
         "Text", "BoldText" -> if (inBody) override("size" to OpenUIValue.Str("xs")) else element
-        "AreaChart", "BarChart", "LineChart" -> override("height" to OpenUIValue.of(180))
+        "AreaChart", "BarChart", "LineChart" -> override("height" to OpenUIValue.of(OpenUIDimens.CardChartHeight))
         "ListBlock" -> override("size" to OpenUIValue.Str("small"))
         "EntityList" -> override("size" to OpenUIValue.Str("small")).let {
             it.copy(props = it.props.without("header").without("footer"))
@@ -857,7 +864,7 @@ private fun VisualCard(item: ElementNode) {
         RemoteImage(props.string("bgImageSrc"), Modifier.matchParentSize(), alt = props.text("bgImageAlt"))
         Box(
             Modifier.matchParentSize().background(
-                Brush.verticalGradient(0.5f to Color.Transparent, 1f to Color.Black.copy(alpha = 0.75f)),
+                Brush.verticalGradient(ScrimStart to Color.Transparent, 1f to Color.Black.copy(alpha = 0.75f)),
             ),
         )
         Column(
@@ -884,3 +891,10 @@ private fun VisualCard(item: ElementNode) {
         }
     }
 }
+
+// How a pressed card shrinks and fades.
+private const val PressedScale = 0.98f
+private const val PressedAlpha = 0.85f
+
+// Where the scrim over a background image starts, as a share of its height.
+private const val ScrimStart = 0.5f
