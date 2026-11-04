@@ -203,6 +203,65 @@ internal class RuntimeTest {
         }
 
         @Test
+        fun `a query sharing a key keeps the result when the fetching query moves away`() = runTest {
+            val provider = RecordingToolProvider { _, args, _ ->
+                delay(80)
+                obj("rows" to listOf(args["q"] ?: v("none")))
+            }
+            val manager = QueryManager(provider, this)
+            manager.evaluateQueries(listOf(node("a", args = obj("q" to "x"))))
+            // Joins the in-flight fetch, then the query that started it moves to other args.
+            manager.evaluateQueries(listOf(node("a", args = obj("q" to "x")), node("b", args = obj("q" to "x"))))
+            manager.evaluateQueries(listOf(node("a", args = obj("q" to "y")), node("b", args = obj("q" to "x"))))
+            advanceUntilIdle()
+            assertEquals(obj("rows" to listOf("x")), manager.result("b"))
+            assertEquals(obj("rows" to listOf("y")), manager.result("a"))
+            assertFalse(manager.isAnyLoading)
+            assertEquals(2, provider.calls.size)
+        }
+
+        @Test
+        fun `a query that moves onto a key another query is fetching stops loading when it settles`() = runTest {
+            val provider = RecordingToolProvider { _, args, _ ->
+                delay(if (args["q"] == v("x")) 40 else 80)
+                obj("rows" to listOf(args["q"] ?: v("none")))
+            }
+            val manager = QueryManager(provider, this)
+            manager.evaluateQueries(listOf(node("a", args = obj("q" to "y")), node("b", args = obj("q" to "x"))))
+            manager.evaluateQueries(listOf(node("a", args = obj("q" to "y")), node("b", args = obj("q" to "y"))))
+            assertTrue(manager.isLoading("b"))
+            advanceUntilIdle()
+            assertFalse(manager.isLoading("b"))
+            assertEquals(emptyList(), manager.snapshot.value.loading)
+            assertEquals(obj("rows" to listOf("y")), manager.result("b"))
+        }
+
+        @Test
+        fun `a query invalidated while sharing an in-flight fetch refetches when it settles`() = runTest {
+            val provider = RecordingToolProvider { _, _, count ->
+                delay(50)
+                obj("n" to count)
+            }
+            val manager = QueryManager(provider, this)
+            manager.evaluateQueries(listOf(node("a"), node("b")))
+            manager.invalidate(listOf("b"))
+            advanceUntilIdle()
+            assertEquals(2, provider.calls.size)
+            assertEquals(obj("n" to 2), manager.result("a"))
+            assertEquals(obj("n" to 2), manager.result("b"))
+            assertFalse(manager.isAnyLoading)
+        }
+
+        @Test
+        fun `a failed shared fetch reports an error for every query on the key`() = runTest {
+            val manager = QueryManager(RecordingToolProvider { _, _, _ -> throw ToolFailure() }, this)
+            manager.evaluateQueries(listOf(node("a"), node("b")))
+            advanceUntilIdle()
+            assertEquals(listOf("a", "b"), manager.snapshot.value.errors.map { it.statementId })
+            assertFalse(manager.isAnyLoading)
+        }
+
+        @Test
         fun `refresh waits at least the tool provider's minimum and is clamped like setInterval`() {
             assertEquals(30.seconds, QueryManager.refreshDelay(30.0, 5.seconds))
             assertEquals(5.seconds, QueryManager.refreshDelay(0.001, 5.seconds))

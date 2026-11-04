@@ -158,46 +158,50 @@ internal class QueryManager(
             try {
                 val data = provider.callTool(toolName, args.objectValue ?: OpenUIObject.Empty)
                 if (disposed) return@launch
-                // A query removed or moved to a different key while in flight: discard.
-                val current = queries[statementId]
-                if (current == null || current.cacheKey != cacheKey) {
+                // The data belongs to the key, so every query on it takes it. With none left (all
+                // removed or moved to a different key while in flight) it is discarded.
+                val sharing = queriesOn(cacheKey, entry)
+                if (sharing.isEmpty()) {
                     entry.inFlight = false
                     cleanupCacheEntry(cacheKey)
                     return@launch
                 }
                 entry.data = data
-                current.everFetched = true
-                current.error = null
-                // Clear the previous key first so cleanup doesn't see it as referenced.
-                current.previousCacheKey?.takeIf { it != cacheKey }?.let { previous ->
-                    current.previousCacheKey = null
-                    cleanupCacheEntry(previous)
+                for (query in sharing.values) {
+                    query.everFetched = true
+                    query.error = null
+                    // Clear the previous key first so cleanup doesn't see it as referenced.
+                    query.previousCacheKey?.takeIf { it != cacheKey }?.let { previous ->
+                        query.previousCacheKey = null
+                        cleanupCacheEntry(previous)
+                    }
                 }
             } catch (error: CancellationException) {
                 throw error
             } catch (@Suppress("TooGenericExceptionCaught") error: Throwable) {
                 // Any failure of the app's tool is reported to the model as a query error.
-                val current = queries[statementId]
-                if (current != null && current.cacheKey == cacheKey) {
-                    current.error = toolError(OpenUIError.Source.Query, statementId, toolName, error)
+                for ((id, query) in queriesOn(cacheKey, entry)) {
+                    query.error = toolError(OpenUIError.Source.Query, id, toolName, error)
                 }
             } finally {
                 entry.inFlight = false
-                val current = queries[statementId]
-                if (current != null && current.cacheKey == cacheKey) {
-                    current.loading = false
-                    if (rebuildSnapshot()) notifyChange()
-                    // Refetch when invalidated while in flight.
-                    if (current.needsRefetch && !disposed) {
-                        current.needsRefetch = false
-                        executeFetch(current.cacheKey, statementId)
-                    }
-                } else if (rebuildSnapshot()) {
-                    notifyChange()
+                // Every query waiting on the key settles, not only the one that started the fetch.
+                val waiting = queriesOn(cacheKey, entry)
+                for (query in waiting.values) query.loading = false
+                if (rebuildSnapshot()) notifyChange()
+                // Refetch when invalidated while in flight.
+                val invalidated = waiting.entries.firstOrNull { it.value.needsRefetch }?.key
+                if (invalidated != null && !disposed) {
+                    for (query in waiting.values) query.needsRefetch = false
+                    executeFetch(cacheKey, invalidated)
                 }
             }
         }
     }
+
+    /** The queries on [cacheKey], while [entry] is still its cache entry. */
+    private fun queriesOn(cacheKey: String, entry: CacheEntry): Map<String, QueryEntry> =
+        if (cache[cacheKey] === entry) queries.filterValues { it.cacheKey == cacheKey } else emptyMap()
 
     private fun toolError(
         source: OpenUIError.Source,
