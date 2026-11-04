@@ -29,6 +29,7 @@
     <!-- Carousels. %1$s is the slide, %2$s the number of slides. -->
     <string name="stream_ai_openui_carousel_previous">Previous slide</string>
     <string name="stream_ai_openui_carousel_next">Next slide</string>
+    <string name="stream_ai_openui_carousel_position_accessibility">Slide %1$s of %2$s</string>
     <!-- The sources a chat answer cites. -->
     <string name="stream_ai_openui_sources_title">Sources</string>
     <string name="stream_ai_openui_sources_untitled">Source</string>

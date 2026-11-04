@@ -80,6 +80,7 @@ import io.getstream.chat.android.ai.openui.icons.Circle
 import io.getstream.chat.android.ai.openui.icons.Dangerous
 import io.getstream.chat.android.ai.openui.lang.OpenUIObject
 import io.getstream.chat.android.ai.openui.lang.OpenUIValue
+import io.getstream.chat.android.ai.openui.lang.ReactiveBinding
 import io.getstream.chat.android.ai.openui.lang.objectValue
 import io.getstream.chat.android.ai.openui.lang.stringValue
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
@@ -88,6 +89,7 @@ import io.getstream.chat.android.ai.openui.rendering.OpenUICodeBlock
 import io.getstream.chat.android.ai.openui.rendering.OpenUIMarkdown
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
+import io.getstream.chat.android.ai.openui.utils.OpenUILink
 import kotlinx.coroutines.delay
 
 private fun contentRenderer(block: ComponentRenderer): ComponentRenderer = block
@@ -122,16 +124,53 @@ internal val standardContentRenderers: Map<String, ComponentRenderer> = mapOf(
 internal val LocalCitationSources = compositionLocalOf<Map<Int, String>> { emptyMap() }
 
 internal object Citations {
-    private val pattern = Regex("""\[(\d{1,2})](?!\()""")
+    private val pattern = Regex("""\[(\d+)](?!\()""")
+    private val fence = Regex("""^ {0,3}(`{3,}|~{3,})""")
+    private val codeSpan = Regex("""(`+)[\s\S]*?(?<!`)\1(?!`)""")
 
-    /** Turns `[1]` citations into Markdown links when a source URL exists for them. */
+    /**
+     * Turns `[1]` citations into Markdown links when a source URL exists for them. Code spans and
+     * fenced code show their text as written, so citations in them stay as they are.
+     */
     fun link(text: String, sources: Map<Int, String>): String {
         if (sources.isEmpty() || '[' !in text) return text
-        return pattern.replace(text) { match ->
-            val number = match.groupValues[1].toIntOrNull() ?: 0
-            val url = sources[number] ?: return@replace match.value
-            "[[$number]](${encode(url)})"
+        var openFence: String? = null
+        return text.split('\n').joinToString("\n") { line ->
+            val marker = fence.find(line)?.groupValues?.get(1)
+            val inFence = openFence
+            when {
+                inFence != null -> {
+                    val closes = marker != null && marker[0] == inFence[0] && marker.length >= inFence.length &&
+                        line.trim().all { it == inFence[0] }
+                    if (closes) openFence = null
+                    line
+                }
+                marker != null -> {
+                    openFence = marker
+                    line
+                }
+                else -> linkOutsideCodeSpans(line, sources)
+            }
         }
+    }
+
+    private fun linkOutsideCodeSpans(line: String, sources: Map<Int, String>): String {
+        if ('[' !in line) return line
+        var start = 0
+        return buildString {
+            codeSpan.findAll(line).forEach { span ->
+                append(linkCitations(line.substring(start, span.range.first), sources))
+                append(span.value)
+                start = span.range.last + 1
+            }
+            append(linkCitations(line.substring(start), sources))
+        }
+    }
+
+    private fun linkCitations(text: String, sources: Map<Int, String>): String = pattern.replace(text) { match ->
+        val number = match.groupValues[1].toIntOrNull() ?: 0
+        val url = sources[number] ?: return@replace match.value
+        "[[$number]](${encode(url)})"
     }
 
     // Keeps the URL one Markdown link destination (like `urlFragmentAllowed` percent-encoding).
@@ -194,7 +233,7 @@ private fun SourcesStrip(sources: List<OpenUIObject>, context: ComponentRenderPr
                         .width(180.dp)
                         .clip(RoundedCornerShape(theme.radius.small))
                         .background(theme.colors.sunkenSurface)
-                        .clickable(enabled = !url.isNullOrEmpty()) {
+                        .clickable(enabled = OpenUILink.isOpenable(url)) {
                             context.triggerAction(
                                 label = "",
                                 action = OpenUIValue.obj(
@@ -367,15 +406,18 @@ private fun LabelView(context: ComponentRenderProps) {
 @Composable
 private fun CalloutView(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
-    val field = context.stateField("visible", context.props["visible"])
+    val binding = context.props["visible"]
+    val field = context.stateField("visible", binding)
     val isVisible = if (field.isReactive) {
         field.value == OpenUIValue.True ||
             field.value == OpenUIValue.Str("true")
     } else {
-        true
+        // A literal `false` hides it; without `visible` it shows.
+        field.value != OpenUIValue.False && field.value != OpenUIValue.Str("false")
     }
     val currentField by rememberUpdatedState(field)
-    LaunchedEffect(field.isReactive && isVisible) {
+    // Keyed on the binding too, so a callout bound to another `$variable` waits its own 3s.
+    LaunchedEffect(ReactiveBinding.target(binding), field.isReactive && isVisible) {
         if (!(field.isReactive && isVisible)) return@LaunchedEffect
         delay(3_000)
         currentField.setValue(OpenUIValue.False)

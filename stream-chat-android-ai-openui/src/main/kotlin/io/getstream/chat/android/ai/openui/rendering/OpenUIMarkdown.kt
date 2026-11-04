@@ -132,7 +132,7 @@ internal fun OpenUIMarkdown(
  * for one-line titles and labels. Block syntax is kept as text.
  */
 internal fun inlineMarkdown(text: String, linkColor: Color = Color.Unspecified): AnnotatedString {
-    if (text.none { it in "*_`[~" }) return AnnotatedString(text)
+    if (text.none { it in "*_`[~" } && "://" !in text && "www." !in text) return AnnotatedString(text)
     val root = runCatching { MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(text) }.getOrNull()
         ?: return AnnotatedString(text)
     return buildAnnotatedString {
@@ -226,8 +226,11 @@ internal fun OpenUICodeBlock(language: String?, code: String, modifier: Modifier
             )
             Spacer(Modifier.weight(1f))
             TextButton(onClick = {
-                scope.launch { clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, code))) }
-                copied = true
+                scope.launch {
+                    // "Copied" shows once the clipboard has the code.
+                    copied = runCatching { clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, code))) }
+                        .isSuccess
+                }
             }) {
                 Icon(
                     if (copied) Icons.Rounded.Check else Icons.Rounded.ContentCopy,

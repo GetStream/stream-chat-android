@@ -72,6 +72,7 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
+import java.util.Locale
 import kotlin.math.ceil
 
 internal val tableRenderers: Map<String, ComponentRenderer> = mapOf(
@@ -129,7 +130,7 @@ private fun TableComponent(context: ComponentRenderProps) {
                 ) {
                     columns.forEach { column ->
                         Text(
-                            column.label.uppercase(),
+                            column.label.uppercase(Locale.getDefault()),
                             style = theme.typography.caption.copy(fontWeight = FontWeight.SemiBold),
                             color = theme.colors.textSecondary,
                             modifier = Modifier.padding(horizontal = theme.spacing.m, vertical = theme.spacing.s),

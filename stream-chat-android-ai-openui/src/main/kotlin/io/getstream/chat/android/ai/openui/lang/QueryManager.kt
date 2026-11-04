@@ -43,7 +43,7 @@ import kotlin.time.Duration.Companion.seconds
  * @param toolProvider Executes the tools; without one, queries show their defaults.
  */
 internal class QueryManager(
-    val toolProvider: ToolProvider?,
+    var toolProvider: ToolProvider?,
     private val scope: CoroutineScope,
 ) {
     /** An evaluated `Query()` statement. */
