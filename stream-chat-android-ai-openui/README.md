@@ -13,33 +13,7 @@ The language runtime (package `io.getstream.chat.android.ai.openui.lang`) is por
 - Parsing: the entry statement is `root`. Without one, the first statement that calls the library's root component renders, with a `no-root` warning; with neither, nothing renders. While a response streams, the parser only re-parses the statement that is still growing, and a `$name` at the very end of the text isn't declared until the stream ends. An edit-mode answer, with only the statements that changed, applies to the previous program.
 - Values follow JavaScript semantics, because the reference implementation is TypeScript: `undefined` is a Kotlin `null`, and conversions (number formatting, `Number()`, truthiness) follow JavaScript's. Model output can't crash the parser: nesting or chains deeper than any real program, and references that would expand past any real program's size, read as `null`, and non-finite numbers serialize as `null`.
 - Evaluation resolves `$variables`, references, `@` built-ins such as `@Count` and `@Each`, the library's own functions, and expressions, within a shared budget of work. A function's arguments and result are checked against its schema; a call with invalid arguments, or one that throws, is `null` and reports a runtime error. Actions evaluate to plans of steps (`@ToAssistant`, `@OpenUrl`, `@Set`, `@Reset`, `@Run` and the library's own actions); only real calls make custom steps, so data can't pose as one.
-
-## State, actions and tools
-
-Each rendered response keeps its own state: `$variables`, form values and the results of `Query()` and `Mutation()`. `@Run`, `@Set` and `@Reset` steps, form state and `$binding` updates are handled there; each step reads the form state when it runs. Conversation and navigation steps, and the library's custom actions, reach the app as an `ActionEvent` (`BuiltinActionType.CONTINUE_CONVERSATION`, `BuiltinActionType.OPEN_URL`, or the custom action's name). `ActionEvent.url` is only a web or email link, since the model writes it, and `ActionEvent.assistantMessage` is the user message to send back for a continue-conversation action.
-
-Persisted state restores a response's `$variables` and forms, and a component's `StateField` reads and writes one of them. Form fields validate with the rules the model writes, through `parseRules`, `parseStructuredRules` and `validate`.
-
-### Tools for `Query()` and `Mutation()`
-
-Queries start when streaming ends. A `ToolProvider` runs their tools:
-
-```kotlin
-val tools = FunctionToolProvider(
-    "search_hotels" to { args -> api.searchHotels(city = args["city"].stringValue.orEmpty()) },
-)
-```
-
-Or implement `ToolProvider` yourself; `McpToolProvider` adapts an MCP client (`McpClientLike`), and `extractToolResult` reads a tool call's data. A query refreshes at most every `minimumRefreshInterval` (five seconds by default), whatever interval the model writes.
-
-### The message protocol
-
-`buildMessage` and `parseMessage` write and read the OpenUI 1.0 message protocol: marker lines around the stored response, with its attributes, its context (persisted form state, or the context of a clicked action) and an end marker. A regenerated response wins over the cut-off one, and messages in the older XML envelope still read:
-
-```kotlin
-val stored = buildMessage(content = program, context = OpenUIValue.Obj(state), end = true)
-val parsed = parseMessage(stored) // content, context, attributes, isEnded
-```
+- Each response keeps its own state: `$variables`, form values and the results of `Query()` and `Mutation()`. Queries start when streaming ends and refresh at most every five seconds, whatever interval the model writes. A tool is told whether the person asked for it: a `Query` runs by itself as the UI shows, a `Mutation` from a tap. Form fields validate with the rules the model writes. Responses are stored in the OpenUI 1.0 message protocol, with their state, and messages in the older XML envelope still read.
 
 ## Known limitations
 
