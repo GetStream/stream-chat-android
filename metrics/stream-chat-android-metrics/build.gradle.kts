@@ -72,8 +72,11 @@ afterEvaluate {
         val flavorName = flavor.name
         // For compose flavors, we apply the compose plugin,
         // set up build features and add common compose dependencies.
-        // The ai-a2ui flavors are Compose too: A2UI renders through ai-compose.
-        if (flavorName.contains("compose") || flavorName.startsWith("stream-chat-android-ai-a2ui")) {
+        // The ai-a2ui and ai-openui flavors are Compose too: both render through ai-compose.
+        if (flavorName.contains("compose") ||
+            flavorName.startsWith("stream-chat-android-ai-a2ui") ||
+            flavorName.startsWith("stream-chat-android-ai-openui")
+        ) {
             val composePlugin = libs.plugins.kotlin.compose.get()
             plugins.apply(composePlugin.pluginId)
             android.buildFeatures.compose = true
@@ -107,5 +110,7 @@ dependencies {
     // The baseline carries ai-compose, so the number is the cost of A2UI on top of it.
     "stream-chat-android-ai-a2ui-baselineImplementation"(project(":stream-chat-android-ai-compose"))
     "stream-chat-android-ai-a2ui-streamImplementation"(project(":stream-chat-android-ai-a2ui"))
+    // The ai-openui baseline includes ai-compose so the reported size is ai-openui's own cost.
+    "stream-chat-android-ai-openui-baselineImplementation"(project(":stream-chat-android-ai-compose"))
     "stream-chat-android-ai-openui-streamImplementation"(project(":stream-chat-android-ai-openui"))
 }
