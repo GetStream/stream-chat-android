@@ -19,6 +19,8 @@ A reply's `ai_ui` document has the format `a2ui`, and its content holds the repl
 - **Actions.** A button's event reaches the host as an `AIUIAction` named after the event. Its label is the text of the button the person tapped, or else the event's name as words (`submit_form` is "Submit form"), never the agent's words. Its payload holds the `surfaceId`, the `sourceComponentId`, the event's resolved `context`, the event's `userMessage` when it has one, and the surface's `dataModel` when the agent created the surface with `sendDataModel`. What a person types into an `obscured` text field is in none of them. An app component's events carry the component's name as `component`.
 - **App components.** A component joins the catalog under its name in `PascalCase` (`place_card` is `PlaceCard`), with its parameters as its properties. The catalog with them goes by `getstream.io:app-catalog` (`A2UIRenderer.catalogId`); a surface that names the basic catalog's id shows them as well. A component named like one of the basic catalog's is left out.
 - **Links.** `openUrl` runs only from a person's tap, and opens through the host, which decides the kinds of link that open.
+- **Errors.** The problems A2UI reports to the agent, such as a message that doesn't read, reach `A2UIRenderer(onError = { error, messageId -> ... })` as an `A2UIError` with its spec `code`, `message`, `surfaceId` and `path`. A chat has no channel for them, so forward them to your backend if the agent should hear about them. Without `onError` they are logged.
+- **Media.** `A2UIRenderer(mediaUrl = { url -> ... })` returns the URL an image, video or audio clip loads from, given the one the agent wrote, or `null` to not load it. Without it, only web links load. Images load only from web links whatever it returns.
 - **Capabilities.** `capabilities` gives the agent's backend the fence the agent writes in (`fence`, `ui:a2ui@1.0`), the id of the catalog with the app's components (`catalog_id`), and the instructions its model needs to write UI with that catalog (`instructions`): how a reply carries A2UI, the protocol, the basic catalog's guidelines, and the catalog as an A2UI 1.0 catalog document, in Markdown.
 
 ## Protocol support
@@ -33,7 +35,7 @@ The renderer reads the final A2UI 1.0 wire format:
 - the basic catalog: every component and function;
 - errors with the spec's codes and JSON Pointer paths.
 
-The message processor also produces the renderer's other messages to the agent: `callAgentFunction` for a function the catalogs lack, and `error`. A chat sends the agent only the actions a person takes. A `callAgentFunction` runs the host's tool of that name on the device instead, and the tool's output is the function's value: a read-only tool runs while a surface renders, any other only from a person's tap, and a call no tool answers fails. Errors are logged.
+The message processor also produces the renderer's other messages to the agent: `callAgentFunction` for a function the catalogs lack, and `error`. A chat sends the agent only the actions a person takes. A `callAgentFunction` runs the host's tool of that name on the device instead, and the tool's output is the function's value: a read-only tool runs while a surface renders, any other only from a person's tap, and a call no tool answers fails. Errors go to `onError`, or to the log without it.
 
 Parsing and processing are internal: the public API is the renderer, its catalog and the actions it sends.
 
@@ -51,7 +53,13 @@ val catalog = A2UICatalog.Basic.with("Card") { scope ->
 }
 ```
 
-Agent-written content is untrusted: links in text don't open, images, video and audio load only over the web, and nothing on the device is read for them.
+To keep the agent from using a component, remove it. It leaves the catalog the agent is told about, and a reply that still uses it shows nothing for it, as for a type no catalog has:
+
+```kotlin
+val renderer = A2UIRenderer(catalog = A2UICatalog.Basic.removing("Video", "AudioPlayer"))
+```
+
+Agent-written content is untrusted: links in text don't open, images, video and audio load only over the web unless the app's `mediaUrl` says otherwise, and nothing on the device is read for them.
 
 ## Conformance
 
