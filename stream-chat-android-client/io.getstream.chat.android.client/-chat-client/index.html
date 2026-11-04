@@ -38,7 +38,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">7.17.0
+        <div class="library-version" id="library-version">7.18.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -224,6 +224,21 @@
               </div>
             </div>
           </div>
+<a data-name="2103429955%2FProperties%2F1662354712" anchor-label="hasLoadedAllScheduledMessages" id="2103429955%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-loaded-all-scheduled-messages.html"><span>has</span><wbr><span>Loaded</span><wbr><span>All</span><wbr><span>Scheduled</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2103429955%2FProperties%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="has-loaded-all-scheduled-messages.html">hasLoadedAllScheduledMessages</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Whether <a href="scheduled-messages.html">scheduledMessages</a> holds all the current user's scheduled messages from the server, so an empty list means the user has none. It becomes true once a <a href="query-scheduled-messages.html">queryScheduledMessages</a> of every channel and every status returns all of them in a single page, with no <code class="lang-kotlin">next</code> cursor before or after, as only such a query also removes the ones the server no longer has. It becomes false again when the connection is lost, as the events of other devices can be missed until the next query, and when the user disconnects. While it is false, <a href="scheduled-messages.html">scheduledMessages</a> holds only the ones known on this device, for example from earlier sessions or channel queries.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-442069153%2FProperties%2F1662354712" anchor-label="logicRegistry" id="-442069153%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
           <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
@@ -280,6 +295,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="repository-facade.html">repositoryFacade</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.client.persistance.repository/-repository-facade/index.html">RepositoryFacade</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1154626751%2FProperties%2F1662354712" anchor-label="scheduledMessages" id="-1154626751%2FProperties%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scheduled-messages.html"><span>scheduled</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1154626751%2FProperties%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="scheduled-messages.html">scheduledMessages</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/index.html">ScheduledMessage</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The current user's scheduled messages known on this device: the pending ones first, then the failed ones, each sorted by <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/scheduled-at.html">ScheduledMessage.scheduledAt</a>. A change made with this client shows right away, and the events of the user's other devices keep it up to date. <a href="query-scheduled-messages.html">queryScheduledMessages</a> loads the ones this device does not know yet.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -899,6 +929,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="delete-reminder.html"><span class="token function">deleteReminder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Deletes a reminder for a message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-570310583%2FFunctions%2F1662354712" anchor-label="deleteScheduledMessage" id="-570310583%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="delete-scheduled-message.html"><span>delete</span><wbr><span>Scheduled</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-570310583%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="delete-scheduled-message.html"><span class="token function">deleteScheduledMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Deletes a scheduled message, so it is never sent. Failed scheduled messages can be deleted too. The message leaves <a href="scheduled-messages.html">scheduledMessages</a> right away, and is deleted on the server once the device is online. A message that is not on the server yet is only deleted locally, and deleted on the server too if its scheduling is in flight. If the server can't delete it, the message comes back in <a href="scheduled-messages.html">scheduledMessages</a> with a <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/failure.html">ScheduledMessage.failure</a>, and <a href="resend-scheduled-message.html">resendScheduledMessage</a> or another delete deletes it again.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -2163,6 +2208,21 @@
               </div>
             </div>
           </div>
+<a data-name="2145278053%2FFunctions%2F1662354712" anchor-label="queryScheduledMessages" id="2145278053%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="query-scheduled-messages.html"><span>query</span><wbr><span>Scheduled</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2145278053%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="query-scheduled-messages.html"><span class="token function">queryScheduledMessages</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">cid<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">statuses<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message-query-status/index.html">ScheduledMessageQueryStatus</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptySet()<span class="token punctuation">, </span></span><span class="parameter ">limit<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>DEFAULT_SCHEDULED_MESSAGES_LIMIT<span class="token punctuation">, </span></span><span class="parameter ">next<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-query-scheduled-messages-result/index.html">QueryScheduledMessagesResult</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Queries the current user's scheduled messages: the pending ones first, then the failed ones, each sorted by <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/scheduled-at.html">ScheduledMessage.scheduledAt</a>. By default, a user has at most 100 pending scheduled messages, so the first page of the default size holds all of them. The failed ones are kept for 7 days.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-193160297%2FFunctions%2F1662354712" anchor-label="queryThreads" id="-193160297%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
           <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
@@ -2324,6 +2384,81 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="remove-user-group-members.html"><span class="token function">removeUserGroupMembers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">memberIds<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">teamId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-user-group/index.html">UserGroup</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Removes members from a user group.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1409766528%2FFunctions%2F1662354712" anchor-label="removeUserPushSchedule" id="-1409766528%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-user-push-schedule.html"><span>remove</span><wbr><span>User</span><wbr><span>Push</span><wbr><span><span>Schedule</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1409766528%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="remove-user-push-schedule.html"><span class="token function">removeUserPushSchedule</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-push-preference/index.html">PushPreference</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Removes the current user's quiet-hours schedule set with <a href="set-user-push-schedule.html">setUserPushSchedule</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1546651702%2FFunctions%2F1662354712" anchor-label="rescheduleMessage" id="-1546651702%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reschedule-message.html"><span>reschedule</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1546651702%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="reschedule-message.html"><span class="token function">rescheduleMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">scheduledAt<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Date.html">Date</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/index.html">ScheduledMessage</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Changes the date when a scheduled message is sent. The change is saved locally first, and sent to the server like a new scheduled message (see <a href="schedule-message.html">scheduleMessage</a>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-602391847%2FFunctions%2F1662354712" anchor-label="resendScheduledMessage" id="-602391847%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="resend-scheduled-message.html"><span>resend</span><wbr><span>Scheduled</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-602391847%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="resend-scheduled-message.html"><span class="token function">resendScheduledMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/index.html">ScheduledMessage</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Sends again the changes of a scheduled message that could not reach the server, when <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/failure.html">ScheduledMessage.failure</a> is a <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message-failure/-server-rejected-scheduling/index.html">ScheduledMessageFailure.ServerRejectedScheduling</a> or a <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message-failure/-local-device-failed-scheduling/index.html">ScheduledMessageFailure.LocalDeviceFailedScheduling</a>, whatever its <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message-failure/is-retryable.html">ScheduledMessageFailure.isRetryable</a> says. Attachments that failed to upload are uploaded again, and a message whose deletion failed is deleted again.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="133130459%2FFunctions%2F1662354712" anchor-label="scheduledMessages" id="133130459%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scheduled-messages.html"><span>scheduled</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="133130459%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="scheduled-messages.html"><span class="token function">scheduledMessages</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">cid<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">parentId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/Flow///PointingToDeclaration/">Flow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/index.html">ScheduledMessage</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The current user's scheduled messages in a channel or a thread, from <a href="scheduled-messages.html">scheduledMessages</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1480491831%2FFunctions%2F1662354712" anchor-label="scheduleMessage" id="-1480491831%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="schedule-message.html"><span>schedule</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1480491831%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="schedule-message.html"><span class="token function">scheduleMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channelType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">channelId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">scheduledAt<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Date.html">Date</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/index.html">ScheduledMessage</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Schedules a message to be sent at <a href="schedule-message.html">scheduledAt</a>. Set <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/parent-id.html">Message.parentId</a> to schedule a thread reply.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -2493,6 +2628,21 @@
               </div>
             </div>
           </div>
+<a data-name="-2008137474%2FFunctions%2F1662354712" anchor-label="sendScheduledMessageNow" id="-2008137474%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="send-scheduled-message-now.html"><span>send</span><wbr><span>Scheduled</span><wbr><span>Message</span><wbr><span><span>Now</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2008137474%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="send-scheduled-message-now.html"><span class="token function">sendScheduledMessageNow</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/index.html">ScheduledMessage</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Sends a scheduled message right away, instead of at its date. The message is only marked locally: it is sent once its pending changes and attachments are on the server, so it never goes out with older content.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-598863874%2FFunctions%2F1662354712" anchor-label="sendStaticLocation" id="-598863874%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
           <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
@@ -2594,6 +2744,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="set-user-push-preference.html"><span class="token function">setUserPushPreference</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">level<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-push-preference-level/index.html">PushPreferenceLevel</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-push-preference/index.html">PushPreference</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Sets the push notification preference level for the current user. This controls which messages will trigger push notifications for the user across all channels.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1223635642%2FFunctions%2F1662354712" anchor-label="setUserPushSchedule" id="-1223635642%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-user-push-schedule.html"><span>set</span><wbr><span>User</span><wbr><span>Push</span><wbr><span><span>Schedule</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1223635642%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="set-user-push-schedule.html"><span class="token function">setUserPushSchedule</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">schedule<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-push-schedule/index.html">PushSchedule</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-push-preference/index.html">PushPreference</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Sets a recurring quiet-hours schedule for the current user. While any of its windows is active, the server drops (does not delay) the user's push notifications for chat messages, calls (including ringing calls) and feeds. Reminder pushes are still delivered.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -3104,6 +3269,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div></div><span class="token keyword">fun </span><a href="update-reminder.html"><span class="token function">updateReminder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">remindAt<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Date.html">Date</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message-reminder/index.html">MessageReminder</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Updates an existing reminder for a message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1428076018%2FFunctions%2F1662354712" anchor-label="updateScheduledMessage" id="1428076018%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-scheduled-message.html"><span>update</span><wbr><span>Scheduled</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1428076018%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/CheckResult.html"><span class="token annotation builtin">CheckResult</span></a></div><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="update-scheduled-message.html"><span class="token function">updateScheduledMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">scheduledAt<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call/Call///PointingToDeclaration/">Call</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-scheduled-message/index.html">ScheduledMessage</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Edits the content of a scheduled message, and reschedules it when <a href="update-scheduled-message.html">scheduledAt</a> is set. The change is saved locally first, and sent to the server like a new scheduled message (see <a href="schedule-message.html">scheduleMessage</a>). An edit made before the message reached the server goes out with it.</p></div></div></div>
                 </div>
               </div>
             </div>

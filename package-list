@@ -1,12 +1,21 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 
+module:stream-chat-android-ai-a2ui
+io.getstream.chat.android.ai.a2ui.compose
+io.getstream.chat.android.ai.a2ui.generativeui
 module:stream-chat-android-ai-compose
 io.getstream.chat.android.ai.compose.conversation
+io.getstream.chat.android.ai.compose.generativeui
 io.getstream.chat.android.ai.compose.parts
 io.getstream.chat.android.ai.compose.ui.component
+io.getstream.chat.android.ai.compose.util.internal
 module:stream-chat-android-ai-ondevice
 io.getstream.chat.android.ai.ondevice
+module:stream-chat-android-ai-openui
+io.getstream.chat.android.ai.openui.generativeui
+io.getstream.chat.android.ai.openui.lang
+io.getstream.chat.android.ai.openui.rendering
 module:stream-chat-android-client
 io.getstream.chat.android.client
 io.getstream.chat.android.client.api
@@ -110,7 +119,6 @@ io.getstream.chat.android.compose.ui.components.reactions
 io.getstream.chat.android.compose.ui.mentions
 io.getstream.chat.android.compose.ui.messages
 io.getstream.chat.android.compose.ui.messages.attachments
-io.getstream.chat.android.compose.ui.messages.attachments.media
 io.getstream.chat.android.compose.ui.messages.attachments.poll
 io.getstream.chat.android.compose.ui.messages.composer
 io.getstream.chat.android.compose.ui.messages.composer.actions

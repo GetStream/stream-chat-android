@@ -1,0 +1,415 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>A2UIComponentScope</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.18.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-ai-a2ui/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-ai-a2ui/main" data-filter=":stream-chat-android-ai-a2ui/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ai-a2ui::io.getstream.chat.android.ai.a2ui.compose/A2UIComponentScope///PointingToDeclaration//-1232633961">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ai-a2ui</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ai.a2ui.compose</a><span class="delimiter">/</span><span class="current">A2UIComponentScope</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>A2UIComponent</span><wbr><span><span>Scope</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Stable.html"><span class="token annotation builtin">Stable</span></a></div></div><span class="token keyword">class </span><a href="index.html">A2UIComponentScope</a></div><p class="paragraph">One component of a surface as its renderer sees it: its properties, resolved against the surface's data, its children, and what it does when the person uses it.</p><p class="paragraph">Values are plain Kotlin values: maps, lists, strings, numbers (<a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a> or <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-double/index.html">Double</a>), booleans and <code class="lang-kotlin">null</code>. A value the agent bound to the data model reads the data model now, and the surface draws again when the data changes.</p><p class="paragraph">Read it while composing, on the main thread.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-795366133%2FProperties%2F-1232633961" anchor-label="hasAction" id="-795366133%2FProperties%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-action.html"><span>has</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-795366133%2FProperties%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="has-action.html">hasAction</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the component does something when the person uses it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="441518084%2FProperties%2F-1232633961" anchor-label="id" id="441518084%2FProperties%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="id.html"><span><span>id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="441518084%2FProperties%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="id.html">id</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The component's id, unique in its surface.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="419643209%2FProperties%2F-1232633961" anchor-label="isValid" id="419643209%2FProperties%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-valid.html"><span>is</span><wbr><span><span>Valid</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="419643209%2FProperties%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-valid.html">isValid</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether none of the component's checks blocks it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1525255096%2FProperties%2F-1232633961" anchor-label="modifier" id="-1525255096%2FProperties%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="modifier.html"><span><span>modifier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1525255096%2FProperties%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="modifier.html">modifier</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a></div><div class="brief "><p class="paragraph">The modifier the parent gives this component, such as its weight in a <code class="lang-kotlin">Row</code>, with the component's accessibility label. Apply it to the outermost element.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="928161349%2FProperties%2F-1232633961" anchor-label="type" id="928161349%2FProperties%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="type.html"><span><span>type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="928161349%2FProperties%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="type.html">type</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The component's type, such as <code class="lang-kotlin">Text</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1603851387%2FProperties%2F-1232633961" anchor-label="validationErrors" id="1603851387%2FProperties%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="validation-errors.html"><span>validation</span><wbr><span><span>Errors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1603851387%2FProperties%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="validation-errors.html">validationErrors</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The messages of the component's checks that fail now and should block it, such as a button's form being incomplete.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="791987985%2FFunctions%2F-1232633961" anchor-label="boolean" id="791987985%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="boolean.html"><span><span>boolean</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="791987985%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="boolean.html"><span class="token function">boolean</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Property <a href="boolean.html">name</a> as a boolean; a check's result reads as whether it passed.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-212039089%2FFunctions%2F-1232633961" anchor-label="Child" id="-212039089%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-child.html"><span><span>Child</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-212039089%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-child.html"><span class="token function">Child</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">child<span class="token operator">: </span><a href="../-a2-u-i-child/index.html">A2UIChild</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Draws <a href="-child.html">child</a> with the surface's catalog.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="869347717%2FFunctions%2F-1232633961" anchor-label="child" id="869347717%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="child.html"><span><span>child</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="869347717%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="child.html"><span class="token function">child</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">"child"</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-a2-u-i-child/index.html">A2UIChild</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The single child property <a href="child.html">name</a> refers to, such as a <code class="lang-kotlin">Card</code>'s <code class="lang-kotlin">child</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="799510244%2FFunctions%2F-1232633961" anchor-label="children" id="799510244%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="children.html"><span><span>children</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="799510244%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="children.html"><span class="token function">children</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">"children"</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../-a2-u-i-child/index.html">A2UIChild</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The children property <a href="children.html">name</a> lists: the components it names, or its template repeated for every item of the list it is bound to.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1396325045%2FFunctions%2F-1232633961" anchor-label="childWithId" id="-1396325045%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="child-with-id.html"><span>child</span><wbr><span>With</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1396325045%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="child-with-id.html"><span class="token function">childWithId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">slot<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span>id</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-a2-u-i-child/index.html">A2UIChild</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The component with <a href="child-with-id.html">id</a>, placed as this one's child, such as a tab's content.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="240318572%2FFunctions%2F-1232633961" anchor-label="hint" id="240318572%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="hint.html"><span><span>hint</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="240318572%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="hint.html"><span class="token function">hint</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Property <a href="hint.html">name</a> as the agent wrote it, for a hint such as <code class="lang-kotlin">variant</code>, which is never bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1686558627%2FFunctions%2F-1232633961" anchor-label="isBound" id="-1686558627%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-bound.html"><span>is</span><wbr><span><span>Bound</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1686558627%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-bound.html"><span class="token function">isBound</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether property <a href="is-bound.html">name</a> is bound to the data model, so <a href="write.html">write</a> changes it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1328505810%2FFunctions%2F-1232633961" anchor-label="number" id="-1328505810%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="number.html"><span><span>number</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1328505810%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="number.html"><span class="token function">number</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Property <a href="number.html">name</a> as a number.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="314962020%2FFunctions%2F-1232633961" anchor-label="performAction" id="314962020%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="perform-action.html"><span>perform</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="314962020%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="perform-action.html"><span class="token function">performAction</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Does what the component does when the person uses it: sends its event to the agent, with its context read now, or runs its function.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="76237558%2FFunctions%2F-1232633961" anchor-label="string" id="76237558%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="string.html"><span><span>string</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="76237558%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="string.html"><span class="token function">string</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Property <a href="string.html">name</a> as text; numbers show without a needless <code class="lang-kotlin">.0</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-567668300%2FFunctions%2F-1232633961" anchor-label="stringList" id="-567668300%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="string-list.html"><span>string</span><wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-567668300%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="string-list.html"><span class="token function">stringList</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Property <a href="string-list.html">name</a> as a list of strings.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2099845606%2FFunctions%2F-1232633961" anchor-label="value" id="-2099845606%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="value.html"><span><span>value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2099845606%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="value.html"><span class="token function">value</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Property <a href="value.html">name</a>, resolved, or <code class="lang-kotlin">null</code> when it is missing or not there yet. A list or an object the agent wrote resolves all the way down, so a binding or a call nested in it, such as an option's label, reads as its value. A value read from the data model is data, as it is.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="436518443%2FFunctions%2F-1232633961" anchor-label="write" id="436518443%2FFunctions%2F-1232633961" data-filterable-set=":stream-chat-android-ai-a2ui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-a2ui/main" data-filterable-set=":stream-chat-android-ai-a2ui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="write.html"><span><span>write</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="436518443%2FFunctions%2F-1232633961"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-a2ui/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="write.html"><span class="token function">write</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes <a href="write.html">value</a> to the data model where property <a href="write.html">name</a> is bound, as an input does when the person changes it. Does nothing when the property isn't bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

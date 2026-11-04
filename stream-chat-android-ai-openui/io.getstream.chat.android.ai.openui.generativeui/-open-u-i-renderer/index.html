@@ -1,0 +1,224 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>OpenUIRenderer</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.18.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-ai-openui/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-ai-openui/main" data-filter=":stream-chat-android-ai-openui/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ai-openui::io.getstream.chat.android.ai.openui.generativeui/OpenUIRenderer///PointingToDeclaration//-307855650">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ai-openui</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ai.openui.generativeui</a><span class="delimiter">/</span><span class="current">OpenUIRenderer</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Open</span><wbr><span><span>UIRenderer</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-openui/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">OpenUIRenderer</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>library<span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.openui.rendering/-library/index.html">Library</a><span class="token operator"> = </span>openuiChatLibrary<span class="token punctuation">, </span></span><span class="parameter ">instructions<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onError<span class="token operator">: </span><span class="token punctuation">(</span>error<span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.openui.lang/-open-u-i-error/index.html">OpenUIError</a><span class="token punctuation">, </span>messageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.generativeui/-a-i-u-i-renderer/index.html">AIUIRenderer</a></div><p class="paragraph">Shows the replies an agent writes in OpenUI Lang in the generative UI of <code class="lang-kotlin">stream-chat-android-ai-compose</code>, with the app's components placeable wherever OpenUI's own content goes.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val ui = AIUIHost(renderers = listOf(OpenUIRenderer()), components = listOf(placeCard)) { action -&gt;<br>    viewModelScope.launch { channel.sendMessage(Message(text = action.label, extraData = action.customData)) }<br>}</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><p class="paragraph">Each reply keeps its own runtime while the host is kept, so its forms and the state of its <code class="lang-kotlin">$variables</code> survive scrolling. What the person does that is for the agent, such as a follow-up or a form's submit button, reaches the host as an <code class="lang-kotlin">AIUIAction</code> named after OpenUI's action, with the action's <code class="lang-kotlin">context</code>, its other <code class="lang-kotlin">params</code>, the <code class="lang-kotlin">form</code> and the form's <code class="lang-kotlin">values</code> in its payload. A <code class="lang-kotlin">Query</code> or <code class="lang-kotlin">Mutation</code> runs one of the host's tools, on the device, and the model's instructions describe each of the host's tools: what it does, its arguments, and whether it only reads. A <code class="lang-kotlin">Query</code> runs by itself as the reply shows, so it runs only a read-only tool; a tool that changes something runs only from a <code class="lang-kotlin">Mutation</code> the person starts with a tap. Links open through the host, which decides the kinds of link that open.</p><p class="paragraph">An app component joins the library under its OpenUI name, its name in <code class="lang-kotlin">PascalCase</code> (<code class="lang-kotlin">place_card</code> is <code class="lang-kotlin">PlaceCard</code>). One whose name the library already has, or that can't be called in a program, is left out of both the instructions and the UI, so it never replaces one of OpenUI's own.</p><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>library</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The library the agent writes with, the chat library by default. Restyle or drop its components with <a href="../../io.getstream.chat.android.ai.openui.rendering/-library/replacing-view.html">Library.replacingView</a> and <a href="../../io.getstream.chat.android.ai.openui.rendering/-library/removing.html">Library.removing</a>.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>instructions</span></span></u></div></span></div><div><div class="title"><p class="paragraph">What the agent's model is told before OpenUI's own instructions, such as which answers to write as UI and when to use the app's components.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>on</span><wbr><span><span>Error</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Receives each problem with a reply's program, such as one the parser can't read or a tool that failed, with the reply's message id, once the reply is complete. Without it, the problems go to the log.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="2033187755%2FConstructors%2F-307855650" anchor-label="OpenUIRenderer" id="2033187755%2FConstructors%2F-307855650" data-filterable-set=":stream-chat-android-ai-openui/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-open-u-i-renderer.html"><span>Open</span><wbr><span><span>UIRenderer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2033187755%2FConstructors%2F-307855650"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-openui/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">library<span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.openui.rendering/-library/index.html">Library</a><span class="token operator"> = </span>openuiChatLibrary<span class="token punctuation">, </span></span><span class="parameter ">instructions<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onError<span class="token operator">: </span><span class="token punctuation">(</span>error<span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.openui.lang/-open-u-i-error/index.html">OpenUIError</a><span class="token punctuation">, </span>messageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1314544876%2FProperties%2F-307855650" anchor-label="format" id="1314544876%2FProperties%2F-307855650" data-filterable-set=":stream-chat-android-ai-openui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="format.html"><span><span>format</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1314544876%2FProperties%2F-307855650"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-openui/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="format.html">format</a><span class="token operator">: </span><a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.generativeui/-a-i-u-i-format/index.html">AIUIFormat</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-365706532%2FProperties%2F-307855650" anchor-label="library" id="-365706532%2FProperties%2F-307855650" data-filterable-set=":stream-chat-android-ai-openui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="library.html"><span><span>library</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-365706532%2FProperties%2F-307855650"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-openui/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="library.html">library</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.openui.rendering/-library/index.html">Library</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-487633796%2FFunctions%2F-307855650" anchor-label="capabilities" id="-487633796%2FFunctions%2F-307855650" data-filterable-set=":stream-chat-android-ai-openui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="capabilities.html"><span><span>capabilities</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-487633796%2FFunctions%2F-307855650"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-openui/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="capabilities.html"><span class="token function">capabilities</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">components<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.generativeui/-a-i-u-i-component/index.html">AIUIComponent</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">tools<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.parts/-a-i-client-tool/index.html">AIClientTool</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The fence the agent writes its program in (<code class="lang-kotlin">openui-lang</code>), and the instructions its model needs to write one with the library and <a href="capabilities.html">components</a>, and to run <a href="capabilities.html">tools</a> from <code class="lang-kotlin">Query()</code> and <code class="lang-kotlin">Mutation()</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-901600918%2FFunctions%2F-307855650" anchor-label="makeEngine" id="-901600918%2FFunctions%2F-307855650" data-filterable-set=":stream-chat-android-ai-openui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="make-engine.html"><span>make</span><wbr><span><span>Engine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-901600918%2FFunctions%2F-307855650"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-openui/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="make-engine.html"><span class="token function">makeEngine</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">host<span class="token operator">: </span><a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.generativeui/-a-i-u-i-host/index.html">AIUIHost</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.generativeui/-a-i-u-i-engine/index.html">AIUIEngine</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1536403570%2FFunctions%2F-307855650" anchor-label="supports" id="-1536403570%2FFunctions%2F-307855650" data-filterable-set=":stream-chat-android-ai-openui/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-openui/main" data-filterable-set=":stream-chat-android-ai-openui/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1536403570%2FFunctions%2F-307855650"><span><span>supports</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1536403570%2FFunctions%2F-307855650"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-openui/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1536403570%2FFunctions%2F-307855650"><span class="token function">supports</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">version<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
