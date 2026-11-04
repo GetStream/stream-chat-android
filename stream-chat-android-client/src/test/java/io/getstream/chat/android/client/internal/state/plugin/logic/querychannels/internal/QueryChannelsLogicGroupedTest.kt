@@ -129,8 +129,7 @@ internal class QueryChannelsLogicGroupedTest {
         logic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        verify(queryChannelsStateLogic, never()).removeChannels(any())
-        verify(queryChannelsStateLogic).setCids(emptySet())
+        verify(queryChannelsStateLogic).resetToPage(emptySet())
         verify(queryChannelsStateLogic).addChannelsState(channels)
     }
 
@@ -155,8 +154,7 @@ internal class QueryChannelsLogicGroupedTest {
         logic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        verify(queryChannelsStateLogic).removeChannels(setOf("messaging:old1"))
-        verify(queryChannelsStateLogic).setCids(emptySet())
+        verify(queryChannelsStateLogic).resetToPage(setOf("messaging:old1"))
         verify(queryChannelsStateLogic).addChannelsState(newChannels)
     }
 
@@ -331,7 +329,7 @@ internal class QueryChannelsLogicGroupedTest {
         logic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        verify(queryChannelsStateLogic, never()).removeChannels(any())
+        verify(queryChannelsStateLogic).resetToPage(emptySet())
         verify(queryChannelsStateLogic).addChannelsState(group.channels)
     }
 
@@ -351,9 +349,8 @@ internal class QueryChannelsLogicGroupedTest {
         // When
         logic.applyGroupedResult(group, isFirstPage = false)
 
-        // Then — neither removeChannels nor setCids(emptySet()) should fire on a paginated page.
-        verify(queryChannelsStateLogic, never()).removeChannels(any())
-        verify(queryChannelsStateLogic, never()).setCids(any())
+        // Then - a paginated page resets nothing.
+        verify(queryChannelsStateLogic, never()).resetToPage(any())
         verify(queryChannelsStateLogic, never()).setChannelsOffset(any())
         verify(queryChannelsStateLogic).addChannelsState(newChannels)
     }
