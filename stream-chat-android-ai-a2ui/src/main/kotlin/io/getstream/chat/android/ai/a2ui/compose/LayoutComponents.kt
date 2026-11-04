@@ -202,9 +202,11 @@ internal fun A2UIModal(scope: A2UIComponentScope) {
     val triggerIsButton = trigger?.let { scope.context.surface.component(it.id)?.type == "Button" } == true
     CompositionLocalProvider(LocalModalOpener provides { open = true }) {
         Box(
-            modifier = scope.modifier.then(
-                if (triggerIsButton) Modifier else Modifier.clickable(role = Role.Button) { open = true },
-            ),
+            modifier = if (triggerIsButton) {
+                scope.modifier
+            } else {
+                scope.layout.interactive(scope) { open = true }.clickable(role = Role.Button) { open = true }
+            },
         ) {
             trigger?.let { scope.Child(it) }
         }

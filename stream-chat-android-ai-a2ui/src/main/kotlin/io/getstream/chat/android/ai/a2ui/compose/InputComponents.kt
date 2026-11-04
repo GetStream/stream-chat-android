@@ -21,8 +21,10 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -79,12 +81,14 @@ internal fun A2UIButton(scope: A2UIComponentScope) {
             scope.child()?.let { scope.Child(it) }
         }
     }
-    Column(modifier = scope.modifier.padding(LeafMargin)) {
+    Column(modifier = scope.layout.padding(LeafMargin)) {
         val enabled = errors.isEmpty()
+        // The agent's label and description go on the button itself, the node a person taps.
+        val button = Modifier.interactive(scope, onClick.takeIf { enabled })
         when (scope.hint("variant")) {
-            "primary" -> Button(onClick = onClick, enabled = enabled) { content() }
-            "borderless" -> TextButton(onClick = onClick, enabled = enabled) { content() }
-            else -> OutlinedButton(onClick = onClick, enabled = enabled) { content() }
+            "primary" -> Button(onClick = onClick, modifier = button, enabled = enabled) { content() }
+            "borderless" -> TextButton(onClick = onClick, modifier = button, enabled = enabled) { content() }
+            else -> OutlinedButton(onClick = onClick, modifier = button, enabled = enabled) { content() }
         }
         ValidationMessages(errors)
     }
@@ -138,9 +142,12 @@ internal fun A2UITextField(scope: A2UIComponentScope) {
 @Composable
 internal fun A2UICheckBox(scope: A2UIComponentScope) {
     val checked = scope.boolean("value") ?: false
-    Column(modifier = scope.modifier.padding(LeafMargin)) {
+    Column(modifier = scope.layout.padding(LeafMargin)) {
         Row(
-            modifier = Modifier.toggleable(value = checked, role = Role.Checkbox) { scope.write("value", it) },
+            modifier = Modifier
+                .interactive(scope) { scope.write("value", !checked) }
+                .heightIn(min = MinTouchTarget)
+                .toggleable(value = checked, role = Role.Checkbox) { scope.write("value", it) },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(checked = checked, onCheckedChange = null)
@@ -184,29 +191,36 @@ internal fun A2UIChoicePicker(scope: A2UIComponentScope) {
             )
         }
         if (scope.hint("displayStyle") == "chips") {
-            FlowRow(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
+            FlowRow(
+                modifier = Modifier.selectableGroup(),
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+            ) {
                 shown.forEach { (label, value) ->
                     FilterChip(selected = value in selected, onClick = { toggle(value) }, label = { Text(label) })
                 }
             }
         } else {
-            shown.forEach { (label, value) ->
-                val isSelected = value in selected
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = isSelected,
-                            role = if (multiple) Role.Checkbox else Role.RadioButton,
-                        ) { toggle(value) },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (multiple) {
-                        Checkbox(checked = isSelected, onCheckedChange = null)
-                    } else {
-                        RadioButton(selected = isSelected, onClick = null)
+            // One group, so the options read as one list; each row is a full touch target.
+            Column(modifier = Modifier.selectableGroup()) {
+                shown.forEach { (label, value) ->
+                    val isSelected = value in selected
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = MinTouchTarget)
+                            .selectable(
+                                selected = isSelected,
+                                role = if (multiple) Role.Checkbox else Role.RadioButton,
+                            ) { toggle(value) },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (multiple) {
+                            Checkbox(checked = isSelected, onCheckedChange = null)
+                        } else {
+                            RadioButton(selected = isSelected, onClick = null)
+                        }
+                        Text(label, modifier = Modifier.padding(start = 8.dp))
                     }
-                    Text(label, modifier = Modifier.padding(start = 8.dp))
                 }
             }
         }
@@ -233,9 +247,10 @@ internal fun A2UISlider(scope: A2UIComponentScope) {
     val max = (scope.number("max") ?: return).coerceAtLeast(min)
     val value = (scope.number("value") ?: min).coerceIn(min, max)
     val divisions = scope.number("steps")?.roundToInt()?.takeIf { it >= 1 }
-    Column(modifier = scope.modifier.fillMaxWidth().padding(LeafMargin)) {
+    Column(modifier = scope.layout.fillMaxWidth().padding(LeafMargin)) {
         scope.string("label")?.let { label -> Text("$label: ${A2UIJson.stringify(value)}", style = labelStyle()) }
         Slider(
+            modifier = Modifier.interactive(scope),
             value = value.toFloat(),
             onValueChange = { picked ->
                 val snapped = divisions?.let { snap(picked.toDouble(), min, max, it) } ?: picked.toDouble()
@@ -256,3 +271,6 @@ private fun snap(value: Double, min: Double, max: Double, divisions: Int): Doubl
 }
 
 private const val LongTextLines = 3
+
+// The smallest height of a row a person taps.
+private val MinTouchTarget = 48.dp

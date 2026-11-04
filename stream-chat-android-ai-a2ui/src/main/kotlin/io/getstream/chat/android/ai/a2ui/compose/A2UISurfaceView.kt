@@ -30,8 +30,8 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.a2ui.compose.internal.ComponentEntrance
@@ -81,25 +81,52 @@ internal fun A2UISurfaceView(
 internal fun RenderNode(environment: SurfaceEnvironment, node: Node, modifier: Modifier) {
     val renderer = environment.catalog[node.component.type] ?: return
     val context = NodeContext(environment.surface, node)
-    val accessible = modifier.accessibility(context.accessibility()).testTag(node.component.id)
+    val attributes = context.accessibility()
+    fun scope(entrance: Modifier) = A2UIComponentScope(
+        context = context,
+        layout = modifier.then(entrance).hiddenIf(attributes?.hidden == true).testTag(node.component.id),
+        accessibility = Modifier.accessibility(attributes),
+        clickLabel = attributes?.description?.takeUnless { attributes.hidden },
+        environment = environment,
+    )
     if (environment.entrances) {
-        ComponentEntrance {
-            renderer(A2UIComponentScope(context, accessible, environment))
-        }
+        ComponentEntrance { entrance -> renderer(scope(entrance)) }
     } else {
-        renderer(A2UIComponentScope(context, accessible, environment))
+        renderer(scope(Modifier))
     }
 }
 
+// A hidden component and everything in it are left out of the accessibility tree.
+private fun Modifier.hiddenIf(hidden: Boolean): Modifier = if (hidden) clearAndSetSemantics { } else this
+
+// The agent's label and live region, for the node a person interacts with. Its description says
+// what using the component does, so it is the click label of that node instead.
 private fun Modifier.accessibility(attributes: Accessibility?): Modifier {
-    if (attributes == null) return this
-    if (attributes.hidden) return clearAndSetSemantics { }
+    if (attributes == null || attributes.hidden) return this
+    if (attributes.label == null && attributes.live !in LiveRegions) return this
     return semantics {
         attributes.label?.let { contentDescription = it }
-        attributes.description?.let { stateDescription = it }
         when (attributes.live) {
             "polite" -> liveRegion = LiveRegionMode.Polite
             "assertive" -> liveRegion = LiveRegionMode.Assertive
+        }
+    }
+}
+
+private val LiveRegions = setOf("polite", "assertive")
+
+/**
+ * The node a person interacts with, labelled for accessibility: the agent's label, and its
+ * description as what a tap does. [action] is what the tap does, as the node's own action.
+ */
+internal fun Modifier.interactive(scope: A2UIComponentScope, action: (() -> Unit)? = null): Modifier {
+    val label = scope.clickLabel
+    val labelled = then(scope.accessibility)
+    if (label == null || action == null) return labelled
+    return labelled.semantics {
+        onClick(label = label) {
+            action()
+            true
         }
     }
 }
