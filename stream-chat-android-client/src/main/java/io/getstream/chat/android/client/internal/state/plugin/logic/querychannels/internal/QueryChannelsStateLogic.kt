@@ -190,14 +190,7 @@ internal class QueryChannelsStateLogic(
             ChannelId.fromCid(channel.cid)?.let { it to channel }
         }
         mutableState.setCids(mutableState.queryChannelsSpec.cids + validated.map { (id, _) -> id.cid })
-        val existingChannels = mutableState.rawChannels.orEmpty()
-        mutableState.setChannels(
-            existingChannels + validated.associate { (id, channel) ->
-                id.cid to channel.joinMessages(existingChannels[id.cid])
-                    .joinMembers(existingChannels[id.cid])
-                    .keepingActiveMemberCountOf(existingChannels[id.cid])
-            },
-        )
+        val listed = listPage(validated)
         validated.map { (id, channel) ->
             coroutineScope.async {
                 logicRegistry.channel(id).updateDataForChannel(
@@ -207,15 +200,31 @@ internal class QueryChannelsStateLogic(
                 )
             }
         }.forEach { it.await() }
+        // A channel that changed since it was listed may hold a copy of a state that was not updated yet, so it is
+        // refreshed from its updated state. Ones removed since are left out.
+        val currentChannels = mutableState.rawChannels.orEmpty()
+        val changed = listed.filter { (cid, channel) -> currentChannels[cid]?.let { it != channel } == true }.keys
         // For locally tracked channels (local unread count enabled + read events disabled) the local
         // read is authoritative over the raw payload set above, so re-derive them from the merged
         // per-channel state. Skipped entirely when the feature is off, keeping its footprint at zero.
-        if (isLocalUnreadCountEnabled) {
-            validated
-                .mapNotNull { (id, channel) -> id.cid.takeUnless { channel.config.readEventsEnabled } }
-                .takeIf { it.isNotEmpty() }
-                ?.let(::refreshChannels)
+        val locallyTracked = if (isLocalUnreadCountEnabled) {
+            validated.mapNotNull { (id, channel) -> id.cid.takeUnless { channel.config.readEventsEnabled } }
+        } else {
+            emptyList()
         }
+        (changed + locallyTracked).takeIf { it.isNotEmpty() }?.let(::refreshChannels)
+    }
+
+    /** Lists the [page]'s channels, joined with the ones already listed, and returns what it listed. */
+    private fun listPage(page: List<Pair<ChannelId, Channel>>): Map<String, Channel> {
+        val existingChannels = mutableState.rawChannels.orEmpty()
+        val pageChannels = page.associate { (id, channel) ->
+            id.cid to channel.joinMessages(existingChannels[id.cid])
+                .joinMembers(existingChannels[id.cid])
+                .keepingActiveMemberCountOf(existingChannels[id.cid])
+        }
+        mutableState.setChannels(existingChannels + pageChannels)
+        return pageChannels
     }
 
     private fun Channel.joinMessages(existingChannel: Channel?): Channel {
