@@ -40,24 +40,14 @@ public interface AIUIRenderer {
     /**
      * What the agent's backend needs to have its model write UI this renderer shows with
      * [components], and runs [tools] from, such as the model's instructions that list the tools, as
-     * plain Kotlin values. By default, what the renderer gives for [components] alone.
+     * plain Kotlin values. None by default.
      *
      * @param components The app's components the agent can place.
      * @param tools The app's tools a reply's UI can run. Each one's [AIClientTool.definition] has its
      * name, description, argument schema and read-only hint, ready to list in the instructions.
      */
     public fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> =
-        capabilities(components)
-
-    /**
-     * What the agent's backend needs to have its model write UI this renderer shows with
-     * [components], for a renderer whose UI runs none of the app's tools. None by default.
-     *
-     * The host asks for the capabilities with its tools: override that one to list them.
-     *
-     * @param components The app's components the agent can place.
-     */
-    public fun capabilities(components: List<AIUIComponent>): Map<String, Any?> = emptyMap()
+        emptyMap()
 
     /**
      * Makes what shows the documents of one conversation, for [host].

@@ -77,11 +77,11 @@ internal class AIUIHostTest {
         override fun makeEngine(host: AIUIHost): AIUIEngine = Engine(showsNothing).also { engines += it }
     }
 
-    // A renderer that lists no tools, written before the host gave its tools.
+    // A renderer whose UI runs none of the app's tools, so it lists none.
     private class ToolessRenderer : AIUIRenderer {
         override val format: AIUIFormat = AIUIFormat.A2UI
 
-        override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> =
+        override fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> =
             mapOf("components" to components.size)
 
         override fun makeEngine(host: AIUIHost): AIUIEngine = Engine(showsNothing = false)

@@ -362,7 +362,6 @@ public final class io/getstream/chat/android/ai/compose/generativeui/AIUIParamet
 }
 
 public abstract interface class io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer {
-	public fun capabilities (Ljava/util/List;)Ljava/util/Map;
 	public fun capabilities (Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
 	public abstract fun getFormat-cv5I8qU ()Ljava/lang/String;
 	public abstract fun makeEngine (Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIEngine;
@@ -370,7 +369,6 @@ public abstract interface class io/getstream/chat/android/ai/compose/generativeu
 }
 
 public final class io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer$DefaultImpls {
-	public static fun capabilities (Lio/getstream/chat/android/ai/compose/generativeui/AIUIRenderer;Ljava/util/List;)Ljava/util/Map;
 	public static fun capabilities (Lio/getstream/chat/android/ai/compose/generativeui/AIUIRenderer;Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
 	public static fun supports (Lio/getstream/chat/android/ai/compose/generativeui/AIUIRenderer;Ljava/lang/String;)Z
 }
