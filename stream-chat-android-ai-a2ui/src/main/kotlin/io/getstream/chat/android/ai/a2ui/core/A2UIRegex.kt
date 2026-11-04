@@ -20,9 +20,21 @@ import java.util.regex.PatternSyntaxException
 
 /**
  * The A2UI regex dialect: a portable subset of ECMAScript patterns in Unicode mode. A pattern is
- * parsed, checked against the protocol's static safety rules, so that no agent pattern can
- * backtrack catastrophically, and then written out as an equivalent Java pattern with ECMAScript
- * meanings for `.`, `$`, `\d`, `\w`, `\s` and `\b`.
+ * parsed, checked against static safety rules, and then written out as an equivalent Java pattern
+ * with ECMAScript meanings for `.`, `$`, `\d`, `\w`, `\s` and `\b`.
+ *
+ * The static check is the only guard against catastrophic backtracking: the platform matcher
+ * can't be interrupted, so the shapes that backtrack catastrophically are rejected before any
+ * matching. The check rejects:
+ * - a quantifier (`*`, `+`, `?` or `{n,m}`) applied to a group that contains a quantifier or an
+ *   alternation, such as `(a?){25}`, `(a+)+`, `(a|aa)*` or `(?:a*)*`;
+ * - two unbounded quantifiers over overlapping characters with only empty-matching items between
+ *   them, such as `\d+\s*\d+`;
+ * - backreferences;
+ * - a `{n,m}` count above [MAX_REPEAT_COUNT];
+ * - a pattern longer than [MAX_PATTERN_LENGTH] code points.
+ *
+ * A value longer than [MAX_VALUE_LENGTH] code points is not matched at all.
  */
 @Suppress("TooManyFunctions")
 internal object A2UIRegex {
@@ -33,11 +45,14 @@ internal object A2UIRegex {
     /** The longest value matched, in code points; a longer one doesn't match. */
     const val MAX_VALUE_LENGTH: Int = 4096
 
+    /** The largest count a `{n,m}` quantifier may have. */
+    const val MAX_REPEAT_COUNT: Int = 1000
+
     /**
      * [pattern] as a [Regex] with the dialect's meaning.
      *
      * @throws FunctionException With `EXPRESSION_ERROR` when the pattern is too long, isn't in
-     * the dialect, or could backtrack catastrophically.
+     * the dialect, or fails the static safety check.
      */
     fun compile(pattern: String): Regex {
         if (pattern.codePointCount(0, pattern.length) > MAX_PATTERN_LENGTH) {
@@ -53,47 +68,14 @@ internal object A2UIRegex {
     }
 
     /**
-     * Whether [regex] finds a match in [value] within 100 ms. The static check doesn't bound every
-     * pattern's work (`(a?){25}a{25}` against 25 `a`s still backtracks for a long time), so running
-     * out of time counts as no match.
+     * Whether [regex], compiled by [compile], finds a match in [value]. A value longer than
+     * [MAX_VALUE_LENGTH] code points doesn't match.
      */
-    fun containsMatch(regex: Regex, value: CharSequence): Boolean = try {
-        regex.containsMatchIn(DeadlineCharSequence(value, System.nanoTime() + MATCH_TIMEOUT_NANOS))
-    } catch (@Suppress("SwallowedException") timeout: MatchTimeoutException) {
-        false
-    }
+    fun containsMatch(regex: Regex, value: String): Boolean =
+        value.codePointCount(0, value.length) <= MAX_VALUE_LENGTH && regex.containsMatchIn(value)
 
     private fun reject(reason: String): Nothing =
         throw FunctionException(RendererError.EXPRESSION_ERROR, "'regex' rejects the pattern: $reason")
-
-    /** How long a match may take: 100 ms. */
-    private const val MATCH_TIMEOUT_NANOS = 100_000_000L
-
-    private const val CLOCK_CHECK_MASK = 1023
-
-    /** Thrown by [DeadlineCharSequence] once its deadline passes, which ends the match. */
-    private class MatchTimeoutException : RuntimeException() {
-        // Thrown to unwind a match, not to be logged: skip the stack trace.
-        override fun fillInStackTrace(): Throwable = this
-    }
-
-    /** Text that throws [MatchTimeoutException] when read after [deadline] ([System.nanoTime]). */
-    private class DeadlineCharSequence(private val text: CharSequence, private val deadline: Long) : CharSequence {
-        private var reads = 0
-
-        override val length: Int get() = text.length
-
-        override fun get(index: Int): Char {
-            // Reading the clock on every char would slow the match down; every 1024th read is enough.
-            if (++reads and CLOCK_CHECK_MASK == 0 && System.nanoTime() - deadline > 0) throw MatchTimeoutException()
-            return text[index]
-        }
-
-        override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
-            DeadlineCharSequence(text.subSequence(startIndex, endIndex), deadline)
-
-        override fun toString(): String = text.toString()
-    }
 
     internal sealed interface Node
     internal class Alternation(val branches: List<Sequence>) : Node
@@ -252,7 +234,9 @@ internal object A2UIRegex {
             val start = index
             while (peek() in '0'.code..'9'.code) index++
             if (index == start) return null
-            return String(points, start, index - start).toIntOrNull() ?: fail("Quantifier is too large.")
+            val value = String(points, start, index - start).toIntOrNull()
+            if (value == null || value > MAX_REPEAT_COUNT) fail("A quantifier's count is above $MAX_REPEAT_COUNT.")
+            return value
         }
 
         private fun term(): Node {
@@ -422,13 +406,8 @@ internal object A2UIRegex {
                 }
                 is Group -> check(node.body)
                 is Repeat -> {
-                    // Rule 2: a repeated subexpression with an unbounded quantifier inside.
-                    if ((node.max == null || node.max > 1) && containsUnbounded(node.node)) {
-                        fail("A quantifier applies to a subexpression that has an unbounded quantifier.")
-                    }
-                    // Rule 3: an unbounded quantifier over branches that start alike.
-                    if (node.max == null && startAlike(alternation(node.node)?.branches.orEmpty())) {
-                        fail("An unbounded quantifier applies to branches that can start alike.")
+                    if (node.node is Group && containsQuantifierOrAlternation(node.node.body)) {
+                        fail("A quantifier applies to a group that has a quantifier or an alternation.")
                     }
                     check(node.node)
                 }
@@ -436,11 +415,7 @@ internal object A2UIRegex {
             }
         }
 
-        private fun startAlike(branches: List<Sequence>): Boolean = branches.indices.any { i ->
-            (i + 1 until branches.size).any { j -> first(branches[i]).overlaps(first(branches[j])) }
-        }
-
-        // Rule 4: two unbounded atoms that overlap, with only empty-matching items between them.
+        // Two unbounded atoms that overlap, with only empty-matching items between them.
         private fun adjacentRepeats(sequence: Sequence) {
             val items = sequence.items
             for (i in items.indices) {
@@ -465,18 +440,11 @@ internal object A2UIRegex {
             return if (only is Repeat) only else unwrap(only).takeIf { it is Repeat } ?: node
         }
 
-        private fun alternation(node: Node): Alternation? {
-            if (node !is Group || node.kind.isLookahead) return null
-            if (node.body.branches.size > 1) return node.body
-            val only = node.body.branches.single().items.singleOrNull() ?: return null
-            return alternation(only)
-        }
-
-        private fun containsUnbounded(node: Node): Boolean = when (node) {
-            is Repeat -> node.max == null || containsUnbounded(node.node)
-            is Group -> containsUnbounded(node.body)
-            is Alternation -> node.branches.any(::containsUnbounded)
-            is Sequence -> node.items.any(::containsUnbounded)
+        private fun containsQuantifierOrAlternation(node: Node): Boolean = when (node) {
+            is Repeat -> true
+            is Group -> containsQuantifierOrAlternation(node.body)
+            is Alternation -> node.branches.size > 1 || node.branches.any(::containsQuantifierOrAlternation)
+            is Sequence -> node.items.any(::containsQuantifierOrAlternation)
             is Characters, is Assertion -> false
         }
 
@@ -497,23 +465,6 @@ internal object A2UIRegex {
             is Alternation -> node.branches.fold(CharSet.EMPTY) { set, branch -> set.union(characters(branch)) }
             is Sequence -> node.items.fold(CharSet.EMPTY) { set, item -> set.union(characters(item)) }
             is Repeat -> characters(node.node)
-        }
-
-        // The code points a match of [node] can start with.
-        private fun first(node: Node): CharSet = when (node) {
-            is Characters -> node.set
-            is Assertion -> CharSet.EMPTY
-            is Group -> if (node.kind.isLookahead) CharSet.EMPTY else first(node.body)
-            is Alternation -> node.branches.fold(CharSet.EMPTY) { set, branch -> set.union(first(branch)) }
-            is Sequence -> {
-                var set = CharSet.EMPTY
-                for (item in node.items) {
-                    set = set.union(first(item))
-                    if (!canMatchEmpty(item)) break
-                }
-                set
-            }
-            is Repeat -> if (node.max == 0) CharSet.EMPTY else first(node.node)
         }
     }
 

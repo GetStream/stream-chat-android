@@ -35,7 +35,7 @@ internal class A2UIRegexTest {
 
     @Test
     fun `patterns that could backtrack catastrophically are rejected`() {
-        // Rule 2, rule 3, rule 4 and a backreference, as in the protocol's examples.
+        // Nested quantifiers, a quantified alternation, adjacent repeats and a backreference.
         listOf("(a+)+$", "(a|ab)*c", "\\d+\\s*\\d+", "(\\w)\\1", "(?:a*){2}", "a*a*").forEach(::assertRejected)
     }
 
@@ -69,12 +69,50 @@ internal class A2UIRegexTest {
         assertEquals(true, A2UIRegex.compile("^\\x41\\$\\/$").containsMatchIn("A$/"))
     }
 
-    @Test(timeout = 5_000)
-    fun `a match that runs past the deadline counts as no match`() {
-        // Outside the dialect, but it backtracks on every engine, so it runs into the deadline.
-        val backtracking = Regex("^(a+)+\\1$")
-        assertFalse(A2UIRegex.containsMatch(backtracking, "a".repeat(30) + "!"))
-        assertTrue(A2UIRegex.containsMatch(backtracking, "aa"))
+    @Test
+    fun `a quantifier over a group with a quantifier or an alternation is rejected`() {
+        listOf(
+            "(a?){25}a{25}",
+            "(a?){25}",
+            "(a+)+",
+            "(a|aa)*",
+            "(?:a*)*",
+            "(?:a|b)?",
+            "(?:(a)b?)+",
+            "(?:ab{2})?",
+        ).forEach(::assertRejected)
+    }
+
+    @Test
+    fun `backreferences are rejected`() {
+        listOf("(a)\\1", "(a)(b)\\2", "(?<x>a)\\k<x>").forEach(::assertRejected)
+    }
+
+    @Test
+    fun `a count above 1000 is rejected`() {
+        listOf("a{1001}", "a{0,1001}", "a{1001,}", "a{99999999999}").forEach(::assertRejected)
+        A2UIRegex.compile("a{0,${A2UIRegex.MAX_REPEAT_COUNT}}")
+    }
+
+    @Test
+    fun `common validation patterns are accepted`() {
+        val email = A2UIRegex.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+        assertTrue(A2UIRegex.containsMatch(email, "ada@example.com"))
+        assertFalse(A2UIRegex.containsMatch(email, "ada@example"))
+        val phone = A2UIRegex.compile("^\\+?[0-9]{10,15}$")
+        assertTrue(A2UIRegex.containsMatch(phone, "+46701234567"))
+        assertFalse(A2UIRegex.containsMatch(phone, "12345"))
+        val code = A2UIRegex.compile("^[A-Z]{2}\\d{4}$")
+        assertTrue(A2UIRegex.containsMatch(code, "AB1234"))
+        assertFalse(A2UIRegex.containsMatch(code, "AB123"))
+        listOf("^#[0-9a-fA-F]{6}$", "^@([^@]|$)", "^(?:abc)?x$", "^(a)+$").forEach { A2UIRegex.compile(it) }
+    }
+
+    @Test
+    fun `a value longer than the limit doesn't match`() {
+        val regex = A2UIRegex.compile("a")
+        assertTrue(A2UIRegex.containsMatch(regex, "a".repeat(A2UIRegex.MAX_VALUE_LENGTH)))
+        assertFalse(A2UIRegex.containsMatch(regex, "a".repeat(A2UIRegex.MAX_VALUE_LENGTH + 1)))
     }
 
     private fun assertRejected(pattern: String) {

@@ -105,7 +105,6 @@ internal object BasicFunctions {
         val value = invocation.string("value").orEmpty()
         val regex = A2UIRegex.compile(pattern)
         if (value.isEmpty()) return result(true)
-        if (value.codePointCount() > A2UIRegex.MAX_VALUE_LENGTH) return result(false)
         return result(A2UIRegex.containsMatch(regex, value))
     }
 
