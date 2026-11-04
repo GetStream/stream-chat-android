@@ -69,6 +69,58 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given the event leaves out the members of a large channel When ChannelUpdatedEvent adds it Should keep the cached members`() {
+        val currentUser = randomUser()
+        val members = listOf(randomMember(user = currentUser), randomMember())
+        val channel = randomChannel(
+            disabled = false,
+            blocked = false,
+            members = emptyList(),
+            memberCount = 150,
+            extraData = mapOf("group" to "vip"),
+        )
+        val cachedChannel = channel.copy(members = members, membership = members.first(), hidden = false)
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = emptyMap(),
+            currentUser = currentUser,
+        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Add(channel.copy(members = members)), result)
+    }
+
+    @Test
+    fun `Given the event lists the members When ChannelUpdatedEvent adds the channel Should take the event members`() {
+        val currentUser = randomUser()
+        val members = listOf(randomMember(user = currentUser))
+        val channel = randomChannel(
+            disabled = false,
+            blocked = false,
+            members = members,
+            memberCount = 1,
+            extraData = mapOf("group" to "vip"),
+        )
+        val cachedChannel = channel.copy(
+            members = listOf(randomMember(), randomMember()),
+            membership = members.first(),
+            hidden = false,
+        )
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = emptyMap(),
+            currentUser = currentUser,
+        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Add(channel), result)
+    }
+
+    @Test
     fun `Given channel belongs to this group and is already cached When ChannelUpdatedEvent arrives Should skip`() {
         val currentUser = randomUser()
         val channel = randomChannel(disabled = false, blocked = false, extraData = mapOf("group" to "vip"))

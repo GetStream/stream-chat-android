@@ -419,6 +419,7 @@ public data class Channel(
 
 /**
  * Updates the given [Channel] with data from another [Channel] object.
+ * Keeps the current members when [that] has members but lists none, as events of large channels leave them out.
  *
  * @param that The [Channel] to take the new data from.
  */
