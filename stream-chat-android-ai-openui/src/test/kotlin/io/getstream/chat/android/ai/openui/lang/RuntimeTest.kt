@@ -41,9 +41,17 @@ internal class RecordingToolProvider(
 ) : ToolProvider {
     val calls = ArrayList<Pair<String, OpenUIObject>>()
 
+    /** Whether the person asked for each call, in the order of [calls]. */
+    val userInitiated = ArrayList<Boolean>()
+
     override suspend fun callTool(name: String, arguments: OpenUIObject): OpenUIValue {
         calls += name to arguments
         return handler(name, arguments, calls.size)
+    }
+
+    override suspend fun callTool(name: String, arguments: OpenUIObject, userInitiated: Boolean): OpenUIValue {
+        this.userInitiated += userInitiated
+        return callTool(name, arguments)
     }
 }
 
@@ -322,6 +330,19 @@ internal class RuntimeTest {
             assertFalse(manager.fireMutation("broken", OpenUIObject.Empty))
             assertEquals(obj("status" to "error", "error" to "boom"), manager.mutationResult("broken"))
             assertEquals(OpenUIError.Source.Mutation, manager.snapshot.value.errors.first().source)
+        }
+
+        @Test
+        fun `queries run tools on their own and mutations as the person asked`() = runTest {
+            val provider = RecordingToolProvider { _, _, _ -> obj("ok" to true) }
+            val manager = QueryManager(provider, this)
+            manager.evaluateQueries(listOf(QueryManager.QueryNode("data", "list", obj(), obj(), null, null)))
+            advanceUntilIdle()
+            manager.registerMutations(listOf(QueryManager.MutationNode("save", "save")))
+            assertTrue(manager.fireMutation("save", OpenUIObject.Empty))
+
+            assertEquals(listOf("list", "save"), provider.calls.map { it.first })
+            assertEquals(listOf(false, true), provider.userInitiated)
         }
 
         @Test

@@ -30,6 +30,14 @@ internal fun interface ToolProvider {
     suspend fun callTool(name: String, arguments: OpenUIObject): OpenUIValue
 
     /**
+     * Calls tool [name] with [arguments], saying whether the person asked for it: a `Mutation`
+     * runs from a tap, while a `Query` runs by itself as the UI shows. Runs [callTool] without
+     * [userInitiated] by default.
+     */
+    suspend fun callTool(name: String, arguments: OpenUIObject, userInitiated: Boolean): OpenUIValue =
+        callTool(name, arguments)
+
+    /**
      * The shortest time between two refreshes of a query. The model writes a query's refresh
      * interval, so a shorter one waits this long. Five seconds by default.
      */
