@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions") // Every chart and its drawing helpers live here.
+
 package io.getstream.chat.android.ai.openui.components
 
 import androidx.compose.animation.core.Animatable
@@ -79,6 +81,7 @@ import io.getstream.chat.android.ai.openui.lang.elementValue
 import io.getstream.chat.android.ai.openui.lang.objectValue
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
+import io.getstream.chat.android.ai.openui.rendering.OpenUIDimens
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
 import java.math.BigDecimal
@@ -141,8 +144,9 @@ internal object ChartData {
         val names = mutableListOf<String>()
         val points = mutableListOf<ChartPoint>()
         for (element in series.mapNotNull { it.elementValue }) {
-            val name = (element.props["category"] as? OpenUIValue.Str)?.value ?: continue
-            val values = element.props["values"].arrayValue ?: continue
+            val name = (element.props["category"] as? OpenUIValue.Str)?.value
+            val values = element.props["values"].arrayValue
+            if (name == null || values == null) continue
             if (name !in names) names += name
             labelStrings.forEachIndexed { index, label ->
                 if (index < values.size) points += ChartPoint(label, name, drawable(JS.toNumber(values[index])), index)
@@ -221,6 +225,8 @@ internal fun niceTicks(minValue: Double, maxValue: Double, count: Int = 4): List
             high = 0.0
         }
     }
+    // The 1-2-5 steps of nice numbers, and the cutoffs between them.
+    @Suppress("MagicNumber")
     fun nice(range: Double, round: Boolean): Double {
         val exponent = floor(log10(range))
         val fraction = range / 10.0.pow(exponent)
@@ -246,7 +252,7 @@ internal fun niceTicks(minValue: Double, maxValue: Double, count: Int = 4): List
     val end = ceil(high / step) * step
     val ticks = mutableListOf<Double>()
     var value = start
-    while (value <= end + step / 2 && ticks.size < 50) {
+    while (value <= end + step / 2 && ticks.size < MaxTicks) {
         // A Double index: values far beyond Int's range still land on their tick.
         ticks += round(value / step) * step
         value += step
@@ -258,13 +264,13 @@ internal fun niceTicks(minValue: Double, maxValue: Double, count: Int = 4): List
 internal fun axisLabel(value: Double): String {
     val magnitude = abs(value)
     fun trim(number: Double): String {
-        val rounded = (number * 100).roundToInt() / 100.0
+        val rounded = (number * Percent).roundToInt() / Percent.toDouble()
         return JS.numberToString(rounded)
     }
     return when {
-        magnitude >= 1e9 -> trim(value / 1e9) + "B"
-        magnitude >= 1e6 -> trim(value / 1e6) + "M"
-        magnitude >= 1e4 -> trim(value / 1e3) + "k"
+        magnitude >= Billion -> trim(value / Billion) + "B"
+        magnitude >= Million -> trim(value / Million) + "M"
+        magnitude >= CompactThousandsFrom -> trim(value / Thousand) + "k"
         magnitude >= 1 || magnitude == 0.0 || !value.isFinite() -> trim(value)
         // Below 1, significant digits keep small ticks apart.
         else -> JS.numberToString(BigDecimal(value).round(MathContext(AxisLabelDigits)).toDouble())
@@ -284,7 +290,7 @@ private fun Double.orZero(): Double = if (isFinite()) this else 0.0
 @Composable
 private fun rememberEntrance(isStreaming: Boolean): Animatable<Float, *> {
     val progress = remember { Animatable(if (isStreaming) 0f else 1f) }
-    LaunchedEffect(Unit) { progress.animateTo(1f, tween(600, easing = FastOutSlowInEasing)) }
+    LaunchedEffect(Unit) { progress.animateTo(1f, tween(EntranceMillis, easing = FastOutSlowInEasing)) }
     return progress
 }
 
@@ -347,7 +353,9 @@ private fun SliceLegend(entries: List<ChartSlice>, showPercent: Boolean) {
                 )
                 if (showPercent && total > 0) {
                     Text(
-                        NumberFormatting.percent((ChartData.share(entry.value) / total * 100).roundToInt().toDouble()),
+                        NumberFormatting.percent(
+                            (ChartData.share(entry.value) / total * Percent).roundToInt().toDouble(),
+                        ),
                         style = theme.typography.caption,
                         color = theme.colors.textSecondary,
                         textAlign = TextAlign.End,
@@ -395,6 +403,8 @@ private fun DrawScope.drawAxes(axes: ChartAxes, gridColor: Color) {
 internal enum class CartesianKind { Bar, Line, Area, HorizontalBar }
 
 /** `BarChart`, `LineChart`, `AreaChart` and `HorizontalBarChart`. */
+// The four chart kinds share their data, axes, legend and entrance, so they stay in one composable.
+@Suppress("LongMethod")
 @Composable
 private fun CartesianChart(context: ComponentRenderProps, kind: CartesianKind) {
     val props = context.props
@@ -404,8 +414,13 @@ private fun CartesianChart(context: ComponentRenderProps, kind: CartesianKind) {
     val theme = OpenUITheme.current
     val categories = points.map { it.category }.distinct()
     val variant = props.string("variant")
+    val barsHeight = categories.size * OpenUIDimens.BarRowHeight + OpenUIDimens.BarChartAxisHeight
     val height = chartHeight(props.number("height"))?.dp
-        ?: if (kind == CartesianKind.HorizontalBar) min(max(160, categories.size * 34 + 40), 1000).dp else 220.dp
+        ?: if (kind == CartesianKind.HorizontalBar) {
+            barsHeight.coerceIn(OpenUIDimens.BarChartMinHeight, OpenUIDimens.BarChartMaxHeight).dp
+        } else {
+            220.dp
+        }
     val measurer = rememberTextMeasurer()
     val progress = rememberEntrance(context.isStreaming)
     val axisStyle = theme.typography.caption.copy(fontSize = 10.sp, color = theme.colors.textSecondary)
@@ -526,7 +541,7 @@ private fun valueRange(
         low = min(low, 0.0)
         high = max(high, 0.0)
     } else if (high > low) {
-        val pad = (high - low) * 0.1
+        val pad = (high - low) * DomainPadding
         low = if (low >= 0 && low - pad < 0) 0.0 else low - pad
         high += pad
     }
@@ -552,16 +567,16 @@ private fun CacheDrawScope.verticalLayout(
         val ty = y(tick)
         lines += Offset(plot.left, ty) to Offset(plot.right, ty)
         val label = data.tickLabels[index]
-        labels += measurer.place(label, style, Offset(plot.left - 6.dp.toPx(), ty), axisWidth, Offset(1f, 0.5f))
+        labels += measurer.place(label, style, Offset(plot.left - 6.dp.toPx(), ty), axisWidth, Offset(1f, Center))
     }
     val band = plot.width / data.categories.size
     // Category labels, thinned out when they don't fit.
-    val widest = data.categories.maxOf { measurer.measure(it.take(14), style).size.width }.toFloat()
+    val widest = data.categories.maxOf { measurer.measure(it.take(CategoryLabelMaxChars), style).size.width }.toFloat()
     val every = max(1, ceil((widest + 8.dp.toPx()) / band).toInt())
     data.categories.forEachIndexed { index, category ->
         if (index % every == 0) {
-            val at = Offset(plot.left + band * (index + 0.5f), plot.bottom + 6.dp.toPx())
-            labels += measurer.place(category, style, at, band * every, Offset(0.5f, 0f))
+            val at = Offset(plot.left + band * (index + Center), plot.bottom + 6.dp.toPx())
+            labels += measurer.place(category, style, at, band * every, Offset(Center, 0f))
         }
     }
     val zero = y(max(data.domainLow, min(0.0, data.domainHigh)))
@@ -579,8 +594,10 @@ private fun CacheDrawScope.horizontalLayout(
         .size.height
         .toFloat()
     val categoryWidth =
-        min(size.width * 0.4f, data.categories.maxOf { measurer.measure(it, style).size.width }.toFloat()) +
-            8.dp.toPx()
+        min(
+            size.width * OpenUIDimens.BarLabelMaxWidthRatio,
+            data.categories.maxOf { measurer.measure(it, style).size.width }.toFloat(),
+        ) + 8.dp.toPx()
     val lastTickWidth = measurer.measure(data.tickLabels.last(), style).size.width / 2f
     val plot =
         Rect(categoryWidth, 0f, size.width - lastTickWidth - 2.dp.toPx(), size.height - labelHeight - 6.dp.toPx())
@@ -591,13 +608,13 @@ private fun CacheDrawScope.horizontalLayout(
         val tx = x(tick)
         lines += Offset(tx, plot.top) to Offset(tx, plot.bottom)
         val label = data.tickLabels[index]
-        labels += measurer.place(label, style, Offset(tx, plot.bottom + 6.dp.toPx()), size.width, Offset(0.5f, 0f))
+        labels += measurer.place(label, style, Offset(tx, plot.bottom + 6.dp.toPx()), size.width, Offset(Center, 0f))
     }
     val band = plot.height / data.categories.size
     data.categories.forEachIndexed { index, category ->
         val labelRight = categoryWidth - 8.dp.toPx()
-        val y = plot.top + band * (index + 0.5f)
-        labels += measurer.place(category, style, Offset(labelRight, y), labelRight, Offset(1f, 0.5f))
+        val y = plot.top + band * (index + Center)
+        labels += measurer.place(category, style, Offset(labelRight, y), labelRight, Offset(1f, Center))
     }
     val zero = x(max(data.domainLow, min(0.0, data.domainHigh)))
     return CartesianLayout(plot, ChartAxes(lines, labels), band, zero, x)
@@ -617,7 +634,7 @@ private fun DrawScope.drawVerticalBars(
     data.byCategory.forEachIndexed { categoryIndex, inCategory ->
         val bandLeft = plot.left + band * categoryIndex
         if (data.stacked) {
-            val width = band * 0.6f
+            val width = band * OpenUIDimens.BarWidthRatio
             val left = bandLeft + (band - width) / 2
             var positive = 0.0
             var negative = 0.0
@@ -630,9 +647,9 @@ private fun DrawScope.drawVerticalBars(
                 drawRoundRect(colors[data.indexOf(point)], Offset(left, min(y1, y2)), Size(width, abs(y2 - y1)), corner)
             }
         } else {
-            val groupWidth = band * 0.7f
+            val groupWidth = band * OpenUIDimens.BarGroupWidthRatio
             val barWidth = groupWidth / max(1, data.series.size)
-            val gap = min(2.dp.toPx(), barWidth * 0.15f)
+            val gap = min(2.dp.toPx(), barWidth * OpenUIDimens.BarGapRatio)
             for (point in inCategory) {
                 val seriesIndex = data.indexOf(point)
                 val left = bandLeft + (band - groupWidth) / 2 + barWidth * seriesIndex + gap / 2
@@ -660,7 +677,7 @@ private fun seriesLines(
     data.bySeries.mapIndexedNotNull { seriesIndex, inSeries ->
         val offsets = inSeries
             .map { point ->
-                val x = layout.plot.left + layout.band * (data.categories.indexOf(point.category) + 0.5f)
+                val x = layout.plot.left + layout.band * (data.categories.indexOf(point.category) + Center)
                 Offset(x, layout.position(point.value))
             }.sortedBy { it.x }
         if (offsets.isEmpty()) return@mapIndexedNotNull null
@@ -696,10 +713,10 @@ private fun linePath(points: List<Offset>, variant: String?): Path = Path().appl
                 val before = points.getOrElse(index - 2) { previous }
                 val after = points.getOrElse(index + 1) { current }
                 cubicTo(
-                    previous.x + (current.x - before.x) / 6,
-                    previous.y + (current.y - before.y) / 6,
-                    current.x - (after.x - previous.x) / 6,
-                    current.y - (after.y - previous.y) / 6,
+                    previous.x + (current.x - before.x) / CurveTension,
+                    previous.y + (current.y - before.y) / CurveTension,
+                    current.x - (after.x - previous.x) / CurveTension,
+                    current.y - (after.y - previous.y) / CurveTension,
                     current.x,
                     current.y,
                 )
@@ -729,7 +746,7 @@ private fun DrawScope.drawHorizontalBars(
     data.byCategory.forEachIndexed { categoryIndex, inCategory ->
         val bandTop = plot.top + band * categoryIndex
         if (data.stacked) {
-            val thickness = band * 0.6f
+            val thickness = band * OpenUIDimens.BarWidthRatio
             val top = bandTop + (band - thickness) / 2
             var positive = 0.0
             var negative = 0.0
@@ -747,9 +764,9 @@ private fun DrawScope.drawHorizontalBars(
                 )
             }
         } else {
-            val groupHeight = band * 0.7f
+            val groupHeight = band * OpenUIDimens.BarGroupWidthRatio
             val barHeight = groupHeight / max(1, data.series.size)
-            val gap = min(2.dp.toPx(), barHeight * 0.15f)
+            val gap = min(2.dp.toPx(), barHeight * OpenUIDimens.BarGapRatio)
             for (point in inCategory) {
                 val seriesIndex = data.indexOf(point)
                 val top = bandTop + (band - groupHeight) / 2 + barHeight * seriesIndex + gap / 2
@@ -841,7 +858,7 @@ private fun CacheDrawScope.scatterLayout(
     fun padded(values: List<Double>): Pair<Double, Double> {
         val low = values.min()
         val high = values.max()
-        val pad = if (high > low) (high - low) * 0.08 else 1.0
+        val pad = if (high > low) (high - low) * ScatterDomainPadding else 1.0
         return (if (low >= 0 && low - pad < 0) 0.0 else low - pad) to high + pad
     }
     val xRange = padded(points.map { it.x })
@@ -871,17 +888,18 @@ private fun CacheDrawScope.scatterLayout(
     yTicks.forEachIndexed { index, tick ->
         lines += Offset(plot.left, py(tick)) to Offset(plot.right, py(tick))
         val right = plot.left - 6.dp.toPx()
-        labels += measurer.place(yLabels[index], style, Offset(right, py(tick)), axisWidth, Offset(1f, 0.5f))
+        labels += measurer.place(yLabels[index], style, Offset(right, py(tick)), axisWidth, Offset(1f, Center))
     }
     xTicks.forEachIndexed { index, tick ->
         lines += Offset(px(tick), plot.top) to Offset(px(tick), plot.bottom)
         val at = Offset(px(tick), plot.bottom + 6.dp.toPx())
-        labels += measurer.place(xLabels[index], style, at, size.width, Offset(0.5f, 0f))
+        labels += measurer.place(xLabels[index], style, at, size.width, Offset(Center, 0f))
     }
     val centers = points.map { Offset(px(it.x), py(it.y)) }
     val radii = points.map { point ->
         // The bubble area grows with z, from 30 to 200 dp²; a negative z gets the least.
-        val area = point.z?.let { 30 + 170 * max(0.0, it) / maxZ } ?: 50.0
+        val area = point.z?.let { OpenUIDimens.BubbleMinArea + OpenUIDimens.BubbleAreaRange * max(0.0, it) / maxZ }
+            ?: OpenUIDimens.BubbleArea
         sqrt(area / Math.PI).toFloat().dp.toPx()
     }
     return ScatterLayout(ChartAxes(lines, labels), centers, radii)
@@ -903,6 +921,8 @@ private fun sectorPath(rect: Rect, start: Float, sweep: Float, innerRatio: Float
 }
 
 /** `PieChart(labels, values, variant?, appearance?)`. */
+// The slices, their labels and the legend share one entrance and one total.
+@Suppress("LongMethod")
 @Composable
 private fun PieChart(context: ComponentRenderProps) {
     val slices = ChartData.slices(context.props.array("labels"), context.props.array("values"))
@@ -911,8 +931,8 @@ private fun PieChart(context: ComponentRenderProps) {
     val theme = OpenUITheme.current
     val donut = context.props.string("variant") == "donut"
     val semicircle = context.props.string("appearance") == "semiCircular"
-    val span = if (semicircle) 180f else 360f
-    val startOffset = if (semicircle) 180f else -90f
+    val span = if (semicircle) HalfCircleDegrees else FullCircleDegrees
+    val startOffset = if (semicircle) HalfCircleDegrees else TopDegrees
     val progress = rememberEntrance(context.isStreaming)
     val separator = theme.colors.surface
     val colors = slices.indices.map { theme.colors.chartColor(it) }
@@ -944,7 +964,7 @@ private fun PieChart(context: ComponentRenderProps) {
                     val sweep = (value / total * span).toFloat() * progress.value
                     before += value
                     if (sweep <= 0f) return@forEachIndexed
-                    val path = sectorPath(rect, start, sweep, if (donut) 0.58f else 0f)
+                    val path = sectorPath(rect, start, sweep, if (donut) OpenUIDimens.DonutHoleRatio else 0f)
                     drawPath(path, colors[index])
                     drawPath(path, separator, style = Stroke(1.5.dp.toPx()))
                 }
@@ -955,7 +975,7 @@ private fun PieChart(context: ComponentRenderProps) {
                     modifier = if (semicircle) Modifier.align(Alignment.BottomCenter) else Modifier,
                 ) {
                     Text(
-                        NumberFormatting.decimal((total * 100).roundToInt() / 100.0),
+                        NumberFormatting.decimal((total * Percent).roundToInt() / Percent.toDouble()),
                         style = theme.typography.heading,
                         color = theme.colors.textPrimary,
                     )
@@ -1000,11 +1020,12 @@ private fun RadialChart(context: ComponentRenderProps) {
                 if (inset * 2 >= size.minDimension) return@forEachIndexed
                 val topLeft = Offset(inset, inset)
                 val arcSize = Size(size.width - inset * 2, size.height - inset * 2)
-                drawArc(track, 0f, 360f, false, topLeft, arcSize, style = Stroke(stroke))
-                val sweep = (ChartData.share(slice.value) / maximum * 0.75 * 360).toFloat() * progress.value
+                drawArc(track, 0f, FullCircleDegrees, false, topLeft, arcSize, style = Stroke(stroke))
+                val share = ChartData.share(slice.value) / maximum
+                val sweep = (share * RadialSweepShare * FullCircleDegrees).toFloat() * progress.value
                 drawArc(
                     colors[index],
-                    -90f,
+                    TopDegrees,
                     sweep,
                     false,
                     topLeft,
@@ -1069,7 +1090,7 @@ private fun RadarChart(context: ComponentRenderProps) {
     val axes = ChartData.radarAxes(labels, series)
     val (points, seriesNames) = ChartData.points(labels, series)
     val valid = points.filter { it.value.isFinite() }
-    if (axes.size < 3 || valid.isEmpty()) return
+    if (axes.size < RadarMinAxes || valid.isEmpty()) return
     val theme = OpenUITheme.current
     val maximum = max(valid.maxOf { it.value }, 1.0)
     val measurer = rememberTextMeasurer()
@@ -1134,10 +1155,10 @@ private fun CacheDrawScope.radarLayout(measurer: TextMeasurer, style: TextStyle,
             center.y + (sin(angle) * fraction).toFloat() * radius,
         )
     }
-    val grid = (1..4).map { level ->
+    val grid = (1..RadarGridLevels).map { level ->
         Path().apply {
             axes.indices.forEach { index ->
-                val p = point(index, level / 4.0)
+                val p = point(index, level / RadarGridLevels.toDouble())
                 if (index == 0) moveTo(p.x, p.y) else lineTo(p.x, p.y)
             }
             close()
@@ -1145,8 +1166,48 @@ private fun CacheDrawScope.radarLayout(measurer: TextMeasurer, style: TextStyle,
     }
     val spokes = axes.indices.map { center to point(it, 1.0) }
     val labels = axes.mapIndexed { index, text ->
-        val at = point(index, 1.18)
-        measurer.place(text, style, at, size.width / 3, Offset(0.5f, 0.5f))
+        val at = point(index, OpenUIDimens.RadarLabelRadiusRatio)
+        measurer.place(text, style, at, size.width * OpenUIDimens.RadarLabelMaxWidthRatio, Offset(Center, Center))
     }
     return RadarLayout(grid, ChartAxes(spokes, labels), ::point)
 }
+
+// The middle of a band or a label, as a share of its size.
+private const val Center = 0.5f
+
+// Percentages, and rounding to hundredths.
+private const val Percent = 100
+
+// The room left above and below the data, as a share of its range.
+private const val DomainPadding = 0.1
+private const val ScatterDomainPadding = 0.08
+
+// The most ticks an axis has.
+private const val MaxTicks = 50
+
+// Where axis labels switch to `k`, `M` and `B`.
+private const val Thousand = 1e3
+private const val CompactThousandsFrom = 1e4
+private const val Million = 1e6
+private const val Billion = 1e9
+
+// The characters of a category label that count when deciding whether labels fit.
+private const val CategoryLabelMaxChars = 14
+
+// How far a smoothed line's control points reach toward its neighbors (Catmull-Rom).
+private const val CurveTension = 6
+
+// Angles, in degrees, from the right, clockwise.
+private const val HalfCircleDegrees = 180f
+private const val FullCircleDegrees = 360f
+private const val TopDegrees = -90f
+
+// The share of the full circle a radial chart's largest value sweeps.
+private const val RadialSweepShare = 0.75
+
+// A radar chart needs three axes, and draws four grid rings.
+private const val RadarMinAxes = 3
+private const val RadarGridLevels = 4
+
+// How long a chart takes to grow in.
+private const val EntranceMillis = 600
