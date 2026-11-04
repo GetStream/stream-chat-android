@@ -95,7 +95,8 @@ internal object Lexer {
     private fun isIdentPart(c: Char) = isIdentStart(c) || c in '0'..'9'
     private fun isDigit(c: Char) = c in '0'..'9'
 
-    @Suppress("ComplexCondition", "LoopWithTooManyJumpStatements", "NestedBlockDepth")
+    // One pass over the source, one branch per token kind.
+    @Suppress("ComplexCondition", "LoopWithTooManyJumpStatements", "LongMethod", "NestedBlockDepth")
     fun tokenize(src: String): List<Token> {
         val tokens = ArrayList<Token>()
         var i = 0

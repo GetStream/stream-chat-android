@@ -42,6 +42,8 @@ internal object ActionStepType {
 
 /** The `@`-prefixed builtin functions and action steps of OpenUI Lang (port of `builtins.ts`). */
 internal object Builtins {
+    // The position of @Filter's value among its arguments.
+    private const val FILTER_TARGET_ARG = 3
 
     /** A data builtin: its prompt signature/description and runtime implementation. */
     class Definition internal constructor(
@@ -260,7 +262,7 @@ internal object Builtins {
         val items = args.arrayAt(0) ?: return OpenUIValue.EmptyArray
         val field = JS.toStringOrEmpty(args.getOrNull(1))
         val op = args.getOrNull(2).let { if (JS.isNullish(it)) "==" else JS.toString(it) }
-        val target = args.getOrNull(3)
+        val target = args.getOrNull(FILTER_TARGET_ARG)
         return OpenUIValue.Arr(
             items.filter { item ->
                 val value = if (field.isEmpty()) item else resolveField(item, field)

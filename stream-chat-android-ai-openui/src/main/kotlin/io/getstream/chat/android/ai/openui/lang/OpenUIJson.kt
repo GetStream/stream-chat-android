@@ -17,26 +17,26 @@
 package io.getstream.chat.android.ai.openui.lang
 
 /** Thrown when text is not valid JSON. */
-public class OpenUIJsonException(message: String, cause: Throwable? = null) : Exception(message, cause)
+internal class OpenUIJsonException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
 /** JSON reading and writing for [OpenUIValue]s (`JSON.parse` / `JSON.stringify`). */
-public object OpenUIJson {
+internal object OpenUIJson {
 
     /**
      * Parses JSON text with `JSON.parse` semantics: object key order is preserved, the last
      * duplicate key wins, and numbers are doubles. Throws [OpenUIJsonException] for invalid input.
      */
-    public fun parse(text: String): OpenUIValue = JsonReader(text).readDocument()
+    fun parse(text: String): OpenUIValue = JsonReader(text).readDocument()
 
     /** Parses JSON text, returning `null` when it is invalid. */
-    public fun parseOrNull(text: String): OpenUIValue? = try {
+    fun parseOrNull(text: String): OpenUIValue? = try {
         parse(text)
     } catch (_: OpenUIJsonException) {
         null
     }
 
     /** `JSON.stringify(value)`. */
-    public fun stringify(value: OpenUIValue): String = JS.jsonStringify(value)!!
+    fun stringify(value: OpenUIValue): String = JS.jsonStringify(value)!!
 }
 
 /** A single-pass recursive-descent reader for strict JSON (RFC 8259, as `JSON.parse` accepts it). */

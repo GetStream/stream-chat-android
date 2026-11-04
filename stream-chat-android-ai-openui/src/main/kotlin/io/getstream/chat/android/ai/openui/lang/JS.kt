@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MagicNumber") // ECMAScript constants: code points, radix and precision limits.
+
 package io.getstream.chat.android.ai.openui.lang
 
 import java.math.BigDecimal
