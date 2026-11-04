@@ -185,10 +185,17 @@ internal class OpenUIRuntime(
 
     // Evaluation ---------------------------------------------------------------------------
 
-    /** Context used to evaluate expressions against the current state and query results. */
+    /**
+     * Context used to evaluate expressions against the current state and query results.
+     *
+     * Expressions read state without what password fields hold: a field marked secret reads as
+     * `null`, and an object, such as a form, loses its secret fields. So a model that names a
+     * password field or its form with a `$` can't put it in a message, a link or a tool's
+     * arguments. The field itself still shows its value through [fieldValue].
+     */
     val evaluationContext: EvaluationContext
         get() = EvaluationContext(
-            getState = { name -> unwrapFieldValue(store[name]) },
+            getState = { name -> unwrapFieldValue(store[name].withoutSecret) },
             resolveRef = { name -> queryManager.mutationResult(name) ?: queryManager.result(name) },
             functions = functions,
             actions = customActions,
@@ -250,7 +257,9 @@ internal class OpenUIRuntime(
         val queryNodes = result?.queryStatements.orEmpty().map { statement ->
             val deps = statement.deps?.takeIf { it.isNotEmpty() }?.let { names ->
                 OpenUIValue.Obj(
-                    OpenUIObject.build { for (name in names) this[name] = snapshot[name] ?: OpenUIValue.Null },
+                    OpenUIObject.build {
+                        for (name in names) this[name] = snapshot[name].withoutSecret ?: OpenUIValue.Null
+                    },
                 )
             }
             QueryManager.QueryNode(
@@ -373,7 +382,7 @@ internal class OpenUIRuntime(
         // read it: it stays in the form's state, which leaves it out of what goes anywhere.
         if (target != null && !isSecret) {
             val expression = ReactiveBinding.expression(binding)
-            return StateField(name, store[target], isReactive = true) { newValue ->
+            return StateField(name, store[target].withoutSecret, isReactive = true) { newValue ->
                 val context = evaluationContext.copy(extraScope = mapOf("\$value" to (newValue ?: OpenUIValue.Null)))
                 store[target] = expression?.let { Evaluator.evaluate(it, context) } ?: newValue
             }
@@ -518,4 +527,11 @@ internal val OpenUIObject.withoutSecrets: OpenUIObject
                 else -> this[key] = OpenUIValue.Obj(fields.withoutSecrets)
             }
         }
+    }
+
+/** The value without what password fields hold: `null` for a field marked secret, else [withoutSecrets]. */
+private val OpenUIValue?.withoutSecret: OpenUIValue?
+    get() {
+        val fields = (this as? OpenUIValue.Obj)?.fields ?: return this
+        return if (fields[SecretKey] == OpenUIValue.of(true)) null else OpenUIValue.Obj(fields.withoutSecrets)
     }
