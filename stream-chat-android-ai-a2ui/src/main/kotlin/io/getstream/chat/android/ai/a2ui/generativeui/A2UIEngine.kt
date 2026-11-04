@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -38,6 +39,8 @@ import io.getstream.chat.android.ai.a2ui.core.A2UIProtocol
 import io.getstream.chat.android.ai.a2ui.core.A2UIStream
 import io.getstream.chat.android.ai.a2ui.core.BasicCatalog
 import io.getstream.chat.android.ai.a2ui.core.ComponentDefinition
+import io.getstream.chat.android.ai.a2ui.core.DataContext
+import io.getstream.chat.android.ai.a2ui.core.DynamicValue
 import io.getstream.chat.android.ai.a2ui.core.MessageProcessor
 import io.getstream.chat.android.ai.a2ui.core.RendererMessage
 import io.getstream.chat.android.ai.a2ui.core.RendererServices
@@ -96,10 +99,12 @@ internal class A2UIEngine(
     @Composable
     private fun ReplyContent(reply: A2UIReply, messages: List<String>, isStreaming: Boolean) {
         val uriHandler = LocalUriHandler.current
-        SideEffect {
-            reply.uriHandler = uriHandler
-            reply.update(messages, isStreaming)
+        // The handler holds the screen's context, so a reply lets it go once no composition shows it.
+        DisposableEffect(reply, uriHandler) {
+            reply.uriHandlers.add(uriHandler)
+            onDispose { reply.uriHandlers.remove(uriHandler) }
         }
+        SideEffect { reply.update(messages, isStreaming) }
         val revision by reply.revision
         Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(SurfaceSpacing)) {
             reply.processor.surfaces.values.forEach { surface ->
@@ -168,11 +173,17 @@ internal class A2UIEngine(
         ),
     )
 
-    // What the button the person tapped says, when its event has no words of its own.
+    // What the button the person tapped says, when its event has no words of its own. A path
+    // relative to a list item isn't read: the action doesn't say which item the button is in.
     private fun buttonText(message: RendererMessage.Action, reply: A2UIReply): String? {
         val surface = reply.processor.surface(message.surfaceId) ?: return null
         val childId = surface.component(message.sourceComponentId)?.properties?.get("child") as? String ?: return null
-        return (surface.component(childId)?.properties?.get("text") as? String)?.takeIf { it.isNotBlank() }
+        val text = when (val value = surface.component(childId)?.dynamic("text")) {
+            is DynamicValue.Literal -> value.value
+            is DynamicValue.Binding -> value.path.takeIf { it.isAbsolute }?.let(DataContext(surface.dataModel)::value)
+            else -> null
+        }
+        return A2UIJson.string(text)?.takeIf { it.isNotBlank() }
     }
 
     /**
@@ -184,8 +195,14 @@ internal class A2UIEngine(
         /** Changes whenever a surface's components or data do. */
         val revision = mutableIntStateOf(0)
 
+        /** The URI handlers of the compositions that show the reply, the latest last. */
+        val uriHandlers = mutableListOf<UriHandler>()
+
         /** The URI handler of the composition that shows the reply, for its links. */
-        var uriHandler: UriHandler? = null
+        val uriHandler: UriHandler? get() = uriHandlers.lastOrNull()
+
+        // Whether the whole tree was checked since the agent last finished the reply.
+        private var checked = false
 
         /** Whether the agent is still writing the reply. */
         var isStreaming: Boolean = false
@@ -220,11 +237,11 @@ internal class A2UIEngine(
          */
         fun update(messages: List<String>?, isStreaming: Boolean) {
             if (messages == null) return
-            val finished = this.isStreaming && !isStreaming
             this.isStreaming = isStreaming
             if (messages.size < applied.size || messages.subList(0, applied.size) != applied) {
                 processor.clear()
                 applied = emptyList()
+                checked = false
             }
             for (raw in messages.drop(applied.size)) {
                 val json = A2UIJson.map(A2UIJson.parseOrNull(raw))
@@ -235,8 +252,14 @@ internal class A2UIEngine(
                 processor.handleAny(normalizedVersion(json))
             }
             applied = messages
-            // Placeholders an incremental reply replaced stay behind, unreachable, so orphans are fine.
-            if (finished) processor.validateTopology(TopologyValidator(allowOrphans = true))
+            // A reply can arrive finished, so this doesn't wait for streaming to stop. Placeholders
+            // an incremental reply replaced stay behind, unreachable, so orphans are fine.
+            if (isStreaming) {
+                checked = false
+            } else if (!checked) {
+                checked = true
+                processor.validateTopology(TopologyValidator(allowOrphans = true))
+            }
         }
     }
 
@@ -255,11 +278,11 @@ internal class A2UIEngine(
          */
         fun messages(document: AIUIDocument): List<String>? = when (val content = document.content) {
             is String -> A2UIStream.messages(content)
-            is List<*> -> content.mapNotNull { item -> A2UIJson.map(item)?.let { A2UIJson.write(it) } }
+            // An entry that isn't an object stays, so applying it logs it.
+            is List<*> -> content.map { item -> A2UIJson.write(item) }
             is Map<*, *> -> {
                 val list = A2UIJson.list(content["messages"])
-                list?.mapNotNull { item -> A2UIJson.map(item)?.let { A2UIJson.write(it) } }
-                    ?: listOf(A2UIJson.write(content))
+                list?.map { item -> A2UIJson.write(item) } ?: listOf(A2UIJson.write(content))
             }
             else -> null
         }

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.a2ui.generativeui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
@@ -52,6 +53,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.shadows.ShadowLog
 
 @RunWith(AndroidJUnit4::class)
 internal class A2UIRendererTest {
@@ -189,6 +191,23 @@ internal class A2UIRendererTest {
         assertEquals("s", action.payload["surfaceId"])
         assertEquals("root", action.payload["sourceComponentId"])
         assertEquals(mapOf("restaurant" to "Lake View"), action.payload["context"])
+    }
+
+    @Test
+    fun `a button whose text is bound is labelled with the text it shows`() {
+        show(
+            document(
+                surface(
+                    mapOf("id" to "root", "component" to "Button", "child" to "label", "action" to bookEvent()),
+                    mapOf("id" to "label", "component" to "Text", "text" to mapOf("@path" to "/cta")),
+                    data = mapOf("name" to "Lake View", "cta" to "Reserve a table"),
+                ),
+            ),
+        )
+
+        rule.onNodeWithText("Reserve a table").performClick()
+
+        assertEquals("Reserve a table", sent.single().label)
     }
 
     @Test
@@ -361,6 +380,59 @@ internal class A2UIRendererTest {
 
         val surface = engine.reply("m1")!!.processor.surface("s")!!
         assertEquals("Booked", surface.dataModel.get(DataPath.parse("/status")))
+    }
+
+    @Test
+    fun `a reply lets go of its link handler once no composition shows it`() {
+        val engine = renderer.makeEngine(host) as A2UIEngine
+        val content = engine.content(document(surface(mapOf("id" to "root", "component" to "Text", "text" to "Hi"))), "m1")!!
+        val handler = object : UriHandler {
+            override fun openUri(uri: String) = Unit
+        }
+        var copies by mutableStateOf(2)
+        rule.setContent {
+            CompositionLocalProvider(LocalUriHandler provides handler) {
+                MaterialTheme { Column { repeat(copies) { content() } } }
+            }
+        }
+        val reply = engine.reply("m1")!!
+
+        rule.runOnIdle { copies = 1 }
+        rule.runOnIdle { assertEquals(handler, reply.uriHandler) }
+        rule.runOnIdle { copies = 0 }
+        rule.runOnIdle { assertNull(reply.uriHandler) }
+    }
+
+    @Test
+    fun `a reply that arrives finished has its whole tree checked`() {
+        ShadowLog.clear()
+        val engine = renderer.makeEngine(host)
+        val create = surface(mapOf("id" to "root", "component" to "Column", "children" to listOf("missing")))
+
+        engine.content(document(create), "m1")
+
+        assertTrue(ShadowLog.getLogsForTag("StreamA2UI").any { "missing" in it.msg })
+    }
+
+    @Test
+    fun `entries of a message list that aren't objects are kept, to be logged`() {
+        val create = A2UIJson.parse(surface(mapOf("id" to "root", "component" to "Text", "text" to "Hi")))
+
+        assertEquals(2, A2UIEngine.messages(document(listOf(create, "oops")))!!.size)
+        assertEquals(2, A2UIEngine.messages(document(mapOf("messages" to listOf(create, 42))))!!.size)
+    }
+
+    @Test
+    fun `an app component with a parameter named component is left out`() {
+        val clash = AIUIComponent(
+            AIUIComponentDefinition(
+                name = "badge",
+                description = "",
+                parameters = listOf(AIUIParameter.required("component", AIUIParameterType.String)),
+            ),
+        ) { _, _ -> }
+
+        assertNull(PortableComponents.definition(clash))
     }
 
     @Test

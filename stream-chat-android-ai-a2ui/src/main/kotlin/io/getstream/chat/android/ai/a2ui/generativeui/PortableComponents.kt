@@ -36,7 +36,10 @@ internal object PortableComponents {
         part.replaceFirstChar { it.titlecase(Locale.ROOT) }
     }
 
-    /** The catalog entry of [component], or `null` when its name or a parameter's isn't an A2UI identifier. */
+    /**
+     * The catalog entry of [component], or `null` when its name or a parameter's isn't an A2UI
+     * identifier, or a parameter is named `component`, the key that holds a component's type.
+     */
     fun definition(component: AIUIComponent): ComponentDefinition? {
         val definition = component.definition
         val type = typeName(definition.name)
@@ -45,7 +48,7 @@ internal object PortableComponents {
         val properties = A2UIJson.map(schema["properties"]).orEmpty().mapNotNull { (key, value) ->
             A2UIJson.map(value)?.let { key to it }
         }.toMap()
-        if (properties.keys.any { !A2UIIdentifier.isValid(it) }) return null
+        if (properties.keys.any { it == TYPE_KEY || !A2UIIdentifier.isValid(it) }) return null
         val notes = listOf(definition.description) + definition.events.map { it.description }
         return ComponentDefinition(
             name = type,
@@ -67,6 +70,8 @@ internal object PortableComponents {
             if (taken.add(definition.name)) component to definition else null
         }
     }
+
+    private const val TYPE_KEY = "component"
 
     private fun sentence(text: String): String {
         val trimmed = text.trim()
