@@ -191,6 +191,23 @@ internal class LibraryApiTest {
     }
 
     @Test
+    fun `removing drops the default examples and rules that use a removed component`() {
+        val library = chat.removing(setOf("Table", "Col", "EditableTable"))
+        val prompt = library.systemPrompt()
+
+        assertFalse(Regex("\\b(Table|Col|EditableTable)\\(").containsMatchIn(prompt), prompt)
+        assertTrue(library.defaultPromptOptions.examples.size < chat.defaultPromptOptions.examples.size)
+        assertTrue(library.defaultPromptOptions.examples.isNotEmpty())
+    }
+
+    @Test
+    fun `removing a name the library lacks keeps the default prompt options`() {
+        val library = chat.removing(setOf("Stack"))
+
+        assertEquals(chat.defaultPromptOptions, library.defaultPromptOptions)
+    }
+
+    @Test
     fun `removing keeps the root and a slot's only type`() {
         val library = chat.removing(setOf("Card", "FollowUpItem", "Callout"))
 
