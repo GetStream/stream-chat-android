@@ -33,6 +33,7 @@ internal class SocketFactory(
     private val tokenManager: TokenManager,
     private val headersUtil: HeadersUtil,
     private val httpClient: OkHttpClient = OkHttpClient(),
+    private val isEventProtocolV3Enabled: Boolean = false,
 ) {
     private val logger by taggedLogger("Chat:SocketFactory")
 
@@ -76,11 +77,13 @@ internal class SocketFactory(
     }
 
     private fun buildUserDetailJson(connectionConf: ConnectionConf): String {
-        val data = mapOf(
-            "user_details" to connectionConf.reduceUserDetails(),
-            "user_id" to connectionConf.id,
-            "server_determines_connection_id" to true,
-        )
+        val data = buildMap<String, Any> {
+            put("user_details", connectionConf.reduceUserDetails())
+            put("user_id", connectionConf.id)
+            put("server_determines_connection_id", true)
+            // v3 leaves the members out of the events of large channels, which the SDK keeps from its own copy
+            if (isEventProtocolV3Enabled) put("event_protocol", EVENT_PROTOCOL)
+        }
         return parser.toJson(data)
     }
 
@@ -149,5 +152,6 @@ internal class SocketFactory(
 
     companion object {
         private const val X_STREAM_CLIENT = "X-Stream-Client"
+        private const val EVENT_PROTOCOL = 3
     }
 }

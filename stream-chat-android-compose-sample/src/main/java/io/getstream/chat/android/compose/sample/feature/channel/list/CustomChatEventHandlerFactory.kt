@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.feature.channel.list
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MemberAddedEvent
@@ -46,6 +47,14 @@ class CustomChatEventHandlerFactory : ChatEventHandlerFactory() {
 class CustomChatEventHandler(channels: StateFlow<Map<String, Channel>?>) :
     DefaultChatEventHandler(channels, ChatClient.instance().clientState) {
 
+    override fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
+        return when (event) {
+            is ChannelUpdatedEvent -> handleChannelUpdate(event.channel, cachedChannel)
+            is ChannelUpdatedByUserEvent -> handleChannelUpdate(event.channel, cachedChannel)
+            else -> super.handleChatEvent(event, filter, cachedChannel)
+        }
+    }
+
     override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
         return when (event) {
             is MemberAddedEvent -> addIfCurrentUserAddedAndChannelNotDraft(cachedChannel, event.member)
@@ -56,8 +65,6 @@ class CustomChatEventHandler(channels: StateFlow<Map<String, Channel>?>) :
     override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
             is NotificationAddedToChannelEvent -> watchAndAddChannelIfNotDraft(event.channel)
-            is ChannelUpdatedEvent -> handleChannelUpdate(event.channel)
-            is ChannelUpdatedByUserEvent -> handleChannelUpdate(event.channel)
             else -> super.handleChannelEvent(event, filter)
         }
     }
@@ -86,8 +93,10 @@ class CustomChatEventHandler(channels: StateFlow<Map<String, Channel>?>) :
         }
     }
 
-    private fun handleChannelUpdate(channel: Channel): EventHandlingResult {
-        val isCurrentUserMember = channel.members.any { it.getUserId() == clientState.user.value?.id }
+    // channel.updated leaves out the members of large channels, so membership comes from the cached channel
+    private fun handleChannelUpdate(channel: Channel, cachedChannel: Channel?): EventHandlingResult {
+        val currentUserId = clientState.user.value?.id
+        val isCurrentUserMember = currentUserId != null && cachedChannel?.membership?.getUserId() == currentUserId
         return if (isCurrentUserMember) {
             addChannelIfNotDraft(channel)
         } else {

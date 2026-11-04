@@ -4986,6 +4986,7 @@ internal constructor(
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
         private var fastEventParsing: Boolean = false
+        private var eventProtocolV3: Boolean = false
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
@@ -5279,6 +5280,20 @@ internal constructor(
         }
 
         /**
+         * Connects with WebSocket event protocol v3, which leaves `channel.members` out of `channel.updated`,
+         * `member.*`, `notification.message_new` and `notification.added_to_channel` events of channels with more
+         * than 100 members.
+         *
+         * The SDK keeps the members it already has, but [Channel.members] on these events is empty, so read the
+         * members from the channel state and the count from [Channel.memberCount].
+         *
+         * Disabled by default.
+         */
+        public fun eventProtocolV3(enabled: Boolean): Builder = apply {
+            this.eventProtocolV3 = enabled
+        }
+
+        /**
          * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
          * By default, no calls are retried.
          * @see [NoRetryPolicy]
@@ -5354,6 +5369,7 @@ internal constructor(
                 debugRequests = debugRequests,
                 notificationConfig = notificationConfig,
                 fastEventParsing = fastEventParsing,
+                isEventProtocolV3Enabled = eventProtocolV3,
             )
             setupStreamLog()
 

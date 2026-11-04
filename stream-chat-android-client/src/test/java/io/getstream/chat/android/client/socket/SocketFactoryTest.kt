@@ -31,6 +31,8 @@ import io.getstream.chat.android.randomUser
 import okhttp3.OkHttpClient
 import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain`
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -72,18 +74,39 @@ internal class SocketFactoryTest {
         )
     }
 
+    @Test
+    fun `A client with event protocol v3 enabled asks for it in the connect json`() {
+        val user = randomUser()
+        val socketFactory = Fixture(httpClient)
+            .withEventProtocolV3()
+            .get()
+
+        socketFactory.createSocket(SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, user))
+
+        verify(httpClient, only()).newWebSocket(
+            org.mockito.kotlin.check {
+                it.url.toString() `should contain` "%22event_protocol%22%3A3"
+            },
+            any<WebSocketListener>(),
+        )
+    }
+
     private class Fixture(val httpClient: OkHttpClient) {
         private val tokenManager = FakeTokenManager(token, loadSyncToken)
+        private var isEventProtocolV3Enabled = false
 
         fun withExpire(expire: Boolean): Fixture = apply {
             tokenManager.takeIf { expire }?.expireToken()
         }
+
+        fun withEventProtocolV3(): Fixture = apply { isEventProtocolV3Enabled = true }
 
         fun get() = SocketFactory(
             chatParser,
             tokenManager,
             headersUtil,
             httpClient,
+            isEventProtocolV3Enabled,
         )
     }
 

@@ -354,6 +354,7 @@ public data class Channel(
 
 /**
  * Updates the given [Channel] with data from another [Channel] object.
+ * Keeps the current members when [that] has members but lists none, as events of large channels leave them out.
  *
  * @param that The [Channel] to take the new data from.
  */
@@ -371,7 +372,8 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         syncStatus = that.syncStatus,
         hiddenMessagesBefore = that.hiddenMessagesBefore,
         memberCount = that.memberCount,
-        members = that.members,
+        // Events of large channels leave the members out, so a channel with members but none listed keeps its own
+        members = if (that.members.isEmpty() && that.memberCount > 0) members else that.members,
         createdAt = that.createdAt,
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
