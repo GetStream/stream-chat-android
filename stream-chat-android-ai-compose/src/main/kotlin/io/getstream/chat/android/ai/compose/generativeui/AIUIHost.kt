@@ -18,6 +18,8 @@ package io.getstream.chat.android.ai.compose.generativeui
 
 import android.content.ActivityNotFoundException
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.platform.UriHandler
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
@@ -25,9 +27,12 @@ import io.getstream.chat.android.ai.compose.parts.AIClientTool
 import io.getstream.chat.android.ai.compose.parts.AIClientToolResult
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import io.getstream.chat.android.ai.compose.parts.Json
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import org.json.JSONException
 import java.util.Locale
 import java.util.UUID
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * The generated UI of one conversation: the renderers of the formats it reads, the app's
@@ -58,34 +63,56 @@ import java.util.UUID
  * @param send Sends what the person did to the agent, as their next message.
  */
 public class AIUIHost(
-    public val renderers: List<AIUIRenderer>,
-    public val components: List<AIUIComponent> = emptyList(),
+    renderers: List<AIUIRenderer>,
+    components: List<AIUIComponent> = emptyList(),
     tools: List<AIClientTool> = emptyList(),
     linkSchemes: Set<String> = setOf(HTTP, HTTPS, MAILTO),
     private val send: (AIUIAction) -> Unit,
 ) {
+    /** The renderer of each format the agent writes, the first one listed asked first. */
+    public val renderers: List<AIUIRenderer> = renderers.toList()
+
+    /** The app's views the agent can place. */
+    public val components: List<AIUIComponent> = components.toList()
+
     private val tools: Map<String, AIClientTool> = tools.distinctBy { it.name }.associateBy { it.name }
     private val linkSchemes: Set<String> = linkSchemes.mapTo(mutableSetOf()) { it.lowercase(Locale.ROOT) }
     private val engines = mutableMapOf<Int, AIUIEngine>()
     private val states = mutableMapOf<String, Any?>()
-    private val received = mutableMapOf<String, AIUIDocument>()
 
-    /** The app's component the agent places by [name]. */
+    // Snapshot state like the engines' own, so a composition that is thrown away forgets what it
+    // received along with what the engines did with it.
+    private val received = mutableStateMapOf<String, AIUIDocument>()
+
+    /**
+     * The app's component the agent places by [name].
+     *
+     * @param name The component's name.
+     */
     public fun component(name: String): AIUIComponent? = components.firstOrNull { it.name == name }
 
     /**
      * Whether one of its renderers reads [document]. The one that does can still show nothing of
-     * its own for a reply, which then shows its text, as [canShow] tells.
+     * its own for a reply, which then shows its text, as [showsUI] tells.
+     *
+     * @param document A reply's document.
      */
-    public fun reads(document: AIUIDocument): Boolean = position(document) != null
+    public fun canShow(document: AIUIDocument): Boolean = position(document) != null
 
     /**
      * Whether a reply shows its UI rather than its text: one of the host's renderers reads
      * [document], and shows something of its own for the reply.
+     *
+     * @param document The reply's document.
+     * @param messageId The reply's id.
      */
-    public fun canShow(document: AIUIDocument, messageId: String): Boolean = content(document, messageId) != null
+    public fun showsUI(document: AIUIDocument, messageId: String): Boolean = content(document, messageId) != null
 
-    /** Sends what the person did to the agent. */
+    /**
+     * Sends what the person did to the agent.
+     *
+     * @param action What they did, and in which reply's UI.
+     */
     public fun send(action: AIUIAction) {
         send.invoke(action)
     }
@@ -96,7 +123,8 @@ public class AIUIHost(
      * @param name The tool's name.
      * @param arguments Its arguments, as plain Kotlin values.
      * @return The tool's output, as plain Kotlin values.
-     * @throws AIUIToolException When the host has no such tool, or it fails.
+     * @throws AIUIToolException When the host has no such tool, it fails or throws, or its output
+     * is not JSON.
      */
     public suspend fun runTool(name: String, arguments: Map<String, Any?> = emptyMap()): Any? {
         val tool = tools[name]
@@ -107,7 +135,7 @@ public class AIUIHost(
             executor = AIToolCallPart.Executor.Client,
             arguments = Json.write(arguments),
         )
-        val result = tool?.run(call) ?: AIClientToolResult.failed("No tool named $name")
+        val result = if (tool == null) AIClientToolResult.failed("No tool named $name") else run(tool, call)
         result.failure?.let { throw AIUIToolException(it) }
         val output = result.output ?: return null
         return try {
@@ -117,9 +145,22 @@ public class AIUIHost(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
+    private suspend fun run(tool: AIClientTool, call: AIToolCallPart): AIClientToolResult = try {
+        tool.run(call)
+    } catch (cancellation: CancellationException) {
+        // Rethrows when the caller is cancelled; otherwise the tool's own timeout.
+        currentCoroutineContext().ensureActive()
+        AIClientToolResult.failed("${call.name} timed out")
+    } catch (_: Exception) {
+        AIClientToolResult.failed("${call.name} failed")
+    }
+
     /**
      * Whether a reply's UI may open [url]: a link of one of the host's `linkSchemes`, web and
      * email links by default, with a host of its own when it is a web link.
+     *
+     * @param url The link the agent wrote.
      */
     public fun canOpen(url: String): Boolean {
         val scheme = url.substringBefore(':', missingDelimiterValue = "").lowercase(Locale.ROOT)
@@ -132,12 +173,17 @@ public class AIUIHost(
     private fun hasHost(rest: String): Boolean {
         if (!rest.startsWith("//")) return false
         val authority = rest.drop(2).substringBefore('/').substringBefore('?').substringBefore('#')
-        return authority.substringAfterLast('@').isNotEmpty()
+        val host = authority.substringAfterLast('@')
+        // An IPv6 host keeps its colons in brackets; otherwise a colon starts the port.
+        val name = if (host.startsWith("[")) host.substringBefore(']') else host.substringBefore(':')
+        return name.isNotEmpty()
     }
 
     /**
      * Opens a link from a reply's UI with [uriHandler], when [canOpen] lets it.
      *
+     * @param url The link the agent wrote.
+     * @param uriHandler What opens it, such as `LocalUriHandler.current`.
      * @return Whether the link was opened.
      */
     public fun open(url: String, uriHandler: UriHandler): Boolean {
@@ -153,10 +199,19 @@ public class AIUIHost(
         }
     }
 
-    /** The state a reply's UI was left in, such as a form's values, kept while the host is. */
+    /**
+     * The state a reply's UI was left in, such as a form's values, kept while the host is.
+     *
+     * @param messageId The reply's id.
+     */
     public fun state(messageId: String): Any? = states[messageId]
 
-    /** Keeps the state a reply's UI was left in, or forgets it when [state] is `null`. */
+    /**
+     * Keeps the state a reply's UI was left in, or forgets it when [state] is `null`.
+     *
+     * @param messageId The reply's id.
+     * @param state The state to keep, as plain Kotlin values.
+     */
     public fun setState(messageId: String, state: Any?) {
         if (state == null) states.remove(messageId) else states[messageId] = state
     }
@@ -164,15 +219,30 @@ public class AIUIHost(
     /**
      * Gives its renderers the UI of the conversation's replies, oldest first, as each arrives or
      * changes, whether or not the reply is on screen, so a format whose later replies change an
-     * earlier one's UI follows them all. `AIConversation` does it: call it with the
+     * earlier one's UI follows them all. It also tells them when a reply leaves the conversation,
+     * or its UI does, such as when it is deleted. `AIConversation` does it: call it with the
      * conversation's messages when you show replies yourself with [AIUIView].
+     *
+     * @param messages The conversation's messages, oldest first.
      */
     public fun receive(messages: List<AIMessage>) {
-        messages.filter { it.role != AIMessageRole.User }.forEach { message ->
+        val documents = LinkedHashMap<String, AIUIDocument>()
+        messages.forEach { message ->
             val document = message.uiDocument
-            if (document != null && received[message.id] != document) {
-                received[message.id] = document
-                position(document)?.let { engine(it).receive(document, message.id) }
+            if (message.role != AIMessageRole.User && document != null) documents[message.id] = document
+        }
+        // What it received is its own bookkeeping, not something to recompose for.
+        Snapshot.withoutReadObservation {
+            (received.keys - documents.keys).forEach { messageId ->
+                val document = received.remove(messageId) ?: return@forEach
+                states.remove(messageId)
+                position(document)?.let { engine(it).remove(messageId) }
+            }
+            documents.forEach { (messageId, document) ->
+                if (received[messageId] != document) {
+                    received[messageId] = document
+                    position(document)?.let { engine(it).receive(document, messageId) }
+                }
             }
         }
     }

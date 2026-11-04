@@ -256,10 +256,12 @@ public final class io/getstream/chat/android/ai/compose/generativeui/AIUIDocumen
 public abstract interface class io/getstream/chat/android/ai/compose/generativeui/AIUIEngine {
 	public abstract fun content (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)Lkotlin/jvm/functions/Function2;
 	public fun receive (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)V
+	public fun remove (Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/ai/compose/generativeui/AIUIEngine$DefaultImpls {
 	public static fun receive (Lio/getstream/chat/android/ai/compose/generativeui/AIUIEngine;Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)V
+	public static fun remove (Lio/getstream/chat/android/ai/compose/generativeui/AIUIEngine;Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/ai/compose/generativeui/AIUIEntranceKt {
@@ -291,18 +293,18 @@ public final class io/getstream/chat/android/ai/compose/generativeui/AIUIHost {
 	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun canOpen (Ljava/lang/String;)Z
-	public final fun canShow (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)Z
+	public final fun canShow (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;)Z
 	public final fun component (Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponent;
 	public final fun getCapabilities ()Ljava/util/Map;
 	public final fun getComponents ()Ljava/util/List;
 	public final fun getRenderers ()Ljava/util/List;
 	public final fun open (Ljava/lang/String;Landroidx/compose/ui/platform/UriHandler;)Z
-	public final fun reads (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;)Z
 	public final fun receive (Ljava/util/List;)V
 	public final fun runTool (Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun runTool$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun send (Lio/getstream/chat/android/ai/compose/generativeui/AIUIAction;)V
 	public final fun setState (Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun showsUI (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)Z
 	public final fun state (Ljava/lang/String;)Ljava/lang/Object;
 }
 

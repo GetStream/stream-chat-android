@@ -90,6 +90,8 @@ public data class AIUIComponentDefinition(
         /**
          * Reads a definition from its portable JSON, in plain Kotlin values, or returns `null`
          * when it has no name.
+         *
+         * @param json The definition, as plain Kotlin values.
          */
         public fun fromJson(json: Map<String, Any?>): AIUIComponentDefinition? {
             val name = (json["name"] as? String)?.takeIf { it.isNotEmpty() } ?: return null
@@ -113,6 +115,8 @@ public data class AIUIComponentDefinition(
         /**
          * Reads a definition from its portable JSON text, or returns `null` when the text is not
          * a JSON object with a name.
+         *
+         * @param text The definition, as JSON text.
          */
         public fun fromJsonString(text: String): AIUIComponentDefinition? =
             (Json.parseOrNull(text) as? Map<*, *>)?.let { map -> fromJson(map.stringKeyed()) }

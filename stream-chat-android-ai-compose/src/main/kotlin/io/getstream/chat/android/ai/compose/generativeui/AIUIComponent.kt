@@ -114,6 +114,7 @@ public class AIUIComponentContext(
     /**
      * Opens a link, when the host lets links of its kind open (see [AIUIHost.canOpen]).
      *
+     * @param url The link the agent wrote.
      * @return Whether the link was opened.
      */
     public fun openUrl(url: String): Boolean = host.open(url, uriHandler)

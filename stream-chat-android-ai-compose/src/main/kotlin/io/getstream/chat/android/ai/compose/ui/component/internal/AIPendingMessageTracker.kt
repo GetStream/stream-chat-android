@@ -20,6 +20,7 @@ import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.conversation.AIPendingMessage
+import io.getstream.chat.android.ai.compose.generativeui.AIUIDocument
 
 /**
  * A row of a conversation of [AIMessage]s: a message, or one the person sent that is on its way.
@@ -74,9 +75,13 @@ internal class AIPendingMessageTracker {
 
     /**
      * The rows of a conversation: its [messages], apart from replies with nothing to show yet, and
-     * the [pending] message until its copy arrives.
+     * the [pending] message until its copy arrives. A reply's UI counts only when [canShow] it.
      */
-    fun entries(messages: List<AIMessage>, pending: AIPendingMessage?): List<AIConversationEntry> {
+    fun entries(
+        messages: List<AIMessage>,
+        pending: AIPendingMessage?,
+        canShow: (AIUIDocument) -> Boolean = { false },
+    ): List<AIConversationEntry> {
         var showsPending = pending != null
         // A copy that arrives in the update that stops passing its pending message still takes
         // over its row. Only then: a message sent later is not the copy of one that failed.
@@ -96,7 +101,7 @@ internal class AIPendingMessageTracker {
         }
         lastPending = pending
         lastSent = ids
-        val entries = messages.filterNot { it.showsNothing }.mapTo(mutableListOf()) { message ->
+        val entries = messages.filterNot { it.showsNothing(canShow) }.mapTo(mutableListOf()) { message ->
             val taken = copies[message.id]
             AIConversationEntry(
                 id = taken?.id ?: message.id,
@@ -118,11 +123,15 @@ internal class AIPendingMessageTracker {
     /**
      * Whether the latest message is surely waiting for a reply that shows nothing yet: it is on its
      * way, it is the copy of the one on its way, or its reply is being written but shows nothing.
-     * Call it after [entries], which matches the copies.
+     * Call it after [entries], which matches the copies. A reply's UI counts only when [canShow] it.
      */
-    fun isAwaitingReply(messages: List<AIMessage>, pending: AIPendingMessage?): Boolean {
+    fun isAwaitingReply(
+        messages: List<AIMessage>,
+        pending: AIPendingMessage?,
+        canShow: (AIUIDocument) -> Boolean = { false },
+    ): Boolean {
         val last = messages.lastOrNull()
-        if (last != null && last.isGenerating && last.showsNothing) return true
+        if (last != null && last.isGenerating && last.showsNothing(canShow)) return true
         if (pending == null) return false
         val copy = copies.entries.firstOrNull { it.value.id == pending.id }?.key ?: return true
         return last?.id == copy
@@ -143,7 +152,7 @@ internal class AIPendingMessageTracker {
     }
 }
 
-// A reply the agent has started but that has nothing to show yet.
-private val AIMessage.showsNothing: Boolean
-    get() = role != AIMessageRole.User && text.isEmpty() && parts.isEmpty() && attachments.isEmpty() &&
-        uiDocument == null
+// A reply the agent has started but that has nothing to show yet, its UI included when it can show.
+private fun AIMessage.showsNothing(canShow: (AIUIDocument) -> Boolean): Boolean =
+    role != AIMessageRole.User && text.isEmpty() && parts.isEmpty() && attachments.isEmpty() &&
+        uiDocument?.let(canShow) != true

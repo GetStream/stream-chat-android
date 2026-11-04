@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.conversation.AIPendingMessage
+import io.getstream.chat.android.ai.compose.generativeui.AIUIDocument
 import io.getstream.chat.android.ai.compose.generativeui.AIUIEntranceStage
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIConversationEntry
@@ -121,8 +122,10 @@ public fun AIConversation(
     val shown = messages.toList()
     // The list composes only the replies on screen, so the engines take every reply's UI first.
     ui?.receive(shown)
-    val (entries, isAwaitingReply) = remember(tracker, shown, pendingMessage) {
-        tracker.entries(shown, pendingMessage) to tracker.isAwaitingReply(shown, pendingMessage)
+    val (entries, isAwaitingReply) = remember(tracker, shown, pendingMessage, ui) {
+        // A reply's UI counts only when the host reads its format; otherwise the reply waits.
+        val canShow: (AIUIDocument) -> Boolean = { document -> ui?.canShow(document) == true }
+        tracker.entries(shown, pendingMessage, canShow) to tracker.isAwaitingReply(shown, pendingMessage, canShow)
     }
     AIConversation(
         messages = entries,

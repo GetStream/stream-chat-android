@@ -33,27 +33,45 @@ public data class AIUIParameter(
     val isRequired: Boolean = true,
 ) {
     public companion object {
-        /** A parameter the agent must fill in. */
+        /**
+         * A parameter the agent must fill in.
+         *
+         * @param name The parameter's name.
+         * @param type The type of its value.
+         * @param description What it is, for the agent.
+         */
         public fun required(name: String, type: AIUIParameterType, description: String? = null): AIUIParameter =
             AIUIParameter(name, type, description, isRequired = true)
 
-        /** A parameter the agent may leave out. */
+        /**
+         * A parameter the agent may leave out.
+         *
+         * @param name The parameter's name.
+         * @param type The type of its value.
+         * @param description What it is, for the agent.
+         */
         public fun optional(name: String, type: AIUIParameterType, description: String? = null): AIUIParameter =
             AIUIParameter(name, type, description, isRequired = false)
 
         /** The key that keeps the order of an object's fields, which JSON objects don't have. */
         internal const val ORDER_KEY = "x-order"
 
-        /** [parameters] as a JSON Schema object, in their order. */
-        internal fun objectSchema(parameters: List<AIUIParameter>): Map<String, Any?> = mapOf(
-            "type" to "object",
-            "properties" to parameters.associate { parameter ->
-                val description = listOfNotNull(parameter.description?.let { "description" to it })
-                parameter.name to parameter.type.schema + description
-            },
-            "required" to parameters.filter { it.isRequired }.map { it.name },
-            ORDER_KEY to parameters.map { it.name },
-        )
+        /**
+         * [parameters] as a JSON Schema object, in their order. Of parameters with the same name,
+         * the first one counts.
+         */
+        internal fun objectSchema(parameters: List<AIUIParameter>): Map<String, Any?> {
+            val distinct = parameters.distinctBy { it.name }
+            return mapOf(
+                "type" to "object",
+                "properties" to distinct.associate { parameter ->
+                    val description = listOfNotNull(parameter.description?.let { "description" to it })
+                    parameter.name to parameter.type.schema + description
+                },
+                "required" to distinct.filter { it.isRequired }.map { it.name },
+                ORDER_KEY to distinct.map { it.name },
+            )
+        }
 
         /** The fields of a JSON Schema object, in the order it keeps, then by name. */
         internal fun fromObjectSchema(schema: Map<*, *>?): List<AIUIParameter> {
@@ -106,15 +124,27 @@ public data class AIUIParameterType(val schema: Map<String, Any?>) {
         /** A link, such as an image's. */
         public val Url: AIUIParameterType = AIUIParameterType(mapOf("type" to "string", "format" to "uri"))
 
-        /** One of a fixed set of strings. */
+        /**
+         * One of a fixed set of strings.
+         *
+         * @param values The strings it can be.
+         */
         public fun enumeration(values: List<String>): AIUIParameterType =
             AIUIParameterType(mapOf("type" to "string", "enum" to values))
 
-        /** A list of values of one type. */
+        /**
+         * A list of values of one type.
+         *
+         * @param items The type of the list's values.
+         */
         public fun array(items: AIUIParameterType): AIUIParameterType =
             AIUIParameterType(mapOf("type" to "array", "items" to items.schema))
 
-        /** An object with named fields, in order. */
+        /**
+         * An object with named fields, in order.
+         *
+         * @param fields The object's fields, in order.
+         */
         public fun obj(fields: List<AIUIParameter>): AIUIParameterType =
             AIUIParameterType(AIUIParameter.objectSchema(fields))
     }
