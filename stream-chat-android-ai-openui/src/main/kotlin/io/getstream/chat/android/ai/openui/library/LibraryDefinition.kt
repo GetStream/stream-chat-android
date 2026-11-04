@@ -170,7 +170,8 @@ internal class LibraryDefinition(
     /**
      * A library without the components named [names]. They are also removed from every slot that
      * takes several types, and groups left empty are dropped. The root component, and a type that
-     * is the only one a slot takes, stay.
+     * is the only one a slot takes, stay. Default prompt examples that call a removed component, and
+     * additional rules that name one, are dropped too.
      */
     fun removing(names: Set<String>): LibraryDefinition {
         var removed = names - setOfNotNull(root)
@@ -188,7 +189,25 @@ internal class LibraryDefinition(
         val groups = componentGroups.mapNotNull { group ->
             group.components.filter { it !in removed }.takeIf { it.isNotEmpty() }?.let { group.copy(components = it) }
         }
-        return copy(components = remaining, componentGroups = groups)
+        val gone = components.map { it.name }.filter { it in removed }
+        return copy(
+            components = remaining,
+            componentGroups = groups,
+            defaultPromptOptions = defaultPromptOptions.without(gone),
+        )
+    }
+
+    /** These options without the examples that call, and the rules that name, a component of [names]. */
+    private fun PromptOptions.without(names: List<String>): PromptOptions {
+        if (names.isEmpty()) return this
+        val alternatives = names.joinToString("|") { Regex.escape(it) }
+        val call = Regex("\\b(?:$alternatives)\\(")
+        val mention = Regex("\\b(?:$alternatives)\\b")
+        return copy(
+            additionalRules = additionalRules.filterNot { mention.containsMatchIn(it) },
+            examples = examples.filterNot { call.containsMatchIn(it) },
+            toolExamples = toolExamples.filterNot { call.containsMatchIn(it) },
+        )
     }
 
     /**

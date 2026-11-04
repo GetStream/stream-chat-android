@@ -485,7 +485,7 @@ internal object PromptGenerator {
             }
 
         val byName = LinkedHashMap<String, ComponentPromptSpec>()
-        spec.components.forEach { byName.putIfAbsent(it.name, it) }
+        spec.components.forEach { byName.getOrPut(it.name) { it } }
         if (spec.componentGroups.isNotEmpty()) {
             val grouped = HashSet<String>()
             for (group in spec.componentGroups) {
