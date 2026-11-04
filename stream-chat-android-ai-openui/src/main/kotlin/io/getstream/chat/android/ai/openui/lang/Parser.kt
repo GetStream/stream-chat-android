@@ -180,7 +180,31 @@ internal class Parser internal constructor(
             return found
         }
 
-        @Suppress("LongMethod", "LoopWithTooManyJumpStatements", "NestedBlockDepth")
+        /** The `$variables` a statement uses, kept with the cache while the statement is unchanged. */
+        private fun stateReferences(statement: Statement, context: MaterializeContext): List<String> {
+            val cache = context.cache
+            val version = cache?.versions?.get(statement.id)
+            if (version != null) {
+                cache.stateReferences[statement.id]?.takeIf { it.version == version }?.let { return it.names }
+            }
+            val nodes = when (statement) {
+                is Statement.State -> listOf(statement.initial)
+                is Statement.Value -> listOf(statement.expr)
+                is Statement.Query -> statement.args
+                is Statement.Mutation -> statement.args
+            }
+            val names = nodes.flatMap { it.stateReferences }
+            if (version != null) {
+                cache.stateReferences[statement.id] = MaterializationCache.StateReferences(version, names)
+            }
+            return names
+        }
+
+        /**
+         * Materializes [statements] into a result. With a [cache], referenced statements whose
+         * reads are unchanged since an earlier pass are reused rather than materialized again.
+         */
+        @Suppress("LongMethod", "LoopWithTooManyJumpStatements", "NestedBlockDepth", "LongParameterList")
         internal fun buildResult(
             statements: Map<String, Statement>,
             incomplete: Boolean,
@@ -188,6 +212,7 @@ internal class Parser internal constructor(
             catalog: ParamMap?,
             rootName: String?,
             partialReference: PartialReference? = null,
+            cache: MaterializationCache? = null,
         ): ParseResult {
             val entry = pickEntry(statements, rootName)
             val symbols = statements.mapValues { it.value.symbol }
@@ -197,6 +222,7 @@ internal class Parser internal constructor(
                 if (id != entry?.id && statement is Statement.Value) unreached += id
             }
             val context = MaterializeContext(symbols, catalog, incomplete, entry?.id, unreached)
+            context.cache = cache
             var root: ElementNode? = null
             var rootExpression: ASTNode? = null
             val entrySymbol = entry?.let { symbols[it.id] }
@@ -242,20 +268,13 @@ internal class Parser internal constructor(
             // Any $variable referenced but not declared gets a null default, except a `$name`
             // that may still be streaming in.
             for (statement in statements.values) {
-                val nodes = when (statement) {
-                    is Statement.State -> listOf(statement.initial)
-                    is Statement.Value -> listOf(statement.expr)
-                    is Statement.Query -> statement.args
-                    is Statement.Mutation -> statement.args
-                }
-                for (node in nodes) {
-                    for (dep in node.stateReferences) {
-                        if (dep in stateDeclarations) continue
-                        if (partialReference?.matches(dep, statement.id) == true) continue
-                        stateDeclarations[dep] = OpenUIValue.Null
-                    }
+                for (dep in stateReferences(statement, context)) {
+                    if (dep in stateDeclarations) continue
+                    if (partialReference?.matches(dep, statement.id) == true) continue
+                    stateDeclarations[dep] = OpenUIValue.Null
                 }
             }
+            if (cache != null) cache.materializedNodes += context.materialized
 
             // Streaming consumers drop parser errors until the stream ends, so this reads as a stream-end check.
             context.currentStatementId = entry?.id

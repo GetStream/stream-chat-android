@@ -32,9 +32,17 @@ internal fun createStreamingParser(schema: OpenUIValue, rootName: String? = null
  * Incremental parser for streamed responses (port of `StreamParser`); create one with
  * [createStreamingParser].
  *
- * Completed statements (ended by a depth-0 newline) are parsed once and cached; only the
- * trailing, still-growing statement is re-parsed on each update. A statement already completed
- * is replaced by a later definition only once that definition no longer needs auto-closing.
+ * Work per update grows with the new text, not with the whole response:
+ * - preprocessing (fences, comments, whitespace) reads only the appended text and the line it
+ *   ends; completed lines are not processed again ([IncrementalPreprocessor]);
+ * - completed statements (ended by a depth-0 newline) are lexed and parsed once; only the
+ *   trailing, still-growing statement is re-parsed on each update;
+ * - what each referenced statement materialized to is reused until its source or any statement
+ *   it reads changes ([MaterializationCache]); the entry statement, `$state` initializers and
+ *   `Query`/`Mutation` args are materialized again each update.
+ *
+ * A statement already completed is replaced by a later definition only once that definition no
+ * longer needs auto-closing.
  *
  * Not thread-safe: feed it from one thread.
  *
@@ -57,16 +65,28 @@ internal class StreamParser internal constructor(
      * Preprocessed view of [buffer]. The completed-statement scan runs over this, never the raw
      * buffer, so leading prose or fences (an apostrophe in "You're …") can't corrupt it.
      */
-    private var cleaned = ""
+    private var cleaned = IncrementalPreprocessor()
 
     /** How far into [cleaned] statements are already completed. */
     private var completedEnd = 0
     private val completed = LinkedHashMap<String, Statement>()
     private var completedCount = 0
 
+    // A new version for each statement parsed, so the cache can tell when one changed.
+    private val completedVersions = HashMap<String, Int>()
+    private var lastVersion = 0
+    private var cache = MaterializationCache()
+
+    /** How many characters preprocessing has read since the last [reset]. */
+    internal val preprocessedChars: Int get() = cleaned.charsRead
+
+    /** How many nodes were materialized afresh, not reused, since the last [reset]. */
+    internal val materializedNodes: Int get() = cache.materializedNodes
+
     /** Appends the next chunk and returns the latest result. Pass [complete] once the stream has ended. */
     fun push(chunk: String, complete: Boolean = false): ParseResult {
         buffer += chunk
+        refreshCleaned(chunk, 0)
         return getResult(complete)
     }
 
@@ -76,7 +96,11 @@ internal class StreamParser internal constructor(
      */
     fun set(fullText: String, complete: Boolean = false): ParseResult {
         if (fullText.length < buffer.length || !fullText.startsWith(buffer)) reset()
-        buffer += fullText.substring(buffer.length)
+        if (fullText.length > buffer.length) {
+            val start = buffer.length
+            buffer = fullText
+            refreshCleaned(fullText, start)
+        }
         return getResult(complete)
     }
 
@@ -85,13 +109,12 @@ internal class StreamParser internal constructor(
      * may still be growing, so it isn't declared yet.
      */
     fun getResult(complete: Boolean = false): ParseResult {
-        refreshCleaned()
         val pendingStart = scanNewCompleted()
-        val pendingText = JS.trim(cleaned.substring(pendingStart))
+        val pendingText = JS.trim(cleaned.text.substring(minOf(pendingStart, cleaned.length), cleaned.length))
 
         if (pendingText.isEmpty()) {
             if (completedCount == 0) return ParseResult.empty()
-            return Parser.buildResult(completed, false, completedCount, paramMap, rootName)
+            return buildResult(completed, completedVersions, false, completedCount)
         }
 
         // `cleaned` is already preprocessed: just auto-close the trailing statement.
@@ -99,25 +122,26 @@ internal class StreamParser internal constructor(
         val pending = Statements.split(Lexer.tokenize(closed))
         if (pending.isEmpty()) {
             if (completedCount == 0) return ParseResult.empty(incomplete)
-            return Parser.buildResult(completed, incomplete, completedCount, paramMap, rootName)
+            return buildResult(completed, completedVersions, incomplete, completedCount)
         }
 
         // New ids render progressively; completed ids are replaced only once the pending
         // definition no longer needs auto-closing.
         val all = LinkedHashMap(completed)
+        val versions = HashMap(completedVersions)
         val pendingIds = HashSet<String>()
         for (statement in pending) {
             if (statement.id in completed && incomplete) continue
             all[statement.id] = Parser.classify(statement, ExpressionParser.parse(statement.tokens))
+            versions[statement.id] = nextVersion()
             pendingIds += statement.id
         }
         val tail = if (complete) null else partialStateName(buffer, pendingText)
-        return Parser.buildResult(
+        return buildResult(
             all,
+            versions,
             incomplete,
             completedCount + pending.size,
-            paramMap,
-            rootName,
             tail?.let { PartialReference(it, pendingIds) },
         )
     }
@@ -125,10 +149,29 @@ internal class StreamParser internal constructor(
     /** Clears all state. */
     fun reset() {
         buffer = ""
-        cleaned = ""
+        cleaned = IncrementalPreprocessor()
+        resetCompleted()
+    }
+
+    private fun resetCompleted() {
         completedEnd = 0
         completed.clear()
         completedCount = 0
+        completedVersions.clear()
+        cache = MaterializationCache()
+    }
+
+    private fun nextVersion(): Int = ++lastVersion
+
+    private fun buildResult(
+        statements: Map<String, Statement>,
+        versions: Map<String, Int>,
+        incomplete: Boolean,
+        statementCount: Int,
+        partialReference: PartialReference? = null,
+    ): ParseResult {
+        cache.versions = versions
+        return Parser.buildResult(statements, incomplete, statementCount, paramMap, rootName, partialReference, cache)
     }
 
     private fun addStatement(text: String) {
@@ -136,22 +179,19 @@ internal class StreamParser internal constructor(
         if (trimmed.isEmpty()) return
         for (statement in Statements.split(Lexer.tokenize(trimmed))) {
             completed[statement.id] = Parser.classify(statement, ExpressionParser.parse(statement.tokens))
+            completedVersions[statement.id] = nextVersion()
             completedCount++
         }
     }
 
     /**
-     * Recomputes [cleaned]. If the completed prefix is no longer a prefix of the new cleaned text
-     * (e.g. an opening fence just appeared), the cache is stale and is rebuilt.
+     * Preprocesses `text[start, text.length)`. Completed statements are read again when the text
+     * before [completedEnd] changes: a fence after unfenced text, or the line after them turning
+     * into a comment or a closing fence.
      */
-    private fun refreshCleaned() {
-        val next = Preprocessor.preprocess(buffer)
-        if (!next.startsWith(cleaned.substring(0, completedEnd))) {
-            completedEnd = 0
-            completed.clear()
-            completedCount = 0
-        }
-        cleaned = next
+    private fun refreshCleaned(text: String, start: Int) {
+        val startedOver = cleaned.append(text, start, text.length)
+        if (startedOver || cleaned.length < completedEnd) resetCompleted()
     }
 
     /** Caches statements completed since the last scan; returns where the pending statement starts. */
@@ -162,10 +202,12 @@ internal class StreamParser internal constructor(
         var inString: Char? = null
         var escaped = false
         var statementStart = completedEnd
+        val text = cleaned.text
+        val end = cleaned.length
 
         var i = completedEnd
-        while (i < cleaned.length) {
-            val c = cleaned[i]
+        while (i < end) {
+            val c = text[i]
             when {
                 escaped -> escaped = false
                 c == '\\' && inString != null -> escaped = true
@@ -178,16 +220,16 @@ internal class StreamParser internal constructor(
                 c == '\n' && depth <= 0 && ternaryDepth <= 0 -> {
                     // A next line starting with `?` (or `:` inside a ternary) continues the statement.
                     var peek = i + 1
-                    while (peek < cleaned.length &&
-                        cleaned[peek].let { it == ' ' || it == '\t' || it == '\r' || it == '\n' }
+                    while (peek < end &&
+                        text[peek].let { it == ' ' || it == '\t' || it == '\r' || it == '\n' }
                     ) {
                         peek++
                     }
                     val continues =
-                        peek < cleaned.length && (cleaned[peek] == '?' || (cleaned[peek] == ':' && ternaryDepth > 0))
+                        peek < end && (text[peek] == '?' || (text[peek] == ':' && ternaryDepth > 0))
                     if (!continues) {
-                        val text = JS.trim(cleaned.substring(statementStart, i))
-                        if (text.isNotEmpty()) addStatement(text)
+                        val statement = JS.trim(text.substring(statementStart, i))
+                        if (statement.isNotEmpty()) addStatement(statement)
                         statementStart = i + 1
                         completedEnd = i + 1
                     }
