@@ -18,10 +18,7 @@ package io.getstream.chat.android.ai.compose.generativeui
 
 import android.os.SystemClock
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -33,20 +30,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.ai.compose.ui.component.internal.rememberAnimationsOff
+import io.getstream.chat.android.ai.compose.util.internal.InternalStreamAIApi
 import kotlinx.coroutines.delay
 
 /**
  * Brings a part of a reply's generated UI in when it shows, such as when the agent writes it: the
  * part fades in, rising into place and coming into focus, after the parts that came in just before
  * it. What shows together with the reply's UI, or with a part around it, comes in with that, so a
- * reply written before it showed shows at once. With the system's animations off, parts only
- * fade.
+ * reply written before it showed shows at once. With the system's animations off, parts show at
+ * once.
  *
  * Renderers give it to each part they place, and to every app component. Outside a reply's
  * generated UI it shows [content] as it is.
@@ -56,15 +54,27 @@ import kotlinx.coroutines.delay
  */
 @Composable
 public fun AIUIEntrance(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    AIUIPartEntrance { entrance ->
+        Box(modifier = modifier.then(entrance)) {
+            content()
+        }
+    }
+}
+
+/**
+ * Brings a part of a reply's generated UI in as [AIUIEntrance] does, without a layout of its own:
+ * [content] gets the entrance as a modifier for its outermost element, so what its parent asks of
+ * it, such as its weight in a `Row`, still applies.
+ *
+ * @param content The part, given the entrance to apply to its outermost element.
+ */
+@InternalStreamAIApi
+@Composable
+public fun AIUIPartEntrance(content: @Composable (entrance: Modifier) -> Unit) {
     val stage = LocalAIUIStage.current
     // A part that shows with the one around it is carried in by it.
     val carried = remember { stage == null || stage.isCarried || stage.isStill }
-    Entrance(
-        stage = stage,
-        animates = !carried,
-        modifier = modifier,
-        content = content,
-    )
+    Entrance(stage = stage, animates = !carried, content = content)
 }
 
 /**
@@ -80,41 +90,46 @@ internal fun AIUIEntranceStage(isStreaming: Boolean, modifier: Modifier = Modifi
     Entrance(
         stage = AIUIStage(isCarried = false, isStill = still, cascade = cascade),
         animates = animates,
-        modifier = modifier,
-        content = content,
-    )
+    ) { entrance ->
+        Box(modifier = modifier.then(entrance)) {
+            content()
+        }
+    }
 }
 
 @Composable
-private fun Entrance(stage: AIUIStage?, animates: Boolean, modifier: Modifier, content: @Composable () -> Unit) {
+private fun Entrance(stage: AIUIStage?, animates: Boolean, content: @Composable (entrance: Modifier) -> Unit) {
     var hasShown by remember { mutableStateOf(false) }
     val progress = remember { Animatable(if (animates) 0f else 1f) }
-    val reduceMotion by rememberAnimationsOff()
     if (animates && stage != null) {
         // Outside the check on hasShown: setting it must not cancel the entrance under way.
         LaunchedEffect(Unit) {
-            val wait = stage.cascade.delay()
-            hasShown = true
-            delay(wait)
-            progress.animateTo(1f, entranceSpec(reduceMotion))
+            // The system's animation scale, which is 0 with animations off.
+            val scale = coroutineContext[MotionDurationScale]?.scaleFactor ?: 1f
+            if (scale == 0f) {
+                hasShown = true
+                progress.snapTo(1f)
+            } else {
+                val wait = stage.cascade.delay()
+                hasShown = true
+                delay(wait)
+                progress.animateTo(1f, spring(dampingRatio = EntranceDamping, stiffness = EntranceStiffness))
+            }
         }
     } else if (!hasShown) {
         SideEffect { hasShown = true }
     }
     // What shows with the part while it first shows comes in with it.
     CompositionLocalProvider(LocalAIUIStage provides stage?.carrying(!hasShown)) {
-        Box(modifier = modifier.entrance(progress::value, moves = !reduceMotion)) {
-            content()
-        }
+        content(Modifier.entrance(progress::value))
     }
 }
 
-// How a part looks on its way in: clear, a little lower and smaller, and out of focus. Without
-// motion it only fades.
-private fun Modifier.entrance(progress: () -> Float, moves: Boolean): Modifier = graphicsLayer {
+// How a part looks on its way in: clear, a little lower and smaller, and out of focus.
+private fun Modifier.entrance(progress: () -> Float): Modifier = graphicsLayer {
     val remaining = 1f - progress()
     alpha = 1f - remaining
-    if (moves && remaining > 0f) {
+    if (remaining > 0f) {
         translationY = EntranceRise.toPx() * remaining
         val scale = 1f - (1f - EntranceScale) * remaining
         scaleX = scale
@@ -124,14 +139,11 @@ private fun Modifier.entrance(progress: () -> Float, moves: Boolean): Modifier =
         // Blurs from Android 12; earlier versions skip it.
         renderEffect = if (blur > 0f) BlurEffect(blur, blur) else null
     } else {
+        translationY = 0f
+        scaleX = 1f
+        scaleY = 1f
         renderEffect = null
     }
-}
-
-private fun entranceSpec(reduceMotion: Boolean): AnimationSpec<Float> = if (reduceMotion) {
-    tween(durationMillis = ReducedEntranceMillis, easing = FastOutSlowInEasing)
-} else {
-    spring(dampingRatio = EntranceDamping, stiffness = EntranceStiffness)
 }
 
 /**
@@ -177,4 +189,3 @@ private const val EntranceDamping = 0.88f
 
 // A spring that settles in about 0.7 s.
 private const val EntranceStiffness = 80f
-private const val ReducedEntranceMillis = 300

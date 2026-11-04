@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.ai.compose.util.internal
+
+/**
+ * Marks the parts of the AI SDK its own modules share, such as its renderers of generated UI.
+ * They can change or go away in any release: don't use them in an app.
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS,
+)
+@RequiresOptIn(
+    message = "This is internal API for the Stream AI libraries. Do not depend on this API in your own client code.",
+    level = RequiresOptIn.Level.ERROR,
+)
+@Retention(AnnotationRetention.BINARY)
+public annotation class InternalStreamAIApi

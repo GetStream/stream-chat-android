@@ -70,10 +70,25 @@ internal class AIUIHostTest {
 
         override fun supports(version: String?): Boolean = versions == null || version in versions
 
-        override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> =
-            mapOf("components" to components.map { it.name })
+        override fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> =
+            mapOf("components" to components.map { it.name }, "tools" to tools.map { it.name })
 
         override fun makeEngine(host: AIUIHost): AIUIEngine = Engine(showsNothing).also { engines += it }
+    }
+
+    // A renderer that lists no tools, written before the host gave its tools.
+    private class ToolessRenderer : AIUIRenderer {
+        override val format: AIUIFormat = AIUIFormat.A2UI
+
+        override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> =
+            mapOf("components" to components.size)
+
+        override fun makeEngine(host: AIUIHost): AIUIEngine = Engine(showsNothing = false)
+    }
+
+    private fun tool(name: String) = object : AIClientTool {
+        override val name: String = name
+        override suspend fun run(call: AIToolCallPart) = AIClientToolResult.completed("{}")
     }
 
     private fun document(text: String, format: AIUIFormat = AIUIFormat.OpenUI, version: String? = null) =
@@ -271,12 +286,20 @@ internal class AIUIHostTest {
 
     @Test
     fun `capabilities name each format with what its renderer adds, and the app's components`() {
-        val host = AIUIHost(listOf(Renderer(AIUIFormat.OpenUI)), components = listOf(component)) {}
+        val host = AIUIHost(
+            renderers = listOf(Renderer(AIUIFormat.OpenUI), ToolessRenderer()),
+            components = listOf(component),
+            tools = listOf(tool("weather"), tool("contacts"), tool("weather")),
+        ) {}
 
         assertEquals(
             mapOf(
                 "v" to 1,
-                "renderers" to listOf(mapOf("format" to "openui", "components" to listOf("place_card"))),
+                "renderers" to listOf(
+                    // The renderer gets the host's tools, each once, by name.
+                    mapOf("format" to "openui", "components" to listOf("place_card"), "tools" to listOf("contacts", "weather")),
+                    mapOf("format" to "a2ui", "components" to 1),
+                ),
                 "components" to listOf(component.definition.toJson()),
             ),
             host.capabilities,

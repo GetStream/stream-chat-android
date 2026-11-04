@@ -26,7 +26,10 @@ import androidx.exifinterface.media.ExifInterface
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
+import io.getstream.chat.android.ai.compose.util.internal.decodeSampledBitmap
 import io.getstream.chat.android.ai.compose.util.internal.isDecodableImage
+import io.getstream.chat.android.ai.compose.util.internal.readAtMost
+import io.getstream.chat.android.ai.compose.util.internal.sampleSize
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -197,7 +200,19 @@ internal class AttachmentInfoTest {
         assertEquals(1, sampleSize(width = 400, height = 400, targetSizePx = 300))
         assertEquals(2, sampleSize(width = 1_200, height = 800, targetSizePx = 300))
         assertEquals(8, sampleSize(width = 4_000, height = 3_000, targetSizePx = 300))
-        assertEquals(1, sampleSize(width = 4_000, height = 3_000, targetSizePx = 0))
+        assertEquals(1, sampleSize(width = 2_000, height = 1_500, targetSizePx = 0))
+    }
+
+    @Test
+    fun `an image is sampled down until it decodes to no more than the most pixels`() {
+        // Its short side alone would keep a panorama at 8000 x 1000.
+        assertEquals(2, sampleSize(width = 8_000, height = 1_000, targetSizePx = 1_000))
+        // Without a target, a large photo is still sampled down: 6000 x 4000 is 24 MP.
+        assertEquals(4, sampleSize(width = 6_000, height = 4_000, targetSizePx = 0))
+        assertEquals(1, sampleSize(width = 2_048, height = 2_048, targetSizePx = 0))
+        // A side the decoder rounds up counts whole: half of 4097 decodes to 2049, past 2048.
+        assertEquals(4, sampleSize(width = 4_097, height = 4_097, targetSizePx = 0))
+        assertEquals(2, sampleSize(width = 400, height = 400, targetSizePx = 0, maxPixels = 200L * 200L))
     }
 
     @Test

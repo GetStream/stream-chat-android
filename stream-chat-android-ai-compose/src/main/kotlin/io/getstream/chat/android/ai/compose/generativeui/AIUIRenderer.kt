@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.compose.generativeui
 
 import androidx.compose.runtime.Composable
+import io.getstream.chat.android.ai.compose.parts.AIClientTool
 
 /**
  * Reads one format of generated UI and shows it. The SDK knows no format of its own: give a
@@ -38,7 +39,20 @@ public interface AIUIRenderer {
 
     /**
      * What the agent's backend needs to have its model write UI this renderer shows with
-     * [components], such as the model's instructions, as plain Kotlin values. None by default.
+     * [components], and runs [tools] from, such as the model's instructions that list the tools, as
+     * plain Kotlin values. By default, what the renderer gives for [components] alone.
+     *
+     * @param components The app's components the agent can place.
+     * @param tools The app's tools a reply's UI can run, by name.
+     */
+    public fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> =
+        capabilities(components)
+
+    /**
+     * What the agent's backend needs to have its model write UI this renderer shows with
+     * [components], for a renderer whose UI runs none of the app's tools. None by default.
+     *
+     * The host asks for the capabilities with its tools: override that one to list them.
      *
      * @param components The app's components the agent can place.
      */
