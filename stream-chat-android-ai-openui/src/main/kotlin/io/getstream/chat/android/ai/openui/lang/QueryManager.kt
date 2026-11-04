@@ -161,7 +161,7 @@ internal class QueryManager(
 
         scope.launch {
             try {
-                val data = provider.callTool(toolName, args.objectValue ?: OpenUIObject.Empty)
+                val data = provider.callTool(toolName, args.objectValue ?: OpenUIObject.Empty, userInitiated = false)
                 if (disposed) return@launch
                 // The data belongs to the key, so every query on it takes it. With none left (all
                 // removed or moved to a different key while in flight) it is discarded.
@@ -415,7 +415,7 @@ internal class QueryManager(
 
         var success = false
         try {
-            val data = provider.callTool(mutation.toolName, arguments)
+            val data = provider.callTool(mutation.toolName, arguments, userInitiated = true)
             if (disposed || startGeneration != generation) return false
             mutation.result = OpenUIValue.obj("status" to OpenUIValue.Str("success"), "data" to data)
             mutation.error = null
