@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ai.a2ui.compose
 
+import android.media.MediaPlayer
 import androidx.compose.material3.Text
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsMatcher
@@ -40,6 +41,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.shadows.ShadowMediaPlayer
+import org.robolectric.shadows.util.DataSource
 
 @RunWith(AndroidJUnit4::class)
 internal class SurfaceRenderingTest {
@@ -312,5 +315,25 @@ internal class SurfaceRenderingTest {
         assertEquals("19:30:00", DateTimeValues.format(null, 19, 30, utc, DateTimeKind.Time))
         assertEquals("2026-09-25T19:30:00+02:00", DateTimeValues.format(day, 19, 30, berlin, DateTimeKind.DateTime))
         assertEquals("2026-09-25T19:30:00Z", DateTimeValues.format(day, 19, 30, utc, DateTimeKind.DateTime))
+    }
+
+    @Test
+    fun `an audio player that failed to prepare starts again on the next tap`() {
+        val url = "https://example.com/song.mp3"
+        // The audio never finishes preparing on its own, so the test decides when it fails.
+        ShadowMediaPlayer.addMediaInfo(DataSource.toDataSource(url), ShadowMediaPlayer.MediaInfo(1_000, -1))
+        val players = mutableListOf<ShadowMediaPlayer>()
+        ShadowMediaPlayer.setCreateListener { _, shadow -> players.add(shadow) }
+        surfaces.create(listOf(mapOf("id" to "root", "component" to "AudioPlayer", "url" to url))).show()
+
+        rule.onNodeWithContentDescription("Play").performClick()
+        rule.runOnIdle { players.single().invokeErrorListener(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0) }
+        rule.onNodeWithContentDescription("Play").performClick()
+
+        rule.runOnIdle {
+            assertEquals(2, players.size)
+            assertEquals(ShadowMediaPlayer.State.END, players[0].state)
+            assertEquals(ShadowMediaPlayer.State.PREPARING, players[1].state)
+        }
     }
 }

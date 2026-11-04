@@ -175,7 +175,9 @@ private class AudioPlayback(private val url: String?, private val onFinished: ()
                     if (playWhenPrepared) it.start()
                 }
                 setOnCompletionListener { onFinished() }
+                // A player that failed can't play; the next tap starts a new one.
                 setOnErrorListener { _, _, _ ->
+                    this@AudioPlayback.release()
                     onFinished()
                     true
                 }
@@ -201,6 +203,7 @@ private class AudioPlayback(private val url: String?, private val onFinished: ()
         player?.release()
         player = null
         prepared = false
+        playWhenPrepared = false
     }
 }
 
