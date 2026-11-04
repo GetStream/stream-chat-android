@@ -4,6 +4,7 @@ public abstract interface class io/getstream/chat/android/ai/compose/conversatio
 	public fun getParts ()Ljava/util/List;
 	public abstract fun getRole-i3P7V6k ()Ljava/lang/String;
 	public abstract fun getText ()Ljava/lang/String;
+	public fun getUiDocument ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;
 	public fun isGenerating ()Z
 	public fun reasoningText (Lio/getstream/chat/android/ai/compose/parts/AIReasoningPart;)Ljava/lang/String;
 }
@@ -11,6 +12,7 @@ public abstract interface class io/getstream/chat/android/ai/compose/conversatio
 public final class io/getstream/chat/android/ai/compose/conversation/AIMessage$DefaultImpls {
 	public static fun getAttachments (Lio/getstream/chat/android/ai/compose/conversation/AIMessage;)Ljava/util/List;
 	public static fun getParts (Lio/getstream/chat/android/ai/compose/conversation/AIMessage;)Ljava/util/List;
+	public static fun getUiDocument (Lio/getstream/chat/android/ai/compose/conversation/AIMessage;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;
 	public static fun isGenerating (Lio/getstream/chat/android/ai/compose/conversation/AIMessage;)Z
 	public static fun reasoningText (Lio/getstream/chat/android/ai/compose/conversation/AIMessage;Lio/getstream/chat/android/ai/compose/parts/AIReasoningPart;)Ljava/lang/String;
 }
@@ -126,6 +128,260 @@ public final class io/getstream/chat/android/ai/compose/conversation/AIReplyActi
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIAction {
+	public static final field $stable I
+	public static final field CUSTOM_DATA_KEY Ljava/lang/String;
+	public static final field Companion Lio/getstream/chat/android/ai/compose/generativeui/AIUIAction$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2-cv5I8qU ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun copy-4DgJn1w (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIAction;
+	public static synthetic fun copy-4DgJn1w$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIAction;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIAction;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCustomData ()Ljava/util/Map;
+	public final fun getFormat-cv5I8qU ()Ljava/lang/String;
+	public final fun getJson ()Ljava/util/Map;
+	public final fun getLabel ()Ljava/lang/String;
+	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getPayload ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIAction$Companion {
+}
+
+public abstract interface class io/getstream/chat/android/ai/compose/generativeui/AIUIComponent {
+	public abstract fun Content (Ljava/util/Map;Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentContext;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun getDefinition ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition;
+	public fun getName ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIComponent$DefaultImpls {
+	public static fun getName (Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponent;)Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIComponentContext {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;ZLio/getstream/chat/android/ai/compose/generativeui/AIUIHost;Landroidx/compose/ui/platform/UriHandler;Lkotlin/jvm/functions/Function3;)V
+	public final fun emit (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public static synthetic fun emit$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentContext;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
+	public final fun getHost ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;
+	public final fun getMessageId ()Ljava/lang/String;
+	public final fun isStreaming ()Z
+	public final fun openUrl (Ljava/lang/String;)Z
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getEvents ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getParameters ()Ljava/util/List;
+	public final fun getParametersSchema ()Ljava/util/Map;
+	public fun hashCode ()I
+	public final fun toJson ()Ljava/util/Map;
+	public final fun toJsonString ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition$Companion {
+	public final fun fromJson (Ljava/util/Map;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition;
+	public final fun fromJsonString (Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition$Event {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition$Event;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition$Event;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition$Event;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getParameters ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIComponentKt {
+	public static final fun AIUIComponent (Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponentDefinition;Lkotlin/jvm/functions/Function4;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponent;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIDocument {
+	public static final field $stable I
+	public static final field CUSTOM_DATA_KEY Ljava/lang/String;
+	public static final field Companion Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument$Companion;
+	public static final field SUPPORTED_VERSION I
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ZLjava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ZLjava/lang/Object;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-cv5I8qU ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun component4 ()Ljava/lang/Object;
+	public final fun copy-5CEDoAg (Ljava/lang/String;Ljava/lang/String;ZLjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;
+	public static synthetic fun copy-5CEDoAg$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContent ()Ljava/lang/Object;
+	public final fun getFormat-cv5I8qU ()Ljava/lang/String;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isStreaming ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIDocument$Companion {
+	public final fun from (Ljava/util/Map;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;
+}
+
+public abstract interface class io/getstream/chat/android/ai/compose/generativeui/AIUIEngine {
+	public abstract fun content (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)Lkotlin/jvm/functions/Function2;
+	public fun receive (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)V
+	public fun remove (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIEngine$DefaultImpls {
+	public static fun receive (Lio/getstream/chat/android/ai/compose/generativeui/AIUIEngine;Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)V
+	public static fun remove (Lio/getstream/chat/android/ai/compose/generativeui/AIUIEngine;Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIEntranceKt {
+	public static final fun AIUIEntrance (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIFormat {
+	public static final field Companion Lio/getstream/chat/android/ai/compose/generativeui/AIUIFormat$Companion;
+	public static final synthetic fun box-impl (Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIFormat;
+	public static fun constructor-impl (Ljava/lang/String;)Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/lang/String;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/lang/String;Ljava/lang/String;)Z
+	public final fun getRawValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/lang/String;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/lang/String;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIFormat$Companion {
+	public final fun getA2UI-cv5I8qU ()Ljava/lang/String;
+	public final fun getOpenUI-cv5I8qU ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIHost {
+	public static final field $stable I
+	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun canOpen (Ljava/lang/String;)Z
+	public final fun canShow (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;)Z
+	public final fun component (Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIComponent;
+	public final fun getCapabilities ()Ljava/util/Map;
+	public final fun getComponents ()Ljava/util/List;
+	public final fun getRenderers ()Ljava/util/List;
+	public final fun open (Ljava/lang/String;Landroidx/compose/ui/platform/UriHandler;)Z
+	public final fun receive (Ljava/util/List;)V
+	public final fun runTool (Ljava/lang/String;Ljava/util/Map;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun runTool$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;Ljava/lang/String;Ljava/util/Map;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun send (Lio/getstream/chat/android/ai/compose/generativeui/AIUIAction;)V
+	public final fun setState (Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun showsUI (Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;)Z
+	public final fun state (Ljava/lang/String;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIParameter {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter$Companion;
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Z
+	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/lang/String;Z)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter;Ljava/lang/String;Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getType ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public fun hashCode ()I
+	public final fun isRequired ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIParameter$Companion {
+	public final fun optional (Ljava/lang/String;Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter;
+	public static synthetic fun optional$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter$Companion;Ljava/lang/String;Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter;
+	public final fun required (Ljava/lang/String;Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter;
+	public static synthetic fun required$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter$Companion;Ljava/lang/String;Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameter;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIParameterType {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType$Companion;
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSchema ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIParameterType$Companion {
+	public final fun array (Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun enumeration (Ljava/util/List;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun getBoolean ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun getDate ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun getDateTime ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun getInteger ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun getNumber ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun getString ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun getUrl ()Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+	public final fun obj (Ljava/util/List;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIParameterType;
+}
+
+public abstract interface class io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer {
+	public fun capabilities (Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
+	public abstract fun getFormat-cv5I8qU ()Ljava/lang/String;
+	public abstract fun makeEngine (Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;)Lio/getstream/chat/android/ai/compose/generativeui/AIUIEngine;
+	public fun supports (Ljava/lang/String;)Z
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIRenderer$DefaultImpls {
+	public static fun capabilities (Lio/getstream/chat/android/ai/compose/generativeui/AIUIRenderer;Ljava/util/List;Ljava/util/List;)Ljava/util/Map;
+	public static fun supports (Lio/getstream/chat/android/ai/compose/generativeui/AIUIRenderer;Ljava/lang/String;)Z
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIToolException : java/lang/Exception {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ai/compose/generativeui/AIUIViewKt {
+	public static final fun AIUIView (Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;Lio/getstream/chat/android/ai/compose/generativeui/AIUIDocument;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/ai/compose/parts/AIClientIdentity {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ai/compose/parts/AIClientIdentity;
@@ -133,8 +389,44 @@ public final class io/getstream/chat/android/ai/compose/parts/AIClientIdentity {
 }
 
 public abstract interface class io/getstream/chat/android/ai/compose/parts/AIClientTool {
+	public fun getDescription ()Ljava/lang/String;
+	public fun getInputSchema ()Ljava/util/Map;
 	public abstract fun getName ()Ljava/lang/String;
+	public fun isReadOnly ()Z
 	public abstract fun run (Lio/getstream/chat/android/ai/compose/parts/AIToolCallPart;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ai/compose/parts/AIClientTool$DefaultImpls {
+	public static fun getDescription (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Ljava/lang/String;
+	public static fun getInputSchema (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Ljava/util/Map;
+	public static fun isReadOnly (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Z
+}
+
+public final class io/getstream/chat/android/ai/compose/parts/AIClientToolDefinition {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Z)Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ZILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getInputSchema ()Ljava/util/Map;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isReadOnly ()Z
+	public final fun toJson ()Ljava/util/Map;
+	public final fun toJsonString ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ai/compose/parts/AIClientToolDefinition$Companion {
+	public final fun fromJson (Ljava/util/Map;)Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;
+	public final fun fromJsonString (Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;
 }
 
 public final class io/getstream/chat/android/ai/compose/parts/AIClientToolResult {
@@ -169,6 +461,10 @@ public final class io/getstream/chat/android/ai/compose/parts/AIClientToolRunner
 	public final fun getUserId ()Ljava/lang/String;
 	public final fun run (Ljava/util/List;Lkotlin/jvm/functions/Function3;)V
 	public final fun setMaxAttempts (I)V
+}
+
+public final class io/getstream/chat/android/ai/compose/parts/AIClientToolRunnerKt {
+	public static final fun getDefinition (Lio/getstream/chat/android/ai/compose/parts/AIClientTool;)Lio/getstream/chat/android/ai/compose/parts/AIClientToolDefinition;
 }
 
 public final class io/getstream/chat/android/ai/compose/parts/AIMessagePart {
@@ -556,7 +852,8 @@ public final class io/getstream/chat/android/ai/compose/ui/component/AIConversat
 }
 
 public final class io/getstream/chat/android/ai/compose/ui/component/AIConversationMessagesKt {
-	public static final fun AIConversation (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/conversation/AIPendingMessage;ZLio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;III)V
+	public static final synthetic fun AIConversation (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/conversation/AIPendingMessage;ZLio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;III)V
+	public static final fun AIConversation (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/conversation/AIPendingMessage;ZLio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Landroidx/compose/foundation/layout/PaddingValues;Lio/getstream/chat/android/ai/compose/generativeui/AIUIHost;Landroidx/compose/runtime/Composer;III)V
 	public static final synthetic fun AIConversation (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/conversation/AIPendingMessage;ZLio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationColors;Lio/getstream/chat/android/ai/compose/ui/component/AIConversationIcons;Landroidx/compose/runtime/Composer;II)V
 }
 
@@ -1028,10 +1325,12 @@ public final class io/getstream/chat/android/ai/compose/ui/component/ComposableS
 public final class io/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIConversationMessagesKt {
 	public static final field INSTANCE Lio/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIConversationMessagesKt;
 	public fun <init> ()V
+	public final fun getLambda$-1908331031$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-910991191$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1576577882$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1596490082$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$361948627$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$420895320$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIToolApprovalPromptKt {
@@ -1279,5 +1578,8 @@ public final class io/getstream/chat/android/ai/compose/ui/component/internal/Co
 	public final fun getLambda$-1485754247$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function4;
 	public final fun getLambda$1811339457$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$1855231261$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function3;
+}
+
+public abstract interface annotation class io/getstream/chat/android/ai/compose/util/internal/InternalStreamAIApi : java/lang/annotation/Annotation {
 }
 

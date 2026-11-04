@@ -19,6 +19,7 @@ package io.getstream.chat.android.ai.compose.parts
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.json.JSONTokener
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
@@ -87,9 +88,53 @@ internal object Json {
 
     /** Parses a JSON object into a map, or returns an empty map when [text] is not one. */
     fun parseObject(text: String): Map<String, Any?> = try {
+        checkDepth(text)
         toKotlin(JSONObject(text)) as? Map<String, Any?> ?: emptyMap()
     } catch (_: JSONException) {
         emptyMap()
+    }
+
+    /**
+     * Parses JSON text into plain Kotlin values: maps, lists, strings, numbers, booleans and
+     * `null`. Throws [JSONException] when [text] is not JSON, or nests deeper than [MAX_DEPTH].
+     */
+    fun parse(text: String): Any? {
+        checkDepth(text)
+        val tokener = JSONTokener(text)
+        val value = tokener.nextValue()
+        // JSONTokener reads one value and stops, so text after it would go unnoticed.
+        if (tokener.nextClean() != 0.toChar()) throw JSONException("Text after the JSON value")
+        // JSONTokener reads a bare word, such as `ok`, as a string; JSON quotes its strings.
+        if (value is String && text.trimStart().firstOrNull() != '"') throw JSONException("Text that is not JSON")
+        return toKotlin(value)
+    }
+
+    /** How deep JSON this reads may nest, past which it would run out of stack. */
+    const val MAX_DEPTH: Int = 512
+
+    // Throws before parsing when arrays and objects nest deeper than MAX_DEPTH, outside strings.
+    private fun checkDepth(text: String) {
+        var depth = 0
+        var inString = false
+        var escaped = false
+        for (char in text) {
+            when {
+                escaped -> escaped = false
+                inString -> if (char == '\\') escaped = true else if (char == '"') inString = false
+                char == '"' -> inString = true
+                char == '[' || char == '{' -> if (++depth > MAX_DEPTH) {
+                    throw JSONException("Nesting deeper than $MAX_DEPTH levels")
+                }
+                char == ']' || char == '}' -> depth--
+            }
+        }
+    }
+
+    /** Parses JSON text, or returns `null` when it is not JSON. */
+    fun parseOrNull(text: String): Any? = try {
+        parse(text)
+    } catch (_: JSONException) {
+        null
     }
 
     /** Writes [value] as JSON, with object keys sorted so equal values write equal text. */

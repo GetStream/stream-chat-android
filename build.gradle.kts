@@ -142,5 +142,6 @@ apiValidation {
 
     nonPublicMarkers += listOf(
         "io.getstream.chat.android.core.internal.InternalStreamChatApi",
+        "io.getstream.chat.android.ai.compose.util.internal.InternalStreamAIApi",
     )
 }

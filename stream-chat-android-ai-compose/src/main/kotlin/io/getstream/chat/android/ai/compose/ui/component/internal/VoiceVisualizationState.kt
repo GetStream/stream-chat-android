@@ -112,7 +112,7 @@ internal fun audioLevelInput(level: Float?): Float? = level?.takeIf { it.isFinit
 
 /** Whether the system's animations are off, following the setting while the screen is shown. */
 @Composable
-private fun rememberAnimationsOff(): State<Boolean> {
+internal fun rememberAnimationsOff(): State<Boolean> {
     val context = LocalContext.current
     val resolver = context.contentResolver
     val off = remember(resolver) { mutableStateOf(animationsOff(resolver)) }

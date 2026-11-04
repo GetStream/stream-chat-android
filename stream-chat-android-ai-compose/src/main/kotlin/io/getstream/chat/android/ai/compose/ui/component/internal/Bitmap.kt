@@ -22,10 +22,11 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import androidx.exifinterface.media.ExifInterface
+import io.getstream.chat.android.ai.compose.util.internal.sampleSize
 
 /**
- * Decodes a bitmap from a URI, downsampling it to approximately the target size
- * and applying the correct EXIF orientation.
+ * Decodes a bitmap from a URI, downsampling it to approximately the target size, within a total
+ * pixel cap, and applying the correct EXIF orientation.
  * This prevents loading huge images into memory when only a thumbnail is needed.
  *
  * @param contentResolver The content resolver to use for opening the URI
@@ -46,8 +47,8 @@ internal fun decodeSampledBitmap(
         BitmapFactory.decodeStream(inputStream, null, options)
     }
 
-    // Calculate the sample size
-    options.inSampleSize = calculateInSampleSize(options, targetSize, targetSize)
+    if (options.outWidth <= 0 || options.outHeight <= 0) return null
+    options.inSampleSize = sampleSize(options.outWidth, options.outHeight, targetSize)
     options.inJustDecodeBounds = false
 
     // Decode the bitmap with the calculated sample size
@@ -100,35 +101,4 @@ private fun rotateBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
             bitmap.recycle()
         }
     }
-}
-
-/**
- * Calculates the largest inSampleSize value that is a power of 2 and keeps both
- * height and width larger than the requested height and width.
- *
- * @param options The BitmapFactory.Options containing the image dimensions
- * @param reqWidth The requested width
- * @param reqHeight The requested height
- * @return The calculated sample size
- */
-private fun calculateInSampleSize(
-    options: BitmapFactory.Options,
-    reqWidth: Int,
-    reqHeight: Int,
-): Int {
-    val (height: Int, width: Int) = options.outHeight to options.outWidth
-    var inSampleSize = 1
-
-    if (height > reqHeight || width > reqWidth) {
-        val halfHeight: Int = height / 2
-        val halfWidth: Int = width / 2
-
-        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-        // height and width larger than the requested height and width.
-        while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-            inSampleSize *= 2
-        }
-    }
-
-    return inSampleSize
 }

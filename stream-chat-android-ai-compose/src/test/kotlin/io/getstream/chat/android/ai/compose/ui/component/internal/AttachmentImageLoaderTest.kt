@@ -23,6 +23,8 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.ai.compose.util.internal.AIImageLoader
+import io.getstream.chat.android.ai.compose.util.internal.decodeSampledBitmap
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -54,7 +56,7 @@ internal class AttachmentImageLoaderTest {
     fun setUp() {
         server = LocalHttpServer { path, out ->
             when (path) {
-                "/photo.png" -> out.respond(200, png(width = 400, height = 200))
+                "/photo.png", "/from-model.png" -> out.respond(200, png(width = 400, height = 200))
                 "/missing.png" -> out.respond(404, "Not found".toByteArray())
                 "/not-an-image.png" -> out.respond(200, "<html>Sign in</html>".toByteArray())
                 // Says it's larger than the limit and sends nothing: the loader must not read it.
@@ -79,6 +81,13 @@ internal class AttachmentImageLoaderTest {
     @After
     fun tearDown() {
         server.close()
+    }
+
+    @Test
+    fun `an image whose link the model wrote isn't downloaded from this device's network`() = runTest {
+        // A path no other test loads, so nothing an attachment loaded is served from memory.
+        assertNull(AIImageLoader.load("http://127.0.0.1:${server.port}/from-model.png", targetSizePx = 100))
+        assertEquals(0, server.requests.get())
     }
 
     @Test
