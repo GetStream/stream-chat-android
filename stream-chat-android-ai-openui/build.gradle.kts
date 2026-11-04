@@ -46,6 +46,8 @@ tasks.withType<KotlinCompile>().configureEach {
                 "-Xexplicit-api=strict",
             ),
         )
+        // Images load with the shared loader of stream-chat-android-ai-compose.
+        optIn.add("io.getstream.chat.android.ai.compose.util.internal.InternalStreamAIApi")
     }
 }
 
