@@ -18,6 +18,7 @@ package io.getstream.chat.android.ai.openui.lang
 
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -167,6 +168,19 @@ internal class UtilityTest {
             assertEquals("Please enter a valid URL", check(v("not a url"), obj("url" to true)))
             assertNull(check(v("https://openui.com"), obj("url" to true)))
             assertNull(check(v(""), obj("email" to true, "minLength" to 3)), "empty optional fields pass")
+        }
+
+        @Test
+        @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
+        fun `a pattern that backtracks without end is invalid instead of hanging`() {
+            val rules = FormValidation.rules(obj("pattern" to "^(a+)+$"))
+            assertEquals("Invalid format", FormValidation.validate(v("a".repeat(30) + "!"), rules))
+            assertNull(FormValidation.validate(v("a".repeat(30)), rules))
+
+            // The JVM's engine finishes the pattern above quickly; the backreference makes it
+            // backtrack on every engine, so this one runs into the deadline.
+            val backtracking = FormValidation.rules(obj("pattern" to "^(a+)+\\1$"))
+            assertEquals("Invalid format", FormValidation.validate(v("a".repeat(30) + "!"), backtracking))
         }
     }
 

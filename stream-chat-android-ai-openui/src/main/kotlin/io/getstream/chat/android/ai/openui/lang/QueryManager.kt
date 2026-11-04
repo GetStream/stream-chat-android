@@ -34,6 +34,8 @@ import kotlin.time.Duration.Companion.seconds
  *
  * Results are cached by tool name, arguments and dependency values; while a query refetches
  * with new arguments the previous data stays visible. Queries can auto-refresh on an interval.
+ * A query whose arguments change waits [ARGUMENT_DEBOUNCE] before fetching, so arguments bound
+ * to an input fetch once the user pauses rather than on every keystroke.
  *
  * Fetches run in [scope]. Like the runtime that owns it, the manager is confined to one thread:
  * give it a single-threaded scope (the main thread on Android).
@@ -79,6 +81,9 @@ internal class QueryManager(
         var everFetched = false
         var refreshInterval = 0.0
         var timer: Job? = null
+
+        /** A fetch waiting out the argument debounce. */
+        var pendingFetch: Job? = null
         var needsRefetch = false
         var error: OpenUIError? = null
     }
@@ -258,6 +263,7 @@ internal class QueryManager(
         val removed = queries.filterKeys { it !in activeIds }
         for ((id, query) in removed) {
             query.timer?.cancel()
+            query.pendingFetch?.cancel()
             queries.remove(id)
             cleanupCacheEntry(query.cacheKey)
             query.previousCacheKey?.let(::cleanupCacheEntry)
@@ -267,9 +273,15 @@ internal class QueryManager(
             if (!node.complete) continue
             val cacheKey = cacheKey(node.toolName, node.args, node.deps)
             val existing = queries[node.statementId]
+            val argumentsChanged = existing != null && existing.cacheKey != cacheKey
             val query = if (existing != null) {
                 // Keep the previous key for display while the new one loads.
-                if (existing.cacheKey != cacheKey) existing.previousCacheKey = existing.cacheKey
+                if (argumentsChanged) {
+                    existing.previousCacheKey = existing.cacheKey
+                    // A fetch scheduled for the old arguments is replaced.
+                    existing.pendingFetch?.cancel()
+                    existing.pendingFetch = null
+                }
                 existing.toolName = node.toolName
                 existing.args = node.args
                 existing.defaults = node.defaults
@@ -283,7 +295,12 @@ internal class QueryManager(
             val entry = cache[cacheKey]
             val hasSettledData = entry?.data != null && !entry.inFlight
             if (toolProvider != null && !hasSettledData && entry?.inFlight != true) {
-                executeFetch(cacheKey, node.statementId)
+                when {
+                    argumentsChanged -> scheduleFetch(query, node.statementId)
+                    // Same arguments as a fetch already waiting: let it fire.
+                    query.pendingFetch?.isActive == true -> Unit
+                    else -> executeFetch(cacheKey, node.statementId)
+                }
             } else if (hasSettledData && query.loading) {
                 // Back on args whose data is cached while another fetch was in flight: that fetch
                 // no longer concerns this query, so it must not keep it loading.
@@ -294,24 +311,50 @@ internal class QueryManager(
                 }
             }
 
-            val interval = node.refreshInterval ?: 0.0
-            if (interval != query.refreshInterval) {
-                query.timer?.cancel()
-                query.timer = null
-                if (interval > 0) {
-                    val wait = refreshDelay(interval, toolProvider?.minimumRefreshInterval ?: DEFAULT_MINIMUM_REFRESH)
-                    query.timer = scope.launch {
-                        while (isActive) {
-                            delay(wait)
-                            if (disposed || toolProvider == null) continue
-                            if (cache[query.cacheKey]?.inFlight != true) executeFetch(query.cacheKey, node.statementId)
-                        }
-                    }
-                }
-                query.refreshInterval = interval
-            }
+            armRefresh(query, node)
         }
         if (rebuildSnapshot()) notifyChange()
+    }
+
+    /** (Re)arms the auto-refresh timer of [query] when its interval changed. */
+    private fun armRefresh(query: QueryEntry, node: QueryNode) {
+        val interval = node.refreshInterval ?: 0.0
+        if (interval == query.refreshInterval) return
+        query.timer?.cancel()
+        query.timer = null
+        if (interval > 0) {
+            val wait = refreshDelay(interval, toolProvider?.minimumRefreshInterval ?: DEFAULT_MINIMUM_REFRESH)
+            query.timer = scope.launch {
+                while (isActive) {
+                    delay(wait)
+                    if (disposed || toolProvider == null) continue
+                    if (cache[query.cacheKey]?.inFlight != true) executeFetch(query.cacheKey, node.statementId)
+                }
+            }
+        }
+        query.refreshInterval = interval
+    }
+
+    /**
+     * Fetches [query]'s current key after [ARGUMENT_DEBOUNCE], unless its arguments change again
+     * first. It shows as loading meanwhile, with the previous data still visible.
+     */
+    private fun scheduleFetch(query: QueryEntry, statementId: String) {
+        query.loading = true
+        query.pendingFetch = scope.launch {
+            delay(ARGUMENT_DEBOUNCE)
+            query.pendingFetch = null
+            if (disposed || queries[statementId] !== query) return@launch
+            val entry = cache[query.cacheKey]
+            when {
+                entry?.inFlight == true -> Unit
+                entry?.data != null -> {
+                    query.loading = false
+                    if (rebuildSnapshot()) notifyChange()
+                }
+                else -> executeFetch(query.cacheKey, statementId)
+            }
+        }
     }
 
     /** The current result of a query: data, previous data while refetching, or its defaults. */
@@ -340,22 +383,10 @@ internal class QueryManager(
         for (node in nodes) {
             val existing = mutations[node.statementId]
             if (existing == null) {
-                mutations[node.statementId] = MutationEntry(
-                    node.toolName,
-                    OpenUIValue.obj(
-                        "status" to OpenUIValue.Str("idle"),
-                        "data" to OpenUIValue.Null,
-                        "error" to OpenUIValue.Null,
-                    ),
-                )
+                mutations[node.statementId] = MutationEntry(node.toolName, IDLE)
             } else if (existing.toolName != node.toolName) {
                 existing.toolName = node.toolName
-                existing.result =
-                    OpenUIValue.obj(
-                        "status" to OpenUIValue.Str("idle"),
-                        "data" to OpenUIValue.Null,
-                        "error" to OpenUIValue.Null,
-                    )
+                existing.result = IDLE
                 existing.error = null
             }
         }
@@ -377,7 +408,8 @@ internal class QueryManager(
         if (mutation.result["status"] == OpenUIValue.Str("loading")) return false
 
         val startGeneration = generation
-        mutation.result = status("loading")
+        val loading = status("loading")
+        mutation.result = loading
         rebuildSnapshot()
         notifyChange()
 
@@ -399,6 +431,13 @@ internal class QueryManager(
                     "error" to OpenUIValue.Str(error.message ?: error.toString()),
                 )
             mutation.error = toolError(OpenUIError.Source.Mutation, statementId, mutation.toolName, error)
+        } finally {
+            // A cancelled call (its caller left the screen) never settles: back to idle so the
+            // mutation can run again.
+            if (mutation.result === loading) {
+                mutation.result = IDLE
+                if (rebuildSnapshot()) notifyChange()
+            }
         }
         rebuildSnapshot()
         notifyChange()
@@ -425,6 +464,8 @@ internal class QueryManager(
         for (query in queries.values) {
             query.timer?.cancel()
             query.timer = null
+            query.pendingFetch?.cancel()
+            query.pendingFetch = null
             query.refreshInterval = 0.0
             query.loading = false
             query.needsRefetch = false
@@ -434,6 +475,16 @@ internal class QueryManager(
 
     internal companion object {
         private val DEFAULT_MINIMUM_REFRESH = 5.seconds
+
+        /** The state of a mutation that hasn't run, or whose last run was cancelled. */
+        private val IDLE = OpenUIValue.obj(
+            "status" to OpenUIValue.Str("idle"),
+            "data" to OpenUIValue.Null,
+            "error" to OpenUIValue.Null,
+        )
+
+        /** How long a query waits after its arguments change before fetching. */
+        internal val ARGUMENT_DEBOUNCE = 300.milliseconds
         private val SHORTEST = 1.milliseconds
 
         // A browser's `setInterval` waits at most 2^31 - 1 ms (about 24.8 days).

@@ -18,6 +18,7 @@ package io.getstream.chat.android.ai.openui.lang
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -321,6 +322,52 @@ internal class RuntimeTest {
             assertFalse(manager.fireMutation("broken", OpenUIObject.Empty))
             assertEquals(obj("status" to "error", "error" to "boom"), manager.mutationResult("broken"))
             assertEquals(OpenUIError.Source.Mutation, manager.snapshot.value.errors.first().source)
+        }
+
+        @Test
+        fun `a cancelled mutation goes back to idle and runs again`() = runTest {
+            val provider = RecordingToolProvider { _, _, _ ->
+                delay(100)
+                obj("saved" to true)
+            }
+            val manager = QueryManager(provider, this)
+            manager.registerMutations(listOf(QueryManager.MutationNode("save", "save")))
+            val call = launch { manager.fireMutation("save", OpenUIObject.Empty) }
+            runCurrent()
+            assertEquals(v("loading"), manager.mutationResult("save")["status"])
+
+            call.cancel()
+            runCurrent()
+
+            assertEquals(v("idle"), manager.mutationResult("save")["status"])
+            assertTrue(manager.fireMutation("save", OpenUIObject.Empty))
+            assertEquals(v("success"), manager.mutationResult("save")["status"])
+            assertEquals(2, provider.calls.size)
+        }
+
+        @Test
+        fun `arguments that change quickly fetch once after they settle`() = runTest {
+            val provider = RecordingToolProvider { _, args, _ ->
+                delay(50)
+                obj("rows" to listOf(args["q"] ?: v("none")))
+            }
+            val manager = QueryManager(provider, this)
+            manager.evaluateQueries(listOf(node("data", args = obj("q" to ""))))
+            advanceUntilIdle()
+            provider.calls.clear()
+
+            val typed = "barcelona"
+            for (length in 1..typed.length) {
+                manager.evaluateQueries(listOf(node("data", args = obj("q" to typed.take(length)))))
+                advanceTimeBy(100)
+            }
+            assertTrue(provider.calls.isEmpty(), "no fetch while the arguments keep changing")
+            assertTrue(manager.isLoading("data"))
+            advanceUntilIdle()
+
+            assertEquals(listOf(v(typed)), provider.calls.map { it.second["q"] })
+            assertEquals(obj("rows" to listOf(typed)), manager.result("data"))
+            assertFalse(manager.isLoading("data"))
         }
     }
 
