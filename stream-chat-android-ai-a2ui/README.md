@@ -19,7 +19,7 @@ A reply's `ai_ui` document has the format `a2ui`, and its content holds the repl
 - **Actions.** A button's event reaches the host as an `AIUIAction` named after the event. Its label is the event's `userMessage`, or else the button's text, and its payload holds the `surfaceId`, the `sourceComponentId` and the event's resolved `context`. An app component's events carry the component's name as `component`.
 - **App components.** A component joins the catalog under its name in `PascalCase` (`place_card` is `PlaceCard`), with its parameters as its properties. The catalog with them goes by `getstream.io:app-catalog` (`A2UIRenderer.catalogId`); a surface that names the basic catalog's id shows them as well. A component named like one of the basic catalog's is left out.
 - **Links.** `openUrl` runs only from a person's tap, and opens through the host, which decides the kinds of link that open.
-- **Capabilities.** `capabilities` gives the agent's backend the fence the agent writes in (`ui:a2ui@1.0`), the catalog id, and the catalog with the app's components as an A2UI 1.0 catalog document, with the basic catalog's instructions, to write its model's instructions from.
+- **Capabilities.** `capabilities` gives the agent's backend the fence the agent writes in (`fence`, `ui:a2ui@1.0`), the id of the catalog with the app's components (`catalog_id`), and the instructions its model needs to write UI with that catalog (`instructions`): how a reply carries A2UI, the protocol, the basic catalog's guidelines, and the catalog as an A2UI 1.0 catalog document, in Markdown.
 
 ## Protocol support
 

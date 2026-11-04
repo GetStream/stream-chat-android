@@ -146,13 +146,21 @@ internal class A2UIRendererTest {
     }
 
     @Test
-    fun `its capabilities hold the fence and the catalog with the app's components`() {
+    fun `its capabilities hold the fence, the catalog id and the instructions`() {
         val capabilities = renderer.capabilities(listOf(placeCard, card))
 
+        assertEquals(setOf("fence", "catalog_id", "instructions"), capabilities.keys)
         assertEquals("ui:a2ui@1.0", capabilities["fence"])
         assertEquals("getstream.io:app-catalog", capabilities["catalog_id"])
-        val catalog = A2UIJson.map(capabilities["catalog"])!!
+        val instructions = capabilities["instructions"] as String
+        assertTrue(instructions.contains("`ui:a2ui@1.0`"))
+        assertTrue(instructions.contains("# Generating user interfaces with A2UI v1.0"))
+        assertTrue(instructions.contains("formatString"))
+        val document = instructions.substringAfter("## The catalog `getstream.io:app-catalog`\n\n```json\n")
+            .substringBefore("\n```")
+        val catalog = A2UIJson.map(A2UIJson.parse(document))!!
         assertEquals("getstream.io:app-catalog", catalog["catalogId"])
+        assertFalse(catalog.containsKey("instructions"))
         val components = A2UIJson.map(catalog["components"])!!
         assertTrue("PlaceCard" in components)
         assertTrue("Text" in components)
@@ -160,7 +168,6 @@ internal class A2UIRendererTest {
         val placeCardSchema = A2UIJson.map(components["PlaceCard"])!!
         assertEquals("A short summary of a place. The person asks about the place.", placeCardSchema["description"])
         assertEquals(listOf("title", "component"), placeCardSchema["required"])
-        assertTrue(catalog["instructions"].toString().contains("formatString"))
     }
 
     @Test

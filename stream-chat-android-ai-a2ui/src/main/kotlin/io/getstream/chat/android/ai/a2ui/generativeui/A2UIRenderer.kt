@@ -69,15 +69,15 @@ public class A2UIRenderer(
     override fun supports(version: String?): Boolean = version == null || version in SUPPORTED_VERSIONS
 
     /**
-     * The fence the agent writes its UI in, the id of the catalog with the app's [components], and
-     * that catalog as an A2UI 1.0 catalog document, with the basic catalog's instructions, for the
-     * agent's backend to write its model's instructions from.
+     * The fence the agent writes its UI in (`fence`), the id of the catalog with the app's
+     * [components] (`catalog_id`), and the instructions its model needs to write UI with that
+     * catalog (`instructions`): how a reply carries A2UI, the protocol, the catalog's guidelines
+     * and the catalog itself, in Markdown.
      */
     override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> = mapOf(
         "fence" to fence,
-        "version" to VERSION,
         "catalog_id" to catalogId,
-        "catalog" to catalogs(components).first().toJson(),
+        "instructions" to A2UIInstructions(catalogs(components).first(), fence).text,
     )
 
     override fun makeEngine(host: AIUIHost): AIUIEngine = A2UIEngine(this, host)
