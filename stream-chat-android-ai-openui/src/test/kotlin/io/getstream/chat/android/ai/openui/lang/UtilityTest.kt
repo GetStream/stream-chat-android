@@ -179,6 +179,27 @@ internal class UtilityTest {
         }
 
         @Test
+        fun `adjacent unbounded quantifiers over the same characters are rejected`() {
+            listOf(
+                "^[a-z]*[a-z]*[a-z]*[a-z]*[a-z]*1$", "\\d+\\s*\\d+", "[a-z]*[a-z]*", "a+a+", "a+b?a+",
+                "\\w+(?:\\d+)", "(\\d+)\\d+", "a+(?=b)a+", "\\d+^\\d+", "[0-9]{2,}\\d*", "x(\\d+|y)z\\d+\\d*",
+                ".*.*=.*", "[^b]+a+", "[a-z&&[^e]]+e*a+", "\\p{L}+a+", "\\x41+A*", "\\Qab\\E+b+",
+                "(?i)[a-z]+[A-Z]+", "(?i)[a-z]+[é]+", "(?U)\\w+[é]+", "(?x)\\d+ \\d+",
+            ).forEach { assertFalse(PatternSafety.isSafe(it), it) }
+        }
+
+        @Test
+        fun `unbounded quantifiers with a required separator or disjoint characters are accepted`() {
+            listOf(
+                "[a-z]+@[a-z]+", "\\d+-\\d+", "^[0-9]{5}(?:-[0-9]{4})?$", "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+                "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", "^\\+?[0-9 ()-]{7,20}$",
+                "^\\+?\\d+[ -]\\d+$",
+                "[a-z]+\\d+", "\\d+[a-z]*", "a+b+a+", "[^a]+a+", "[a-z&&[^e]]+e+", "(?i)[a-z]+\\d+",
+                "\\d{2,3}\\d{2,3}", "\\d+\\d?",
+            ).forEach { assertTrue(PatternSafety.isSafe(it), it) }
+        }
+
+        @Test
         fun `ordinary patterns are accepted`() {
             listOf(
                 "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", "^\\+?[0-9 ()-]{7,20}$", "^[A-Z]{2}\\d{4}$", "^[a-z]+$",
