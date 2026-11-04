@@ -83,7 +83,6 @@ import io.getstream.chat.android.network.models.UserUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent
 import io.getstream.chat.android.network.models.UserWatchingStopEvent
 import io.getstream.chat.android.network.models.WSEvent
-import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
 
 /**
  * The generated adapter of every event type that always maps to one model. Types whose model depends on the payload,
@@ -107,8 +106,7 @@ internal fun generatedEventAdapters(moshi: Moshi): Map<String, JsonAdapter<WSEve
             "channel_type" to channelType,
             "channel_id" to channelId,
             "user" to user,
-            // The spec types it as a string; an unparseable value counts as missing.
-            "last_delivered_at" to lastDeliveredAt?.let(GeneratedExactDate::parseOrNull),
+            "last_delivered_at" to lastDeliveredAt,
             "last_delivered_message_id" to lastDeliveredMessageId,
         )
     },

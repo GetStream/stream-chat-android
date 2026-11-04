@@ -28,9 +28,11 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UpdateReminderRequest(
+    @Json(name = "expires_at")
+    internal val expiresAt: java.util.Date? = null,
+
     @Json(name = "remind_at")
-    val remindAt: java.util.Date? = null,
+    internal val remindAt: java.util.Date? = null,
 )

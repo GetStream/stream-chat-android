@@ -117,7 +117,7 @@ internal class V2LaneBatchSevenTest {
         )
         assertBody("""{"message_id":"m"}""", MarkReadRequest(messageId = "m"))
         assertBody("""{"message_id":"m"}""", MarkUnreadRequest(messageId = "m"))
-        assertBody("""{"latest_delivered_messages":[]}""", MarkDeliveredRequest())
+        assertBody("""{}""", MarkDeliveredRequest())
         assertBody("""{"clear_history":true}""", HideChannelRequest(clearHistory = true))
         assertBody("""{"skip_push":true}""", TruncateChannelRequest(skipPush = true))
         assertBody("""{}""", emptyMap<Any, Any>())

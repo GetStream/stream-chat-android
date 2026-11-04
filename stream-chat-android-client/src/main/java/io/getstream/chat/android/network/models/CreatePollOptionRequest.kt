@@ -34,5 +34,5 @@ internal data class CreatePollOptionRequest(
     internal val text: String,
 
     @Json(name = "custom")
-    internal val custom: Map<String, Any?>? = emptyMap(),
+    internal val custom: Map<String, Any?>? = null,
 )
