@@ -163,57 +163,19 @@ internal object FormValidation {
                 "Must be no more than ${JS.numberToString(max)} characters"
             }
         },
+        // The model writes the pattern: one that fails PatternSafety is ignored like an invalid one,
+        // and input longer than PatternSafety.MAX_INPUT_LENGTH fails the rule.
         "pattern" to { value, argument ->
             val pattern = argument.stringValue
-            val regex = pattern?.let { runCatching { Regex(it) }.getOrNull() }
+            val regex = pattern?.takeIf(PatternSafety::isSafe)?.let { runCatching { Regex(it) }.getOrNull() }
             val text = (value as? OpenUIValue.Str)?.value
             when {
                 isEmpty(value) || text == null || regex == null -> null
-                matchesWithin(regex, text, PATTERN_TIMEOUT_NANOS) -> null
+                text.length <= PatternSafety.MAX_INPUT_LENGTH && regex.containsMatchIn(text) -> null
                 else -> "Invalid format"
             }
         },
     )
-
-    /**
-     * Whether [regex] finds a match in [text] within [timeoutNanos]. The model writes the pattern,
-     * so it may backtrack for practically forever (`^(a+)+$` against `aaa…a!`); running out of time
-     * counts as no match.
-     */
-    internal fun matchesWithin(regex: Regex, text: String, timeoutNanos: Long): Boolean = try {
-        regex.containsMatchIn(DeadlineCharSequence(text, System.nanoTime() + timeoutNanos))
-    } catch (@Suppress("SwallowedException") timeout: MatchTimeoutException) {
-        false
-    }
-
-    /** Thrown by [DeadlineCharSequence] once its deadline passes, which ends the match. */
-    private class MatchTimeoutException : RuntimeException() {
-        // Thrown to unwind a match, not to be logged: skip the stack trace.
-        override fun fillInStackTrace(): Throwable = this
-    }
-
-    /** Text that throws [MatchTimeoutException] when read after [deadline] ([System.nanoTime]). */
-    private class DeadlineCharSequence(private val text: CharSequence, private val deadline: Long) : CharSequence {
-        private var reads = 0
-
-        override val length: Int get() = text.length
-
-        override fun get(index: Int): Char {
-            // Reading the clock on every char would slow the match down; every 1024th read is enough.
-            if (++reads and CLOCK_CHECK_MASK == 0 && System.nanoTime() - deadline > 0) throw MatchTimeoutException()
-            return text[index]
-        }
-
-        override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
-            DeadlineCharSequence(text.subSequence(startIndex, endIndex), deadline)
-
-        override fun toString(): String = text.toString()
-    }
-
-    private const val CLOCK_CHECK_MASK = 1023
-
-    /** How long a `pattern` rule may take to match: 100 ms. */
-    private const val PATTERN_TIMEOUT_NANOS = 100_000_000L
 
     /** Runs rules against a value, stopping at the first error. Custom validators take precedence. */
     fun validate(

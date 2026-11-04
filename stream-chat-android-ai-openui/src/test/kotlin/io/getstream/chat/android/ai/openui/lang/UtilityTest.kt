@@ -18,7 +18,6 @@ package io.getstream.chat.android.ai.openui.lang
 
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -171,16 +170,31 @@ internal class UtilityTest {
         }
 
         @Test
-        @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-        fun `a pattern that backtracks without end is invalid instead of hanging`() {
-            val rules = FormValidation.rules(obj("pattern" to "^(a+)+$"))
-            assertEquals("Invalid format", FormValidation.validate(v("a".repeat(30) + "!"), rules))
-            assertNull(FormValidation.validate(v("a".repeat(30)), rules))
+        fun `patterns that can backtrack without end are rejected`() {
+            listOf(
+                "(a?){25}a{25}", "^(a+)+$", "(a|aa)*", "(?:a*)*", "((a|b)c)+", "(a*b)?", "(?<x>a+){2}",
+                "^(a+)\\1$", "(a)\\k<x>", "a{1001}", "a{1,1001}", "a{99999999999}",
+            ).forEach { assertFalse(PatternSafety.isSafe(it), it) }
+        }
 
-            // The JVM's engine finishes the pattern above quickly; the backreference makes it
-            // backtrack on every engine, so this one runs into the deadline.
-            val backtracking = FormValidation.rules(obj("pattern" to "^(a+)+\\1$"))
-            assertEquals("Invalid format", FormValidation.validate(v("a".repeat(30) + "!"), backtracking))
+        @Test
+        fun `ordinary patterns are accepted`() {
+            listOf(
+                "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", "^\\+?[0-9 ()-]{7,20}$", "^[A-Z]{2}\\d{4}$", "^[a-z]+$",
+                "^(foo|bar)$", "^(?:\\d{3})-\\d{4}$", "a{1000}", "[(a+)+]*", "\\(a+\\)+", "\\Q(a+)+\\E",
+                "\\p{L}{2,5}", "(?i)^abc+?$", "a*+b", "(?=a)b", "[]a]+",
+            ).forEach { assertTrue(PatternSafety.isSafe(it), it) }
+        }
+
+        @Test
+        fun `a rejected pattern is ignored and overlong input fails the rule`() {
+            val unsafe = FormValidation.rules(obj("pattern" to "^(a+)+$"))
+            assertNull(FormValidation.validate(v("a".repeat(30) + "!"), unsafe))
+
+            val safe = FormValidation.rules(obj("pattern" to "^a+$"))
+            val limit = PatternSafety.MAX_INPUT_LENGTH
+            assertNull(FormValidation.validate(v("a".repeat(limit)), safe))
+            assertEquals("Invalid format", FormValidation.validate(v("a".repeat(limit + 1)), safe))
         }
     }
 
