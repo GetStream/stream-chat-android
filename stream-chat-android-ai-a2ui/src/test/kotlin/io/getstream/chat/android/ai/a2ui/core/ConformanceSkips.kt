@@ -47,9 +47,6 @@ internal object ConformanceSkips {
         "test_v10_call_validation_config_relaxes_strict_processor" to CALL_CONFIG,
         "test_v10_call_validation_config_tightens_permissive_processor" to CALL_CONFIG,
         "test_v10_call_validation_config_leaves_out_rules_as_strict" to CALL_CONFIG,
-        "test_v10_call_to_undeclared_function_without_strict_mode_accepted" to
-            "The processor always checks a call against its catalog, so an undeclared function " +
-            "is reported rather than forwarded to the agent",
     )
 
     /** Why [case] doesn't apply, or `null` when it runs. */
