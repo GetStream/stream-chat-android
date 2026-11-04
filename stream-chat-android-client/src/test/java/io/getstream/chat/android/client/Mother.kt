@@ -133,6 +133,7 @@ import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningResponse
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
+import io.getstream.chat.android.network.models.VotingVisibility as VotingVisibilityDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -1228,7 +1229,7 @@ internal object Mother {
         id: String = randomString(),
         name: String = randomString(),
         description: String = randomString(),
-        votingVisibility: String = "public",
+        votingVisibility: VotingVisibilityDto = VotingVisibilityDto.Public,
         enforceUniqueVote: Boolean = randomBoolean(),
         maxVotesAllowed: Int? = randomInt(),
         allowUserSuggestedOptions: Boolean = randomBoolean(),

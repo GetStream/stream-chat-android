@@ -202,6 +202,7 @@ constructor(
             tokenManager = tokenManager,
             headersUtil = headersUtil,
             eventParser = v2EventParser,
+            isEventProtocolV3Enabled = config.isEventProtocolV3Enabled,
         )
     }
 

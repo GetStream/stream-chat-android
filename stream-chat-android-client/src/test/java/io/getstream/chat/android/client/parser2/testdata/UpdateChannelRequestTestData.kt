@@ -32,10 +32,7 @@ internal object UpdateChannelRequestTestData {
         acceptInvite = true,
         message = MessageRequest(text = "accepting"),
     )
-    const val acceptInviteJson =
-        """{"accept_invite":true,"message":{"text":"accepting","attachments":[],""" +
-            """"mentioned_group_ids":[],"mentioned_roles":[],"mentioned_users":[],"restricted_visibility":[],""" +
-            """"custom":{}}}"""
+    const val acceptInviteJson = """{"accept_invite":true,"message":{"text":"accepting"}}"""
 
     val removeMembersRequest = UpdateChannelRequest(
         removeMembers = listOf("han"),
@@ -65,6 +62,5 @@ internal object UpdateChannelRequestTestData {
     )
     const val addMembersJson =
         """{"skip_push":true,"add_members":[{"channel_role":"moderator","user_id":"u1","custom":{"k":"v"}}],""" +
-            """"message":{"text":"added","type":"system","attachments":[],"mentioned_group_ids":[],""" +
-            """"mentioned_roles":[],"mentioned_users":[],"restricted_visibility":[],"custom":{"mk":"mv"}}}"""
+            """"message":{"text":"added","type":"system","custom":{"mk":"mv"}}}"""
 }

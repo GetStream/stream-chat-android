@@ -30,7 +30,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- * [All possibility of string to use]
+ * [An action that can be performed in a channel.]
  */
 /**
  * ChannelOwnCapability Enum

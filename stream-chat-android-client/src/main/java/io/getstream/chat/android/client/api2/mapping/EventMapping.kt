@@ -255,7 +255,7 @@ internal class EventMapping(
             cid = requireNotNull(cid),
             channelType = requireNotNull(channelType),
             channelId = requireNotNull(channelId),
-            lastDeliveredAt = requireNotNull(lastDeliveredAt?.let(ExactDate::parseOrNull)).date,
+            lastDeliveredAt = requireNotNull(lastDeliveredAt),
             lastDeliveredMessageId = requireNotNull(lastDeliveredMessageId),
         )
     }

@@ -172,6 +172,7 @@ import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.SortParamType
 import io.getstream.chat.android.network.models.SyncRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.TruncateChannelRequest
@@ -217,6 +218,7 @@ import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
+import io.getstream.chat.android.network.models.VotingVisibility as VotingVisibilityDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class MoshiChatApi
@@ -1973,8 +1975,8 @@ constructor(
                     )
                 },
                 votingVisibility = when (createPollParams.votingVisibility) {
-                    VotingVisibility.PUBLIC -> CreatePollRequest.VotingVisibility.Public
-                    VotingVisibility.ANONYMOUS -> CreatePollRequest.VotingVisibility.Anonymous
+                    VotingVisibility.PUBLIC -> VotingVisibilityDto.Public
+                    VotingVisibility.ANONYMOUS -> VotingVisibilityDto.Anonymous
                 },
                 custom = createPollParams.extraData,
             ),
@@ -2004,8 +2006,8 @@ constructor(
             name = request.name,
             options = options,
             votingVisibility = when (request.votingVisibility) {
-                VotingVisibility.PUBLIC -> UpdatePollRequestDto.VotingVisibility.Public
-                VotingVisibility.ANONYMOUS -> UpdatePollRequestDto.VotingVisibility.Anonymous
+                VotingVisibility.PUBLIC -> VotingVisibilityDto.Public
+                VotingVisibility.ANONYMOUS -> VotingVisibilityDto.Anonymous
             },
             custom = request.extraData,
         )
@@ -2237,7 +2239,7 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
             field = it[QuerySorter.KEY_FIELD_NAME] as? String,
             direction = (it[QuerySorter.KEY_DIRECTION] as? Number)?.toInt(),
             // Built-in sorters don't emit a type; forward it when a custom sorter does.
-            type = it[QuerySorter.KEY_TYPE] as? String,
+            type = (it[QuerySorter.KEY_TYPE] as? String)?.let(SortParamType::fromString),
         )
     }
 

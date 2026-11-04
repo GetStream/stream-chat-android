@@ -24,26 +24,24 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.Map
 
 /**
  * Represents user reaction to a message
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class ReactionRequest(
     @Json(name = "type")
-    val type: kotlin.String,
+    internal val type: String,
 
     @Json(name = "created_at")
-    val createdAt: java.util.Date? = null,
+    internal val createdAt: java.util.Date? = null,
 
     @Json(name = "score")
-    val score: kotlin.Int? = null,
+    internal val score: Int? = null,
 
     @Json(name = "updated_at")
-    val updatedAt: java.util.Date? = null,
+    internal val updatedAt: java.util.Date? = null,
 
     @Json(name = "custom")
-    val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
+    internal val custom: Map<String, Any?>? = null,
 )

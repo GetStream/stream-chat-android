@@ -34,5 +34,5 @@ internal data class MessageOptions(
     internal val includeThreadParticipants: Boolean? = null,
 
     @Json(name = "member_custom_include")
-    internal val memberCustomInclude: List<String>? = emptyList(),
+    internal val memberCustomInclude: List<String>? = null,
 )

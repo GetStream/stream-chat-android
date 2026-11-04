@@ -49,6 +49,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -419,7 +420,7 @@ internal class QueryChannelsStateLogicTest {
         val cid = "$channelType:$channelId"
         val existingChannel = randomChannel(type = channelType, id = channelId).copy(messages = listOf(msg1))
         val newChannel = existingChannel.copy(messages = listOf(msg2))
-        whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
+        storeWrittenChannels(mapOf(cid to existingChannel))
 
         queryChannelsStateLogic.addChannelsState(listOf(newChannel))
 
@@ -439,7 +440,7 @@ internal class QueryChannelsStateLogicTest {
         val cid = "$channelType:$channelId"
         val existingChannel = randomChannel(type = channelType, id = channelId).copy(messages = listOf(sharedMsg))
         val newChannel = existingChannel.copy(messages = listOf(sharedMsg.copy(text = "edited")))
-        whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
+        storeWrittenChannels(mapOf(cid to existingChannel))
 
         queryChannelsStateLogic.addChannelsState(listOf(newChannel))
 
@@ -458,7 +459,7 @@ internal class QueryChannelsStateLogicTest {
         val cid = "$channelType:$channelId"
         val existingChannel = randomChannel(type = channelType, id = channelId).copy(messages = listOf(unsyncedEdit))
         val newChannel = existingChannel.copy(messages = listOf(serverMsg))
-        whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
+        storeWrittenChannels(mapOf(cid to existingChannel))
 
         queryChannelsStateLogic.addChannelsState(listOf(newChannel))
 
@@ -485,7 +486,7 @@ internal class QueryChannelsStateLogicTest {
             members = listOf(memberB),
             memberCount = 10,
         )
-        whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
+        storeWrittenChannels(mapOf(cid to existingChannel))
 
         queryChannelsStateLogic.addChannelsState(listOf(newChannel))
 
@@ -498,6 +499,13 @@ internal class QueryChannelsStateLogicTest {
     }
 
     // endregion
+
+    /** Makes the mocked list keep what is written to it, as the real one does. */
+    private fun storeWrittenChannels(initial: Map<String, Channel>) {
+        var stored: Map<String, Channel>? = initial
+        whenever(mutableState.rawChannels) doAnswer { stored }
+        whenever(mutableState.setChannels(any())) doAnswer { stored = it.getArgument(0) }
+    }
 
     private fun syncedMessage(id: String, text: String) = randomMessage(
         id = id,

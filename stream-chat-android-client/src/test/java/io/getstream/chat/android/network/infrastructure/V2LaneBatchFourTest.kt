@@ -132,10 +132,8 @@ internal class V2LaneBatchFourTest {
     @Test
     fun `A draft creation nests the message custom data on v2, where the v1 body would lose it`() {
         val request = CreateDraftRequest(MessageRequest(text = "Draft", custom = mapOf("k" to "v")))
-        val lists = """"attachments":[],"mentioned_group_ids":[],"mentioned_roles":[],"mentioned_users":[],""" +
-            """"restricted_visibility":[]"""
 
-        assertEquals("""{"message":{"text":"Draft",$lists,"custom":{"k":"v"}}}""", v2Body(request))
+        assertEquals("""{"message":{"text":"Draft","custom":{"k":"v"}}}""", v2Body(request))
     }
 
     @Test
@@ -149,7 +147,7 @@ internal class V2LaneBatchFourTest {
             UpdateReminderRequest(remindAt = Date(1798797600000)),
         )
         assertBody(
-            """{"limit":2,"sort":[],"filter":{"channel_cid":"messaging:a"}}""",
+            """{"limit":2,"filter":{"channel_cid":"messaging:a"}}""",
             QueryRemindersRequest(filter = mapOf("channel_cid" to "messaging:a"), limit = 2),
         )
     }
@@ -159,7 +157,7 @@ internal class V2LaneBatchFourTest {
         val sort = listOf(SortParamRequest(field = "created_at", direction = -1))
         assertBody(
             """{"limit":1,"participant_limit":1,"reply_limit":1,"watch":true,""" +
-                """"sort":[{"direction":-1,"field":"created_at"}],"filter":{}}""",
+                """"sort":[{"direction":-1,"field":"created_at"}]}""",
             QueryThreadsRequest(limit = 1, replyLimit = 1, participantLimit = 1, watch = true, sort = sort),
         )
         assertBody(

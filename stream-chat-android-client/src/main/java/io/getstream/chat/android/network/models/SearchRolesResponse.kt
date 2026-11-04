@@ -24,17 +24,15 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.List
 
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class SearchRolesResponse(
     @Json(name = "duration")
-    val duration: kotlin.String,
+    internal val duration: String,
 
     @Json(name = "roles")
-    val roles: kotlin.collections.List<io.getstream.chat.android.network.models.Role> = emptyList(),
+    internal val roles: List<io.getstream.chat.android.network.models.Role> = emptyList(),
 )

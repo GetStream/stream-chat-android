@@ -34,7 +34,7 @@ internal data class PollVotesResponse(
     internal val duration: String,
 
     @Json(name = "votes")
-    internal val votes: List<PollVoteResponseData> = emptyList(),
+    internal val votes: List<io.getstream.chat.android.network.models.PollVoteResponseData> = emptyList(),
 
     @Json(name = "next")
     internal val next: String? = null,

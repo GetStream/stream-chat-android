@@ -52,10 +52,10 @@ internal data class SearchPayload(
     internal val query: String? = null,
 
     @Json(name = "sort")
-    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = emptyList(),
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
 
     @Json(name = "message_filter_conditions")
-    internal val messageFilterConditions: Map<String, Any?>? = emptyMap(),
+    internal val messageFilterConditions: Map<String, Any?>? = null,
 
     @Json(name = "message_options")
     internal val messageOptions: io.getstream.chat.android.network.models.MessageOptions? = null,

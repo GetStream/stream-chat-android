@@ -28,9 +28,8 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UnblockUsersRequest(
     @Json(name = "blocked_user_id")
-    val blockedUserId: kotlin.String,
+    internal val blockedUserId: String,
 )

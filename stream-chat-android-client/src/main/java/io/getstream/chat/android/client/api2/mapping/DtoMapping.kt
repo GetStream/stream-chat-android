@@ -424,7 +424,7 @@ internal class DtoMapping(
                     invisible = isInvisible,
                     language = language,
                     privacySettings = privacySettings?.toDto(),
-                    custom = extraData - RESPONSE_ONLY_USER_KEYS - USER_DEVICES_CUSTOM_KEY,
+                    custom = requestCustom(),
                 )
             }
 
@@ -471,6 +471,9 @@ private val RESPONSE_ONLY_MESSAGE_KEYS = GENERATED_MESSAGE_EXTRA_DATA_KEYS - SEN
  */
 private val RESPONSE_ONLY_USER_KEYS = GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS +
     GENERATED_OWN_USER_EXTRA_DATA_KEYS + REVOKE_TOKENS_ISSUED_BEFORE_KEY
+
+/** The custom data a user sends: its extra data without the [RESPONSE_ONLY_USER_KEYS] and its devices. */
+internal fun User.requestCustom(): Map<String, Any> = extraData - RESPONSE_ONLY_USER_KEYS - USER_DEVICES_CUSTOM_KEY
 
 /**
  * The channel counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: the declared channel fields the channel adapters keep,

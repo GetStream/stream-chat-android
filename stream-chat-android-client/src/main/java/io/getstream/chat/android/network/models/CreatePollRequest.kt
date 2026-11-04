@@ -23,12 +23,7 @@
 
 package io.getstream.chat.android.network.models
 
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 
 /**
  * Contains all information needed to create a new poll
@@ -59,44 +54,15 @@ internal data class CreatePollRequest(
     @Json(name = "max_votes_allowed")
     internal val maxVotesAllowed: Int? = null,
 
+    @Json(name = "team")
+    internal val team: String? = null,
+
     @Json(name = "voting_visibility")
-    internal val votingVisibility: VotingVisibility? = null,
+    internal val votingVisibility: io.getstream.chat.android.network.models.VotingVisibility? = null,
 
     @Json(name = "options")
-    internal val options: List<io.getstream.chat.android.network.models.PollOptionInput>? = emptyList(),
+    internal val options: List<io.getstream.chat.android.network.models.PollOptionInput>? = null,
 
     @Json(name = "custom")
-    internal val custom: Map<String, Any?>? = emptyMap(),
-) {
-
-    /**
-     * VotingVisibility Enum
-     */
-    internal sealed class VotingVisibility(internal val value: String) {
-        override fun toString(): String = value
-
-        internal companion object {
-            internal fun fromString(s: String): VotingVisibility = when (s) {
-                "anonymous" -> Anonymous
-                "public" -> Public
-                else -> Unknown(s)
-            }
-        }
-        internal object Anonymous : VotingVisibility("anonymous")
-        internal object Public : VotingVisibility("public")
-        internal data class Unknown(val unknownValue: String) : VotingVisibility(unknownValue)
-
-        internal class VotingVisibilityAdapter : JsonAdapter<VotingVisibility>() {
-            @FromJson
-            override fun fromJson(reader: JsonReader): VotingVisibility? {
-                val s = reader.nextString() ?: return null
-                return VotingVisibility.fromString(s)
-            }
-
-            @ToJson
-            override fun toJson(writer: JsonWriter, value: VotingVisibility?) {
-                writer.value(value?.value)
-            }
-        }
-    }
-}
+    internal val custom: Map<String, Any?>? = null,
+)

@@ -34,8 +34,8 @@ internal data class PollVoteResponse(
     internal val duration: String,
 
     @Json(name = "poll")
-    internal val poll: PollResponseData? = null,
+    internal val poll: io.getstream.chat.android.network.models.PollResponseData? = null,
 
     @Json(name = "vote")
-    internal val vote: PollVoteResponseData? = null,
+    internal val vote: io.getstream.chat.android.network.models.PollVoteResponseData? = null,
 )

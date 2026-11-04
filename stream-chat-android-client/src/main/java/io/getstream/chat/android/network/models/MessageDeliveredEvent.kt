@@ -55,7 +55,7 @@ internal data class MessageDeliveredEvent(
     internal val cid: String? = null,
 
     @Json(name = "last_delivered_at")
-    internal val lastDeliveredAt: String? = null,
+    internal val lastDeliveredAt: java.util.Date? = null,
 
     @Json(name = "last_delivered_message_id")
     internal val lastDeliveredMessageId: String? = null,

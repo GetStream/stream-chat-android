@@ -24,14 +24,12 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.List
 
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class MarkDeliveredRequest(
     @Json(name = "latest_delivered_messages")
-    val latestDeliveredMessages: kotlin.collections.List<DeliveredMessagePayload>? = emptyList(),
+    internal val latestDeliveredMessages: List<io.getstream.chat.android.network.models.DeliveredMessagePayload>? = null,
 )

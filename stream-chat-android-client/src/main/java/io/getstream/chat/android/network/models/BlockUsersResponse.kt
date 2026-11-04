@@ -28,18 +28,17 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class BlockUsersResponse(
     @Json(name = "blocked_by_user_id")
-    val blockedByUserId: kotlin.String,
+    internal val blockedByUserId: String,
 
     @Json(name = "blocked_user_id")
-    val blockedUserId: kotlin.String,
+    internal val blockedUserId: String,
 
     @Json(name = "created_at")
-    val createdAt: java.util.Date,
+    internal val createdAt: java.util.Date,
 
     @Json(name = "duration")
-    val duration: kotlin.String,
+    internal val duration: String,
 )

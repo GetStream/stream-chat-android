@@ -5805,6 +5805,7 @@ internal constructor(
                 debugRequests = debugRequests,
                 notificationConfig = notificationConfig,
                 fastEventParsing = chatClientConfig.fastEventParsing,
+                isEventProtocolV3Enabled = chatClientConfig.isEventProtocolV3Enabled,
             )
             setupStreamLog()
 

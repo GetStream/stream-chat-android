@@ -24,20 +24,18 @@
 package io.getstream.chat.android.network.models
 
 import com.squareup.moshi.Json
-import kotlin.collections.Map
 
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UpsertPushPreferencesResponse(
     @Json(name = "duration")
-    val duration: kotlin.String,
+    internal val duration: String,
 
     @Json(name = "user_channel_preferences")
-    val userChannelPreferences: kotlin.collections.Map<kotlin.String, kotlin.collections.Map<kotlin.String, io.getstream.chat.android.network.models.ChannelPushPreferencesResponse>> = emptyMap(),
+    internal val userChannelPreferences: Map<String, Map<String, io.getstream.chat.android.network.models.ChannelPushPreferencesResponse>> = emptyMap(),
 
     @Json(name = "user_preferences")
-    val userPreferences: kotlin.collections.Map<kotlin.String, io.getstream.chat.android.network.models.PushPreferencesResponse> = emptyMap(),
+    internal val userPreferences: Map<String, io.getstream.chat.android.network.models.PushPreferencesResponse> = emptyMap(),
 )

@@ -107,21 +107,15 @@ internal class V2LaneBatchFiveTest {
     @Test
     fun `A sent message nests custom data on v2, where the v1 body would lose it`() {
         val request = SendMessageRequest(MessageRequest(text = "Hi", custom = mapOf("k" to "v")))
-        val lists = """"attachments":[],"mentioned_group_ids":[],"mentioned_roles":[],"mentioned_users":[],""" +
-            """"restricted_visibility":[]"""
 
-        assertEquals("""{"message":{"text":"Hi",$lists,"custom":{"k":"v"}}}""", v2Body(request))
+        assertEquals("""{"message":{"text":"Hi","custom":{"k":"v"}}}""", v2Body(request))
     }
 
     @Test
     fun `An updated message nests custom data on v2`() {
         val request = UpdateMessageRequest(MessageRequest(id = "m", text = "Hi", custom = mapOf("k" to "v")))
 
-        assertEquals(
-            """{"message":{"id":"m","text":"Hi","attachments":[],"mentioned_group_ids":[],"mentioned_roles":[],""" +
-                """"mentioned_users":[],"restricted_visibility":[],"custom":{"k":"v"}}}""",
-            v2Body(request),
-        )
+        assertEquals("""{"message":{"id":"m","text":"Hi","custom":{"k":"v"}}}""", v2Body(request))
     }
 
     @Test

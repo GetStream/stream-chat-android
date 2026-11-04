@@ -31,11 +31,11 @@ import com.squareup.moshi.Json
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class Thresholds(
     @Json(name = "explicit")
-    internal val explicit: LabelThresholds? = null,
+    internal val explicit: io.getstream.chat.android.network.models.LabelThresholds? = null,
 
     @Json(name = "spam")
-    internal val spam: LabelThresholds? = null,
+    internal val spam: io.getstream.chat.android.network.models.LabelThresholds? = null,
 
     @Json(name = "toxic")
-    internal val toxic: LabelThresholds? = null,
+    internal val toxic: io.getstream.chat.android.network.models.LabelThresholds? = null,
 )

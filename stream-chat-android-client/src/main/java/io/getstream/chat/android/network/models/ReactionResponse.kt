@@ -52,5 +52,5 @@ internal data class ReactionResponse(
     internal val custom: Map<String, Any?> = emptyMap(),
 
     @Json(name = "user")
-    internal val user: UserResponse,
+    internal val user: io.getstream.chat.android.network.models.UserResponse,
 )
