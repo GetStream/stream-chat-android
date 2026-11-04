@@ -23,6 +23,9 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIParameter
 import io.getstream.chat.android.ai.compose.generativeui.AIUIParameterType
+import io.getstream.chat.android.ai.compose.parts.AIClientTool
+import io.getstream.chat.android.ai.compose.parts.AIClientToolResult
+import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import io.getstream.chat.android.ai.openui.library.openuiChatPromptOptions
 import io.getstream.chat.android.ai.openui.library.openuiPromptOptions
 import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
@@ -86,6 +89,32 @@ internal class OpenUIRendererTest {
         assertTrue("PlaceCard(" in instructions)
         assertTrue("A photo and a short summary of a place." in instructions)
         assertEquals(openuiChatLibrary.prompt(openuiChatPromptOptions), renderer.capabilities(emptyList())["instructions"])
+    }
+
+    @Test
+    fun `the instructions list the host's tools with Query and Mutation`() {
+        val tool = object : AIClientTool {
+            override val name = "get_weather"
+            override suspend fun run(call: AIToolCallPart) = AIClientToolResult.completed("{}")
+        }
+
+        val withTools = OpenUIRenderer().capabilities(emptyList(), listOf(tool))["instructions"] as String
+        val withoutTools = OpenUIRenderer().capabilities(emptyList(), emptyList())["instructions"] as String
+
+        assertTrue("- get_weather" in withTools)
+        assertTrue("## Query — Live Data Fetching" in withTools)
+        assertTrue("## Mutation — Write Operations" in withTools)
+        assertFalse("get_weather" in withoutTools)
+        assertFalse("## Available Tools" in withoutTools)
+    }
+
+    @Test
+    fun `the app's instructions come before OpenUI's own`() {
+        val instructions = OpenUIRenderer(instructions = "Answer travel questions with UI.")
+            .capabilities(emptyList(), emptyList())["instructions"] as String
+
+        assertTrue(instructions.startsWith("Answer travel questions with UI.\n\n"))
+        assertTrue(instructions.endsWith(openuiChatLibrary.prompt(openuiChatPromptOptions)))
     }
 
     @Test

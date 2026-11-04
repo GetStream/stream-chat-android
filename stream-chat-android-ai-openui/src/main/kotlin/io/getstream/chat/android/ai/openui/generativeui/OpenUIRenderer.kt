@@ -22,12 +22,13 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIEngine
 import io.getstream.chat.android.ai.compose.generativeui.AIUIFormat
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.generativeui.AIUIRenderer
+import io.getstream.chat.android.ai.compose.parts.AIClientTool
 import io.getstream.chat.android.ai.openui.lang.OpenUIError
-import io.getstream.chat.android.ai.openui.lang.ToolProvider
 import io.getstream.chat.android.ai.openui.library.ComponentSchema
 import io.getstream.chat.android.ai.openui.library.LibraryDefinition
 import io.getstream.chat.android.ai.openui.library.OpenUIPortableComponentException
 import io.getstream.chat.android.ai.openui.library.PromptOptions
+import io.getstream.chat.android.ai.openui.library.ToolDescriptor
 import io.getstream.chat.android.ai.openui.library.fromPortableDefinition
 import io.getstream.chat.android.ai.openui.rendering.Library
 import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
@@ -47,43 +48,53 @@ import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
  * `$variables` survive scrolling. What the person does that is for the agent, such as a follow-up
  * or a form's submit button, reaches the host as an `AIUIAction` named after OpenUI's action, with
  * the action's `context`, its other `params`, the `form` and the form's `values` in its payload.
- * Links open through the host, which decides the kinds of link that open.
+ * A `Query` or `Mutation` runs one of the host's tools, on the device, and the model's
+ * instructions list the host's tools by name. Links open through the host, which decides the kinds
+ * of link that open.
  *
  * An app component joins the library under its OpenUI name, its name in `PascalCase` (`place_card`
  * is `PlaceCard`). One whose name the library already has, or that can't be called in a program,
  * is left out of both the instructions and the UI, so it never replaces one of OpenUI's own.
  *
- * @param library The library the agent writes with, the chat library by default.
- * @param promptOptions The examples and rules of the system prompt, the ones made for [library] by
- * default.
- * @param toolProvider Runs the tools of `Query()` and `Mutation()`. By default they are the host's
- * tools, run on the device.
+ * @param library The library the agent writes with, the chat library by default. Restyle or drop
+ * its components with [Library.replacingView] and [Library.removing].
+ * @param instructions What the agent's model is told before OpenUI's own instructions, such as
+ * which answers to write as UI and when to use the app's components.
  * @param onError Receives each problem with a reply's program, such as one the parser can't read
  * or a tool that failed, with the reply's message id, once the reply is complete. Without it, the
  * problems go to the log.
  */
 public class OpenUIRenderer(
     public val library: Library = openuiChatLibrary,
-    public val promptOptions: PromptOptions = library.defaultPromptOptions,
-    private val toolProvider: ToolProvider? = null,
+    private val instructions: String? = null,
     private val onError: ((error: OpenUIError, messageId: String) -> Unit)? = null,
 ) : AIUIRenderer {
     override val format: AIUIFormat = AIUIFormat.OpenUI
 
+    /** The examples and rules of the system prompt: the ones made for [library]. */
+    internal val promptOptions: PromptOptions get() = library.defaultPromptOptions
+
     /**
      * The fence the agent writes its program in (`openui-lang`), and the instructions its model
-     * needs to write one with the library and [components].
+     * needs to write one with the library and [components], and to run [tools] from `Query()` and
+     * `Mutation()`.
      */
-    override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> {
+    override fun capabilities(components: List<AIUIComponent>, tools: List<AIClientTool>): Map<String, Any?> {
         val schemas = placeable(components, library.definition).map { it.second }
+        val options = promptOptions.copy(tools = promptOptions.tools + tools.map { ToolDescriptor.Name(it.name) })
+        val prompt = library.definition.addingContent(schemas).systemPrompt(options)
         return mapOf(
             "fence" to Fence,
-            "instructions" to library.definition.addingContent(schemas).systemPrompt(promptOptions),
+            "instructions" to listOfNotNull(instructions?.takeIf { it.isNotBlank() }, prompt).joinToString("\n\n"),
         )
     }
 
+    /** The capabilities for [components], with none of the host's tools. */
+    override fun capabilities(components: List<AIUIComponent>): Map<String, Any?> =
+        capabilities(components, emptyList())
+
     override fun makeEngine(host: AIUIHost): AIUIEngine =
-        OpenUIEngine(library, host, toolProvider ?: HostToolProvider(host), onError ?: ::log)
+        OpenUIEngine(library, host, HostToolProvider(host), onError ?: ::log)
 
     // A reply's problem, for the log when the app takes none.
     private fun log(error: OpenUIError, messageId: String) {
