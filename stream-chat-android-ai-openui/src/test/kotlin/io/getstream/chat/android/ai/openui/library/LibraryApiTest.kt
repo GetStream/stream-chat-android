@@ -201,6 +201,17 @@ internal class LibraryApiTest {
     }
 
     @Test
+    fun `removing drops the group notes that name a removed component`() {
+        val library = chat.removing(setOf("EditableTable"))
+        val tables = library.componentGroups.single { it.name == "Tables" }
+
+        assertEquals(listOf("Table", "Col"), tables.components)
+        assertFalse(tables.notes.any { "EditableTable" in it }, tables.notes.toString())
+        assertTrue(tables.notes.isNotEmpty())
+        assertFalse("EditableTable" in library.systemPrompt())
+    }
+
+    @Test
     fun `removing a name the library lacks keeps the default prompt options`() {
         val library = chat.removing(setOf("Stack"))
 

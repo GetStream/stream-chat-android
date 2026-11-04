@@ -171,7 +171,7 @@ internal class LibraryDefinition(
      * A library without the components named [names]. They are also removed from every slot that
      * takes several types, and groups left empty are dropped. The root component, and a type that
      * is the only one a slot takes, stay. Default prompt examples that call a removed component, and
-     * additional rules that name one, are dropped too.
+     * group notes and additional rules that name one, are dropped too.
      */
     fun removing(names: Set<String>): LibraryDefinition {
         var removed = names - setOfNotNull(root)
@@ -186,10 +186,13 @@ internal class LibraryDefinition(
         val remaining = components.filter { it.name !in removed }.map { schema ->
             schema.copy(props = schema.props.map { it.copy(type = it.type.removingComponents(removed)) })
         }
-        val groups = componentGroups.mapNotNull { group ->
-            group.components.filter { it !in removed }.takeIf { it.isNotEmpty() }?.let { group.copy(components = it) }
-        }
         val gone = components.map { it.name }.filter { it in removed }
+        val mention = mentionOf(gone)
+        val groups = componentGroups.mapNotNull { group ->
+            group.components.filter { it !in removed }.takeIf { it.isNotEmpty() }?.let { kept ->
+                group.copy(components = kept, notes = group.notes.filterNot { mention?.containsMatchIn(it) == true })
+            }
+        }
         return copy(
             components = remaining,
             componentGroups = groups,
@@ -197,12 +200,16 @@ internal class LibraryDefinition(
         )
     }
 
+    /** Matches a whole-word mention of a component of [names], or `null` when there are none. */
+    private fun mentionOf(names: List<String>): Regex? = names.takeIf { it.isNotEmpty() }
+        ?.joinToString("|") { Regex.escape(it) }
+        ?.let { Regex("\\b(?:$it)\\b") }
+
     /** These options without the examples that call, and the rules that name, a component of [names]. */
     private fun PromptOptions.without(names: List<String>): PromptOptions {
-        if (names.isEmpty()) return this
+        val mention = mentionOf(names) ?: return this
         val alternatives = names.joinToString("|") { Regex.escape(it) }
         val call = Regex("\\b(?:$alternatives)\\(")
-        val mention = Regex("\\b(?:$alternatives)\\b")
         return copy(
             additionalRules = additionalRules.filterNot { mention.containsMatchIn(it) },
             examples = examples.filterNot { call.containsMatchIn(it) },
