@@ -80,9 +80,14 @@ internal sealed interface AgentMessage {
         val components: List<Component>,
         val dataModel: Map<String, Any?>?,
         val metadata: Map<String, Any?>?,
+        val invalidComponents: List<InvalidComponent> = emptyList(),
     ) : AgentMessage
 
-    data class UpdateComponents(override val surfaceId: String, val components: List<Component>) : AgentMessage
+    data class UpdateComponents(
+        override val surfaceId: String,
+        val components: List<Component>,
+        val invalidComponents: List<InvalidComponent> = emptyList(),
+    ) : AgentMessage
 
     /** Writes [value] at [path]; a `null` [value] removes the entry. */
     data class UpdateDataModel(override val surfaceId: String, val path: DataPath, val value: Any?) : AgentMessage
@@ -97,6 +102,37 @@ internal sealed interface AgentMessage {
 
     data class AgentFunctionResponse(val response: FunctionResponse) : AgentMessage {
         override val surfaceId: String? get() = null
+    }
+}
+
+/**
+ * An entry of a message's `components` that can't be read as a component.
+ *
+ * @param index The position of the entry in the message's `components`.
+ * @param pointer The JSON Pointer, in the message, of what is wrong.
+ */
+internal data class InvalidComponent(val index: Int, val pointer: String, val reason: String) {
+    companion object {
+        /** Why the entry at [index], [json] when it is an object, isn't a component. */
+        fun of(index: Int, json: Map<String, Any?>?): InvalidComponent {
+            val pointer = "/components/$index"
+            return when {
+                json == null -> InvalidComponent(index, pointer, "Component entry $index must be an object.")
+                (json["id"] as? String).isNullOrEmpty() ->
+                    InvalidComponent(index, "$pointer/id", "Component entry $index has no 'id'.")
+                else -> InvalidComponent(
+                    index,
+                    "$pointer/component",
+                    "Component '${json["id"]}' has no 'component' type.",
+                )
+            }
+        }
+
+        /** The position in the message of each of [count] components read, skipping the [invalid] entries. */
+        fun positions(count: Int, invalid: List<InvalidComponent>): List<Int> {
+            val skipped = invalid.mapTo(HashSet()) { it.index }
+            return generateSequence(0) { it + 1 }.filterNot(skipped::contains).take(count).toList()
+        }
     }
 }
 
@@ -262,13 +298,15 @@ internal object AgentMessageDecoder {
                 throw DecodingException.InvalidField("metadata$pointer", "createSurface", reason)
             }
         }
+        val (components, invalidComponents) = components(payload["components"])
         return AgentMessage.CreateSurface(
             surfaceId = surfaceId,
             catalogId = payload["catalogId"] as? String,
             sendDataModel = A2UIJson.bool(payload["sendDataModel"]) ?: false,
-            components = components(payload["components"]),
+            components = components,
             dataModel = A2UIJson.map(payload["dataModel"]),
             metadata = A2UIJson.map(payload["metadata"]),
+            invalidComponents = invalidComponents,
         )
     }
 
@@ -277,7 +315,8 @@ internal object AgentMessageDecoder {
         if (A2UIJson.list(payload["components"]) == null) {
             throw DecodingException.MissingField("components", "updateComponents")
         }
-        return AgentMessage.UpdateComponents(surfaceId, components(payload["components"]))
+        val (components, invalidComponents) = components(payload["components"])
+        return AgentMessage.UpdateComponents(surfaceId, components, invalidComponents)
     }
 
     @Suppress("ThrowsCount")
@@ -319,8 +358,21 @@ internal object AgentMessageDecoder {
         return AgentMessage.CallRendererFunction(callId, function, payload["surfaceId"] as? String)
     }
 
-    private fun components(raw: Any?): List<Component> =
-        A2UIJson.list(raw).orEmpty().mapNotNull { entry -> A2UIJson.map(entry)?.let(Component::of) }
+    // The entries that read as components, and the ones that don't.
+    private fun components(raw: Any?): Pair<List<Component>, List<InvalidComponent>> {
+        val components = mutableListOf<Component>()
+        val invalid = mutableListOf<InvalidComponent>()
+        A2UIJson.list(raw).orEmpty().forEachIndexed { index, entry ->
+            val json = A2UIJson.map(entry)
+            val component = json?.let(Component::of)
+            if (component != null) {
+                components.add(component)
+            } else {
+                invalid.add(InvalidComponent.of(index, json))
+            }
+        }
+        return components to invalid
+    }
 }
 
 /** Surface and component metadata hold only `extensions`, keyed by Unicode identifiers. */

@@ -172,7 +172,7 @@ internal class MessageProcessor(
     private val surfacesById = LinkedHashMap<String, Surface>()
     private val remoteCalls = HashMap<RemoteCallKey, RemoteCall>()
     private val remoteCallIds = HashMap<String, RemoteCallKey>()
-    private val reported = HashSet<String>()
+    private val reported = HashSet<RendererError>()
     private var callCounter = 0
     private val listeners = mutableListOf<() -> Unit>()
 
@@ -251,10 +251,13 @@ internal class MessageProcessor(
         }
     }
 
-    /** Reports a problem to the agent, once per problem: rendering repeats, the agent's context shouldn't. */
+    /**
+     * Reports a problem to the agent, once per problem: rendering repeats, the agent's context
+     * shouldn't. Problems with different function calls are different problems: each call waits
+     * for its own answer.
+     */
     override fun report(error: RendererError) {
-        val key = listOf(error.code, error.message, error.surfaceId.orEmpty(), error.path.orEmpty()).joinToString("|")
-        if (reported.add(key)) sendMessage(RendererMessage.Error(error))
+        if (reported.add(error)) sendMessage(RendererMessage.Error(error))
     }
 
     /** Sends a message to the agent. */
@@ -313,8 +316,10 @@ internal class MessageProcessor(
         )
         surfacesById[message.surfaceId] = surface
         dataModel.observe(DataPath.Root) { changed() }
-        surface.merge(validated(message.components, surface))
-        CompositionValidator.errors(surface, message.components).forEach(::report)
+        reportInvalid(message.invalidComponents, surface.surfaceId)
+        val positions = InvalidComponent.positions(message.components.size, message.invalidComponents)
+        surface.merge(validated(message.components, surface, positions))
+        CompositionValidator.errors(surface, message.components, positions).forEach(::report)
         changed()
     }
 
@@ -329,9 +334,17 @@ internal class MessageProcessor(
             )
             return
         }
-        surface.merge(validated(message.components, surface))
-        CompositionValidator.errors(surface, message.components).forEach(::report)
+        reportInvalid(message.invalidComponents, surface.surfaceId)
+        val positions = InvalidComponent.positions(message.components.size, message.invalidComponents)
+        surface.merge(validated(message.components, surface, positions))
+        CompositionValidator.errors(surface, message.components, positions).forEach(::report)
         changed()
+    }
+
+    // Entries of `components` that aren't components: the agent learns which one to repair,
+    // rather than only seeing a reference to it dangle.
+    private fun reportInvalid(invalid: List<InvalidComponent>, surfaceId: String) {
+        invalid.forEach { report(RendererError(RendererError.VALIDATION_FAILED, it.reason, surfaceId, it.pointer)) }
     }
 
     private fun updateDataModel(message: AgentMessage.UpdateDataModel) {
@@ -375,18 +388,24 @@ internal class MessageProcessor(
         val stale = remoteCalls.keys.filter { it.surfaceId == message.surfaceId }.toSet()
         stale.forEach(remoteCalls::remove)
         remoteCallIds.entries.removeAll { it.value in stale }
+        // A surface created again under the same id hears about its problems again.
+        reported.removeAll { it.surfaceId == message.surfaceId }
         changed()
     }
 
     // The components of a batch to apply, reporting what can be found wrong before rendering.
     // A batch that repeats an id applies only the first.
     @Suppress("LongMethod", "CyclomaticComplexMethod")
-    private fun validated(components: List<Component>, surface: Surface): List<Component> {
+    private fun validated(
+        components: List<Component>,
+        surface: Surface,
+        positions: List<Int>,
+    ): List<Component> {
         val seen = HashSet<String>()
         val accepted = mutableListOf<Component>()
         val surfaceId = surface.surfaceId
         components.forEachIndexed { index, component ->
-            val pointer = "/components/$index"
+            val pointer = "/components/${positions[index]}"
             if (!seen.add(component.id)) {
                 report(
                     RendererError(
@@ -697,9 +716,13 @@ internal class MessageProcessor(
 internal object CompositionValidator {
     // Only the root is checked against `Surface`: a component nothing holds has no parent yet.
     @Suppress("LoopWithTooManyJumpStatements")
-    fun errors(surface: Surface, batch: List<Component>): List<RendererError> {
+    fun errors(
+        surface: Surface,
+        batch: List<Component>,
+        positions: List<Int> = batch.indices.toList(),
+    ): List<RendererError> {
         val batchIndex = HashMap<String, Int>()
-        batch.forEachIndexed { index, component -> batchIndex.putIfAbsent(component.id, index) }
+        batch.forEachIndexed { index, component -> batchIndex.getOrPut(component.id) { positions[index] } }
         val errors = mutableListOf<RendererError>()
         rootError(surface, batchIndex)?.let(errors::add)
         val parents = surface.components.values.sortedWith(compareBy({ batchIndex[it.id] ?: Int.MAX_VALUE }, { it.id }))
