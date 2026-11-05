@@ -20,18 +20,23 @@ import com.google.re2j.Pattern
 import com.google.re2j.PatternSyntaxException
 
 /**
- * The regular expressions of `pattern` rules, which the model writes.
+ * The regular expressions of `pattern` rules, which the model writes as JavaScript does.
  *
  * They run on the main thread, so they are matched with RE2J, in time linear in the input: the
  * platform matcher backtracks and can't be interrupted, so a pattern such as `x.*x.*y` would freeze
- * the UI. Compiling is bounded instead, as RE2 bounds it and RE2J doesn't. A pattern is rejected
- * when it is longer than [MAX_PATTERN_LENGTH], or when counts nested inside each other multiply to
- * more than [MAX_REPEAT], such as `(?:a{100}){11}`.
+ * the UI. Matching costs about the input's length times the size of the compiled program, so a
+ * pattern is rejected when it is longer than [MAX_PATTERN_LENGTH], or when it expands past
+ * [MAX_PROGRAM_SIZE] items once its counts are written out, such as `(?:a{100}){11}` or
+ * `a{0,600}b{0,600}`.
+ *
+ * Written for RE2J, `\uXXXX` and `\u{X}` become `\x{X}`, and `.` matches no line terminator, as
+ * in JavaScript. RE2J has no lookahead, so lookaheads right after a leading `^`, such as
+ * `^(?=.*\d).{8,}$`, are each matched on their own from the input's start.
  */
 internal object PatternSafety {
 
-    /** The largest count a `{n,m}` quantifier may use, alone or multiplied by the counts around it. */
-    const val MAX_REPEAT: Int = 1000
+    /** The most items a pattern may expand to once its counts are written out, as RE2 compiles it. */
+    const val MAX_PROGRAM_SIZE: Int = 1000
 
     /** The longest pattern compiled. */
     const val MAX_PATTERN_LENGTH: Int = 1000
@@ -40,71 +45,186 @@ internal object PatternSafety {
     const val MAX_INPUT_LENGTH: Int = 4096
 
     /**
-     * [pattern] compiled, or null when it is rejected or RE2J can't compile it, such as one with
-     * lookaround or a backreference.
+     * A pattern, compiled: [pattern] without its leading lookaheads, the ones that must match at the
+     * input's start, and the ones that must not.
      */
-    fun compile(pattern: String): Pattern? {
-        if (pattern.length > MAX_PATTERN_LENGTH || repeats(pattern) > MAX_REPEAT) return null
+    class Compiled internal constructor(
+        private val pattern: Pattern,
+        private val required: List<Pattern>,
+        private val forbidden: List<Pattern>,
+    ) {
+
+        /** Whether the pattern finds a match in [text]. */
+        fun containsMatchIn(text: String): Boolean =
+            required.all { it.matcher(text).lookingAt() } &&
+                forbidden.none { it.matcher(text).lookingAt() } &&
+                pattern.matcher(text).find()
+    }
+
+    /**
+     * [pattern] compiled, or null when it is rejected or RE2J can't compile it, such as one with
+     * lookbehind, a backreference, or lookahead anywhere but right after a leading `^`.
+     */
+    fun compile(pattern: String): Compiled? {
+        if (pattern.length > MAX_PATTERN_LENGTH || size(pattern) > MAX_PROGRAM_SIZE) return null
+        val lookaheads = leadingLookaheads(pattern)
+        val rest = lookaheads.lastOrNull()?.let { "^" + pattern.substring(it.end) } ?: pattern
+        val (required, forbidden) = lookaheads.partition { !it.negative }
         return try {
-            Pattern.compile(pattern)
+            Compiled(
+                pattern = Pattern.compile(translate(rest)),
+                required = required.map { Pattern.compile(translate(it.body)) },
+                forbidden = forbidden.map { Pattern.compile(translate(it.body)) },
+            )
         } catch (_: PatternSyntaxException) {
             null
         }
     }
 
     /**
-     * The largest product of `{n,m}` counts nested inside each other in [pattern], such as 30 for
-     * `(?:a{3}){10}`. `*`, `+` and `?` count once, as in RE2. Stops growing past [MAX_REPEAT].
+     * How many items [pattern] expands to once its counts are written out, as RE2 compiles it: 4 for
+     * `a{0,3}b`, 6 for `(?:ab){3}`, and 2 for `a+`, which is `aa*`. Stops growing past
+     * [MAX_PROGRAM_SIZE].
      */
-    @Suppress("CyclomaticComplexMethod")
-    fun repeats(pattern: String): Int {
-        // The largest product in each enclosing group, and in the group being read.
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
+    fun size(pattern: String): Int {
+        // The size of each enclosing group read so far, and of the group being read.
         val enclosing = ArrayDeque<Int>()
-        var largest = 1
-        // The product of the item a following count would repeat.
-        var last = 1
+        var total = 0
+        // The size of the item a following count would repeat.
+        var last = 0
         var index = 0
         while (index < pattern.length) {
-            when (pattern[index]) {
-                '\\' -> {
-                    index = afterEscape(pattern, index)
-                    last = 1
+            val count = if (pattern[index] == '{') REPEAT.matchAt(pattern, index) else null
+            when {
+                count != null -> {
+                    val (min, range, max) = count.destructured
+                    val times = when {
+                        range.isEmpty() -> min.toCount()
+                        max.isEmpty() -> min.toCount() + 1
+                        else -> max.toCount()
+                    }.coerceAtLeast(1)
+                    total = bounded(total + last * (times - 1))
+                    last = bounded(last * times)
+                    index = count.range.last + 1
                 }
-                '[' -> {
-                    index = afterClass(pattern, index)
-                    last = 1
-                }
-                '(' -> {
-                    enclosing.addLast(largest)
-                    largest = 1
-                    index++
-                }
-                ')' -> {
-                    last = largest
-                    largest = maxOf(enclosing.removeLastOrNull() ?: 1, last)
-                    index++
-                }
-                '{' -> {
-                    val count = REPEAT.matchAt(pattern, index)
-                    if (count == null) {
+                // A flag group or an empty quote adds nothing, so a following count repeats the item
+                // before it.
+                pattern.startsWith("\\Q", index) -> {
+                    val end = afterEscape(pattern, index)
+                    val quoted = pattern.substring(index, end).removePrefix("\\Q").removeSuffix("\\E").length
+                    if (quoted > 0) {
+                        total = bounded(total + quoted)
                         last = 1
-                        index++
-                    } else {
-                        val times = count.groupValues[2].ifEmpty { count.groupValues[1] }
-                        last = minOf(maxOf(times.toIntOrNull() ?: Int.MAX_VALUE, 1).toLong() * last, MAX_REPEAT + 1L)
-                            .toInt()
-                        largest = maxOf(largest, last)
-                        index = count.range.last + 1
+                    }
+                    index = end
+                }
+                FLAGS.matchAt(pattern, index) != null -> index = pattern.indexOf(')', index) + 1
+                pattern[index] == '(' -> {
+                    enclosing.addLast(total)
+                    total = 0
+                    last = 0
+                    index = GROUP_OPENING.matchAt(pattern, index)?.let { it.range.last + 1 } ?: (index + 1)
+                }
+                pattern[index] == ')' -> {
+                    last = total
+                    total = bounded((enclosing.removeLastOrNull() ?: 0) + total)
+                    index++
+                }
+                pattern[index] == '|' -> {
+                    last = 0
+                    index++
+                }
+                pattern[index] == '+' -> {
+                    total = bounded(total + last)
+                    last = bounded(last * 2)
+                    index++
+                }
+                pattern[index] == '*' || pattern[index] == '?' -> index++
+                else -> {
+                    total = bounded(total + 1)
+                    last = 1
+                    index = when (pattern[index]) {
+                        '\\' -> afterEscape(pattern, index)
+                        '[' -> afterClass(pattern, index)
+                        else -> index + 1
                     }
                 }
-                '*', '+', '?' -> index++
+            }
+        }
+        return enclosing.fold(total) { sum, outer -> bounded(sum + outer) }
+    }
+
+    private fun bounded(size: Int): Int = minOf(size, MAX_PROGRAM_SIZE + 1)
+
+    private fun String.toCount(): Int = toIntOrNull()?.coerceAtMost(MAX_PROGRAM_SIZE + 1) ?: (MAX_PROGRAM_SIZE + 1)
+
+    private class Lookahead(val body: String, val negative: Boolean, val end: Int)
+
+    // The lookaheads right after a leading `^`, each up to the index after it.
+    private fun leadingLookaheads(pattern: String): List<Lookahead> {
+        if (!pattern.startsWith('^')) return emptyList()
+        val lookaheads = mutableListOf<Lookahead>()
+        var index = 1
+        while (true) {
+            val opening = LOOKAHEAD.matchAt(pattern, index)
+            val close = opening?.let { closing(pattern, index) } ?: return lookaheads
+            val body = pattern.substring(opening.range.last + 1, close)
+            lookaheads.add(Lookahead(body, negative = opening.value.endsWith('!'), end = close + 1))
+            index = close + 1
+        }
+    }
+
+    // The index of the `)` closing the group that opens at [start], or null when it isn't closed.
+    private fun closing(pattern: String, start: Int): Int? {
+        var depth = 0
+        var index = start
+        while (index < pattern.length) {
+            when (pattern[index]) {
+                '\\' -> index = afterEscape(pattern, index) - 1
+                '[' -> index = afterClass(pattern, index) - 1
+                '(' -> depth++
+                ')' -> if (--depth == 0) return index
+            }
+            index++
+        }
+        return null
+    }
+
+    // [pattern] with JavaScript's meanings in RE2's syntax: `\uXXXX` and `\u{X}` as `\x{X}`, and `.`
+    // outside a class as any character but a line terminator.
+    private fun translate(pattern: String): String = buildString {
+        // The index after the class being read, or -1 outside one.
+        var classEnd = -1
+        var index = 0
+        while (index < pattern.length) {
+            if (index >= classEnd) classEnd = -1
+            val unicode = UNICODE_ESCAPE.matchAt(pattern, index)
+            when {
+                unicode != null -> {
+                    append("\\x{").append(unicode.groupValues[1].ifEmpty { unicode.groupValues[2] }).append('}')
+                    index = unicode.range.last + 1
+                }
+                pattern[index] == '\\' -> {
+                    val end = afterEscape(pattern, index)
+                    append(pattern, index, end)
+                    index = end
+                }
+                classEnd < 0 && pattern[index] == '[' -> {
+                    classEnd = afterClass(pattern, index)
+                    append('[')
+                    index++
+                }
+                classEnd < 0 && pattern[index] == '.' -> {
+                    append(ANY_BUT_LINE_TERMINATOR)
+                    index++
+                }
                 else -> {
-                    last = 1
+                    append(pattern[index])
                     index++
                 }
             }
         }
-        return enclosing.fold(largest, ::maxOf)
     }
 
     // The index after the escape at [start]: `\Q...\E` to its end, `\x{...}`, `\p{...}` and `\P{...}`
@@ -138,5 +258,12 @@ internal object PatternSafety {
     private fun after(pattern: String, end: String, from: Int): Int =
         pattern.indexOf(end, from).let { if (it < 0) pattern.length else it + end.length }
 
-    private val REPEAT = Regex("""\{(\d+)(?:,(\d*))?}""")
+    private const val ANY_BUT_LINE_TERMINATOR = """[^\n\r\x{2028}\x{2029}]"""
+    private val REPEAT = Regex("""\{(\d+)(,(\d*))?}""")
+    private val FLAGS = Regex("""\(\?[a-zA-Z-]*\)""")
+
+    // What opens a group before its body: `(?:`, `(?i:`, `(?=`, `(?!`, `(?P<name>` or `(?<name>`.
+    private val GROUP_OPENING = Regex("""\(\?(?:[a-zA-Z-]*:|[=!]|P?<[^>]*>)""")
+    private val LOOKAHEAD = Regex("""\(\?[=!]""")
+    private val UNICODE_ESCAPE = Regex("""\\u(?:\{([0-9A-Fa-f]{1,6})}|([0-9A-Fa-f]{4}))""")
 }

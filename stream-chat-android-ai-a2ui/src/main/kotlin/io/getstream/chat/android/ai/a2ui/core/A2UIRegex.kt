@@ -27,9 +27,11 @@ import com.google.re2j.PatternSyntaxException
  * RE2J matches in time linear in the value, so no pattern can backtrack catastrophically. What it
  * can't do is rejected: backreferences, and lookahead anywhere but right after a leading `^`, such
  * as `^(?=.*\d).{8,}$`. There, each lookahead is matched on its own from the value's start.
- * Compiling is bounded instead, by rejecting:
- * - a `{n,m}` count above [MAX_REPEAT_COUNT], or counts nested inside each other whose product is
- *   above it, such as `(?:a{100}){11}`;
+ * Matching costs about the value's length times the size of the compiled program, which is bounded
+ * by rejecting:
+ * - a `{n,m}` count above [MAX_REPEAT_COUNT];
+ * - a pattern that expands past [MAX_PROGRAM_SIZE] items once its counts are written out, such as
+ *   `(?:a{100}){11}` or `a{0,600}b{0,600}`;
  * - a pattern longer than [MAX_PATTERN_LENGTH] code points.
  *
  * A value longer than [MAX_VALUE_LENGTH] code points is not matched at all.
@@ -43,11 +45,14 @@ internal object A2UIRegex {
     /** The longest value matched, in code points; a longer one doesn't match. */
     const val MAX_VALUE_LENGTH: Int = 4096
 
-    /**
-     * The largest count a `{n,m}` quantifier may have, and the largest product of counts nested
-     * inside each other. RE2 has the same bound; RE2J leaves out the nested one.
-     */
+    /** The largest count a `{n,m}` quantifier may have, as in RE2. */
     const val MAX_REPEAT_COUNT: Int = 1000
+
+    /**
+     * The most items a pattern may expand to once its counts are written out, as RE2 compiles it.
+     * RE2 bounds its program's memory; RE2J doesn't, and runs the program on every character.
+     */
+    const val MAX_PROGRAM_SIZE: Int = 1000
 
     /**
      * A pattern of the dialect, compiled: [pattern] without its leading lookaheads, the ones that
@@ -70,14 +75,14 @@ internal object A2UIRegex {
      * [pattern] compiled with the dialect's meaning.
      *
      * @throws FunctionException With `EXPRESSION_ERROR` when the pattern is too long, isn't in
-     * the dialect, or repeats more than [MAX_REPEAT_COUNT] times.
+     * the dialect, or expands past [MAX_PROGRAM_SIZE] items.
      */
     fun compile(pattern: String): Compiled {
         if (pattern.codePointCount(0, pattern.length) > MAX_PATTERN_LENGTH) {
             reject("The pattern is longer than $MAX_PATTERN_LENGTH code points.")
         }
         val tree = Parser(pattern).parse()
-        if (repeats(tree) > MAX_REPEAT_COUNT) reject("Nested counts repeat more than $MAX_REPEAT_COUNT times.")
+        if (size(tree) > MAX_PROGRAM_SIZE) reject("The pattern expands past $MAX_PROGRAM_SIZE items.")
         val items = tree.branches.singleOrNull()?.items.orEmpty()
         val start = items.firstOrNull() as? Assertion
         val lookaheads = if (start?.re2 == "^") {
@@ -116,15 +121,17 @@ internal object A2UIRegex {
     fun containsMatch(regex: Compiled, value: String): Boolean =
         value.codePointCount(0, value.length) <= MAX_VALUE_LENGTH && regex.containsMatchIn(value)
 
-    // The largest product of counts nested inside each other in [node], such as 30 for
-    // `(?:a{3}){10}`. `*`, `+` and `?` count once, as in RE2. Stops growing past the bound.
-    private fun repeats(node: Node): Int = when (node) {
-        is Alternation -> node.branches.maxOf(::repeats)
-        is Sequence -> node.items.maxOfOrNull(::repeats) ?: 1
-        is Group -> repeats(node.body)
-        is Repeat -> minOf(maxOf(node.max ?: node.min, 1) * repeats(node.node), MAX_REPEAT_COUNT + 1)
+    // How many items [node] expands to once its counts are written out, as RE2 compiles it: 4 for
+    // `a{0,3}b`, 6 for `(?:ab){3}`, and 2 for `a+`, which is `aa*`. Stops growing past the bound.
+    private fun size(node: Node): Int = when (node) {
+        is Alternation -> bounded(node.branches.sumOf(::size))
+        is Sequence -> bounded(node.items.sumOf(::size))
+        is Group -> size(node.body)
+        is Repeat -> bounded(size(node.node) * maxOf(node.max ?: (node.min + 1), 1))
         is Characters, is Assertion -> 1
     }
+
+    private fun bounded(size: Int): Int = minOf(size, MAX_PROGRAM_SIZE + 1)
 
     private fun reject(reason: String): Nothing =
         throw FunctionException(RendererError.EXPRESSION_ERROR, "'regex' rejects the pattern: $reason")

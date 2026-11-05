@@ -170,7 +170,7 @@ internal object FormValidation {
             val text = (value as? OpenUIValue.Str)?.value
             when {
                 isEmpty(value) || text == null || regex == null -> null
-                text.length <= PatternSafety.MAX_INPUT_LENGTH && regex.matcher(text).find() -> null
+                text.length <= PatternSafety.MAX_INPUT_LENGTH && regex.containsMatchIn(text) -> null
                 else -> "Invalid format"
             }
         },

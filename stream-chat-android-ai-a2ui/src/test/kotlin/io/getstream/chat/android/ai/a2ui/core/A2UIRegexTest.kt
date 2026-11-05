@@ -56,6 +56,8 @@ internal class A2UIRegexTest {
         assertFalse(A2UIRegex.containsMatch(A2UIRegex.compile("^(a|aa)*$"), "a".repeat(longest - 1) + "!"))
         assertFalse(A2UIRegex.containsMatch(A2UIRegex.compile("^[a-z]*[a-z]*[a-z]*[a-z]*1$"), "a".repeat(longest)))
         assertTrue(A2UIRegex.containsMatch(A2UIRegex.compile("^(a?){25}a{25}$"), "a".repeat(25)))
+        // The largest pattern accepted, all of it optional, which costs the most to match.
+        assertFalse(A2UIRegex.containsMatch(A2UIRegex.compile("a{0,999}b"), "a".repeat(longest)))
         assertTrue(A2UIRegex.containsMatch(A2UIRegex.compile("\\d+\\s*\\d+"), "12 34"))
         assertTrue(A2UIRegex.containsMatch(A2UIRegex.compile("^((a|b)c)+$"), "acbc"))
     }
@@ -132,9 +134,20 @@ internal class A2UIRegexTest {
     }
 
     @Test
-    fun `nested counts whose product is above 1000 are rejected`() {
-        listOf("(?:a{1000}){2}", "((a{10}){10}){11}", "(?:(?:a{1000}){1000}){1000}", "(?:a{2,}){501}").forEach(::assertRejected)
-        listOf("(?:a{10}){100}", "(?:a{1000})*", "(?:a{500})+(?:b{1000})?").forEach { A2UIRegex.compile(it) }
+    fun `a pattern that expands past 1000 items is rejected`() {
+        listOf(
+            "(?:a{1000}){2}",
+            "((a{10}){10}){11}",
+            "(?:(?:a{1000}){1000}){1000}",
+            "(?:a{2,}){501}",
+            "(?:a{500})+(?:b{1000})?",
+            "a{0,600}b{0,600}",
+            "a{0,1000}".repeat(28) + "b",
+            "(?:ab{0,10}){100}",
+        ).forEach(::assertRejected)
+        listOf("(?:a{10}){100}", "(?:a{1000})*", "a{0,500}b{0,499}", "(?:a+){500}", "(?:a|b){500}").forEach {
+            A2UIRegex.compile(it)
+        }
     }
 
     @Test

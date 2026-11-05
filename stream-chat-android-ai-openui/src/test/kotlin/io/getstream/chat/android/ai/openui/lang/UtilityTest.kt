@@ -187,19 +187,46 @@ internal class UtilityTest {
                 assertEquals("Invalid format", validate(v(input), obj("pattern" to pattern)), pattern)
             }
             assertNull(validate(v("a".repeat(25)), obj("pattern" to "^(a?){25}a{25}$")))
+            // The largest pattern accepted, all of it optional, which costs the most to match.
+            assertEquals("Invalid format", validate(v("a".repeat(longest)), obj("pattern" to "a{0,999}b")))
         }
 
         @Test
         fun `patterns RE2J can't compile are ignored`() {
             listOf(
-                "^(?=.*\\d).{8,}$", "(?!a)b", "(?<=a)b", "^(a+)\\1$", "(a)\\k<x>", "a*+b",
+                "(?=a)b", "(?!a)b", "^a(?=b)", "^(?=(?=a))", "^(?=a", "(?<=a)b", "^(a+)\\1$", "(a)\\k<x>", "a*+b",
                 "[invalid(", "a{1001}", "a{1,1001}",
             ).forEach { assertNull(PatternSafety.compile(it), it) }
-            assertNull(validate(v("password"), obj("pattern" to "^(?=.*\\d).{8,}$")), "an ignored rule passes")
+            assertNull(validate(v("ab"), obj("pattern" to "(?=a)b")), "an ignored rule passes")
         }
 
         @Test
-        fun `nested counts whose product is above 1000 are rejected`() {
+        fun `lookaheads right after a leading caret each match from the start`() {
+            val password = obj("pattern" to "^(?=.*[A-Z])(?=.*\\d)(?!.*\\s).{8,}$")
+            assertNull(validate(v("Passw0rd"), password))
+            assertEquals("Invalid format", validate(v("password"), password))
+            assertEquals("Invalid format", validate(v("Password"), password))
+            assertEquals("Invalid format", validate(v("Pass w0rd"), password))
+            assertEquals("Invalid format", validate(v("Pa0"), password))
+            assertNull(validate(v("a(b"), obj("pattern" to "^(?=[^)]*\\()(?=.*[(])a")))
+        }
+
+        @Test
+        fun `escapes and the dot mean what they mean in JavaScript`() {
+            val letters = obj("pattern" to "^[A-Za-z\\u00C0-\\u017F ]+$")
+            assertNull(validate(v("Zoë Šimić"), letters))
+            assertEquals("Invalid format", validate(v("Zoë1"), letters))
+            assertNull(validate(v("😀"), obj("pattern" to "^\\u{1F600}$")))
+            assertNull(validate(v("\\u0041"), obj("pattern" to "^\\\\u0041$")), "an escaped backslash stays")
+            listOf("\r", "\n", "\u2028", "\u2029").forEach {
+                assertEquals("Invalid format", validate(v(it), obj("pattern" to "^.$")), it)
+            }
+            assertNull(validate(v("."), obj("pattern" to "^[.]$")))
+            assertNull(validate(v("\u0085"), obj("pattern" to "^.$")))
+        }
+
+        @Test
+        fun `a pattern that expands past 1000 items is rejected`() {
             listOf(
                 "(?:a{1000}){2}",
                 "((a{10}){10}){11}",
@@ -207,18 +234,26 @@ internal class UtilityTest {
                 "(?:a{2,}){501}",
                 "(?:[{]{10}(?:b{10}){10}){11}",
                 "(?:\\Q(\\E{10}){101}",
-            ).forEach { assertTrue(PatternSafety.repeats(it) > PatternSafety.MAX_REPEAT, it) }
-            listOf("(?:a{10}){100}", "(?:a{1000})*", "(?:a{500})+(?:b{1000})?", "a{1000}b{1000}").forEach {
+                "(?:a{500})+(?:b{1000})?",
+                "a{1000}b{1000}",
+                "a{0,1000}".repeat(111) + "b",
+                "^(?:" + "a?".repeat(100) + "){1000}$",
+                "a{1000}(?i){1000}(?i){1000}",
+                "a{100}\\Q\\E{100}",
+                "(?:\\Q" + "a".repeat(100) + "\\E){11}",
+            ).forEach { assertNull(PatternSafety.compile(it), it.take(40)) }
+            listOf("(?:a{10}){100}", "(?:a{1000})*", "a{0,500}b{0,499}", "(?:a+){500}", "(?:a|b){500}").forEach {
                 assertTrue(PatternSafety.compile(it) != null, it)
             }
         }
 
         @Test
-        fun `braces and parentheses in classes and escapes don't count`() {
+        fun `braces and parentheses in classes and escapes count once`() {
             listOf(
                 "[(]{10}" to 10, "[{]{2}{3}" to 6, "\\x{41}{10}" to 10, "\\p{L}{5}" to 5, "\\({10}" to 10,
-                "[]{]{10}" to 10, "[[:alpha:]]{10}" to 10, "a{x}" to 1, "\\Q{10}\\E" to 1, "(a){2}(b{3}){4}" to 12,
-            ).forEach { (pattern, repeats) -> assertEquals(repeats, PatternSafety.repeats(pattern), pattern) }
+                "[]{]{10}" to 10, "[[:alpha:]]{10}" to 10, "a{x}" to 4, "\\Q{10}\\E" to 4, "(a){2}(b{3}){4}" to 14,
+                "a{0,3}b" to 4, "(?:ab){3}" to 6, "a+" to 2, "a{2,}" to 3, "(?i)a{3}" to 3,
+            ).forEach { (pattern, size) -> assertEquals(size, PatternSafety.size(pattern), pattern) }
         }
 
         @Test
