@@ -64,6 +64,8 @@ dependencies {
     // The Markdown renderer stream-chat-android-ai-compose uses, for Text.
     implementation(libs.markdown.renderer)
     implementation(libs.markdown.renderer.m3)
+    // Agent-written patterns match in linear time, which java.util.regex can't promise.
+    implementation(libs.re2j)
 
     testImplementation(libs.junit)
     testImplementation(libs.androidx.test.junit)

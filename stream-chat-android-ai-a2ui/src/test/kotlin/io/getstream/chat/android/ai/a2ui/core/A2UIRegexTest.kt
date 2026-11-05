@@ -22,7 +22,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 
-/** The A2UI regex dialect and its static safety check. */
+/** The A2UI regex dialect, matched with RE2J. */
 internal class A2UIRegexTest {
 
     @Test
@@ -34,9 +34,39 @@ internal class A2UIRegexTest {
     }
 
     @Test
-    fun `patterns that could backtrack catastrophically are rejected`() {
-        // Nested quantifiers, a quantified alternation, adjacent repeats and a backreference.
-        listOf("(a+)+$", "(a|ab)*c", "\\d+\\s*\\d+", "(\\w)\\1", "(?:a*){2}", "a*a*").forEach(::assertRejected)
+    fun `lookaheads right after a leading caret each match from the start`() {
+        val password = A2UIRegex.compile("^(?=.*[A-Z])(?=.*\\d)(?!.*\\s).{8,}$")
+        assertTrue(password.containsMatchIn("Password1"))
+        assertFalse(password.containsMatchIn("password1"))
+        assertFalse(password.containsMatchIn("Password"))
+        assertFalse(password.containsMatchIn("Pass word1"))
+        assertFalse(password.containsMatchIn("Pass1"))
+        // A lookahead's own alternation stays inside it.
+        val either = A2UIRegex.compile("^(?=a|b)[a-c]$")
+        assertTrue(either.containsMatchIn("b"))
+        assertFalse(either.containsMatchIn("c"))
+        assertTrue(A2UIRegex.compile("^(?=a)").containsMatchIn("abc"))
+    }
+
+    @Test(timeout = 10_000)
+    fun `patterns that backtrack catastrophically elsewhere match in linear time`() {
+        val longest = A2UIRegex.MAX_VALUE_LENGTH
+        assertFalse(A2UIRegex.containsMatch(A2UIRegex.compile("x.*x.*y"), "x".repeat(longest)))
+        assertFalse(A2UIRegex.containsMatch(A2UIRegex.compile("^(a+)+$"), "a".repeat(longest - 1) + "!"))
+        assertFalse(A2UIRegex.containsMatch(A2UIRegex.compile("^(a|aa)*$"), "a".repeat(longest - 1) + "!"))
+        assertFalse(A2UIRegex.containsMatch(A2UIRegex.compile("^[a-z]*[a-z]*[a-z]*[a-z]*1$"), "a".repeat(longest)))
+        assertTrue(A2UIRegex.containsMatch(A2UIRegex.compile("^(a?){25}a{25}$"), "a".repeat(25)))
+        // The largest pattern accepted, all of it optional, which costs the most to match.
+        assertFalse(A2UIRegex.containsMatch(A2UIRegex.compile("a{0,999}b"), "a".repeat(longest)))
+        assertTrue(A2UIRegex.containsMatch(A2UIRegex.compile("\\d+\\s*\\d+"), "12 34"))
+        assertTrue(A2UIRegex.containsMatch(A2UIRegex.compile("^((a|b)c)+$"), "acbc"))
+    }
+
+    @Test
+    fun `lookahead anywhere else is rejected`() {
+        listOf(
+            "(?=a)b", "a(?!b)", "^a(?=b)", "^(?=a)|b", "b|^(?=a)", "^(?:(?=a))", "^(?=(?=a))", "^(?=a)*", "(^(?=a))",
+        ).forEach(::assertRejected)
     }
 
     @Test
@@ -70,23 +100,7 @@ internal class A2UIRegexTest {
     }
 
     @Test
-    fun `a group that repeats with a variable quantifier or an alternation inside is rejected`() {
-        listOf(
-            "(a?){25}a{25}",
-            "(a?){25}",
-            "(a+)+",
-            "(a|aa)*",
-            "(?:a*)*",
-            "((a|b)c)+",
-            "(?:(a)b?)+",
-            "(?:a{2,3}){2}",
-            "(?:a{2,})*",
-            "(?:(?:a|b)c){0,2}",
-        ).forEach(::assertRejected)
-    }
-
-    @Test
-    fun `a group that repeats at most once, or holds only exact counts, is accepted`() {
+    fun `optional and counted groups match`() {
         listOf(
             "^[0-9]{5}(?:-[0-9]{4})?$",
             "(Mr|Mrs)?",
@@ -117,6 +131,23 @@ internal class A2UIRegexTest {
     fun `a count above 1000 is rejected`() {
         listOf("a{1001}", "a{0,1001}", "a{1001,}", "a{99999999999}").forEach(::assertRejected)
         A2UIRegex.compile("a{0,${A2UIRegex.MAX_REPEAT_COUNT}}")
+    }
+
+    @Test
+    fun `a pattern that expands past 1000 items is rejected`() {
+        listOf(
+            "(?:a{1000}){2}",
+            "((a{10}){10}){11}",
+            "(?:(?:a{1000}){1000}){1000}",
+            "(?:a{2,}){501}",
+            "(?:a{500})+(?:b{1000})?",
+            "a{0,600}b{0,600}",
+            "a{0,1000}".repeat(28) + "b",
+            "(?:ab{0,10}){100}",
+        ).forEach(::assertRejected)
+        listOf("(?:a{10}){100}", "(?:a{1000})*", "a{0,500}b{0,499}", "(?:a+){500}", "(?:a|b){500}").forEach {
+            A2UIRegex.compile(it)
+        }
     }
 
     @Test

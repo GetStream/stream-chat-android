@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.markdown)
     implementation(libs.markdown.renderer)
     implementation(libs.markdown.renderer.m3)
+    // Agent-written patterns match in linear time, which java.util.regex can't promise.
+    implementation(libs.re2j)
 
     testImplementation(libs.kotlin.test.junit5)
     testImplementation(libs.junit.jupiter.api)

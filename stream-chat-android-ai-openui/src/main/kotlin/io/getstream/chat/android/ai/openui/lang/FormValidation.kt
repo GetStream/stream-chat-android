@@ -163,11 +163,10 @@ internal object FormValidation {
                 "Must be no more than ${JS.numberToString(max)} characters"
             }
         },
-        // The model writes the pattern: one that fails PatternSafety is ignored like an invalid one,
+        // The model writes the pattern: one PatternSafety rejects is ignored like an invalid one,
         // and input longer than PatternSafety.MAX_INPUT_LENGTH fails the rule.
         "pattern" to { value, argument ->
-            val pattern = argument.stringValue
-            val regex = pattern?.takeIf(PatternSafety::isSafe)?.let { runCatching { Regex(it) }.getOrNull() }
+            val regex = argument.stringValue?.let(PatternSafety::compile)
             val text = (value as? OpenUIValue.Str)?.value
             when {
                 isEmpty(value) || text == null || regex == null -> null

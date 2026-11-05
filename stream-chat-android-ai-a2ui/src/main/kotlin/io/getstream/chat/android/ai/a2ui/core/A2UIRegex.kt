@@ -16,25 +16,22 @@
 
 package io.getstream.chat.android.ai.a2ui.core
 
-import java.util.regex.PatternSyntaxException
+import com.google.re2j.Pattern
+import com.google.re2j.PatternSyntaxException
 
 /**
  * The A2UI regex dialect: a portable subset of ECMAScript patterns in Unicode mode. A pattern is
- * parsed, checked against static safety rules, and then written out as an equivalent Java pattern
- * with ECMAScript meanings for `.`, `$`, `\d`, `\w`, `\s` and `\b`.
+ * parsed and then written out as an equivalent RE2 pattern with ECMAScript meanings for `.`, `$`,
+ * `\d`, `\w`, `\s` and `\b`.
  *
- * The static check is the only guard against catastrophic backtracking: the platform matcher
- * can't be interrupted, so the shapes that backtrack catastrophically are rejected before any
- * matching. The check rejects:
- * - a group that repeats more than once, such as with `*`, `+` or `{2}`, whose contents, at any
- *   depth, have a variable quantifier (`*`, `+`, `?`, `{n,m}` with n≠m, or `{n,}`) or an
- *   alternation, such as `(a?){25}`, `(a+)+`, `(a|aa)*`, `(?:a*)*` or `((a|b)c)+`. A group that
- *   repeats at most once, such as `(Mr|Mrs)?`, and an exact count `{n}` inside a group, such as
- *   `(ab){3}`, are fine;
- * - two unbounded quantifiers over overlapping characters with only empty-matching items between
- *   them, such as `\d+\s*\d+`;
- * - backreferences;
+ * RE2J matches in time linear in the value, so no pattern can backtrack catastrophically. What it
+ * can't do is rejected: backreferences, and lookahead anywhere but right after a leading `^`, such
+ * as `^(?=.*\d).{8,}$`. There, each lookahead is matched on its own from the value's start.
+ * Matching costs about the value's length times the size of the compiled program, which is bounded
+ * by rejecting:
  * - a `{n,m}` count above [MAX_REPEAT_COUNT];
+ * - a pattern that expands past [MAX_PROGRAM_SIZE] items once its counts are written out, such as
+ *   `(?:a{100}){11}` or `a{0,600}b{0,600}`;
  * - a pattern longer than [MAX_PATTERN_LENGTH] code points.
  *
  * A value longer than [MAX_VALUE_LENGTH] code points is not matched at all.
@@ -48,34 +45,93 @@ internal object A2UIRegex {
     /** The longest value matched, in code points; a longer one doesn't match. */
     const val MAX_VALUE_LENGTH: Int = 4096
 
-    /** The largest count a `{n,m}` quantifier may have. */
+    /** The largest count a `{n,m}` quantifier may have, as in RE2. */
     const val MAX_REPEAT_COUNT: Int = 1000
 
     /**
-     * [pattern] as a [Regex] with the dialect's meaning.
+     * The most items a pattern may expand to once its counts are written out, as RE2 compiles it.
+     * RE2 bounds its program's memory; RE2J doesn't, and runs the program on every character.
+     */
+    const val MAX_PROGRAM_SIZE: Int = 1000
+
+    /**
+     * A pattern of the dialect, compiled: [pattern] without its leading lookaheads, the ones that
+     * must match at the value's start, and the ones that must not.
+     */
+    class Compiled internal constructor(
+        private val pattern: Pattern,
+        private val required: List<Pattern> = emptyList(),
+        private val forbidden: List<Pattern> = emptyList(),
+    ) {
+
+        /** Whether the pattern finds a match in [value]. */
+        fun containsMatchIn(value: String): Boolean =
+            required.all { it.matcher(value).lookingAt() } &&
+                forbidden.none { it.matcher(value).lookingAt() } &&
+                pattern.matcher(value).find()
+    }
+
+    /**
+     * [pattern] compiled with the dialect's meaning.
      *
      * @throws FunctionException With `EXPRESSION_ERROR` when the pattern is too long, isn't in
-     * the dialect, or fails the static safety check.
+     * the dialect, or expands past [MAX_PROGRAM_SIZE] items.
      */
-    fun compile(pattern: String): Regex {
+    fun compile(pattern: String): Compiled {
         if (pattern.codePointCount(0, pattern.length) > MAX_PATTERN_LENGTH) {
             reject("The pattern is longer than $MAX_PATTERN_LENGTH code points.")
         }
         val tree = Parser(pattern).parse()
-        Safety.check(tree)
+        if (size(tree) > MAX_PROGRAM_SIZE) reject("The pattern expands past $MAX_PROGRAM_SIZE items.")
+        val items = tree.branches.singleOrNull()?.items.orEmpty()
+        val start = items.firstOrNull() as? Assertion
+        val lookaheads = if (start?.re2 == "^") {
+            items.drop(1).takeWhile { it is Group && it.kind.isLookahead }.map { it as Group }
+        } else {
+            emptyList()
+        }
+        val rest = if (lookaheads.isEmpty()) tree else Sequence(items.take(1) + items.drop(1 + lookaheads.size))
+        if (hasLookahead(rest) || lookaheads.any { hasLookahead(it.body) }) {
+            reject("Lookahead is only allowed right after a leading '^'.")
+        }
         return try {
-            Regex(Writer.write(tree))
+            val (required, forbidden) = lookaheads.partition { it.kind == GroupKind.LOOKAHEAD }
+            Compiled(
+                pattern = Pattern.compile(Writer.write(rest)),
+                required = required.map { Pattern.compile(Writer.write(it.body)) },
+                forbidden = forbidden.map { Pattern.compile(Writer.write(it.body)) },
+            )
         } catch (_: PatternSyntaxException) {
             reject("The pattern is not valid.")
         }
+    }
+
+    private fun hasLookahead(node: Node): Boolean = when (node) {
+        is Alternation -> node.branches.any(::hasLookahead)
+        is Sequence -> node.items.any(::hasLookahead)
+        is Group -> node.kind.isLookahead || hasLookahead(node.body)
+        is Repeat -> hasLookahead(node.node)
+        is Characters, is Assertion -> false
     }
 
     /**
      * Whether [regex], compiled by [compile], finds a match in [value]. A value longer than
      * [MAX_VALUE_LENGTH] code points doesn't match.
      */
-    fun containsMatch(regex: Regex, value: String): Boolean =
+    fun containsMatch(regex: Compiled, value: String): Boolean =
         value.codePointCount(0, value.length) <= MAX_VALUE_LENGTH && regex.containsMatchIn(value)
+
+    // How many items [node] expands to once its counts are written out, as RE2 compiles it: 4 for
+    // `a{0,3}b`, 6 for `(?:ab){3}`, and 2 for `a+`, which is `aa*`. Stops growing past the bound.
+    private fun size(node: Node): Int = when (node) {
+        is Alternation -> bounded(node.branches.sumOf(::size))
+        is Sequence -> bounded(node.items.sumOf(::size))
+        is Group -> size(node.body)
+        is Repeat -> bounded(size(node.node) * maxOf(node.max ?: (node.min + 1), 1))
+        is Characters, is Assertion -> 1
+    }
+
+    private fun bounded(size: Int): Int = minOf(size, MAX_PROGRAM_SIZE + 1)
 
     private fun reject(reason: String): Nothing =
         throw FunctionException(RendererError.EXPRESSION_ERROR, "'regex' rejects the pattern: $reason")
@@ -85,12 +141,14 @@ internal object A2UIRegex {
     internal class Sequence(val items: List<Node>) : Node
     internal class Characters(val set: CharSet) : Node
     internal class Group(val body: Alternation, val kind: GroupKind) : Node
-    internal class Assertion(val java: String) : Node
+    internal class Assertion(val re2: String) : Node
     internal class Repeat(val node: Node, val min: Int, val max: Int?, val lazy: Boolean) : Node
 
-    internal enum class GroupKind(val java: String, val isLookahead: Boolean) {
+    internal enum class GroupKind(val re2: String, val isLookahead: Boolean) {
         CAPTURING("(", false),
         NON_CAPTURING("(?:", false),
+
+        // Not RE2: only matched on its own, never written.
         LOOKAHEAD("(?=", true),
         NEGATIVE_LOOKAHEAD("(?!", true),
     }
@@ -109,10 +167,6 @@ internal object A2UIRegex {
             }
             if (next <= MAX_CODE_POINT) result.add(next..MAX_CODE_POINT)
             return CharSet(result)
-        }
-
-        fun overlaps(other: CharSet): Boolean = ranges.any { range ->
-            other.ranges.any { it.first <= range.last && range.first <= it.last }
         }
 
         companion object {
@@ -278,13 +332,14 @@ internal object A2UIRegex {
         private fun atomEscape(): Node {
             if (index >= points.size) fail("'\\' at end of pattern.")
             return when (peek()) {
+                // RE2's `\b` is ASCII, like ECMAScript's.
                 'b'.code -> {
                     index++
-                    Assertion(WORD_BOUNDARY)
+                    Assertion("\\b")
                 }
                 'B'.code -> {
                     index++
-                    Assertion(NOT_WORD_BOUNDARY)
+                    Assertion("\\B")
                 }
                 else -> Characters(escape(inClass = false))
             }
@@ -393,88 +448,7 @@ internal object A2UIRegex {
         }
     }
 
-    private const val WORD_CLASS = "[0-9A-Za-z_]"
-    private const val WORD_BOUNDARY = "(?:(?<=$WORD_CLASS)(?!$WORD_CLASS)|(?<!$WORD_CLASS)(?=$WORD_CLASS))"
-    private const val NOT_WORD_BOUNDARY = "(?:(?<=$WORD_CLASS)(?=$WORD_CLASS)|(?<!$WORD_CLASS)(?!$WORD_CLASS))"
-
-    /** The protocol's static safety check, which runs before any matching. */
-    private object Safety {
-
-        fun check(node: Node) {
-            when (node) {
-                is Alternation -> node.branches.forEach(::check)
-                is Sequence -> {
-                    adjacentRepeats(node)
-                    node.items.forEach(::check)
-                }
-                is Group -> check(node.body)
-                is Repeat -> {
-                    val repeatsMoreThanOnce = node.max == null || node.max > 1
-                    if (repeatsMoreThanOnce && node.node is Group && isVariable(node.node.body)) {
-                        fail("A group that repeats has a variable quantifier or an alternation.")
-                    }
-                    check(node.node)
-                }
-                is Characters, is Assertion -> Unit
-            }
-        }
-
-        // Two unbounded atoms that overlap, with only empty-matching items between them.
-        private fun adjacentRepeats(sequence: Sequence) {
-            val items = sequence.items
-            for (i in items.indices) {
-                val left = unwrap(items[i])
-                if (left !is Repeat || left.max != null) continue
-                for (j in i + 1 until items.size) {
-                    val right = unwrap(items[j])
-                    if (right is Repeat && right.max == null && characters(left).overlaps(characters(right))) {
-                        fail("Two unbounded quantifiers over overlapping characters are adjacent.")
-                    }
-                    if (!canMatchEmpty(items[j])) break
-                }
-            }
-        }
-
-        private fun fail(message: String): Nothing = reject(message)
-
-        // A group whose only content is one quantified atom counts as that atom.
-        private fun unwrap(node: Node): Node {
-            if (node !is Group || node.kind.isLookahead) return node
-            val only = node.body.branches.singleOrNull()?.items?.singleOrNull() ?: return node
-            return if (only is Repeat) only else unwrap(only).takeIf { it is Repeat } ?: node
-        }
-
-        // Whether [node] has, at any depth, a quantifier whose count varies or an alternation. An
-        // exact count `{n}` doesn't vary.
-        private fun isVariable(node: Node): Boolean = when (node) {
-            is Repeat -> node.max != node.min || isVariable(node.node)
-            is Group -> isVariable(node.body)
-            is Alternation -> node.branches.size > 1 || node.branches.any(::isVariable)
-            is Sequence -> node.items.any(::isVariable)
-            is Characters, is Assertion -> false
-        }
-
-        private fun canMatchEmpty(node: Node): Boolean = when (node) {
-            is Characters -> false
-            is Assertion -> true
-            is Group -> node.kind.isLookahead || canMatchEmpty(node.body)
-            is Alternation -> node.branches.any(::canMatchEmpty)
-            is Sequence -> node.items.all(::canMatchEmpty)
-            is Repeat -> node.min == 0 || canMatchEmpty(node.node)
-        }
-
-        // Every code point [node] can consume.
-        private fun characters(node: Node): CharSet = when (node) {
-            is Characters -> node.set
-            is Assertion -> CharSet.EMPTY
-            is Group -> if (node.kind.isLookahead) CharSet.EMPTY else characters(node.body)
-            is Alternation -> node.branches.fold(CharSet.EMPTY) { set, branch -> set.union(characters(branch)) }
-            is Sequence -> node.items.fold(CharSet.EMPTY) { set, item -> set.union(characters(item)) }
-            is Repeat -> characters(node.node)
-        }
-    }
-
-    /** Writes a checked tree as a Java pattern. */
+    /** Writes a tree as an RE2 pattern. */
     private object Writer {
 
         fun write(node: Node): String = StringBuilder().also { write(node, it) }.toString()
@@ -487,9 +461,9 @@ internal object A2UIRegex {
                 }
                 is Sequence -> node.items.forEach { write(it, out) }
                 is Characters -> characters(node.set, out)
-                is Assertion -> out.append(node.java)
+                is Assertion -> out.append(node.re2)
                 is Group -> {
-                    out.append(node.kind.java)
+                    out.append(node.kind.re2)
                     write(node.body, out)
                     out.append(')')
                 }
