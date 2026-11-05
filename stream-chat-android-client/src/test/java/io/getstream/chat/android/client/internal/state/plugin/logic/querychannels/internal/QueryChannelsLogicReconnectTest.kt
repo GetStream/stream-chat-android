@@ -81,23 +81,40 @@ internal class QueryChannelsLogicReconnectTest {
 
     @Test
     fun `a failed later page keeps the loaded channels and the offset`() = runTest {
-        val loadedChannels = loadTwoPages()
-        givenPages(firstPage = loadedChannels.take(PAGE_SIZE), laterPage = null)
+        val loadedChannels = loadPages(count = 2)
+        val newChannel = randomChannel(type = "messaging")
+        givenPages(0 to listOf(newChannel) + loadedChannels.take(PAGE_SIZE - 1))
+
+        logic.queryFirstPage()
+
+        val expectedCids = loadedChannels.cids() + newChannel.cid
+        assertEquals(expectedCids, stateLogic.getChannels()!!.keys)
+        assertEquals(expectedCids, logic.cids())
+        assertEquals(PAGE_SIZE * 2, mutableState.channelsOffset.value)
+    }
+
+    @Test
+    fun `a page failing after a successful later page keeps the loaded channels and the offset`() = runTest {
+        val loadedChannels = loadPages(count = 3)
+        givenPages(
+            0 to loadedChannels.take(PAGE_SIZE),
+            PAGE_SIZE to loadedChannels.subList(PAGE_SIZE, PAGE_SIZE * 2),
+        )
 
         logic.queryFirstPage()
 
         assertEquals(loadedChannels.cids(), stateLogic.getChannels()!!.keys)
         assertEquals(loadedChannels.cids(), logic.cids())
-        assertEquals(PAGE_SIZE * 2, mutableState.channelsOffset.value)
+        assertEquals(PAGE_SIZE * 3, mutableState.channelsOffset.value)
     }
 
     @Test
     fun `a successful later page removes the channel that left the list`() = runTest {
-        val loadedChannels = loadTwoPages()
+        val loadedChannels = loadPages(count = 2)
         val leftChannel = loadedChannels.last()
         givenPages(
-            firstPage = loadedChannels.take(PAGE_SIZE),
-            laterPage = loadedChannels.drop(PAGE_SIZE) - leftChannel,
+            0 to loadedChannels.take(PAGE_SIZE),
+            PAGE_SIZE to loadedChannels.drop(PAGE_SIZE) - leftChannel,
         )
 
         logic.queryFirstPage()
@@ -107,9 +124,9 @@ internal class QueryChannelsLogicReconnectTest {
         assertEquals(PAGE_SIZE * 2 - 1, mutableState.channelsOffset.value)
     }
 
-    /** Loads two full pages into the list, the way the channel list loads them before the connection drops. */
-    private suspend fun loadTwoPages(): List<Channel> {
-        val channels = List(PAGE_SIZE * 2) { randomChannel(type = "messaging") }
+    /** Loads [count] full pages into the list, the way the channel list loads them before the connection drops. */
+    private suspend fun loadPages(count: Int): List<Channel> {
+        val channels = List(PAGE_SIZE * count) { randomChannel(type = "messaging") }
         channels.chunked(PAGE_SIZE).forEachIndexed { index, page ->
             val request = QueryChannelsRequest(
                 filter = filter,
@@ -123,13 +140,14 @@ internal class QueryChannelsLogicReconnectTest {
         return channels
     }
 
-    /** Stubs the first page, and every later page with [laterPage], or with a failure when it is null. */
-    private fun givenPages(firstPage: List<Channel>, laterPage: List<Channel>?) {
+    /** Stubs the page at each offset of [pages]. A request at any other offset fails. */
+    private fun givenPages(vararg pages: Pair<Int, List<Channel>>) {
+        val pagesByOffset = pages.toMap()
         whenever(client.queryChannelsInternal(any())) doAnswer { invocation ->
             val request = invocation.getArgument<QueryChannelsRequest>(0)
-            val page = if (request.offset == 0) firstPage else laterPage
-            page?.let { QueryChannelsResult(channels = it, predefinedFilter = null).asCall() }
-                ?: Error.GenericError("Later page failed").asCall()
+            pagesByOffset[request.offset]
+                ?.let { QueryChannelsResult(channels = it, predefinedFilter = null).asCall() }
+                ?: Error.GenericError("Page at offset ${request.offset} failed").asCall()
         }
     }
 
