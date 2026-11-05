@@ -37,4 +37,44 @@ internal class CaptureMediaTargetSheetTest : PaparazziComposeTest {
             CaptureMediaTargetSheetContent()
         }
     }
+
+    @Test
+    fun `capture media target sheet with long labels`() {
+        snapshotWithDarkMode {
+            CaptureMediaTargetSheetContent(
+                title = "Cattura immagine o video",
+                items = listOf(
+                    CaptureMediaTargetItem(
+                        label = "Fotocamera",
+                        icon = null,
+                        subtitle = "Cattura immagine",
+                        onClick = {},
+                    ),
+                    CaptureMediaTargetItem(
+                        label = "Videocamera",
+                        icon = null,
+                        subtitle = "Cattura video",
+                        onClick = {},
+                    ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `capture media target sheet with a shorter last row`() {
+        snapshotWithDarkMode {
+            CaptureMediaTargetSheetContent(
+                title = "Capture Image or Video",
+                items = List(5) { index ->
+                    CaptureMediaTargetItem(
+                        label = "Camera ${index + 1}",
+                        icon = null,
+                        subtitle = "Capture Image",
+                        onClick = {},
+                    )
+                },
+            )
+        }
+    }
 }

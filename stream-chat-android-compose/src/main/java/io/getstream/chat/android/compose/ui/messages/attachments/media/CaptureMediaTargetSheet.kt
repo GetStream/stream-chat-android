@@ -20,11 +20,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -109,21 +109,23 @@ internal fun CaptureMediaTargetSheetContent(
             color = ChatTheme.colors.textPrimary,
             textAlign = TextAlign.Center,
         )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
-        ) {
-            items.forEach { item -> CaptureMediaTarget(item) }
+        val columns = items.size.coerceIn(1, MaxColumns)
+        Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd)) {
+            items.chunked(columns).forEach { row ->
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    row.forEach { item -> CaptureMediaTarget(item, Modifier.weight(1f)) }
+                    // Keeps the cells of a shorter last row as wide as the others.
+                    repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun CaptureMediaTarget(item: CaptureMediaTargetItem) {
+private fun CaptureMediaTarget(item: CaptureMediaTargetItem, modifier: Modifier) {
     Column(
-        modifier = Modifier
-            .width(TargetWidth)
+        modifier = modifier
             .clip(RoundedCornerShape(StreamTokens.radiusLg))
             .clickable(onClick = item.onClick)
             .padding(StreamTokens.spacingXs),
@@ -165,7 +167,7 @@ private fun CaptureMediaTarget(item: CaptureMediaTargetItem) {
     }
 }
 
-private val TargetWidth = 88.dp
+private const val MaxColumns = 4
 private val TargetIconSize = 48.dp
 
 @Preview(showBackground = true)
