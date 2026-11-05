@@ -42,11 +42,9 @@ import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
-import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
-import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
@@ -356,7 +354,6 @@ constructor(
             fileUploader = fileUploader ?: defaultFileUploader,
             fileTransformer = fileTransformer,
             buildV2RetrofitApi<UserApi>(),
-            buildV2RetrofitApi<GuestApi>(),
             buildV2RetrofitApi<MessageApi>(),
             buildV2RetrofitApi<ChannelApi>(),
             v2EventParser,
@@ -366,10 +363,10 @@ constructor(
             buildV2RetrofitApi<SyncApi>(),
             buildFileDownloadApi(),
             buildV2RetrofitApi<ThreadsApi>(),
-            // Generated, so it carries no @AuthenticatedApi.
+            // Generated, so it carries neither @AuthenticatedApi nor @AnonymousApi.
             buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = false),
+            buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = true),
             moshiParser,
-            buildV2RetrofitApi<ScheduledMessagesApi>(),
             userScope,
             userScope,
         ).let { originalApi ->
