@@ -115,7 +115,7 @@ public class CaptureMediaContract(
             component = ComponentName(input.activityInfo.packageName, input.activityInfo.name)
             if (destinationFile != null) {
                 putExtra(MediaStore.EXTRA_OUTPUT, uriProvider.getUriForFile(context, destinationFile))
-                flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
         }
     }

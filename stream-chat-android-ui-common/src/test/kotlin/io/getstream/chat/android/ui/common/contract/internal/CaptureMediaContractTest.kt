@@ -88,7 +88,7 @@ internal class CaptureMediaContractTest {
 
         intent.action shouldBeEqualTo MediaStore.ACTION_VIDEO_CAPTURE
         intent.component shouldBeEqualTo ComponentName("com.camera", "CameraActivity")
-        intent.flags shouldBeEqualTo Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        intent.flags shouldBeEqualTo (Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
         @Suppress("DEPRECATION")
         intent.getParcelableExtra<Uri>(MediaStore.EXTRA_OUTPUT) shouldBeEqualTo outputUri
     }
