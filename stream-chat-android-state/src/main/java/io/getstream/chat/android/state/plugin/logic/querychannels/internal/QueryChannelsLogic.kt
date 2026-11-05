@@ -552,17 +552,18 @@ internal class QueryChannelsLogic(
             }
 
             if (request.isFirstPage && !existingChannels.isNullOrEmpty()) {
-                var newChannelsOffset = channels.size
                 val notUpdatedChannels = existingChannels - channels.map { it.cid }.toSet()
                 logger.v { "[updateOnlineChannels] notUpdatedChannels.size: ${notUpdatedChannels.size}" }
-                if (notUpdatedChannels.isNotEmpty()) {
-                    val localCids = notUpdatedChannels.values.map { it.cid }
-                    val remoteCids = getRemoteCids(request.limit, request.limit, existingChannels.size)
-                    val cidsToRemove = localCids - remoteCids.toSet()
-                    logger.v { "[updateOnlineChannels] cidsToRemove.size: ${cidsToRemove.size}" }
-                    removeChannels(cidsToRemove)
-                    newChannelsOffset += remoteCids.size
+                val laterChannelsCount = if (notUpdatedChannels.isEmpty()) {
+                    0
+                } else {
+                    removeChannelsMissingFromLaterPages(
+                        localCids = notUpdatedChannels.values.map { it.cid },
+                        limit = request.limit,
+                        loadedCount = existingChannels.size,
+                    )
                 }
+                val newChannelsOffset = laterChannelsCount?.let { channels.size + it } ?: currentChannelsOffset
                 logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
                 setChannelsOffset(newChannelsOffset)
             } else {
@@ -574,6 +575,24 @@ internal class QueryChannelsLogic(
     }
 
     /**
+     * Re-queries the pages after the first one and removes the [localCids] none of them returns. Removes nothing when
+     * a page fails.
+     *
+     * @return The number of channels the later pages returned, or null when a page failed.
+     */
+    private suspend fun removeChannelsMissingFromLaterPages(
+        localCids: List<String>,
+        limit: Int,
+        loadedCount: Int,
+    ): Int? {
+        val remoteCids = getRemoteCids(limit, limit, loadedCount) ?: return null
+        val cidsToRemove = localCids - remoteCids
+        logger.v { "[removeChannelsMissingFromLaterPages] cidsToRemove.size: ${cidsToRemove.size}" }
+        removeChannels(cidsToRemove)
+        return remoteCids.size
+    }
+
+    /**
      * Returns the channel cids by re-issuing the same query (matching this logic's [identifier])
      * at advancing offsets, until [thresholdCount] is reached or the server returns a short page.
      * Might produce several requests.
@@ -581,19 +600,21 @@ internal class QueryChannelsLogic(
      * For [QueryChannelsIdentifier.Predefined] we issue another predefined-filter request — we
      * never substitute the server-resolved filter, since the server owns the actual filter
      * definition and our cached resolved value may be stale (e.g. if the template changed).
+     *
+     * @return The cids, or null when a page fails.
      */
     private suspend fun getRemoteCids(
         initialOffset: Int,
         step: Int,
         thresholdCount: Int,
-    ): HashSet<String> {
+    ): Set<String>? {
         logger.d { "[getRemoteCids] initialOffset: $initialOffset, step: $step, thresholdCount: $thresholdCount" }
         val remoteCids = hashSetOf<String>()
         var offset = initialOffset
 
         while (offset < thresholdCount) {
             logger.v { "[getRemoteCids] offset: $offset, limit: $step, thresholdCount: $thresholdCount" }
-            val channels = fetchPage(offset = offset, limit = step)
+            val channels = fetchPage(offset = offset, limit = step) ?: return null
             remoteCids.addAll(channels.map { it.cid })
             logger.v { "[getRemoteCids] remoteCids.size: ${remoteCids.size}" }
             offset += step
@@ -604,7 +625,8 @@ internal class QueryChannelsLogic(
         return remoteCids
     }
 
-    private suspend fun fetchPage(offset: Int, limit: Int): List<Channel> {
+    /** @return The channels of the page, or null when the request fails. */
+    private suspend fun fetchPage(offset: Int, limit: Int): List<Channel>? {
         val request = when (identifier) {
             is QueryChannelsIdentifier.Standard -> QueryChannelsRequest(
                 filter = identifier.filter,
@@ -628,7 +650,10 @@ internal class QueryChannelsLogic(
         }
         return when (val result = client.queryChannelsInternal(request).await()) {
             is Result.Success -> result.value.channels
-            is Result.Failure -> emptyList()
+            is Result.Failure -> {
+                logger.w { "[fetchPage] offset: $offset failed: ${result.value}" }
+                null
+            }
         }
     }
 
