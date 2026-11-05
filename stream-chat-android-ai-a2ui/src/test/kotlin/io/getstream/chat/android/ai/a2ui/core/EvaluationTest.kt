@@ -47,17 +47,18 @@ internal class EvaluationTest {
     private fun call(name: String, args: Map<String, Any?>, evaluator: Evaluator = evaluator()): Any? =
         evaluator.evaluateRaw(mapOf("@call" to name, "args" to args), context)
 
-    @Test
-    fun `regex rejects a pattern that could backtrack catastrophically`() {
-        val result = call("regex", mapOf("pattern" to "(a+)+$", "value" to "a".repeat(40) + "b"))
+    @Test(timeout = 10_000)
+    fun `regex matches a pattern that backtracks catastrophically elsewhere in linear time`() {
+        val value = "x".repeat(A2UIRegex.MAX_VALUE_LENGTH)
+        val result = call("regex", mapOf("pattern" to "x.*x.*y", "value" to value))
 
-        assertNull(result)
-        assertEquals(RendererError.EXPRESSION_ERROR, errors.single().code)
+        assertEquals(false, A2UIJson.map(result)!!["valid"])
+        assertTrue(errors.isEmpty())
     }
 
     @Test
-    fun `regex rejects a bounded pattern that backtracks exponentially`() {
-        val result = call("regex", mapOf("pattern" to "(a?){25}a{25}", "value" to "a".repeat(25)))
+    fun `regex rejects a backreference`() {
+        val result = call("regex", mapOf("pattern" to "(a)\\1", "value" to "aa"))
 
         assertNull(result)
         assertEquals(RendererError.EXPRESSION_ERROR, errors.single().code)

@@ -18,6 +18,7 @@ package io.getstream.chat.android.ai.openui.lang
 
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -129,6 +130,9 @@ internal class UtilityTest {
 
     @Nested
     inner class FormValidationRules {
+        private fun validate(value: OpenUIValue?, rules: OpenUIValue) =
+            FormValidation.validate(value, FormValidation.rules(rules))
+
         @Test
         fun `parses rules`() {
             assertEquals(
@@ -170,33 +174,57 @@ internal class UtilityTest {
         }
 
         @Test
-        fun `patterns that can backtrack without end are rejected`() {
+        @Timeout(10)
+        fun `patterns that backtrack catastrophically elsewhere match in linear time`() {
+            val longest = PatternSafety.MAX_INPUT_LENGTH
             listOf(
-                "(a?){25}", "(a?){25}a{25}", "(a+)+", "^(a+)+$", "(a|aa)*", "(?:a*)*", "((a|b)c)+", "(?<x>a+){2}",
-                "((a?)?)+", "(a{2,3}){2}", "(a{2,}){2}",
-                "^(a+)\\1$", "(a)\\k<x>", "a{1001}", "a{1,1001}", "a{99999999999}",
-            ).forEach { assertFalse(PatternSafety.isSafe(it), it) }
+                "x.*x.*y" to "x".repeat(longest),
+                "^(a+)+$" to "a".repeat(longest - 1) + "!",
+                "^(a|aa)*$" to "a".repeat(longest - 1) + "!",
+                "^[a-z]*[a-z]*[a-z]*[a-z]*[a-z]*1$" to "a".repeat(longest),
+                "\\d+\\s*\\d+$" to "1 ".repeat(longest / 2 - 1) + "!",
+            ).forEach { (pattern, input) ->
+                assertEquals("Invalid format", validate(v(input), obj("pattern" to pattern)), pattern)
+            }
+            assertNull(validate(v("a".repeat(25)), obj("pattern" to "^(a?){25}a{25}$")))
         }
 
         @Test
-        fun `adjacent unbounded quantifiers over the same characters are rejected`() {
+        fun `patterns RE2J can't compile are ignored`() {
             listOf(
-                "^[a-z]*[a-z]*[a-z]*[a-z]*[a-z]*1$", "\\d+\\s*\\d+", "[a-z]*[a-z]*", "a+a+", "a+b?a+",
-                "\\w+(?:\\d+)", "(\\d+)\\d+", "a+(?=b)a+", "\\d+^\\d+", "[0-9]{2,}\\d*", "x(\\d+|y)z\\d+\\d*",
-                ".*.*=.*", "[^b]+a+", "[a-z&&[^e]]+e*a+", "\\p{L}+a+", "\\x41+A*", "\\Qab\\E+b+",
-                "(?i)[a-z]+[A-Z]+", "(?i)[a-z]+[é]+", "(?U)\\w+[é]+", "(?x)\\d+ \\d+",
-            ).forEach { assertFalse(PatternSafety.isSafe(it), it) }
+                "^(?=.*\\d).{8,}$", "(?!a)b", "(?<=a)b", "^(a+)\\1$", "(a)\\k<x>", "a*+b",
+                "[invalid(", "a{1001}", "a{1,1001}",
+            ).forEach { assertNull(PatternSafety.compile(it), it) }
+            assertNull(validate(v("password"), obj("pattern" to "^(?=.*\\d).{8,}$")), "an ignored rule passes")
         }
 
         @Test
-        fun `unbounded quantifiers with a required separator or disjoint characters are accepted`() {
+        fun `nested counts whose product is above 1000 are rejected`() {
             listOf(
-                "[a-z]+@[a-z]+", "\\d+-\\d+", "^[0-9]{5}(?:-[0-9]{4})?$", "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
-                "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", "^\\+?[0-9 ()-]{7,20}$",
-                "^\\+?\\d+[ -]\\d+$",
-                "[a-z]+\\d+", "\\d+[a-z]*", "a+b+a+", "[^a]+a+", "[a-z&&[^e]]+e+", "(?i)[a-z]+\\d+",
-                "\\d{2,3}\\d{2,3}", "\\d+\\d?",
-            ).forEach { assertTrue(PatternSafety.isSafe(it), it) }
+                "(?:a{1000}){2}",
+                "((a{10}){10}){11}",
+                "(?:(?:a{1000}){1000}){1000}",
+                "(?:a{2,}){501}",
+                "(?:[{]{10}(?:b{10}){10}){11}",
+                "(?:\\Q(\\E{10}){101}",
+            ).forEach { assertTrue(PatternSafety.repeats(it) > PatternSafety.MAX_REPEAT, it) }
+            listOf("(?:a{10}){100}", "(?:a{1000})*", "(?:a{500})+(?:b{1000})?", "a{1000}b{1000}").forEach {
+                assertTrue(PatternSafety.compile(it) != null, it)
+            }
+        }
+
+        @Test
+        fun `braces and parentheses in classes and escapes don't count`() {
+            listOf(
+                "[(]{10}" to 10, "[{]{2}{3}" to 6, "\\x{41}{10}" to 10, "\\p{L}{5}" to 5, "\\({10}" to 10,
+                "[]{]{10}" to 10, "[[:alpha:]]{10}" to 10, "a{x}" to 1, "\\Q{10}\\E" to 1, "(a){2}(b{3}){4}" to 12,
+            ).forEach { (pattern, repeats) -> assertEquals(repeats, PatternSafety.repeats(pattern), pattern) }
+        }
+
+        @Test
+        fun `a pattern longer than the limit is rejected`() {
+            assertNull(PatternSafety.compile("a".repeat(PatternSafety.MAX_PATTERN_LENGTH + 1)))
+            assertTrue(PatternSafety.compile("a".repeat(PatternSafety.MAX_PATTERN_LENGTH)) != null)
         }
 
         @Test
@@ -204,21 +232,20 @@ internal class UtilityTest {
             listOf(
                 "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", "^\\+?[0-9 ()-]{7,20}$", "^[A-Z]{2}\\d{4}$", "^[a-z]+$",
                 "^(foo|bar)$", "^(?:\\d{3})-\\d{4}$", "a{1000}", "[(a+)+]*", "\\(a+\\)+", "\\Q(a+)+\\E",
-                "\\p{L}{2,5}", "(?i)^abc+?$", "a*+b", "(?=a)b", "[]a]+",
-                "^[0-9]{5}(?:-[0-9]{4})?$", "(Mr|Mrs)?", "(?:-[0-9]{4})?", "(ab){3}", "(a*b)?", "(a+){1}",
-                "(a|b){0,1}", "((ab){2}){3}", "(a{2,2})+",
-            ).forEach { assertTrue(PatternSafety.isSafe(it), it) }
+                "\\p{L}{2,5}", "(?i)^abc+?$", "[]a]+", "^[0-9]{5}(?:-[0-9]{4})?$", "(Mr|Mrs)?", "(ab){3}",
+                "((ab){2}){3}", "(?P<x>a)",
+            ).forEach { assertTrue(PatternSafety.compile(it) != null, it) }
         }
 
         @Test
-        fun `a rejected pattern is ignored and overlong input fails the rule`() {
-            val unsafe = FormValidation.rules(obj("pattern" to "^(a+)+$"))
-            assertNull(FormValidation.validate(v("a".repeat(30) + "!"), unsafe))
+        fun `an ignored pattern passes and overlong input fails the rule`() {
+            val ignored = FormValidation.rules(obj("pattern" to "^(a)\\1$"))
+            assertNull(FormValidation.validate(v("ab"), ignored))
 
-            val safe = FormValidation.rules(obj("pattern" to "^a+$"))
+            val rule = FormValidation.rules(obj("pattern" to "^a+$"))
             val limit = PatternSafety.MAX_INPUT_LENGTH
-            assertNull(FormValidation.validate(v("a".repeat(limit)), safe))
-            assertEquals("Invalid format", FormValidation.validate(v("a".repeat(limit + 1)), safe))
+            assertNull(FormValidation.validate(v("a".repeat(limit)), rule))
+            assertEquals("Invalid format", FormValidation.validate(v("a".repeat(limit + 1)), rule))
         }
     }
 
