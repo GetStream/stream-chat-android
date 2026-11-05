@@ -109,6 +109,25 @@ internal class QueryChannelsLogicReconnectTest {
     }
 
     @Test
+    fun `a failed later page keeps the offset of a page loaded meanwhile`() = runTest {
+        val loadedChannels = loadPages(count = 2)
+        whenever(client.queryChannelsInternal(any())) doAnswer { invocation ->
+            val request = invocation.getArgument<QueryChannelsRequest>(0)
+            if (request.offset == 0) {
+                QueryChannelsResult(channels = loadedChannels.take(PAGE_SIZE), predefinedFilter = null).asCall()
+            } else {
+                // A next page loads while the later pages are re-queried
+                stateLogic.incrementChannelsOffset(PAGE_SIZE)
+                Error.GenericError("Page at offset ${request.offset} failed").asCall()
+            }
+        }
+
+        logic.queryFirstPage()
+
+        assertEquals(PAGE_SIZE * 3, mutableState.channelsOffset.value)
+    }
+
+    @Test
     fun `a successful later page removes the channel that left the list`() = runTest {
         val loadedChannels = loadPages(count = 2)
         val leftChannel = loadedChannels.last()

@@ -567,9 +567,14 @@ internal class QueryChannelsLogic(
                         loadedCount = existingChannels.size,
                     )
                 }
-                val newChannelsOffset = laterChannelsCount?.let { channels.size + it } ?: currentChannelsOffset
-                logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
-                setChannelsOffset(newChannelsOffset)
+                // A failed later page leaves the offset as it is, since a page can load while the pages are re-queried
+                if (laterChannelsCount != null) {
+                    val newChannelsOffset = channels.size + laterChannelsCount
+                    logger.v {
+                        "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset"
+                    }
+                    setChannelsOffset(newChannelsOffset)
+                }
             } else {
                 incrementChannelsOffset(channels.size)
             }

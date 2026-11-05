@@ -453,7 +453,7 @@ internal class QueryChannelsLogicTest {
         logic.queryFirstPage()
 
         verify(queryChannelsStateLogic, never()).removeChannels(any())
-        verify(queryChannelsStateLogic).setChannelsOffset(LOADED_CHANNELS_COUNT)
+        verify(queryChannelsStateLogic, never()).setChannelsOffset(any())
     }
 
     @Test
