@@ -143,6 +143,19 @@ internal class QueryChannelsLogicReconnectTest {
         assertEquals(PAGE_SIZE * 2 - 1, mutableState.channelsOffset.value)
     }
 
+    @Test
+    fun `an empty later page removes the loaded channels after the first page`() = runTest {
+        val loadedChannels = loadPages(count = 2)
+        val firstPage = loadedChannels.take(PAGE_SIZE)
+        givenPages(0 to firstPage, PAGE_SIZE to emptyList())
+
+        logic.queryFirstPage()
+
+        assertEquals(firstPage.cids(), stateLogic.getChannels()!!.keys)
+        assertEquals(firstPage.cids(), logic.cids())
+        assertEquals(PAGE_SIZE, mutableState.channelsOffset.value)
+    }
+
     /** Loads [count] full pages into the list, the way the channel list loads them before the connection drops. */
     private suspend fun loadPages(count: Int): List<Channel> {
         val channels = List(PAGE_SIZE * count) { randomChannel(type = "messaging") }
