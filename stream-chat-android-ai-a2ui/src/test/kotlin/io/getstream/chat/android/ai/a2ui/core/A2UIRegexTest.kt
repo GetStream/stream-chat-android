@@ -28,7 +28,24 @@ internal class A2UIRegexTest {
     @Test
     fun `the protocol's accepted examples compile and match`() {
         assertTrue(A2UIRegex.compile("^[a-z]+@[a-z]+\\.com$").containsMatchIn("ada@example.com"))
+        assertTrue(A2UIRegex.compile("^(?=.*\\d).{8,}$").containsMatchIn("password1"))
+        assertFalse(A2UIRegex.compile("^(?=.*\\d).{8,}$").containsMatchIn("password"))
         assertTrue(A2UIRegex.compile("\\w+\\s+\\w+").containsMatchIn("hello world"))
+    }
+
+    @Test
+    fun `lookaheads right after a leading caret each match from the start`() {
+        val password = A2UIRegex.compile("^(?=.*[A-Z])(?=.*\\d)(?!.*\\s).{8,}$")
+        assertTrue(password.containsMatchIn("Password1"))
+        assertFalse(password.containsMatchIn("password1"))
+        assertFalse(password.containsMatchIn("Password"))
+        assertFalse(password.containsMatchIn("Pass word1"))
+        assertFalse(password.containsMatchIn("Pass1"))
+        // A lookahead's own alternation stays inside it.
+        val either = A2UIRegex.compile("^(?=a|b)[a-c]$")
+        assertTrue(either.containsMatchIn("b"))
+        assertFalse(either.containsMatchIn("c"))
+        assertTrue(A2UIRegex.compile("^(?=a)").containsMatchIn("abc"))
     }
 
     @Test(timeout = 10_000)
@@ -44,8 +61,10 @@ internal class A2UIRegexTest {
     }
 
     @Test
-    fun `lookahead is rejected`() {
-        listOf("^(?=.*\\d).{8,}$", "^(?!.*\\s).+$", "(?=a)b", "a(?!b)").forEach(::assertRejected)
+    fun `lookahead anywhere else is rejected`() {
+        listOf(
+            "(?=a)b", "a(?!b)", "^a(?=b)", "^(?=a)|b", "b|^(?=a)", "^(?:(?=a))", "^(?=(?=a))", "^(?=a)*", "(^(?=a))",
+        ).forEach(::assertRejected)
     }
 
     @Test

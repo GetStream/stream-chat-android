@@ -25,7 +25,9 @@ import com.google.re2j.PatternSyntaxException
  * `\d`, `\w`, `\s` and `\b`.
  *
  * RE2J matches in time linear in the value, so no pattern can backtrack catastrophically. What it
- * can't do is rejected: lookahead and backreferences. Compiling is bounded instead, by rejecting:
+ * can't do is rejected: backreferences, and lookahead anywhere but right after a leading `^`, such
+ * as `^(?=.*\d).{8,}$`. There, each lookahead is matched on its own from the value's start.
+ * Compiling is bounded instead, by rejecting:
  * - a `{n,m}` count above [MAX_REPEAT_COUNT], or counts nested inside each other whose product is
  *   above it, such as `(?:a{100}){11}`;
  * - a pattern longer than [MAX_PATTERN_LENGTH] code points.
@@ -47,11 +49,21 @@ internal object A2UIRegex {
      */
     const val MAX_REPEAT_COUNT: Int = 1000
 
-    /** A pattern of the dialect, compiled. */
-    class Compiled internal constructor(private val pattern: Pattern) {
+    /**
+     * A pattern of the dialect, compiled: [pattern] without its leading lookaheads, the ones that
+     * must match at the value's start, and the ones that must not.
+     */
+    class Compiled internal constructor(
+        private val pattern: Pattern,
+        private val required: List<Pattern> = emptyList(),
+        private val forbidden: List<Pattern> = emptyList(),
+    ) {
 
         /** Whether the pattern finds a match in [value]. */
-        fun containsMatchIn(value: String): Boolean = pattern.matcher(value).find()
+        fun containsMatchIn(value: String): Boolean =
+            required.all { it.matcher(value).lookingAt() } &&
+                forbidden.none { it.matcher(value).lookingAt() } &&
+                pattern.matcher(value).find()
     }
 
     /**
@@ -66,11 +78,35 @@ internal object A2UIRegex {
         }
         val tree = Parser(pattern).parse()
         if (repeats(tree) > MAX_REPEAT_COUNT) reject("Nested counts repeat more than $MAX_REPEAT_COUNT times.")
+        val items = tree.branches.singleOrNull()?.items.orEmpty()
+        val start = items.firstOrNull() as? Assertion
+        val lookaheads = if (start?.re2 == "^") {
+            items.drop(1).takeWhile { it is Group && it.kind.isLookahead }.map { it as Group }
+        } else {
+            emptyList()
+        }
+        val rest = if (lookaheads.isEmpty()) tree else Sequence(items.take(1) + items.drop(1 + lookaheads.size))
+        if (hasLookahead(rest) || lookaheads.any { hasLookahead(it.body) }) {
+            reject("Lookahead is only allowed right after a leading '^'.")
+        }
         return try {
-            Compiled(Pattern.compile(Writer.write(tree)))
+            val (required, forbidden) = lookaheads.partition { it.kind == GroupKind.LOOKAHEAD }
+            Compiled(
+                pattern = Pattern.compile(Writer.write(rest)),
+                required = required.map { Pattern.compile(Writer.write(it.body)) },
+                forbidden = forbidden.map { Pattern.compile(Writer.write(it.body)) },
+            )
         } catch (_: PatternSyntaxException) {
             reject("The pattern is not valid.")
         }
+    }
+
+    private fun hasLookahead(node: Node): Boolean = when (node) {
+        is Alternation -> node.branches.any(::hasLookahead)
+        is Sequence -> node.items.any(::hasLookahead)
+        is Group -> node.kind.isLookahead || hasLookahead(node.body)
+        is Repeat -> hasLookahead(node.node)
+        is Characters, is Assertion -> false
     }
 
     /**
@@ -101,9 +137,13 @@ internal object A2UIRegex {
     internal class Assertion(val re2: String) : Node
     internal class Repeat(val node: Node, val min: Int, val max: Int?, val lazy: Boolean) : Node
 
-    internal enum class GroupKind(val re2: String) {
-        CAPTURING("("),
-        NON_CAPTURING("(?:"),
+    internal enum class GroupKind(val re2: String, val isLookahead: Boolean) {
+        CAPTURING("(", false),
+        NON_CAPTURING("(?:", false),
+
+        // Not RE2: only matched on its own, never written.
+        LOOKAHEAD("(?=", true),
+        NEGATIVE_LOOKAHEAD("(?!", true),
     }
 
     /** A set of code points, as sorted, disjoint, non-adjacent ranges. */
@@ -213,7 +253,7 @@ internal object A2UIRegex {
                 '{'.code -> braces()
                 else -> return node
             }
-            if (node is Assertion) fail("An assertion can't be repeated.")
+            if (node is Assertion || (node is Group && node.kind.isLookahead)) fail("An assertion can't be repeated.")
             val lazy = peek() == '?'.code
             if (lazy) index++
             return Repeat(node, min, max, lazy)
@@ -269,7 +309,8 @@ internal object A2UIRegex {
                 index++
                 when (if (index < points.size) take() else -1) {
                     ':'.code -> GroupKind.NON_CAPTURING
-                    '='.code, '!'.code -> fail("Lookahead is not allowed.")
+                    '='.code -> GroupKind.LOOKAHEAD
+                    '!'.code -> GroupKind.NEGATIVE_LOOKAHEAD
                     else -> fail("Lookbehind, named groups and inline flags are not allowed.")
                 }
             } else {
