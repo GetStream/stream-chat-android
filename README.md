@@ -23,8 +23,8 @@
 ![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-13.37%20MB-lightgreen)
 ![stream-chat-android-ai-compose](https://img.shields.io/badge/stream--chat--android--ai--compose-2.23%20MB-lightgreen)
 ![stream-chat-android-ai-ondevice](https://img.shields.io/badge/stream--chat--android--ai--ondevice-1.66%20MB-lightgreen)
-![stream-chat-android-ai-a2ui](https://img.shields.io/badge/stream--chat--android--ai--a2ui-.21%20MB-lightgreen)
-![stream-chat-android-ai-openui](https://img.shields.io/badge/stream--chat--android--ai--openui-.75%20MB-lightgreen)
+![stream-chat-android-ai-a2ui](https://img.shields.io/badge/stream--chat--android--ai--a2ui-.27%20MB-lightgreen)
+![stream-chat-android-ai-openui](https://img.shields.io/badge/stream--chat--android--ai--openui-.81%20MB-lightgreen)
 
 </div>
 
