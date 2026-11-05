@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.test.asCall
+import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -442,6 +444,34 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsStateLogic, never()).applyResolvedSpec(any(), any())
     }
 
+    @Test
+    fun `queryFirstPage keeps the loaded channels when a later page fails`() = runTest {
+        val loadedChannels = List(LOADED_CHANNELS_COUNT) { randomChannel() }
+        givenLoadedChannels(loadedChannels)
+        givenPages(firstPage = loadedChannels.take(PAGE_SIZE), laterPage = null)
+
+        logic.queryFirstPage()
+
+        verify(queryChannelsStateLogic, never()).removeChannels(any())
+        verify(queryChannelsStateLogic).setChannelsOffset(LOADED_CHANNELS_COUNT)
+    }
+
+    @Test
+    fun `queryFirstPage removes the loaded channels that no page returns`() = runTest {
+        val loadedChannels = List(LOADED_CHANNELS_COUNT) { randomChannel() }
+        val leftChannel = loadedChannels.last()
+        givenLoadedChannels(loadedChannels)
+        givenPages(
+            firstPage = loadedChannels.take(PAGE_SIZE),
+            laterPage = loadedChannels.drop(PAGE_SIZE) - leftChannel,
+        )
+
+        logic.queryFirstPage()
+
+        verify(queryChannelsStateLogic).removeChannels(setOf(leftChannel.cid))
+        verify(queryChannelsStateLogic).setChannelsOffset(LOADED_CHANNELS_COUNT - 1)
+    }
+
     // endregion
 
     // region parseChatEventResults
@@ -649,4 +679,25 @@ internal class QueryChannelsLogicTest {
     }
 
     // endregion
+
+    private fun givenLoadedChannels(channels: List<Channel>) {
+        queryChannelsSpec.cids = channels.map(Channel::cid).toSet()
+        whenever(queryChannelsStateLogic.getChannels()) doReturn channels.associateBy(Channel::cid)
+        whenever(queryChannelsStateLogic.getChannelsOffset()) doReturn channels.size
+    }
+
+    /** Stubs the first page, and every later page with [laterPage], or with a failure when it is null. */
+    private fun givenPages(firstPage: List<Channel>, laterPage: List<Channel>?) {
+        whenever(client.queryChannelsInternal(any())) doAnswer { invocation ->
+            val request = invocation.getArgument<QueryChannelsRequest>(0)
+            val page = if (request.offset == 0) firstPage else laterPage
+            page?.let { QueryChannelsResult(channels = it, predefinedFilter = null).asCall() }
+                ?: Error.GenericError("Later page failed").asCall()
+        }
+    }
+
+    private companion object {
+        const val PAGE_SIZE = 30
+        const val LOADED_CHANNELS_COUNT = 60
+    }
 }
