@@ -137,6 +137,7 @@ import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
+import io.getstream.chat.android.network.models.MarkChannelsReadRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
@@ -1057,11 +1058,10 @@ constructor(
         channelId: String,
         cooldownTimeInSeconds: Int,
     ): Call<Channel> {
-        return channelApi.updateChannelPartial(
-            channelType = channelType,
-            channelId = channelId,
-            body = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldownTimeInSeconds)),
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        val request = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldownTimeInSeconds))
+        return endpoint {
+            updateChannelPartial(type = channelType, id = channelId, updateChannelPartialRequest = request)
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun stopWatching(channelType: String, channelId: String): Call<Unit> = postponeCall {
@@ -1101,16 +1101,18 @@ constructor(
         extraData: Map<String, Any>,
         updateMessage: Message?,
     ): Call<Channel> {
-        return channelApi.updateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                UpdateChannelRequest(
-                    data = extraData.toChannelInputRequest(),
-                    message = updateMessage?.toMessageRequest(),
-                )
-            },
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            updateChannel(
+                type = channelType,
+                id = channelId,
+                updateChannelRequest = with(dtoMapping) {
+                    UpdateChannelRequest(
+                        data = extraData.toChannelInputRequest(),
+                        message = updateMessage?.toMessageRequest(),
+                    )
+                },
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun updateChannelPartial(
@@ -1119,22 +1121,20 @@ constructor(
         set: Map<String, Any>,
         unset: List<String>,
     ): Call<Channel> {
-        return channelApi.updateChannelPartial(
-            channelType = channelType,
-            channelId = channelId,
-            body = UpdateChannelPartialRequest(set = set, unset = unset),
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            updateChannelPartial(
+                type = channelType,
+                id = channelId,
+                updateChannelPartialRequest = UpdateChannelPartialRequest(set = set, unset = unset),
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun showChannel(
         channelType: String,
         channelId: String,
     ): Call<Unit> {
-        return channelApi.showChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = emptyMap(),
-        ).toUnitCall()
+        return endpoint { showChannel(type = channelType, id = channelId) }.toUnitCall()
     }
 
     override fun hideChannel(
@@ -1142,11 +1142,13 @@ constructor(
         channelId: String,
         clearHistory: Boolean,
     ): Call<Unit> {
-        return channelApi.hideChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = HideChannelRequest(clearHistory),
-        ).toUnitCall()
+        return endpoint {
+            hideChannel(
+                type = channelType,
+                id = channelId,
+                hideChannelRequest = HideChannelRequest(clearHistory),
+            )
+        }.toUnitCall()
     }
 
     override fun truncateChannel(
@@ -1156,25 +1158,29 @@ constructor(
         hardDelete: Boolean,
         skipPush: Boolean,
     ): Call<Channel> {
-        return channelApi.truncateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                TruncateChannelRequest(
-                    hardDelete = hardDelete,
-                    skipPush = skipPush,
-                    message = systemMessage?.toMessageRequest(),
-                )
-            },
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            truncateChannel(
+                type = channelType,
+                id = channelId,
+                truncateChannelRequest = with(dtoMapping) {
+                    TruncateChannelRequest(
+                        hardDelete = hardDelete,
+                        skipPush = skipPush,
+                        message = systemMessage?.toMessageRequest(),
+                    )
+                },
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
-        return channelApi.updateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = UpdateChannelRequest(rejectInvite = true),
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            updateChannel(
+                type = channelType,
+                id = channelId,
+                updateChannelRequest = UpdateChannelRequest(rejectInvite = true),
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun acceptInvite(
@@ -1182,47 +1188,57 @@ constructor(
         channelId: String,
         message: String?,
     ): Call<Channel> {
-        return channelApi.updateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = UpdateChannelRequest(
-                acceptInvite = true,
-                message = message?.let { MessageRequest(text = it) },
-            ),
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            updateChannel(
+                type = channelType,
+                id = channelId,
+                updateChannelRequest = UpdateChannelRequest(
+                    acceptInvite = true,
+                    message = message?.let { MessageRequest(text = it) },
+                ),
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
-        return channelApi.deleteChannel(
-            channelType = channelType,
-            channelId = channelId,
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            deleteChannel(
+                type = channelType,
+                id = channelId,
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun getUnreadCounts(): Call<UnreadCounts> = endpoint { unreadCounts() }
         .mapDomain { it.toDomain() }
 
     override fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit> {
-        return channelApi.markRead(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkReadRequest(messageId = messageId),
-        ).toUnitCall()
+        return endpoint {
+            markRead(
+                type = channelType,
+                id = channelId,
+                markReadRequest = MarkReadRequest(messageId = messageId),
+            )
+        }.toUnitCall()
     }
 
     override fun markDelivered(messages: List<Message>): Call<Unit> =
-        channelApi.markDelivered(
-            request = MarkDeliveredRequest(
-                latestDeliveredMessages = messages.map { DeliveredMessagePayload(cid = it.cid, id = it.id) },
-            ),
-        ).toUnitCall()
+        endpoint {
+            markDelivered(
+                markDeliveredRequest = MarkDeliveredRequest(
+                    latestDeliveredMessages = messages.map { DeliveredMessagePayload(cid = it.cid, id = it.id) },
+                ),
+            )
+        }.toUnitCall()
 
     override fun markThreadRead(channelType: String, channelId: String, threadId: String): Call<Unit> {
-        return channelApi.markRead(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkReadRequest(threadId = threadId),
-        ).toUnitCall()
+        return endpoint {
+            markRead(
+                type = channelType,
+                id = channelId,
+                markReadRequest = MarkReadRequest(threadId = threadId),
+            )
+        }.toUnitCall()
     }
 
     override fun markUnread(
@@ -1237,11 +1253,11 @@ constructor(
             messageTimestamp = messageTimestamp,
             threadId = threadId,
         )
-        return channelApi.markUnread(channelType, channelId, request).toUnitCall()
+        return endpoint { markUnread(channelType, channelId, request) }.toUnitCall()
     }
 
     override fun markAllRead(): Call<Unit> {
-        return channelApi.markAllRead().toUnitCall()
+        return endpoint { markChannelsRead(markChannelsReadRequest = MarkChannelsReadRequest()) }.toUnitCall()
     }
 
     override fun addMembers(
@@ -1253,19 +1269,21 @@ constructor(
         hideHistoryBefore: Date?,
         skipPush: Boolean?,
     ): Call<Channel> {
-        return channelApi.updateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                UpdateChannelRequest(
-                    addMembers = members.map { it.toChannelMemberRequest() },
-                    message = systemMessage?.toMessageRequest(),
-                    hideHistory = hideHistory,
-                    hideHistoryBefore = hideHistoryBefore,
-                    skipPush = skipPush,
-                )
-            },
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            updateChannel(
+                type = channelType,
+                id = channelId,
+                updateChannelRequest = with(dtoMapping) {
+                    UpdateChannelRequest(
+                        addMembers = members.map { it.toChannelMemberRequest() },
+                        message = systemMessage?.toMessageRequest(),
+                        hideHistory = hideHistory,
+                        hideHistoryBefore = hideHistoryBefore,
+                        skipPush = skipPush,
+                    )
+                },
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun removeMembers(
@@ -1275,17 +1293,19 @@ constructor(
         systemMessage: Message?,
         skipPush: Boolean?,
     ): Call<Channel> {
-        return channelApi.updateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                UpdateChannelRequest(
-                    removeMembers = members,
-                    message = systemMessage?.toMessageRequest(),
-                    skipPush = skipPush,
-                )
-            },
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            updateChannel(
+                type = channelType,
+                id = channelId,
+                updateChannelRequest = with(dtoMapping) {
+                    UpdateChannelRequest(
+                        removeMembers = members,
+                        message = systemMessage?.toMessageRequest(),
+                        skipPush = skipPush,
+                    )
+                },
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun inviteMembers(
@@ -1295,17 +1315,19 @@ constructor(
         systemMessage: Message?,
         skipPush: Boolean?,
     ): Call<Channel> {
-        return channelApi.updateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                UpdateChannelRequest(
-                    invites = members.map { ChannelMemberRequest(userId = it) },
-                    message = systemMessage?.toMessageRequest(),
-                    skipPush = skipPush,
-                )
-            },
-        ).flatMapDomain { it.toDomain().toChannelCall() }
+        return endpoint {
+            updateChannel(
+                type = channelType,
+                id = channelId,
+                updateChannelRequest = with(dtoMapping) {
+                    UpdateChannelRequest(
+                        invites = members.map { ChannelMemberRequest(userId = it) },
+                        message = systemMessage?.toMessageRequest(),
+                        skipPush = skipPush,
+                    )
+                },
+            )
+        }.flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun partialUpdateMember(
@@ -1314,11 +1336,13 @@ constructor(
         set: Map<String, Any>,
         unset: List<String>,
     ): Call<Member> {
-        return channelApi.partialUpdateMember(
-            channelType = channelType,
-            channelId = channelId,
-            body = UpdateMemberPartialRequest(set = set, unset = unset),
-        ).flatMapDomain { toMemberCall(it) }
+        return endpoint {
+            updateMemberPartial(
+                type = channelType,
+                id = channelId,
+                updateMemberPartialRequest = UpdateMemberPartialRequest(set = set, unset = unset),
+            )
+        }.flatMapDomain { toMemberCall(it) }
     }
 
     /**
@@ -1549,10 +1573,12 @@ constructor(
         )
 
         val lazyQueryChannelsCall = {
-            channelApi.queryChannels(
-                connectionId = connectionId,
-                request = request,
-            ).flatMapDomain { response ->
+            endpoint {
+                queryChannels(
+                    connectionId = connectionId,
+                    queryChannelsRequest = request,
+                )
+            }.flatMapDomain { response ->
                 channelsCall(response.channels) { channels ->
                     QueryChannelsResult(
                         channels = channels,
@@ -1599,10 +1625,12 @@ constructor(
             sort = sort?.toSortParams(),
         )
         val lazyCall = {
-            channelApi.queryGroupedChannels(
-                connectionId = connectionId,
-                body = body,
-            ).flatMapDomain { response ->
+            endpoint {
+                groupedQueryChannels(
+                    connectionId = connectionId,
+                    groupedQueryChannelsRequest = body,
+                )
+            }.flatMapDomain { response ->
                 val groups = response.groups.mapValues { (key, bucket) ->
                     GroupedChannelsGroup(
                         groupKey = key,
@@ -1633,19 +1661,21 @@ constructor(
         val request = with(dtoMapping) { query.toChannelGetOrCreateRequest() }
 
         val lazyQueryChannelCall = {
-            if (channelId.isEmpty()) {
-                channelApi.queryChannel(
-                    channelType = channelType,
-                    connectionId = connectionId,
-                    request = request,
-                )
-            } else {
-                channelApi.queryChannel(
-                    channelType = channelType,
-                    channelId = channelId,
-                    connectionId = connectionId,
-                    request = request,
-                )
+            endpoint {
+                if (channelId.isEmpty()) {
+                    getOrCreateDistinctChannel(
+                        type = channelType,
+                        connectionId = connectionId,
+                        channelGetOrCreateRequest = request,
+                    )
+                } else {
+                    getOrCreateChannel(
+                        type = channelType,
+                        id = channelId,
+                        connectionId = connectionId,
+                        channelGetOrCreateRequest = request,
+                    )
+                }
             }.flatMapDomain { response -> channelsCall(listOf(response.toStateFields())) { it.single() } }
         }
 
