@@ -26,8 +26,8 @@ import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Sends at most one live location update per message every [LIVE_LOCATION_THROTTLE_MS]. An update arriving
- * inside the window is held until the window ends and then sent, unless a newer update, a stop or a disconnect
- * drops it first; a dropped update fails at once.
+ * inside the window is held until the window ends and then sent, unless a newer update, a successful stop or a
+ * disconnect drops it first; a dropped update fails at once.
  *
  * @param now Monotonic clock in milliseconds.
  */
@@ -71,7 +71,9 @@ internal class ThrottlingPlugin(
                 Result.Success(Unit)
             } else {
                 logger.d { "[onUpdateLiveLocationPrecondition] dropped held update ($messageId)" }
-                Result.Failure(Error.GenericError("Live location update dropped by a newer update or a stop"))
+                Result.Failure(
+                    Error.GenericError("Live location update dropped by a newer update, a stop or a disconnect"),
+                )
             }
         }
     }

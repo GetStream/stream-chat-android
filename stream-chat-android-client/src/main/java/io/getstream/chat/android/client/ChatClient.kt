@@ -2288,8 +2288,9 @@ internal constructor(
      * Updates the live location info of a message.
      *
      * Updates are throttled to one every 3 seconds per message. An update made sooner is held until the
-     * window ends and then sent, so the call can take up to 3 seconds; avoid [Call.execute] on the main thread.
-     * A held update fails if a newer update for the same message, a stop or a disconnect replaces it first.
+     * window ends and then sent, which adds up to 3 seconds before the request starts; avoid [Call.execute] on the
+     * main thread. A held update fails at once if a newer update for the same message, a successful
+     * [stopLiveLocationSharing] or a disconnect comes first.
      *
      * @param messageId The ID of the message to update.
      * @param latitude The latitude of the new location.

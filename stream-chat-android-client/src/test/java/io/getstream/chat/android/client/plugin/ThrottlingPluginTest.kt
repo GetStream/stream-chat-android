@@ -20,6 +20,7 @@ import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
@@ -111,6 +112,22 @@ internal class ThrottlingPluginTest {
     }
 
     @Test
+    fun `cancelled live location update does not remove a newer held one`() = runTest {
+        val sut = plugin()
+        sut.onUpdateLiveLocationPrecondition(location())
+        val cancelled = async { sut.onUpdateLiveLocationPrecondition(location()) }
+        advanceTimeBy(1000)
+
+        cancelled.cancel()
+        val newer = async(start = CoroutineStart.UNDISPATCHED) { sut.onUpdateLiveLocationPrecondition(location()) }
+        advanceUntilIdle()
+
+        assertTrue(cancelled.isCancelled)
+        assertTrue(newer.await() is Result.Success)
+        assertEquals(3000L, testScheduler.currentTime)
+    }
+
+    @Test
     fun `sending a pending live location update starts a new window`() = runTest {
         val sut = plugin()
         sut.onUpdateLiveLocationPrecondition(location())
@@ -134,6 +151,27 @@ internal class ThrottlingPluginTest {
 
         assertTrue(result is Result.Success)
         assertEquals(0L, testScheduler.currentTime)
+    }
+
+    @Test
+    fun `held live location updates of different messages are kept independently`() = runTest {
+        val sut = plugin()
+        val otherId = randomString()
+        sut.onUpdateLiveLocationPrecondition(location())
+        sut.onUpdateLiveLocationPrecondition(location(otherId))
+        val held = async { sut.onUpdateLiveLocationPrecondition(location()) }
+        val heldOther = async { sut.onUpdateLiveLocationPrecondition(location(otherId)) }
+        advanceTimeBy(1000)
+
+        val newerOther = async { sut.onUpdateLiveLocationPrecondition(location(otherId)) }
+        runCurrent()
+
+        assertTrue(heldOther.await() is Result.Failure)
+        assertFalse(held.isCompleted)
+        advanceUntilIdle()
+        assertTrue(held.await() is Result.Success)
+        assertTrue(newerOther.await() is Result.Success)
+        assertEquals(3000L, testScheduler.currentTime)
     }
 
     @Test
@@ -166,6 +204,20 @@ internal class ThrottlingPluginTest {
     }
 
     @Test
+    fun `failing to stop live location sharing keeps the window`() = runTest {
+        val sut = plugin()
+        sut.onUpdateLiveLocationPrecondition(location())
+        advanceTimeBy(1000)
+
+        sut.onStopLiveLocationSharingResult(location(), Result.Failure(Error.GenericError("")))
+        val next = async { sut.onUpdateLiveLocationPrecondition(location()) }
+        advanceUntilIdle()
+
+        assertTrue(next.await() is Result.Success)
+        assertEquals(3000L, testScheduler.currentTime)
+    }
+
+    @Test
     fun `onUserDisconnected drops the pending update and resets the window`() = runTest {
         val sut = plugin()
         sut.onUpdateLiveLocationPrecondition(location())
@@ -173,6 +225,9 @@ internal class ThrottlingPluginTest {
         advanceTimeBy(1000)
 
         sut.onUserDisconnected()
+        runCurrent()
+        assertTrue(pending.isCompleted)
+        assertEquals(1000L, testScheduler.currentTime)
         val afterDisconnect = sut.onUpdateLiveLocationPrecondition(location())
         advanceUntilIdle()
 
