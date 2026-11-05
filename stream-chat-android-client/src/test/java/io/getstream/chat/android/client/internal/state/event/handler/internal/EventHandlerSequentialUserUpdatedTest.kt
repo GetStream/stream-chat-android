@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.test.randomNotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomMute
+import io.getstream.chat.android.randomPrivacySettings
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -53,12 +54,22 @@ import java.util.Date
 internal class EventHandlerSequentialUserUpdatedTest {
 
     private val mutes = List(3) { randomMute() }
-    private val currentUser = randomUser(name = "Old", updatedAt = Date(1_000), mutes = mutes)
+    private val currentUser = randomUser(
+        name = "Old",
+        updatedAt = Date(1_000),
+        mutes = mutes,
+        privacySettings = randomPrivacySettings(),
+    )
 
     @Test
     fun `When the current user is updated, should keep their mutes in global state and storage`() = runTest {
         // Given
-        val eventUser = currentUser.copy(name = "New", updatedAt = Date(2_000), mutes = emptyList())
+        val eventUser = currentUser.copy(
+            name = "New",
+            updatedAt = Date(2_000),
+            mutes = emptyList(),
+            privacySettings = null,
+        )
         val event = UserUpdatedEvent(
             type = "user.updated",
             createdAt = Date(),
@@ -77,6 +88,7 @@ internal class EventHandlerSequentialUserUpdatedTest {
         val storedUser = argumentCaptor<User>().apply { verify(repos).insertCurrentUser(capture()) }.firstValue
         assertEquals("New", storedUser.name)
         assertEquals(mutes, storedUser.mutes)
+        assertEquals(currentUser.privacySettings, storedUser.privacySettings)
     }
 
     @Test

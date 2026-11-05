@@ -97,6 +97,71 @@ internal class UserUtilsTest {
     }
 
     @Test
+    fun `mergePartially should keep the privacy settings when that has none`() {
+        // given
+        val privacySettings = randomPrivacySettings()
+        val thisUser = randomUser(updatedAt = Date(1_000), privacySettings = privacySettings)
+        val thatUser = randomUser(updatedAt = Date(2_000), privacySettings = null)
+
+        // when
+        val result = thisUser.mergePartially(thatUser)
+
+        // then
+        assertEquals(privacySettings, result.privacySettings)
+    }
+
+    @Test
+    fun `mergePartially should only take the privacy settings when that is as up to date`() {
+        // given
+        val thisUser = randomUser(
+            createdAt = Date(0),
+            updatedAt = Date(1_000),
+            name = "Old",
+            privacySettings = randomPrivacySettings(),
+        )
+        val thatPrivacySettings = randomPrivacySettings()
+        val thatUser = randomUser(
+            createdAt = Date(0),
+            updatedAt = Date(1_000),
+            name = "New",
+            privacySettings = thatPrivacySettings,
+        )
+
+        // when
+        val result = thisUser.mergePartially(thatUser)
+
+        // then
+        assertEquals(thisUser.copy(privacySettings = thatPrivacySettings), result)
+    }
+
+    @Test
+    fun `mergePartially should return this when that is as up to date and has no privacy settings`() {
+        // given
+        val thisUser = randomUser(createdAt = Date(0), updatedAt = Date(1_000), privacySettings = randomPrivacySettings())
+        val thatUser = randomUser(createdAt = Date(0), updatedAt = Date(1_000), privacySettings = null)
+
+        // when
+        val result = thisUser.mergePartially(thatUser)
+
+        // then
+        assertSame(thisUser, result)
+    }
+
+    @Test
+    fun `mergePartially should return this when that is as up to date and has the same privacy settings`() {
+        // given
+        val privacySettings = randomPrivacySettings()
+        val thisUser = randomUser(createdAt = Date(0), updatedAt = Date(1_000), privacySettings = privacySettings)
+        val thatUser = randomUser(createdAt = Date(0), updatedAt = Date(1_000), privacySettings = privacySettings)
+
+        // when
+        val result = thisUser.mergePartially(thatUser)
+
+        // then
+        assertSame(thisUser, result)
+    }
+
+    @Test
     fun `mergePartially should copy the profile fields and keep the own-user fields`() {
         // given
         val thisUser = randomUser(

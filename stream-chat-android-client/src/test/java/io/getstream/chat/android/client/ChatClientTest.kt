@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.UnknownEvent
+import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
@@ -47,8 +48,10 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDateBefore
+import io.getstream.chat.android.randomPrivacySettings
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -103,7 +106,11 @@ internal class ChatClientTest {
     private lateinit var result: MutableList<ChatEvent>
     private val token = randomString()
     private val userId = randomString()
-    private val user = randomUser(id = userId, updatedAt = randomDateBefore(Date()))
+    private val user = randomUser(
+        id = userId,
+        updatedAt = randomDateBefore(Date()),
+        privacySettings = randomPrivacySettings(),
+    )
     private val tokenUtils: TokenUtils = mock()
 
     @BeforeEach
@@ -321,6 +328,59 @@ internal class ChatClientTest {
 
         assertEquals(updateUser, client.getCurrentUser())
     }
+
+    @Test
+    fun `Given connected user When handle event whose user has no privacy settings Should keep them`() {
+        val eventUser = user.copy(updatedAt = Date(), name = "updateUserName", privacySettings = null)
+
+        fakeChatSocket.mockEventReceived(Mother.randomUserPresenceChangedEvent(user = eventUser))
+
+        val currentUser = client.getCurrentUser()
+        assertEquals("updateUserName", currentUser?.name)
+        assertEquals(user.privacySettings, currentUser?.privacySettings)
+    }
+
+    @Test
+    fun `Given connected user When handle user updated event Should apply its privacy settings`() {
+        val privacySettings = randomPrivacySettings()
+        val eventUser = user.copy(updatedAt = Date(), privacySettings = privacySettings)
+
+        fakeChatSocket.mockEventReceived(userUpdatedEvent(eventUser))
+
+        assertEquals(privacySettings, client.getCurrentUser()?.privacySettings)
+    }
+
+    @Test
+    fun `Given connected user When handle user updated event changing only privacy settings Should apply them`() {
+        val privacySettings = randomPrivacySettings()
+        // Changing only the privacy settings doesn't move updatedAt
+        val eventUser = user.copy(privacySettings = privacySettings)
+
+        fakeChatSocket.mockEventReceived(userUpdatedEvent(eventUser))
+
+        assertEquals(privacySettings, client.getCurrentUser()?.privacySettings)
+    }
+
+    @Test
+    fun `Given connected user When handle user updated event without privacy settings Should apply them from the own copy`() {
+        val strippedUser = user.copy(updatedAt = Date(), name = "updateUserName", privacySettings = null)
+
+        // Subscribers to the user get a copy without privacy settings, possibly before the user's own copy
+        fakeChatSocket.mockEventReceived(userUpdatedEvent(strippedUser))
+        val privacySettings = randomPrivacySettings()
+        fakeChatSocket.mockEventReceived(userUpdatedEvent(strippedUser.copy(privacySettings = privacySettings)))
+
+        val currentUser = client.getCurrentUser()
+        assertEquals("updateUserName", currentUser?.name)
+        assertEquals(privacySettings, currentUser?.privacySettings)
+    }
+
+    private fun userUpdatedEvent(user: User) = UserUpdatedEvent(
+        type = EventType.USER_UPDATED,
+        createdAt = Date(),
+        rawCreatedAt = "",
+        user = user,
+    )
 
     @Test
     fun `Disconnect on unrecoverable error`() = runTest {
