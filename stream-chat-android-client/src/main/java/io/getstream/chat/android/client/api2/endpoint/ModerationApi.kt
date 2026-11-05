@@ -19,23 +19,13 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
-import io.getstream.chat.android.network.models.Response
-import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.POST
 import retrofit2.http.Query
 
 @AuthenticatedApi
 internal interface ModerationApi {
-
-    @POST("/api/v2/chat/moderation/mute/channel")
-    fun muteChannel(@Body body: MuteChannelRequest): RetrofitCall<Response>
-
-    @POST("/api/v2/chat/moderation/unmute/channel")
-    fun unmuteChannel(@Body body: MuteChannelRequest): RetrofitCall<Response>
 
     @GET("/api/v2/chat/query_banned_users")
     fun queryBannedUsers(

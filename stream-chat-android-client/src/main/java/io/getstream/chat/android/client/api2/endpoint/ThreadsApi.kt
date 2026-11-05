@@ -20,29 +20,13 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.GetThreadResponse
-import io.getstream.chat.android.network.models.QueryThreadsRequest
-import io.getstream.chat.android.network.models.QueryThreadsResponse
-import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
-import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
-import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 @AuthenticatedApi
 internal interface ThreadsApi {
-
-    /**
-     * [REST documentation](https://getstream.io/chat/docs/rest/#product:chat-querythreads)
-     */
-    @POST("/api/v2/chat/threads")
-    fun queryThreads(
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: QueryThreadsRequest,
-    ): RetrofitCall<QueryThreadsResponse>
 
     /**
      * [REST documentation](https://getstream.io/chat/docs/rest/#product:chat-getthread)
@@ -53,13 +37,4 @@ internal interface ThreadsApi {
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @QueryMap options: Map<String, String>,
     ): RetrofitCall<GetThreadResponse>
-
-    /**
-     * [REST documentation](https://getstream.github.io/protocol/#/product%3Achat/UpdateThreadPartial)
-     */
-    @PATCH("/api/v2/chat/threads/{message_id}")
-    fun partialUpdateThread(
-        @Path("message_id") messageId: String,
-        @Body body: UpdateThreadPartialRequest,
-    ): RetrofitCall<UpdateThreadPartialResponse>
 }
