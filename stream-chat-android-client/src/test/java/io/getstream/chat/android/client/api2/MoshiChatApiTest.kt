@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
@@ -118,7 +117,6 @@ import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GetRepliesResponse
-import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.GroupedChannelsBucket
 import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
@@ -3119,12 +3117,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getThreadInput")
-    fun testGetThread(call: RetrofitCall<GetThreadResponse>, expected: KClass<*>) = runTest {
+    fun testGetThread(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ThreadsApi>()
-        whenever(api.getThread(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getThread(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withThreadsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val userId = randomString()
@@ -3134,9 +3132,17 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.getThread(messageId, options).await()
         // then
-        val expectedOptions = options.toMap()
         result `should be instance of` expected
-        verify(api, times(1)).getThread(messageId, connectionId, expectedOptions)
+        verifyBlocking(api, times(1)) {
+            getThread(
+                messageId = messageId,
+                watch = options.watch,
+                connectionId = connectionId,
+                replyLimit = options.replyLimit,
+                participantLimit = options.participantLimit,
+                memberLimit = options.memberLimit,
+            )
+        }
     }
 
     @ParameterizedTest
@@ -4505,7 +4511,6 @@ internal class MoshiChatApiTest {
         private var generalApi: GeneralApi = mock()
         private var syncApi: SyncApi = mock()
         private var fileDownloadApi: FileDownloadApi = mock()
-        private var threadsApi: ThreadsApi = mock()
         private var chatEndpoints: ChatEndpoints = mock()
         private var anonymousChatEndpoints: ChatEndpoints = mock()
 
@@ -4546,10 +4551,6 @@ internal class MoshiChatApiTest {
 
         fun withFileDownloadApi(fileDownloadApi: FileDownloadApi) = apply {
             this.fileDownloadApi = fileDownloadApi
-        }
-
-        fun withThreadsApi(threadsApi: ThreadsApi) = apply {
-            this.threadsApi = threadsApi
         }
 
         fun withChatEndpoints(chatEndpoints: ChatEndpoints) = apply {
@@ -4596,7 +4597,6 @@ internal class MoshiChatApiTest {
                 generalApi = generalApi,
                 syncApi = syncApi,
                 fileDownloadApi = fileDownloadApi,
-                threadsApi = threadsApi,
                 chatEndpoints = chatEndpoints,
                 anonymousChatEndpoints = anonymousChatEndpoints,
                 parser = ParserFactory.createMoshiChatParser(),

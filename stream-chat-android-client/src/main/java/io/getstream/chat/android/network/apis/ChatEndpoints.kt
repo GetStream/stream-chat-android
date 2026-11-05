@@ -486,6 +486,20 @@ internal interface ChatEndpoints {
     ): io.getstream.chat.android.network.models.QueryThreadsResponse
 
     /**
+     * Get Thread
+     * Return a specific thread
+     */
+    @GET("/api/v2/chat/threads/{message_id}")
+    suspend fun getThread(
+        @Path("message_id") messageId: String,
+        @Query("watch") watch: Boolean? = null,
+        @Query("connection_id") connectionId: String? = null,
+        @Query("reply_limit") replyLimit: Int? = null,
+        @Query("participant_limit") participantLimit: Int? = null,
+        @Query("member_limit") memberLimit: Int? = null,
+    ): io.getstream.chat.android.network.models.GetThreadResponse
+
+    /**
      * Partially update thread
      * Updates certain fields of the thread
      */
