@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
@@ -232,7 +231,6 @@ constructor(
     private val generalApi: GeneralApi,
     private val syncApi: SyncApi,
     private val fileDownloadApi: FileDownloadApi,
-    private val threadsApi: ThreadsApi,
     private val chatEndpoints: ChatEndpoints,
     private val anonymousChatEndpoints: ChatEndpoints,
     private val parser: ChatParser,
@@ -1825,11 +1823,16 @@ constructor(
      */
     override fun getThread(messageId: String, options: GetThreadOptions): Call<Thread> {
         val lazyGetThread = {
-            threadsApi.getThread(
-                messageId,
-                connectionId,
-                options.toMap(),
-            ).flatMapDomain { response ->
+            endpoint {
+                getThread(
+                    messageId = messageId,
+                    watch = options.watch,
+                    connectionId = connectionId,
+                    replyLimit = options.replyLimit,
+                    participantLimit = options.participantLimit,
+                    memberLimit = options.memberLimit,
+                )
+            }.flatMapDomain { response ->
                 response.thread.toDomain()
                     ?.let { thread -> CoroutineCall(coroutineScope) { Result.Success(thread) } }
                     ?: ErrorCall(coroutineScope, Error.GenericError(MISSING_THREAD_FIELDS))

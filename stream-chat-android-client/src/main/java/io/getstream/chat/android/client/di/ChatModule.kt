@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
@@ -362,7 +361,6 @@ constructor(
             buildV2RetrofitApi<GeneralApi>(),
             buildV2RetrofitApi<SyncApi>(),
             buildFileDownloadApi(),
-            buildV2RetrofitApi<ThreadsApi>(),
             // Generated, so it carries neither @AuthenticatedApi nor @AnonymousApi.
             buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = false),
             buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = true),

@@ -940,24 +940,20 @@ internal object MoshiChatApiTestArguments {
 
     private fun threadResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(
-                GetThreadResponse(
-                    thread = Mother.randomThreadStateResponse(),
-                    duration = randomString(),
-                ),
-            ).toRetrofitCall(),
+            GetThreadResponse(
+                thread = Mother.randomThreadStateResponse(),
+                duration = randomString(),
+            ),
             Result.Success::class,
         ),
         Arguments.of(
-            RetroSuccess(
-                GetThreadResponse(
-                    thread = Mother.randomThreadStateResponse(lastMessageAt = null),
-                    duration = randomString(),
-                ),
-            ).toRetrofitCall(),
+            GetThreadResponse(
+                thread = Mother.randomThreadStateResponse(lastMessageAt = null),
+                duration = randomString(),
+            ),
             Result.Failure::class,
         ),
-        Arguments.of(RetroError<GetThreadResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetThreadResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     private fun threadInfoResponseArguments() =
