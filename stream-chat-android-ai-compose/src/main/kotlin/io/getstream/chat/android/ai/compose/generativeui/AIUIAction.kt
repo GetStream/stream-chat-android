@@ -24,7 +24,7 @@ package io.getstream.chat.android.ai.compose.generativeui
  * [customData] holds the action for the agent.
  *
  * ```
- * channel.sendMessage(Message(text = action.label, extraData = action.customData))
+ * channel.sendMessage(Message(text = action.label, extraData = action.customData)).enqueue()
  * ```
  *
  * @param messageId The reply whose UI it came from.
@@ -53,7 +53,7 @@ public data class AIUIAction(
         )
 
     /** The action as the custom data of the person's message, under [CUSTOM_DATA_KEY]. */
-    val customData: Map<String, Any?> get() = mapOf(CUSTOM_DATA_KEY to json)
+    val customData: Map<String, Any> get() = mapOf(CUSTOM_DATA_KEY to json)
 
     public companion object {
         /** The custom field of the person's message that holds the action. */

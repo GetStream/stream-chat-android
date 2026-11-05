@@ -8,7 +8,9 @@ Give the conversation's `AIUIHost` an `A2UIRenderer`. The app's components join 
 
 ```kotlin
 val ui = AIUIHost(renderers = listOf(A2UIRenderer()), components = listOf(placeCard)) { action ->
-    viewModelScope.launch { channel.sendMessage(Message(text = action.label, extraData = action.customData)) }
+    viewModelScope.launch {
+        channel.sendMessage(Message(text = action.label, extraData = action.customData)).await()
+    }
 }
 
 AIConversation(messages = messages, ui = ui)

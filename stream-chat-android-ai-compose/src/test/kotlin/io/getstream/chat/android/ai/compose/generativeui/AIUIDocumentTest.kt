@@ -106,4 +106,14 @@ internal class AIUIDocumentTest {
         )
         assertEquals(mapOf("ai_ui_action" to action.json), action.customData)
     }
+
+    @Test
+    fun `an action's custom data is a message's extra data`() {
+        val action = AIUIAction(messageId = "m1", format = AIUIFormat.A2UI, name = "submit", label = "Send")
+
+        // The type of Message.extraData, which this module doesn't depend on.
+        val extraData: Map<String, Any> = action.customData
+
+        assertEquals(mapOf("ai_ui_action" to action.json), extraData)
+    }
 }

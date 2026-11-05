@@ -38,7 +38,9 @@ import io.getstream.chat.android.ai.compose.parts.definition
  *
  * ```
  * val ui = AIUIHost(renderers = listOf(A2UIRenderer()), components = listOf(placeCard)) { action ->
- *     viewModelScope.launch { channel.sendMessage(Message(text = action.label, extraData = action.customData)) }
+ *     viewModelScope.launch {
+ *         channel.sendMessage(Message(text = action.label, extraData = action.customData)).await()
+ *     }
  * }
  * ```
  *

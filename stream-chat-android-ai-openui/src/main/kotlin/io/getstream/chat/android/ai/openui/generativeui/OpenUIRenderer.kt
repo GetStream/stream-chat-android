@@ -45,7 +45,9 @@ import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
  *
  * ```
  * val ui = AIUIHost(renderers = listOf(OpenUIRenderer()), components = listOf(placeCard)) { action ->
- *     viewModelScope.launch { channel.sendMessage(Message(text = action.label, extraData = action.customData)) }
+ *     viewModelScope.launch {
+ *         channel.sendMessage(Message(text = action.label, extraData = action.customData)).await()
+ *     }
  * }
  * ```
  *

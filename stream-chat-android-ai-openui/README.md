@@ -12,7 +12,9 @@ val ui = AIUIHost(
     components = listOf(placeCard), // the app's components, placeable as `PlaceCard(...)`
     tools = listOf(calendar),       // what `Query()` and `Mutation()` run, on the device
 ) { action ->
-    viewModelScope.launch { channel.sendMessage(Message(text = action.label, extraData = action.customData)) }
+    viewModelScope.launch {
+        channel.sendMessage(Message(text = action.label, extraData = action.customData)).await()
+    }
 }
 
 AIConversation(messages = messages, ui = ui)
