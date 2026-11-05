@@ -65,11 +65,9 @@ import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
-import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.QueryDraftsResponse
-import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryThreadsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
@@ -720,31 +718,13 @@ internal object MoshiChatApiTestArguments {
     fun getPollInput() = pollResponseArguments()
 
     @JvmStatic
-    fun deletePollInput() = completableResponseArguments()
+    fun deletePollInput() = endpointArgs(Response(randomString()))
 
     @JvmStatic
-    fun queryPollsInput() = listOf(
-        Arguments.of(
-            RetroSuccess(Mother.randomQueryPollsResponse()).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(
-            RetroError<QueryPollsResponse>(statusCode = 500).toRetrofitCall(),
-            Result.Failure::class,
-        ),
-    )
+    fun queryPollsInput() = endpointArgs(Mother.randomQueryPollsResponse())
 
     @JvmStatic
-    fun queryPollVotesInput() = listOf(
-        Arguments.of(
-            RetroSuccess(Mother.randomPollVotesResponse()).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(
-            RetroError<PollVotesResponse>(statusCode = 500).toRetrofitCall(),
-            Result.Failure::class,
-        ),
-    )
+    fun queryPollVotesInput() = endpointArgs(Mother.randomPollVotesResponse())
 
     @JvmStatic
     fun createPollOptionInput() = pollOptionResponseArguments()
@@ -753,7 +733,7 @@ internal object MoshiChatApiTestArguments {
     fun updatePollOptionInput() = pollOptionResponseArguments()
 
     @JvmStatic
-    fun deletePollOptionInput() = completableResponseArguments()
+    fun deletePollOptionInput() = endpointArgs(Response(randomString()))
 
     @JvmStatic
     fun createReminderInput() =
@@ -1061,44 +1041,14 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(RetroError<UpdateThreadPartialResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
-    private fun pollResponseArguments() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                PollResponse(
-                    poll = Mother.randomPollResponseData(),
-                    duration = randomString(),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<PollResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    private fun pollResponseArguments() =
+        endpointArgs(PollResponse(poll = Mother.randomPollResponseData(), duration = randomString()))
 
-    private fun pollOptionResponseArguments() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                PollOptionResponse(
-                    duration = randomString(),
-                    pollOption = Mother.randomPollOptionResponseData(),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<PollOptionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    private fun pollOptionResponseArguments() =
+        endpointArgs(PollOptionResponse(duration = randomString(), pollOption = Mother.randomPollOptionResponseData()))
 
-    private fun pollVoteResponseArguments() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                PollVoteResponse(
-                    duration = randomString(),
-                    vote = Mother.randomPollVoteResponseData(),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<PollVoteResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    private fun pollVoteResponseArguments() =
+        endpointArgs(PollVoteResponse(duration = randomString(), vote = Mother.randomPollVoteResponseData()))
 
     private fun <T : Any> responseArgs(success: T) = listOf(
         Arguments.of(RetroSuccess(success).toRetrofitCall(), Result.Success::class),

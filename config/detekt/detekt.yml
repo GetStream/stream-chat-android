@@ -146,7 +146,8 @@ complexity:
     ignoreStringsRegex: '$^'
   TooManyFunctions:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+    # The generated ChatEndpoints holds every endpoint the SDK calls in one interface.
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**', '**/io/getstream/chat/android/network/**']
     thresholdInFiles: 20
     thresholdInClasses: 20
     thresholdInInterfaces: 11

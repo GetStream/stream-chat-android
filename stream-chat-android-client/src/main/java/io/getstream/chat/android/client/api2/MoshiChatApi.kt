@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
-import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
@@ -246,7 +245,6 @@ constructor(
     private val fileDownloadApi: FileDownloadApi,
     private val ogApi: OpenGraphApi,
     private val threadsApi: ThreadsApi,
-    private val pollsApi: PollsApi,
     private val chatEndpoints: ChatEndpoints,
     private val parser: ChatParser,
     private val scheduledMessagesApi: ScheduledMessagesApi,
@@ -1883,22 +1881,18 @@ constructor(
         pollId: String,
         vote: VoteData,
     ): Call<Vote> =
-        pollsApi.castPollVote(
-            messageId,
-            pollId,
-            CastPollVoteRequest(vote),
-        ).flatMapDomain { toVoteCall(it) }
+        endpoint {
+            castPollVote(messageId = messageId, pollId = pollId, castPollVoteRequest = CastPollVoteRequest(vote))
+        }.flatMapDomain { toVoteCall(it) }
 
     override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> =
-        pollsApi.removePollVote(
-            messageId,
-            pollId,
-            voteId,
-        ).flatMapDomain { toVoteCall(it) }
+        endpoint { deletePollVote(messageId = messageId, pollId = pollId, voteId = voteId) }
+            .flatMapDomain { toVoteCall(it) }
 
     override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
         val request = UpdatePollPartialRequest(set = set, unset = unset)
-        return pollsApi.partialUpdatePoll(pollId, request).mapDomain { it.poll.toDomain() }
+        return endpoint { updatePollPartial(pollId = pollId, updatePollPartialRequest = request) }
+            .mapDomain { it.poll.toDomain() }
     }
 
     override fun closePoll(pollId: String): Call<Poll> {
@@ -1911,7 +1905,8 @@ constructor(
             text = option.text,
             custom = option.extraData,
         )
-        return pollsApi.createPollOption(pollId, body).mapDomain { it.pollOption.toDomain() }
+        return endpoint { createPollOption(pollId = pollId, createPollOptionRequest = body) }
+            .mapDomain { it.pollOption.toDomain() }
     }
 
     override fun updatePollOption(pollId: String, option: PollOption): Call<PollOption> {
@@ -1924,11 +1919,12 @@ constructor(
             text = option.text,
             custom = option.extraData,
         )
-        return pollsApi.updatePollOption(pollId, body).mapDomain { it.pollOption.toDomain() }
+        return endpoint { updatePollOption(pollId = pollId, updatePollOptionRequest = body) }
+            .mapDomain { it.pollOption.toDomain() }
     }
 
     override fun deletePollOption(pollId: String, optionId: String): Call<Unit> {
-        return pollsApi.deletePollOption(pollId, optionId).toUnitCall()
+        return endpoint { deletePollOption(pollId = pollId, optionId = optionId) }.toUnitCall()
     }
 
     override fun queryPollVotes(
@@ -1944,7 +1940,7 @@ constructor(
             next = next,
             sort = sort?.toSortParams(),
         )
-        return pollsApi.queryPollVotes(pollId, request).mapDomain { it.toDomain() }
+        return endpoint { queryPollVotes(pollId = pollId, queryPollVotesRequest = request) }.mapDomain { it.toDomain() }
     }
 
     override fun queryPolls(
@@ -1959,31 +1955,30 @@ constructor(
             next = next,
             sort = sort?.toSortParams(),
         )
-        return pollsApi.queryPolls(request).mapDomain { it.toDomain() }
+        return endpoint { queryPolls(queryPollsRequest = request) }.mapDomain { it.toDomain() }
     }
 
     override fun createPoll(createPollParams: CreatePollParams): Call<Poll> {
-        return pollsApi.createPoll(
-            CreatePollRequest(
-                allowAnswers = createPollParams.allowAnswers,
-                allowUserSuggestedOptions = createPollParams.allowUserSuggestedOptions,
-                description = createPollParams.description,
-                enforceUniqueVote = createPollParams.enforceUniqueVote,
-                maxVotesAllowed = createPollParams.maxVotesAllowed,
-                name = createPollParams.name,
-                options = createPollParams.optionsWithExtraData.map {
-                    PollOptionInput(
-                        text = it.text,
-                        custom = it.extraData,
-                    )
-                },
-                votingVisibility = when (createPollParams.votingVisibility) {
-                    VotingVisibility.PUBLIC -> VotingVisibilityDto.Public
-                    VotingVisibility.ANONYMOUS -> VotingVisibilityDto.Anonymous
-                },
-                custom = createPollParams.extraData,
-            ),
-        ).mapDomain { it.poll.toDomain() }
+        val body = CreatePollRequest(
+            allowAnswers = createPollParams.allowAnswers,
+            allowUserSuggestedOptions = createPollParams.allowUserSuggestedOptions,
+            description = createPollParams.description,
+            enforceUniqueVote = createPollParams.enforceUniqueVote,
+            maxVotesAllowed = createPollParams.maxVotesAllowed,
+            name = createPollParams.name,
+            options = createPollParams.optionsWithExtraData.map {
+                PollOptionInput(
+                    text = it.text,
+                    custom = it.extraData,
+                )
+            },
+            votingVisibility = when (createPollParams.votingVisibility) {
+                VotingVisibility.PUBLIC -> VotingVisibilityDto.Public
+                VotingVisibility.ANONYMOUS -> VotingVisibilityDto.Anonymous
+            },
+            custom = createPollParams.extraData,
+        )
+        return endpoint { createPoll(createPollRequest = body) }.mapDomain { it.poll.toDomain() }
     }
 
     override fun updatePoll(request: UpdatePollRequest): Call<Poll> {
@@ -2014,15 +2009,15 @@ constructor(
             },
             custom = request.extraData,
         )
-        return pollsApi.updatePoll(body).mapDomain { it.poll.toDomain() }
+        return endpoint { updatePoll(updatePollRequest = body) }.mapDomain { it.poll.toDomain() }
     }
 
     override fun getPoll(pollId: String): Call<Poll> {
-        return pollsApi.getPoll(pollId).mapDomain { it.poll.toDomain() }
+        return endpoint { getPoll(pollId = pollId) }.mapDomain { it.poll.toDomain() }
     }
 
     override fun deletePoll(pollId: String): Call<Unit> {
-        return pollsApi.deletePoll(pollId).toUnitCall()
+        return endpoint { deletePoll(pollId = pollId) }.toUnitCall()
     }
 
     override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
@@ -2229,7 +2224,7 @@ constructor(
             }
         }
 
-    private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
+    private fun <T : Any, R : Any> Call<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
         flatMap { domainMapping.transform(it) }
 
     /** [mapDomain] for the endpoints still on v1. */
