@@ -35,6 +35,8 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
 import io.getstream.chat.android.client.scope.ClientTestScope
@@ -50,6 +52,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDateBefore
 import io.getstream.chat.android.randomString
@@ -113,6 +116,13 @@ internal class ChatClientTest {
     private val tokenUtils: TokenUtils = mock()
     private val userCredentialStorage: UserCredentialStorage = mock()
     private val audioPlayer: AudioPlayer = mock()
+    private val userRepository: UserRepository = mock()
+    private val repositoryFactoryProvider = object : RepositoryFactory.Provider {
+        override fun createRepositoryFactory(user: User): RepositoryFactory =
+            object : RepositoryFactory by NoOpRepositoryFactory {
+                override fun createUserRepository(): UserRepository = userRepository
+            }
+    }
     private val repository: ChatClientRepository = mock {
         // Suspends like a real database call, so a cancelled caller stops here.
         onBlocking { clear() } doSuspendableAnswer { yield() }
@@ -166,7 +176,7 @@ internal class ChatClientTest {
             serverClockOffset = ServerClockOffset(),
             pluginFactories = emptyList(),
             mutableClientState = Mother.mockedClientState(),
-            repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            repositoryFactoryProvider = repositoryFactoryProvider,
             currentUserFetcher = mock(),
             audioPlayer = audioPlayer,
             repository = repository,
@@ -424,6 +434,7 @@ internal class ChatClientTest {
         delay(10L)
 
         verify(userCredentialStorage, never()).clear()
+        verify(userRepository, never()).clear()
         verify(repository).clear()
         verify(audioPlayer).dispose()
         assertNull(client.clientState.user.value)
