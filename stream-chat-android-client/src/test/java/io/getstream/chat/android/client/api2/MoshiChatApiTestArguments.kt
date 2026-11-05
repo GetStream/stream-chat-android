@@ -92,7 +92,6 @@ import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomDate
-import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
@@ -145,95 +144,77 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             true,
             false,
-            RetroSuccess(randomDeleteMessageResponse()).toRetrofitCall(),
+            randomDeleteMessageResponse(),
             Result.Success::class,
         ),
         Arguments.of(
             false,
             true,
-            RetroSuccess(randomDeleteMessageResponse()).toRetrofitCall(),
+            randomDeleteMessageResponse(),
             Result.Success::class,
         ),
         Arguments.of(
             false,
             false,
-            RetroSuccess(randomDeleteMessageResponse()).toRetrofitCall(),
+            randomDeleteMessageResponse(),
             Result.Success::class,
         ),
         Arguments.of(
             true,
             true,
-            RetroSuccess(randomDeleteMessageResponse()).toRetrofitCall(),
+            randomDeleteMessageResponse(),
             Result.Success::class,
         ),
         Arguments.of(
             true,
             false,
-            RetroError<DeleteMessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            RetroError<DeleteMessageResponse>(statusCode = 500).toHttpException(),
             Result.Failure::class,
         ),
         Arguments.of(
             false,
             true,
-            RetroError<DeleteMessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            RetroError<DeleteMessageResponse>(statusCode = 500).toHttpException(),
             Result.Failure::class,
         ),
         Arguments.of(
             false,
             false,
-            RetroError<DeleteMessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            RetroError<DeleteMessageResponse>(statusCode = 500).toHttpException(),
             Result.Failure::class,
         ),
         Arguments.of(
             true,
             true,
-            RetroError<DeleteMessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            RetroError<DeleteMessageResponse>(statusCode = 500).toHttpException(),
             Result.Failure::class,
         ),
     )
 
     @JvmStatic
-    fun getReactionsInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                GetReactionsResponse(
-                    duration = randomString(),
-                    reactions = listOf(Mother.randomReactionResponse()),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
+    fun getReactionsInput() = endpointArgs(
+        GetReactionsResponse(
+            duration = randomString(),
+            reactions = listOf(Mother.randomReactionResponse()),
         ),
-        Arguments.of(RetroError<GetReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
-    fun queryReactionsInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                QueryReactionsResponse(
-                    duration = randomString(),
-                    reactions = listOf(Mother.randomReactionResponse()),
-                    next = randomString(),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
+    fun queryReactionsInput() = endpointArgs(
+        QueryReactionsResponse(
+            duration = randomString(),
+            reactions = listOf(Mother.randomReactionResponse()),
+            next = randomString(),
         ),
-        Arguments.of(RetroError<QueryReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
-    fun sendReactionInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                SendReactionResponse(
-                    duration = "1ms",
-                    message = Mother.randomMessageResponse(),
-                    reaction = Mother.randomReactionResponse(),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
+    fun sendReactionInput() = endpointArgs(
+        SendReactionResponse(
+            duration = "1ms",
+            message = Mother.randomMessageResponse(),
+            reaction = Mother.randomReactionResponse(),
         ),
-        Arguments.of(RetroError<SendReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -415,7 +396,10 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun getNewerRepliesInput() = repliesResponseArguments()
+    fun getNewerRepliesInput() = listOf(
+        Arguments.of(RetroSuccess(randomRepliesResponse()).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<GetRepliesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
 
     @JvmStatic
     fun getRepliesInput() = repliesResponseArguments()
@@ -922,23 +906,19 @@ internal object MoshiChatApiTestArguments {
         DeleteMessageResponse(duration = "1ms", message = Mother.randomMessageResponse())
 
     private inline fun <reified T : Any> responseArguments(response: T, missingMessage: T? = null) = listOfNotNull(
-        Arguments.of(RetroSuccess(response).toRetrofitCall(), Result.Success::class),
-        missingMessage?.let { Arguments.of(RetroSuccess(it).toRetrofitCall(), Result.Failure::class) },
-        Arguments.of(RetroError<T>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(response, Result.Success::class),
+        missingMessage?.let { Arguments.of(it, Result.Failure::class) },
+        Arguments.of(RetroError<T>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     private fun getMessageResponseArguments() = responseArguments(GetMessageResponseParityTest.getMessageResponse())
 
     private fun draftMessageResponseArguments() = endpointArgs(Mother.randomCreateDraftResponse())
 
-    private fun repliesResponseArguments() = listOf(
-        Arguments.of(
-            RetroSuccess(GetRepliesResponse(duration = "1ms", messages = listOf(Mother.randomMessageResponse())))
-                .toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<GetRepliesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    private fun randomRepliesResponse() =
+        GetRepliesResponse(duration = "1ms", messages = listOf(Mother.randomMessageResponse()))
+
+    private fun repliesResponseArguments() = endpointArgs(randomRepliesResponse())
 
     private fun pinnedMessagesResponseArguments() = listOf(
         Arguments.of(

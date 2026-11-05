@@ -118,15 +118,11 @@ import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.DeleteChannelResponse
-import io.getstream.chat.android.network.models.DeleteMessageResponse
-import io.getstream.chat.android.network.models.DeleteReactionResponse
 import io.getstream.chat.android.network.models.DeleteScheduledMessageResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
-import io.getstream.chat.android.network.models.GetMessageResponse
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
-import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.GetRepliesResponse
 import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.GroupedChannelsBucket
@@ -139,7 +135,6 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
-import io.getstream.chat.android.network.models.MessageActionResponse
 import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
@@ -160,7 +155,6 @@ import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
-import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.QueryScheduledMessagesRequest
 import io.getstream.chat.android.network.models.QueryScheduledMessagesResponse
@@ -175,14 +169,12 @@ import io.getstream.chat.android.network.models.ScheduledMessagesFilter
 import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SendMessageResponse
-import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.SendScheduledMessageNowResponse
 import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.SyncRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
-import io.getstream.chat.android.network.models.TranslateMessageResponse
 import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
@@ -195,8 +187,6 @@ import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
-import io.getstream.chat.android.network.models.UpdateMessagePartialResponse
-import io.getstream.chat.android.network.models.UpdateMessageResponse
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
@@ -294,27 +284,27 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendMessageInput")
-    fun testSendMessage(call: RetrofitCall<SendMessageResponse>, expected: KClass<*>) = runTest {
+    fun testSendMessage(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.sendMessage(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.sendMessage(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val result = sut.sendMessage(randomString(), randomString(), randomMessage()).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).sendMessage(any(), any(), any())
+        verifyBlocking(api, times(1)) { sendMessage(any(), any(), any()) }
     }
 
     @Test
     fun `scheduleMessage sends the date and maps a message sent right away to the channel`() = runTest {
         // given
-        val api = mock<MessageApi>()
+        val api = mock<ChatEndpoints>()
         val response = SendMessageResponse(duration = "1ms", message = Mother.randomMessageResponse(cid = ""))
-        whenever(api.sendMessage(any(), any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
-        val sut = Fixture().withMessageApi(api).get()
+        wheneverBlocking { api.sendMessage(any(), any(), any()) }.thenRespond(response)
+        val sut = Fixture().withChatEndpoints(api).get()
         val scheduledAt = randomDate()
         // when
         val result = sut.scheduleMessage("messaging", "123", randomMessage(), scheduledAt).await()
@@ -322,7 +312,7 @@ internal class MoshiChatApiTest {
         val value = result.getOrThrow()
         value.message.cid shouldBeEqualTo "messaging:123"
         value.scheduledMessage.shouldBeNull()
-        verify(api).sendMessage(eq("messaging"), eq("123"), argThat { this.scheduledAt == scheduledAt })
+        verifyBlocking(api) { sendMessage(eq("messaging"), eq("123"), argThat { this.scheduledAt == scheduledAt }) }
     }
 
     @ParameterizedTest
@@ -388,29 +378,29 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateMessageInput")
-    fun testUpdateMessage(call: RetrofitCall<UpdateMessageResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateMessage(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.updateMessage(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateMessage(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val message = randomMessage()
         val result = sut.updateMessage(message).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).updateMessage(eq(message.id), any())
+        verifyBlocking(api, times(1)) { updateMessage(eq(message.id), any()) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdateMessageInput")
-    fun testPartialUpdateMessage(call: RetrofitCall<UpdateMessagePartialResponse>, expected: KClass<*>) = runTest {
+    fun testPartialUpdateMessage(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.partialUpdateMessage(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateMessagePartial(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -425,41 +415,41 @@ internal class MoshiChatApiTest {
             skipEnrichUrl = skipEnrichUrl,
         )
         result `should be instance of` expected
-        verify(api, times(1)).partialUpdateMessage(messageId, expectedRequest)
+        verifyBlocking(api, times(1)) { updateMessagePartial(messageId, expectedRequest) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getMessageInput")
-    fun testGetMessage(call: RetrofitCall<GetMessageResponse>, expected: KClass<*>) = runTest {
+    fun testGetMessage(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.getMessage(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getMessage(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
         val result = sut.getMessage(messageId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).getMessage(messageId)
+        verifyBlocking(api, times(1)) { getMessage(messageId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getPendingMessageInput")
-    fun testGetPendingMessage(call: RetrofitCall<GetMessageResponse>, expected: KClass<*>) = runTest {
+    fun testGetPendingMessage(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.getMessage(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getMessage(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
         val result = sut.getPendingMessage(messageId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).getMessage(messageId)
+        verifyBlocking(api, times(1)) { getMessage(messageId) }
     }
 
     @ParameterizedTest
@@ -467,14 +457,14 @@ internal class MoshiChatApiTest {
     fun testDeleteMessage(
         hard: Boolean,
         deleteForMe: Boolean,
-        call: RetrofitCall<DeleteMessageResponse>,
+        outcome: Any,
         expected: KClass<*>,
     ) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.deleteMessage(messageId = any(), hard = anyOrNull(), deleteForMe = anyOrNull())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.deleteMessage(id = any(), hard = anyOrNull(), deleteForMe = anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -483,17 +473,17 @@ internal class MoshiChatApiTest {
         val expectedHard = if (hard) true else null
         val expectedDeleteForMe = if (deleteForMe) true else null
         result `should be instance of` expected
-        verify(api, times(1)).deleteMessage(messageId, expectedHard, expectedDeleteForMe)
+        verifyBlocking(api, times(1)) { deleteMessage(messageId, expectedHard, expectedDeleteForMe) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getReactionsInput")
-    fun testGetReactions(call: RetrofitCall<GetReactionsResponse>, expected: KClass<*>) = runTest {
+    fun testGetReactions(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.getReactions(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getReactions(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -502,17 +492,17 @@ internal class MoshiChatApiTest {
         val result = sut.getReactions(messageId, offset, limit).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).getReactions(messageId, offset, limit)
+        verifyBlocking(api, times(1)) { getReactions(id = messageId, limit = limit, offset = offset) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryReactionsInput")
-    fun testQueryReactions(call: RetrofitCall<QueryReactionsResponse>, expected: KClass<*>) = runTest {
+    fun testQueryReactions(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.queryReactions(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryReactions(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -529,17 +519,17 @@ internal class MoshiChatApiTest {
             sort = sort.toSortParams(),
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryReactions(messageId, expectedRequest)
+        verifyBlocking(api, times(1)) { queryReactions(messageId, expectedRequest) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendReactionInput")
-    fun testSendReaction(call: RetrofitCall<SendReactionResponse>, expected: KClass<*>) = runTest {
+    fun testSendReaction(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.sendReaction(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.sendReaction(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val reaction = randomReaction()
@@ -548,17 +538,17 @@ internal class MoshiChatApiTest {
         val result = sut.sendReaction(reaction, enforceUnique, skipPush).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).sendReaction(eq(reaction.messageId), any())
+        verifyBlocking(api, times(1)) { sendReaction(eq(reaction.messageId), any()) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteReactionInput")
-    fun testDeleteReaction(call: RetrofitCall<DeleteReactionResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteReaction(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.deleteReaction(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.deleteReaction(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -566,7 +556,7 @@ internal class MoshiChatApiTest {
         val result = sut.deleteReaction(messageId, reactionType).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deleteReaction(messageId, reactionType)
+        verifyBlocking(api, times(1)) { deleteReaction(messageId, reactionType) }
     }
 
     @ParameterizedTest
@@ -1895,12 +1885,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getRepliesInput")
-    fun testGetReplies(call: RetrofitCall<GetRepliesResponse>, expected: KClass<*>) = runTest {
+    fun testGetReplies(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.getReplies(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getReplies(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val parentId = randomString()
@@ -1908,17 +1898,17 @@ internal class MoshiChatApiTest {
         val result = sut.getReplies(parentId, limit).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).getReplies(parentId, limit)
+        verifyBlocking(api, times(1)) { getReplies(parentId = parentId, limit = limit) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getRepliesMoreInput")
-    fun testGetRepliesMore(call: RetrofitCall<GetRepliesResponse>, expected: KClass<*>) = runTest {
+    fun testGetRepliesMore(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.getRepliesMore(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getReplies(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val parentId = randomString()
@@ -1927,17 +1917,17 @@ internal class MoshiChatApiTest {
         val result = sut.getRepliesMore(parentId, firstId, limit).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).getRepliesMore(parentId, limit, firstId)
+        verifyBlocking(api, times(1)) { getReplies(parentId = parentId, limit = limit, idLt = firstId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getRepliesAroundInput")
-    fun testGetRepliesAround(call: RetrofitCall<GetRepliesResponse>, expected: KClass<*>) = runTest {
+    fun testGetRepliesAround(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.getRepliesAround(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getReplies(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val parentId = randomString()
@@ -1946,17 +1936,17 @@ internal class MoshiChatApiTest {
         val result = sut.getRepliesAround(parentId, aroundId, limit).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).getRepliesAround(parentId, limit, aroundId)
+        verifyBlocking(api, times(1)) { getReplies(parentId = parentId, limit = limit, idAround = aroundId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendActionInput")
-    fun testSendAction(call: RetrofitCall<MessageActionResponse>, expected: KClass<*>) = runTest {
+    fun testSendAction(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.sendAction(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.runMessageAction(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val request = Mother.randomSendActionRequest()
@@ -1966,7 +1956,7 @@ internal class MoshiChatApiTest {
             formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
         )
         result `should be instance of` expected
-        verify(api, times(1)).sendAction(request.messageId, expectedRequest)
+        verifyBlocking(api, times(1)) { runMessageAction(request.messageId, expectedRequest) }
     }
 
     @ParameterizedTest
@@ -2110,12 +2100,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#translateInput")
-    fun testTranslate(call: RetrofitCall<TranslateMessageResponse>, expected: KClass<*>) = runTest {
+    fun testTranslate(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.translate(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.translateMessage(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -2124,7 +2114,7 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = TranslateMessageRequest(TranslateMessageRequest.Language.fromString(language))
         result `should be instance of` expected
-        verify(api, times(1)).translate(messageId, expectedBody)
+        verifyBlocking(api, times(1)) { translateMessage(messageId, expectedBody) }
     }
 
     @ParameterizedTest
