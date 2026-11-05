@@ -25,16 +25,16 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
@@ -44,9 +44,6 @@ import org.mockito.kotlin.whenever
 
 /** A reconnect refresh of a standard channel list that has loaded more than its first page, on the real state. */
 internal class QueryChannelsLogicReconnectTest {
-
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
 
     private val filter = Filters.eq("type", "messaging")
     private val sort = QuerySortByField.descByName<Channel>("last_message_at")
@@ -188,6 +185,10 @@ internal class QueryChannelsLogicReconnectTest {
     private fun List<Channel>.cids(): Set<String> = mapTo(mutableSetOf(), Channel::cid)
 
     private companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
         private const val PAGE_SIZE = 30
     }
 }
