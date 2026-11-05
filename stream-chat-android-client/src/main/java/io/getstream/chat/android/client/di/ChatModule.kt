@@ -40,23 +40,16 @@ import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.endpoint.ConfigApi
-import io.getstream.chat.android.client.api2.endpoint.DeviceApi
-import io.getstream.chat.android.client.api2.endpoint.DraftApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
-import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
-import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
-import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
-import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.cdn.CDN
@@ -365,25 +358,18 @@ constructor(
             buildV2RetrofitApi<UserApi>(),
             buildV2RetrofitApi<GuestApi>(),
             buildV2RetrofitApi<MessageApi>(),
-            buildV2RetrofitApi<DraftApi>(),
             buildV2RetrofitApi<ChannelApi>(),
             v2EventParser,
-            buildV2RetrofitApi<DeviceApi>(),
             buildV2RetrofitApi<ModerationApi>(),
             buildRetrofitApi<ModerationV1Api>(),
             buildV2RetrofitApi<GeneralApi>(),
             buildV2RetrofitApi<SyncApi>(),
-            buildV2RetrofitApi<ConfigApi>(),
             buildFileDownloadApi(),
-            buildV2RetrofitApi<OpenGraphApi>(),
             buildV2RetrofitApi<ThreadsApi>(),
             // Generated, so it carries no @AuthenticatedApi.
             buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = false),
             moshiParser,
             buildV2RetrofitApi<ScheduledMessagesApi>(),
-            buildV2RetrofitApi<PushPreferencesApi>(),
-            buildV2RetrofitApi<UserGroupApi>(),
-            buildV2RetrofitApi<RoleApi>(),
             userScope,
             userScope,
         ).let { originalApi ->

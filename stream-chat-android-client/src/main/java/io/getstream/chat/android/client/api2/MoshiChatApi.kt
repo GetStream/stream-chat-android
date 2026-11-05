@@ -29,23 +29,16 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.endpoint.ConfigApi
-import io.getstream.chat.android.client.api2.endpoint.DeviceApi
-import io.getstream.chat.android.client.api2.endpoint.DraftApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
-import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
-import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
-import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
-import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
@@ -233,24 +226,17 @@ constructor(
     private val userApi: UserApi,
     private val guestApi: GuestApi,
     private val messageApi: MessageApi,
-    private val draftApi: DraftApi,
     private val channelApi: ChannelApi,
     private val v2EventParser: V2EventParser,
-    private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
     private val moderationV1Api: ModerationV1Api,
     private val generalApi: GeneralApi,
     private val syncApi: SyncApi,
-    private val configApi: ConfigApi,
     private val fileDownloadApi: FileDownloadApi,
-    private val ogApi: OpenGraphApi,
     private val threadsApi: ThreadsApi,
     private val chatEndpoints: ChatEndpoints,
     private val parser: ChatParser,
     private val scheduledMessagesApi: ScheduledMessagesApi,
-    private val pushPreferencesApi: PushPreferencesApi,
-    private val userGroupApi: UserGroupApi,
-    private val roleApi: RoleApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -296,7 +282,7 @@ constructor(
     }
 
     override fun appSettings(): Call<AppSettings> =
-        configApi.getAppSettings().mapDomain { it.toDomain() }
+        endpoint { getApp() }.mapDomain { it.toDomain() }
 
     override fun sendMessage(
         channelType: String,
@@ -318,13 +304,13 @@ constructor(
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<DraftMessage> = draftApi.createDraftMessage(
-        channelType = channelType,
-        channelId = channelId,
-        request = CreateDraftRequest(
-            message = with(dtoMapping) { message.toMessageRequest() },
-        ),
-    ).mapDomain { response ->
+    ): Call<DraftMessage> = endpoint {
+        createDraft(
+            type = channelType,
+            id = channelId,
+            createDraftRequest = CreateDraftRequest(message = with(dtoMapping) { message.toMessageRequest() }),
+        )
+    }.mapDomain { response ->
         response.draft.toDomain()
     }
 
@@ -332,11 +318,9 @@ constructor(
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<Unit> = draftApi.deleteDraftMessage(
-        channelType = channelType,
-        channelId = channelId,
-        parentId = message.parentId,
-    ).toUnitCall()
+    ): Call<Unit> = endpoint {
+        deleteDraft(type = channelType, id = channelId, parentId = message.parentId)
+    }.toUnitCall()
 
     override fun queryDrafts(
         filter: FilterObject,
@@ -344,14 +328,16 @@ constructor(
         next: String?,
         sort: QuerySorter<DraftsSort>,
     ): Call<QueryDraftsResult> =
-        draftApi.queryDrafts(
-            body = QueryDraftsRequest(
-                filter = filter.toMap(),
-                limit = limit,
-                next = next,
-                sort = sort.toSortParams(),
-            ),
-        ).mapDomain { response ->
+        endpoint {
+            queryDrafts(
+                queryDraftsRequest = QueryDraftsRequest(
+                    filter = filter.toMap(),
+                    limit = limit,
+                    next = next,
+                    sort = sort.toSortParams(),
+                ),
+            )
+        }.mapDomain { response ->
             QueryDraftsResult(
                 drafts = response.drafts.map { it.toDomain() },
                 next = response.next,
@@ -493,21 +479,20 @@ constructor(
     }
 
     override fun addDevice(device: Device): Call<Unit> {
-        return deviceApi.addDevices(
-            request = CreateDeviceRequest(
-                id = device.token,
-                pushProvider = PushProviderName.fromString(device.pushProvider.key),
-                pushProviderName = device.providerName,
-            ),
-        ).toUnitCall()
+        val request = CreateDeviceRequest(
+            id = device.token,
+            pushProvider = PushProviderName.fromString(device.pushProvider.key),
+            pushProviderName = device.providerName,
+        )
+        return endpoint { createDevice(createDeviceRequest = request) }.toUnitCall()
     }
 
     override fun deleteDevice(id: String): Call<Unit> {
-        return deviceApi.deleteDevice(id).toUnitCall()
+        return endpoint { deleteDevice(id = id) }.toUnitCall()
     }
 
     override fun getDevices(): Call<List<Device>> {
-        return deviceApi.getDevices().mapDomain { response ->
+        return endpoint { listDevices() }.mapDomain { response ->
             response.devices.map { it.toDomain() }
         }
     }
@@ -520,8 +505,7 @@ constructor(
             removeDisable = true,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
-        return pushPreferencesApi
-            .upsertPushPreferences(request)
+        return upsertPushPreferences(request)
             .parseUserPushPreferencesResponse()
     }
 
@@ -533,8 +517,7 @@ constructor(
             removeDisable = null,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
-        return pushPreferencesApi
-            .upsertPushPreferences(request)
+        return upsertPushPreferences(request)
             .parseUserPushPreferencesResponse()
     }
 
@@ -545,8 +528,7 @@ constructor(
             removeSchedule = true,
             schedule = with(dtoMapping) { schedule.toPushScheduleInput() },
         )
-        return pushPreferencesApi
-            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
+        return upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
             .parseUserPushPreferencesResponse()
     }
 
@@ -555,8 +537,7 @@ constructor(
             channelCid = null,
             removeSchedule = true,
         )
-        return pushPreferencesApi
-            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
+        return upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
             .parseUserPushPreferencesResponse()
     }
 
@@ -568,8 +549,7 @@ constructor(
             removeDisable = true,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
-        return pushPreferencesApi
-            .upsertPushPreferences(request)
+        return upsertPushPreferences(request)
             .parseChannelPushPreferencesResponse(cid)
     }
 
@@ -581,8 +561,7 @@ constructor(
             removeDisable = null,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
-        return pushPreferencesApi
-            .upsertPushPreferences(request)
+        return upsertPushPreferences(request)
             .parseChannelPushPreferencesResponse(cid)
     }
 
@@ -594,8 +573,7 @@ constructor(
             removeDisable = null,
             chatPreferences = with(dtoMapping) { preferences.toChatPreferencesInput() },
         )
-        return pushPreferencesApi
-            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
+        return upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
             .parseUserPushPreferencesResponse()
     }
 
@@ -607,8 +585,7 @@ constructor(
             removeDisable = null,
             chatPreferences = with(dtoMapping) { preferences.toChatPreferencesInput() },
         )
-        return pushPreferencesApi
-            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
+        return upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
             .parseChannelPushPreferencesResponse(cid)
     }
 
@@ -626,7 +603,8 @@ constructor(
             teamId = teamId,
             memberIds = memberIds,
         )
-        return userGroupApi.createUserGroup(body).mapUserGroup(CreateUserGroupResponse::userGroup)
+        return endpoint { createUserGroup(createUserGroupRequest = body) }
+            .mapUserGroup(CreateUserGroupResponse::userGroup)
     }
 
     override fun queryUserGroups(
@@ -635,13 +613,7 @@ constructor(
         createdAtGt: String?,
         teamId: String?,
     ): Call<List<UserGroup>> {
-        return userGroupApi
-            .queryUserGroups(
-                limit = limit,
-                idGt = idGt,
-                createdAtGt = createdAtGt,
-                teamId = teamId,
-            )
+        return endpoint { listUserGroups(limit = limit, idGt = idGt, createdAtGt = createdAtGt, teamId = teamId) }
             .mapUserGroups(ListUserGroupsResponse::userGroups)
     }
 
@@ -652,19 +624,13 @@ constructor(
         nameGt: String?,
         idGt: String?,
     ): Call<List<UserGroup>> {
-        return userGroupApi
-            .searchUserGroups(
-                query = query,
-                limit = limit,
-                teamId = teamId,
-                nameGt = nameGt,
-                idGt = idGt,
-            )
-            .mapUserGroups(SearchUserGroupsResponse::userGroups)
+        return endpoint {
+            searchUserGroups(query = query, limit = limit, nameGt = nameGt, idGt = idGt, teamId = teamId)
+        }.mapUserGroups(SearchUserGroupsResponse::userGroups)
     }
 
     override fun getUserGroup(id: String, teamId: String?): Call<UserGroup> {
-        return userGroupApi.getUserGroup(id = id, teamId = teamId).mapUserGroup(GetUserGroupResponse::userGroup)
+        return endpoint { getUserGroup(id = id, teamId = teamId) }.mapUserGroup(GetUserGroupResponse::userGroup)
     }
 
     override fun updateUserGroup(
@@ -678,11 +644,12 @@ constructor(
             description = description,
             teamId = teamId,
         )
-        return userGroupApi.updateUserGroup(id = id, body = body).mapUserGroup(UpdateUserGroupResponse::userGroup)
+        return endpoint { updateUserGroup(id = id, updateUserGroupRequest = body) }
+            .mapUserGroup(UpdateUserGroupResponse::userGroup)
     }
 
     override fun deleteUserGroup(id: String, teamId: String?): Call<Unit> {
-        return userGroupApi.deleteUserGroup(id = id, teamId = teamId).toUnitCall()
+        return endpoint { deleteUserGroup(id = id, teamId = teamId) }.toUnitCall()
     }
 
     override fun addUserGroupMembers(
@@ -696,7 +663,7 @@ constructor(
             asAdmin = asAdmin,
             teamId = teamId,
         )
-        return userGroupApi.addUserGroupMembers(id = id, body = body)
+        return endpoint { addUserGroupMembers(id = id, addUserGroupMembersRequest = body) }
             .mapUserGroup(AddUserGroupMembersResponse::userGroup)
     }
 
@@ -709,11 +676,11 @@ constructor(
             memberIds = memberIds,
             teamId = teamId,
         )
-        return userGroupApi.removeUserGroupMembers(id = id, body = body)
+        return endpoint { removeUserGroupMembers(id = id, removeUserGroupMembersRequest = body) }
             .mapUserGroup(RemoveUserGroupMembersResponse::userGroup)
     }
 
-    private fun <T : Any> RetrofitCall<T>.mapUserGroup(extract: (T) -> UserGroupResponse?) =
+    private fun <T : Any> Call<T>.mapUserGroup(extract: (T) -> UserGroupResponse?) =
         flatMap { response ->
             CoroutineCall(coroutineScope) {
                 when (val userGroup = extract(response)) {
@@ -732,7 +699,7 @@ constructor(
                 ?: ErrorCall(coroutineScope, Error.GenericError(MISSING_MESSAGE))
         }
 
-    private fun <T : Any> RetrofitCall<T>.mapUserGroups(extract: (T) -> List<UserGroupResponse>) =
+    private fun <T : Any> Call<T>.mapUserGroups(extract: (T) -> List<UserGroupResponse>) =
         map { response -> with(domainMapping) { extract(response).map { it.toDomain() } } }
 
     override fun searchRoles(
@@ -742,17 +709,17 @@ constructor(
         includeGlobalRoles: Boolean?,
         nameGt: String?,
     ): Call<List<Role>> {
-        return roleApi
-            .searchRoles(
+        return endpoint {
+            searchRoles(
                 query = query,
                 limit = limit,
+                nameGt = nameGt,
                 roleType = roleType?.value,
                 includeGlobalRoles = includeGlobalRoles,
-                nameGt = nameGt,
             )
-            .map { response ->
-                with(domainMapping) { response.roles.map { it.toDomain() } }
-            }
+        }.map { response ->
+            with(domainMapping) { response.roles.map { it.toDomain() } }
+        }
     }
 
     override fun muteCurrentUser(): Call<Mute> {
@@ -1216,7 +1183,7 @@ constructor(
         ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
-    override fun getUnreadCounts(): Call<UnreadCounts> = generalApi.getUnreadCounts()
+    override fun getUnreadCounts(): Call<UnreadCounts> = endpoint { unreadCounts() }
         .mapDomain { it.toDomain() }
 
     override fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit> {
@@ -1507,7 +1474,7 @@ constructor(
     }
 
     override fun og(url: String): Call<Attachment> =
-        ogApi.get(url).mapDomain { it.toDomain() }
+        endpoint { getOG(url = url) }.mapDomain { it.toDomain() }
 
     override fun searchMessages(
         channelFilter: FilterObject,
@@ -2146,7 +2113,10 @@ constructor(
     private fun <T : Any, R : Any> Call<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
         map { domainMapping.transform(it) }
 
-    private fun RetrofitCall<UpsertPushPreferencesResponse>.parseUserPushPreferencesResponse() = flatMapDomain {
+    private fun upsertPushPreferences(request: UpsertPushPreferencesRequest) =
+        endpoint { updatePushNotificationPreferences(upsertPushPreferencesRequest = request) }
+
+    private fun Call<UpsertPushPreferencesResponse>.parseUserPushPreferencesResponse() = flatMapDomain {
         val currentUserId = currentUserIdProvider().orEmpty()
         val preference = it.userPreferences[currentUserId]
         if (preference != null) {
@@ -2161,7 +2131,7 @@ constructor(
         }
     }
 
-    private fun RetrofitCall<UpsertPushPreferencesResponse>.parseChannelPushPreferencesResponse(
+    private fun Call<UpsertPushPreferencesResponse>.parseChannelPushPreferencesResponse(
         cid: String,
     ) = flatMapDomain {
         val currentUserId = currentUserIdProvider().orEmpty()
