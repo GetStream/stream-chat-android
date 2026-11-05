@@ -24,7 +24,7 @@ package io.getstream.chat.android.ai.compose.generativeui
  * [customData] holds the action for the agent.
  *
  * ```
- * channel.sendMessage(Message(text = action.label, extraData = action.customData))
+ * channel.sendMessage(Message(text = action.label, extraData = action.customData)).enqueue()
  * ```
  *
  * @param messageId The reply whose UI it came from.

@@ -48,7 +48,9 @@ import kotlin.coroutines.cancellation.CancellationException
  *     renderers = listOf(OpenUIRenderer()),
  *     components = listOf(placeCard),
  * ) { action ->
- *     viewModelScope.launch { channel.sendMessage(Message(text = action.label, extraData = action.customData)) }
+ *     viewModelScope.launch {
+ *         channel.sendMessage(Message(text = action.label, extraData = action.customData)).await()
+ *     }
  * }
  *
  * AIConversation(messages = messages, ui = ui)
