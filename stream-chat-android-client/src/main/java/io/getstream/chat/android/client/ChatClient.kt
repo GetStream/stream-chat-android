@@ -260,6 +260,7 @@ import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -273,6 +274,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
@@ -548,7 +550,11 @@ internal constructor(
                     }
 
                     is DisconnectCause.UnrecoverableError -> {
-                        disconnectSuspend(true)
+                        // Like a failed connectUser, this is not a logout: keep the offline data and credentials.
+                        // The disconnect cancels the user scope this event runs in, so it must not be cancellable.
+                        withContext(NonCancellable) {
+                            disconnectSuspend(flushPersistence = false)
+                        }
                     }
                 }
             }

@@ -20,6 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatErrorCode
@@ -35,10 +36,12 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -56,6 +59,7 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.yield
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
@@ -63,7 +67,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -105,6 +111,12 @@ internal class ChatClientTest {
     private val userId = randomString()
     private val user = randomUser(id = userId, updatedAt = randomDateBefore(Date()))
     private val tokenUtils: TokenUtils = mock()
+    private val userCredentialStorage: UserCredentialStorage = mock()
+    private val audioPlayer: AudioPlayer = mock()
+    private val repository: ChatClientRepository = mock {
+        // Suspends like a real database call, so a cancelled caller stops here.
+        onBlocking { clear() } doSuspendableAnswer { yield() }
+    }
 
     @BeforeEach
     fun setUp() {
@@ -143,7 +155,7 @@ internal class ChatClientTest {
             dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer),
             notifications = mock(),
             tokenManager = tokenManager,
-            userCredentialStorage = mock(),
+            userCredentialStorage = userCredentialStorage,
             userStateService = UserStateService(),
             tokenUtils = tokenUtils,
             clientScope = clientScope,
@@ -156,8 +168,8 @@ internal class ChatClientTest {
             mutableClientState = Mother.mockedClientState(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             currentUserFetcher = mock(),
-            audioPlayer = mock(),
-            repository = mock(),
+            audioPlayer = audioPlayer,
+            repository = repository,
             messageReceiptReporter = mock(),
             messageReceiptManager = mock(),
         ).apply {
@@ -390,6 +402,31 @@ internal class ChatClientTest {
         assertNull(client.getCurrentUser())
         assertNull(client.clientState.user.value)
         assertEquals(ConnectionState.Offline, client.clientState.connectionState.value)
+        assertEquals(InitializationState.NOT_INITIALIZED, client.clientState.initializationState.value)
+    }
+
+    @Test
+    fun `Unrecoverable error keeps local data and completes the disconnect`() = runTest {
+        fakeChatSocket.mockEventReceived(
+            DisconnectedEvent(
+                EventType.CONNECTION_DISCONNECTED,
+                Date(),
+                rawCreatedAt = null,
+                disconnectCause = DisconnectCause.UnrecoverableError(
+                    Error.NetworkError(
+                        statusCode = -1,
+                        serverErrorCode = ChatErrorCode.API_KEY_NOT_FOUND.code,
+                        message = ChatErrorCode.API_KEY_NOT_FOUND.description,
+                    ),
+                ),
+            ),
+        )
+        delay(10L)
+
+        verify(userCredentialStorage, never()).clear()
+        verify(repository).clear()
+        verify(audioPlayer).dispose()
+        assertNull(client.clientState.user.value)
         assertEquals(InitializationState.NOT_INITIALIZED, client.clientState.initializationState.value)
     }
 }
