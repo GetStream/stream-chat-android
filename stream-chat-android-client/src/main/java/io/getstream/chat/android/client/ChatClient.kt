@@ -345,6 +345,12 @@ internal constructor(
     private val initializedUserId = AtomicReference<String?>(null)
 
     /**
+     * The user of a [setUser] call that is waiting for its first connection. While it is set, that call
+     * disconnects on its own failure path.
+     */
+    private val connectingUser = AtomicReference<User?>(null)
+
+    /**
      * Launches a new coroutine in the [UserScope] without blocking the current thread
      * and returns a reference to the coroutine as a [Job].
      */
@@ -552,8 +558,10 @@ internal constructor(
                     is DisconnectCause.UnrecoverableError -> {
                         // Like a failed connectUser, this is not a logout: keep the offline data and credentials.
                         // The disconnect cancels the user scope this event runs in, so it must not be cancellable.
-                        withContext(NonCancellable) {
-                            disconnectSuspend(flushPersistence = false)
+                        if (connectingUser.get() == null) {
+                            withContext(NonCancellable) {
+                                disconnectSuspend(flushPersistence = false)
+                            }
                         }
                     }
                 }
@@ -603,8 +611,19 @@ internal constructor(
      *
      * @return [Result] of [ConnectionData] with the info of the established connection or a detailed error.
      */
-    @Suppress("LongMethod")
     private suspend fun setUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long?,
+    ): Result<ConnectionData> =
+        try {
+            setUserOrDisconnect(user, tokenProvider, timeoutMilliseconds)
+        } finally {
+            connectingUser.compareAndSet(user, null)
+        }
+
+    @Suppress("LongMethod")
+    private suspend fun setUserOrDisconnect(
         user: User,
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long?,
@@ -648,6 +667,7 @@ internal constructor(
                 mutableClientState.setUser(user)
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user, isAnonymous)
+                connectingUser.set(user)
                 chatSocket.connectUser(user, isAnonymous)
                 mutableClientState.setInitializationState(InitializationState.COMPLETE)
                 waitFirstConnection(timeoutMilliseconds)

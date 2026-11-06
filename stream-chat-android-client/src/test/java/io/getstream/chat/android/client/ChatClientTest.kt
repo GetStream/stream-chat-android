@@ -416,7 +416,10 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Unrecoverable error keeps local data and completes the disconnect`() = runTest {
+    fun `Unrecoverable error after connecting keeps local data and completes the disconnect`() = runTest {
+        fakeChatSocket.prepareAliveConnection(user, randomString())
+        delay(10L)
+
         fakeChatSocket.mockEventReceived(
             DisconnectedEvent(
                 EventType.CONNECTION_DISCONNECTED,
