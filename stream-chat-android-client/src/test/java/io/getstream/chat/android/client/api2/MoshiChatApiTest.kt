@@ -342,7 +342,7 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteDraftMessageInput")
     fun testDeleteDraftMessage(outcome: Any, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChatEndpoints>()
@@ -350,11 +350,14 @@ internal class MoshiChatApiTest {
         val sut = Fixture()
             .withChatEndpoints(api)
             .get()
+        val channelType = randomString()
+        val channelId = randomString()
+        val draft = randomDraftMessage(parentId = randomString())
         // when
-        val result = sut.deleteDraftMessage(randomString(), randomString(), randomDraftMessage()).await()
+        val result = sut.deleteDraftMessage(channelType, channelId, draft).await()
         // then
         result `should be instance of` expected
-        verifyBlocking(api, times(1)) { deleteDraft(any(), any(), any()) }
+        verifyBlocking(api, times(1)) { deleteDraft(channelType, channelId, draft.parentId) }
     }
 
     @ParameterizedTest

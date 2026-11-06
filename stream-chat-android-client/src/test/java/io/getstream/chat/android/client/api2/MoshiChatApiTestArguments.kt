@@ -119,6 +119,9 @@ internal object MoshiChatApiTestArguments {
     fun createDraftMessageInput() = draftMessageResponseArguments()
 
     @JvmStatic
+    fun deleteDraftMessageInput() = endpointArgs(Response(randomString()))
+
+    @JvmStatic
     fun queryDraftMessageInput() = endpointArgs(Mother.randomQueryDraftsResponse())
 
     @JvmStatic
