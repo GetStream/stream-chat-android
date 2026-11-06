@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
-import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
@@ -57,6 +56,7 @@ import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.parser.toMap
+import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -101,6 +101,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.network.apis.ChatEndpoints
 import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
@@ -124,7 +125,6 @@ import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
-import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeleteChannelResponse
@@ -183,7 +183,6 @@ import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryRemindersRequest
-import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.QueryScheduledMessagesRequest
 import io.getstream.chat.android.network.models.QueryScheduledMessagesResponse
 import io.getstream.chat.android.network.models.QueryThreadsResponse
@@ -225,7 +224,6 @@ import io.getstream.chat.android.network.models.UpdateMessageResponse
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
-import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateScheduledMessageRequest
 import io.getstream.chat.android.network.models.UpdateScheduledMessageResponse
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
@@ -291,7 +289,10 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.wheneverBlocking
+import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
 import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
@@ -3749,12 +3750,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createReminderInput")
-    fun testCreateReminder(call: RetrofitCall<CreateReminderResponse>, expected: KClass<*>) = runTest {
+    fun testCreateReminder(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<RemindersApi>()
-        whenever(api.createReminder(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.createReminder(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withRemindersApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -3763,17 +3764,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = CreateReminderRequest(remindAt = remindAt)
         result `should be instance of` expected
-        verify(api, times(1)).createReminder(messageId, expectedBody)
+        verifyBlocking(api, times(1)) { createReminder(messageId, expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateReminderInput")
-    fun testUpdateReminder(call: RetrofitCall<UpdateReminderResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateReminder(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<RemindersApi>()
-        whenever(api.updateReminder(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateReminder(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withRemindersApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -3782,34 +3783,34 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = UpdateReminderRequest(remindAt = remindAt)
         result `should be instance of` expected
-        verify(api, times(1)).updateReminder(messageId, expectedBody)
+        verifyBlocking(api, times(1)) { updateReminder(messageId, expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteReminderInput")
-    fun testDeleteReminder(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testDeleteReminder(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<RemindersApi>()
-        whenever(api.deleteReminder(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.deleteReminder(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withRemindersApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
         val result = sut.deleteReminder(messageId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deleteReminder(messageId)
+        verifyBlocking(api, times(1)) { deleteReminder(messageId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryRemindersInput")
-    fun testQueryReminders(call: RetrofitCall<QueryRemindersResponse>, expected: KClass<*>) = runTest {
+    fun testQueryReminders(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<RemindersApi>()
-        whenever(api.queryReminders(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryReminders(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withRemindersApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val filter = Filters.neutral()
@@ -3825,7 +3826,7 @@ internal class MoshiChatApiTest {
             sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryReminders(expectedBody)
+        verifyBlocking(api, times(1)) { queryReminders(expectedBody) }
     }
 
     @Test
@@ -4572,7 +4573,7 @@ internal class MoshiChatApiTest {
         private var ogApi: OpenGraphApi = mock()
         private var threadsApi: ThreadsApi = mock()
         private var pollsApi: PollsApi = mock()
-        private var remindersApi: RemindersApi = mock()
+        private var chatEndpoints: ChatEndpoints = mock()
         private var scheduledMessagesApi: ScheduledMessagesApi = mock()
         private var pushPreferencesApi: PushPreferencesApi = mock()
         private var userGroupApi: UserGroupApi = mock()
@@ -4645,8 +4646,8 @@ internal class MoshiChatApiTest {
             this.pollsApi = pollsApi
         }
 
-        fun withRemindersApi(remindersApi: RemindersApi) = apply {
-            this.remindersApi = remindersApi
+        fun withChatEndpoints(chatEndpoints: ChatEndpoints) = apply {
+            this.chatEndpoints = chatEndpoints
         }
 
         fun withScheduledMessagesApi(scheduledMessagesApi: ScheduledMessagesApi) = apply {
@@ -4708,7 +4709,8 @@ internal class MoshiChatApiTest {
                 ogApi = ogApi,
                 threadsApi = threadsApi,
                 pollsApi = pollsApi,
-                remindersApi = remindersApi,
+                chatEndpoints = chatEndpoints,
+                parser = ParserFactory.createMoshiChatParser(),
                 scheduledMessagesApi = scheduledMessagesApi,
                 pushPreferencesApi = pushPreferencesApi,
                 userGroupApi = userGroupApi,
@@ -4718,6 +4720,10 @@ internal class MoshiChatApiTest {
             )
         }
     }
+
+    /** Answers with [outcome], throwing it when it's the exception a failed request throws. */
+    private fun <T> OngoingStubbing<T>.thenRespond(outcome: Any) =
+        thenAnswer { if (outcome is Throwable) throw outcome else outcome }
 
     companion object {
 
