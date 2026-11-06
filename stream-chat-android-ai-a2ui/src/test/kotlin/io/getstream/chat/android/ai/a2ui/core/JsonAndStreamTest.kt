@@ -86,6 +86,83 @@ internal class JsonAndStreamTest {
     }
 
     @Test
+    fun `the stream reads a pretty-printed message across its lines`() {
+        val text = """
+            {
+              "version": "1.0",
+              "updateComponents": {
+                "surfaceId": "s",
+                "components": [
+                  {"id": "root", "component": "Column", "children": ["a"]},
+                  {
+                    "id": "a", "component": "Text", "text": "{ not a brace }"
+                  }
+                ]
+              }
+            }
+            {"version": "1.0", "deleteSurface": {"surfaceId": "s"}}
+        """.trimIndent()
+
+        val messages = A2UIStream.messages(text)
+
+        assertEquals(2, messages.size)
+        assertTrue(messages.all { A2UIJson.parseOrNull(it) is Map<*, *> })
+    }
+
+    @Test
+    fun `a message with a stray quote ends at its line, and the messages after it still count`() {
+        val text = """
+            {"version": "1.0", "createSurface": {"surfaceId": "a"}}
+            {"version": "1.0", "updateComponents": {"surfaceId": "a", "components": [{"id": "t", "text">Day 1"}]}}
+            {"version": "1.0", "createSurface": {"surfaceId": "b"}}
+            {"version": "1.0", "createSurface": {"surfaceId": "c", "note": "a } and a \" in a string"}}
+        """.trimIndent()
+
+        val messages = A2UIStream.messages(text)
+
+        assertEquals(text.lines(), messages)
+        assertNull(A2UIJson.parseOrNull(messages[1]))
+        assertEquals(listOf("a", "b", "c"), listOf(0, 2, 3).map { surfaceId(messages[it]) })
+    }
+
+    @Test
+    fun `a message missing a brace ends where the next one starts`() {
+        val text = listOf(
+            """{"version": "1.0", "createSurface": {"surfaceId": "a"}""",
+            """{"version": "1.0", "createSurface": {"surfaceId": "b"}}""",
+            """{"version": "1.0", "createSurface": {"surfaceId": "c"}}""",
+        ).joinToString("\n")
+
+        val messages = A2UIStream.messages(text)
+
+        assertEquals(text.lines(), messages)
+        assertNull(A2UIJson.parseOrNull(messages[0]))
+        assertEquals(listOf("b", "c"), messages.drop(1).map(::surfaceId))
+    }
+
+    @Test
+    fun `the line still being written after a broken message doesn't count yet`() {
+        val broken = """{"version": "1.0", "updateComponents": {"surfaceId": "a", "text">x"}}"""
+        val next = """{"version": "1.0", "createSurface": {"surfaceId": "b"}}"""
+
+        for (length in 0 until next.length) {
+            assertEquals(listOf(broken), A2UIStream.messages(broken + "\n" + next.take(length)))
+        }
+        assertEquals(listOf(broken, next), A2UIStream.messages(broken + "\n" + next))
+    }
+
+    @Test
+    fun `a string still being written may hold braces and quotes`() {
+        val partial = """{"version": "1.0", "createSurface": {"surfaceId": "s", "note": "a { and a \" so far"""
+
+        assertTrue(A2UIStream.messages(partial).isEmpty())
+        assertEquals(1, A2UIStream.messages("$partial\"}}").size)
+    }
+
+    private fun surfaceId(message: String): Any? =
+        A2UIJson.map(A2UIJson.map(A2UIJson.parse(message))!!["createSurface"])!!["surfaceId"]
+
+    @Test
     fun `dates keep the zone they were written in`() {
         val utc = TimeZone.getTimeZone("UTC")
 
