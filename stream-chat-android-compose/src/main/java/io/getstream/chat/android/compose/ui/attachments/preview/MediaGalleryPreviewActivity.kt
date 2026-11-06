@@ -20,7 +20,6 @@ import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
@@ -39,6 +38,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -419,14 +419,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         )
     }
 
-    private inline fun <reified T> Intent.getParcelable(key: String): T? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getParcelableExtra(key, T::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            getParcelableExtra(key)
-        }
-    }
+    // The typed platform getter can throw a NullPointerException on API 33; IntentCompat only uses it from API 34.
+    private inline fun <reified T> Intent.getParcelable(key: String): T? =
+        IntentCompat.getParcelableExtra(this, key, T::class.java)
 
     public companion object {
 
