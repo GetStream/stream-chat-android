@@ -20,9 +20,12 @@ import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.audio.AudioPlayer
+import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
@@ -53,6 +56,7 @@ import io.getstream.result.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -65,6 +69,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -93,6 +98,7 @@ internal class ChatClientConnectionTests {
     private val streamDateFormatter = StreamDateFormatter()
     private val config = mock<ChatApiConfig>()
     private val userCredentialStorage = mock<UserCredentialStorage>()
+    private val audioPlayer = mock<AudioPlayer>()
     private lateinit var networkStateProvider: NetworkStateProvider
 
     @BeforeEach
@@ -134,7 +140,7 @@ internal class ChatClientConnectionTests {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
-            audioPlayer = mock(),
+            audioPlayer = audioPlayer,
             repository = mock(),
             messageReceiptReporter = mock(),
             messageReceiptManager = mock(),
@@ -260,6 +266,29 @@ internal class ChatClientConnectionTests {
         result.shouldBeInstanceOf(Result.Failure::class)
         verify(userCredentialStorage, never()).clear()
     }
+
+    @Test
+    fun `When the socket fails with an unrecoverable error during connectUser, the client disconnects once`() =
+        runCancellableTest {
+            val error = Error.NetworkError(
+                message = randomString(),
+                serverErrorCode = ChatErrorCode.API_KEY_NOT_FOUND.code,
+            )
+            val event = DisconnectedEvent(
+                EventType.CONNECTION_DISCONNECTED,
+                Date(),
+                rawCreatedAt = null,
+                disconnectCause = DisconnectCause.UnrecoverableError(error),
+            )
+
+            val deferred = (testCoroutines.scope + Job()).async { client.connectUser(user, jwt).await() }
+            fakeChatSocket.mockEventReceived(event)
+            val result = deferred.await()
+            delay(10L)
+
+            result.shouldBeInstanceOf(Result.Failure::class)
+            verify(audioPlayer, times(1)).dispose()
+        }
 
     @Test
     fun `When there is an ongoing connection with the same user, an error should be propagated`() = runTest {
