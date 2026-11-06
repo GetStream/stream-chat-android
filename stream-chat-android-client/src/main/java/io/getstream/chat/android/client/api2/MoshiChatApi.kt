@@ -31,13 +31,10 @@ import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
-import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
-import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
@@ -172,6 +169,7 @@ import io.getstream.chat.android.network.models.SyncRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
+import io.getstream.chat.android.network.models.UnmuteChannelRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
@@ -225,7 +223,6 @@ constructor(
     private val fileUploader: FileUploader,
     private val fileTransformer: FileTransformer,
     private val userApi: UserApi,
-    private val guestApi: GuestApi,
     private val messageApi: MessageApi,
     private val channelApi: ChannelApi,
     private val v2EventParser: V2EventParser,
@@ -234,10 +231,9 @@ constructor(
     private val generalApi: GeneralApi,
     private val syncApi: SyncApi,
     private val fileDownloadApi: FileDownloadApi,
-    private val threadsApi: ThreadsApi,
     private val chatEndpoints: ChatEndpoints,
+    private val anonymousChatEndpoints: ChatEndpoints,
     private val parser: ChatParser,
-    private val scheduledMessagesApi: ScheduledMessagesApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -780,24 +776,16 @@ constructor(
         channelId: String,
         expiration: Int?,
     ): Call<Unit> {
-        return moderationApi.muteChannel(
-            body = MuteChannelRequest(
-                channelCids = listOf("$channelType:$channelId"),
-                expiration = expiration,
-            ),
-        ).toUnitCall()
+        val request = MuteChannelRequest(channelCids = listOf("$channelType:$channelId"), expiration = expiration)
+        return endpoint { muteChannel(muteChannelRequest = request) }.toUnitCall()
     }
 
     override fun unmuteChannel(
         channelType: String,
         channelId: String,
     ): Call<Unit> {
-        return moderationApi.unmuteChannel(
-            body = MuteChannelRequest(
-                channelCids = listOf("$channelType:$channelId"),
-                expiration = null,
-            ),
-        ).toUnitCall()
+        val request = UnmuteChannelRequest(channelCids = listOf("$channelType:$channelId"))
+        return endpoint { unmuteChannel(unmuteChannelRequest = request) }.toUnitCall()
     }
 
     override fun sendFile(
@@ -1461,12 +1449,8 @@ constructor(
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
-        return userApi.updateUsers(
-            connectionId = connectionId,
-            body = with(dtoMapping) {
-                UpdateUsersRequest(users.associateBy({ it.id }, { it.toUserRequest() }))
-            },
-        ).mapDomain { response ->
+        val request = with(dtoMapping) { UpdateUsersRequest(users.associateBy({ it.id }, { it.toUserRequest() })) }
+        return endpoint { updateUsers(updateUsersRequest = request) }.mapDomain { response ->
             response.users.values.map {
                 it.toDomain()
             }
@@ -1474,42 +1458,41 @@ constructor(
     }
 
     override fun blockUser(userId: String): Call<UserBlock> {
-        return userApi.blockUser(
-            body = BlockUsersRequest(userId),
-        ).mapDomain { response ->
+        return endpoint {
+            blockUsers(
+                blockUsersRequest = BlockUsersRequest(userId),
+            )
+        }.mapDomain { response ->
             response.toDomain()
         }
     }
 
     override fun queryBlockedUsers(): Call<List<UserBlock>> =
-        userApi.queryBlockedUsers().mapDomain {
+        endpoint { getBlockedUsers() }.mapDomain {
             it.blocks.toDomain()
         }
 
     override fun unblockUser(userId: String): Call<Unit> {
-        return userApi.unblockUser(body = UnblockUsersRequest(userId)).toUnitCall()
+        return endpoint { unblockUsers(unblockUsersRequest = UnblockUsersRequest(userId)) }.toUnitCall()
     }
 
     override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {
-        return userApi.partialUpdateUsers(
-            connectionId = connectionId,
-            body = UpdateUsersPartialRequest(
-                users = listOf(UpdateUserPartialRequest(id = id, set = set, unset = unset)),
-            ),
-        ).mapDomain { response ->
+        val user = UpdateUserPartialRequest(id = id, set = set, unset = unset)
+        val request = UpdateUsersPartialRequest(users = listOf(user))
+        return endpoint { updateUsersPartial(updateUsersPartialRequest = request) }.mapDomain { response ->
             response.users.values.map { it.toDomain() }
         }
     }
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
-        return guestApi.getGuestUser(
-            body = CreateGuestRequest(user = UserRequest(id = userId, name = userName)),
-        ).mapDomain { response ->
-            GuestUser(
-                response.user.toDomain(),
-                response.accessToken,
-            )
-        }
+        val request = CreateGuestRequest(user = UserRequest(id = userId, name = userName))
+        return endpointCall(parser, coroutineScope) { anonymousChatEndpoints.createGuest(createGuestRequest = request) }
+            .mapDomain { response ->
+                GuestUser(
+                    response.user.toDomain(),
+                    response.accessToken,
+                )
+            }
     }
 
     override fun translate(messageId: String, language: String): Call<Message> {
@@ -1797,20 +1780,22 @@ constructor(
         query: QueryThreadsRequest,
     ): Call<QueryThreadsResult> {
         val lazyQueryThreads = {
-            threadsApi.queryThreads(
-                connectionId,
-                io.getstream.chat.android.network.models.QueryThreadsRequest(
-                    filter = query.filter?.toMap(),
-                    sort = query.sort.toSortParams(),
-                    watch = query.watch,
-                    limit = query.limit,
-                    memberLimit = query.memberLimit,
-                    next = query.next,
-                    participantLimit = query.participantLimit,
-                    prev = query.prev,
-                    replyLimit = query.replyLimit,
-                ),
-            ).flatMapDomain { response ->
+            endpoint {
+                queryThreads(
+                    connectionId,
+                    io.getstream.chat.android.network.models.QueryThreadsRequest(
+                        filter = query.filter?.toMap(),
+                        sort = query.sort.toSortParams(),
+                        watch = query.watch,
+                        limit = query.limit,
+                        memberLimit = query.memberLimit,
+                        next = query.next,
+                        participantLimit = query.participantLimit,
+                        prev = query.prev,
+                        replyLimit = query.replyLimit,
+                    ),
+                )
+            }.flatMapDomain { response ->
                 val threads = response.threads.mapNotNull { it.toDomain() }
                 if (threads.size == response.threads.size) {
                     CoroutineCall(coroutineScope) {
@@ -1838,11 +1823,16 @@ constructor(
      */
     override fun getThread(messageId: String, options: GetThreadOptions): Call<Thread> {
         val lazyGetThread = {
-            threadsApi.getThread(
-                messageId,
-                connectionId,
-                options.toMap(),
-            ).flatMapDomain { response ->
+            endpoint {
+                getThread(
+                    messageId = messageId,
+                    watch = options.watch,
+                    connectionId = connectionId,
+                    replyLimit = options.replyLimit,
+                    participantLimit = options.participantLimit,
+                    memberLimit = options.memberLimit,
+                )
+            }.flatMapDomain { response ->
                 response.thread.toDomain()
                     ?.let { thread -> CoroutineCall(coroutineScope) { Result.Success(thread) } }
                     ?: ErrorCall(coroutineScope, Error.GenericError(MISSING_THREAD_FIELDS))
@@ -1864,13 +1854,15 @@ constructor(
      * @param unset The fields to unset.
      */
     override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<ThreadInfo> {
-        return threadsApi.partialUpdateThread(
-            messageId = messageId,
-            body = UpdateThreadPartialRequest(
-                set = set,
-                unset = unset,
-            ),
-        ).mapDomain { response ->
+        return endpoint {
+            updateThreadPartial(
+                messageId = messageId,
+                updateThreadPartialRequest = UpdateThreadPartialRequest(
+                    set = set,
+                    unset = unset,
+                ),
+            )
+        }.mapDomain { response ->
             response.thread.toDomain()
         }
     }
@@ -2105,7 +2097,7 @@ constructor(
             next = next,
             filter = if (cid != null || status != null) ScheduledMessagesFilter(cid = cid, status = status) else null,
         )
-        return scheduledMessagesApi.queryScheduledMessages(body = body).mapDomain { it.toDomain() }
+        return endpoint { queryScheduledMessages(queryScheduledMessagesRequest = body) }.mapDomain { it.toDomain() }
     }
 
     override fun updateScheduledMessage(id: String, message: Message?, scheduledAt: Date?): Call<ScheduledMessage> {
@@ -2113,43 +2105,47 @@ constructor(
             scheduledAt = scheduledAt,
             message = message?.let { with(dtoMapping) { it.toMessageRequest() } },
         )
-        return scheduledMessagesApi.updateScheduledMessage(id = id, body = body)
+        return endpoint { updateScheduledMessage(id = id, updateScheduledMessageRequest = body) }
             .mapDomain { it.scheduledMessage.toDomain() }
     }
 
     override fun deleteScheduledMessage(id: String): Call<Unit> {
-        return scheduledMessagesApi.deleteScheduledMessage(id).toUnitCall()
+        return endpoint { deleteScheduledMessage(id) }.toUnitCall()
     }
 
     override fun sendScheduledMessageNow(id: String): Call<ScheduledMessage> {
-        return scheduledMessagesApi.sendScheduledMessageNow(id).mapDomain { it.scheduledMessage.toDomain() }
+        return endpoint { sendScheduledMessageNow(id) }.mapDomain { it.scheduledMessage.toDomain() }
     }
 
     override fun queryActiveLocations(): Call<List<Location>> =
-        userApi.liveLocations().mapDomain {
+        endpoint { getUserLiveLocations() }.mapDomain {
             it.activeLiveLocations.map {
                 it.toDomain()
             }
         }
 
     override fun updateLiveLocation(location: Location): Call<Location> =
-        userApi.updateLiveLocation(
-            UpdateLiveLocationRequest(
-                messageId = location.messageId,
-                latitude = location.latitude,
-                longitude = location.longitude,
-            ),
-        ).mapDomain { response ->
+        endpoint {
+            updateLiveLocation(
+                UpdateLiveLocationRequest(
+                    messageId = location.messageId,
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                ),
+            )
+        }.mapDomain { response ->
             response.toDomain()
         }
 
     override fun stopLiveLocation(location: Location): Call<Location> =
-        userApi.updateLiveLocation(
-            UpdateLiveLocationRequest(
-                messageId = location.messageId,
-                endAt = location.endAt,
-            ),
-        ).mapDomain { response ->
+        endpoint {
+            updateLiveLocation(
+                UpdateLiveLocationRequest(
+                    messageId = location.messageId,
+                    endAt = location.endAt,
+                ),
+            )
+        }.mapDomain { response ->
             response.toDomain()
         }
 

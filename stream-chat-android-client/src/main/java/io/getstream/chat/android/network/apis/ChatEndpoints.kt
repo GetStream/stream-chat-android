@@ -412,6 +412,24 @@ internal interface ChatEndpoints {
     ): io.getstream.chat.android.network.models.GetRepliesResponse
 
     /**
+     * Mute channel
+     * Mutes channel for user
+     */
+    @POST("/api/v2/chat/moderation/mute/channel")
+    suspend fun muteChannel(
+        @Body muteChannelRequest: io.getstream.chat.android.network.models.MuteChannelRequest,
+    ): io.getstream.chat.android.network.models.MuteChannelResponse
+
+    /**
+     * Unmute channel
+     * Unmutes channel for user
+     */
+    @POST("/api/v2/chat/moderation/unmute/channel")
+    suspend fun unmuteChannel(
+        @Body unmuteChannelRequest: io.getstream.chat.android.network.models.UnmuteChannelRequest,
+    ): io.getstream.chat.android.network.models.UnmuteResponse
+
+    /**
      * Query reminders
      * Queries reminders
      */
@@ -419,6 +437,77 @@ internal interface ChatEndpoints {
     suspend fun queryReminders(
         @Body queryRemindersRequest: io.getstream.chat.android.network.models.QueryRemindersRequest,
     ): io.getstream.chat.android.network.models.QueryRemindersResponse
+
+    /**
+     * Query scheduled messages
+     * Lists the scheduled messages of one user across channels: pending ones first, then failed ones, each by scheduled_at. Client-side requests return the caller's own; server-side requests require user_id
+     */
+    @POST("/api/v2/chat/scheduled_messages/query")
+    suspend fun queryScheduledMessages(
+        @Body queryScheduledMessagesRequest: io.getstream.chat.android.network.models.QueryScheduledMessagesRequest,
+    ): io.getstream.chat.android.network.models.QueryScheduledMessagesResponse
+
+    /**
+     * Delete a scheduled message
+     * Cancels a scheduled message so it is never sent, or removes a failed one. Returns 409 while the message is being sent
+     */
+    @DELETE("/api/v2/chat/scheduled_messages/{id}")
+    suspend fun deleteScheduledMessage(
+        @Path("id") id: String,
+    ): io.getstream.chat.android.network.models.DeleteScheduledMessageResponse
+
+    /**
+     * Update a scheduled message
+     * Replaces the message and/or the send time of a scheduled message. The scheduling checks run again, and the message is then sent, under the caller's auth mode. A request that changes only scheduled_at keeps the auth mode the message was scheduled with. Returns 409 while the message is being sent
+     */
+    @PATCH("/api/v2/chat/scheduled_messages/{id}")
+    suspend fun updateScheduledMessage(
+        @Path("id") id: String,
+        @Body updateScheduledMessageRequest: io.getstream.chat.android.network.models.UpdateScheduledMessageRequest,
+    ): io.getstream.chat.android.network.models.UpdateScheduledMessageResponse
+
+    /**
+     * Send a scheduled message now
+     * Moves the send time of a scheduled message to now and queues the send. Every send check runs when it is sent. Returns 409 while the message is being sent
+     */
+    @POST("/api/v2/chat/scheduled_messages/{id}/send_now")
+    suspend fun sendScheduledMessageNow(
+        @Path("id") id: String,
+    ): io.getstream.chat.android.network.models.SendScheduledMessageNowResponse
+
+    /**
+     * Query Threads
+     * Returns the list of threads for specific user
+     */
+    @POST("/api/v2/chat/threads")
+    suspend fun queryThreads(
+        @Query("connection_id") connectionId: String? = null,
+        @Body queryThreadsRequest: io.getstream.chat.android.network.models.QueryThreadsRequest,
+    ): io.getstream.chat.android.network.models.QueryThreadsResponse
+
+    /**
+     * Get Thread
+     * Return a specific thread
+     */
+    @GET("/api/v2/chat/threads/{message_id}")
+    suspend fun getThread(
+        @Path("message_id") messageId: String,
+        @Query("watch") watch: Boolean? = null,
+        @Query("connection_id") connectionId: String? = null,
+        @Query("reply_limit") replyLimit: Int? = null,
+        @Query("participant_limit") participantLimit: Int? = null,
+        @Query("member_limit") memberLimit: Int? = null,
+    ): io.getstream.chat.android.network.models.GetThreadResponse
+
+    /**
+     * Partially update thread
+     * Updates certain fields of the thread
+     */
+    @PATCH("/api/v2/chat/threads/{message_id}")
+    suspend fun updateThreadPartial(
+        @Path("message_id") messageId: String,
+        @Body updateThreadPartialRequest: io.getstream.chat.android.network.models.UpdateThreadPartialRequest,
+    ): io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 
     /**
      * Unread counts
@@ -453,6 +542,15 @@ internal interface ChatEndpoints {
     suspend fun createDevice(
         @Body createDeviceRequest: io.getstream.chat.android.network.models.CreateDeviceRequest,
     ): io.getstream.chat.android.network.models.Response
+
+    /**
+     * Create Guest
+     *
+     */
+    @POST("/api/v2/guest")
+    suspend fun createGuest(
+        @Body createGuestRequest: io.getstream.chat.android.network.models.CreateGuestRequest,
+    ): io.getstream.chat.android.network.models.CreateGuestResponse
 
     /**
      * Get OG
@@ -663,4 +761,63 @@ internal interface ChatEndpoints {
         @Path("id") id: String,
         @Body removeUserGroupMembersRequest: io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest,
     ): io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
+
+    /**
+     * Partially update user
+     * Updates certain fields of the user
+     */
+    @PATCH("/api/v2/users")
+    suspend fun updateUsersPartial(
+        @Body updateUsersPartialRequest: io.getstream.chat.android.network.models.UpdateUsersPartialRequest,
+    ): io.getstream.chat.android.network.models.UpdateUsersResponse
+
+    /**
+     * Upsert users
+     * Update or create users in bulk
+     */
+    @POST("/api/v2/users")
+    suspend fun updateUsers(
+        @Body updateUsersRequest: io.getstream.chat.android.network.models.UpdateUsersRequest,
+    ): io.getstream.chat.android.network.models.UpdateUsersResponse
+
+    /**
+     * Get list of blocked Users
+     * Get list of blocked Users
+     */
+    @GET("/api/v2/users/block")
+    suspend fun getBlockedUsers(): io.getstream.chat.android.network.models.GetBlockedUsersResponse
+
+    /**
+     * Block user
+     * Block users
+     */
+    @POST("/api/v2/users/block")
+    suspend fun blockUsers(
+        @Body blockUsersRequest: io.getstream.chat.android.network.models.BlockUsersRequest,
+    ): io.getstream.chat.android.network.models.BlockUsersResponse
+
+    /**
+     * Get user live locations
+     * Retrieves all active live locations for a user
+     */
+    @GET("/api/v2/users/live_locations")
+    suspend fun getUserLiveLocations(): io.getstream.chat.android.network.models.SharedLocationsResponse
+
+    /**
+     * Update live location
+     * Updates an existing live location with new coordinates or expiration time
+     */
+    @PUT("/api/v2/users/live_locations")
+    suspend fun updateLiveLocation(
+        @Body updateLiveLocationRequest: io.getstream.chat.android.network.models.UpdateLiveLocationRequest,
+    ): io.getstream.chat.android.network.models.SharedLocationResponse
+
+    /**
+     * Unblock user
+     * Unblock users
+     */
+    @POST("/api/v2/users/unblock")
+    suspend fun unblockUsers(
+        @Body unblockUsersRequest: io.getstream.chat.android.network.models.UnblockUsersRequest,
+    ): io.getstream.chat.android.network.models.UnblockUsersResponse
 }

@@ -61,6 +61,7 @@ import io.getstream.chat.android.network.models.MarkDeliveredResponse
 import io.getstream.chat.android.network.models.MarkReadResponse
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionResponse
+import io.getstream.chat.android.network.models.MuteChannelResponse
 import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.PollResponse
@@ -84,6 +85,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageResponse
 import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UnmuteResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
 import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
@@ -252,10 +254,10 @@ internal object MoshiChatApiTestArguments {
     fun unmuteUserInput() = completableResponseArguments()
 
     @JvmStatic
-    fun muteChannelInput() = completableResponseArguments()
+    fun muteChannelInput() = endpointArgs(MuteChannelResponse(randomString()))
 
     @JvmStatic
-    fun unmuteChannelInput() = completableResponseArguments()
+    fun unmuteChannelInput() = endpointArgs(UnmuteResponse(randomString()))
 
     @JvmStatic
     fun sendFileInput() = uploadedFileArguments()
@@ -420,26 +422,24 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun blockUserInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomBlockUsersResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<BlockUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(Mother.randomBlockUsersResponse(), Result.Success::class),
+        Arguments.of(RetroError<BlockUsersResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     @JvmStatic
     fun unblockUserInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomUnblockUsersResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<UnblockUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(Mother.randomUnblockUsersResponse(), Result.Success::class),
+        Arguments.of(RetroError<UnblockUsersResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     @JvmStatic
     fun queryBlockedUsersInput() = listOf(
         Arguments.of(
-            RetroSuccess(
-                GetBlockedUsersResponse(duration = "1ms", blocks = listOf(Mother.randomBlockedUserResponse())),
-            ).toRetrofitCall(),
+            GetBlockedUsersResponse(duration = "1ms", blocks = listOf(Mother.randomBlockedUserResponse())),
             Result.Success::class,
         ),
         Arguments.of(
-            RetroError<GetBlockedUsersResponse>(statusCode = 500).toRetrofitCall(),
+            RetroError<GetBlockedUsersResponse>(statusCode = 500).toHttpException(),
             Result.Failure::class,
         ),
     )
@@ -449,8 +449,8 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun getGuestUserInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomCreateGuestResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<CreateGuestResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(Mother.randomCreateGuestResponse(), Result.Success::class),
+        Arguments.of(RetroError<CreateGuestResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -619,26 +619,22 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryThreadsInput() = listOf(
         Arguments.of(
-            RetroSuccess(
-                QueryThreadsResponse(
-                    threads = listOf(Mother.randomThreadStateResponse()),
-                    duration = randomString(),
-                    prev = randomString(),
-                    next = randomString(),
-                ),
-            ).toRetrofitCall(),
+            QueryThreadsResponse(
+                threads = listOf(Mother.randomThreadStateResponse()),
+                duration = randomString(),
+                prev = randomString(),
+                next = randomString(),
+            ),
             Result.Success::class,
         ),
         Arguments.of(
-            RetroSuccess(
-                QueryThreadsResponse(
-                    threads = listOf(Mother.randomThreadStateResponse(parentMessage = null)),
-                    duration = randomString(),
-                ),
-            ).toRetrofitCall(),
+            QueryThreadsResponse(
+                threads = listOf(Mother.randomThreadStateResponse(parentMessage = null)),
+                duration = randomString(),
+            ),
             Result.Failure::class,
         ),
-        Arguments.of(RetroError<QueryThreadsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<QueryThreadsResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -921,8 +917,8 @@ internal object MoshiChatApiTestArguments {
             users = mapOf(userId to user),
         )
         return listOf(
-            Arguments.of(RetroSuccess(response).toRetrofitCall(), Result.Success::class),
-            Arguments.of(RetroError<UpdateUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+            Arguments.of(response, Result.Success::class),
+            Arguments.of(RetroError<UpdateUsersResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
         )
     }
 
@@ -944,38 +940,24 @@ internal object MoshiChatApiTestArguments {
 
     private fun threadResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(
-                GetThreadResponse(
-                    thread = Mother.randomThreadStateResponse(),
-                    duration = randomString(),
-                ),
-            ).toRetrofitCall(),
+            GetThreadResponse(
+                thread = Mother.randomThreadStateResponse(),
+                duration = randomString(),
+            ),
             Result.Success::class,
         ),
         Arguments.of(
-            RetroSuccess(
-                GetThreadResponse(
-                    thread = Mother.randomThreadStateResponse(lastMessageAt = null),
-                    duration = randomString(),
-                ),
-            ).toRetrofitCall(),
+            GetThreadResponse(
+                thread = Mother.randomThreadStateResponse(lastMessageAt = null),
+                duration = randomString(),
+            ),
             Result.Failure::class,
         ),
-        Arguments.of(RetroError<GetThreadResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetThreadResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
-    private fun threadInfoResponseArguments() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                UpdateThreadPartialResponse(
-                    thread = Mother.randomThreadResponse(),
-                    duration = randomString(),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<UpdateThreadPartialResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    private fun threadInfoResponseArguments() =
+        endpointArgs(UpdateThreadPartialResponse(thread = Mother.randomThreadResponse(), duration = randomString()))
 
     private fun pollResponseArguments() =
         endpointArgs(PollResponse(poll = Mother.randomPollResponseData(), duration = randomString()))

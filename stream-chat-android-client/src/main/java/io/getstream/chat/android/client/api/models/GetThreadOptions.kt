@@ -30,14 +30,4 @@ public data class GetThreadOptions @JvmOverloads constructor(
     public val replyLimit: Int = 2,
     public val participantLimit: Int = 100,
     public val memberLimit: Int = 100,
-) {
-
-    internal fun toMap(): Map<String, String> {
-        val map = mutableMapOf<String, String>()
-        map["watch"] = watch.toString()
-        map["reply_limit"] = replyLimit.toString()
-        map["participant_limit"] = participantLimit.toString()
-        map["member_limit"] = memberLimit.toString()
-        return map
-    }
-}
+)

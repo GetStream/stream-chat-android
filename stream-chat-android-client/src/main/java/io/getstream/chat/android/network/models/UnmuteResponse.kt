@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.endpoint
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import io.getstream.chat.android.client.api.AnonymousApi
-import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.network.models.CreateGuestRequest
-import io.getstream.chat.android.network.models.CreateGuestResponse
-import retrofit2.http.Body
-import retrofit2.http.POST
+package io.getstream.chat.android.network.models
 
-@AnonymousApi
-internal interface GuestApi {
+import com.squareup.moshi.Json
 
-    @POST("/api/v2/guest")
-    fun getGuestUser(
-        @Body body: CreateGuestRequest,
-    ): RetrofitCall<CreateGuestResponse>
-}
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UnmuteResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "non_existing_users")
+    internal val nonExistingUsers: List<String>? = null,
+)
