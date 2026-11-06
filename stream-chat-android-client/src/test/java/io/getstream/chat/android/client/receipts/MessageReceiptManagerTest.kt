@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.receipts
 import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
@@ -33,13 +34,16 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.wheneverBlocking
 import org.mockito.verification.VerificationMode
@@ -84,6 +88,22 @@ internal class MessageReceiptManagerTest {
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
         assertTrue(result)
+    }
+
+    @Test
+    fun `fetch the channel state without messages or watching when channel is not found from repository`() = runTest {
+        val fixture = Fixture()
+            .givenChannelNotFoundFromRepository()
+        val sut = fixture.get()
+
+        sut.markMessageAsDelivered(DeliverableMessage)
+
+        val request = fixture.captureQueryChannelRequest()
+        assertTrue(request.state)
+        assertFalse(request.watch)
+        assertFalse(request.presence)
+        assertEquals(mapOf<String, Any>("limit" to 0), request.messages)
+        assertEquals(mapOf<String, Any>("limit" to 1, "offset" to 0), request.members)
     }
 
     @Test
@@ -441,6 +461,16 @@ internal class MessageReceiptManagerTest {
 
         fun givenMessageNotFoundFromApi() = apply {
             wheneverBlocking { mockChatApi.getMessage(messageId = any()) } doReturn mock<Error>().asCall()
+        }
+
+        fun captureQueryChannelRequest(): QueryChannelRequest {
+            val captor = argumentCaptor<QueryChannelRequest>()
+            verify(mockChatApi).queryChannel(
+                channelType = any(),
+                channelId = any(),
+                query = captor.capture(),
+            )
+            return captor.firstValue
         }
 
         fun verifyUpsertMessageReceiptsCalled(
