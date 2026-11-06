@@ -288,15 +288,17 @@ constructor(
         channelType: String,
         channelId: String,
         message: Message,
-    ): Call<Message> = messageApi.sendMessage(
-        channelType = channelType,
-        channelId = channelId,
-        message = SendMessageRequest(
-            message = with(dtoMapping) { message.toMessageRequest() },
-            skipPush = message.skipPushNotification,
-            skipEnrichUrl = message.skipEnrichUrl,
-        ),
-    ).mapDomain { response ->
+    ): Call<Message> = endpoint {
+        sendMessage(
+            type = channelType,
+            id = channelId,
+            sendMessageRequest = SendMessageRequest(
+                message = with(dtoMapping) { message.toMessageRequest() },
+                skipPush = message.skipPushNotification,
+                skipEnrichUrl = message.skipEnrichUrl,
+            ),
+        )
+    }.mapDomain { response ->
         response.message.toDomain()
     }
 
@@ -347,14 +349,16 @@ constructor(
     override fun updateMessage(
         message: Message,
     ): Call<Message> {
-        return messageApi.updateMessage(
-            messageId = message.id,
-            message = UpdateMessageRequest(
-                message = with(dtoMapping) { message.toMessageRequest() },
-                skipEnrichUrl = message.skipEnrichUrl,
-                skipPush = message.skipPushNotification,
-            ),
-        ).mapDomain { response ->
+        return endpoint {
+            updateMessage(
+                id = message.id,
+                updateMessageRequest = UpdateMessageRequest(
+                    message = with(dtoMapping) { message.toMessageRequest() },
+                    skipEnrichUrl = message.skipEnrichUrl,
+                    skipPush = message.skipPushNotification,
+                ),
+            )
+        }.mapDomain { response ->
             response.message.toDomain()
         }
     }
@@ -365,14 +369,16 @@ constructor(
         unset: List<String>,
         skipEnrichUrl: Boolean,
     ): Call<Message> {
-        return messageApi.partialUpdateMessage(
-            messageId = messageId,
-            body = UpdateMessagePartialRequest(
-                set = set.toDto(),
-                unset = unset,
-                skipEnrichUrl = skipEnrichUrl,
-            ),
-        ).mapMessage(UpdateMessagePartialResponse::message)
+        return endpoint {
+            updateMessagePartial(
+                id = messageId,
+                updateMessagePartialRequest = UpdateMessagePartialRequest(
+                    set = set.toDto(),
+                    unset = unset,
+                    skipEnrichUrl = skipEnrichUrl,
+                ),
+            )
+        }.mapMessage(UpdateMessagePartialResponse::message)
     }
 
     private fun Map<String, Any>.toDto(): Map<String, Any> = with(dtoMapping) {
@@ -391,15 +397,17 @@ constructor(
     }
 
     override fun getMessage(messageId: String): Call<Message> {
-        return messageApi.getMessage(
-            messageId = messageId,
-        ).mapDomain { response ->
+        return endpoint {
+            getMessage(
+                id = messageId,
+            )
+        }.mapDomain { response ->
             response.message.toDomain()
         }
     }
 
     override fun getPendingMessage(messageId: String): Call<PendingMessage> {
-        return messageApi.getMessage(messageId).mapDomain { it.toPendingMessage() }
+        return endpoint { getMessage(messageId) }.mapDomain { it.toPendingMessage() }
     }
 
     override fun deleteMessage(
@@ -407,11 +415,13 @@ constructor(
         hard: Boolean,
         deleteForMe: Boolean,
     ): Call<Message> {
-        return messageApi.deleteMessage(
-            messageId = messageId,
-            hard = if (hard) true else null,
-            deleteForMe = if (deleteForMe) true else null,
-        ).mapDomain { response ->
+        return endpoint {
+            deleteMessage(
+                id = messageId,
+                hard = if (hard) true else null,
+                deleteForMe = if (deleteForMe) true else null,
+            )
+        }.mapDomain { response ->
             response.message.toDomain()
         }
     }
@@ -421,11 +431,13 @@ constructor(
         offset: Int,
         limit: Int,
     ): Call<List<Reaction>> {
-        return messageApi.getReactions(
-            messageId = messageId,
-            offset = offset,
-            limit = limit,
-        ).mapDomain { response ->
+        return endpoint {
+            getReactions(
+                id = messageId,
+                offset = offset,
+                limit = limit,
+            )
+        }.mapDomain { response ->
             response.reactions.map {
                 it.toDomain()
             }
@@ -445,7 +457,7 @@ constructor(
             next = next,
             sort = sort?.toSortParams(),
         )
-        return messageApi.queryReactions(messageId, body).mapDomain {
+        return endpoint { queryReactions(messageId, body) }.mapDomain {
             QueryReactionsResult(
                 reactions = it.reactions.map { reaction -> reaction.toDomain() },
                 next = it.next,
@@ -454,14 +466,16 @@ constructor(
     }
 
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean, skipPush: Boolean): Call<Reaction> {
-        return messageApi.sendReaction(
-            messageId = reaction.messageId,
-            request = SendReactionRequest(
-                reaction = with(dtoMapping) { reaction.toDto() },
-                enforceUnique = enforceUnique,
-                skipPush = skipPush,
-            ),
-        ).mapDomain { response ->
+        return endpoint {
+            sendReaction(
+                id = reaction.messageId,
+                sendReactionRequest = SendReactionRequest(
+                    reaction = with(dtoMapping) { reaction.toDto() },
+                    enforceUnique = enforceUnique,
+                    skipPush = skipPush,
+                ),
+            )
+        }.mapDomain { response ->
             response.reaction.toDomain()
         }
     }
@@ -470,10 +484,12 @@ constructor(
         messageId: String,
         reactionType: String,
     ): Call<Message> {
-        return messageApi.deleteReaction(
-            messageId = messageId,
-            reactionType = reactionType,
-        ).mapDomain { response ->
+        return endpoint {
+            deleteReaction(
+                id = messageId,
+                type = reactionType,
+            )
+        }.mapDomain { response ->
             response.message.toDomain()
         }
     }
@@ -692,7 +708,7 @@ constructor(
             }
         }
 
-    private fun <T : Any> RetrofitCall<T>.mapMessage(extract: (T) -> MessageResponse?): Call<Message> =
+    private fun <T : Any> Call<T>.mapMessage(extract: (T) -> MessageResponse?): Call<Message> =
         flatMapDomain { response ->
             extract(response)
                 ?.let { message -> CoroutineCall(coroutineScope) { Result.Success(message.toDomain()) } }
@@ -1370,21 +1386,25 @@ constructor(
         parentId: String,
         aroundId: String,
         limit: Int,
-    ): Call<List<Message>> = messageApi.getRepliesAround(
-        parentId = parentId,
-        limit = limit,
-        aroundId = aroundId,
-    ).mapDomain { response ->
+    ): Call<List<Message>> = endpoint {
+        getReplies(
+            parentId = parentId,
+            limit = limit,
+            idAround = aroundId,
+        )
+    }.mapDomain { response ->
         response.messages.map {
             it.toDomain()
         }
     }
 
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
-        return messageApi.getReplies(
-            messageId = messageId,
-            limit = limit,
-        ).mapDomain { response ->
+        return endpoint {
+            getReplies(
+                parentId = messageId,
+                limit = limit,
+            )
+        }.mapDomain { response ->
             response.messages.map {
                 it.toDomain()
             }
@@ -1392,11 +1412,13 @@ constructor(
     }
 
     override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> {
-        return messageApi.getRepliesMore(
-            messageId = messageId,
-            limit = limit,
-            firstId = firstId,
-        ).mapDomain { response ->
+        return endpoint {
+            getReplies(
+                parentId = messageId,
+                limit = limit,
+                idLt = firstId,
+            )
+        }.mapDomain { response ->
             response.messages.map {
                 it.toDomain()
             }
@@ -1404,12 +1426,14 @@ constructor(
     }
 
     override fun sendAction(request: DomainSendActionRequest): Call<Message> {
-        return messageApi.sendAction(
-            messageId = request.messageId,
-            request = MessageActionRequest(
-                formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
-            ),
-        ).mapMessage(MessageActionResponse::message)
+        return endpoint {
+            runMessageAction(
+                id = request.messageId,
+                messageActionRequest = MessageActionRequest(
+                    formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
+                ),
+            )
+        }.mapMessage(MessageActionResponse::message)
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
@@ -1465,10 +1489,8 @@ constructor(
     }
 
     override fun translate(messageId: String, language: String): Call<Message> {
-        return messageApi.translate(
-            messageId = messageId,
-            request = TranslateMessageRequest(TranslateMessageRequest.Language.fromString(language)),
-        ).mapDomain { response ->
+        val request = TranslateMessageRequest(TranslateMessageRequest.Language.fromString(language))
+        return endpoint { translateMessage(id = messageId, translateMessageRequest = request) }.mapDomain { response ->
             response.message.toDomain()
         }
     }
@@ -2023,16 +2045,18 @@ constructor(
         channelId: String,
         message: Message,
         scheduledAt: Date,
-    ): Call<ScheduleMessageResult> = messageApi.sendMessage(
-        channelType = channelType,
-        channelId = channelId,
-        message = SendMessageRequest(
-            message = with(dtoMapping) { message.toMessageRequest() },
-            skipPush = message.skipPushNotification,
-            skipEnrichUrl = message.skipEnrichUrl,
-            scheduledAt = scheduledAt,
-        ),
-    ).mapDomain { response ->
+    ): Call<ScheduleMessageResult> = endpoint {
+        sendMessage(
+            type = channelType,
+            id = channelId,
+            sendMessageRequest = SendMessageRequest(
+                message = with(dtoMapping) { message.toMessageRequest() },
+                skipPush = message.skipPushNotification,
+                skipEnrichUrl = message.skipEnrichUrl,
+                scheduledAt = scheduledAt,
+            ),
+        )
+    }.mapDomain { response ->
         ScheduleMessageResult(
             message = response.message.toDomain().enrichWithCid("$channelType:$channelId"),
             scheduledMessage = response.scheduledMessage?.toDomain(),

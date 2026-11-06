@@ -64,6 +64,17 @@ internal interface ChatEndpoints {
     ): io.getstream.chat.android.network.models.CreateDraftResponse
 
     /**
+     * Send new message
+     * Sends new message to the specified channel
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/message")
+    suspend fun sendMessage(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Body sendMessageRequest: io.getstream.chat.android.network.models.SendMessageRequest,
+    ): io.getstream.chat.android.network.models.SendMessageResponse
+
+    /**
      * Query draft messages
      * Queries draft messages for a user
      */
@@ -71,6 +82,107 @@ internal interface ChatEndpoints {
     suspend fun queryDrafts(
         @Body queryDraftsRequest: io.getstream.chat.android.network.models.QueryDraftsRequest,
     ): io.getstream.chat.android.network.models.QueryDraftsResponse
+
+    /**
+     * Delete message
+     * Deletes message
+     */
+    @DELETE("/api/v2/chat/messages/{id}")
+    suspend fun deleteMessage(
+        @Path("id") id: String,
+        @Query("hard") hard: Boolean? = null,
+        @Query("delete_for_me") deleteForMe: Boolean? = null,
+    ): io.getstream.chat.android.network.models.DeleteMessageResponse
+
+    /**
+     * Get message
+     * Returns message by ID
+     */
+    @GET("/api/v2/chat/messages/{id}")
+    suspend fun getMessage(
+        @Path("id") id: String,
+    ): io.getstream.chat.android.network.models.GetMessageResponse
+
+    /**
+     * Update message
+     * Updates message with new data
+     */
+    @POST("/api/v2/chat/messages/{id}")
+    suspend fun updateMessage(
+        @Path("id") id: String,
+        @Body updateMessageRequest: io.getstream.chat.android.network.models.UpdateMessageRequest,
+    ): io.getstream.chat.android.network.models.UpdateMessageResponse
+
+    /**
+     * Partially message update
+     * Updates certain fields of the message
+     */
+    @PUT("/api/v2/chat/messages/{id}")
+    suspend fun updateMessagePartial(
+        @Path("id") id: String,
+        @Body updateMessagePartialRequest: io.getstream.chat.android.network.models.UpdateMessagePartialRequest,
+    ): io.getstream.chat.android.network.models.UpdateMessagePartialResponse
+
+    /**
+     * Run message command action
+     * Executes message command action with given parameters
+     */
+    @POST("/api/v2/chat/messages/{id}/action")
+    suspend fun runMessageAction(
+        @Path("id") id: String,
+        @Body messageActionRequest: io.getstream.chat.android.network.models.MessageActionRequest,
+    ): io.getstream.chat.android.network.models.MessageActionResponse
+
+    /**
+     * Send reaction
+     * Sends reaction to specified message
+     */
+    @POST("/api/v2/chat/messages/{id}/reaction")
+    suspend fun sendReaction(
+        @Path("id") id: String,
+        @Body sendReactionRequest: io.getstream.chat.android.network.models.SendReactionRequest,
+    ): io.getstream.chat.android.network.models.SendReactionResponse
+
+    /**
+     * Delete reaction
+     * Removes user reaction from the message
+     */
+    @DELETE("/api/v2/chat/messages/{id}/reaction/{type}")
+    suspend fun deleteReaction(
+        @Path("id") id: String,
+        @Path("type") type: String,
+    ): io.getstream.chat.android.network.models.DeleteReactionResponse
+
+    /**
+     * Get reactions
+     * Returns list of reactions of specific message
+     */
+    @GET("/api/v2/chat/messages/{id}/reactions")
+    suspend fun getReactions(
+        @Path("id") id: String,
+        @Query("limit") limit: Int? = null,
+        @Query("offset") offset: Int? = null,
+    ): io.getstream.chat.android.network.models.GetReactionsResponse
+
+    /**
+     *
+     * Get reactions on a message
+     */
+    @POST("/api/v2/chat/messages/{id}/reactions")
+    suspend fun queryReactions(
+        @Path("id") id: String,
+        @Body queryReactionsRequest: io.getstream.chat.android.network.models.QueryReactionsRequest,
+    ): io.getstream.chat.android.network.models.QueryReactionsResponse
+
+    /**
+     * Translate message
+     * Translates message to a given language using automated translation software
+     */
+    @POST("/api/v2/chat/messages/{id}/translate")
+    suspend fun translateMessage(
+        @Path("id") id: String,
+        @Body translateMessageRequest: io.getstream.chat.android.network.models.TranslateMessageRequest,
+    ): io.getstream.chat.android.network.models.TranslateMessageResponse
 
     /**
      * Cast vote
@@ -122,6 +234,23 @@ internal interface ChatEndpoints {
         @Path("message_id") messageId: String,
         @Body createReminderRequest: io.getstream.chat.android.network.models.CreateReminderRequest,
     ): io.getstream.chat.android.network.models.CreateReminderResponse
+
+    /**
+     * Get replies
+     * Returns replies (thread) of the message
+     */
+    @GET("/api/v2/chat/messages/{parent_id}/replies")
+    suspend fun getReplies(
+        @Path("parent_id") parentId: String,
+        @Query("limit") limit: Int? = null,
+        @Query("id_gte") idGte: String? = null,
+        @Query("id_gt") idGt: String? = null,
+        @Query("id_lte") idLte: String? = null,
+        @Query("id_lt") idLt: String? = null,
+        @Query("id_around") idAround: String? = null,
+        @Query("sort") sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
+        @Query("member_custom_include") memberCustomInclude: List<String>? = null,
+    ): io.getstream.chat.android.network.models.GetRepliesResponse
 
     /**
      * Query reminders
