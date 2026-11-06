@@ -50,7 +50,6 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
-import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
@@ -378,7 +377,6 @@ constructor(
             buildFileDownloadApi(),
             buildV2RetrofitApi<OpenGraphApi>(),
             buildV2RetrofitApi<ThreadsApi>(),
-            buildV2RetrofitApi<PollsApi>(),
             // Generated, so it carries no @AuthenticatedApi.
             buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = false),
             moshiParser,

@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
-import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
@@ -162,10 +161,6 @@ import io.getstream.chat.android.network.models.PaginationParams
 import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
-import io.getstream.chat.android.network.models.PollOptionResponse
-import io.getstream.chat.android.network.models.PollResponse
-import io.getstream.chat.android.network.models.PollVoteResponse
-import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.PushProviderName
@@ -179,7 +174,6 @@ import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
-import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryRemindersRequest
@@ -3206,12 +3200,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#castPollVoteInput")
-    fun testCastPollVote(call: RetrofitCall<PollVoteResponse>, expected: KClass<*>) = runTest {
+    fun testCastPollVote(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.castPollVote(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.castPollVote(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -3221,17 +3215,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedVote = CastPollVoteRequest(VoteData(optionId = optionId))
         result `should be instance of` expected
-        verify(api, times(1)).castPollVote(messageId, pollId, expectedVote)
+        verifyBlocking(api, times(1)) { castPollVote(messageId, pollId, expectedVote) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#castPollAnswerInput")
-    fun testCastPollAnswer(call: RetrofitCall<PollVoteResponse>, expected: KClass<*>) = runTest {
+    fun testCastPollAnswer(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.castPollVote(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.castPollVote(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -3241,17 +3235,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedAnswer = CastPollVoteRequest(VoteData(answerText = answer))
         result `should be instance of` expected
-        verify(api, times(1)).castPollVote(messageId, pollId, expectedAnswer)
+        verifyBlocking(api, times(1)) { castPollVote(messageId, pollId, expectedAnswer) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#removePollVoteInput")
-    fun testRemovePollVote(call: RetrofitCall<PollVoteResponse>, expected: KClass<*>) = runTest {
+    fun testRemovePollVote(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.removePollVote(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.deletePollVote(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messageId = randomString()
@@ -3260,17 +3254,17 @@ internal class MoshiChatApiTest {
         val result = sut.removePollVote(messageId, pollId, voteId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).removePollVote(messageId, pollId, voteId)
+        verifyBlocking(api, times(1)) { deletePollVote(messageId, pollId, voteId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdatePollInput")
-    fun testPartialUpdatePoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
+    fun testPartialUpdatePoll(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.partialUpdatePoll(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updatePollPartial(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollId = randomString()
@@ -3280,17 +3274,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedRequest = UpdatePollPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
-        verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
+        verifyBlocking(api, times(1)) { updatePollPartial(pollId, expectedRequest) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#closePollInput")
-    fun testClosePoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
+    fun testClosePoll(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.partialUpdatePoll(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updatePollPartial(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollId = randomString()
@@ -3298,17 +3292,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedRequest = UpdatePollPartialRequest(set = mapOf("is_closed" to true), unset = emptyList())
         result `should be instance of` expected
-        verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
+        verifyBlocking(api, times(1)) { updatePollPartial(pollId, expectedRequest) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createPollOptionInput")
-    fun testCreatePollOption(call: RetrofitCall<PollOptionResponse>, expected: KClass<*>) = runTest {
+    fun testCreatePollOption(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.createPollOption(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.createPollOption(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollId = randomString()
@@ -3317,17 +3311,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedOption = CreatePollOptionRequest(text = option.text, custom = option.extraData)
         result `should be instance of` expected
-        verify(api, times(1)).createPollOption(pollId, expectedOption)
+        verifyBlocking(api, times(1)) { createPollOption(pollId, expectedOption) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updatePollOptionInput")
-    fun testUpdatePollOption(call: RetrofitCall<PollOptionResponse>, expected: KClass<*>) = runTest {
+    fun testUpdatePollOption(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.updatePollOption(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updatePollOption(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollId = randomString()
@@ -3340,17 +3334,17 @@ internal class MoshiChatApiTest {
             custom = option.extraData,
         )
         result `should be instance of` expected
-        verify(api, times(1)).updatePollOption(pollId, expectedOption)
+        verifyBlocking(api, times(1)) { updatePollOption(pollId, expectedOption) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deletePollOptionInput")
-    fun testDeletePollOption(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testDeletePollOption(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.deletePollOption(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.deletePollOption(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollId = randomString()
@@ -3358,17 +3352,17 @@ internal class MoshiChatApiTest {
         val result = sut.deletePollOption(pollId, optionId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deletePollOption(pollId, optionId)
+        verifyBlocking(api, times(1)) { deletePollOption(pollId, optionId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createPollInput")
-    fun testCreatePoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
+    fun testCreatePoll(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.createPoll(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.createPoll(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollConfig = randomPollConfig()
@@ -3394,17 +3388,17 @@ internal class MoshiChatApiTest {
             custom = pollConfig.extraData,
         )
         result `should be instance of` expected
-        verify(api, times(1)).createPoll(expectedBody)
+        verifyBlocking(api, times(1)) { createPoll(expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updatePollInput")
-    fun testUpdatePoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
+    fun testUpdatePoll(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.updatePoll(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updatePoll(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollId = randomString()
@@ -3453,29 +3447,29 @@ internal class MoshiChatApiTest {
             custom = extraData,
         )
         result `should be instance of` expected
-        verify(api, times(1)).updatePoll(expectedBody)
+        verifyBlocking(api, times(1)) { updatePoll(expectedBody) }
     }
 
     @Test
     fun `updatePollOption returns a failure when the option has no id`() = runTest {
         // given
-        val api = mock<PollsApi>()
+        val api = mock<ChatEndpoints>()
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val result = sut.updatePollOption(randomString(), PollOption(text = randomString())).await()
         // then
         result `should be instance of` Result.Failure::class
-        verify(api, never()).updatePollOption(any(), any())
+        verifyBlocking(api, never()) { updatePollOption(any(), any()) }
     }
 
     @Test
     fun `updatePoll returns a failure when an option has no id`() = runTest {
         // given
-        val api = mock<PollsApi>()
+        val api = mock<ChatEndpoints>()
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val request = io.getstream.chat.android.client.api.models.UpdatePollRequest(
@@ -3486,51 +3480,51 @@ internal class MoshiChatApiTest {
         val result = sut.updatePoll(request).await()
         // then
         result `should be instance of` Result.Failure::class
-        verify(api, never()).updatePoll(any())
+        verifyBlocking(api, never()) { updatePoll(any()) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getPollInput")
-    fun testGetPoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
+    fun testGetPoll(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.getPoll(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getPoll(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollId = randomString()
         val result = sut.getPoll(pollId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).getPoll(pollId)
+        verifyBlocking(api, times(1)) { getPoll(pollId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deletePollInput")
-    fun testDeletePoll(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testDeletePoll(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.deletePoll(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.deletePoll(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val pollId = randomString()
         val result = sut.deletePoll(pollId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deletePoll(pollId)
+        verifyBlocking(api, times(1)) { deletePoll(pollId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryPollsInput")
-    fun testQueryPolls(call: RetrofitCall<QueryPollsResponse>, expected: KClass<*>) = runTest {
+    fun testQueryPolls(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
-        whenever(api.queryPolls(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryPolls(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val filter = Filters.neutral()
@@ -3546,18 +3540,18 @@ internal class MoshiChatApiTest {
             sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryPolls(expectedBody)
+        verifyBlocking(api, times(1)) { queryPolls(expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryPollVotesInput")
-    fun testQueryPollVotes(call: RetrofitCall<PollVotesResponse>, expected: KClass<*>) = runTest {
+    fun testQueryPollVotes(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<PollsApi>()
+        val api = mock<ChatEndpoints>()
         val pollId = randomString()
-        whenever(api.queryPollVotes(any(), any())).doReturn(call)
+        wheneverBlocking { api.queryPollVotes(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withPollsApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val filter = Filters.neutral()
@@ -3573,7 +3567,7 @@ internal class MoshiChatApiTest {
             sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryPollVotes(pollId, expectedBody)
+        verifyBlocking(api, times(1)) { queryPollVotes(pollId, expectedBody) }
     }
 
     @Test
@@ -4572,7 +4566,6 @@ internal class MoshiChatApiTest {
         private var fileDownloadApi: FileDownloadApi = mock()
         private var ogApi: OpenGraphApi = mock()
         private var threadsApi: ThreadsApi = mock()
-        private var pollsApi: PollsApi = mock()
         private var chatEndpoints: ChatEndpoints = mock()
         private var scheduledMessagesApi: ScheduledMessagesApi = mock()
         private var pushPreferencesApi: PushPreferencesApi = mock()
@@ -4642,10 +4635,6 @@ internal class MoshiChatApiTest {
             this.threadsApi = threadsApi
         }
 
-        fun withPollsApi(pollsApi: PollsApi) = apply {
-            this.pollsApi = pollsApi
-        }
-
         fun withChatEndpoints(chatEndpoints: ChatEndpoints) = apply {
             this.chatEndpoints = chatEndpoints
         }
@@ -4708,7 +4697,6 @@ internal class MoshiChatApiTest {
                 fileDownloadApi = fileDownloadApi,
                 ogApi = ogApi,
                 threadsApi = threadsApi,
-                pollsApi = pollsApi,
                 chatEndpoints = chatEndpoints,
                 parser = ParserFactory.createMoshiChatParser(),
                 scheduledMessagesApi = scheduledMessagesApi,
