@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
@@ -45,6 +46,7 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomCommand
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.MockRetrofitCall
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -2835,6 +2837,475 @@ internal class MessageComposerControllerTest {
             verify(fixture.chatClient, never()).getReplies(any(), any())
         }
 
+    @Test
+    fun `Given a draft with attachments When the controller initializes Then they are shown in the composer`() =
+        runTest {
+            val attachment = remoteAttachment()
+            val draft = DraftMessage(id = "draft", cid = CID, text = "draft text", attachments = listOf(attachment))
+            val controller = draftFixture(channelDrafts = mapOf(CID to draft)).get()
+            advanceUntilIdle()
+
+            assertEquals("draft text", controller.messageInput.value.text)
+            assertEquals(listOf(attachment), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given a draft with two images without names When the controller initializes Then both are shown`() =
+        runTest {
+            val first = Attachment(type = "image", imageUrl = "https://cdn.getstream.io/first.jpg")
+            val second = Attachment(type = "image", imageUrl = "https://cdn.getstream.io/second.jpg")
+            val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(first, second))
+            val controller = draftFixture(channelDrafts = mapOf(CID to draft)).get()
+            advanceUntilIdle()
+
+            assertEquals(listOf(first, second), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given a draft with a link preview When the controller initializes Then the link preview is not shown`() =
+        runTest {
+            val attachment = remoteAttachment()
+            val linkPreview = Attachment(ogUrl = "https://getstream.io", titleLink = "https://getstream.io")
+            val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(attachment, linkPreview))
+            val controller = draftFixture(channelDrafts = mapOf(CID to draft)).get()
+            advanceUntilIdle()
+
+            assertEquals(listOf(attachment), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given a draft with attachments When the user picks a file and the composer closes Then only uploaded ones are saved`() =
+        runTest {
+            val attachment = remoteAttachment()
+            val draft = DraftMessage(id = "draft", cid = CID, text = "draft text", attachments = listOf(attachment))
+            val picked = Attachment(type = "image", name = "picked.jpg", extraData = mapOf(EXTRA_SOURCE_URI to "uri:picked"))
+            val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+            val controller = fixture.get()
+            advanceUntilIdle()
+            controller.setMessageInput("edited")
+            controller.addAttachments(listOf(picked))
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            val saved = fixture.savedDraft()
+            assertEquals("edited", saved.text)
+            assertEquals(listOf(attachment), saved.attachments)
+        }
+
+    @Test
+    fun `Given a draft with only attachments When the composer closes Then the draft keeps them`() = runTest {
+        val attachment = remoteAttachment()
+        val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(attachment))
+        val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+        val controller = fixture.get()
+        advanceUntilIdle()
+
+        controller.onCleared()
+        advanceUntilIdle()
+
+        assertEquals(listOf(attachment), fixture.savedDraft().attachments)
+        verify(fixture.chatClient, never()).deleteDraftMessages(any(), any(), any())
+    }
+
+    @Test
+    fun `Given a draft with attachments When the user removes one Then the draft is saved without it`() = runTest {
+        val removed = remoteAttachment()
+        val kept = remoteAttachment()
+        val draft = DraftMessage(id = "draft", cid = CID, text = "draft text", attachments = listOf(removed, kept))
+        val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+        val controller = fixture.get()
+        advanceUntilIdle()
+
+        controller.removeAttachment(removed)
+        controller.onCleared()
+        advanceUntilIdle()
+
+        assertEquals(listOf(kept), fixture.savedDraft().attachments)
+    }
+
+    @Test
+    fun `Given a draft with only attachments When the user removes them all Then the draft is deleted`() = runTest {
+        val attachment = remoteAttachment()
+        val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(attachment))
+        val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+        val controller = fixture.get()
+        advanceUntilIdle()
+
+        controller.removeAttachment(attachment)
+        controller.onCleared()
+        advanceUntilIdle()
+
+        verify(fixture.chatClient).deleteDraftMessages(CHANNEL_TYPE, CHANNEL_ID, draft)
+        verify(fixture.chatClient, never()).createDraftMessage(any(), any(), any())
+    }
+
+    @Test
+    fun `Given drafts with attachments When the mode changes Then the new draft's attachments replace them and picked files stay`() =
+        runTest {
+            val parentMessage = randomMessage(cid = CID)
+            val channelAttachment = remoteAttachment()
+            val threadAttachment = remoteAttachment()
+            val picked = Attachment(type = "image", name = "picked.jpg", extraData = mapOf(EXTRA_SOURCE_URI to "uri:picked"))
+            val channelDraft = DraftMessage(id = "channel", cid = CID, attachments = listOf(channelAttachment))
+            val threadDraft = DraftMessage(
+                id = "thread",
+                cid = CID,
+                parentId = parentMessage.id,
+                attachments = listOf(threadAttachment),
+            )
+            val controller = draftFixture(
+                channelDrafts = mapOf(CID to channelDraft),
+                threadDrafts = mapOf(parentMessage.id to threadDraft),
+            ).get()
+            advanceUntilIdle()
+            controller.addAttachments(listOf(picked))
+
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+            advanceUntilIdle()
+
+            assertEquals(listOf(picked, threadAttachment), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given a draft with attachments When a command is selected and cancelled Then the attachments come back`() =
+        runTest {
+            val giphyCommand = randomCommand(name = "giphy")
+            val attachment = remoteAttachment()
+            val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(attachment))
+            val controller = draftFixture(
+                channelDrafts = mapOf(CID to draft),
+                config = MessageComposerController.Config(activeCommandEnabled = true),
+                commands = listOf(giphyCommand),
+            ).get()
+            advanceUntilIdle()
+
+            controller.selectCommand(giphyCommand)
+            assertTrue(controller.state.value.attachments.isEmpty())
+            controller.clearActiveCommand()
+
+            assertEquals(listOf(attachment), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given a draft with attachments When a message is edited Then they are left out of the edit until it ends`() =
+        runTest {
+            val draftAttachment = remoteAttachment()
+            val editAttachment = remoteAttachment()
+            val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(draftAttachment))
+            val controller = draftFixture(channelDrafts = mapOf(CID to draft)).get()
+            advanceUntilIdle()
+
+            controller.performMessageAction(
+                Edit(Message(id = "edited", cid = CID, text = "edited", attachments = mutableListOf(editAttachment))),
+            )
+            val edited = controller.buildNewMessage("edited again", controller.state.value.attachments)
+            controller.dismissMessageActions()
+
+            assertEquals(listOf(editAttachment), edited.attachments)
+            assertEquals(listOf(draftAttachment), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given a draft with attachments When an app attachment is added during an edit Then the edit includes it`() =
+        runTest {
+            val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(remoteAttachment()))
+            val appAttachment = remoteAttachment()
+            val controller = draftFixture(channelDrafts = mapOf(CID to draft)).get()
+            advanceUntilIdle()
+            controller.performMessageAction(Edit(Message(id = "edited", cid = CID, text = "edited")))
+
+            controller.addAttachments(listOf(appAttachment))
+
+            assertEquals(listOf(appAttachment), controller.state.value.attachments)
+        }
+
+    @Test
+    fun `Given a draft with attachments and an app attachment When the session is saved Then the app attachment is kept`() =
+        runTest {
+            val savedStateHandle = SavedStateHandle()
+            val appAttachment = remoteAttachment()
+            val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(remoteAttachment()))
+            val controller = Fixture(savedStateHandle = savedStateHandle)
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState(channelDrafts = mapOf(CID to draft))
+                .givenChannelState()
+                .get()
+            advanceUntilIdle()
+
+            controller.addAttachments(listOf(appAttachment))
+            advanceUntilIdle()
+
+            val restored = ComposerSessionRepository(savedStateHandle).restoreSelectedAttachments()
+            assertEquals(listOf(appAttachment.imageUrl), restored.map(Attachment::imageUrl))
+        }
+
+    @Test
+    fun `Given a draft with attachments and a picked file When the session is saved Then only the picked file is kept`() =
+        runTest {
+            val savedStateHandle = SavedStateHandle()
+            val picked = Attachment(type = "image", name = "picked.jpg", extraData = mapOf(EXTRA_SOURCE_URI to "uri:picked"))
+            val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(remoteAttachment()))
+            val controller = Fixture(savedStateHandle = savedStateHandle)
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState(channelDrafts = mapOf(CID to draft))
+                .givenChannelState()
+                .get()
+            advanceUntilIdle()
+
+            controller.addAttachments(listOf(picked))
+            advanceUntilIdle()
+
+            val restored = ComposerSessionRepository(savedStateHandle).restoreSelectedAttachments()
+            assertEquals(listOf("uri:picked"), restored.map { it.extraData[EXTRA_SOURCE_URI] })
+        }
+
+    @Test
+    fun `Given a draft with mentioned users not loaded in the channel When the message is built Then they are mentioned`() =
+        runTest {
+            val user = randomUser(name = "Jane")
+            val draft = DraftMessage(
+                id = "draft",
+                cid = CID,
+                text = "hi @Jane",
+                mentionedUsersIds = listOf(user.id),
+                mentionedUsers = listOf(user),
+            )
+            val controller = draftFixture(channelDrafts = mapOf(CID to draft), members = listOf(Member(user = randomUser())))
+                .get()
+            advanceUntilIdle()
+
+            assertEquals(setOf(Mention.User(user)), controller.state.value.selectedMentions)
+            assertEquals(listOf(user.id), controller.buildNewMessage(controller.messageInput.value.text).mentionedUsersIds)
+        }
+
+    @Test
+    fun `Given a selected mention When the composer closes Then the draft keeps the mentioned user`() = runTest {
+        val user = randomUser(name = "Jane")
+        val fixture = draftFixture()
+        val controller = fixture.get()
+        advanceUntilIdle()
+        controller.setMessageInput("hi @")
+        controller.selectMention(user)
+
+        controller.onCleared()
+        advanceUntilIdle()
+
+        val saved = fixture.savedDraft()
+        assertEquals(listOf(user.id), saved.mentionedUsersIds)
+        assertEquals(listOf(user), saved.mentionedUsers)
+    }
+
+    @Test
+    fun `Given a draft mention removed from the text When the composer closes Then the draft has no mentioned user`() =
+        runTest {
+            val user = randomUser(name = "Jane")
+            val draft = DraftMessage(
+                id = "draft",
+                cid = CID,
+                text = "hi @Jane",
+                mentionedUsersIds = listOf(user.id),
+                mentionedUsers = listOf(user),
+            )
+            val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+            val controller = fixture.get()
+            advanceUntilIdle()
+            controller.setMessageInput("hi")
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            val saved = fixture.savedDraft()
+            assertTrue(saved.mentionedUsersIds.isEmpty())
+            assertTrue(saved.mentionedUsers.isEmpty())
+        }
+
+    @Test
+    fun `Given drafts in the channel and the thread When the mode changes Then the thread mentions are restored and the channel draft keeps its mentions`() = runTest {
+        val parentMessage = randomMessage(cid = CID)
+        val channelUser = randomUser(name = "Jane")
+        val threadUser = randomUser(name = "John")
+        val channelAttachment = remoteAttachment()
+        val channelDraft = DraftMessage(
+            id = "channel",
+            cid = CID,
+            text = "hi @Jane",
+            attachments = listOf(channelAttachment),
+            mentionedUsersIds = listOf(channelUser.id),
+            mentionedUsers = listOf(channelUser),
+        )
+        val threadDraft = DraftMessage(
+            id = "thread",
+            cid = CID,
+            parentId = parentMessage.id,
+            text = "hi @John",
+            mentionedUsersIds = listOf(threadUser.id),
+            mentionedUsers = listOf(threadUser),
+        )
+        val fixture = draftFixture(
+            channelDrafts = mapOf(CID to channelDraft),
+            threadDrafts = mapOf(parentMessage.id to threadDraft),
+        )
+        val controller = fixture.get()
+        advanceUntilIdle()
+
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        advanceUntilIdle()
+
+        assertEquals(setOf(Mention.User(threadUser)), controller.state.value.selectedMentions)
+        val saved = fixture.savedDraft()
+        assertEquals(listOf(channelUser), saved.mentionedUsers)
+        assertEquals(listOf(channelAttachment), saved.attachments)
+    }
+
+    @Test
+    fun `Given a draft with text and attachments When the user empties the input and the composer closes Then only the text is removed`() =
+        runTest {
+            val attachment = remoteAttachment()
+            val draft = DraftMessage(id = "draft", cid = CID, text = "draft text", attachments = listOf(attachment))
+            val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+            val controller = fixture.get()
+            advanceUntilIdle()
+            controller.setMessageInput("")
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            val saved = fixture.savedDraft()
+            assertEquals("", saved.text)
+            assertEquals(listOf(attachment), saved.attachments)
+            verify(fixture.chatClient, never()).deleteDraftMessages(any(), any(), any())
+        }
+
+    @Test
+    fun `Given a draft with attachments that was not shown When the composer closes empty Then the draft is not overwritten`() =
+        runTest {
+            val picked = Attachment(type = "image", name = "picked.jpg", extraData = mapOf(EXTRA_SOURCE_URI to "uri:picked"))
+            val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenDraftFlows(channelDrafts = channelDrafts)
+                .givenChannelState()
+                .givenDraftMessageStubs()
+                .givenStopTyping()
+            val controller = fixture.get()
+            advanceUntilIdle()
+            controller.addAttachments(listOf(picked))
+            channelDrafts.value = mapOf(
+                CID to DraftMessage(id = "draft", cid = CID, text = "other device", attachments = listOf(remoteAttachment())),
+            )
+            advanceUntilIdle()
+            controller.removeAttachment(picked)
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            verify(fixture.chatClient, never()).createDraftMessage(any(), any(), any())
+            verify(fixture.chatClient, never()).deleteDraftMessages(any(), any(), any())
+        }
+
+    @Test
+    fun `Given a restored mention picked again When the composer closes Then the draft has the mentioned user once`() =
+        runTest {
+            val user = randomUser(name = "Jane", online = false)
+            val draft = DraftMessage(
+                id = "draft",
+                cid = CID,
+                text = "hi @Jane ",
+                mentionedUsersIds = listOf(user.id),
+                mentionedUsers = listOf(user),
+            )
+            val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+            val controller = fixture.get()
+            advanceUntilIdle()
+            controller.setMessageInput("hi @Jane and @")
+            controller.selectMention(user.copy(online = true))
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            val saved = fixture.savedDraft()
+            assertEquals(listOf(user.id), saved.mentionedUsersIds)
+            assertEquals(listOf(user.id), saved.mentionedUsers.map(User::id))
+        }
+
+    @Test
+    fun `Given a selected here mention When the mode changes and back Then the mention is still selected`() = runTest {
+        val parentMessage = randomMessage(cid = CID)
+        val controller = draftFixture().get()
+        advanceUntilIdle()
+        controller.setMessageInput("@")
+        controller.selectMention(Mention.Here)
+
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        advanceUntilIdle()
+        controller.setMessageMode(MessageMode.Normal)
+        advanceUntilIdle()
+
+        assertTrue(Mention.Here in controller.state.value.selectedMentions)
+    }
+
+    @Test
+    fun `Given a draft with mentioned user ids only When the composer closes Then the ids are kept`() = runTest {
+        val draft = DraftMessage(id = "draft", cid = CID, text = "hi @Jane", mentionedUsersIds = listOf("jane"))
+        val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+        val controller = fixture.get()
+        advanceUntilIdle()
+        controller.setMessageInput("hi @Jane, again")
+
+        controller.onCleared()
+        advanceUntilIdle()
+
+        assertEquals(listOf("jane"), fixture.savedDraft().mentionedUsersIds)
+    }
+
+    @Test
+    fun `Given a draft with a mentioned user id only When the user is picked again Then the draft has the id once`() =
+        runTest {
+            val draft = DraftMessage(id = "draft", cid = CID, text = "hi @Jane ", mentionedUsersIds = listOf("jane"))
+            val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+            val controller = fixture.get()
+            advanceUntilIdle()
+            controller.setMessageInput("hi @Jane and @")
+            controller.selectMention(User(id = "jane", name = "Jane"))
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            assertEquals(listOf("jane"), fixture.savedDraft().mentionedUsersIds)
+        }
+
+    private fun remoteAttachment(name: String = randomString()) = Attachment(
+        type = "image",
+        name = name,
+        imageUrl = "https://cdn.getstream.io/${randomString()}.jpg",
+    )
+
+    private fun draftFixture(
+        channelDrafts: Map<String, DraftMessage> = mapOf(),
+        threadDrafts: Map<String, DraftMessage> = mapOf(),
+        members: List<Member> = emptyList(),
+        config: MessageComposerController.Config = MessageComposerController.Config(),
+        commands: List<Command> = emptyList(),
+    ) = Fixture()
+        .givenConfig(config)
+        .givenAppSettings()
+        .givenAudioPlayer(mock())
+        .givenClientState(randomUser())
+        .givenGlobalState(channelDrafts = channelDrafts, threadDrafts = threadDrafts)
+        .givenChannelState(
+            configState = MutableStateFlow(Config(commands = commands)),
+            membersState = MutableStateFlow(members),
+        )
+        .givenDraftMessageStubs()
+        .givenStopTyping()
+
     private fun givenThreadFixture() = Fixture()
         .givenAppSettings()
         .givenAudioPlayer(mock())
@@ -3351,6 +3822,12 @@ internal class MessageComposerControllerTest {
         ) = apply {
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(channelDrafts)
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
+        }
+
+        fun savedDraft(): DraftMessage {
+            val captor = argumentCaptor<DraftMessage>()
+            verify(chatClient).createDraftMessage(eq(CHANNEL_TYPE), eq(CHANNEL_ID), captor.capture())
+            return captor.firstValue
         }
 
         fun get(parentMessageId: String? = null): MessageComposerController {

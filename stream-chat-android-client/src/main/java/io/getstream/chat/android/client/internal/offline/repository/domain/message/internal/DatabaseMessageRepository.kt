@@ -192,7 +192,7 @@ internal class DatabaseMessageRepository(
 
     override suspend fun insertDraftMessage(message: DraftMessage) {
         message.replyMessage?.let { insertMessage(it) }
-        messageDao.insertDraftMessages(message.toEntity())
+        messageDao.replaceDraftMessage(message.toEntity())
     }
 
     override suspend fun deleteDraftMessage(message: DraftMessage) {
@@ -207,13 +207,13 @@ internal class DatabaseMessageRepository(
     }
 
     override suspend fun selectDraftMessages(): List<DraftMessage> = messageDao.selectDraftMessages()
-        .map { it.toModel(::selectMessage) }
+        .map { it.toModel(::selectMessage, getUser) }
 
     override suspend fun selectDraftMessagesByCid(cid: String): DraftMessage? = messageDao.selectDraftMessageByCid(cid)
-        ?.toModel(::selectMessage)
+        ?.toModel(::selectMessage, getUser)
 
     override suspend fun selectDraftMessageByParentId(parentId: String): DraftMessage? =
-        messageDao.selectDraftMessageByParentId(parentId)?.toModel(::selectMessage)
+        messageDao.selectDraftMessageByParentId(parentId)?.toModel(::selectMessage, getUser)
 
     /**
      * Deletes all messages before a message with passed ID.

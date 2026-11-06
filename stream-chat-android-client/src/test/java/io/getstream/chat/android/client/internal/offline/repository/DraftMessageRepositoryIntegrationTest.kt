@@ -18,9 +18,11 @@ package io.getstream.chat.android.client.internal.offline.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.internal.offline.integration.BaseDomainTest2
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
@@ -38,6 +40,65 @@ internal class DraftMessageRepositoryIntegrationTest : BaseDomainTest2() {
         repos.insertDraftMessage(draft)
 
         repos.selectDraftMessagesByCid(draft.cid) shouldBeEqualTo draft
+    }
+
+    @Test
+    fun `inserting a draft with attachments and reading it back should keep the attachments`(): Unit = runTest {
+        val attachments = listOf(
+            Attachment(type = "image", name = randomString(), imageUrl = randomString()),
+            Attachment(type = "file", name = randomString(), assetUrl = randomString(), extraData = mapOf("key" to "value")),
+        )
+        val draft = randomDraftMessage(parentId = null, replyMessage = null, attachments = attachments)
+
+        repos.insertDraftMessage(draft)
+
+        repos.selectDraftMessagesByCid(draft.cid) shouldBeEqualTo draft
+    }
+
+    @Test
+    fun `inserting a draft with mentioned users and reading it back should keep the users`(): Unit = runTest {
+        val draft = randomDraftMessage(parentId = null, replyMessage = null, mentionedUsers = listOf(randomUser()))
+
+        repos.insertDraftMessage(draft)
+
+        repos.selectDraftMessagesByCid(draft.cid) shouldBeEqualTo draft
+    }
+
+    @Test
+    fun `inserting a channel draft with a new id should keep the thread drafts of the channel`(): Unit = runTest {
+        val threadDraft = randomDraftMessage(parentId = randomString(), replyMessage = null)
+        val older = randomDraftMessage(cid = threadDraft.cid, parentId = null, replyMessage = null)
+        val newer = randomDraftMessage(cid = threadDraft.cid, parentId = null, replyMessage = null)
+        repos.insertDraftMessage(threadDraft)
+        repos.insertDraftMessage(older)
+
+        repos.insertDraftMessage(newer)
+
+        repos.selectDraftMessages() shouldContainSame listOf(threadDraft, newer)
+    }
+
+    @Test
+    fun `inserting a channel draft with a new id should replace the older draft of the channel`(): Unit = runTest {
+        val older = randomDraftMessage(parentId = null, replyMessage = null)
+        val newer = randomDraftMessage(cid = older.cid, parentId = null, replyMessage = null)
+        repos.insertDraftMessage(older)
+
+        repos.insertDraftMessage(newer)
+
+        repos.selectDraftMessages() shouldContainSame listOf(newer)
+    }
+
+    @Test
+    fun `inserting a thread draft with a new id should replace only the older draft of the thread`(): Unit = runTest {
+        val channelDraft = randomDraftMessage(parentId = null, replyMessage = null)
+        val older = randomDraftMessage(cid = channelDraft.cid, parentId = randomString(), replyMessage = null)
+        val newer = randomDraftMessage(cid = channelDraft.cid, parentId = older.parentId, replyMessage = null)
+        repos.insertDraftMessage(channelDraft)
+        repos.insertDraftMessage(older)
+
+        repos.insertDraftMessage(newer)
+
+        repos.selectDraftMessages() shouldContainSame listOf(channelDraft, newer)
     }
 
     @Test

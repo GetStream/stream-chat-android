@@ -295,7 +295,6 @@ public fun randomDraftMessage(
     parentId = parentId,
     attachments = attachments,
     mentionedUsersIds = mentionedUsers.map(User::id).toMutableList(),
-
     extraData = extraData,
     silent = silent,
     showInChannel = showInChannel,
@@ -303,6 +302,7 @@ public fun randomDraftMessage(
     command = command,
     args = args,
     createdAt = createdAt,
+    mentionedUsers = mentionedUsers,
 )
 
 public fun randomQueryDraftsResult(

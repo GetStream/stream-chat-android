@@ -118,6 +118,19 @@ internal interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDraftMessages(draftMessage: DraftMessageEntity)
 
+    /**
+     * Stores [draftMessage] as the only draft of its channel or thread. A channel or thread has one draft, but its ID
+     * can change when another client saves it, so the rows with an older ID are removed.
+     */
+    @Transaction
+    suspend fun replaceDraftMessage(draftMessage: DraftMessageEntity) {
+        when (val parentId = draftMessage.parentId) {
+            null -> deleteDraftMessageByCid(draftMessage.cid)
+            else -> deleteDraftMessageByParentId(parentId)
+        }
+        insertDraftMessages(draftMessage)
+    }
+
     @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME")
     suspend fun selectDraftMessages(): List<DraftMessageEntity>
 
