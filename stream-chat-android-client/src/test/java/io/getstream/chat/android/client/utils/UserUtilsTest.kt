@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.utils
 
+import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelMute
 import io.getstream.chat.android.randomMute
@@ -117,9 +118,9 @@ internal class UserUtilsTest {
             createdAt = Date(0),
             updatedAt = Date(1_000),
             name = "Old",
-            privacySettings = randomPrivacySettings(),
+            privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = true)),
         )
-        val thatPrivacySettings = randomPrivacySettings()
+        val thatPrivacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = false))
         val thatUser = randomUser(
             createdAt = Date(0),
             updatedAt = Date(1_000),

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.testing.TestLifecycleOwner
+import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.clientstate.DisconnectCause
@@ -109,7 +110,7 @@ internal class ChatClientTest {
     private val user = randomUser(
         id = userId,
         updatedAt = randomDateBefore(Date()),
-        privacySettings = randomPrivacySettings(),
+        privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = true)),
     )
     private val tokenUtils: TokenUtils = mock()
 
@@ -342,7 +343,7 @@ internal class ChatClientTest {
 
     @Test
     fun `Given connected user When handle user updated event Should apply its privacy settings`() {
-        val privacySettings = randomPrivacySettings()
+        val privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = false))
         val eventUser = user.copy(updatedAt = Date(), privacySettings = privacySettings)
 
         fakeChatSocket.mockEventReceived(userUpdatedEvent(eventUser))
@@ -352,7 +353,7 @@ internal class ChatClientTest {
 
     @Test
     fun `Given connected user When handle user updated event changing only privacy settings Should apply them`() {
-        val privacySettings = randomPrivacySettings()
+        val privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = false))
         // Changing only the privacy settings doesn't move updatedAt
         val eventUser = user.copy(privacySettings = privacySettings)
 
@@ -367,7 +368,7 @@ internal class ChatClientTest {
 
         // Subscribers to the user get a copy without privacy settings, possibly before the user's own copy
         fakeChatSocket.mockEventReceived(userUpdatedEvent(strippedUser))
-        val privacySettings = randomPrivacySettings()
+        val privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = false))
         fakeChatSocket.mockEventReceived(userUpdatedEvent(strippedUser.copy(privacySettings = privacySettings)))
 
         val currentUser = client.getCurrentUser()

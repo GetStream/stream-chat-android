@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.plugin.Plugin
@@ -282,9 +283,9 @@ internal class ChatClientUserApiTests : BaseChatClientTest() {
     fun partialUpdateUserSuccessUpdatesPrivacySettings() = runTest {
         // given
         val id = randomString()
-        val currentUser = randomUser(id = id, updatedAt = Date(1_000), privacySettings = randomPrivacySettings())
+        val currentUser = randomUser(id = id, updatedAt = Date(1_000), privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = true)))
         // Changing only the privacy settings doesn't move updatedAt
-        val updatedUser = currentUser.copy(privacySettings = randomPrivacySettings())
+        val updatedUser = currentUser.copy(privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = false)))
         val sut = Fixture()
             .givenPartialUpdateUserResult(RetroSuccess(listOf(updatedUser)).toRetrofitCall())
             .givenUserState(currentUser)
