@@ -22,11 +22,12 @@ import io.getstream.chat.android.models.User
 
 /**
  * Partially merges [that] user data into [this] user data if [that] is more up to date. Own-user fields, such as
- * mutes, are kept from [this].
+ * mutes, are kept from [this], and so are privacy settings when [that] has none. When [that] has the same updatedAt
+ * as [this], only its privacy settings are taken.
  */
 @InternalStreamChatApi
-public fun User.mergePartially(that: User): User =
-    if (that.isMoreUpToDateThan(this)) {
+public fun User.mergePartially(that: User): User = when {
+    that.isMoreUpToDateThan(this) ->
         this.copy(
             role = that.role,
             createdAt = that.createdAt,
@@ -36,7 +37,8 @@ public fun User.mergePartially(that: User): User =
             banned = that.banned,
             name = that.name,
             image = that.image,
-            privacySettings = that.privacySettings,
+            // Stored privacy settings can't be cleared, so a payload without them just doesn't carry them
+            privacySettings = that.privacySettings ?: privacySettings,
             extraData = that.extraData,
             language = that.language,
             teams = that.teams,
@@ -44,9 +46,14 @@ public fun User.mergePartially(that: User): User =
             deactivatedAt = that.deactivatedAt,
             avgResponseTime = that.avgResponseTime ?: avgResponseTime,
         )
-    } else {
-        this
-    }
+    // Changing only the privacy settings doesn't move updatedAt
+    that.updatedAt != null &&
+        that.updatedAt == updatedAt &&
+        that.privacySettings != null &&
+        that.privacySettings != privacySettings ->
+        this.copy(privacySettings = that.privacySettings)
+    else -> this
+}
 
 private fun User.isMoreUpToDateThan(that: User): Boolean =
     (this.createdAt ?: NEVER) > (that.createdAt ?: NEVER) ||

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.plugin.Plugin
@@ -27,6 +28,7 @@ import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomPrivacySettings
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.randomUserBlock
@@ -275,6 +277,26 @@ internal class ChatClientUserApiTests : BaseChatClientTest() {
         assertEquals("New", storedUser.name)
         assertEquals(Date(2_000), storedUser.updatedAt)
         verify(userStateService).onUserUpdated(storedUser)
+    }
+
+    @Test
+    fun partialUpdateUserSuccessUpdatesPrivacySettings() = runTest {
+        // given
+        val id = randomString()
+        val currentUser = randomUser(id = id, updatedAt = Date(1_000), privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = true)))
+        // Changing only the privacy settings doesn't move updatedAt
+        val updatedUser = currentUser.copy(privacySettings = randomPrivacySettings(typingIndicators = TypingIndicators(enabled = false)))
+        val sut = Fixture()
+            .givenPartialUpdateUserResult(RetroSuccess(listOf(updatedUser)).toRetrofitCall())
+            .givenUserState(currentUser)
+            .givenClientState(currentUser)
+            .get()
+        // when
+        val privacySettings = mapOf("typing_indicators" to mapOf("enabled" to false))
+        sut.partialUpdateUser(id, mapOf("privacy_settings" to privacySettings)).await()
+        // then
+        val storedUser = argumentCaptor<User>().apply { verify(mutableClientState).setUser(capture()) }.firstValue
+        assertEquals(updatedUser.privacySettings, storedUser.privacySettings)
     }
 
     @Test
