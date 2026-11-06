@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.IntentCompat
+import androidx.core.os.BundleCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -132,8 +133,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             return
         }
 
-        uiState = savedInstanceState?.getParcelable(KeyMediaGalleryPreviewActivityState)
-            ?: intent?.getParcelableExtra(KeyMediaGalleryPreviewActivityState)
+        uiState = savedInstanceState?.let {
+            BundleCompat.getParcelable(
+                it,
+                KeyMediaGalleryPreviewActivityState,
+                MediaGalleryPreviewActivityState::class.java,
+            )
+        } ?: intent?.getParcelable(KeyMediaGalleryPreviewActivityState)
 
         val videoThumbnailsEnabled = intent?.getBooleanExtra(KeyVideoThumbnailsEnabled, true) ?: true
         val streamCdnImageResizing = intent?.createStreamCdnImageResizing()

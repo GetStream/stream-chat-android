@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.core.content.IntentCompat
 import io.getstream.chat.android.ui.feature.gallery.internal.AttachmentGalleryRepository
 import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 
@@ -95,6 +96,12 @@ private class AttachmentGalleryResultContract :
         if (resultCode != Activity.RESULT_OK) {
             return null
         }
-        return intent?.getParcelableExtra(AttachmentGalleryActivity.EXTRA_ATTACHMENT_OPTION_RESULT)
+        return intent?.let {
+            IntentCompat.getParcelableExtra(
+                it,
+                AttachmentGalleryActivity.EXTRA_ATTACHMENT_OPTION_RESULT,
+                AttachmentGalleryActivity.AttachmentOptionResult::class.java,
+            )
+        }
     }
 }
