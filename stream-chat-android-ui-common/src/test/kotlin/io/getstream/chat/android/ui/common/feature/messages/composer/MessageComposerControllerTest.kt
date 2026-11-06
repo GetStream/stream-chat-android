@@ -2862,6 +2862,48 @@ internal class MessageComposerControllerTest {
         }
 
     @Test
+    fun `Given a draft with the same image twice When the user removes one Then the draft keeps the other`() =
+        runTest {
+            val image = remoteAttachment()
+            val draft = DraftMessage(id = "draft", cid = CID, attachments = listOf(image, image))
+            val fixture = draftFixture(channelDrafts = mapOf(CID to draft))
+            val controller = fixture.get()
+            advanceUntilIdle()
+            assertEquals(listOf(image, image), controller.state.value.attachments)
+
+            controller.removeAttachment(image)
+            controller.onCleared()
+            advanceUntilIdle()
+
+            assertEquals(listOf(image), fixture.savedDraft().attachments)
+        }
+
+    @Test
+    fun `Given an uploaded attachment restored from the session When the draft is saved Then it is not saved`() =
+        runTest {
+            val savedStateHandle = SavedStateHandle()
+            val appAttachment = remoteAttachment()
+            ComposerSessionRepository(savedStateHandle).save(selectedAttachments = listOf(appAttachment), editMode = null)
+            val draft = DraftMessage(id = "draft", cid = CID, text = "draft text")
+            val fixture = Fixture(savedStateHandle = savedStateHandle)
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState(channelDrafts = mapOf(CID to draft))
+                .givenChannelState()
+                .givenDraftMessageStubs()
+                .givenStopTyping()
+            val controller = fixture.get()
+            advanceUntilIdle()
+            assertEquals(listOf(appAttachment.imageUrl), controller.state.value.attachments.map(Attachment::imageUrl))
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            assertTrue(fixture.savedDraft().attachments.isEmpty())
+        }
+
+    @Test
     fun `Given a draft with a link preview When the controller initializes Then the link preview is not shown`() =
         runTest {
             val attachment = remoteAttachment()

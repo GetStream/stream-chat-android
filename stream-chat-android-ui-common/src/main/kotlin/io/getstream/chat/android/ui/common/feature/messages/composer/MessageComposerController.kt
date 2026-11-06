@@ -261,6 +261,9 @@ public class MessageComposerController(
     // Keys of the staged attachments that were restored from the shown draft.
     private var draftAttachmentKeys: Set<String> = emptySet()
 
+    // Keys of the uploaded attachments restored from the composer session, whose copies miss some fields.
+    private var sessionAttachmentKeys: Set<String> = emptySet()
+
     // Holds the base attachments from the message being edited. Cleared when edit mode is dismissed.
     private val _editModeAttachments = MutableStateFlow<List<Attachment>>(emptyList())
 
@@ -479,6 +482,7 @@ public class MessageComposerController(
     private fun restoreSession() {
         val restoredAttachments = sessionRepository.restoreSelectedAttachments()
         if (restoredAttachments.isNotEmpty()) {
+            sessionAttachmentKeys = restoredAttachments.filter(Attachment::isRemote).map { it.attachmentKey() }.toSet()
             addAttachments(restoredAttachments)
         }
         sessionRepository.restoreEditMode()?.let { editMode ->
@@ -496,7 +500,7 @@ public class MessageComposerController(
         }.onEach { (selected, editMessage, editAttachments) ->
             sessionRepository.save(
                 // Draft attachments come back in full from the stored draft; the session copy keeps fewer fields.
-                selectedAttachments = selected.values.filterNot { isFromDraft(it) },
+                selectedAttachments = selected.filterKeys { it !in draftAttachmentKeys }.values.toList(),
                 editMode = editMessage?.let { ComposerSessionRepository.EditMode(it, editAttachments) },
             )
         }.launchIn(scope)
@@ -552,8 +556,10 @@ public class MessageComposerController(
         // In legacy mode the slash + name + args is encoded inside `text`, so command/args fields
         // would duplicate what's already there and confuse cross-SDK readers.
         val activeCommand = _state.value.activeCommand.takeIf { config.activeCommandEnabled }
-        // Only uploaded attachments can be shared through the server; local files stay out of the draft.
-        val attachments = _selectedAttachments.value.values.filter(Attachment::isRemote)
+        // Only uploaded attachments can be shared through the server; local files and session copies stay out.
+        val attachments = _selectedAttachments.value
+            .filter { (key, attachment) -> attachment.isRemote() && key !in sessionAttachmentKeys }
+            .values.toList()
         if (inputText.isEmpty() && activeCommand == null && attachments.isEmpty()) {
             // Only an emptied draft is deleted: one that never reached the input is still the user's
             if (isDraftShown) clearDraftMessage(messageMode)
@@ -608,8 +614,10 @@ public class MessageComposerController(
 
     /** Replaces the attachments restored from the previous draft with the new draft's. Other attachments stay. */
     private fun restoreDraftAttachments(attachments: List<Attachment>) {
-        // Link previews come back from the restored text.
-        val restored = attachments.filter { it.ogUrl == null }.associateBy { it.attachmentKey() }
+        // Link previews come back from the restored text. Keys by position, so equal attachments are all kept.
+        val restored = attachments.filter { it.ogUrl == null }
+            .withIndex()
+            .associate { (index, attachment) -> "$DRAFT_ATTACHMENT_KEY_PREFIX$index" to attachment }
         val previousKeys = draftAttachmentKeys
         // Set before the update, so the session observer already leaves the new draft attachments out.
         draftAttachmentKeys = restored.keys
@@ -618,8 +626,6 @@ public class MessageComposerController(
         }
         syncAttachments()
     }
-
-    private fun isFromDraft(attachment: Attachment): Boolean = attachment.attachmentKey() in draftAttachmentKeys
 
     /** Replaces the selected user mentions with the users mentioned in the draft. */
     private fun restoreDraftMentions(users: List<User>) {
@@ -766,7 +772,9 @@ public class MessageComposerController(
      * @param attachment The attachment to remove.
      */
     public fun removeAttachment(attachment: Attachment) {
-        val key = attachment.attachmentKey()
+        // Draft attachments are keyed by position, so the staged entry is found by its value first.
+        val key = _selectedAttachments.value.entries.firstOrNull { it.value == attachment }?.key
+            ?: attachment.attachmentKey()
         when {
             _selectedAttachments.value.containsKey(key) -> {
                 _selectedAttachments.update { LinkedHashMap(it).also { map -> map.remove(key) } }
@@ -1074,7 +1082,7 @@ public class MessageComposerController(
             it.copy(
                 // An edited message keeps its own attachments: the draft's are not added to it.
                 attachments = _editModeAttachments.value +
-                    _selectedAttachments.value.values.filterNot { isInEditMode && isFromDraft(it) } +
+                    _selectedAttachments.value.filterKeys { !isInEditMode || it !in draftAttachmentKeys }.values +
                     listOfNotNull(_recordingAttachment.value),
             )
         }
@@ -1631,7 +1639,9 @@ public class MessageComposerController(
 private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI]?.toString()
 
 private fun Attachment.attachmentKey(): String =
-    sourceUriString() ?: assetUrl ?: imageUrl ?: "fallback:${name.orEmpty()}:${mimeType.orEmpty()}:$fileSize"
+    sourceUriString() ?: "fallback:${name.orEmpty()}:${mimeType.orEmpty()}:$fileSize"
+
+private const val DRAFT_ATTACHMENT_KEY_PREFIX = "draft:"
 
 /** An attachment that is already uploaded: it has no local file and no picked source URI to resolve. */
 private fun Attachment.isRemote(): Boolean = upload == null && sourceUriString() == null
