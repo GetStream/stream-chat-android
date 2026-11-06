@@ -100,7 +100,6 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         }
 
         override fun bind(attachment: Attachment) {
-            if (attachment.upload == null) return
             logger.d { "[bind] attachment: $attachment" }
             val audioPlayer = ChatClient.instance().audioPlayer
             val playerView = binding.playerView
@@ -150,12 +149,12 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
             hashCode: Int,
         ) {
             setOnPlayButtonClickListener {
-                val audioFile = attachment.upload ?: run {
-                    logger.w { "[toggleRecordingPlayback] rejected (audioFile is null)" }
+                // A recording restored from a draft is already uploaded, so it plays from its URL.
+                val audioUri = attachment.upload?.toUri()?.toString() ?: attachment.assetUrl ?: run {
+                    logger.w { "[toggleRecordingPlayback] rejected (no audio file or URL)" }
                     return@setOnPlayButtonClickListener
                 }
-                val fileUri = audioFile.toUri().toString()
-                audioPlayer.play(fileUri, hashCode)
+                audioPlayer.play(audioUri, hashCode)
             }
 
             setOnSpeedButtonClickListener {

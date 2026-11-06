@@ -22,6 +22,7 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -45,6 +46,7 @@ internal class DraftMessageTest {
             replyMessage = randomMessage(),
             command = randomString(),
             args = randomString(),
+            mentionedUsers = listOf(randomUser()),
         )
 
         val built = DraftMessage.Builder()
@@ -60,6 +62,7 @@ internal class DraftMessageTest {
             .withReplyMessage(expected.replyMessage)
             .withCommand(expected.command)
             .withArgs(expected.args)
+            .withMentionedUsers(expected.mentionedUsers)
             .build()
 
         assertEquals(expected, built)
@@ -72,6 +75,7 @@ internal class DraftMessageTest {
             extraData = mapOf(randomString() to randomString()),
             command = randomString(),
             args = randomString(),
+            mentionedUsers = listOf(randomUser()),
         )
 
         val built = DraftMessage.Builder(draft).build()

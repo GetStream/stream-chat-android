@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.messa
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.channelinfo.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.channelinfo.internal.toModel
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.toEntity
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
@@ -469,14 +470,28 @@ internal class MessageMapperTest {
     }
 
     @Test
+    fun `Should keep the attachments of a DraftMessage when mapping to the entity and back`() = runTest {
+        val attachments = listOf(
+            Attachment(type = "image", name = randomString(), imageUrl = randomString()),
+            Attachment(type = "file", name = randomString(), assetUrl = randomString()),
+        )
+        val draftMessage = randomDraftMessage(replyMessage = null, attachments = attachments)
+
+        val result = draftMessage.toEntity().toModel(getMessage = { null }, getUser = { User(id = it) })
+
+        assertEquals(attachments, result.attachments)
+    }
+
+    @Test
     fun `Should map DraftMessageEntity to DraftMessage correctly`() = runTest {
         val replyMessage = randomMessage()
+        val mentionedUser = randomUser()
         val draftMessageEntity = DraftMessageEntity(
             id = randomString(),
             cid = randomCID(),
             text = randomString(),
             parentId = randomString(),
-            mentionedUsersIds = listOf(randomString()),
+            mentionedUsersIds = listOf(mentionedUser.id),
             silent = randomBoolean(),
             showInChannel = randomBoolean(),
             replyMessageId = replyMessage.id,
@@ -499,13 +514,31 @@ internal class MessageMapperTest {
             args = draftMessageEntity.args,
             extraData = draftMessageEntity.extraData,
             createdAt = draftMessageEntity.createdAt,
+            mentionedUsers = listOf(mentionedUser),
         )
 
-        val result = draftMessageEntity.toModel { messageId ->
-            replyMessage.takeIf { messageId == replyMessage.id }
-        }
+        val result = draftMessageEntity.toModel(
+            getMessage = { messageId -> replyMessage.takeIf { messageId == replyMessage.id } },
+            getUser = { userId -> mentionedUser.takeIf { userId == it.id } ?: User(id = userId) },
+        )
 
         assertEquals(expectedDraftMessage, result)
+    }
+
+    @Test
+    fun `Should leave out mentioned users that are not stored when mapping a DraftMessageEntity`() = runTest {
+        val storedUser = randomUser()
+        val missingUserId = randomString()
+        val draftMessageEntity = randomDraftMessage(replyMessage = null).toEntity()
+            .copy(mentionedUsersIds = listOf(storedUser.id, missingUserId))
+
+        val result = draftMessageEntity.toModel(
+            getMessage = { null },
+            getUser = { userId -> storedUser.takeIf { userId == it.id } ?: User(id = userId) },
+        )
+
+        assertEquals(listOf(storedUser.id, missingUserId), result.mentionedUsersIds)
+        assertEquals(listOf(storedUser), result.mentionedUsers)
     }
 
     @Test

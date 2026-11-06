@@ -640,6 +640,7 @@ internal class DomainMappingTest {
                 command = "giphy",
                 args = "cat",
                 createdAt = draftMessageResponse.createdAt,
+                mentionedUsers = draftMessageResponse.message.mentionedUsers?.map { it.toDomain() }.orEmpty(),
             )
         }
 

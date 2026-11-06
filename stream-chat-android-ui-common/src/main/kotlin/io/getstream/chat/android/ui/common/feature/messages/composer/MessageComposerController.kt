@@ -258,6 +258,12 @@ public class MessageComposerController(
     // survive entering and exiting edit mode.
     private val _selectedAttachments = MutableStateFlow(linkedMapOf<String, Attachment>())
 
+    // Keys of the staged attachments that were restored from the shown draft.
+    private var draftAttachmentKeys: Set<String> = emptySet()
+
+    // Keys of the uploaded attachments restored from the composer session, whose copies miss some fields.
+    private var sessionAttachmentKeys: Set<String> = emptySet()
+
     // Holds the base attachments from the message being edited. Cleared when edit mode is dismissed.
     private val _editModeAttachments = MutableStateFlow<List<Attachment>>(emptyList())
 
@@ -476,6 +482,7 @@ public class MessageComposerController(
     private fun restoreSession() {
         val restoredAttachments = sessionRepository.restoreSelectedAttachments()
         if (restoredAttachments.isNotEmpty()) {
+            sessionAttachmentKeys = restoredAttachments.filter(Attachment::isRemote).map { it.attachmentKey() }.toSet()
             addAttachments(restoredAttachments)
         }
         sessionRepository.restoreEditMode()?.let { editMode ->
@@ -492,7 +499,8 @@ public class MessageComposerController(
             Triple(selected, editMessage, editAttachments)
         }.onEach { (selected, editMessage, editAttachments) ->
             sessionRepository.save(
-                selectedAttachments = selected.values.toList(),
+                // Draft attachments come back in full from the stored draft; the session copy keeps fewer fields.
+                selectedAttachments = selected.filterKeys { it !in draftAttachmentKeys }.values.toList(),
                 editMode = editMessage?.let { ComposerSessionRepository.EditMode(it, editAttachments) },
             )
         }.launchIn(scope)
@@ -548,17 +556,29 @@ public class MessageComposerController(
         // In legacy mode the slash + name + args is encoded inside `text`, so command/args fields
         // would duplicate what's already there and confuse cross-SDK readers.
         val activeCommand = _state.value.activeCommand.takeIf { config.activeCommandEnabled }
-        if (inputText.isEmpty() && activeCommand == null) {
+        // Only uploaded attachments can be shared through the server; local files and session copies stay out.
+        val attachments = _selectedAttachments.value
+            .filter { (key, attachment) -> attachment.isRemote() && key !in sessionAttachmentKeys }
+            .values.toList()
+        if (inputText.isEmpty() && activeCommand == null && attachments.isEmpty()) {
             // Only an emptied draft is deleted: one that never reached the input is still the user's
             if (isDraftShown) clearDraftMessage(messageMode)
             return
         }
-        getDraftMessageOrEmpty(messageMode).let {
+        val storedDraftMessage = getDraftMessageOrEmpty(messageMode)
+        val mentionedUsers = collectMentions(selectedMentions, inputText).users
+        // Mentioned users without a user object cannot be matched to the text, so their ids are kept as they are.
+        val unmatchedIds = storedDraftMessage.mentionedUsersIds -
+            storedDraftMessage.mentionedUsers.map(User::id).toSet()
+        storedDraftMessage.let {
             chatClient.createDraftMessage(
                 channelType = channelType,
                 channelId = channelId,
                 message = it.copy(
                     text = inputText,
+                    attachments = attachments,
+                    mentionedUsersIds = (mentionedUsers.map(User::id) + unmatchedIds).distinct(),
+                    mentionedUsers = mentionedUsers,
                     command = activeCommand?.name,
                     args = if (activeCommand != null) inputText else null,
                     showInChannel = _state.value.alsoSendToChannel,
@@ -587,7 +607,32 @@ public class MessageComposerController(
             val inputText = if (command != null) draftMessage.args ?: draftMessage.text else draftMessage.text
             setMessageInputInternal(inputText, MessageInput.Source.DraftMessage)
             setAlsoSendToChannel(draftMessage.showInChannel)
+            restoreDraftAttachments(draftMessage.attachments)
+            restoreDraftMentions(draftMessage.mentionedUsers)
         }
+    }
+
+    /** Replaces the attachments restored from the previous draft with the new draft's. Other attachments stay. */
+    private fun restoreDraftAttachments(attachments: List<Attachment>) {
+        // Link previews come back from the restored text. Keys by position, so equal attachments are all kept.
+        val restored = attachments.filter { it.ogUrl == null }
+            .withIndex()
+            .associate { (index, attachment) -> "$DRAFT_ATTACHMENT_KEY_PREFIX$index" to attachment }
+        val previousKeys = draftAttachmentKeys
+        // Set before the update, so the session observer already leaves the new draft attachments out.
+        draftAttachmentKeys = restored.keys
+        _selectedAttachments.update { current ->
+            LinkedHashMap(current.filterKeys { it !in previousKeys }).also { it.putAll(restored) }
+        }
+        syncAttachments()
+    }
+
+    /** Replaces the selected user mentions with the users mentioned in the draft. */
+    private fun restoreDraftMentions(users: List<User>) {
+        // Drafts store only user mentions, so the other kinds selected in this composer are kept.
+        selectedMentions.removeAll { it is Mention.User }
+        users.mapTo(selectedMentions, Mention::User)
+        _state.update { it.copy(selectedMentions = selectedMentions.toSet()) }
     }
 
     /**
@@ -691,10 +736,11 @@ public class MessageComposerController(
             _editModeAttachments.value = emptyList()
             selectedMentions.clear()
             _state.update { it.copy(selectedMentions = emptySet()) }
-            syncAttachments()
         }
 
         _messageActions.value = emptySet()
+        // Runs after the edit action is gone, so the draft's attachments show again.
+        syncAttachments()
     }
 
     /**
@@ -726,7 +772,9 @@ public class MessageComposerController(
      * @param attachment The attachment to remove.
      */
     public fun removeAttachment(attachment: Attachment) {
-        val key = attachment.attachmentKey()
+        // Draft attachments are keyed by position, so the staged entry is found by its value first.
+        val key = _selectedAttachments.value.entries.firstOrNull { it.value == attachment }?.key
+            ?: attachment.attachmentKey()
         when {
             _selectedAttachments.value.containsKey(key) -> {
                 _selectedAttachments.update { LinkedHashMap(it).also { map -> map.remove(key) } }
@@ -937,7 +985,7 @@ public class MessageComposerController(
             activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),
-                mentionedUsersIds = mentions.userIds,
+                mentionedUsersIds = mentions.users.map(User::id),
                 mentionedChannel = mentions.channel,
                 mentionedHere = mentions.here,
                 mentionedRoles = mentions.roles,
@@ -951,7 +999,7 @@ public class MessageComposerController(
                 replyMessageId = replyMessage?.id,
                 replyTo = replyMessage,
                 attachments = attachments.toMutableList(),
-                mentionedUsersIds = mentions.userIds,
+                mentionedUsersIds = mentions.users.map(User::id),
                 mentionedChannel = mentions.channel,
                 mentionedHere = mentions.here,
                 mentionedRoles = mentions.roles,
@@ -964,8 +1012,15 @@ public class MessageComposerController(
      * Drops any selected mention whose `@<token>` is no longer present in [message] and returns
      * the metadata to attach to the outgoing message.
      */
-    private fun filterMentions(selectedMentions: Set<Mention>, message: String): FilteredMentions {
-        val userIds = mutableListOf<String>()
+    private fun filterMentions(selectedMentions: Set<Mention>, message: String): FilteredMentions =
+        collectMentions(selectedMentions, message).also {
+            this.selectedMentions.clear()
+            _state.update { it.copy(selectedMentions = emptySet()) }
+        }
+
+    /** Returns the metadata of the [selectedMentions] whose `@<token>` is still present in [message]. */
+    private fun collectMentions(selectedMentions: Set<Mention>, message: String): FilteredMentions {
+        val users = mutableListOf<User>()
         val roles = mutableSetOf<String>()
         val groups = mutableMapOf<String, UserGroup>()
         var channel = false
@@ -973,7 +1028,7 @@ public class MessageComposerController(
         for (mention in selectedMentions) {
             if (mention.tokens.none { mentionRegex(it).containsMatchIn(message) }) continue
             when (mention) {
-                is Mention.User -> userIds += mention.user.id
+                is Mention.User -> users += mention.user
                 Mention.Channel -> channel = true
                 Mention.Here -> here = true
                 is Mention.Role -> roles += mention.role
@@ -981,10 +1036,8 @@ public class MessageComposerController(
                 else -> Unit // ignore custom mentions
             }
         }
-        this.selectedMentions.clear()
-        _state.update { it.copy(selectedMentions = emptySet()) }
         return FilteredMentions(
-            userIds = userIds,
+            users = users.distinctBy(User::id),
             channel = channel,
             here = here,
             roles = roles.toList(),
@@ -993,7 +1046,7 @@ public class MessageComposerController(
     }
 
     private data class FilteredMentions(
-        val userIds: List<String>,
+        val users: List<User>,
         val channel: Boolean,
         val here: Boolean,
         val roles: List<String>,
@@ -1027,8 +1080,9 @@ public class MessageComposerController(
     private fun syncAttachments() {
         _state.update {
             it.copy(
+                // An edited message keeps its own attachments: the draft's are not added to it.
                 attachments = _editModeAttachments.value +
-                    _selectedAttachments.value.values.toList() +
+                    _selectedAttachments.value.filterKeys { !isInEditMode || it !in draftAttachmentKeys }.values +
                     listOfNotNull(_recordingAttachment.value),
             )
         }
@@ -1586,3 +1640,8 @@ private fun Attachment.sourceUriString(): String? = extraData[EXTRA_SOURCE_URI]?
 
 private fun Attachment.attachmentKey(): String =
     sourceUriString() ?: "fallback:${name.orEmpty()}:${mimeType.orEmpty()}:$fileSize"
+
+private const val DRAFT_ATTACHMENT_KEY_PREFIX = "draft:"
+
+/** An attachment that is already uploaded: it has no local file and no picked source URI to resolve. */
+private fun Attachment.isRemote(): Boolean = upload == null && sourceUriString() == null

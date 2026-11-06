@@ -176,6 +176,8 @@ internal class SyncManager(
         if (!isDisposed) return
         eventsDisposable = chatClient.subscribe(::onEvent)
         rescueScope.launch { rescueEntitiesStuckInProgress() }
+        // Not tied to ConnectedEvent, so drafts also show when the app starts offline.
+        rescueScope.launch { syncOfflineDraftMessages() }
     }
 
     override fun stop() {

@@ -159,6 +159,7 @@ internal class SyncManagerTest {
                 on(it.selectChannels(any<List<String>>())) doReturn emptyList()
                 on(it.selectMessageIdsBySyncState(any())) doReturn emptyList()
                 on(it.selectReactionIdsBySyncStatus(any())) doReturn emptyList()
+                on(it.selectDraftMessages()) doReturn emptyList()
             }
         }
     }
@@ -1162,6 +1163,17 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectDraftMessages()).thenReturn(draftMessages)
 
         sut.onEvent(event = randomConnectedEvent())
+
+        draftMessages.forEach(verify(mutableGlobalState)::updateDraftMessage)
+    }
+
+    @Test
+    fun `start should sync offline draft messages without a connected event`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val draftMessages = listOf(randomDraftMessage(), randomDraftMessage())
+        whenever(repositoryFacade.selectDraftMessages()).thenReturn(draftMessages)
+
+        sut.start()
 
         draftMessages.forEach(verify(mutableGlobalState)::updateDraftMessage)
     }
