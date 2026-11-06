@@ -39,7 +39,6 @@ import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.ChannelStateResponseFields
-import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
@@ -47,9 +46,7 @@ import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeleteMessageResponse
 import io.getstream.chat.android.network.models.DeleteReactionResponse
 import io.getstream.chat.android.network.models.DeleteReminderResponse
-import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
-import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.GetRepliesResponse
@@ -67,7 +64,6 @@ import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryChannelsResponse
-import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryThreadsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
@@ -113,10 +109,7 @@ import org.mockito.kotlin.whenever
 internal object MoshiChatApiTestArguments {
 
     @JvmStatic
-    fun appSettingsInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomAppSettingsResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<GetApplicationResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun appSettingsInput() = endpointArgs(Mother.randomAppSettingsResponse())
 
     @JvmStatic
     fun sendMessageInput() =
@@ -126,13 +119,10 @@ internal object MoshiChatApiTestArguments {
     fun createDraftMessageInput() = draftMessageResponseArguments()
 
     @JvmStatic
-    fun queryDraftMessageInput() = listOf(
-        Arguments.of(
-            RetroSuccess(Mother.randomQueryDraftsResponse()).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<QueryDraftsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun deleteDraftMessageInput() = endpointArgs(Response(randomString()))
+
+    @JvmStatic
+    fun queryDraftMessageInput() = endpointArgs(Mother.randomQueryDraftsResponse())
 
     @JvmStatic
     fun updateMessageInput() =
@@ -256,21 +246,14 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun addDeviceInput() = completableResponseArguments()
+    fun addDeviceInput() = endpointArgs(Response(randomString()))
 
     @JvmStatic
-    fun deleteDeviceInput() = completableResponseArguments()
+    fun deleteDeviceInput() = endpointArgs(Response(randomString()))
 
     @JvmStatic
-    fun getDevicesInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                ListDevicesResponse(duration = randomString(), devices = listOf(Mother.randomDeviceResponse())),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<ListDevicesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun getDevicesInput() =
+        endpointArgs(ListDevicesResponse(duration = randomString(), devices = listOf(Mother.randomDeviceResponse())))
 
     @JvmStatic
     fun muteCurrentUserInput() = muteUserResponseArguments()
@@ -492,10 +475,7 @@ internal object MoshiChatApiTestArguments {
         responseArguments(TranslateMessageResponse(duration = "1ms", message = Mother.randomMessageResponse()))
 
     @JvmStatic
-    fun ogInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomGetOGResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<GetOGResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun ogInput() = endpointArgs(Mother.randomGetOGResponse())
 
     @JvmStatic
     fun searchMessagesInput() = searchMessagesResponseArguments()
@@ -949,13 +929,7 @@ internal object MoshiChatApiTestArguments {
 
     private fun getMessageResponseArguments() = responseArguments(GetMessageResponseParityTest.getMessageResponse())
 
-    private fun draftMessageResponseArguments() = listOf(
-        Arguments.of(
-            RetroSuccess(Mother.randomCreateDraftResponse()).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<CreateDraftResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    private fun draftMessageResponseArguments() = endpointArgs(Mother.randomCreateDraftResponse())
 
     private fun repliesResponseArguments() = listOf(
         Arguments.of(
@@ -1050,11 +1024,6 @@ internal object MoshiChatApiTestArguments {
     private fun pollVoteResponseArguments() =
         endpointArgs(PollVoteResponse(duration = randomString(), vote = Mother.randomPollVoteResponseData()))
 
-    private fun <T : Any> responseArgs(success: T) = listOf(
-        Arguments.of(RetroSuccess(success).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<T>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
-
     /** A response or the exception a generated suspend endpoint throws, with the result each must give. */
     private fun <T : Any> endpointArgs(success: T) = listOf(
         Arguments.of(success, Result.Success::class),
@@ -1065,43 +1034,36 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun createUserGroupResponseInput() =
-        responseArgs(CreateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        endpointArgs(CreateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun getUserGroupResponseInput() =
-        responseArgs(GetUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        endpointArgs(GetUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun updateUserGroupResponseInput() =
-        responseArgs(UpdateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        endpointArgs(UpdateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun addUserGroupMembersResponseInput() =
-        responseArgs(AddUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
+        endpointArgs(AddUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun removeUserGroupMembersResponseInput() =
-        responseArgs(RemoveUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
+        endpointArgs(RemoveUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun listUserGroupsResponseInput() =
-        responseArgs(ListUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
+        endpointArgs(ListUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
 
     @JvmStatic
     fun searchUserGroupsResponseInput() =
-        responseArgs(SearchUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
+        endpointArgs(SearchUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
 
     @JvmStatic
-    fun deleteUserGroupInput() = completableResponseArguments()
+    fun deleteUserGroupInput() = endpointArgs(Response(randomString()))
 
     @JvmStatic
-    fun searchRolesInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                SearchRolesResponse(duration = randomString(), roles = listOf(Mother.randomRoleDto())),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<SearchRolesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun searchRolesInput() =
+        endpointArgs(SearchRolesResponse(duration = randomString(), roles = listOf(Mother.randomRoleDto())))
 }

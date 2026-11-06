@@ -23,7 +23,6 @@ import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.SearchPayload
 import io.getstream.chat.android.network.models.SearchResponse
-import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -38,7 +37,4 @@ internal interface GeneralApi {
     fun queryMembers(
         @UrlQueryPayload @Query("payload") payload: QueryMembersPayload,
     ): RetrofitCall<MembersResponse>
-
-    @GET("/api/v2/chat/unread")
-    fun getUnreadCounts(): RetrofitCall<WrappedUnreadCountsResponse>
 }

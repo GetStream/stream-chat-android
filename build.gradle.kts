@@ -46,8 +46,8 @@ streamProject {
             "stream-chat-android-ui-common",
         )
         sonarExclusions = listOf(
-            // Generated OpenAPI models
-            "**/io/getstream/chat/android/network/models/**",
+            // Generated OpenAPI models and endpoints
+            "**/io/getstream/chat/android/network/**",
         )
     }
 
