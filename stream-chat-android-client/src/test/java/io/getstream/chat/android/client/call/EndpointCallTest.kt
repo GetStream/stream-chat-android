@@ -28,6 +28,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldContain
 import org.junit.jupiter.api.Test
 import java.io.IOException
 
@@ -49,6 +50,10 @@ internal class EndpointCallTest {
         val result = endpointCall<String>(parser, scope()) { throw error.toHttpException() }.await()
 
         result shouldBeEqualTo error.toRetrofitCall().await()
+        val failure = (result as Result.Failure).value as Error.NetworkError
+        failure.serverErrorCode shouldBeEqualTo 17
+        failure.statusCode shouldBeEqualTo 403
+        failure.message shouldContain "Not allowed"
     }
 
     @Test
