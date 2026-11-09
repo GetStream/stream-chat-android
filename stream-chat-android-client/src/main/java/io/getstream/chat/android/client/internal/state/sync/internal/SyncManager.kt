@@ -83,6 +83,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.Collections
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
@@ -173,7 +174,8 @@ internal class SyncManager(
     private var liveLocationEndJob: Job? = null
 
     /** Ended live locations the server was not told about yet, sent on the next connection. */
-    private val endedLiveLocationsToNotify = ConcurrentHashMap.newKeySet<String>()
+    private val endedLiveLocationsToNotify: MutableSet<String> =
+        Collections.newSetFromMap(ConcurrentHashMap<String, Boolean>())
 
     override fun start() {
         logger.d { "[start] no args" }
