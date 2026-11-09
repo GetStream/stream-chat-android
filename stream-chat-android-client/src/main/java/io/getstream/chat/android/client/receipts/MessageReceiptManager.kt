@@ -131,7 +131,6 @@ internal class MessageReceiptManager(
             // The read state is only returned with the channel state, and only when at least one member is loaded.
             // The current user's read is always included, so a single member is enough.
             val request = QueryChannelRequest()
-                .withState()
                 .withMessages(limit = 0)
                 .withMembers(limit = 1, offset = 0)
             api.queryChannel(channelType, channelId, request)
