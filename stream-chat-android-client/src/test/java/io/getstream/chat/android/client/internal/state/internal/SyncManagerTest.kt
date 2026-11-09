@@ -1185,7 +1185,7 @@ internal class SyncManagerTest {
     @Test
     fun `a live location ends on time while offline without a server call`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
-        val location = randomLocation(endAt = Date(currentTime + 100))
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
         val activeLiveLocations = MutableStateFlow(listOf(location))
         whenever(mutableGlobalState.activeLiveLocations) doReturn activeLiveLocations
 
@@ -1204,7 +1204,7 @@ internal class SyncManagerTest {
         runTest(testDispatcher) {
             val sut = buildSyncManager()
             val message = randomMessage()
-            val location = randomLocation(messageId = message.id, endAt = Date(currentTime + 100))
+            val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
             whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
             whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)) doReturn
                 message.asCall()
@@ -1221,7 +1221,7 @@ internal class SyncManagerTest {
     fun `a live location that ends online is ended locally and sent to the server`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
         val message = randomMessage()
-        val location = randomLocation(messageId = message.id, endAt = Date(currentTime + 100))
+        val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
         whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
         whenever(clientState.isOnline) doReturn true
         whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)) doReturn
@@ -1237,7 +1237,7 @@ internal class SyncManagerTest {
     @Test
     fun `a live location with a new end time ends at the new end time`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
-        val location = randomLocation(endAt = Date(currentTime + 100))
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
         val extendedLocation = location.copy(endAt = Date(currentTime + 300))
         val activeLiveLocations = MutableStateFlow(listOf(location))
         whenever(mutableGlobalState.activeLiveLocations) doReturn activeLiveLocations
@@ -1256,7 +1256,7 @@ internal class SyncManagerTest {
         runTest(testDispatcher) {
             val sut = buildSyncManager()
             val message = randomMessage()
-            val location = randomLocation(messageId = message.id, endAt = Date(currentTime + 100))
+            val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
             whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
             whenever(clientState.isOnline) doReturn true
             val temporaryError = Error.NetworkError(serverErrorCode = 0, message = "boom", statusCode = 500)
@@ -1275,7 +1275,7 @@ internal class SyncManagerTest {
     fun `a live location update that failed with a permanent error is not sent again`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
         val message = randomMessage()
-        val location = randomLocation(messageId = message.id, endAt = Date(currentTime + 100))
+        val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
         whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
         whenever(clientState.isOnline) doReturn true
         val permanentError = Error.NetworkError(serverErrorCode = 17, message = "not allowed", statusCode = 403)
@@ -1293,7 +1293,7 @@ internal class SyncManagerTest {
     fun `a live location update that failed with a non-network error is not sent again`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
         val message = randomMessage()
-        val location = randomLocation(messageId = message.id, endAt = Date(currentTime + 100))
+        val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
         whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
         whenever(clientState.isOnline) doReturn true
         whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)) doReturn
@@ -1307,9 +1307,24 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `a live location that was already ended is not sent to the server`() = runTest(testDispatcher) {
+    fun `another member's live location is ended locally without a server call`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
         val location = randomLocation(endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+        whenever(clientState.isOnline) doReturn true
+
+        sut.start()
+        advanceTimeBy(101)
+        sut.onEvent(randomConnectedEvent())
+
+        verify(mutableGlobalState).endLiveLocation(location)
+        verify(chatClient, never()).partialUpdateMessage(any(), any(), any())
+    }
+
+    @Test
+    fun `a live location that was already ended is not sent to the server`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
         whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
         whenever(mutableGlobalState.endLiveLocation(location)) doReturn false
         whenever(clientState.isOnline) doReturn true
@@ -1324,7 +1339,7 @@ internal class SyncManagerTest {
     @Test
     fun `stop drops the live location updates not sent yet`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
-        val location = randomLocation(endAt = Date(currentTime + 100))
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
         whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
 
         sut.start()
@@ -1343,8 +1358,8 @@ internal class SyncManagerTest {
         val message2 = randomMessage()
         mutableGlobalState.addLiveLocations(
             listOf(
-                randomLocation(messageId = message1.id, endAt = Date(currentTime + 100)),
-                randomLocation(messageId = message2.id, endAt = Date(currentTime + 200)),
+                randomLocation(userId = user.id, messageId = message1.id, endAt = Date(currentTime + 100)),
+                randomLocation(userId = user.id, messageId = message2.id, endAt = Date(currentTime + 200)),
             ),
         )
         whenever(clientState.isOnline) doReturn true
@@ -1364,7 +1379,7 @@ internal class SyncManagerTest {
     @Test
     fun `stop cancels the end of live locations`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
-        val location = randomLocation(endAt = Date(currentTime + 100))
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
         whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
         whenever(clientState.isOnline) doReturn true
 

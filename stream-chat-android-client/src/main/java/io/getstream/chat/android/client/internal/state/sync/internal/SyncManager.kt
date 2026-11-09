@@ -235,6 +235,8 @@ internal class SyncManager(
         logger.v { "[endLiveLocationOnTime] live location sharing ended at $endAt, messageId: ${location.messageId}" }
         // Only the call that removes it tells the server, so a restarted timer can't send it twice.
         if (!mutableGlobalState.endLiveLocation(location)) return
+        // Only the sharer can update the message; other members' clients only end it locally.
+        if (location.userId != currentUserId) return
         val messageId = location.messageId
         if (clientState.isOnline) {
             rescueScope.launch { if (!notifyLiveLocationEnded(messageId)) endedLiveLocationsToNotify += messageId }
