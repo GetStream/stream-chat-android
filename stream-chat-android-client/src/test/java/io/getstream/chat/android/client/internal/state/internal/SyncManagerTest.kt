@@ -58,7 +58,6 @@ import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.InFilterObject
-import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
@@ -89,6 +88,7 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should not be`
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -134,6 +134,7 @@ internal class SyncManagerTest {
 
     private val connectionState = MutableStateFlow(ConnectionState.Offline)
     private val streamDateFormatter = StreamDateFormatter()
+    private val liveLocationEndedSet = mapOf("live_location_sharing_ended" to true)
 
     @BeforeEach
     fun setUp() {
@@ -151,7 +152,10 @@ internal class SyncManagerTest {
         clientState = mock {
             on(it.connectionState) doReturn connectionState
         }
-        mutableGlobalState = mock()
+        mutableGlobalState = mock {
+            on(it.activeLiveLocations) doReturn MutableStateFlow(emptyList())
+            on(it.endLiveLocation(any())) doReturn true
+        }
         repositoryFacade = mock {
             runBlocking {
                 on(it.selectChannelCidsBySyncNeeded()) doReturn emptyList()
@@ -1179,43 +1183,212 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `on connected event should schedule live location message updates`() = runTest(testDispatcher) {
+    fun `a live location ends on time while offline without a server call`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
-        val message1 = randomMessage()
-        val message2 = randomMessage()
-        val location1 = randomLocation(messageId = message1.id, endAt = Date(currentTime + 100))
-        val location2 = randomLocation(messageId = message2.id, endAt = Date(currentTime + 200))
-        val activeLiveLocations = MutableStateFlow<List<Location>>(emptyList())
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
+        val activeLiveLocations = MutableStateFlow(listOf(location))
         whenever(mutableGlobalState.activeLiveLocations) doReturn activeLiveLocations
-        val set = mapOf("live_location_sharing_ended" to true)
-        whenever(chatClient.partialUpdateMessage(messageId = message1.id, set = set)) doReturn message1.asCall()
-        whenever(chatClient.partialUpdateMessage(messageId = message2.id, set = set)) doReturn message2.asCall()
 
-        sut.onEvent(event = randomConnectedEvent())
-        activeLiveLocations.value = listOf(location1, location2)
-        advanceTimeBy(250)
+        sut.start()
+        sut.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+        advanceTimeBy(99)
+        verify(mutableGlobalState, never()).endLiveLocation(any())
+        advanceTimeBy(2)
 
-        verify(chatClient).partialUpdateMessage(messageId = message1.id, set = set)
-        verify(chatClient).partialUpdateMessage(messageId = message2.id, set = set)
+        verify(mutableGlobalState).endLiveLocation(location)
+        verify(chatClient, never()).partialUpdateMessage(any(), any(), any())
     }
 
     @Test
-    fun `on stop should cancel live location messages updates`() = runTest(testDispatcher) {
+    fun `a live location that ended offline is sent to the server once on the next connection`() =
+        runTest(testDispatcher) {
+            val sut = buildSyncManager()
+            val message = randomMessage()
+            val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
+            whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+            whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)) doReturn
+                message.asCall()
+
+            sut.start()
+            advanceTimeBy(101)
+            sut.onEvent(randomConnectedEvent())
+            sut.onEvent(randomConnectedEvent())
+
+            verify(chatClient, times(1)).partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)
+        }
+
+    @Test
+    fun `a live location that ends online is ended locally and sent to the server`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val message = randomMessage()
+        val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+        whenever(clientState.isOnline) doReturn true
+        whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)) doReturn
+            message.asCall()
+
+        sut.start()
+        advanceTimeBy(101)
+
+        verify(mutableGlobalState).endLiveLocation(location)
+        verify(chatClient).partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)
+    }
+
+    @Test
+    fun `a live location with a new end time ends at the new end time`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
+        val extendedLocation = location.copy(endAt = Date(currentTime + 300))
+        val activeLiveLocations = MutableStateFlow(listOf(location))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn activeLiveLocations
+
+        sut.start()
+        activeLiveLocations.value = listOf(extendedLocation)
+        advanceTimeBy(299)
+        verify(mutableGlobalState, never()).endLiveLocation(any())
+        advanceTimeBy(2)
+
+        verify(mutableGlobalState).endLiveLocation(extendedLocation)
+    }
+
+    @Test
+    fun `a live location update that failed with a temporary error is sent again on the next connection`() =
+        runTest(testDispatcher) {
+            val sut = buildSyncManager()
+            val message = randomMessage()
+            val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
+            whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+            whenever(clientState.isOnline) doReturn true
+            val temporaryError = Error.NetworkError(serverErrorCode = 0, message = "boom", statusCode = 500)
+            whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet))
+                .doReturn(TestCall(Result.Failure(temporaryError)), message.asCall())
+
+            sut.start()
+            advanceTimeBy(101)
+            sut.onEvent(randomConnectedEvent())
+            sut.onEvent(randomConnectedEvent())
+
+            verify(chatClient, times(2)).partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)
+        }
+
+    @Test
+    fun `a live location update that failed with a permanent error is not sent again`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val message = randomMessage()
+        val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+        whenever(clientState.isOnline) doReturn true
+        val permanentError = Error.NetworkError(serverErrorCode = 17, message = "not allowed", statusCode = 403)
+        whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)) doReturn
+            TestCall(Result.Failure(permanentError))
+
+        sut.start()
+        advanceTimeBy(101)
+        sut.onEvent(randomConnectedEvent())
+
+        verify(chatClient, times(1)).partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)
+    }
+
+    @Test
+    fun `a live location update that failed with a non-network error is not sent again`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val message = randomMessage()
+        val location = randomLocation(userId = user.id, messageId = message.id, endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+        whenever(clientState.isOnline) doReturn true
+        whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)) doReturn
+            TestCall(Result.Failure(Error.GenericError(message = "boom")))
+
+        sut.start()
+        advanceTimeBy(101)
+        sut.onEvent(randomConnectedEvent())
+
+        verify(chatClient, times(1)).partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)
+    }
+
+    @Test
+    fun `another member's live location is ended locally without a server call`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val location = randomLocation(endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+        whenever(clientState.isOnline) doReturn true
+
+        sut.start()
+        advanceTimeBy(101)
+        sut.onEvent(randomConnectedEvent())
+
+        verify(mutableGlobalState).endLiveLocation(location)
+        verify(chatClient, never()).partialUpdateMessage(any(), any(), any())
+    }
+
+    @Test
+    fun `a live location that was already ended is not sent to the server`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+        whenever(mutableGlobalState.endLiveLocation(location)) doReturn false
+        whenever(clientState.isOnline) doReturn true
+
+        sut.start()
+        advanceTimeBy(101)
+        sut.onEvent(randomConnectedEvent())
+
+        verify(chatClient, never()).partialUpdateMessage(any(), any(), any())
+    }
+
+    @Test
+    fun `stop drops the live location updates not sent yet`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+
+        sut.start()
+        advanceTimeBy(101)
+        sut.stop()
+        sut.onEvent(randomConnectedEvent())
+
+        verify(chatClient, never()).partialUpdateMessage(any(), any(), any())
+    }
+
+    @Test
+    fun `live locations ending one after another are each ended and sent once`() = runTest(testDispatcher) {
+        mutableGlobalState = MutableGlobalState(userId = user.id, now = { currentTime })
         val sut = buildSyncManager()
         val message1 = randomMessage()
-        val location1 = randomLocation(messageId = message1.id, endAt = Date(currentTime + 200))
-        val activeLiveLocations = MutableStateFlow<List<Location>>(emptyList())
-        whenever(mutableGlobalState.activeLiveLocations) doReturn activeLiveLocations
-        val set = mapOf("live_location_sharing_ended" to true)
-        whenever(chatClient.partialUpdateMessage(messageId = message1.id, set = set)) doReturn message1.asCall()
+        val message2 = randomMessage()
+        mutableGlobalState.addLiveLocations(
+            listOf(
+                randomLocation(userId = user.id, messageId = message1.id, endAt = Date(currentTime + 100)),
+                randomLocation(userId = user.id, messageId = message2.id, endAt = Date(currentTime + 200)),
+            ),
+        )
+        whenever(clientState.isOnline) doReturn true
+        whenever(chatClient.partialUpdateMessage(messageId = message1.id, set = liveLocationEndedSet)) doReturn
+            message1.asCall()
+        whenever(chatClient.partialUpdateMessage(messageId = message2.id, set = liveLocationEndedSet)) doReturn
+            message2.asCall()
 
-        sut.onEvent(event = randomConnectedEvent())
-        activeLiveLocations.value = listOf(location1)
+        sut.start()
+        advanceTimeBy(201)
 
+        mutableGlobalState.activeLiveLocations.value shouldBeEqualTo emptyList()
+        verify(chatClient, times(1)).partialUpdateMessage(messageId = message1.id, set = liveLocationEndedSet)
+        verify(chatClient, times(1)).partialUpdateMessage(messageId = message2.id, set = liveLocationEndedSet)
+    }
+
+    @Test
+    fun `stop cancels the end of live locations`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val location = randomLocation(userId = user.id, endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+        whenever(clientState.isOnline) doReturn true
+
+        sut.start()
         sut.stop()
-        advanceTimeBy(250)
+        advanceTimeBy(101)
 
-        verify(chatClient, never()).partialUpdateMessage(messageId = message1.id, set = set)
+        verify(mutableGlobalState, never()).endLiveLocation(any())
+        verify(chatClient, never()).partialUpdateMessage(any(), any(), any())
     }
 
     @Test

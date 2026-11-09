@@ -54,6 +54,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -71,18 +72,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.Collections
 import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.time.ExperimentalTime
@@ -168,7 +171,14 @@ internal class SyncManager(
 
     private val mutex = Mutex()
 
-    private val liveLocationJobs = mutableListOf<Job>()
+    private var liveLocationEndJob: Job? = null
+
+    /**
+     * Ended live locations the server was not told about yet, sent again on the next connection.
+     * Kept in memory only, so they are not sent if the process ends first.
+     */
+    private val endedLiveLocationsToNotify: MutableSet<String> =
+        Collections.newSetFromMap(ConcurrentHashMap<String, Boolean>())
 
     override fun start() {
         logger.d { "[start] no args" }
@@ -178,12 +188,16 @@ internal class SyncManager(
         rescueScope.launch { rescueEntitiesStuckInProgress() }
         // Not tied to ConnectedEvent, so drafts also show when the app starts offline.
         rescueScope.launch { syncOfflineDraftMessages() }
+        // Not tied to the connection, so live locations also end on time while offline.
+        liveLocationEndJob = rescueScope.launch { endLiveLocationsOnTime() }
     }
 
     override fun stop() {
         logger.d { "[stop] no args" }
         eventsDisposable?.dispose()
         syncScope.coroutineContext.job.cancelChildren()
+        liveLocationEndJob?.cancel()
+        endedLiveLocationsToNotify.clear()
     }
 
     override suspend fun sync() {
@@ -202,41 +216,57 @@ internal class SyncManager(
         logger.v { "[awaitSyncing] completed" }
     }
 
-    private fun scheduleLiveLocationMessageUpdates() {
-        logger.d { "[scheduleLiveLocationMessageUpdates] no args" }
-
-        // Listen for changes in active live locations
-        mutableGlobalState.activeLiveLocations.onEach { locations ->
-            logger.d { "[scheduleLiveLocationMessageUpdates] locations: ${locations.size}" }
-            liveLocationJobs.forEach(Job::cancel)
-            locations.forEach { location ->
-                val delayMillis = (location.endAt?.time ?: now()) - now()
-                logger.d {
-                    "[scheduleLiveLocationMessageUpdates] " +
-                        "cid: ${location.cid}, " +
-                        "messageId: ${location.messageId}, " +
-                        "delayMillis: $delayMillis"
-                }
-                liveLocationJobs += syncScope.launch {
-                    delay(delayMillis)
-                    logger.v {
-                        "[scheduleLiveLocationMessageUpdates] live location sharing ended at ${location.endAt}, " +
-                            "messageId: ${location.messageId}"
-                    }
-                    // Ensure the message has any attribute updated, so the UI can reflect the live location update
-                    chatClient.partialUpdateMessage(
-                        messageId = location.messageId,
-                        set = mapOf("live_location_sharing_ended" to true),
-                    ).await()
-                        .onError { error ->
-                            logger.e {
-                                "[scheduleLiveLocationMessageUpdates] failed to update message: " +
-                                    "${location.messageId}, error: $error"
-                            }
-                        }
-                }
+    private suspend fun endLiveLocationsOnTime() {
+        mutableGlobalState.activeLiveLocations.collectLatest { locations ->
+            logger.d { "[endLiveLocationsOnTime] locations: ${locations.size}" }
+            coroutineScope {
+                locations.forEach { location -> launch { endLiveLocationOnTime(location) } }
             }
-        }.launchIn(syncScope)
+        }
+    }
+
+    private suspend fun endLiveLocationOnTime(location: Location) {
+        val endAt = location.endAt ?: return
+        val delayMillis = endAt.time - now()
+        logger.d {
+            "[endLiveLocationOnTime] cid: ${location.cid}, messageId: ${location.messageId}, delayMillis: $delayMillis"
+        }
+        delay(delayMillis)
+        logger.v { "[endLiveLocationOnTime] live location sharing ended at $endAt, messageId: ${location.messageId}" }
+        // Only the call that removes it tells the server, so a restarted timer can't send it twice.
+        if (!mutableGlobalState.endLiveLocation(location)) return
+        // Only the sharer can update the message; other members' clients only end it locally.
+        if (location.userId != currentUserId) return
+        val messageId = location.messageId
+        if (clientState.isOnline) {
+            rescueScope.launch { if (!notifyLiveLocationEnded(messageId)) endedLiveLocationsToNotify += messageId }
+        } else {
+            endedLiveLocationsToNotify += messageId
+        }
+    }
+
+    private suspend fun notifyEndedLiveLocations() {
+        endedLiveLocationsToNotify.toList().forEach { messageId ->
+            if (notifyLiveLocationEnded(messageId)) endedLiveLocationsToNotify -= messageId
+        }
+    }
+
+    /**
+     * Updates the message, so other members' UI can show that the live location sharing ended.
+     *
+     * @return `false` if it failed with a temporary network error, so it is sent again on the next connection.
+     */
+    private suspend fun notifyLiveLocationEnded(messageId: String): Boolean {
+        val error = chatClient.partialUpdateMessage(
+            messageId = messageId,
+            set = mapOf("live_location_sharing_ended" to true),
+        ).await()
+            .onError { error ->
+                logger.e { "[notifyLiveLocationEnded] failed to update message: $messageId, error: $error" }
+            }
+            .errorOrNull()
+        // Any other error would fail the same way when sent again.
+        return error !is Error.NetworkError || error.isPermanent()
     }
 
     @VisibleForTesting
@@ -250,7 +280,7 @@ internal class SyncManager(
                 logger.i { "[onEvent] ConnectedEvent received" }
                 onConnectionEstablished(currentUserId)
                 syncScope.launch { syncOfflineDraftMessages() }
-                scheduleLiveLocationMessageUpdates()
+                syncScope.launch { notifyEndedLiveLocations() }
             }
 
             is DisconnectedEvent -> syncScope.launch {
