@@ -166,30 +166,77 @@ internal data class Accessibility(val label: String?, val description: String?, 
  * The A2UI messages of a reply as the agent writes them: JSON objects one after another, on
  * lines of their own, pretty-printed or in an array. Each complete one counts, in order; the one
  * still being written doesn't, so a UI shows as its messages arrive.
+ *
+ * A message that breaks off, such as one with a stray quote or a missing brace, ends where that
+ * shows: at a line break inside a string, which JSON can't hold, or at an object that starts a
+ * line, in its first column, where no object can follow. Reading starts again at the next object
+ * that starts a line in its first column, so the rest of a broken message, indented under it, is
+ * skipped. The broken message still counts, as written, so applying it reports it.
+ *
+ * A broken message at the end of a reply never counts, and in the array form, where a comma
+ * separates the messages, a missing brace isn't caught.
  */
 internal object A2UIStream {
     /** The complete top-level JSON objects in [text], as written. */
     fun messages(text: String): List<String> {
+        val scanner = Scanner(text)
+        text.indices.forEach(scanner::read)
+        return scanner.messages
+    }
+
+    /** The characters a value inside an object or array can follow. */
+    private const val VALUE_STARTS = ":,["
+
+    private class Scanner(private val text: String) {
         val messages = mutableListOf<String>()
-        var depth = 0
-        var start = 0
-        var inString = false
-        var escaped = false
-        for (index in text.indices) {
+        private var depth = 0
+        private var start = 0
+        private var inString = false
+        private var escaped = false
+
+        // Whether a message broke off and the next one hasn't started yet.
+        private var resyncing = false
+
+        // The last character outside a string that isn't whitespace.
+        private var previous = ' '
+
+        fun read(index: Int) {
             val char = text[index]
-            if (inString) {
-                when {
-                    escaped -> escaped = false
-                    char == '\\' -> escaped = true
-                    char == '"' -> inString = false
+            when {
+                inString -> readString(char, index)
+                char.isWhitespace() -> Unit
+                else -> {
+                    readStructure(char, index)
+                    previous = char
                 }
-                continue
             }
+        }
+
+        private fun readString(char: Char, index: Int) {
+            when {
+                // JSON escapes line breaks in strings, so the message broke off on this line.
+                char == '\n' -> breakOff(index)
+                escaped -> escaped = false
+                char == '\\' -> escaped = true
+                char == '"' -> {
+                    inString = false
+                    previous = char
+                }
+            }
+        }
+
+        private fun readStructure(char: Char, index: Int) {
             when {
                 char == '"' && depth > 0 -> inString = true
                 char == '{' -> {
-                    if (depth == 0) start = index
-                    depth++
+                    val firstColumn = index == 0 || text[index - 1] == '\n'
+                    // An object can't follow this, so the message before broke off and this one starts anew.
+                    if (depth > 0 && firstColumn && previous !in VALUE_STARTS) breakOff(index)
+                    if (depth > 0 || !resyncing || firstColumn) {
+                        if (depth == 0) start = index
+                        resyncing = false
+                        depth++
+                    }
                 }
                 char == '}' && depth > 0 -> {
                     depth--
@@ -197,6 +244,13 @@ internal object A2UIStream {
                 }
             }
         }
-        return messages
+
+        private fun breakOff(index: Int) {
+            messages.add(text.substring(start, index).trimEnd())
+            depth = 0
+            inString = false
+            escaped = false
+            resyncing = true
+        }
     }
 }

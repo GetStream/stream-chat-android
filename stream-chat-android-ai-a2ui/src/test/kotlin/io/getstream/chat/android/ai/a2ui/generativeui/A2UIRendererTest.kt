@@ -366,6 +366,22 @@ internal class A2UIRendererTest {
     }
 
     @Test
+    fun `a reply shows the messages after one the agent broke, and reports the broken one`() {
+        val errors = mutableListOf<A2UIError>()
+        val renderer = A2UIRenderer(onError = { error, _ -> errors.add(error) })
+        val first = surface(mapOf("id" to "root", "component" to "Text", "text" to "Day 1"), surfaceId = "a")
+        val broken = """{"version": "1.0", "createSurface": {"surfaceId": "b", "components": [{"id": "root", """ +
+            """"component": "Text", "text">Tip"}]}}"""
+        val last = surface(mapOf("id" to "root", "component" to "Text", "text" to "Day 2"), surfaceId = "c")
+
+        show(document("$first\n$broken\n$last"), host = AIUIHost(renderers = listOf(renderer)) {})
+
+        rule.onNodeWithText("Day 1").assertExists()
+        rule.onNodeWithText("Day 2").assertExists()
+        assertEquals(listOf(A2UIError("VALIDATION_FAILED", "Message 2 of the reply isn't a JSON object.")), errors)
+    }
+
+    @Test
     fun `a reply that leaves the conversation lets go of its surfaces`() {
         val engine = renderer.makeEngine(host) as A2UIEngine
         engine.content(document(surface(mapOf("id" to "root", "component" to "Text", "text" to "Hi"))), "m1")
