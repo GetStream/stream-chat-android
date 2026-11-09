@@ -426,6 +426,41 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
+    fun `Given the message was marked failed during the upload Should keep it failed`() = runTest {
+        val pending = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+        val uploaded = pending.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url1", extraData = emptyMap())
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doReturn Result.Success(uploaded)
+        }
+        val failedAt = java.util.Date(1_000)
+        val message = randomMessage(
+            id = "messageId123",
+            attachments = mutableListOf(pending),
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+        )
+        val failed = message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = failedAt)
+        val repository = mock<MessageRepository> {
+            onBlocking { it.selectMessage(message.id) } doReturn failed
+        }
+        val fixture = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessageRepository(repository)
+            .givenMessageInChannelState(message)
+
+        fixture.get().uploadAttachmentsForMessage(message.id)
+
+        val inserted = argumentCaptor<Message>()
+        verify(repository, times(2)).insertMessage(inserted.capture())
+        inserted.allValues.forEach {
+            it.syncStatus shouldBeEqualTo SyncStatus.FAILED_PERMANENTLY
+            it.updatedLocallyAt shouldBeEqualTo failedAt
+        }
+        inserted.lastValue.attachments shouldBeEqualTo listOf(uploaded)
+        verify(fixture.channelStateLogic()).upsertMessage(
+            argThat { attachments == listOf(uploaded) && syncStatus == SyncStatus.FAILED_PERMANENTLY },
+        )
+    }
+
+    @Test
     fun `Given an attachment without a file Should not upload it`() = runTest {
         val link = randomAttachment().copy(upload = null, uploadState = null)
         val attachmentUploader = mock<AttachmentUploader>()

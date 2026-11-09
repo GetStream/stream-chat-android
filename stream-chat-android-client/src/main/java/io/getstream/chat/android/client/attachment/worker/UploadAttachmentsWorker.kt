@@ -201,16 +201,24 @@ public class UploadAttachmentsWorker(
                     message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }
                 } ?: SyncStatus.FAILED_PERMANENTLY,
         )
-        channelStateLogic?.upsertMessage(updatedMessage)
-        insertMessageIfStored(updatedMessage)
+        channelStateLogic?.upsertMessage(insertMessageIfStored(updatedMessage) ?: updatedMessage)
         AttachmentsUploadStates.updateMessageAttachments(updatedMessage)
     }
 
-    private suspend fun insertMessageIfStored(message: Message) {
+    /**
+     * Stores [message] unless it was removed meanwhile, and returns what was stored.
+     */
+    private suspend fun insertMessageIfStored(message: Message): Message? {
         // A logout that flushed the database also removed the message: don't bring it back.
-        if (messageRepository.selectMessage(message.id) != null) {
-            messageRepository.insertMessage(message)
+        val stored = messageRepository.selectMessage(message.id) ?: return null
+        // The sync marks a message failed when it is too old to send, possibly while its upload is running
+        val updated = if (stored.syncStatus == SyncStatus.FAILED_PERMANENTLY) {
+            message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = stored.updatedLocallyAt)
+        } else {
+            message
         }
+        messageRepository.insertMessage(updated)
+        return updated
     }
 
     private class ProgressCallbackImpl(
