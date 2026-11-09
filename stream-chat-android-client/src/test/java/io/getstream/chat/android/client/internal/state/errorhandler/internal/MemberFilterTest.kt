@@ -20,6 +20,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -170,6 +171,19 @@ internal class MemberFilterTest {
         assertEquals(
             listOf(newer, older),
             listOf(older, newer).sortedWith(QuerySortByField.descByName<Member>("created_at").memberComparator),
+        )
+    }
+
+    @Test
+    fun `name sort after other fields keeps their order`() {
+        val older = randomMember(user = randomUser(name = "Zoe"), createdAt = Date(1))
+        val newerBob = randomMember(user = randomUser(name = "bob"), createdAt = Date(2))
+        val newerAnna = randomMember(user = randomUser(name = "Anna"), createdAt = Date(2))
+        val reflectionSort = QuerySortByReflection.desc(Member::createdAt).asc("name")
+
+        assertEquals(
+            listOf(newerAnna, newerBob, older),
+            listOf(older, newerBob, newerAnna).sortedWith(reflectionSort.memberComparator),
         )
     }
 

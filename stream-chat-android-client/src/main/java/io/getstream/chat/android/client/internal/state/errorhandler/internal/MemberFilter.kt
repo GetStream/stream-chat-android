@@ -36,10 +36,11 @@ import io.getstream.chat.android.models.NotEqualsFilterObject
 import io.getstream.chat.android.models.NotExistsFilterObject
 import io.getstream.chat.android.models.NotInFilterObject
 import io.getstream.chat.android.models.OrFilterObject
-import io.getstream.chat.android.models.querysort.ComparableFieldProvider
-import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.BaseQuerySort
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
+import io.getstream.chat.android.models.querysort.internal.SortAttribute
+import io.getstream.chat.android.models.querysort.internal.SortSpecification
 import java.text.Collator
 import java.text.Normalizer
 import java.util.Date
@@ -88,26 +89,31 @@ internal fun FilterObject.matchesMember(member: Member, cid: String): Boolean = 
 
 /**
  * The comparator for this member query sort on the device. A `name` sort compares the user names in US English
- * collation order, where case and accents only decide between otherwise equal names, as the backend sorts them. Any
- * other sort keeps [QuerySorter.comparator].
+ * collation order, where case and accents only decide between otherwise equal names, as the backend sorts them. Every
+ * other field keeps the comparison of this sorter.
  */
 internal val QuerySorter<Member>.memberComparator: Comparator<in Member>
     get() {
-        if (sortSpecifications.none { it.sortAttribute.name == NAME_FIELD }) return comparator
-        val sort = sortSpecifications.fold(QuerySortByField<UserNameSortFields>()) { sort, specification ->
-            when (specification.sortDirection) {
-                SortDirection.ASC -> sort.asc(specification.sortAttribute.name)
-                SortDirection.DESC -> sort.desc(specification.sortAttribute.name)
-            }
-        }
+        val sorter = this as? BaseQuerySort<Member>
+        if (sorter == null || sortSpecifications.none { it.sortAttribute.name == NAME_FIELD }) return comparator
         val collator = Collator.getInstance(Locale.US)
-        return compareBy(sort.comparator) { member: Member -> UserNameSortFields(member, collator) }
+        return sortSpecifications
+            .map { specification -> sorter.comparatorFor(specification, collator) }
+            .reduce { first, second -> first.then(second) }
     }
 
-private class UserNameSortFields(private val member: Member, private val collator: Collator) : ComparableFieldProvider {
-    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
-        NAME_FIELD -> collator.getCollationKey(member.user.name)
-        else -> member.getComparableField(fieldName)
+private fun BaseQuerySort<Member>.comparatorFor(
+    specification: SortSpecification<Member>,
+    collator: Collator,
+): Comparator<Member> = when (val attribute = specification.sortAttribute) {
+    is SortAttribute.FieldSortAttribute -> comparatorFromFieldSort(attribute, specification.sortDirection)
+    is SortAttribute.FieldNameSortAttribute -> if (attribute.name == NAME_FIELD) {
+        when (specification.sortDirection) {
+            SortDirection.ASC -> compareBy(collator) { member: Member -> member.user.name }
+            SortDirection.DESC -> compareByDescending(collator) { member: Member -> member.user.name }
+        }
+    } else {
+        comparatorFromNameAttribute(attribute, specification.sortDirection)
     }
 }
 
