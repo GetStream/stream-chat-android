@@ -61,6 +61,9 @@ public data class ExpandableList<T>(
         } else {
             0
         }
+
+    internal val allItems: List<T>
+        get() = items
 }
 
 /**

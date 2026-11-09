@@ -104,6 +104,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
+import io.getstream.chat.android.ui.common.utils.extensions.onlineMemberCount
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 import io.getstream.chat.android.ui.common.R as UiCommonR
@@ -394,7 +395,7 @@ internal fun GroupChannelInfoAvatarContainer(
     isMuted: Boolean,
 ) {
     val totalMembers = members.size + members.collapsedCount
-    val onlineCount = channel.members.count { it.user.online }
+    val onlineCount = members.onlineMemberCount()
     Column(
         modifier = Modifier.padding(bottom = StreamTokens.spacingMd),
         horizontalAlignment = Alignment.CenterHorizontally,
