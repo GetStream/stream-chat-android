@@ -20,44 +20,84 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollAnswersViewAction
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollAnswersViewController
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollAnswersViewEvent
+import io.getstream.chat.android.ui.common.state.messages.poll.PollAnswersViewState
+import io.getstream.chat.android.ui.utils.asSingleLiveEvent
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 
 /**
  * Observes the live [Poll] hosted by the message identified by [messageId] inside the channel
- * identified by [cid].
+ * identified by [cid], and pages through the answers of the poll identified by [pollId].
  */
 internal class PollCommentsViewModel(
     cid: String,
     messageId: String,
+    pollId: String,
     state: StateRegistry = ChatClient.instance().state,
+    controllerProvider: PollCommentsViewModel.() -> PollAnswersViewController = {
+        PollAnswersViewController(
+            pollId = pollId,
+            scope = viewModelScope,
+            cachedAnswers = { messages.value.find { it.id == messageId }?.poll?.answers.orEmpty() },
+        )
+    },
 ) : ViewModel() {
 
-    val poll: LiveData<Poll> = run {
+    private val controller: PollAnswersViewController by lazy { controllerProvider() }
+
+    private val messages: StateFlow<List<Message>> = run {
         val (channelType, channelId) = cid.cidToTypeAndId()
         state.channel(channelType, channelId).messages
+    }
+
+    val poll: LiveData<Poll> = run {
+        messages
             .map { messages -> messages.find { it.id == messageId }?.poll }
             .filterNotNull()
             .distinctUntilChanged()
             .asLiveData()
     }
 
+    /**
+     * @see [PollAnswersViewController.state]
+     */
+    val answersState: LiveData<PollAnswersViewState> by lazy { controller.state.asLiveData() }
+
+    /**
+     * @see [PollAnswersViewController.events]
+     */
+    val answersEvents: LiveData<PollAnswersViewEvent> by lazy { controller.events.asSingleLiveEvent() }
+
+    /**
+     * @see [PollAnswersViewController.onViewAction]
+     */
+    fun onViewAction(action: PollAnswersViewAction) {
+        controller.onViewAction(action)
+    }
+
     class Factory(
         private val cid: String,
         private val messageId: String,
+        private val pollId: String,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass == PollCommentsViewModel::class.java) {
                 "Factory can only create instances of PollCommentsViewModel"
             }
-            return PollCommentsViewModel(cid = cid, messageId = messageId) as T
+            return PollCommentsViewModel(cid = cid, messageId = messageId, pollId = pollId) as T
         }
     }
 }

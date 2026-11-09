@@ -634,10 +634,10 @@ public class MessageListView : ConstraintLayout {
             true
         } ?: false
     }
-    private val defaultOnViewPollCommentsClickListener = OnViewPollCommentsClickListener { message, _ ->
+    private val defaultOnViewPollCommentsClickListener = OnViewPollCommentsClickListener { message, poll ->
         context.getFragmentManager()?.let { fragmentManager ->
             PollCommentsDialogFragment
-                .newInstance(cid = message.cid, messageId = message.id)
+                .newInstance(cid = message.cid, messageId = message.id, pollId = poll.id)
                 .show(fragmentManager, PollCommentsDialogFragment.TAG)
             true
         } ?: false

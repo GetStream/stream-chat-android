@@ -16,14 +16,21 @@
 
 package io.getstream.chat.android.ui.viewmodels.messages
 
+import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.QueryPollAnswersResult
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomPollAnswer
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.observeAll
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollAnswersViewAction
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollAnswersViewController
 import io.getstream.chat.android.ui.viewmodel.messages.PollCommentsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,8 +41,13 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doReturnConsecutively
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class PollCommentsViewModelTest {
@@ -90,6 +102,45 @@ internal class PollCommentsViewModelTest {
         emissions shouldBeEqualTo listOf(firstPoll, secondPoll)
     }
 
+    @Test
+    fun `Given the poll has answers When observing the answers Should emit the first page`() = runTest {
+        val answers = answersNewestFirst(2)
+        val viewModel = Fixture()
+            .givenAnswerPages(QueryPollAnswersResult(answers = answers, next = null))
+            .get()
+
+        val emissions = viewModel.answersState.observeAll()
+        advanceUntilIdle()
+
+        emissions.last().results shouldBeEqualTo answers
+        emissions.last().canLoadMore shouldBeEqualTo false
+    }
+
+    @Test
+    fun `Given more answers When load more is requested Should append the next page`() = runTest {
+        val answers = answersNewestFirst(4)
+        val firstPage = answers.take(2)
+        val secondPage = answers.drop(2)
+        val viewModel = Fixture()
+            .givenAnswerPages(
+                QueryPollAnswersResult(answers = firstPage, next = "next"),
+                QueryPollAnswersResult(answers = secondPage, next = null),
+            )
+            .get()
+        val emissions = viewModel.answersState.observeAll()
+        advanceUntilIdle()
+
+        viewModel.onViewAction(PollAnswersViewAction.LoadMoreRequested)
+        advanceUntilIdle()
+
+        emissions.last().results shouldBeEqualTo firstPage + secondPage
+    }
+
+    // The server lists answers newest first
+    private fun answersNewestFirst(count: Int) = List(count) {
+        randomPollAnswer(pollId = POLL_ID, createdAt = Date(1_000_000L - it * 1_000L))
+    }
+
     private class Fixture {
         private val messages = MutableStateFlow<List<Message>>(emptyList())
         private val channelState: ChannelState = mock {
@@ -98,15 +149,28 @@ internal class PollCommentsViewModelTest {
         private val state: StateRegistry = mock {
             on { channel(any(), any()) } doReturn channelState
         }
+        private val chatClient: ChatClient = mock {
+            on { subscribe(any()) } doReturn mock()
+        }
 
         fun givenChannelMessages(messages: List<Message>) = apply {
             this.messages.value = messages
         }
 
+        fun givenAnswerPages(vararg pages: QueryPollAnswersResult) = apply {
+            whenever(
+                chatClient.queryPollAnswers(eq(POLL_ID), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
+            ) doReturnConsecutively pages.map { it.asCall() }
+        }
+
         fun get(): PollCommentsViewModel = PollCommentsViewModel(
             cid = CID,
             messageId = TARGET_MESSAGE_ID,
+            pollId = POLL_ID,
             state = state,
+            controllerProvider = {
+                PollAnswersViewController(pollId = POLL_ID, chatClient = chatClient, scope = viewModelScope)
+            },
         )
     }
 
@@ -121,5 +185,6 @@ internal class PollCommentsViewModelTest {
 
         private const val CID = "messaging:123"
         private const val TARGET_MESSAGE_ID = "target-message-id"
+        private const val POLL_ID = "poll-id"
     }
 }
