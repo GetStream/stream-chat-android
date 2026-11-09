@@ -2034,12 +2034,9 @@ internal class MoshiChatApiTest {
             .withChatEndpoints(api)
             .get()
         // when
-        val userId = randomString()
-        val connectionId = randomString()
         val targetUserId = randomString()
         val set = emptyMap<String, Any>()
         val unset = emptyList<String>()
-        sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.partialUpdateUser(targetUserId, set, unset).await()
         // then
         val expectedBody = UpdateUsersPartialRequest(
