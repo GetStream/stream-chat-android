@@ -140,11 +140,11 @@ internal class PollView : RecyclerView {
         PollItem.SuggestOption.takeIf { poll.allowUserSuggestedOptions && !poll.closed }
             ?.let(pollItems::add)
 
-        PollItem.AddComment.takeIf { poll.allowAnswers && poll.answers.isEmpty() && !poll.closed }
+        PollItem.AddComment.takeIf { poll.allowAnswers && poll.answersCount == 0 && !poll.closed }
             ?.let(pollItems::add)
 
-        PollItem.ViewComments(count = poll.answers.size)
-            .takeIf { poll.allowAnswers && poll.answers.isNotEmpty() }
+        PollItem.ViewComments(count = poll.answersCount)
+            .takeIf { poll.allowAnswers && poll.answersCount > 0 }
             ?.let(pollItems::add)
 
         pollItems.add(PollItem.ViewResults)

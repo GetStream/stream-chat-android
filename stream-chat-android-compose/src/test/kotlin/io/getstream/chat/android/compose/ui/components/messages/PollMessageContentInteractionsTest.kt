@@ -18,14 +18,17 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +41,7 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
+import java.util.Date
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
 internal class PollMessageContentInteractionsTest : MockedChatClientTest {
@@ -76,6 +80,44 @@ internal class PollMessageContentInteractionsTest : MockedChatClientTest {
         }
         composeTestRule.onNodeWithTag("Stream_PollEndButton").performClick()
         assertNull(closedPollId)
+    }
+
+    // The poll carries only a capped preview of the latest answers, so the count comes from the total.
+    @Test
+    fun `view comments shows the total answer count, not the preview size`() {
+        val poll = PreviewPollData.poll1.copy(
+            allowAnswers = true,
+            answersCount = 25,
+            answers = listOf(
+                Answer(
+                    id = "answer1",
+                    pollId = PreviewPollData.poll1.id,
+                    text = "A comment",
+                    createdAt = Date(),
+                    updatedAt = Date(),
+                    user = null,
+                ),
+            ),
+        )
+        composeTestRule.setContent {
+            ChatTheme {
+                PollMessageContent(
+                    modifier = Modifier,
+                    onCastVote = { _, _, _ -> },
+                    onRemoveVote = { _, _, _ -> },
+                    selectPoll = { _, _, _ -> },
+                    onAddAnswer = { _, _, _ -> },
+                    onClosePoll = {},
+                    onAddPollOption = { _, _ -> },
+                    messageItem = MessageItemState(
+                        message = PreviewMessageData.messageWithPoll.copy(poll = poll),
+                        isMine = true,
+                        ownCapabilities = ChannelCapabilities.toSet(),
+                    ),
+                )
+            }
+        }
+        composeTestRule.onNodeWithText("View 25 Comments").assertExists()
     }
 
     @Test
