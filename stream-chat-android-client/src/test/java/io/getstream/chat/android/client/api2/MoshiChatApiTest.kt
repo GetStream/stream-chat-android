@@ -50,8 +50,7 @@ import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.parser2.V2EventParser
-import io.getstream.chat.android.client.scope.ClientScope
-import io.getstream.chat.android.client.scope.UserScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -104,7 +103,6 @@ import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
 import io.getstream.chat.android.network.models.ChannelInput
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
-import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
@@ -117,7 +115,6 @@ import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
-import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeleteScheduledMessageResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.EventRequest
@@ -130,6 +127,7 @@ import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
+import io.getstream.chat.android.network.models.MarkChannelsReadRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
@@ -1311,12 +1309,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#enableSlowModeInput")
-    fun testEnableSlowMode(call: RetrofitCall<UpdateChannelPartialResponse>, expected: KClass<*>) = runTest {
+    fun testEnableSlowMode(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannelPartial(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1326,17 +1324,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldown))
         result `should be instance of` expected
-        verify(api, times(1)).updateChannelPartial(channelType, channelId, expectedBody)
+        verifyBlocking(api, times(1)) { updateChannelPartial(channelType, channelId, expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#disableSlowModeInput")
-    fun testDisableSlowMode(call: RetrofitCall<UpdateChannelPartialResponse>, expected: KClass<*>) = runTest {
+    fun testDisableSlowMode(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannelPartial(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1345,7 +1343,7 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = UpdateChannelPartialRequest(set = mapOf("cooldown" to 0))
         result `should be instance of` expected
-        verify(api, times(1)).updateChannelPartial(channelType, channelId, expectedBody)
+        verifyBlocking(api, times(1)) { updateChannelPartial(channelType, channelId, expectedBody) }
     }
 
     @ParameterizedTest
@@ -1397,12 +1395,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateChannelInput")
-    fun testUpdateChannel(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateChannel(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1412,17 +1410,17 @@ internal class MoshiChatApiTest {
         val result = sut.updateChannel(channelType, channelId, extraData, updateMessage).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).updateChannel(eq(channelType), eq(channelId), any())
+        verifyBlocking(api, times(1)) { updateChannel(eq(channelType), eq(channelId), any()) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateChannelPartialInput")
-    fun testUpdateChannelPartial(call: RetrofitCall<UpdateChannelPartialResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateChannelPartial(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannelPartial(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1433,36 +1431,35 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = UpdateChannelPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
-        verify(api, times(1)).updateChannelPartial(channelType, channelId, expectedBody)
+        verifyBlocking(api, times(1)) { updateChannelPartial(channelType, channelId, expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#showChannelInput")
-    fun testShowChannel(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testShowChannel(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.showChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.showChannel(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
         val channelId = randomString()
         val result = sut.showChannel(channelType, channelId).await()
         // then
-        val expectedBody = emptyMap<Any, Any>()
         result `should be instance of` expected
-        verify(api, times(1)).showChannel(channelType, channelId, expectedBody)
+        verifyBlocking(api, times(1)) { showChannel(channelType, channelId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#hideChannelInput")
-    fun testHideChannel(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testHideChannel(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.hideChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.hideChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1472,17 +1469,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = HideChannelRequest(clearHistory)
         result `should be instance of` expected
-        verify(api, times(1)).hideChannel(channelType, channelId, expectedBody)
+        verifyBlocking(api, times(1)) { hideChannel(channelType, channelId, expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#truncateChannelInput")
-    fun testTruncateChannel(call: RetrofitCall<TruncateChannelResponse>, expected: KClass<*>) = runTest {
+    fun testTruncateChannel(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.truncateChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.truncateChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1493,25 +1490,27 @@ internal class MoshiChatApiTest {
         val result = sut.truncateChannel(channelType, channelId, systemMessage, hardDelete, skipPush).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).truncateChannel(
-            eq(channelType),
-            eq(channelId),
-            check {
-                it.hardDelete `should be equal to` hardDelete
-                it.skipPush `should be equal to` skipPush
-                it.message?.id `should be equal to` systemMessage.id
-            },
-        )
+        verifyBlocking(api, times(1)) {
+            truncateChannel(
+                eq(channelType),
+                eq(channelId),
+                check {
+                    it.hardDelete `should be equal to` hardDelete
+                    it.skipPush `should be equal to` skipPush
+                    it.message?.id `should be equal to` systemMessage.id
+                },
+            )
+        }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#rejectInviteInput")
-    fun testRejectInvite(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
+    fun testRejectInvite(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1520,17 +1519,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = UpdateChannelRequest(rejectInvite = true)
         result `should be instance of` expected
-        verify(api, times(1)).updateChannel(channelType, channelId, expectedBody)
+        verifyBlocking(api, times(1)) { updateChannel(channelType, channelId, expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#acceptInviteInput")
-    fun testAcceptInvite(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
+    fun testAcceptInvite(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val userId = randomString()
@@ -1546,17 +1545,17 @@ internal class MoshiChatApiTest {
             message = MessageRequest(text = message),
         )
         result `should be instance of` expected
-        verify(api, times(1)).updateChannel(channelType, channelId, expectedBody)
+        verifyBlocking(api, times(1)) { updateChannel(channelType, channelId, expectedBody) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteChannelInput")
-    fun testDeleteChannel(call: RetrofitCall<DeleteChannelResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteChannel(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.deleteChannel(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.deleteChannel(any(), any(), anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1564,17 +1563,17 @@ internal class MoshiChatApiTest {
         val result = sut.deleteChannel(channelType, channelId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deleteChannel(channelType, channelId)
+        verifyBlocking(api, times(1)) { deleteChannel(channelType, channelId) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markReadInput")
-    fun testMarkRead(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testMarkRead(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.markRead(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.markRead(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1584,17 +1583,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedRequest = MarkReadRequest(messageId = messageId)
         result `should be instance of` expected
-        verify(api, times(1)).markRead(channelType, channelId, expectedRequest)
+        verifyBlocking(api, times(1)) { markRead(channelType, channelId, expectedRequest) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markDeliveredInput")
-    fun testMarkDelivered(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testMarkDelivered(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.markDelivered(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.markDelivered(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val messages = randomMessageList(10)
@@ -1609,17 +1608,17 @@ internal class MoshiChatApiTest {
             },
         )
         result `should be instance of` expected
-        verify(api, times(1)).markDelivered(expectedRequest)
+        verifyBlocking(api, times(1)) { markDelivered(expectedRequest) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markThreadReadInput")
-    fun testMarkThreadRead(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testMarkThreadRead(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.markRead(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.markRead(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1629,17 +1628,17 @@ internal class MoshiChatApiTest {
         // then
         val expectedRequest = MarkReadRequest(threadId = threadId)
         result `should be instance of` expected
-        verify(api, times(1)).markRead(channelType, channelId, expectedRequest)
+        verifyBlocking(api, times(1)) { markRead(channelType, channelId, expectedRequest) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markUnreadInput")
-    fun testMarkUnread(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testMarkUnread(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.markUnread(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.markUnread(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1652,33 +1651,33 @@ internal class MoshiChatApiTest {
         val expectedRequest =
             MarkUnreadRequest(messageId = messageId, messageTimestamp = messageTimestamp, threadId = threadId)
         result `should be instance of` expected
-        verify(api, times(1)).markUnread(channelType, channelId, expectedRequest)
+        verifyBlocking(api, times(1)) { markUnread(channelType, channelId, expectedRequest) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markAllReadInput")
-    fun testMarkAllRead(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testMarkAllRead(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.markAllRead()).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.markChannelsRead(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val result = sut.markAllRead().await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).markAllRead()
+        verifyBlocking(api, times(1)) { markChannelsRead(MarkChannelsReadRequest()) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#addMembersInput")
-    fun testAddMembers(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
+    fun testAddMembers(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1693,28 +1692,30 @@ internal class MoshiChatApiTest {
                 .await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).updateChannel(
-            eq(channelType),
-            eq(channelId),
-            check { body ->
-                body.addMembers?.map(ChannelMemberRequest::userId) shouldBeEqualTo members.map(MemberData::userId)
-                body.removeMembers shouldBeEqualTo null
-                body.invites shouldBeEqualTo null
-                body.hideHistory shouldBeEqualTo hideHistory
-                body.hideHistoryBefore shouldBeEqualTo hideHistoryBefore
-                body.skipPush shouldBeEqualTo skipPush
-            },
-        )
+        verifyBlocking(api, times(1)) {
+            updateChannel(
+                eq(channelType),
+                eq(channelId),
+                check { body ->
+                    body.addMembers?.map(ChannelMemberRequest::userId) shouldBeEqualTo members.map(MemberData::userId)
+                    body.removeMembers shouldBeEqualTo null
+                    body.invites shouldBeEqualTo null
+                    body.hideHistory shouldBeEqualTo hideHistory
+                    body.hideHistoryBefore shouldBeEqualTo hideHistoryBefore
+                    body.skipPush shouldBeEqualTo skipPush
+                },
+            )
+        }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#removeMembersInput")
-    fun testRemoveMembers(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
+    fun testRemoveMembers(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1725,26 +1726,28 @@ internal class MoshiChatApiTest {
         val result = sut.removeMembers(channelType, channelId, members, systemMessage, skipPush).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).updateChannel(
-            eq(channelType),
-            eq(channelId),
-            check { body ->
-                body.removeMembers shouldBeEqualTo members
-                body.addMembers shouldBeEqualTo null
-                body.invites shouldBeEqualTo null
-                body.skipPush shouldBeEqualTo skipPush
-            },
-        )
+        verifyBlocking(api, times(1)) {
+            updateChannel(
+                eq(channelType),
+                eq(channelId),
+                check { body ->
+                    body.removeMembers shouldBeEqualTo members
+                    body.addMembers shouldBeEqualTo null
+                    body.invites shouldBeEqualTo null
+                    body.skipPush shouldBeEqualTo skipPush
+                },
+            )
+        }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#inviteMembersInput")
-    fun testInviteMembers(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
+    fun testInviteMembers(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1755,26 +1758,28 @@ internal class MoshiChatApiTest {
         val result = sut.inviteMembers(channelType, channelId, members, systemMessage, skipPush).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).updateChannel(
-            eq(channelType),
-            eq(channelId),
-            check { body ->
-                body.invites shouldBeEqualTo members.map { ChannelMemberRequest(userId = it) }
-                body.addMembers shouldBeEqualTo null
-                body.removeMembers shouldBeEqualTo null
-                body.skipPush shouldBeEqualTo skipPush
-            },
-        )
+        verifyBlocking(api, times(1)) {
+            updateChannel(
+                eq(channelType),
+                eq(channelId),
+                check { body ->
+                    body.invites shouldBeEqualTo members.map { ChannelMemberRequest(userId = it) }
+                    body.addMembers shouldBeEqualTo null
+                    body.removeMembers shouldBeEqualTo null
+                    body.skipPush shouldBeEqualTo skipPush
+                },
+            )
+        }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdateMemberInput")
-    fun testPartialUpdateMember(call: RetrofitCall<UpdateMemberPartialResponse>, expected: KClass<*>) = runTest {
+    fun testPartialUpdateMember(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.partialUpdateMember(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateMemberPartial(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1785,7 +1790,7 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = UpdateMemberPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
-        verify(api, times(1)).partialUpdateMember(channelType, channelId, expectedBody)
+        verifyBlocking(api, times(1)) { updateMemberPartial(channelType, channelId, expectedBody) }
     }
 
     @Test
@@ -1806,9 +1811,9 @@ internal class MoshiChatApiTest {
     fun `A v2 member response hides a custom value stored under a declared member field`() = runTest {
         val member = Mother.randomChannelMemberResponse().copy(custom = mapOf("is_moderator" to true), isModerator = false)
         val response = UpdateMemberPartialResponse(duration = randomString(), channelMember = member)
-        val api = mock<ChannelApi>()
-        whenever(api.partialUpdateMember(any(), any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateMemberPartial(any(), any(), any()) }.thenRespond(response)
+        val sut = Fixture().withChatEndpoints(api).get()
 
         val result = sut.partialUpdateMember(randomString(), randomString(), emptyMap(), emptyList()).await()
 
@@ -1846,11 +1851,10 @@ internal class MoshiChatApiTest {
     @Test
     fun `partialUpdateMember reports a missing member as an error rather than crashing`() = runTest {
         // given
-        val api = mock<ChannelApi>()
+        val api = mock<ChatEndpoints>()
         val response = UpdateMemberPartialResponse(duration = randomString(), channelMember = null)
-        whenever(api.partialUpdateMember(any(), any(), any()))
-            .doReturn(RetroSuccess(response).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        wheneverBlocking { api.updateMemberPartial(any(), any(), any()) }.thenRespond(response)
+        val sut = Fixture().withChatEndpoints(api).get()
 
         // when
         val result = sut.partialUpdateMember(randomString(), randomString(), emptyMap(), emptyList()).await()
@@ -2166,12 +2170,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelsInput")
-    fun testQueryChannels(call: RetrofitCall<QueryChannelsResponse>, expected: KClass<*>) = runTest {
+    fun testQueryChannels(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannels(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryChannels(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val userId = randomString()
@@ -2195,15 +2199,14 @@ internal class MoshiChatApiTest {
             presence = query.presence,
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryChannels(connectionId, expectedPayload)
+        verifyBlocking(api, times(1)) { queryChannels(connectionId, expectedPayload) }
     }
 
     @Test
     fun `queryChannels sends include_active_member_count only when requested`() = runTest {
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannels(any(), any()))
-            .doReturn(RetroSuccess(QueryChannelsResponse(duration = randomString())).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryChannels(any(), any()) }.thenRespond(QueryChannelsResponse(duration = randomString()))
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
         val filter = Filters.eq("type", "messaging")
 
@@ -2211,7 +2214,7 @@ internal class MoshiChatApiTest {
         sut.queryChannels(QueryChannelsRequest(filter = filter, limit = 10)).await()
 
         val captor = argumentCaptor<io.getstream.chat.android.network.models.QueryChannelsRequest>()
-        verify(api, times(2)).queryChannels(any(), captor.capture())
+        verifyBlocking(api, times(2)) { queryChannels(any(), captor.capture()) }
         assertEquals(true, captor.firstValue.includeActiveMemberCount)
         assertEquals(null, captor.secondValue.includeActiveMemberCount)
     }
@@ -2219,14 +2222,14 @@ internal class MoshiChatApiTest {
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryGroupedChannelsInput")
     fun testQueryGroupedChannels(
-        call: RetrofitCall<GroupedQueryChannelsResponse>,
+        outcome: Any,
         expected: KClass<*>,
     ) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.queryGroupedChannels(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.groupedQueryChannels(any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val userId = randomString()
@@ -2243,16 +2246,16 @@ internal class MoshiChatApiTest {
             sort = null,
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryGroupedChannels(connectionId, expectedPayload)
+        verifyBlocking(api, times(1)) { groupedQueryChannels(connectionId, expectedPayload) }
     }
 
     @Test
     fun `queryGroupedChannels maps per-group GroupedChannelsGroupQuery into the request body`() = runTest {
         val response = GroupedQueryChannelsResponse(groups = emptyMap(), duration = "0ms")
-        val api = mock<ChannelApi>()
-        whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.groupedQueryChannels(any(), any()) }.thenRespond(response)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         val connectionId = randomString()
         sut.setConnection(userId = randomString(), connectionId = connectionId)
@@ -2288,16 +2291,16 @@ internal class MoshiChatApiTest {
             presence = false,
             sort = null,
         )
-        verify(api, times(1)).queryGroupedChannels(connectionId, expectedPayload)
+        verifyBlocking(api, times(1)) { groupedQueryChannels(connectionId, expectedPayload) }
     }
 
     @Test
     fun `queryGroupedChannels maps the sort and per-group filters into the request body`() = runTest {
         val response = GroupedQueryChannelsResponse(groups = emptyMap(), duration = "0ms")
-        val api = mock<ChannelApi>()
-        whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.groupedQueryChannels(any(), any()) }.thenRespond(response)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         val connectionId = randomString()
         sut.setConnection(userId = randomString(), connectionId = connectionId)
@@ -2348,7 +2351,7 @@ internal class MoshiChatApiTest {
             presence = false,
             sort = listOf(SortParamRequest(field = "query_timestamp", direction = -1)),
         )
-        verify(api, times(1)).queryGroupedChannels(connectionId, expectedPayload)
+        verifyBlocking(api, times(1)) { groupedQueryChannels(connectionId, expectedPayload) }
     }
 
     @Test
@@ -2357,10 +2360,10 @@ internal class MoshiChatApiTest {
             groups = mapOf("direct" to GroupedChannelsBucket(channels = emptyList(), unreadChannels = null)),
             duration = "0ms",
         )
-        val api = mock<ChannelApi>()
-        whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.groupedQueryChannels(any(), any()) }.thenRespond(response)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
@@ -2382,9 +2385,9 @@ internal class MoshiChatApiTest {
                 ),
                 duration = "0ms",
             )
-            val api = mock<ChannelApi>()
-            whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
-            val sut = Fixture().withChannelApi(api).get()
+            val api = mock<ChatEndpoints>()
+            wheneverBlocking { api.groupedQueryChannels(any(), any()) }.thenRespond(response)
+            val sut = Fixture().withChatEndpoints(api).get()
             sut.setConnection(userId = randomString(), connectionId = randomString())
 
             val result = sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = false, presence = false).await()
@@ -2395,16 +2398,19 @@ internal class MoshiChatApiTest {
 
     @Test
     fun `queryGroupedChannels postpones the call when watch is true and connectionId is blank`() = runTest {
-        val api = mock<ChannelApi>()
+        val api = mock<ChatEndpoints>()
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
-        // Intentionally not calling setConnection — connectionId stays blank.
+        // Intentionally not calling setConnection, so connectionId stays blank.
 
-        sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = true, presence = false)
+        val result = sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = true, presence = false)
+            .await()
 
-        // Postponed calls do not invoke the API eagerly; they wait for a connection.
-        verify(api, never()).queryGroupedChannels(any(), any())
+        // The call waits for a connection that never comes, so it fails without reaching the API.
+        (result as Result.Failure).value.message shouldBeEqualTo
+            "Failed to perform call. Waiting for WS connection was too long."
+        verifyBlocking(api, never()) { groupedQueryChannels(any(), any()) }
     }
 
     @Test
@@ -2439,13 +2445,13 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelsWithPredefinedFilterInput")
-    fun testQueryChannelsWithPredefinedFilter(call: RetrofitCall<QueryChannelsResponse>, expected: KClass<*>) =
+    fun testQueryChannelsWithPredefinedFilter(outcome: Any, expected: KClass<*>) =
         runTest {
             // given
-            val api = mock<ChannelApi>()
-            whenever(api.queryChannels(any(), any())).doReturn(call)
+            val api = mock<ChatEndpoints>()
+            wheneverBlocking { api.queryChannels(any(), any()) }.thenRespond(outcome)
             val sut = Fixture()
-                .withChannelApi(api)
+                .withChatEndpoints(api)
                 .get()
             // when
             val userId = randomString()
@@ -2476,7 +2482,7 @@ internal class MoshiChatApiTest {
                 presence = query.presence,
             )
             result `should be instance of` expected
-            verify(api, times(1)).queryChannels(connectionId, expectedPayload)
+            verifyBlocking(api, times(1)) { queryChannels(connectionId, expectedPayload) }
         }
 
     @Test
@@ -2587,17 +2593,15 @@ internal class MoshiChatApiTest {
     private suspend fun queryChannelsAndGetPredefinedFilter(
         predefinedFilter: ParsedPredefinedFilterResponse,
     ): PredefinedFilter? {
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannels(any(), any())).doReturn(
-            RetroSuccess(
-                QueryChannelsResponse(
-                    duration = "1ms",
-                    channels = emptyList(),
-                    predefinedFilter = predefinedFilter,
-                ),
-            ).toRetrofitCall(),
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryChannels(any(), any()) }.thenRespond(
+            QueryChannelsResponse(
+                duration = "1ms",
+                channels = emptyList(),
+                predefinedFilter = predefinedFilter,
+            ),
         )
-        val sut = Fixture().withChannelApi(api).get()
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
         val query = Mother.randomQueryChannelsRequest(predefinedFilter = "any")
         val result = sut.queryChannels(query).await()
@@ -2609,7 +2613,7 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
     fun `channel state maps active live locations onto the channel`(
         @Suppress("UNUSED_PARAMETER") path: String,
-        stub: (ChannelApi, ChannelStateResponseFields) -> Unit,
+        stub: (ChatEndpoints, ChannelStateResponseFields) -> Unit,
         query: (MoshiChatApi) -> Call<List<Channel>>,
     ) = runTest {
         val endAt = randomDate()
@@ -2629,9 +2633,9 @@ internal class MoshiChatApiTest {
                 ),
             ),
         )
-        val api = mock<ChannelApi>()
+        val api = mock<ChatEndpoints>()
         stub(api, response)
-        val sut = Fixture().withChannelApi(api).get()
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
         val channels = query(sut).await().getOrNull()
@@ -2653,11 +2657,9 @@ internal class MoshiChatApiTest {
     @Test
     fun `A channel state maps each of its fields onto the channel`() = runTest {
         val state = Mother.randomFullChannelStateResponseFields()
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannels(any(), any())).doReturn(
-            RetroSuccess(QueryChannelsResponse(duration = "1ms", channels = listOf(state))).toRetrofitCall(),
-        )
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryChannels(any(), any()) }.thenRespond(QueryChannelsResponse(duration = "1ms", channels = listOf(state)))
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
         val channel = sut.queryChannels(Mother.randomQueryChannelsRequest()).await().getOrThrow().channels.single()
@@ -2696,12 +2698,12 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
     fun `A channel state without a channel fails the call`(
         @Suppress("UNUSED_PARAMETER") path: String,
-        stub: (ChannelApi, ChannelStateResponseFields) -> Unit,
+        stub: (ChatEndpoints, ChannelStateResponseFields) -> Unit,
         query: (MoshiChatApi) -> Call<List<Channel>>,
     ) = runTest {
-        val api = mock<ChannelApi>()
+        val api = mock<ChatEndpoints>()
         stub(api, ChannelStateResponseFields(channel = null))
-        val sut = Fixture().withChannelApi(api).get()
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
         val result = query(sut).await()
@@ -2713,15 +2715,15 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
     fun `channel state maps the scheduled messages, an absent field as null`(
         @Suppress("UNUSED_PARAMETER") path: String,
-        stub: (ChannelApi, ChannelStateResponseFields) -> Unit,
+        stub: (ChatEndpoints, ChannelStateResponseFields) -> Unit,
         query: (MoshiChatApi) -> Call<List<Channel>>,
     ) = runTest {
         val channel = Mother.randomChannelResponse(id = "123", type = "messaging")
         val scheduledMessage = Mother.randomScheduledMessageResponse(cid = channel.cid)
         val scheduledMessagesOf = { scheduledMessages: List<ScheduledMessageResponse>? ->
-            val api = mock<ChannelApi>()
+            val api = mock<ChatEndpoints>()
             stub(api, ChannelStateResponseFields(channel = channel, scheduledMessages = scheduledMessages))
-            val sut = Fixture().withChannelApi(api).get()
+            val sut = Fixture().withChatEndpoints(api).get()
             sut.setConnection(userId = randomString(), connectionId = randomString())
             query(sut)
         }
@@ -2734,46 +2736,42 @@ internal class MoshiChatApiTest {
 
     @Test
     fun `queryChannel sends include_scheduled_messages only when requested`() = runTest {
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannel(any(), any(), any(), any())).doReturn(
-            RetroSuccess(Mother.randomChannelStateResponseFields().toChannelStateResponse()).toRetrofitCall(),
-        )
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getOrCreateChannel(any(), any(), any(), any()) }.thenRespond(Mother.randomChannelStateResponseFields().toChannelStateResponse())
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = randomString(), connectionId = "connection-1")
 
         sut.queryChannel("messaging", "123", QueryChannelRequest()).await()
         sut.queryChannel("messaging", "123", QueryChannelRequest().apply { includeScheduledMessages = true }).await()
 
         val captor = argumentCaptor<ChannelGetOrCreateRequest>()
-        verify(api, times(2)).queryChannel(eq("messaging"), eq("123"), eq("connection-1"), captor.capture())
+        verifyBlocking(api, times(2)) { getOrCreateChannel(eq("messaging"), eq("123"), eq("connection-1"), captor.capture()) }
         captor.allValues.map { it.includeScheduledMessages } shouldBeEqualTo listOf(null, true)
     }
 
     @Test
     fun `queryChannels sends include_scheduled_messages only when requested`() = runTest {
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannels(any(), any())).doReturn(
-            RetroSuccess(QueryChannelsResponse(duration = "1ms", channels = emptyList())).toRetrofitCall(),
-        )
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryChannels(any(), any()) }.thenRespond(QueryChannelsResponse(duration = "1ms", channels = emptyList()))
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = randomString(), connectionId = "connection-1")
 
         sut.queryChannels(Mother.randomQueryChannelsRequest()).await()
         sut.queryChannels(Mother.randomQueryChannelsRequest().apply { includeScheduledMessages = true }).await()
 
         val captor = argumentCaptor<io.getstream.chat.android.network.models.QueryChannelsRequest>()
-        verify(api, times(2)).queryChannels(eq("connection-1"), captor.capture())
+        verifyBlocking(api, times(2)) { queryChannels(eq("connection-1"), captor.capture()) }
         captor.allValues.map { it.includeScheduledMessages } shouldBeEqualTo listOf(null, true)
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelInput")
-    fun testQueryChannelWithoutChannelId(call: RetrofitCall<ChannelStateResponse>, expected: KClass<*>) = runTest {
+    fun testQueryChannelWithoutChannelId(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannel(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getOrCreateDistinctChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val userId = randomString()
@@ -2799,17 +2797,17 @@ internal class MoshiChatApiTest {
             data = ChannelInput(custom = mapOf("name" to "Team")),
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryChannel(channelType, connectionId, expectedPayload)
+        verifyBlocking(api, times(1)) { getOrCreateDistinctChannel(channelType, connectionId, expectedPayload) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelInput")
-    fun testQueryChannelWithChannelId(call: RetrofitCall<ChannelStateResponse>, expected: KClass<*>) = runTest {
+    fun testQueryChannelWithChannelId(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannel(any(), any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.getOrCreateChannel(any(), any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val userId = randomString()
@@ -2835,7 +2833,7 @@ internal class MoshiChatApiTest {
             data = ChannelInput(custom = mapOf("name" to "Team")),
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryChannel(channelType, channelId, connectionId, expectedPayload)
+        verifyBlocking(api, times(1)) { getOrCreateChannel(channelType, channelId, connectionId, expectedPayload) }
     }
 
     @ParameterizedTest
@@ -4423,9 +4421,9 @@ internal class MoshiChatApiTest {
 
     @Test
     fun `Channel updates send only the member and invite lists they set`() = runTest {
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannel(any(), any(), any())).doReturn(RetroError<UpdateChannelResponse>(500).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannel(any(), any(), any()) }.thenRespond(RetroError<UpdateChannelResponse>(500).toHttpException())
+        val sut = Fixture().withChatEndpoints(api).get()
 
         sut.updateChannel("messaging", "id", mapOf("name" to "Room"), null).await()
         sut.rejectInvite("messaging", "id").await()
@@ -4435,7 +4433,7 @@ internal class MoshiChatApiTest {
         sut.inviteMembers("messaging", "id", listOf("u1"), null, null).await()
 
         val bodies = argumentCaptor<UpdateChannelRequest>()
-        verify(api, times(6)).updateChannel(eq("messaging"), eq("id"), bodies.capture())
+        verifyBlocking(api, times(6)) { updateChannel(eq("messaging"), eq("id"), bodies.capture()) }
         // Channel data still sends its own invites and members, as before.
         bodies.allValues.map(::wireBody) shouldBeEqualTo listOf(
             """{"data":{"invites":[],"members":[],"custom":{"name":"Room"}}}""",
@@ -4449,37 +4447,35 @@ internal class MoshiChatApiTest {
 
     @Test
     fun `A channel truncate leaves member_ids out`() = runTest {
-        val api = mock<ChannelApi>()
-        whenever(api.truncateChannel(any(), any(), any()))
-            .doReturn(RetroError<TruncateChannelResponse>(500).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.truncateChannel(any(), any(), any()) }.thenRespond(RetroError<TruncateChannelResponse>(500).toHttpException())
+        val sut = Fixture().withChatEndpoints(api).get()
 
         sut.truncateChannel("messaging", "id", null, hardDelete = false, skipPush = false).await()
 
         val body = argumentCaptor<TruncateChannelRequest>()
-        verify(api).truncateChannel(eq("messaging"), eq("id"), body.capture())
+        verifyBlocking(api) { truncateChannel(eq("messaging"), eq("id"), body.capture()) }
         wireBody(body.firstValue) shouldBeEqualTo """{"hard_delete":false,"skip_push":false}"""
     }
 
     @Test
     fun `Slow mode sends only the cooldown`() = runTest {
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannelPartial(any(), any(), any()))
-            .doReturn(RetroError<UpdateChannelPartialResponse>(500).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannelPartial(any(), any(), any()) }.thenRespond(RetroError<UpdateChannelPartialResponse>(500).toHttpException())
+        val sut = Fixture().withChatEndpoints(api).get()
 
         sut.enableSlowMode("messaging", "id", 10).await()
 
         val body = argumentCaptor<UpdateChannelPartialRequest>()
-        verify(api).updateChannelPartial(eq("messaging"), eq("id"), body.capture())
+        verifyBlocking(api) { updateChannelPartial(eq("messaging"), eq("id"), body.capture()) }
         wireBody(body.firstValue) shouldBeEqualTo """{"set":{"cooldown":10}}"""
     }
 
     @Test
     fun `A channel query leaves member_custom_include out`() = runTest {
-        val api = mock<ChannelApi>()
-        whenever(api.queryChannels(any(), any())).doReturn(RetroError<QueryChannelsResponse>(500).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryChannels(any(), any()) }.thenRespond(RetroError<QueryChannelsResponse>(500).toHttpException())
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = "u1", connectionId = "connection")
 
         sut.queryChannels(
@@ -4490,7 +4486,7 @@ internal class MoshiChatApiTest {
         ).await()
 
         val body = argumentCaptor<io.getstream.chat.android.network.models.QueryChannelsRequest>()
-        verify(api).queryChannels(eq("connection"), body.capture())
+        verifyBlocking(api) { queryChannels(eq("connection"), body.capture()) }
         wireBody(body.firstValue) shouldBeEqualTo
             """{"limit":1,"offset":0,"presence":false,"state":true,"watch":true,"sort":[],""" +
             """"filter_conditions":{"type":"messaging"}}"""
@@ -4498,14 +4494,14 @@ internal class MoshiChatApiTest {
 
     @Test
     fun `An invite accepted with a message sends only its text`() = runTest {
-        val api = mock<ChannelApi>()
-        whenever(api.updateChannel(any(), any(), any())).doReturn(RetroError<UpdateChannelResponse>(500).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.updateChannel(any(), any(), any()) }.thenRespond(RetroError<UpdateChannelResponse>(500).toHttpException())
+        val sut = Fixture().withChatEndpoints(api).get()
 
         sut.acceptInvite("messaging", "id", "Joined").await()
 
         val body = argumentCaptor<UpdateChannelRequest>()
-        verify(api).updateChannel(eq("messaging"), eq("id"), body.capture())
+        verifyBlocking(api) { updateChannel(eq("messaging"), eq("id"), body.capture()) }
         wireBody(body.firstValue) shouldBeEqualTo """{"accept_invite":true,"message":{"text":"Joined"}}"""
     }
 
@@ -4643,7 +4639,7 @@ internal class MoshiChatApiTest {
                 chatEndpoints = chatEndpoints,
                 parser = ParserFactory.createMoshiChatParser(),
                 scheduledMessagesApi = scheduledMessagesApi,
-                userScope = UserScope(ClientScope()),
+                userScope = UserTestScope(testCoroutineExtension.scope),
                 coroutineScope = testCoroutineExtension.scope,
             )
         }

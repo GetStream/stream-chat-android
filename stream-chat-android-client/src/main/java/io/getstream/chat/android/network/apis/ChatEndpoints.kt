@@ -42,6 +42,88 @@ internal interface ChatEndpoints {
     suspend fun getApp(): io.getstream.chat.android.network.models.GetApplicationResponse
 
     /**
+     * Query channels
+     * Query channels with filter query
+     */
+    @POST("/api/v2/chat/channels")
+    suspend fun queryChannels(
+        @Query("connection_id") connectionId: String? = null,
+        @Body queryChannelsRequest: io.getstream.chat.android.network.models.QueryChannelsRequest,
+    ): io.getstream.chat.android.network.models.QueryChannelsResponse
+
+    /**
+     * Mark channel message delivery status
+     * Mark the status of a channel message delivered.
+     */
+    @POST("/api/v2/chat/channels/delivered")
+    suspend fun markDelivered(
+        @Body markDeliveredRequest: io.getstream.chat.android.network.models.MarkDeliveredRequest,
+    ): io.getstream.chat.android.network.models.MarkDeliveredResponse
+
+    /**
+     * Grouped query channels
+     * Query channels grouped into predefined buckets. Only available for enterprise apps.
+     */
+    @POST("/api/v2/chat/channels/grouped")
+    suspend fun groupedQueryChannels(
+        @Query("connection_id") connectionId: String? = null,
+        @Body groupedQueryChannelsRequest: io.getstream.chat.android.network.models.GroupedQueryChannelsRequest,
+    ): io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
+
+    /**
+     * Mark channels as read
+     * Marks channels as read up to the specific message. If no channels is given, mark all channel as read
+     */
+    @POST("/api/v2/chat/channels/read")
+    suspend fun markChannelsRead(
+        @Body markChannelsReadRequest: io.getstream.chat.android.network.models.MarkChannelsReadRequest,
+    ): io.getstream.chat.android.network.models.MarkReadResponse
+
+    /**
+     * Get or create channel
+     * This Method creates a channel or returns an existing one with matching attributes
+     */
+    @POST("/api/v2/chat/channels/{type}/query")
+    suspend fun getOrCreateDistinctChannel(
+        @Path("type") type: String,
+        @Query("connection_id") connectionId: String? = null,
+        @Body channelGetOrCreateRequest: io.getstream.chat.android.network.models.ChannelGetOrCreateRequest,
+    ): io.getstream.chat.android.network.models.ChannelStateResponse
+
+    /**
+     * Delete channel
+     * Deletes channel
+     */
+    @DELETE("/api/v2/chat/channels/{type}/{id}")
+    suspend fun deleteChannel(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Query("hard_delete") hardDelete: Boolean? = null,
+    ): io.getstream.chat.android.network.models.DeleteChannelResponse
+
+    /**
+     * Partially update channel
+     * Updates certain fields of the channel
+     */
+    @PATCH("/api/v2/chat/channels/{type}/{id}")
+    suspend fun updateChannelPartial(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Body updateChannelPartialRequest: io.getstream.chat.android.network.models.UpdateChannelPartialRequest,
+    ): io.getstream.chat.android.network.models.UpdateChannelPartialResponse
+
+    /**
+     * Update channel
+     * Change channel data
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}")
+    suspend fun updateChannel(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Body updateChannelRequest: io.getstream.chat.android.network.models.UpdateChannelRequest,
+    ): io.getstream.chat.android.network.models.UpdateChannelResponse
+
+    /**
      * Delete draft
      * Deletes a draft
      */
@@ -64,6 +146,28 @@ internal interface ChatEndpoints {
     ): io.getstream.chat.android.network.models.CreateDraftResponse
 
     /**
+     * Hide channel
+     * Marks channel as hidden for current user
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/hide")
+    suspend fun hideChannel(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Body hideChannelRequest: io.getstream.chat.android.network.models.HideChannelRequest,
+    ): io.getstream.chat.android.network.models.HideChannelResponse
+
+    /**
+     * Partially channel member update
+     *
+     */
+    @PATCH("/api/v2/chat/channels/{type}/{id}/member")
+    suspend fun updateMemberPartial(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Body updateMemberPartialRequest: io.getstream.chat.android.network.models.UpdateMemberPartialRequest,
+    ): io.getstream.chat.android.network.models.UpdateMemberPartialResponse
+
+    /**
      * Send new message
      * Sends new message to the specified channel
      */
@@ -73,6 +177,61 @@ internal interface ChatEndpoints {
         @Path("id") id: String,
         @Body sendMessageRequest: io.getstream.chat.android.network.models.SendMessageRequest,
     ): io.getstream.chat.android.network.models.SendMessageResponse
+
+    /**
+     * Get or create channel
+     * This Method creates a channel or returns an existing one with matching attributes
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/query")
+    suspend fun getOrCreateChannel(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Query("connection_id") connectionId: String? = null,
+        @Body channelGetOrCreateRequest: io.getstream.chat.android.network.models.ChannelGetOrCreateRequest,
+    ): io.getstream.chat.android.network.models.ChannelStateResponse
+
+    /**
+     * Mark read
+     * Marks channel as read up to the specific message
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/read")
+    suspend fun markRead(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Body markReadRequest: io.getstream.chat.android.network.models.MarkReadRequest,
+    ): io.getstream.chat.android.network.models.MarkReadResponse
+
+    /**
+     * Show channel
+     * Shows previously hidden channel
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/show")
+    suspend fun showChannel(
+        @Path("type") type: String,
+        @Path("id") id: String,
+    ): io.getstream.chat.android.network.models.ShowChannelResponse
+
+    /**
+     * Truncate channel
+     * Truncates messages from a channel. Can be applied to the entire channel or scoped to specific members.
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/truncate")
+    suspend fun truncateChannel(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Body truncateChannelRequest: io.getstream.chat.android.network.models.TruncateChannelRequest,
+    ): io.getstream.chat.android.network.models.TruncateChannelResponse
+
+    /**
+     * Mark unread
+     * Marks channel as unread from a specific message
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/unread")
+    suspend fun markUnread(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Body markUnreadRequest: io.getstream.chat.android.network.models.MarkUnreadRequest,
+    ): io.getstream.chat.android.network.models.Response
 
     /**
      * Query draft messages
