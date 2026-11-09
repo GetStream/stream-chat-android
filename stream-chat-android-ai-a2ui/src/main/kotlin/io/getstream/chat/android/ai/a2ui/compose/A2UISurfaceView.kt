@@ -19,13 +19,16 @@ package io.getstream.chat.android.ai.a2ui.compose
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -66,15 +69,29 @@ internal fun A2UISurfaceView(
     val fits = remember(surface, revision) { surface.fitsExpansionLimit() }
     if (!fits) return
     val environment = SurfaceEnvironment(surface, catalog, entrances, revision, mediaUrl)
-    Box(modifier = modifier.fillMaxWidth().testTag("a2ui:${surface.surfaceId}")) {
-        if (entrances) {
-            AIUIEntrance {
+    CompositionLocalProvider(LocalContentColor provides surfaceContentColor()) {
+        Box(modifier = modifier.fillMaxWidth().testTag("a2ui:${surface.surfaceId}")) {
+            if (entrances) {
+                AIUIEntrance {
+                    RenderNode(environment, root, Modifier)
+                }
+            } else {
                 RenderNode(environment, root, Modifier)
             }
-        } else {
-            RenderNode(environment, root, Modifier)
         }
     }
+}
+
+/**
+ * The color of a surface's text and icons: the one around it, or the theme's color on a surface
+ * when nothing around it sets one, as outside a Material surface, where it would be black on any
+ * background.
+ */
+@Composable
+private fun surfaceContentColor(): Color {
+    val color = LocalContentColor.current
+    // Black is the color when nothing provides one.
+    return if (color == Color.Black) MaterialTheme.colorScheme.onSurface else color
 }
 
 /** Draws one node with its type's renderer, applying its accessibility attributes. */
