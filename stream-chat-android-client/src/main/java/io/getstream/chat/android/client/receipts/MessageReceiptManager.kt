@@ -128,7 +128,11 @@ internal class MessageReceiptManager(
     private suspend fun retrieveChannel(cid: String): Channel? =
         repositoryFacade.selectChannel(cid) ?: run {
             val (channelType, channelId) = cid.cidToTypeAndId()
+            // The read state is only returned with the channel state, and only when at least one member is loaded.
+            // The current user's read is always included, so a single member is enough.
             val request = QueryChannelRequest()
+                .withMessages(limit = 0)
+                .withMembers(limit = 1, offset = 0)
             api.queryChannel(channelType, channelId, request)
                 .await().getOrNull()
         }
