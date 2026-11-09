@@ -173,7 +173,10 @@ internal class SyncManager(
 
     private var liveLocationEndJob: Job? = null
 
-    /** Ended live locations the server was not told about yet, sent on the next connection. */
+    /**
+     * Ended live locations the server was not told about yet, sent again on the next connection.
+     * Kept in memory only, so they are not sent if the process ends first.
+     */
     private val endedLiveLocationsToNotify: MutableSet<String> =
         Collections.newSetFromMap(ConcurrentHashMap<String, Boolean>())
 
@@ -249,17 +252,20 @@ internal class SyncManager(
     /**
      * Updates the message, so other members' UI can show that the live location sharing ended.
      *
-     * @return `false` if it failed with a temporary error, so it is sent again on the next connection.
+     * @return `false` if it failed with a temporary network error, so it is sent again on the next connection.
      */
-    private suspend fun notifyLiveLocationEnded(messageId: String): Boolean =
-        chatClient.partialUpdateMessage(
+    private suspend fun notifyLiveLocationEnded(messageId: String): Boolean {
+        val error = chatClient.partialUpdateMessage(
             messageId = messageId,
             set = mapOf("live_location_sharing_ended" to true),
         ).await()
             .onError { error ->
                 logger.e { "[notifyLiveLocationEnded] failed to update message: $messageId, error: $error" }
             }
-            .let { result -> result !is Result.Failure || result.value.isPermanent() }
+            .errorOrNull()
+        // Any other error would fail the same way when sent again.
+        return error !is Error.NetworkError || error.isPermanent()
+    }
 
     @VisibleForTesting
     internal fun onEvent(event: ChatEvent) {

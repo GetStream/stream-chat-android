@@ -1290,6 +1290,23 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `a live location update that failed with a non-network error is not sent again`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val message = randomMessage()
+        val location = randomLocation(messageId = message.id, endAt = Date(currentTime + 100))
+        whenever(mutableGlobalState.activeLiveLocations) doReturn MutableStateFlow(listOf(location))
+        whenever(clientState.isOnline) doReturn true
+        whenever(chatClient.partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)) doReturn
+            TestCall(Result.Failure(Error.GenericError(message = "boom")))
+
+        sut.start()
+        advanceTimeBy(101)
+        sut.onEvent(randomConnectedEvent())
+
+        verify(chatClient, times(1)).partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)
+    }
+
+    @Test
     fun `a live location that was already ended is not sent to the server`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
         val location = randomLocation(endAt = Date(currentTime + 100))
