@@ -42,7 +42,7 @@ import java.util.Date
  * @property updatedAt The last update date of the poll.
  * @property closed If set to true, the poll is closed and no more votes can be cast.
  * @property answersCount The total number of answers in the poll.
- * @property answers The list of poll answers.
+ * @property answers The latest answers, plus the current user's own answer.
  * @property createdBy The user who created the poll. This property is optional and might be null.
  * @property extraData Any additional data associated with the poll.
  * @property nameI18n Automatic translations of [name]. Key `language` contains the original language,
@@ -128,7 +128,7 @@ public data class Answer(
     val updatedAt: Date,
     val user: User?,
     val textI18n: Map<String, String> = emptyMap(),
-) {
+) : ComparableFieldProvider {
 
     /**
      * Retrieves the translated [text] for the given [language].
@@ -136,6 +136,11 @@ public data class Answer(
      * @return The translated text, or empty if the translation is not available.
      */
     public fun getTranslation(language: String): String = textI18n.translation(language)
+
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "created_at", "createdAt" -> createdAt
+        else -> null
+    }
 }
 
 /**

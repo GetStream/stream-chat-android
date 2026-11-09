@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.scheduled.ScheduleMessageResult
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -58,6 +59,7 @@ import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushSchedule
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollAnswersResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryReactionsResult
@@ -731,6 +733,15 @@ internal interface ChatApi {
         next: String?,
         sort: QuerySorter<Vote>?,
     ): Call<QueryPollVotesResult>
+
+    @CheckResult
+    fun queryPollAnswers(
+        pollId: String,
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Answer>?,
+    ): Call<QueryPollAnswersResult>
 
     @CheckResult
     fun queryPolls(

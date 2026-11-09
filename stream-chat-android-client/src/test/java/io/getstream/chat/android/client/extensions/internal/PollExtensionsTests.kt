@@ -196,6 +196,29 @@ internal class PollExtensionsTests {
     }
 
     @Test
+    fun `VoteRemovedEvent processPoll should remove a removed answer from answers`() {
+        // given
+        val removedAnswer = basePoll.answers.first()
+        val event = VoteRemovedEvent(
+            type = "vote.removed",
+            createdAt = now,
+            rawCreatedAt = null,
+            cid = "channel1",
+            channelType = "messaging",
+            channelId = "channel1",
+            messageId = "message1",
+            poll = basePoll,
+            removedVote = vote1.copy(id = removedAnswer.id),
+        )
+
+        // when
+        val result = event.processPoll { basePoll }
+
+        // then
+        result.answers shouldBeEqualTo basePoll.answers - removedAnswer
+    }
+
+    @Test
     fun `AnswerCastedEvent processPoll should add new answer to answers`() {
         // given
         val newAnswer = Answer(

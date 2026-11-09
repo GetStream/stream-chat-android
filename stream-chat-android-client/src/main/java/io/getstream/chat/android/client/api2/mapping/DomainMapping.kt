@@ -63,6 +63,7 @@ import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.PushSchedule
+import io.getstream.chat.android.models.QueryPollAnswersResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
@@ -1253,7 +1254,10 @@ internal class DomainMapping(
             updatedAt = updatedAt,
             closed = isClosed ?: false,
             answersCount = answersCount,
-            answers = latestAnswers.map { it.toAnswerDomain() },
+            // The user's own answer may be older than the latest ones; keep it so it can be edited
+            answers = (latestAnswers + ownVotes.filter { it.isAnswer == true })
+                .distinctBy { it.id }
+                .map { it.toAnswerDomain() },
             createdBy = createdBy?.toDomain(),
             extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
             nameI18n = nameI18n.orEmpty(),
@@ -1291,6 +1295,14 @@ internal class DomainMapping(
      */
     internal fun PollVotesResponse.toDomain(): QueryPollVotesResult = QueryPollVotesResult(
         votes = votes.map { it.toDomain() },
+        next = next,
+    )
+
+    /**
+     * Transforms [PollVotesResponse] holding answers into [QueryPollAnswersResult]
+     */
+    internal fun PollVotesResponse.toAnswersDomain(): QueryPollAnswersResult = QueryPollAnswersResult(
+        answers = votes.map { it.toAnswerDomain() },
         next = next,
     )
 

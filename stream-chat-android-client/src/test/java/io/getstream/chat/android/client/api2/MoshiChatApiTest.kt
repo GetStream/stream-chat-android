@@ -57,6 +57,7 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChatPreferenceToggle
@@ -3507,6 +3508,49 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verifyBlocking(api, times(1)) { queryPolls(expectedBody) }
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryPollVotesInput")
+    fun testQueryPollAnswers(outcome: Any, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChatEndpoints>()
+        val pollId = randomString()
+        wheneverBlocking { api.queryPollVotes(any(), any()) }.thenRespond(outcome)
+        val sut = Fixture()
+            .withChatEndpoints(api)
+            .get()
+        // when
+        val filter = Filters.eq("user_id", "user1")
+        val limit = positiveRandomInt()
+        val next = randomString()
+        val sort = QuerySortByField.descByName<Answer>("created_at")
+        val result = sut.queryPollAnswers(pollId, filter, limit, next, sort).await()
+        // then
+        val expectedBody = QueryPollVotesRequest(
+            filter = mapOf("user_id" to "user1", "is_answer" to true),
+            limit = limit,
+            next = next,
+            sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
+        )
+        result `should be instance of` expected
+        verifyBlocking(api, times(1)) { queryPollVotes(pollId, expectedBody) }
+    }
+
+    @Test
+    fun `queryPollAnswers without a filter queries only answers`() = runTest {
+        // given
+        val api = mock<ChatEndpoints>()
+        val pollId = randomString()
+        wheneverBlocking { api.queryPollVotes(any(), any()) }.thenRespond(Mother.randomPollVotesResponse())
+        val sut = Fixture()
+            .withChatEndpoints(api)
+            .get()
+        // when
+        sut.queryPollAnswers(pollId, filter = null, limit = null, next = null, sort = null).await()
+        // then
+        val expectedBody = QueryPollVotesRequest(filter = mapOf("is_answer" to true))
+        verifyBlocking(api, times(1)) { queryPollVotes(pollId, expectedBody) }
     }
 
     @ParameterizedTest

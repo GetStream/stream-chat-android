@@ -21,15 +21,18 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollOption
+import io.getstream.chat.android.models.QueryPollAnswersResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomPollAnswer
 import io.getstream.chat.android.randomPollConfig
 import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomPollVote
@@ -508,6 +511,54 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
             .thenReturn(RetroError<io.getstream.chat.android.models.QueryPollVotesResult>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.queryPollVotes(pollId, filter, limit, next, sort).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun queryPollAnswersSuccessWithAllParameters() = runTest {
+        // given
+        val pollId = randomString()
+        val filter = Filters.eq("user_id", randomString())
+        val limit = positiveRandomInt(10)
+        val next = randomString()
+        val sort = QuerySortByField.descByName<Answer>("created_at")
+        val expectedResult = Mother.randomQueryPollAnswersResult(
+            answers = listOf(randomPollAnswer(), randomPollAnswer()),
+            next = randomString(),
+        )
+        whenever(api.queryPollAnswers(any(), any(), any(), any(), any()))
+            .thenReturn(RetroSuccess(expectedResult).toRetrofitCall())
+        // when
+        val result = chatClient.queryPollAnswers(pollId, filter, limit, next, sort).await()
+        // then
+        verifySuccess(result, expectedResult)
+        verify(api).queryPollAnswers(eq(pollId), eq(filter), eq(limit), eq(next), eq(sort))
+    }
+
+    @Test
+    fun queryPollAnswersSuccessWithMinimalParameters() = runTest {
+        // given
+        val pollId = randomString()
+        val expectedResult = Mother.randomQueryPollAnswersResult(next = null)
+        whenever(api.queryPollAnswers(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()))
+            .thenReturn(RetroSuccess(expectedResult).toRetrofitCall())
+        // when
+        val result = chatClient.queryPollAnswers(pollId).await()
+        // then
+        verifySuccess(result, expectedResult)
+        verify(api).queryPollAnswers(eq(pollId), eq(null), eq(null), eq(null), eq(null))
+    }
+
+    @Test
+    fun queryPollAnswersError() = runTest {
+        // given
+        val pollId = randomString()
+        val errorCode = positiveRandomInt()
+        whenever(api.queryPollAnswers(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()))
+            .thenReturn(RetroError<QueryPollAnswersResult>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.queryPollAnswers(pollId).await()
         // then
         verifyNetworkError(result, errorCode)
     }
