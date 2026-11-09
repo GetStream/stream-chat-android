@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.attachments.preview
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.core.content.IntentCompat
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.MediaGalleryConfig
 import io.getstream.chat.android.models.Message
@@ -56,7 +57,13 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      * @return The [MediaGalleryPreviewResult] or null if it doesn't exist.
      */
     override fun parseResult(resultCode: Int, intent: Intent?): MediaGalleryPreviewResult? {
-        return intent?.getParcelableExtra(MediaGalleryPreviewActivity.KeyMediaGalleryPreviewResult)
+        return intent?.let {
+            IntentCompat.getParcelableExtra(
+                it,
+                MediaGalleryPreviewActivity.KeyMediaGalleryPreviewResult,
+                MediaGalleryPreviewResult::class.java,
+            )
+        }
     }
 
     /**

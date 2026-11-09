@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.models.CreatePollParams
@@ -141,8 +142,13 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
         binding.buttonMedia.setOnClickListener {
             visualMediaPickerLauncher?.launch(
                 input = PickVisualMediaRequest(
-                    (requireArguments().getSerializable(ARG_VISUAL_MEDIA_TYPE) as VisualMediaType)
-                        .toContractVisualMediaType(),
+                    requireNotNull(
+                        BundleCompat.getSerializable(
+                            requireArguments(),
+                            ARG_VISUAL_MEDIA_TYPE,
+                            VisualMediaType::class.java,
+                        ),
+                    ) { "Missing $ARG_VISUAL_MEDIA_TYPE argument" }.toContractVisualMediaType(),
                 ),
             )
         }

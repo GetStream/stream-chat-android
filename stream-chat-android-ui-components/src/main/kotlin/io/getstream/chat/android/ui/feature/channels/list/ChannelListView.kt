@@ -25,6 +25,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
+import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -177,8 +178,8 @@ public class ChannelListView : FrameLayout {
             return
         }
 
-        layoutManagerState = state.getParcelable(KEY_SCROLL_STATE)
-        super.onRestoreInstanceState(state.getParcelable(KEY_SUPER_STATE))
+        layoutManagerState = BundleCompat.getParcelable(state, KEY_SCROLL_STATE, Parcelable::class.java)
+        super.onRestoreInstanceState(BundleCompat.getParcelable(state, KEY_SUPER_STATE, Parcelable::class.java))
     }
 
     /**
