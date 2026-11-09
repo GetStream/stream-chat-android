@@ -166,4 +166,19 @@ internal class PollTest {
         assertEquals("Bleu", answer.getTranslation("fr"))
         assertEquals("", answer.getTranslation("de"))
     }
+
+    @Test
+    fun `Answer getComparableField should return createdAt for created_at and null otherwise`() {
+        val answer = Answer(
+            id = "ans1",
+            pollId = pollId,
+            text = "Blue",
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            user = null,
+        )
+        assertEquals(createdAt, answer.getComparableField("created_at"))
+        assertEquals(createdAt, answer.getComparableField("createdAt"))
+        assertNull(answer.getComparableField("text"))
+    }
 }
