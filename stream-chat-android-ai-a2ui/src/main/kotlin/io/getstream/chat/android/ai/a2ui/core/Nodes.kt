@@ -167,10 +167,14 @@ internal data class Accessibility(val label: String?, val description: String?, 
  * lines of their own, pretty-printed or in an array. Each complete one counts, in order; the one
  * still being written doesn't, so a UI shows as its messages arrive.
  *
- * A message that breaks off, such as one with a stray quote or a missing brace, ends at its line,
- * and reading starts again on the next one: a line break inside a string, or an object that
- * starts a line where none can, can't be valid JSON. The broken message still counts, as
- * written, so applying it reports it.
+ * A message that breaks off, such as one with a stray quote or a missing brace, ends where that
+ * shows: at a line break inside a string, which JSON can't hold, or at an object that starts a
+ * line, in its first column, where no object can follow. Reading starts again at the next object
+ * that starts a line in its first column, so the rest of a broken message, indented under it, is
+ * skipped. The broken message still counts, as written, so applying it reports it.
+ *
+ * A broken message at the end of a reply never counts, and in the array form, where a comma
+ * separates the messages, a missing brace isn't caught.
  */
 internal object A2UIStream {
     /** The complete top-level JSON objects in [text], as written. */
@@ -190,20 +194,20 @@ internal object A2UIStream {
         private var inString = false
         private var escaped = false
 
-        // The last character outside a string that isn't whitespace, and whether none came yet on its line.
+        // Whether a message broke off and the next one hasn't started yet.
+        private var resyncing = false
+
+        // The last character outside a string that isn't whitespace.
         private var previous = ' '
-        private var lineStart = true
 
         fun read(index: Int) {
             val char = text[index]
             when {
                 inString -> readString(char, index)
-                char == '\n' -> lineStart = true
                 char.isWhitespace() -> Unit
                 else -> {
                     readStructure(char, index)
                     previous = char
-                    lineStart = false
                 }
             }
         }
@@ -211,10 +215,7 @@ internal object A2UIStream {
         private fun readString(char: Char, index: Int) {
             when {
                 // JSON escapes line breaks in strings, so the message broke off on this line.
-                char == '\n' -> {
-                    breakOff(index)
-                    lineStart = true
-                }
+                char == '\n' -> breakOff(index)
                 escaped -> escaped = false
                 char == '\\' -> escaped = true
                 char == '"' -> {
@@ -228,10 +229,14 @@ internal object A2UIStream {
             when {
                 char == '"' && depth > 0 -> inString = true
                 char == '{' -> {
+                    val firstColumn = index == 0 || text[index - 1] == '\n'
                     // An object can't follow this, so the message before broke off and this one starts anew.
-                    if (depth > 0 && lineStart && previous !in VALUE_STARTS) breakOff(index)
-                    if (depth == 0) start = index
-                    depth++
+                    if (depth > 0 && firstColumn && previous !in VALUE_STARTS) breakOff(index)
+                    if (depth > 0 || !resyncing || firstColumn) {
+                        if (depth == 0) start = index
+                        resyncing = false
+                        depth++
+                    }
                 }
                 char == '}' && depth > 0 -> {
                     depth--
@@ -245,6 +250,7 @@ internal object A2UIStream {
             depth = 0
             inString = false
             escaped = false
+            resyncing = true
         }
     }
 }

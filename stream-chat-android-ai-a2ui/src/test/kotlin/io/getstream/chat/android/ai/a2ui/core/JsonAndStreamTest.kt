@@ -141,6 +141,49 @@ internal class JsonAndStreamTest {
     }
 
     @Test
+    fun `the rest of a broken pretty-printed message is skipped, not read as messages of its own`() {
+        val broken = """
+            {"version": "1.0", "updateComponents": {"surfaceId": "a", "components": [
+              {"id": "t", "text">Day 1"},
+              {"id": "u", "component": "Text"},
+              {"id": "w", "component": "Text"}
+            ]}}
+        """.trimIndent()
+        val newline = """
+            {"version": "1.0", "updateComponents": {"surfaceId": "a", "components": [
+              {"id": "t", "component": "Text", "text": "Day 1
+            Use {name} here"}
+            ]}}
+        """.trimIndent()
+        val next = """{"version": "1.0", "createSurface": {"surfaceId": "b"}}"""
+
+        listOf(broken, newline).forEach { text ->
+            val messages = A2UIStream.messages(text + "\n" + next)
+
+            assertEquals(2, messages.size)
+            assertNull(A2UIJson.parseOrNull(messages[0]))
+            assertEquals("b", surfaceId(messages[1]))
+        }
+    }
+
+    @Test
+    fun `a missing comma between indented objects stays inside its message`() {
+        val text = """
+            {"version": "1.0", "updateComponents": {"surfaceId": "a", "components": [
+              {"id": "t", "component": "Text"}
+              {"id": "u", "component": "Text"}
+            ]}}
+            {"version": "1.0", "createSurface": {"surfaceId": "b"}}
+        """.trimIndent()
+
+        val messages = A2UIStream.messages(text)
+
+        assertEquals(2, messages.size)
+        assertNull(A2UIJson.parseOrNull(messages[0]))
+        assertEquals("b", surfaceId(messages[1]))
+    }
+
+    @Test
     fun `the line still being written after a broken message doesn't count yet`() {
         val broken = """{"version": "1.0", "updateComponents": {"surfaceId": "a", "text">x"}}"""
         val next = """{"version": "1.0", "createSurface": {"surfaceId": "b"}}"""
