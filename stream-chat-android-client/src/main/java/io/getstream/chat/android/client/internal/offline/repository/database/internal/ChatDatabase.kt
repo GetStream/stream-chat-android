@@ -136,29 +136,24 @@ internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun scheduledMessageDao(): ScheduledMessageDao
 
     companion object {
-        @Volatile
-        private var INSTANCES: MutableMap<String, ChatDatabase?> = mutableMapOf()
+        private val INSTANCES = mutableMapOf<String, ChatDatabase>()
 
-        fun getDatabase(context: Context, userId: String): ChatDatabase {
-            if (!INSTANCES.containsKey(userId)) {
-                synchronized(this) {
-                    val db = Room.databaseBuilder(
-                        context.applicationContext,
-                        ChatDatabase::class.java,
-                        "stream_chat_database_$userId",
-                    ).fallbackToDestructiveMigration()
-                        .addCallback(
-                            object : Callback() {
-                                override fun onOpen(db: SupportSQLiteDatabase) {
-                                    db.execSQL("PRAGMA synchronous = 1")
-                                }
-                            },
-                        )
-                        .build()
-                    INSTANCES[userId] = db
-                }
+        fun getDatabase(context: Context, userId: String): ChatDatabase = synchronized(this) {
+            INSTANCES.getOrPut(userId) {
+                Room.databaseBuilder(
+                    context.applicationContext,
+                    ChatDatabase::class.java,
+                    "stream_chat_database_$userId",
+                ).fallbackToDestructiveMigration()
+                    .addCallback(
+                        object : Callback() {
+                            override fun onOpen(db: SupportSQLiteDatabase) {
+                                db.execSQL("PRAGMA synchronous = 1")
+                            }
+                        },
+                    )
+                    .build()
             }
-            return INSTANCES[userId] ?: error("DB not created")
         }
     }
 }
