@@ -578,6 +578,7 @@ internal class DomainMapping(
             replyMessage = quotedMessage?.toDomain(fallbackChannelInfo),
             showInChannel = message.showInChannel ?: false,
             mentionedUsersIds = message.mentionedUsers?.map { it.id }.orEmpty(),
+            mentionedUsers = message.mentionedUsers?.map { it.toDomain() }.orEmpty(),
             silent = message.silent ?: false,
             text = message.text,
             command = message.custom[DRAFT_COMMAND_KEY] as? String,

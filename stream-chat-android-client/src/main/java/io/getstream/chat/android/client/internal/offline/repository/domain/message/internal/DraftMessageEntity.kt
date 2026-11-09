@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.mess
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import java.util.Date
 
 @Entity(
@@ -29,6 +30,7 @@ internal data class DraftMessageEntity(
     val cid: String,
     val text: String,
     val parentId: String? = null,
+    val attachments: List<AttachmentEntity> = listOf(),
     val mentionedUsersIds: List<String> = listOf(),
     val silent: Boolean,
     val showInChannel: Boolean,

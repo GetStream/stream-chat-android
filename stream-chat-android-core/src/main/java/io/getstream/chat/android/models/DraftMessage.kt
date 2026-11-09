@@ -93,6 +93,12 @@ public data class DraftMessage(
      */
     val createdAt: Date? = null,
 
+    /**
+     * The users mentioned in the draft. The server returns them with the draft, so a draft can restore its mentions
+     * without the users being loaded in the channel. Saving a draft sends only [mentionedUsersIds].
+     */
+    val mentionedUsers: List<User> = listOf(),
+
 ) : CustomObject, ComparableFieldProvider {
 
     @Suppress("ComplexMethod")
@@ -138,6 +144,7 @@ public data class DraftMessage(
         if (command != null) append(", command=\"").append(command).append("\"")
         if (args != null) append(", args=\"").append(args).append("\"")
         if (createdAt != null) append(", createdAt=").append(createdAt)
+        if (mentionedUsers.isNotEmpty()) append(", mentionedUsers=").append(mentionedUsers.map(User::id))
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -161,6 +168,7 @@ public data class DraftMessage(
         private var command: String? = null
         private var args: String? = null
         private var createdAt: Date? = null
+        private var mentionedUsers: List<User> = listOf()
 
         public constructor(message: DraftMessage) : this() {
             id = message.id
@@ -176,6 +184,7 @@ public data class DraftMessage(
             command = message.command
             args = message.args
             createdAt = message.createdAt
+            mentionedUsers = message.mentionedUsers
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -193,6 +202,9 @@ public data class DraftMessage(
         public fun withCommand(command: String?): Builder = apply { this.command = command }
         public fun withArgs(args: String?): Builder = apply { this.args = args }
         public fun withCreatedAt(createdAt: Date?): Builder = apply { this.createdAt = createdAt }
+        public fun withMentionedUsers(mentionedUsers: List<User>): Builder = apply {
+            this.mentionedUsers = mentionedUsers
+        }
 
         public fun build(): DraftMessage {
             return DraftMessage(
@@ -209,6 +221,7 @@ public data class DraftMessage(
                 command = command,
                 args = args,
                 createdAt = createdAt,
+                mentionedUsers = mentionedUsers,
             )
         }
     }

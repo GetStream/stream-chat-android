@@ -336,4 +336,26 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         order.verify(messages).deleteDraftMessage(serverCid, null)
         order.verify(messages).insertDraftMessage(draft.copy(cid = serverCid))
     }
+
+    @Test
+    fun `inserting a draft should store its mentioned users before the draft`() = runTest {
+        val mentionedUsers = listOf(randomUser(), randomUser())
+        val draft = randomDraftMessage(mentionedUsers = mentionedUsers)
+
+        sut.insertDraftMessage(draft)
+
+        val order = inOrder(users, messages)
+        order.verify(users).insertUsers(mentionedUsers)
+        order.verify(messages).insertDraftMessage(draft)
+    }
+
+    @Test
+    fun `inserting a draft without mentions should not write users`() = runTest {
+        val draft = randomDraftMessage(mentionedUsers = emptyList())
+
+        sut.insertDraftMessage(draft)
+
+        verify(users, never()).insertUsers(any())
+        verify(messages).insertDraftMessage(draft)
+    }
 }

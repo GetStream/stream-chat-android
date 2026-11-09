@@ -261,6 +261,7 @@ internal fun DraftMessage.toEntity(): DraftMessageEntity = DraftMessageEntity(
     id = id,
     cid = cid,
     parentId = parentId,
+    attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     mentionedUsersIds = mentionedUsersIds,
     silent = silent,
     showInChannel = showInChannel,
@@ -274,10 +275,15 @@ internal fun DraftMessage.toEntity(): DraftMessageEntity = DraftMessageEntity(
 
 internal suspend fun DraftMessageEntity.toModel(
     getMessage: suspend (messageId: String) -> Message?,
+    getUser: suspend (userId: String) -> User,
 ): DraftMessage = DraftMessage(
     id = id,
     cid = cid,
     parentId = parentId,
+    // The ID only keys the attachment rows of the messages table: it is not part of the content.
+    attachments = attachments.map { entity ->
+        entity.toModel().let { it.copy(extraData = it.extraData - AttachmentEntity.EXTRA_DATA_ID_KEY) }
+    },
     mentionedUsersIds = mentionedUsersIds,
     silent = silent,
     showInChannel = showInChannel,
@@ -287,6 +293,8 @@ internal suspend fun DraftMessageEntity.toModel(
     args = args,
     extraData = extraData,
     createdAt = createdAt,
+    // A user that is not stored comes back as a bare User(id); leaving it out keeps its mention as an id only.
+    mentionedUsers = mentionedUsersIds.map { getUser(it) }.filterNot { it == User(id = it.id) },
 )
 
 internal fun MessageReminderInfo.toEntity(): ReminderInfoEntity = ReminderInfoEntity(
