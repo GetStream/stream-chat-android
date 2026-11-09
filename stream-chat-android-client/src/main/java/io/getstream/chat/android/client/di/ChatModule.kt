@@ -42,13 +42,10 @@ import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
-import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
-import io.getstream.chat.android.client.api2.endpoint.ScheduledMessagesApi
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
@@ -355,23 +352,21 @@ constructor(
             dtoMapping = dtoMapping,
             fileUploader = fileUploader ?: defaultFileUploader,
             fileTransformer = fileTransformer,
-            buildV2RetrofitApi<UserApi>(),
-            buildV2RetrofitApi<GuestApi>(),
-            buildV2RetrofitApi<MessageApi>(),
-            buildV2RetrofitApi<ChannelApi>(),
-            v2EventParser,
-            buildV2RetrofitApi<ModerationApi>(),
-            buildRetrofitApi<ModerationV1Api>(),
-            buildV2RetrofitApi<GeneralApi>(),
-            buildV2RetrofitApi<SyncApi>(),
-            buildFileDownloadApi(),
-            buildV2RetrofitApi<ThreadsApi>(),
-            // Generated, so it carries no @AuthenticatedApi.
-            buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = false),
-            moshiParser,
-            buildV2RetrofitApi<ScheduledMessagesApi>(),
-            userScope,
-            userScope,
+            userApi = buildV2RetrofitApi<UserApi>(),
+            messageApi = buildV2RetrofitApi<MessageApi>(),
+            channelApi = buildV2RetrofitApi<ChannelApi>(),
+            v2EventParser = v2EventParser,
+            moderationApi = buildV2RetrofitApi<ModerationApi>(),
+            moderationV1Api = buildRetrofitApi<ModerationV1Api>(),
+            generalApi = buildV2RetrofitApi<GeneralApi>(),
+            syncApi = buildV2RetrofitApi<SyncApi>(),
+            fileDownloadApi = buildFileDownloadApi(),
+            // Generated, so it carries neither @AuthenticatedApi nor @AnonymousApi.
+            chatEndpoints = buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = false),
+            anonymousChatEndpoints = buildV2RetrofitApi<ChatEndpoints>(isAnonymousApi = true),
+            parser = moshiParser,
+            coroutineScope = userScope,
+            userScope = userScope,
         ).let { originalApi ->
             DistinctChatApiEnabler(DistinctChatApi(userScope, originalApi)) {
                 chatConfig.distinctApiCalls
