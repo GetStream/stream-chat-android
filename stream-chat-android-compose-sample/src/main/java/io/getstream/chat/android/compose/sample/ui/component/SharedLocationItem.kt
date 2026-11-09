@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +58,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import kotlinx.coroutines.delay
 import java.util.Calendar
 import java.util.Date
 
@@ -130,7 +132,12 @@ private fun LiveLocationSharing(
 ) {
     val isOwnMessage = message.user.id == currentUser?.id
     val endAt = requireNotNull(location.endAt)
-    val isLiveLocationEnded = !endAt.after(Date())
+    // Updates itself at the end time, so it also shows as ended while offline.
+    val isLiveLocationEnded by produceState(initialValue = !endAt.after(Date()), endAt) {
+        value = !endAt.after(Date())
+        delay(endAt.time - System.currentTimeMillis())
+        value = true
+    }
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))

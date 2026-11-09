@@ -29,10 +29,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Mutable global state of [StatePlugin].
  */
+@Suppress("TooManyFunctions")
 internal class MutableGlobalState(
     private val userId: UserId,
     private val now: () -> Long = System::currentTimeMillis,
@@ -50,6 +52,9 @@ internal class MutableGlobalState(
     private var _channelDraftMessages: MutableStateFlow<Map<String, DraftMessage>>? = MutableStateFlow(emptyMap())
     private var _threadDraftMessages: MutableStateFlow<Map<String, DraftMessage>>? = MutableStateFlow(emptyMap())
     private var _activeLiveLocations: MutableStateFlow<List<Location>> = MutableStateFlow(emptyList())
+
+    /** End time of each live location ended by [endLiveLocation], by message id. */
+    private val locallyEndedLiveLocations = ConcurrentHashMap<String, Date>()
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
     override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount!!
@@ -83,6 +88,7 @@ internal class MutableGlobalState(
         _channelDraftMessages = null
         _threadDraftMessages = null
         _activeLiveLocations.value = emptyList()
+        locallyEndedLiveLocations.clear()
     }
 
     fun setTotalUnreadCount(totalUnreadCount: Int) {
@@ -198,8 +204,23 @@ internal class MutableGlobalState(
                     locations
                 )
                 .filter(nonExpiredPredicate())
+                .filterNot { location -> locallyEndedLiveLocations[location.messageId] == location.endAt }
                 .sortedBy(Location::messageId) // Keep the same order to prevent unnecessary emissions
                 .toList()
+        }
+    }
+
+    /**
+     * Removes [location] when its end time is reached on this device, without waiting for the server.
+     *
+     * The same location is not added back, even when the device clock says it is still active. A location
+     * with a different end time is.
+     */
+    fun endLiveLocation(location: Location) {
+        // Recorded before the removal, so a concurrent add either sees it or is removed with it.
+        location.endAt?.let { endAt -> locallyEndedLiveLocations[location.messageId] = endAt }
+        _activeLiveLocations.update { locations ->
+            locations.filterNot { it.messageId == location.messageId && it.endAt == location.endAt }
         }
     }
 

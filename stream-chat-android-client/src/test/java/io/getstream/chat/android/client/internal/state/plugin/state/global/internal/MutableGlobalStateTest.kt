@@ -101,6 +101,52 @@ internal class MutableGlobalStateTest {
     }
 
     @Test
+    fun `endLiveLocation removes the location`() = runTest {
+        val location = randomLocation(endAt = Date(now + 10000))
+        val otherLocation = randomLocation(endAt = Date(now + 10000))
+        sut.addLiveLocations(listOf(location, otherLocation))
+
+        sut.endLiveLocation(location)
+
+        assertEquals(listOf(otherLocation), sut.activeLiveLocations.first())
+    }
+
+    @Test
+    fun `a live location ended by endLiveLocation is not added back while the device clock says it is active`() =
+        runTest {
+            val location = randomLocation(endAt = Date(now + 10000))
+            sut.addLiveLocation(location)
+            sut.endLiveLocation(location)
+
+            sut.addLiveLocation(location)
+
+            assertTrue(sut.activeLiveLocations.first().isEmpty())
+        }
+
+    @Test
+    fun `a live location ended by endLiveLocation is added back with a new end time`() = runTest {
+        val location = randomLocation(endAt = Date(now + 10000))
+        val extendedLocation = location.copy(endAt = Date(now + 20000))
+        sut.addLiveLocation(location)
+        sut.endLiveLocation(location)
+
+        sut.addLiveLocation(extendedLocation)
+
+        assertEquals(listOf(extendedLocation), sut.activeLiveLocations.first())
+    }
+
+    @Test
+    fun `endLiveLocation keeps a newer end time of the same message`() = runTest {
+        val location = randomLocation(endAt = Date(now + 10000))
+        val extendedLocation = location.copy(endAt = Date(now + 20000))
+        sut.addLiveLocation(extendedLocation)
+
+        sut.endLiveLocation(location)
+
+        assertEquals(listOf(extendedLocation), sut.activeLiveLocations.first())
+    }
+
+    @Test
     fun `removeExpiredLiveLocations should remove all expired locations`() = runTest {
         val validLocation = randomLocation(
             userId = userId,
