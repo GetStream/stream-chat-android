@@ -56,7 +56,7 @@ repositories {
   google()
   mavenCentral()
   maven { url "https://jitpack.io" }
-  jcenter()
+  maven { url "https://stream-io-repo.com" }
 }
 
 dependencies {
