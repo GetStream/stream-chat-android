@@ -172,7 +172,7 @@ internal class SyncManager(
 
     private var liveLocationEndJob: Job? = null
 
-    /** Live locations that ended while offline, so the server is told on the next connection. */
+    /** Ended live locations the server was not told about yet, sent on the next connection. */
     private val endedLiveLocationsToNotify = ConcurrentHashMap.newKeySet<String>()
 
     override fun start() {
@@ -228,24 +228,28 @@ internal class SyncManager(
         }
         delay(delayMillis)
         logger.v { "[endLiveLocationOnTime] live location sharing ended at $endAt, messageId: ${location.messageId}" }
-        // Before ending it locally: that emits a new list, which cancels this coroutine.
+        // Only the call that removes it tells the server, so a restarted timer can't send it twice.
+        if (!mutableGlobalState.endLiveLocation(location)) return
+        val messageId = location.messageId
         if (clientState.isOnline) {
-            rescueScope.launch { notifyLiveLocationEnded(location.messageId) }
+            rescueScope.launch { if (!notifyLiveLocationEnded(messageId)) endedLiveLocationsToNotify += messageId }
         } else {
-            endedLiveLocationsToNotify += location.messageId
+            endedLiveLocationsToNotify += messageId
         }
-        mutableGlobalState.endLiveLocation(location)
     }
 
     private suspend fun notifyEndedLiveLocations() {
         endedLiveLocationsToNotify.toList().forEach { messageId ->
-            notifyLiveLocationEnded(messageId)
-            endedLiveLocationsToNotify -= messageId
+            if (notifyLiveLocationEnded(messageId)) endedLiveLocationsToNotify -= messageId
         }
     }
 
-    /** Updates the message, so other members' UI can show that the live location sharing ended. */
-    private suspend fun notifyLiveLocationEnded(messageId: String) {
+    /**
+     * Updates the message, so other members' UI can show that the live location sharing ended.
+     *
+     * @return `false` if it failed with a temporary error, so it is sent again on the next connection.
+     */
+    private suspend fun notifyLiveLocationEnded(messageId: String): Boolean =
         chatClient.partialUpdateMessage(
             messageId = messageId,
             set = mapOf("live_location_sharing_ended" to true),
@@ -253,7 +257,7 @@ internal class SyncManager(
             .onError { error ->
                 logger.e { "[notifyLiveLocationEnded] failed to update message: $messageId, error: $error" }
             }
-    }
+            .let { result -> result !is Result.Failure || result.value.isPermanent() }
 
     @VisibleForTesting
     internal fun onEvent(event: ChatEvent) {

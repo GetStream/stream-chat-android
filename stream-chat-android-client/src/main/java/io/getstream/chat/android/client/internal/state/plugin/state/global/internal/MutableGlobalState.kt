@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.UserId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
@@ -215,13 +216,17 @@ internal class MutableGlobalState(
      *
      * The same location is not added back, even when the device clock says it is still active. A location
      * with a different end time is.
+     *
+     * @return `true` if this call removed it, `false` if it was no longer active.
      */
-    fun endLiveLocation(location: Location) {
+    fun endLiveLocation(location: Location): Boolean {
         // Recorded before the removal, so a concurrent add either sees it or is removed with it.
         location.endAt?.let { endAt -> locallyEndedLiveLocations[location.messageId] = endAt }
-        _activeLiveLocations.update { locations ->
-            locations.filterNot { it.messageId == location.messageId && it.endAt == location.endAt }
+        val isSameLocation = { active: Location ->
+            active.messageId == location.messageId && active.endAt == location.endAt
         }
+        return _activeLiveLocations.getAndUpdate { locations -> locations.filterNot(isSameLocation) }
+            .any(isSameLocation)
     }
 
     fun removeExpiredLiveLocations() {

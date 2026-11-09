@@ -22,6 +22,7 @@ import io.getstream.chat.android.randomString
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
@@ -106,9 +107,21 @@ internal class MutableGlobalStateTest {
         val otherLocation = randomLocation(endAt = Date(now + 10000))
         sut.addLiveLocations(listOf(location, otherLocation))
 
+        val removed = sut.endLiveLocation(location)
+
+        assertTrue(removed)
+        assertEquals(listOf(otherLocation), sut.activeLiveLocations.first())
+    }
+
+    @Test
+    fun `endLiveLocation reports that a location already ended was not removed`() = runTest {
+        val location = randomLocation(endAt = Date(now + 10000))
+        sut.addLiveLocation(location)
         sut.endLiveLocation(location)
 
-        assertEquals(listOf(otherLocation), sut.activeLiveLocations.first())
+        val removed = sut.endLiveLocation(location)
+
+        assertFalse(removed)
     }
 
     @Test
