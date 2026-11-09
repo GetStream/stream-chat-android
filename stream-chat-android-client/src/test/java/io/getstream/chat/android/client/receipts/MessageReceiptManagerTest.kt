@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
@@ -87,6 +88,58 @@ internal class MessageReceiptManagerTest {
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+        assertTrue(result)
+    }
+
+    @Test
+    fun `use the channel held in memory when channel is not found from repository`() = runTest {
+        val message = DeliverableMessage
+        val fixture = Fixture()
+            .givenChannelNotFoundFromRepository()
+            .givenActiveChannel(DeliverableChannel)
+        val sut = fixture.get()
+
+        val result = sut.markMessageAsDelivered(message)
+
+        val receipts = listOf(
+            MessageReceipt(
+                messageId = message.id,
+                cid = message.cid,
+                createdAt = Now,
+            ),
+        )
+        fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+        fixture.verifyQueryChannelCalled(never())
+        assertTrue(result)
+    }
+
+    @Test
+    fun `skip without fetching when the loaded channel held in memory has no read for the current user`() = runTest {
+        val fixture = Fixture()
+            .givenChannelNotFoundFromRepository()
+            .givenActiveChannel(DeliverableChannel.copy(read = emptyList()))
+        val sut = fixture.get()
+
+        val result = sut.markMessageAsDelivered(DeliverableMessage)
+
+        fixture.verifyQueryChannelCalled(never())
+        fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
+    }
+
+    @Test
+    fun `fetch channel from API when the channel held in memory is not loaded`() = runTest {
+        val fixture = Fixture()
+            .givenChannelNotFoundFromRepository()
+            .givenActiveChannel(
+                DeliverableChannel.copy(config = DeliverableChannel.config.copy(createdAt = null)),
+            )
+        val sut = fixture.get()
+
+        val result = sut.markMessageAsDelivered(DeliverableMessage)
+
+        fixture.verifyQueryChannelCalled()
+        fixture.verifyUpsertMessageReceiptsCalled()
         assertTrue(result)
     }
 
@@ -166,6 +219,53 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
+    fun `store message delivery receipt for the confirmed user when the repository has no current user`() = runTest {
+        val message = DeliverableMessage
+        val fixture = Fixture()
+            .givenCurrentUser(user = null)
+            .givenConfirmedUser(CurrentUser)
+        val sut = fixture.get()
+
+        val result = sut.markMessageAsDelivered(message)
+
+        val receipts = listOf(
+            MessageReceipt(
+                messageId = message.id,
+                cid = message.cid,
+                createdAt = Now,
+            ),
+        )
+        fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+        assertTrue(result)
+    }
+
+    @Test
+    fun `should skip storing message delivery receipt when the confirmed user disabled delivery receipts`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser(user = null)
+            .givenConfirmedUser(CurrentUser.copy(privacySettings = DeliveryReceiptsDisabled))
+        val sut = fixture.get()
+
+        val result = sut.markMessageAsDelivered(DeliverableMessage)
+
+        fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
+    }
+
+    @Test
+    fun `prefer the repository current user over the confirmed user`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser(CurrentUser.copy(privacySettings = DeliveryReceiptsDisabled))
+            .givenConfirmedUser(CurrentUser)
+        val sut = fixture.get()
+
+        val result = sut.markMessageAsDelivered(DeliverableMessage)
+
+        fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
+    }
+
+    @Test
     fun `should store message delivery receipt when current user privacy settings are undefined`() = runTest {
         val currentUser = CurrentUser.copy(privacySettings = null)
         val message = DeliverableMessage
@@ -187,11 +287,7 @@ internal class MessageReceiptManagerTest {
 
     @Test
     fun `should skip storing message delivery receipt when delivery receipts are disabled`() = runTest {
-        val currentUser = CurrentUser.copy(
-            privacySettings = PrivacySettings(
-                deliveryReceipts = DeliveryReceipts(enabled = false),
-            ),
-        )
+        val currentUser = CurrentUser.copy(privacySettings = DeliveryReceiptsDisabled)
         val message = DeliverableMessage
         val fixture = Fixture().givenCurrentUser(currentUser)
         val sut = fixture.get()
@@ -321,6 +417,26 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
+    fun `store channel delivery receipts for the confirmed user when the repository has no current user`() = runTest {
+        val message = DeliverableMessage
+        val fixture = Fixture()
+            .givenCurrentUser(user = null)
+            .givenConfirmedUser(CurrentUser)
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels = listOf(DeliverableChannel))
+
+        val receipts = listOf(
+            MessageReceipt(
+                messageId = message.id,
+                cid = message.cid,
+                createdAt = Now,
+            ),
+        )
+        fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+    }
+
+    @Test
     fun `should skip storing channel delivery receipts when user read is not found`() = runTest {
         val channel = DeliverableChannel.copy(read = listOf(randomChannelUserRead()))
         val fixture = Fixture()
@@ -431,8 +547,28 @@ internal class MessageReceiptManagerTest {
             on { getMessage(messageId = DeliverableMessage.id) } doReturn DeliverableMessage.asCall()
         }
 
+        private var confirmedUser: User? = null
+
         fun givenCurrentUser(user: User?) = apply {
             wheneverBlocking { mockRepositoryFacade.selectUser("me") } doReturn user
+        }
+
+        fun givenConfirmedUser(user: User) = apply {
+            confirmedUser = user
+        }
+
+        private var activeChannel: Channel? = null
+
+        fun givenActiveChannel(channel: Channel) = apply {
+            activeChannel = channel
+        }
+
+        fun verifyQueryChannelCalled(mode: VerificationMode = times(1)) {
+            verify(mockChatApi, mode).queryChannel(
+                channelType = any(),
+                channelId = any(),
+                query = any(),
+            )
         }
 
         fun givenUpsertFails() = apply {
@@ -485,6 +621,8 @@ internal class MessageReceiptManagerTest {
         fun get() = MessageReceiptManager(
             now = { Now },
             getRepositoryFacade = { mockRepositoryFacade },
+            getConfirmedUser = { confirmedUser },
+            getActiveChannel = { cid -> activeChannel?.takeIf { cid == DeliverableMessage.cid } },
             messageReceiptRepository = messageReceiptRepository,
             api = mockChatApi,
         )
@@ -499,6 +637,10 @@ private val CurrentUser = randomUser(
     ),
 )
 
+private val DeliveryReceiptsDisabled = PrivacySettings(
+    deliveryReceipts = DeliveryReceipts(enabled = false),
+)
+
 private val DeliverableMessage = randomMessage(
     createdLocallyAt = Now,
     deletedAt = null,
@@ -507,6 +649,7 @@ private val DeliverableMessage = randomMessage(
 )
 
 private val DeliverableChannel = randomChannel(
+    config = randomConfig(deliveryEventsEnabled = true),
     messages = listOf(DeliverableMessage),
     read = listOf(
         randomChannelUserRead(

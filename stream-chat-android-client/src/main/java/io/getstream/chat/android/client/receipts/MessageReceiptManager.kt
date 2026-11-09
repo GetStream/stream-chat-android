@@ -37,12 +37,18 @@ import java.util.Date
  *
  * @param now Function to provide the current date.
  * @param getRepositoryFacade Function to provide the [RepositoryFacade] tied to the currently logged in user.
+ * @param getConfirmedUser Function to provide the current user once the server has returned it, used when the
+ * repository has no current user, such as with offline support disabled.
+ * @param getActiveChannel Function to provide the config and reads of the channel with the given cid from memory,
+ * if it is held there.
  * @param messageReceiptRepository The [MessageReceiptRepository] to store the created receipts.
  * @param api The [ChatApi] to fetch data if needed.
  */
 internal class MessageReceiptManager(
     private val now: () -> Date,
     private val getRepositoryFacade: () -> RepositoryFacade,
+    private val getConfirmedUser: () -> User?,
+    private val getActiveChannel: (cid: String) -> Channel?,
     private val messageReceiptRepository: MessageReceiptRepository,
     private val api: ChatApi,
 ) {
@@ -123,19 +129,23 @@ internal class MessageReceiptManager(
     }
 
     private suspend fun retrieveCurrentUser(): User? =
-        repositoryFacade.selectUser(userId = "me")
+        repositoryFacade.selectUser(userId = "me") ?: getConfirmedUser()
 
     private suspend fun retrieveChannel(cid: String): Channel? =
-        repositoryFacade.selectChannel(cid) ?: run {
-            val (channelType, channelId) = cid.cidToTypeAndId()
-            // The read state is only returned with the channel state, and only when at least one member is loaded.
-            // The current user's read is always included, so a single member is enough.
-            val request = QueryChannelRequest()
-                .withMessages(limit = 0)
-                .withMembers(limit = 1, offset = 0)
-            api.queryChannel(channelType, channelId, request)
-                .await().getOrNull()
-        }
+        repositoryFacade.selectChannel(cid)
+            // Until the channel is loaded its state has the default config, which would let receipts through for
+            // channels with delivery events disabled. Only a config from the server has a creation date.
+            ?: getActiveChannel(cid)?.takeIf { channel -> channel.config.createdAt != null }
+            ?: run {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                // The read state is only returned with the channel state, and only when at least one member is loaded.
+                // The current user's read is always included, so a single member is enough.
+                val request = QueryChannelRequest()
+                    .withMessages(limit = 0)
+                    .withMembers(limit = 1, offset = 0)
+                api.queryChannel(channelType, channelId, request)
+                    .await().getOrNull()
+            }
 
     private suspend fun retrieveMessage(id: String): Message? =
         repositoryFacade.selectMessage(id) ?: run {

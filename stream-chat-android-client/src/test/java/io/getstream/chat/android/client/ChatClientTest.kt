@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -41,6 +42,7 @@ import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
+import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.FakeChatSocket
@@ -52,11 +54,13 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDateBefore
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPrivacySettings
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -123,6 +127,7 @@ internal class ChatClientTest {
     private val tokenUtils: TokenUtils = mock()
     private val userCredentialStorage: UserCredentialStorage = mock()
     private val audioPlayer: AudioPlayer = mock()
+    private val messageReceiptManager: MessageReceiptManager = mock()
     private val userRepository: UserRepository = mock()
     private val repositoryFactoryProvider = object : RepositoryFactory.Provider {
         override fun createRepositoryFactory(user: User): RepositoryFactory =
@@ -188,7 +193,7 @@ internal class ChatClientTest {
             audioPlayer = audioPlayer,
             repository = repository,
             messageReceiptReporter = mock(),
-            messageReceiptManager = mock(),
+            messageReceiptManager = messageReceiptManager,
         ).apply {
             attachmentsSender = mock()
             connectUser(user, token).enqueue()
@@ -215,6 +220,46 @@ internal class ChatClientTest {
         val (type, id) = cid.cidToTypeAndId()
         assertEquals(type, channelClient.channelType)
         assertEquals(id, channelClient.channelId)
+    }
+
+    @Test
+    fun `mark a new message as delivered`() = runTest {
+        val event = newMessageEvent()
+
+        fakeChatSocket.mockEventReceived(event)
+
+        verify(messageReceiptManager).markMessageAsDelivered(event.message)
+    }
+
+    @Test
+    fun `keep handling events when marking a new message as delivered fails`() = runTest {
+        whenever(messageReceiptManager.markMessageAsDelivered(any<Message>())) doSuspendableAnswer {
+            throw IllegalStateException("receipt failed")
+        }
+        val firstEvent = newMessageEvent()
+        val secondEvent = newMessageEvent()
+
+        fakeChatSocket.mockEventReceived(firstEvent)
+        fakeChatSocket.mockEventReceived(secondEvent)
+
+        verify(messageReceiptManager).markMessageAsDelivered(firstEvent.message)
+        verify(messageReceiptManager).markMessageAsDelivered(secondEvent.message)
+    }
+
+    private fun newMessageEvent(): NewMessageEvent {
+        val cid = randomCID()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return NewMessageEvent(
+            type = EventType.MESSAGE_NEW,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            user = randomUser(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            message = randomMessage(cid = cid),
+            channelMessageCount = null,
+        )
     }
 
     @Test

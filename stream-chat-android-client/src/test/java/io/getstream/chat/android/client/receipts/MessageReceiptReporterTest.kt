@@ -500,6 +500,8 @@ private class Fixture(
         val manager = MessageReceiptManager(
             now = { Date(1) },
             getRepositoryFacade = { facade },
+            getConfirmedUser = { null },
+            getActiveChannel = { null },
             messageReceiptRepository = repository,
             api = mock(),
         )
