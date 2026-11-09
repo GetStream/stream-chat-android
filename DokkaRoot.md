@@ -49,14 +49,14 @@ There are only **3 steps** to get started with Stream!
 Let's cover some of these steps.
 
 ### Add dependency
-Add one of the four packages below to your dependencies for your `module/app` level `build.gradle` file:
+Add one of the three packages below to your dependencies for your `module/app` level `build.gradle` file:
 
 ```groovy
 repositories {
   google()
   mavenCentral()
   maven { url "https://jitpack.io" }
-  jcenter()
+  maven { url "https://stream-io-repo.com" }
 }
 
 dependencies {
@@ -65,8 +65,6 @@ dependencies {
   // Client + offline + UI components
   implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
   // Client + offline
-  implementation "io.getstream:stream-chat-android-offline:$stream_version"
-  // Client only
   implementation "io.getstream:stream-chat-android-client:$stream_version"
 }
 ```
@@ -109,23 +107,15 @@ For more complex token generation and expiration examples, have a look at [Token
 
 ### Offline storage
 
-To add data persistence you can provide the `ChatClient.Builder` with an instance of `StreamOfflinePluginFactory`.
+Offline storage is built into the client and enabled by default. To turn it off, pass a `ChatClientConfig` to the `ChatClient.Builder`:
 
 ```kotlin
-val offlinePluginFactory = StreamOfflinePluginFactory(
-  config = Config(
-    backgroundSyncEnabled = true,
-    userPresence = true,
-    persistenceEnabled = true,
-    uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-  ),
-  appContext = applicationContext,
-)
-
 val client = ChatClient.Builder(apiKey, applicationContext)
-    .withPlugin(offlinePluginFactory)
+    .config(ChatClientConfig(offlineEnabled = false))
     .build()
 ```
+
+See [Offline Support](https://getstream.io/chat/docs/sdk/android/basics/offline-support/) for the other options.
 
 ### Logging
 
