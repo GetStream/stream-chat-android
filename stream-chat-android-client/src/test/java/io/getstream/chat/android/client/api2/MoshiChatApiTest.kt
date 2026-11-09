@@ -187,6 +187,7 @@ import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesResponse
 import io.getstream.chat.android.network.models.UserRequest
@@ -1961,14 +1962,14 @@ internal class MoshiChatApiTest {
             .withChatEndpoints(api)
             .get()
         // when
-        val userUd = randomString()
-        val connectionId = randomString()
-        val users = listOf(randomUser())
-        sut.setConnection(userId = userUd, connectionId = connectionId)
+        val users = listOf(randomUser(), randomUser())
         val result = sut.updateUsers(users).await()
         // then
+        val expectedBody = with(DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)) {
+            UpdateUsersRequest(users.associate { it.id to it.toUserRequest() })
+        }
         result `should be instance of` expected
-        verifyBlocking(api, times(1)) { updateUsers(any()) }
+        verifyBlocking(api, times(1)) { updateUsers(expectedBody) }
     }
 
     @ParameterizedTest
