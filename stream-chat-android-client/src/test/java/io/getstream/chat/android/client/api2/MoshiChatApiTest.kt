@@ -50,8 +50,7 @@ import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.parser2.V2EventParser
-import io.getstream.chat.android.client.scope.ClientScope
-import io.getstream.chat.android.client.scope.UserScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -1449,7 +1448,6 @@ internal class MoshiChatApiTest {
         val channelId = randomString()
         val result = sut.showChannel(channelType, channelId).await()
         // then
-        val expectedBody = emptyMap<Any, Any>()
         result `should be instance of` expected
         verifyBlocking(api, times(1)) { showChannel(channelType, channelId) }
     }
@@ -2404,11 +2402,14 @@ internal class MoshiChatApiTest {
         val sut = Fixture()
             .withChatEndpoints(api)
             .get()
-        // Intentionally not calling setConnection — connectionId stays blank.
+        // Intentionally not calling setConnection, so connectionId stays blank.
 
-        sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = true, presence = false)
+        val result = sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = true, presence = false)
+            .await()
 
-        // Postponed calls do not invoke the API eagerly; they wait for a connection.
+        // The call waits for a connection that never comes, so it fails without reaching the API.
+        (result as Result.Failure).value.message shouldBeEqualTo
+            "Failed to perform call. Waiting for WS connection was too long."
         verifyBlocking(api, never()) { groupedQueryChannels(any(), any()) }
     }
 
@@ -4638,7 +4639,7 @@ internal class MoshiChatApiTest {
                 chatEndpoints = chatEndpoints,
                 parser = ParserFactory.createMoshiChatParser(),
                 scheduledMessagesApi = scheduledMessagesApi,
-                userScope = UserScope(ClientScope()),
+                userScope = UserTestScope(testCoroutineExtension.scope),
                 coroutineScope = testCoroutineExtension.scope,
             )
         }

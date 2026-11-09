@@ -51,6 +51,10 @@ internal interface ChannelApi {
         @Body body: Map<Any, Any>,
     ): RetrofitCall<Response>
 
+    /**
+     * Sends an event to the channel. The body is returned raw: its `event` is read by the v2 event parser, so its
+     * unix-nanosecond dates aren't read as numbers on the way.
+     */
     @POST("/api/v2/chat/channels/{type}/{id}/event")
     fun sendEvent(
         @Path("type") channelType: String,
