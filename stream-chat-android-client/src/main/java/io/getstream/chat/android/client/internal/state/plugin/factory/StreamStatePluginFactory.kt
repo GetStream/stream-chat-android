@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlug
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.refreshChannelsOnScheduledMessages
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.internal.state.plugin.state.internal.withCurrentUserPresence
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
@@ -104,7 +105,11 @@ public class StreamStatePluginFactory(
 
         val stateRegistry = StateRegistry(
             userStateFlow = clientState.user,
-            latestUsers = repositoryFacade.observeLatestUsers(),
+            latestUsers = repositoryFacade.observeLatestUsers().withCurrentUserPresence(
+                currentUser = clientState.user,
+                connectionState = clientState.connectionState,
+                scope = scope,
+            ),
             activeLiveLocations = mutableGlobalState.activeLiveLocations,
             job = scope.coroutineContext.job,
             now = config.now,
