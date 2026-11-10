@@ -130,7 +130,7 @@ public class PollAnswersViewController(
             val page = result.answers.withoutStale(currentState.results)
             currentState.copy(
                 isLoading = false,
-                results = (currentState.results + page).distinctBy { it.id },
+                results = (currentState.results + page).distinctBy { it.id }.newestFirst(),
                 canLoadMore = nextPage != null,
                 isLoadingMore = false,
             )
@@ -146,7 +146,7 @@ public class PollAnswersViewController(
             val fallback = cachedAnswers().withoutStale(currentState.results)
             currentState.copy(
                 isLoading = false,
-                results = (currentState.results + fallback).distinctBy { it.id }.sortedByDescending { it.createdAt },
+                results = (currentState.results + fallback).distinctBy { it.id }.newestFirst(),
                 canLoadMore = false,
                 isLoadingMore = false,
             )
@@ -181,9 +181,15 @@ public class PollAnswersViewController(
                 val authorId = answer.user?.id
                 listOf(answer) + results.filterNot { authorId != null && it.user?.id == authorId }
             }
-            currentState.copy(results = updated)
+            currentState.copy(results = updated.newestFirst())
         }
     }
+
+    /**
+     * Live answers aren't always new: an edit keeps the answer's creation date, and may belong to a page not loaded
+     * yet. Sorting keeps every answer where the server's newest-first pages would put it.
+     */
+    private fun List<Answer>.newestFirst(): List<Answer> = sortedByDescending { it.createdAt }
 
     private fun removeAnswer(answerId: String) {
         removedAnswerIds += answerId

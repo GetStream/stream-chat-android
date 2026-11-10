@@ -237,7 +237,7 @@ internal class PollAnswersViewControllerTest {
             skipItems(1) // Skip initial state
             awaitItem()
 
-            val live = fixture.answer()
+            val live = fixture.liveAnswer()
             fixture.emit(fixture.answerCastedEvent(live))
             assertEquals(listOf(live, existing), awaitItem().results)
         }
@@ -276,7 +276,7 @@ internal class PollAnswersViewControllerTest {
             skipItems(1) // Skip initial state
             awaitItem()
 
-            val replacement = fixture.answer(user = author)
+            val replacement = fixture.liveAnswer(user = author)
             fixture.emit(fixture.answerCastedEvent(replacement))
             assertEquals(listOf(replacement, other), awaitItem().results)
         }
@@ -322,7 +322,7 @@ internal class PollAnswersViewControllerTest {
     fun `when a live answer comes back in a later page, should not duplicate it`() = runTest {
         val fixture = AnswersFixture()
         val first = fixture.answer()
-        val live = fixture.answer()
+        val live = fixture.liveAnswer()
         val nextPage = randomString()
         val sut = fixture
             .givenQueryResult(result = QueryPollAnswersResult(answers = listOf(first), next = nextPage))
@@ -358,13 +358,63 @@ internal class PollAnswersViewControllerTest {
             skipItems(1) // Skip initial state
             awaitItem()
 
-            val edited = fixture.answer(user = author)
+            val edited = fixture.liveAnswer(user = author)
             fixture.emit(fixture.answerCastedEvent(edited))
             assertEquals(listOf(edited, first), awaitItem().results)
 
             sut.onViewAction(LoadMoreRequested)
             awaitItem() // Loading more
             assertEquals(listOf(edited, first), awaitItem().results)
+        }
+    }
+
+    @Test
+    fun `when an answer not loaded yet is edited live, should keep it in its place by creation date`() = runTest {
+        val fixture = AnswersFixture()
+        val first = fixture.answer()
+        val second = fixture.answer()
+        val notLoaded = fixture.answer()
+        val nextPage = randomString()
+        val sut = fixture
+            .givenQueryResult(result = QueryPollAnswersResult(answers = listOf(first), next = nextPage))
+            .givenQueryResult(
+                next = nextPage,
+                result = QueryPollAnswersResult(answers = listOf(second, notLoaded), next = null),
+            )
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+            awaitItem()
+
+            // Re-answering keeps the answer's id and creation date
+            val edited = notLoaded.copy(text = "edited")
+            fixture.emit(fixture.answerCastedEvent(edited))
+            assertEquals(listOf(first, edited), awaitItem().results)
+
+            sut.onViewAction(LoadMoreRequested)
+            awaitItem() // Loading more
+            assertEquals(listOf(first, second, edited), awaitItem().results)
+        }
+    }
+
+    @Test
+    fun `when an older answer is edited during the initial load, should keep newest first`() = runTest {
+        val fixture = AnswersFixture()
+        val pending = fixture.givenPendingQuery()
+        val sut = fixture.get(backgroundScope)
+        val newer = fixture.answer()
+        val older = fixture.answer()
+
+        sut.state.test {
+            assertTrue(awaitItem().isLoading)
+
+            val edited = older.copy(text = "edited")
+            fixture.emit(fixture.answerCastedEvent(edited))
+            awaitItem()
+
+            pending.complete(QueryPollAnswersResult(answers = listOf(newer, older), next = null).asSuccess())
+            assertEquals(listOf(newer, edited), awaitItem().results)
         }
     }
 
@@ -395,7 +445,7 @@ internal class PollAnswersViewControllerTest {
         val pending = fixture.givenPendingQuery()
         val sut = fixture.get(backgroundScope)
         val first = fixture.answer()
-        val live = fixture.answer()
+        val live = fixture.liveAnswer()
 
         sut.state.test {
             assertTrue(awaitItem().isLoading)
@@ -454,6 +504,8 @@ internal class PollAnswersViewControllerTest {
 
 private fun QueryPollAnswersResult.asSuccess(): Result<QueryPollAnswersResult> = Result.Success(this)
 
+private const val NOW = 1_700_000_000_000L
+
 /**
  * A [Call] whose result is the one the test completes [result] with.
  */
@@ -510,8 +562,20 @@ private class AnswersFixture {
         ) doAnswer { result?.asCall() ?: error?.asCall() }
     }
 
+    private var olderCount = 0
+    private var newerCount = 0
+
+    /**
+     * An answer already on the server: each one is older than the previous, as pages list them.
+     */
     fun answer(user: io.getstream.chat.android.models.User = randomUser()): Answer =
-        randomPollAnswer(pollId = poll.id, user = user)
+        randomPollAnswer(pollId = poll.id, user = user, createdAt = Date(NOW - ++olderCount * 1_000L))
+
+    /**
+     * An answer cast while the controller is open: newer than every answer already on the server.
+     */
+    fun liveAnswer(user: io.getstream.chat.android.models.User = randomUser()): Answer =
+        randomPollAnswer(pollId = poll.id, user = user, createdAt = Date(NOW + ++newerCount * 1_000L))
 
     fun emit(event: ChatEvent) {
         listener?.invoke(event)
