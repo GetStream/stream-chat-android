@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
@@ -1825,10 +1824,10 @@ internal class MoshiChatApiTest {
     @Test
     fun `A v2 response hides a custom value stored under a declared user field`() = runTest {
         val user = Mother.randomFullUserResponse(custom = mapOf("shadow_banned" to true)).copy(shadowBanned = false)
-        val api = mock<UserApi>()
-        whenever(api.queryUsers(any(), any()))
-            .doReturn(RetroSuccess(QueryUsersResponse(duration = randomString(), users = listOf(user))).toRetrofitCall())
-        val sut = Fixture().withUserApi(api).get()
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryUsers(anyOrNull(), anyOrNull()) }
+            .thenRespond(QueryUsersResponse(duration = randomString(), users = listOf(user)))
+        val sut = Fixture().withChatEndpoints(api).get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
         val result = sut.queryUsers(Mother.randomQueryUsersRequest()).await()
@@ -2873,12 +2872,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryUsersInput")
-    fun testQueryUsers(call: RetrofitCall<QueryUsersResponse>, expected: KClass<*>) = runTest {
+    fun testQueryUsers(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<UserApi>()
-        whenever(api.queryUsers(any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryUsers(anyOrNull(), anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withUserApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val userId = randomString()
@@ -2895,7 +2894,7 @@ internal class MoshiChatApiTest {
             presence = query.presence,
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryUsers(connectionId, expectedPayload)
+        verifyBlocking(api, times(1)) { queryUsers(connectionId, JsonQuery(expectedPayload)) }
     }
 
     @ParameterizedTest
@@ -4594,7 +4593,6 @@ internal class MoshiChatApiTest {
             messageTransformer = NoOpMessageTransformer,
             userTransformer = NoOpUserTransformer,
         )
-        private var userApi: UserApi = mock()
         private var channelApi: ChannelApi = mock()
         private var moderationV1Api: ModerationV1Api = mock()
         private var syncApi: SyncApi = mock()
@@ -4607,10 +4605,6 @@ internal class MoshiChatApiTest {
 
         fun withCurrentUserId(userId: String) = apply {
             this.currentUserId = userId
-        }
-
-        fun withUserApi(userApi: UserApi) = apply {
-            this.userApi = userApi
         }
 
         fun withChannelApi(channelApi: ChannelApi) = apply {
@@ -4664,7 +4658,6 @@ internal class MoshiChatApiTest {
                 dtoMapping = dtoMapping,
                 fileUploader = fileUploader,
                 fileTransformer = fileTransformer,
-                userApi = userApi,
                 channelApi = channelApi,
                 v2EventParser = V2EventParser(domainMapping),
                 moderationV1Api = moderationV1Api,

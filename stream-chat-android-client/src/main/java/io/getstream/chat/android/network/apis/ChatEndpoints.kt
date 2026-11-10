@@ -827,6 +827,16 @@ internal interface ChatEndpoints {
     ): io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 
     /**
+     * Query users
+     * Find and filter users
+     */
+    @GET("/api/v2/users")
+    suspend fun queryUsers(
+        @Query("connection_id") connectionId: String? = null,
+        @Query("payload") payload: io.getstream.chat.android.network.infrastructure.JsonQuery<io.getstream.chat.android.network.models.QueryUsersPayload>? = null,
+    ): io.getstream.chat.android.network.models.QueryUsersResponse
+
+    /**
      * Partially update user
      * Updates certain fields of the user
      */

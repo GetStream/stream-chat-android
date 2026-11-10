@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.di.addV2Converters
 import io.getstream.chat.android.network.apis.ChatEndpoints
 import io.getstream.chat.android.network.infrastructure.JsonQuery
 import io.getstream.chat.android.network.models.QueryMembersPayload
+import io.getstream.chat.android.network.models.QueryUsersPayload
 import io.getstream.chat.android.network.models.SortParamRequest
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
@@ -77,6 +78,17 @@ internal class ChatEndpointsRequestTest {
 
         request.requestUrl!!.queryParameterValues("payload") shouldBeEqualTo
             listOf("""{"type":"messaging","id":"general","limit":5}""")
+    }
+
+    @Test
+    fun `A presence query sends its connection id next to the payload`() = runTest {
+        val payload = QueryUsersPayload(filterConditions = emptyMap(), presence = true)
+
+        val request = record { queryUsers(connectionId = "connection", payload = JsonQuery(payload)) }
+
+        request.requestUrl!!.queryParameter("connection_id") shouldBeEqualTo "connection"
+        request.requestUrl!!.queryParameterValues("payload") shouldBeEqualTo
+            listOf("""{"filter_conditions":{},"presence":true}""")
     }
 
     @Test
