@@ -46,6 +46,7 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doReturnConsecutively
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
@@ -53,6 +54,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class WhenUploadAttachmentsTests {
 
@@ -432,7 +434,7 @@ internal class WhenUploadAttachmentsTests {
         val attachmentUploader = mock<AttachmentUploader> {
             on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doReturn Result.Success(uploaded)
         }
-        val failedAt = java.util.Date(1_000)
+        val failedAt = Date(1_000)
         val message = randomMessage(
             id = "messageId123",
             attachments = mutableListOf(pending),
@@ -440,7 +442,8 @@ internal class WhenUploadAttachmentsTests {
         )
         val failed = message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = failedAt)
         val repository = mock<MessageRepository> {
-            onBlocking { it.selectMessage(message.id) } doReturn failed
+            // The sync marks the message failed after the upload stored its first attachment
+            onBlocking { it.selectMessage(message.id) }.doReturnConsecutively(listOf(message, failed))
         }
         val fixture = Fixture().givenAttachmentUploader(attachmentUploader)
             .givenMessageRepository(repository)
@@ -450,10 +453,9 @@ internal class WhenUploadAttachmentsTests {
 
         val inserted = argumentCaptor<Message>()
         verify(repository, times(2)).insertMessage(inserted.capture())
-        inserted.allValues.forEach {
-            it.syncStatus shouldBeEqualTo SyncStatus.FAILED_PERMANENTLY
-            it.updatedLocallyAt shouldBeEqualTo failedAt
-        }
+        inserted.firstValue.syncStatus shouldBeEqualTo SyncStatus.AWAITING_ATTACHMENTS
+        inserted.lastValue.syncStatus shouldBeEqualTo SyncStatus.FAILED_PERMANENTLY
+        inserted.lastValue.updatedLocallyAt shouldBeEqualTo failedAt
         inserted.lastValue.attachments shouldBeEqualTo listOf(uploaded)
         verify(fixture.channelStateLogic()).upsertMessage(
             argThat { attachments == listOf(uploaded) && syncStatus == SyncStatus.FAILED_PERMANENTLY },
