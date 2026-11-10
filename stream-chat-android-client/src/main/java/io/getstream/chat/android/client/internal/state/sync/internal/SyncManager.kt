@@ -854,15 +854,26 @@ internal class SyncManager(
         return watchedCids
     }
 
+    /**
+     * Picks up to [QUERIES_TO_RETRY] standard channel lists to refresh. Lists the user still has open, see
+     * [StateRegistry.getTrackedQueryChannels], come first, the most recently opened first. The other active
+     * lists fill the remaining slots.
+     */
+    private fun queryLogicsToRestore(recoverAll: Boolean): List<QueryChannelsLogic> {
+        val candidates = logicRegistry.getActiveQueryChannelsLogic()
+            .filter { it.groupKey() == null }
+            .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded().value || recoverAll }
+        val candidatesByIdentifier = candidates.associateBy { it.identifier }
+        val tracked = stateRegistry.getTrackedQueryChannels().mapNotNull(candidatesByIdentifier::get)
+        val untracked = candidates - tracked.toSet()
+        logger.v { "[queryLogicsToRestore] tracked.size: ${tracked.size}, untracked.size: ${untracked.size}" }
+        return (tracked + untracked).take(QUERIES_TO_RETRY)
+    }
+
     private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Result<Set<String>> {
         // 2. update the results for queries that are actively being shown right now (synchronous)
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
-        val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()
-            .asSequence()
-            .filter { it.groupKey() == null }
-            .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded().value || recoverAll }
-            .take(QUERIES_TO_RETRY)
-            .toList()
+        val queryLogicsToRestore = queryLogicsToRestore(recoverAll)
         if (queryLogicsToRestore.isEmpty()) {
             logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
             return Result.Success(emptySet())

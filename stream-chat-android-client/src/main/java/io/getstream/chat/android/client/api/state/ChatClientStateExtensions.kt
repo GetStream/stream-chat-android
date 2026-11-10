@@ -37,7 +37,9 @@ import io.getstream.chat.android.client.internal.state.extensions.internal.parse
 import io.getstream.chat.android.client.internal.state.extensions.internal.requestsAsState
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.client.internal.state.plugin.state.internal.TrackedQueryChannelsStateFlow
 import io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
@@ -141,8 +143,11 @@ public fun ChatClient.queryChannelsAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
     StreamLog.d(TAG) { "[queryChannelsAsState] request: $request" }
-    return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).queryChannels(request, chatEventHandlerFactory)
+    return TrackedQueryChannelsStateFlow(request.identifier) { flowRef ->
+        getStateOrNull(coroutineScope) {
+            // Tracked per user: each user gets a new StateRegistry and the producer runs once per user.
+            requestsAsState(coroutineScope).queryChannels(request, chatEventHandlerFactory, flowRef.get())
+        }
     }
 }
 

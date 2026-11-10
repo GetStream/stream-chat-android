@@ -69,11 +69,13 @@ internal class ChatClientStateCalls(
     internal suspend fun queryChannels(
         request: QueryChannelsRequest,
         chatEventHandlerFactory: ChatEventHandlerFactory,
+        trackedFlow: TrackedQueryChannelsStateFlow? = null,
     ): QueryChannelsState {
         logger.d { "[queryChannels] request: $request" }
         chatClient.queryChannels(request).launch(scope)
-        return deferredState
-            .await()
+        val stateRegistry = deferredState.await()
+        trackedFlow?.let(stateRegistry::trackQueryChannels)
+        return stateRegistry
             .queryChannels(request.identifier)
             .also { queryChannelsState -> queryChannelsState.chatEventHandlerFactory = chatEventHandlerFactory }
     }
