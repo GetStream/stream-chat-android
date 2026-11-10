@@ -168,7 +168,6 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
@@ -602,18 +601,9 @@ internal constructor(
      * The config and reads of the channel as held in memory by the state plugin, or null if it has no state for it.
      * Never creates the state.
      */
-    private fun activeChannelReadState(cid: String): Channel? {
-        val channelId = ChannelId.fromCid(cid) ?: return null
+    private fun activeChannelReadState(cid: String): Channel? =
         // Not resolvePluginDependency: it waits for initialization and throws, and this runs for every new message
-        val stateRegistry = plugins.firstNotNullOfOrNull { it.resolveDependency(StateRegistry::class) }
-        val state = stateRegistry?.activeChannel(channelId) ?: return null
-        return Channel(
-            type = state.channelType,
-            id = state.channelId,
-            config = state.channelConfig.value,
-            read = state.reads.value,
-        )
-    }
+        plugins.firstNotNullOfOrNull { it.resolveDependency(StateRegistry::class) }?.activeChannelReadState(cid)
 
     /**
      * Either entirely extracts current user from the event
