@@ -498,6 +498,32 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsDatabaseLogic).storeStateForChannels(loadedChannels.drop(PAGE_SIZE).toSet())
     }
 
+    @Test
+    fun `queryFirstPage re-queries the later pages of a predefined list with its predefined filter`() = runTest {
+        val predefinedLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Predefined(
+                name = "my-predefined",
+                filterValues = mapOf("a" to 1),
+                sortValues = mapOf("b" to 2),
+            ),
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        val loadedChannels = List(LOADED_CHANNELS_COUNT) { randomChannel() }
+        givenLoadedChannels(loadedChannels)
+        givenPages(firstPage = loadedChannels.take(PAGE_SIZE), laterPage = loadedChannels.drop(PAGE_SIZE))
+
+        predefinedLogic.queryFirstPage()
+
+        verify(client).queryChannelsInternal(
+            argThat {
+                offset == PAGE_SIZE && predefinedFilter == "my-predefined" &&
+                    filterValues == mapOf("a" to 1) && sortValues == mapOf("b" to 2)
+            },
+        )
+    }
+
     // endregion
 
     // region parseChatEventResults

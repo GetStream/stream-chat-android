@@ -442,18 +442,26 @@ internal class QueryChannelsLogic(
     private fun Message.isCreatedAfter(date: Date?): Boolean =
         date == null || getCreatedAtOrDefault(NEVER).after(date)
 
-    suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
+    /**
+     * Applies the result of [request] to the list.
+     *
+     * @return The channels from the server that were listed: the page, plus the later pages when a first page
+     * re-queried them. Empty when the request failed.
+     */
+    suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest): List<Channel> {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result is Result.Success}, request: $request" }
         onOnlineQueryResult(result, request)
 
-        if (result is Result.Success) {
+        val listedChannels = if (result is Result.Success) {
             logger.d { "Number of returned channels: ${result.value.size}" }
             updateOnlineChannels(request, result.value)
         } else {
             queryChannelsStateLogic.initializeChannelsIfNeeded()
+            emptyList()
         }
 
         loadingPerPage(false, request.offset > 0)
+        return listedChannels
     }
 
     /**
@@ -463,6 +471,9 @@ internal class QueryChannelsLogic(
      * logic was registered: standard queries rebuild from filter/sort, predefined queries from
      * the predefined name + value maps (filter/querySort default; backend ignores them). Grouped
      * identifiers short-circuit — the grouped path uses `queryGroupedChannels` instead.
+     *
+     * @return The channels from the server that were listed: the first page, plus the later pages when they were
+     * re-queried.
      */
     internal suspend fun queryFirstPage(): Result<List<Channel>> {
         logger.d { "[queryFirstPage] no args" }
@@ -508,8 +519,8 @@ internal class QueryChannelsLogic(
             }
         }
         val channelsResult = result.map(QueryChannelsResult::channels)
-        onQueryChannelsResult(channelsResult, request)
-        return channelsResult
+        val listedChannels = onQueryChannelsResult(channelsResult, request)
+        return channelsResult.map { listedChannels }
     }
 
     private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
@@ -544,8 +555,9 @@ internal class QueryChannelsLogic(
      *
      * @param request The [QueryChannelsRequest].
      * @param channels The list of channels to update.
+     * @return The channels from the server that were listed.
      */
-    private suspend fun updateOnlineChannels(request: QueryChannelsRequest, channels: List<Channel>) {
+    private suspend fun updateOnlineChannels(request: QueryChannelsRequest, channels: List<Channel>): List<Channel> {
         val existingChannels = queryChannelsStateLogic.getChannels()
         logger.d {
             "[updateOnlineChannels] isFirstPage: ${request.isFirstPage}, " +
@@ -556,7 +568,7 @@ internal class QueryChannelsLogic(
         if (!request.isFirstPage || existingChannels.isNullOrEmpty()) {
             queryChannelsStateLogic.incrementChannelsOffset(channels.size)
             addChannels(channels)
-            return
+            return channels
         }
         val pageCids = channels.mapTo(mutableSetOf()) { it.cid }
         val notUpdatedCids = existingChannels.keys - pageCids
@@ -564,39 +576,46 @@ internal class QueryChannelsLogic(
         if (notUpdatedCids.isEmpty()) {
             addChannels(channels)
             queryChannelsStateLogic.setChannelsOffset(queryChannelsStateLogic.getQuerySpecs().cids.size)
-        } else {
-            refreshLaterPages(request, channels, notUpdatedCids, loadedCount = existingChannels.size)
+            return channels
         }
+        return refreshLaterPages(request, channels, notUpdatedCids, loadedCids = existingChannels.keys)
     }
 
     /**
-     * Re-queries the pages after the first one, up to [loadedCount] channels, and lists their channels with the
-     * [firstPage]. The [notUpdatedCids] none of the pages returns are removed. The next page then starts after the
-     * listed channels, so a page loaded while the pages are re-queried is kept.
+     * Re-queries the pages after the first one, up to as many channels as [loadedCids], and lists their channels with
+     * the [firstPage]. The [notUpdatedCids] none of the pages returns are removed. A later-page channel that was
+     * loaded and is no longer listed was removed while the pages were re-queried, so it is not listed again. The next
+     * page then starts after the listed channels, so a page loaded while the pages are re-queried is kept.
      *
      * When a page fails, only the [firstPage] is added and the loaded channels stay: nothing is removed and the offset
      * is left as it is, since a page can load while the pages are re-queried.
+     *
+     * @return The channels from the server that were listed.
      */
     private suspend fun refreshLaterPages(
         request: QueryChannelsRequest,
         firstPage: List<Channel>,
         notUpdatedCids: Set<String>,
-        loadedCount: Int,
-    ) {
-        val laterChannels = fetchLaterPages(request, loadedCount)
+        loadedCids: Set<String>,
+    ): List<Channel> {
+        val laterChannels = fetchLaterPages(request, loadedCids.size)
         if (laterChannels == null) {
             addChannels(firstPage)
-            return
+            return firstPage
         }
         storeChannels(laterChannels)
+        val removedMeanwhile = loadedCids - queryChannelsStateLogic.getQuerySpecs().cids
         val remoteCids = laterChannels.mapTo(mutableSetOf()) { it.cid }
         val cidsToRemove = notUpdatedCids - remoteCids
         logger.v {
-            "[refreshLaterPages] laterChannels.size: ${laterChannels.size}, cidsToRemove.size: ${cidsToRemove.size}"
+            "[refreshLaterPages] laterChannels.size: ${laterChannels.size}, cidsToRemove.size: ${cidsToRemove.size}, " +
+                "removedMeanwhile.size: ${removedMeanwhile.size}"
         }
         removeChannels(cidsToRemove.toList())
-        addChannels((firstPage + laterChannels).distinctBy { it.cid })
+        val listedChannels = (firstPage + laterChannels.filterNot { it.cid in removedMeanwhile }).distinctBy { it.cid }
+        addChannels(listedChannels)
         queryChannelsStateLogic.setChannelsOffset(queryChannelsStateLogic.getQuerySpecs().cids.size)
+        return listedChannels
     }
 
     /**
