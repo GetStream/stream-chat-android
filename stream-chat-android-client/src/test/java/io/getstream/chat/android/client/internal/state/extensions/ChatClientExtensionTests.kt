@@ -333,6 +333,22 @@ internal class ChatClientExtensionTests {
     }
 
     @Test
+    fun `queryChannelsAsState stops counting the flow as open when its scope is cancelled`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val scopeJob = Job()
+
+        val flow = chatClient.queryChannelsAsState(queryChannelsRequest, coroutineScope = testCoroutines.scope + scopeJob)
+        advanceUntilIdle()
+        val tracked = flow as TrackedQueryChannelsStateFlow
+        tracked.isActive shouldBeEqualTo true
+
+        scopeJob.cancel()
+
+        tracked.isActive shouldBeEqualTo false
+    }
+
+    @Test
     fun `queryChannelsAsState tracks the returned flow again for a different user`() = runTest {
         userFlow.value = randomUser(id = "jc")
         initializationStateFlow.value = InitializationState.COMPLETE

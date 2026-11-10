@@ -123,7 +123,30 @@ internal class StateRegistryQueryChannelsTrackingTest {
         return WeakReference(flow)
     }
 
-    private fun trackedQueryChannelsFlow(name: String) = TrackedQueryChannelsStateFlow(
+    @Test
+    fun `getTrackedQueryChannels should skip a list whose scope is no longer active`() {
+        val openJob = Job()
+        val replacedJob = Job()
+        val open = trackedQueryChannelsFlow("open", openJob)
+        val replaced = trackedQueryChannelsFlow("replaced", replacedJob)
+        stateRegistry.trackQueryChannels(open)
+        stateRegistry.trackQueryChannels(replaced)
+
+        replacedJob.cancel()
+
+        assertEquals(listOf(open.identifier), stateRegistry.getTrackedQueryChannels())
+    }
+
+    @Test
+    fun `getTrackedQueryChannels should keep a list created without a scope job`() {
+        val flow = trackedQueryChannelsFlow("list", scopeJob = null)
+        stateRegistry.trackQueryChannels(flow)
+
+        assertEquals(listOf(flow.identifier), stateRegistry.getTrackedQueryChannels())
+    }
+
+    private fun trackedQueryChannelsFlow(name: String, scopeJob: Job? = null) = TrackedQueryChannelsStateFlow(
         identifier = QueryChannelsIdentifier.Standard(Filters.eq("name", name), QuerySortByField.descByName("name")),
+        scopeJob = scopeJob,
     ) { MutableStateFlow(null) }
 }

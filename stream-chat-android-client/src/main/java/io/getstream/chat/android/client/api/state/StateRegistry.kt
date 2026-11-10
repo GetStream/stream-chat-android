@@ -301,12 +301,15 @@ public class StateRegistry @JvmOverloads constructor(
     }
 
     /**
-     * Retrieves the identifiers of the channel lists which were registered via [trackQueryChannels] and are still
-     * strongly referenced, the most recently tracked first, without duplicates.
+     * Retrieves the identifiers of the channel lists which were registered via [trackQueryChannels], are still
+     * strongly referenced and whose scope is still active, the most recently tracked first, without duplicates.
+     * The scope check drops a replaced list before garbage collection clears its flow.
      */
     internal fun getTrackedQueryChannels(): List<QueryChannelsIdentifier> {
         val entries = synchronized(queryChannelsFlows) {
-            queryChannelsFlows.map { (flow, order) -> flow.identifier to order }
+            queryChannelsFlows
+                .filterKeys { flow -> flow.isActive }
+                .map { (flow, order) -> flow.identifier to order }
         }
         return entries
             .sortedByDescending { (_, order) -> order }

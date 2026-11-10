@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.state.internal
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 import java.lang.ref.WeakReference
@@ -35,14 +36,24 @@ import java.lang.ref.WeakReference
  *
  * Code reached from [createDelegate] can run before the constructor returns, so it may read [identifier] only.
  * Reading [value] or collecting this flow there fails, because the delegate is not assigned yet.
+ *
+ * @param identifier The identifier of the channel list.
+ * @param scopeJob The [Job] of the scope the flow was created in. Once it is no longer active, for example when a
+ * screen replaces its query, the flow no longer counts as open. Null counts as always active.
+ * @param createDelegate Creates the delegate from a weak reference to this flow.
  */
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 internal class TrackedQueryChannelsStateFlow(
     val identifier: QueryChannelsIdentifier,
+    private val scopeJob: Job? = null,
     createDelegate: (WeakReference<TrackedQueryChannelsStateFlow>) -> StateFlow<QueryChannelsState?>,
 ) : StateFlow<QueryChannelsState?> {
 
     private val delegate: StateFlow<QueryChannelsState?> = createDelegate(WeakReference(this))
+
+    /** Whether the scope the flow was created in is still active. */
+    val isActive: Boolean
+        get() = scopeJob?.isActive ?: true
 
     override val value: QueryChannelsState?
         get() = delegate.value
