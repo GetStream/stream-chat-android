@@ -230,6 +230,7 @@ import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.UnreadCounts
@@ -3027,12 +3028,15 @@ internal constructor(
     }
 
     /**
-     * Ensure the message has a [Message.createdLocallyAt] timestamp.
-     * If not, set it to the max of the channel's [Channel.lastMessageAt] + 1 millisecond and the
+     * Ensure the message has a [Message.createdLocallyAt] timestamp, renewing it when a failed message that was
+     * never sent is resent. A new one is the max of the channel's [Channel.lastMessageAt] + 1 millisecond and the
      * estimated server time. Using estimated server time (instead of raw local clock) prevents
      * cross-user ordering issues when the device clock is skewed.
      */
     private suspend fun Message.ensureCreatedLocallyAt(cid: String): Message {
+        // A resend of a message that was never sent is sent now, and the server dates it on arrival
+        val currentCreatedLocallyAt = createdLocallyAt
+            .takeUnless { syncStatus == SyncStatus.FAILED_PERMANENTLY && createdAt == null }
         val parentId = this.parentId
         if (parentId != null) {
             // Thread reply
@@ -3042,7 +3046,7 @@ internal constructor(
                 Date(it.time + 1)
             }
             val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
-            return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
+            return copy(createdLocallyAt = currentCreatedLocallyAt ?: createdLocallyAt)
         } else {
             // Regular message
             val (type, id) = cid.cidToTypeAndId()
@@ -3054,7 +3058,7 @@ internal constructor(
                 Date(it.time + 1)
             }
             val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
-            return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
+            return copy(createdLocallyAt = currentCreatedLocallyAt ?: createdLocallyAt)
         }
     }
 
