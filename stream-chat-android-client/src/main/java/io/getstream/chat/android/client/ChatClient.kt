@@ -184,6 +184,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionData
@@ -4521,7 +4522,13 @@ internal constructor(
             channelId = channelId,
             expiration = expiration,
         ).doOnResult(userScope) { result ->
-            result.onSuccess { mutes -> channelUpdateResponseHandler?.onChannelMuted(channelType, channelId, mutes) }
+            result.onSuccess { mutes ->
+                val cid = "$channelType:$channelId"
+                val mutedCids = mutes.mapNotNullTo(mutableSetOf(cid)) { it.channel?.cid }
+                updateChannelMutes(channelType, channelId, muted = true) { current ->
+                    current.filterNot { it.channel?.cid in mutedCids } + mutes
+                }
+            }
         }.toUnitCall()
     }
 
@@ -4542,8 +4549,29 @@ internal constructor(
         channelId: String,
     ): Call<Unit> {
         return api.unmuteChannel(channelType, channelId).doOnResult(userScope) { result ->
-            result.onSuccess { channelUpdateResponseHandler?.onChannelUnmuted(channelType, channelId) }
+            result.onSuccess {
+                val cid = "$channelType:$channelId"
+                updateChannelMutes(channelType, channelId, muted = false) { current ->
+                    current.filterNot { it.channel?.cid == cid }
+                }
+            }
         }
+    }
+
+    /**
+     * Updates the current user's channel mutes after a channel mute or unmute, as
+     * [NotificationChannelMutesUpdatedEvent] does, so they show at once and stay when the event is late or missed.
+     */
+    private fun updateChannelMutes(
+        channelType: String,
+        channelId: String,
+        muted: Boolean,
+        update: (List<ChannelMute>) -> List<ChannelMute>,
+    ) {
+        val currentUser = mutableClientState.user.value ?: return
+        val channelMutes = update(currentUser.channelMutes)
+        mutableClientState.setUser(currentUser.copy(channelMutes = channelMutes))
+        channelUpdateResponseHandler?.onChannelMuteChanged(channelType, channelId, muted, channelMutes)
     }
 
     /**

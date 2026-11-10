@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.client.utils.verifyThrowableError
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.User
@@ -43,6 +44,7 @@ import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelMute
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
@@ -1723,6 +1725,138 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         verify(handler).onMembersRemoved(response, memberIds)
     }
 
+    @Test
+    fun updateChannelSuccessStoresTheResponse() = runTest {
+        // given
+        val response = randomChannel()
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenUpdateChannelResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.updateChannel(randomString(), randomString(), randomMessage(), mapOf("name" to "new")).await()
+        // then
+        verify(handler).onChannelUpdated(response)
+    }
+
+    @Test
+    fun addMembersSuccessPassesTheAddedMemberIds() = runTest {
+        // given
+        val response = randomChannel()
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenAddMembersResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.addMembers(randomString(), randomString(), listOf("jane", "john")).await()
+        // then
+        verify(handler).onMembersAdded(response, listOf("jane", "john"))
+    }
+
+    @Test
+    fun inviteMembersSuccessPassesTheInvitedMemberIds() = runTest {
+        // given
+        val response = randomChannel()
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenInviteMembersResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.inviteMembers(randomString(), randomString(), listOf("jane"), randomMessage(), randomBoolean()).await()
+        // then
+        verify(handler).onMembersAdded(response, listOf("jane"))
+    }
+
+    @Test
+    fun truncateChannelSuccessStoresTheResponse() = runTest {
+        // given
+        val response = randomChannel()
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenTruncateChannelResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.truncateChannel(randomString(), randomString()).await()
+        // then
+        verify(handler).onChannelTruncated(response)
+    }
+
+    @Test
+    fun deleteChannelSuccessStoresTheResponse() = runTest {
+        // given
+        val response = randomChannel()
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenUser(randomUser())
+            .givenDeleteChannelResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.deleteChannel(randomString(), randomString()).await()
+        // then
+        verify(handler).onChannelDeleted(response)
+    }
+
+    @Test
+    fun muteChannelSuccessReplacesTheChannelMuteOfTheCurrentUser() = runTest {
+        // given
+        val otherMute = randomChannelMute(channel = randomChannel(type = "messaging", id = "other"))
+        val oldMute = randomChannelMute(channel = randomChannel(type = "messaging", id = "123"))
+        val newMute = randomChannelMute(channel = randomChannel(type = "messaging", id = "123"))
+        val currentUser = randomUser(channelMutes = listOf(otherMute, oldMute))
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenUser(currentUser)
+            .givenMuteChannelResult(RetroSuccess(listOf(newMute)).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        val result = sut.muteChannel("messaging", "123").await()
+        // then
+        verifySuccess(result, Unit)
+        verify(mutableClientState).setUser(currentUser.copy(channelMutes = listOf(otherMute, newMute)))
+        verify(handler).onChannelMuteChanged("messaging", "123", true, listOf(otherMute, newMute))
+    }
+
+    @Test
+    fun unmuteChannelSuccessRemovesTheChannelMuteOfTheCurrentUser() = runTest {
+        // given
+        val otherMute = randomChannelMute(channel = randomChannel(type = "messaging", id = "other"))
+        val mute = randomChannelMute(channel = randomChannel(type = "messaging", id = "123"))
+        val currentUser = randomUser(channelMutes = listOf(otherMute, mute))
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenUser(currentUser)
+            .givenUnmuteChannelResult(RetroSuccess(Unit).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.unmuteChannel("messaging", "123").await()
+        // then
+        verify(mutableClientState).setUser(currentUser.copy(channelMutes = listOf(otherMute)))
+        verify(handler).onChannelMuteChanged("messaging", "123", false, listOf(otherMute))
+    }
+
+    @Test
+    fun muteChannelErrorChangesNothing() = runTest {
+        // given
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenUser(randomUser())
+            .givenMuteChannelResult(RetroError<List<ChannelMute>>(positiveRandomInt()).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.muteChannel("messaging", "123").await()
+        // then
+        verify(mutableClientState, never()).setUser(any())
+        verifyNoInteractions(handler)
+    }
+
     internal inner class Fixture {
 
         fun givenQueryChannelsResult(result: Call<QueryChannelsResult>) = apply {
@@ -1839,6 +1973,14 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
 
         fun givenInviteMembersResult(result: Call<Channel>) = apply {
             whenever(api.inviteMembers(any(), any(), any(), any(), any())).thenReturn(result)
+        }
+
+        fun givenMuteChannelResult(result: Call<List<ChannelMute>>) = apply {
+            whenever(api.muteChannel(any(), any(), anyOrNull())).thenReturn(result)
+        }
+
+        fun givenUnmuteChannelResult(result: Call<Unit>) = apply {
+            whenever(api.unmuteChannel(any(), any())).thenReturn(result)
         }
 
         fun givenUser(user: User) = apply {

@@ -135,12 +135,13 @@ internal interface ChannelLogic {
     fun upsertMembers(members: List<Member>)
 
     /**
-     * Applies the [channel] returned by a channel update the current user made: the channel data, the member count
-     * and the listed members.
+     * Applies the [channel] returned by a channel update the current user made, keeping the newer data the response
+     * can predate (see [mergeChannelUpdate]).
      *
      * @param channel The channel returned by the server.
+     * @param withMembers True to also take the member count and the listed members from [channel].
      */
-    fun applyChannelUpdate(channel: Channel)
+    fun applyChannelUpdate(channel: Channel, withMembers: Boolean)
 
     /**
      * Removes the messages a truncation at [truncatedAt] removed on the server.

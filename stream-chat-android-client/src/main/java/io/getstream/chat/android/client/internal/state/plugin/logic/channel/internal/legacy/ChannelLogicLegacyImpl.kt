@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.mergeChannelUpdate
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -39,7 +40,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushPreference
-import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
@@ -174,12 +174,14 @@ internal class ChannelLogicLegacyImpl(
         stateLogic.upsertMembers(members)
     }
 
-    override fun applyChannelUpdate(channel: Channel) {
+    override fun applyChannelUpdate(channel: Channel, withMembers: Boolean) {
         val channelData = channel.toChannelData()
-        stateLogic.updateChannelData { current -> current?.mergeFromEvent(channelData) ?: channelData }
-        val members = mutableState.members.value.associateBy(Member::getUserId) +
-            channel.members.associateBy(Member::getUserId)
-        stateLogic.setMembers(members.values.toList(), channel.memberCount)
+        stateLogic.updateChannelData { current -> current?.mergeChannelUpdate(channelData, withMembers) ?: channelData }
+        if (withMembers) {
+            val members = mutableState.members.value.associateBy(Member::getUserId) +
+                channel.members.associateBy(Member::getUserId)
+            stateLogic.setMembers(members.values.toList(), channel.memberCount)
+        }
     }
 
     override fun truncate(truncatedAt: Date) {

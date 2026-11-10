@@ -23,10 +23,14 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.querychannel
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -35,6 +39,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -58,18 +63,47 @@ internal class ChannelUpdateResponseHandlerTest {
     private val handler = ChannelUpdateResponseHandler(logic, repos, globalState) { currentUserId }
 
     @Test
-    fun `onChannelUpdated stores the merged channel and applies it to the active channel`() = runTest {
-        givenActiveChannel()
-        val stored = channel(name = "old", updatedAt = Date(1_000))
+    fun `onChannelUpdated stores the response merged into the stored channel`() = runTest {
+        val jane = randomMember(user = randomUser(id = "jane"))
+        val stored = channel(name = "old", updatedAt = Date(1_000), members = listOf(jane), memberCount = 1).copy(
+            messages = listOf(randomMessage(cid = CID)),
+            read = listOf(randomChannelUserRead()),
+            ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL),
+            hidden = true,
+            lastMessageAt = Date(5_000),
+            messageCount = 10,
+        )
         whenever(repos.selectChannel(CID)) doReturn stored
-        val response = channel(name = "new", updatedAt = Date(2_000))
+        // The response predates a message: an older last message date and message count, and no hidden value
+        val response = channel(name = "new", updatedAt = Date(2_000)).copy(
+            ownCapabilities = emptySet(),
+            hidden = null,
+            lastMessageAt = Date(4_000),
+            messageCount = 9,
+        )
 
         handler.onChannelUpdated(response)
 
         val saved = argumentCaptor<Channel>().apply { verify(repos).insertChannel(capture()) }.firstValue
         saved.name shouldBeEqualTo "new"
         saved.messages shouldBeEqualTo stored.messages
-        verify(channelLogic).applyChannelUpdate(response)
+        saved.read shouldBeEqualTo stored.read
+        saved.ownCapabilities shouldBeEqualTo stored.ownCapabilities
+        saved.hidden shouldBeEqualTo true
+        saved.lastMessageAt shouldBeEqualTo Date(5_000)
+        saved.messageCount shouldBeEqualTo 10
+        saved.members shouldBeEqualTo listOf(jane)
+        saved.memberCount shouldBeEqualTo 1
+    }
+
+    @Test
+    fun `onChannelUpdated applies the response to the active channel without its members`() = runTest {
+        givenActiveChannel()
+        val response = channel(name = "new", updatedAt = Date(2_000))
+
+        handler.onChannelUpdated(response)
+
+        verify(channelLogic).applyChannelUpdate(response, withMembers = false)
         verify(queryChannelsLogic).refreshChannelState(CID)
     }
 
@@ -82,7 +116,7 @@ internal class ChannelUpdateResponseHandlerTest {
         handler.onChannelUpdated(channel(updatedAt = Date(2_000)))
 
         verify(repos, never()).insertChannel(any<Channel>())
-        verify(channelLogic, never()).applyChannelUpdate(any())
+        verify(channelLogic, never()).applyChannelUpdate(any(), any())
     }
 
     @Test
@@ -104,14 +138,28 @@ internal class ChannelUpdateResponseHandlerTest {
     }
 
     @Test
-    fun `onMembersAdded applies a response that lists every added member`() = runTest {
+    fun `onChannelUpdated logs a storage failure instead of throwing`() = runTest {
         givenActiveChannel()
-        val added = randomMember(user = randomUser(id = "jane"))
-        val response = channel(members = listOf(added), memberCount = 2)
+        whenever(repos.selectChannel(CID)) doThrow IllegalStateException("database is closed")
+
+        handler.onChannelUpdated(channel())
+
+        verify(channelLogic, never()).applyChannelUpdate(any(), any())
+    }
+
+    @Test
+    fun `onMembersAdded stores and applies a response that lists every added member`() = runTest {
+        givenActiveChannel()
+        val jane = randomMember(user = randomUser(id = "jane"))
+        whenever(repos.selectChannel(CID)) doReturn channel(members = emptyList(), memberCount = 1)
+        val response = channel(members = listOf(jane), memberCount = 2)
 
         handler.onMembersAdded(response, listOf("jane"))
 
-        verify(channelLogic).applyChannelUpdate(response)
+        val saved = argumentCaptor<Channel>().apply { verify(repos).insertChannel(capture()) }.firstValue
+        saved.members shouldBeEqualTo listOf(jane)
+        saved.memberCount shouldBeEqualTo 2
+        verify(channelLogic).applyChannelUpdate(response, withMembers = true)
     }
 
     @Test
@@ -123,7 +171,7 @@ internal class ChannelUpdateResponseHandlerTest {
         handler.onMembersAdded(response, listOf("jane", "john"))
 
         verify(repos, never()).insertChannel(any<Channel>())
-        verify(channelLogic, never()).applyChannelUpdate(any())
+        verify(channelLogic, never()).applyChannelUpdate(any(), any())
     }
 
     @Test
@@ -141,7 +189,7 @@ internal class ChannelUpdateResponseHandlerTest {
             val saved = argumentCaptor<Channel>().apply { verify(repos).insertChannel(capture()) }.firstValue
             saved.members.map { it.getUserId() } shouldBeEqualTo listOf("jane")
             saved.memberCount shouldBeEqualTo 1
-            verify(channelLogic, never()).applyChannelUpdate(any())
+            verify(channelLogic, never()).applyChannelUpdate(any(), any())
         }
 
     @Test
@@ -154,14 +202,26 @@ internal class ChannelUpdateResponseHandlerTest {
     }
 
     @Test
-    fun `onChannelTruncated removes the truncated messages`() = runTest {
+    fun `onChannelTruncated removes the truncated messages and applies the channel`() = runTest {
         givenActiveChannel()
         val truncatedAt = Date(5_000)
+        val response = channel().copy(truncatedAt = truncatedAt)
 
-        handler.onChannelTruncated(channel().copy(truncatedAt = truncatedAt))
+        handler.onChannelTruncated(response)
 
         verify(repos).deleteChannelMessagesBefore(CID, truncatedAt)
         verify(channelLogic).truncate(truncatedAt)
+        verify(channelLogic).applyChannelUpdate(response, withMembers = false)
+    }
+
+    @Test
+    fun `onChannelTruncated without a truncation date removes no messages`() = runTest {
+        givenActiveChannel()
+
+        handler.onChannelTruncated(channel())
+
+        verify(repos, never()).deleteChannelMessagesBefore(any(), any())
+        verify(channelLogic, never()).truncate(any())
     }
 
     @Test
@@ -177,29 +237,25 @@ internal class ChannelUpdateResponseHandlerTest {
     }
 
     @Test
-    fun `onChannelMuted replaces the channel's mute in the channel mutes`() = runTest {
+    fun `onChannelDeleted without a deletion date changes nothing`() = runTest {
         givenActiveChannel()
-        val otherMute = randomChannelMute(channel = randomChannel(type = "messaging", id = "other"))
-        val oldMute = randomChannelMute(channel = channel())
-        globalState.setChannelMutes(listOf(otherMute, oldMute))
-        val newMute = randomChannelMute(channel = channel())
 
-        handler.onChannelMuted(CHANNEL_TYPE, CHANNEL_ID, listOf(newMute))
+        handler.onChannelDeleted(channel(deletedAt = null))
 
-        globalState.channelMutes.value shouldBeEqualTo listOf(otherMute, newMute)
-        verify(channelLogic).setMuted(true)
+        verify(repos, never()).deleteChannelMessagesBefore(any(), any())
+        verify(channelLogic, never()).deleteChannel(any())
     }
 
     @Test
-    fun `onChannelUnmuted removes the channel's mute from the channel mutes`() = runTest {
+    fun `onChannelMuteChanged sets the channel mutes and the channel's muted state`() = runTest {
         givenActiveChannel()
-        val otherMute = randomChannelMute(channel = randomChannel(type = "messaging", id = "other"))
-        globalState.setChannelMutes(listOf(otherMute, randomChannelMute(channel = channel())))
+        val mutes = listOf(randomChannelMute(channel = channel()))
 
-        handler.onChannelUnmuted(CHANNEL_TYPE, CHANNEL_ID)
+        handler.onChannelMuteChanged(CHANNEL_TYPE, CHANNEL_ID, muted = true, channelMutes = mutes)
 
-        globalState.channelMutes.value shouldBeEqualTo listOf(otherMute)
-        verify(channelLogic).setMuted(false)
+        globalState.channelMutes.value shouldBeEqualTo mutes
+        verify(channelLogic).setMuted(true)
+        verify(queryChannelsLogic).refreshChannelState(CID)
     }
 
     private fun givenActiveChannel() {
@@ -210,7 +266,7 @@ internal class ChannelUpdateResponseHandlerTest {
         name: String = "name",
         updatedAt: Date? = Date(1_000),
         deletedAt: Date? = null,
-        members: List<io.getstream.chat.android.models.Member> = emptyList(),
+        members: List<Member> = emptyList(),
         memberCount: Int = 0,
     ) = randomChannel(
         type = CHANNEL_TYPE,
@@ -220,7 +276,9 @@ internal class ChannelUpdateResponseHandlerTest {
         deletedAt = deletedAt,
         members = members,
         memberCount = memberCount,
-    ).copy(truncatedAt = null, hidden = false)
+        truncatedAt = null,
+        hidden = false,
+    )
 
     private companion object {
         const val CHANNEL_TYPE = "messaging"

@@ -35,10 +35,13 @@ import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomFlag
 import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -148,6 +151,7 @@ internal class ChatClientModerationApiTests : BaseChatClientTest() {
     @Test
     fun muteChannelSuccess() = runTest {
         // given
+        whenever(mutableClientState.user) doReturn MutableStateFlow(randomUser())
         val channelType = randomString()
         val channelId = randomString()
         val expiration = positiveRandomInt()
@@ -177,6 +181,7 @@ internal class ChatClientModerationApiTests : BaseChatClientTest() {
     @Test
     fun unmuteChannelSuccess() = runTest {
         // given
+        whenever(mutableClientState.user) doReturn MutableStateFlow(randomUser())
         val channelType = randomString()
         val channelId = randomString()
         whenever(api.unmuteChannel(any(), any()))

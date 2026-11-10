@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomUser
@@ -56,7 +57,7 @@ internal class ChannelLogicImplChannelUpdateTest : ChannelStateImplTestBase() {
             ChannelData(id = CHANNEL_ID, type = CHANNEL_TYPE, name = "old", ownCapabilities = capabilities)
         }
 
-        sut.applyChannelUpdate(channel(name = "new").copy(ownCapabilities = emptySet()))
+        sut.applyChannelUpdate(channel(name = "new").copy(ownCapabilities = emptySet()), withMembers = false)
 
         assertEquals("new", channelState.channelData.value.name)
         assertEquals(capabilities, channelState.channelData.value.ownCapabilities)
@@ -67,11 +68,32 @@ internal class ChannelLogicImplChannelUpdateTest : ChannelStateImplTestBase() {
         val jane = randomMember(user = randomUser(id = "jane"))
         channelState.setMemberCount(1)
 
-        sut.applyChannelUpdate(channel(members = listOf(jane), memberCount = 2))
+        sut.applyChannelUpdate(channel(members = listOf(jane), memberCount = 2), withMembers = true)
         sut.handleEvent(randomMemberAddedEvent(cid = CID, channelType = CHANNEL_TYPE, channelId = CHANNEL_ID, member = jane))
 
         assertEquals(2, channelState.membersCount.value)
         assertEquals(listOf("jane"), channelState.members.value.map { it.getUserId() })
+    }
+
+    @Test
+    fun `an update response keeps the members and the later last message date`() {
+        val john = randomMember(user = randomUser(id = "john"))
+        channelState.setMembers(listOf(john))
+        channelState.setMemberCount(1)
+        channelState.updateChannelData {
+            ChannelData(id = CHANNEL_ID, type = CHANNEL_TYPE, lastMessageAt = Date(5_000), messageCount = 10)
+        }
+
+        sut.applyChannelUpdate(
+            channel(name = "new").copy(lastMessageAt = Date(4_000), messageCount = 9),
+            withMembers = false,
+        )
+
+        assertEquals("new", channelState.channelData.value.name)
+        assertEquals(Date(5_000), channelState.channelData.value.lastMessageAt)
+        assertEquals(10, channelState.channelData.value.messageCount)
+        assertEquals(1, channelState.membersCount.value)
+        assertEquals(listOf("john"), channelState.members.value.map { it.getUserId() })
     }
 
     @Test
@@ -95,7 +117,7 @@ internal class ChannelLogicImplChannelUpdateTest : ChannelStateImplTestBase() {
 
     private fun channel(
         name: String = "name",
-        members: List<io.getstream.chat.android.models.Member> = emptyList(),
+        members: List<Member> = emptyList(),
         memberCount: Int = 0,
     ) = randomChannel(
         type = CHANNEL_TYPE,
