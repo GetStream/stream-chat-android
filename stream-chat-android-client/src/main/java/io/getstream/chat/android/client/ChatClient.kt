@@ -4524,7 +4524,7 @@ internal constructor(
         ).doOnResult(userScope) { result ->
             result.onSuccess { mutes ->
                 val cid = "$channelType:$channelId"
-                val mutedCids = mutes.mapNotNullTo(mutableSetOf(cid)) { it.channel?.cid }
+                val mutedCids = mutes.mapNotNull { it.channel?.cid }.toSet() + cid
                 updateChannelMutes(channelType, channelId, muted = true) { current ->
                     current.filterNot { it.channel?.cid in mutedCids } + mutes
                 }

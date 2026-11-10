@@ -63,7 +63,7 @@ internal class ChannelUpdateResponseHandler(
      * not listed yet, so a count taken from such a response would be raised twice.
      */
     suspend fun onMembersAdded(channel: Channel, addedMemberIds: List<String>) = safely("onMembersAdded") {
-        val listedIds = channel.members.mapTo(mutableSetOf()) { it.getUserId() }
+        val listedIds = channel.members.map { it.getUserId() }.toSet()
         if (listedIds.containsAll(addedMemberIds)) {
             applyChannel(channel, withMembers = true)
         } else {
