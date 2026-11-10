@@ -17,39 +17,15 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api.QueryParams
-import io.getstream.chat.android.client.api2.UrlQueryPayload
-import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
-import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SendEventRequest
 import okhttp3.ResponseBody
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 @AuthenticatedApi
 internal interface ChannelApi {
-
-    @GET("/api/v2/chat/channels/{type}/{id}/pinned_messages")
-    fun getPinnedMessages(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @UrlQueryPayload @Query("payload") payload: PinnedMessagesRequest,
-    ): RetrofitCall<GetPinnedMessagesResponse>
-
-    // The generated stopWatchingChannel sends no body, but the backend rejects the request without one.
-    @POST("/api/v2/chat/channels/{type}/{id}/stop-watching")
-    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
-    fun stopWatching(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: Map<Any, Any>,
-    ): RetrofitCall<Response>
 
     /**
      * Sends an event to the channel. The body is returned raw: its `event` is read by the v2 event parser, so its

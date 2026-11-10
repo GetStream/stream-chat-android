@@ -21,6 +21,12 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination.AfterDate
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination.AfterMessage
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination.AroundDate
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination.AroundMessage
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination.BeforeDate
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination.BeforeMessage
 import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -30,9 +36,6 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
-import io.getstream.chat.android.client.api2.endpoint.GeneralApi
-import io.getstream.chat.android.client.api2.endpoint.MessageApi
-import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
@@ -44,7 +47,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.call.endpointCall
 import io.getstream.chat.android.client.events.ChatEvent
@@ -117,6 +119,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.apis.ChatEndpoints
 import io.getstream.chat.android.network.infrastructure.ExactDate
+import io.getstream.chat.android.network.infrastructure.JsonQuery
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
@@ -225,12 +228,9 @@ constructor(
     private val fileUploader: FileUploader,
     private val fileTransformer: FileTransformer,
     private val userApi: UserApi,
-    private val messageApi: MessageApi,
     private val channelApi: ChannelApi,
     private val v2EventParser: V2EventParser,
-    private val moderationApi: ModerationApi,
     private val moderationV1Api: ModerationV1Api,
-    private val generalApi: GeneralApi,
     private val syncApi: SyncApi,
     private val fileDownloadApi: FileDownloadApi,
     private val chatEndpoints: ChatEndpoints,
@@ -1001,18 +1001,17 @@ constructor(
         createdAtBefore: Date?,
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>> {
-        return moderationApi.queryBannedUsers(
-            payload = QueryBannedUsersPayload(
-                filterConditions = filter.toMap(),
-                sort = sort.toSortParams(),
-                offset = offset,
-                limit = limit,
-                createdAtAfter = createdAtAfter,
-                createdAtAfterOrEqual = createdAtAfterOrEqual,
-                createdAtBefore = createdAtBefore,
-                createdAtBeforeOrEqual = createdAtBeforeOrEqual,
-            ),
-        ).flatMapDomain { response ->
+        val payload = QueryBannedUsersPayload(
+            filterConditions = filter.toMap(),
+            sort = sort.toSortParams(),
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+        )
+        return endpoint { queryBannedUsers(payload = JsonQuery(payload)) }.flatMapDomain { response ->
             val bans = response.bans.mapNotNull { it.toDomain() }
             if (bans.size == response.bans.size) {
                 CoroutineCall(coroutineScope) { Result.Success(bans) }
@@ -1055,12 +1054,9 @@ constructor(
     }
 
     override fun stopWatching(channelType: String, channelId: String): Call<Unit> = postponeCall {
-        channelApi.stopWatching(
-            channelType = channelType,
-            channelId = channelId,
-            connectionId = connectionId,
-            body = emptyMap(),
-        ).toUnitCall()
+        endpoint {
+            stopWatchingChannel(type = channelType, id = channelId, connectionId = connectionId)
+        }.toUnitCall()
     }
 
     override fun getPinnedMessages(
@@ -1070,15 +1066,37 @@ constructor(
         sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
-        return channelApi.getPinnedMessages(
-            channelType = channelType,
-            channelId = channelId,
-            payload = PinnedMessagesRequest.create(
-                limit = limit,
-                sort = sort,
-                pagination = pagination,
-            ),
-        ).mapDomain { response ->
+        val sortParams = JsonQuery(sort.toSortParams())
+        return endpoint {
+            val type = channelType
+            val id = channelId
+            when (pagination) {
+                is AroundMessage ->
+                    getPinnedMessages(type, id, limit, idAround = pagination.messageId, sort = sortParams)
+                is BeforeMessage -> if (pagination.inclusive) {
+                    getPinnedMessages(type, id, limit, idLte = pagination.messageId, sort = sortParams)
+                } else {
+                    getPinnedMessages(type, id, limit, idLt = pagination.messageId, sort = sortParams)
+                }
+                is AfterMessage -> if (pagination.inclusive) {
+                    getPinnedMessages(type, id, limit, idGte = pagination.messageId, sort = sortParams)
+                } else {
+                    getPinnedMessages(type, id, limit, idGt = pagination.messageId, sort = sortParams)
+                }
+                is AroundDate ->
+                    getPinnedMessages(type, id, limit, pinnedAtAround = pagination.date, sort = sortParams)
+                is BeforeDate -> if (pagination.inclusive) {
+                    getPinnedMessages(type, id, limit, pinnedAtBeforeOrEqual = pagination.date, sort = sortParams)
+                } else {
+                    getPinnedMessages(type, id, limit, pinnedAtBefore = pagination.date, sort = sortParams)
+                }
+                is AfterDate -> if (pagination.inclusive) {
+                    getPinnedMessages(type, id, limit, pinnedAtAfterOrEqual = pagination.date, sort = sortParams)
+                } else {
+                    getPinnedMessages(type, id, limit, pinnedAtAfter = pagination.date, sort = sortParams)
+                }
+            }
+        }.mapDomain { response ->
             response.messages.map {
                 it.toDomain()
             }
@@ -1386,11 +1404,14 @@ constructor(
         parentId: String,
         limit: Int,
         lastId: String?,
-    ): Call<List<Message>> = messageApi.getNewerReplies(
-        parentId = parentId,
-        limit = limit,
-        lastId = lastId,
-    ).mapDomain { response ->
+    ): Call<List<Message>> = endpoint {
+        getReplies(
+            parentId = parentId,
+            limit = limit,
+            idGt = lastId,
+            sort = JsonQuery(listOf(SortParamRequest(field = "created_at", direction = 1))),
+        )
+    }.mapDomain { response ->
         response.messages.map {
             it.toDomain()
         }
@@ -1523,7 +1544,7 @@ constructor(
             next = next,
             sort = sort?.toSortParams(),
         )
-        return generalApi.searchMessages(newRequest)
+        return endpoint { search(payload = JsonQuery(newRequest)) }
             .mapDomain { response ->
                 val messages = response.results.mapNotNull { it.message?.toDomain() }.map { message ->
                     (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
@@ -1720,7 +1741,7 @@ constructor(
             )
         }
 
-        return generalApi.queryMembers(request)
+        return endpoint { queryMembers(payload = JsonQuery(request)) }
             .mapDomain { response ->
                 response.members.map {
                     it.toDomain()
