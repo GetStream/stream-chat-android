@@ -126,6 +126,10 @@ private val ChatClient.chatClientConfig: ChatClientConfig
  *
  * You can pass option [chatEventHandlerFactory] parameter which will be associated with this query channels request.
  *
+ * After a reconnect, the channel lists whose returned StateFlow is still referenced are refreshed first, the most
+ * recently created first. Keep a reference to the returned StateFlow while the list is shown, not only to a flow
+ * derived from it, so the list keeps this priority.
+ *
  * @see [ChatEventHandler]
  *
  * @param request The request's parameters combined into [QueryChannelsRequest] class.

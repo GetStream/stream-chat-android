@@ -20,16 +20,19 @@ import io.getstream.chat.android.client.api.MessageLimitConfig
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.state.internal.TrackedQueryChannelsStateFlow
+import io.getstream.chat.android.client.utils.awaitCollected
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import java.lang.ref.WeakReference
 
 internal class StateRegistryQueryChannelsTrackingTest {
 
@@ -99,6 +102,25 @@ internal class StateRegistryQueryChannelsTrackingTest {
         stateRegistry.clear()
 
         assertTrue(stateRegistry.getTrackedQueryChannels().isEmpty())
+    }
+
+    @Test
+    fun `getTrackedQueryChannels should drop a list once its flow is released`() {
+        val kept = trackedQueryChannelsFlow("kept")
+        stateRegistry.trackQueryChannels(kept)
+        val releasedRef = trackAndRelease("released")
+
+        awaitCollected(releasedRef)
+
+        assertNull(releasedRef.get())
+        assertEquals(listOf(kept.identifier), stateRegistry.getTrackedQueryChannels())
+    }
+
+    /** Tracks a new flow and keeps only a weak reference to it, so nothing else holds it. */
+    private fun trackAndRelease(name: String): WeakReference<TrackedQueryChannelsStateFlow> {
+        val flow = trackedQueryChannelsFlow(name)
+        stateRegistry.trackQueryChannels(flow)
+        return WeakReference(flow)
     }
 
     private fun trackedQueryChannelsFlow(name: String) = TrackedQueryChannelsStateFlow(

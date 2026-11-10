@@ -32,6 +32,9 @@ import java.lang.ref.WeakReference
  * The delegate is created in the constructor from [createDelegate], which receives a weak reference to this
  * flow. The delegate can start producing state before the constructor returns, so this lets the producer
  * register the flow without a race and without keeping it alive.
+ *
+ * Code reached from [createDelegate] can run before the constructor returns, so it may read [identifier] only.
+ * Reading [value] or collecting this flow there fails, because the delegate is not assigned yet.
  */
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 internal class TrackedQueryChannelsStateFlow(
