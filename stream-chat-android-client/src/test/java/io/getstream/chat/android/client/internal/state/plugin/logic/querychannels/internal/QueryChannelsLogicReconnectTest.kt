@@ -144,6 +144,104 @@ internal class QueryChannelsLogicReconnectTest {
     }
 
     @Test
+    fun `a channel that moved into a later page is listed and the next page starts after the listed channels`() =
+        runTest {
+            val loadedChannels = loadPages(count = 2)
+            val movedChannel = randomChannel(type = "messaging")
+            // While offline, a channel from past the loaded pages moved up, so the last loaded channel moved down
+            givenPages(
+                0 to loadedChannels.take(PAGE_SIZE),
+                PAGE_SIZE to listOf(movedChannel) + loadedChannels.subList(PAGE_SIZE, PAGE_SIZE * 2 - 1),
+            )
+
+            logic.queryFirstPage()
+
+            val expectedCids = loadedChannels.cids() - loadedChannels.last().cid + movedChannel.cid
+            assertEquals(expectedCids, stateLogic.getChannels()!!.keys)
+            assertEquals(expectedCids, logic.cids())
+            assertEquals(PAGE_SIZE * 2, mutableState.channelsOffset.value)
+        }
+
+    @Test
+    fun `a page loaded while the later pages are re-queried is kept in the offset`() = runTest {
+        val loadedChannels = loadPages(count = 2)
+        val nextPage = List(PAGE_SIZE) { randomChannel(type = "messaging") }
+        whenever(client.queryChannelsInternal(any())) doAnswer { invocation ->
+            val request = invocation.getArgument<QueryChannelsRequest>(0)
+            if (request.offset == 0) {
+                QueryChannelsResult(channels = loadedChannels.take(PAGE_SIZE), predefinedFilter = null).asCall()
+            } else {
+                // A next page loads while the later pages are re-queried
+                nextPage.forEach(stateLogic::trackChannel)
+                stateLogic.incrementChannelsOffset(PAGE_SIZE)
+                QueryChannelsResult(channels = loadedChannels.drop(PAGE_SIZE), predefinedFilter = null).asCall()
+            }
+        }
+
+        logic.queryFirstPage()
+
+        val expectedCids = loadedChannels.cids() + nextPage.cids()
+        assertEquals(expectedCids, stateLogic.getChannels()!!.keys)
+        assertEquals(PAGE_SIZE * 3, mutableState.channelsOffset.value)
+    }
+
+    @Test
+    fun `a channel removed while the later pages are re-queried is not listed again`() = runTest {
+        val loadedChannels = loadPages(count = 2)
+        val removedChannel = loadedChannels.last()
+        whenever(client.queryChannelsInternal(any())) doAnswer { invocation ->
+            val request = invocation.getArgument<QueryChannelsRequest>(0)
+            if (request.offset == 0) {
+                QueryChannelsResult(channels = loadedChannels.take(PAGE_SIZE), predefinedFilter = null).asCall()
+            } else {
+                // An event removes a channel while the later pages are re-queried
+                stateLogic.removeChannels(setOf(removedChannel.cid))
+                QueryChannelsResult(channels = loadedChannels.drop(PAGE_SIZE), predefinedFilter = null).asCall()
+            }
+        }
+
+        logic.queryFirstPage()
+
+        assertEquals(loadedChannels.cids() - removedChannel.cid, stateLogic.getChannels()!!.keys)
+        assertEquals(PAGE_SIZE * 2 - 1, mutableState.channelsOffset.value)
+    }
+
+    @Test
+    fun `queryFirstPage returns the channels of the first and the later pages`() = runTest {
+        val loadedChannels = loadPages(count = 2)
+        givenPages(0 to loadedChannels.take(PAGE_SIZE), PAGE_SIZE to loadedChannels.drop(PAGE_SIZE))
+
+        val result = logic.queryFirstPage()
+
+        assertEquals(Result.Success(loadedChannels), result)
+    }
+
+    @Test
+    fun `a failed later page makes queryFirstPage return only the first page`() = runTest {
+        val loadedChannels = loadPages(count = 2)
+        givenPages(0 to loadedChannels.take(PAGE_SIZE))
+
+        val result = logic.queryFirstPage()
+
+        assertEquals(Result.Success(loadedChannels.take(PAGE_SIZE)), result)
+    }
+
+    @Test
+    fun `a single loaded page sets the offset from the listed channels`() = runTest {
+        val loadedChannels = List(PAGE_SIZE - 10) { randomChannel(type = "messaging") }
+        val request = QueryChannelsRequest(filter = filter, offset = 0, limit = PAGE_SIZE, querySort = sort)
+        logic.onQueryChannelsResult(Result.Success(loadedChannels), request)
+        val newChannel = randomChannel(type = "messaging")
+        givenPages(0 to listOf(newChannel) + loadedChannels)
+
+        logic.queryFirstPage()
+
+        val expectedCids = loadedChannels.cids() + newChannel.cid
+        assertEquals(expectedCids, stateLogic.getChannels()!!.keys)
+        assertEquals(expectedCids.size, mutableState.channelsOffset.value)
+    }
+
+    @Test
     fun `an empty later page removes the loaded channels after the first page`() = runTest {
         val loadedChannels = loadPages(count = 2)
         val firstPage = loadedChannels.take(PAGE_SIZE)
