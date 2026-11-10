@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.chatclient.BaseChatClientTest
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.errors.cause.StreamChannelNotFoundException
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.query.AddMembersParams
@@ -1675,6 +1676,51 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         inOrder.verify(plugin).onTypingEventPrecondition(any(), any(), any(), any(), any())
         inOrder.verify(plugin).onTypingEventRequest(any(), any(), any(), any(), any())
         inOrder.verify(plugin).onTypingEventResult(any(), any(), any(), any(), any(), any())
+    }
+
+    @Test
+    fun updateChannelPartialSuccessStoresTheResponse() = runTest {
+        // given
+        val response = randomChannel()
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenUpdateChannelPartialResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.updateChannelPartial(randomString(), randomString(), mapOf("name" to "new")).await()
+        // then
+        verify(handler).onChannelUpdated(response)
+    }
+
+    @Test
+    fun updateChannelPartialErrorDoesNotStoreAnything() = runTest {
+        // given
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenUpdateChannelPartialResult(RetroError<Channel>(positiveRandomInt()).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.updateChannelPartial(randomString(), randomString(), mapOf("name" to "new")).await()
+        // then
+        verifyNoInteractions(handler)
+    }
+
+    @Test
+    fun removeMembersSuccessStoresTheResponse() = runTest {
+        // given
+        val memberIds = listOf(randomString())
+        val response = randomChannel()
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenRemoveMembersResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.removeMembers(randomString(), randomString(), memberIds, randomMessage(), randomBoolean()).await()
+        // then
+        verify(handler).onMembersRemoved(response, memberIds)
     }
 
     internal inner class Fixture {

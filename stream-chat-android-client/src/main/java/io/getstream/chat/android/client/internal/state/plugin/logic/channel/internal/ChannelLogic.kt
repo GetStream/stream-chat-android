@@ -135,6 +135,35 @@ internal interface ChannelLogic {
     fun upsertMembers(members: List<Member>)
 
     /**
+     * Applies the [channel] returned by a channel update the current user made: the channel data, the member count
+     * and the listed members.
+     *
+     * @param channel The channel returned by the server.
+     */
+    fun applyChannelUpdate(channel: Channel)
+
+    /**
+     * Removes the messages a truncation at [truncatedAt] removed on the server.
+     *
+     * @param truncatedAt The channel's truncation date.
+     */
+    fun truncate(truncatedAt: Date)
+
+    /**
+     * Marks the channel as deleted at [deletedAt].
+     *
+     * @param deletedAt The date the channel was deleted.
+     */
+    fun deleteChannel(deletedAt: Date)
+
+    /**
+     * Sets whether the channel is muted for the current user.
+     *
+     * @param muted True if the channel is muted.
+     */
+    fun setMuted(muted: Boolean)
+
+    /**
      * Sets the hidden status of the channel.
      *
      * @param hidden True to hide the channel, false to unhide it.

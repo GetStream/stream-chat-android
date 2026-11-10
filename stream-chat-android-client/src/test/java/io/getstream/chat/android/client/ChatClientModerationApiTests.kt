@@ -23,12 +23,14 @@ import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBannedUser
+import io.getstream.chat.android.randomChannelMute
 import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomFlag
 import io.getstream.chat.android.randomMute
@@ -150,7 +152,7 @@ internal class ChatClientModerationApiTests : BaseChatClientTest() {
         val channelId = randomString()
         val expiration = positiveRandomInt()
         whenever(api.muteChannel(any(), any(), any()))
-            .thenReturn(RetroSuccess(Unit).toRetrofitCall())
+            .thenReturn(RetroSuccess(listOf(randomChannelMute())).toRetrofitCall())
         // when
         val result = chatClient.muteChannel(channelType, channelId, expiration).await()
         // then
@@ -165,7 +167,7 @@ internal class ChatClientModerationApiTests : BaseChatClientTest() {
         val expiration = positiveRandomInt()
         val errorCode = positiveRandomInt()
         whenever(api.muteChannel(any(), any(), any()))
-            .thenReturn(RetroError<Unit>(errorCode).toRetrofitCall())
+            .thenReturn(RetroError<List<ChannelMute>>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.muteChannel(channelType, channelId, expiration).await()
         // then

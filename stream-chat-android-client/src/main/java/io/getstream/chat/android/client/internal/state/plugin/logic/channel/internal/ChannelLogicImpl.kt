@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -243,6 +244,25 @@ internal class ChannelLogicImpl(
 
     override fun upsertMembers(members: List<Member>) {
         state.upsertMembers(members)
+    }
+
+    override fun applyChannelUpdate(channel: Channel) {
+        val channelData = channel.toChannelData()
+        state.updateChannelData { current -> current?.mergeFromEvent(channelData) ?: channelData }
+        state.setMemberCount(channel.memberCount)
+        state.upsertMembers(channel.members)
+    }
+
+    override fun truncate(truncatedAt: Date) {
+        state.removeTruncatedMessages(truncatedAt, systemMessage = null)
+    }
+
+    override fun deleteChannel(deletedAt: Date) {
+        state.deleteChannel(deletedAt)
+    }
+
+    override fun setMuted(muted: Boolean) {
+        state.setMuted(muted)
     }
 
     override fun setHidden(hidden: Boolean) {

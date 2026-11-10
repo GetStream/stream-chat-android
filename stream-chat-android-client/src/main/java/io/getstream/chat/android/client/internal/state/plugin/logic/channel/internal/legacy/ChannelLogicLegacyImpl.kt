@@ -39,6 +39,8 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.mergeFromEvent
+import io.getstream.chat.android.models.toChannelData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
@@ -170,6 +172,26 @@ internal class ChannelLogicLegacyImpl(
 
     override fun upsertMembers(members: List<Member>) {
         stateLogic.upsertMembers(members)
+    }
+
+    override fun applyChannelUpdate(channel: Channel) {
+        val channelData = channel.toChannelData()
+        stateLogic.updateChannelData { current -> current?.mergeFromEvent(channelData) ?: channelData }
+        val members = mutableState.members.value.associateBy(Member::getUserId) +
+            channel.members.associateBy(Member::getUserId)
+        stateLogic.setMembers(members.values.toList(), channel.memberCount)
+    }
+
+    override fun truncate(truncatedAt: Date) {
+        stateLogic.removeTruncatedMessages(truncatedAt)
+    }
+
+    override fun deleteChannel(deletedAt: Date) {
+        stateLogic.deleteChannel(deletedAt)
+    }
+
+    override fun setMuted(muted: Boolean) {
+        stateLogic.updateMute(muted)
     }
 
     override fun setHidden(hidden: Boolean) {
