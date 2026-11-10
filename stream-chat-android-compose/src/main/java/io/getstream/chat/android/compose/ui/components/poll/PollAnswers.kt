@@ -90,7 +90,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.chat.android.ui.common.utils.extensions.displayedText
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
-import io.getstream.chat.android.ui.common.R as UiCommonR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,7 +134,7 @@ public fun PollAnswersDialog(
                 viewModel.events.collectLatest { event ->
                     when (event) {
                         is PollAnswersViewEvent.LoadError -> {
-                            val errorMessage = context.getString(UiCommonR.string.stream_ui_mention_list_error)
+                            val errorMessage = context.getString(R.string.stream_compose_poll_answers_error)
                             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                         }
                     }

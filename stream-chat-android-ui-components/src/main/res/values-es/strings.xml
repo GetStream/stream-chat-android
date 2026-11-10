@@ -178,6 +178,7 @@
   <string name="stream_ui_poll_max_number_of_answers_hint">"Número máximo de respuestas"</string>
   <string name="stream_ui_poll_multiple_answers_label">"Respuestas múltiples"</string>
   <string name="stream_ui_poll_option_results_error">"Ocurrió un error al cargar los resultados de la opción. Por favor, inténtelo de nuevo más tarde."</string>
+  <string name="stream_ui_poll_answers_error">"Se produjo un error al cargar los comentarios de la encuesta. Inténtalo de nuevo más tarde."</string>
   <string name="stream_ui_poll_options_label">"Opciones"</string>
   <string name="stream_ui_poll_options_title">"Opciones de encuesta"</string>
   <string name="stream_ui_poll_question_label">"Pregunta"</string>

@@ -48,7 +48,6 @@ import io.getstream.chat.android.ui.viewmodel.messages.PollCommentsViewModel
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 import io.getstream.chat.android.ui.widgets.internal.SnapToTopDataObserver
 import io.getstream.log.taggedLogger
-import io.getstream.chat.android.ui.common.R as UiCommonR
 
 internal class PollCommentsDialogFragment : AppCompatDialogFragment() {
 
@@ -108,7 +107,7 @@ internal class PollCommentsDialogFragment : AppCompatDialogFragment() {
             when (event) {
                 is PollAnswersViewEvent.LoadError -> {
                     logger.e { "[onViewCreated] error loading poll answers: ${event.error}" }
-                    val errorMessage = getString(UiCommonR.string.stream_ui_mention_list_error)
+                    val errorMessage = getString(R.string.stream_ui_poll_answers_error)
                     Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }

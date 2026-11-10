@@ -296,6 +296,7 @@
   <string name="stream_compose_poll_option_description">"Aggiungi un\'opzione"</string>
   <string name="stream_compose_poll_option_hint">"Aggiungi un\'opzione"</string>
   <string name="stream_compose_poll_option_results_error">"Si è verificato un errore durante il caricamento dei risultati. Riprova più tardi."</string>
+  <string name="stream_compose_poll_answers_error">"Si è verificato un errore durante il caricamento dei commenti del sondaggio. Riprova più tardi."</string>
   <string name="stream_compose_poll_question_label">"Domanda"</string>
   <string name="stream_compose_poll_questions_description">"Fai una domanda"</string>
   <string name="stream_compose_poll_questions_title">"Domanda"</string>

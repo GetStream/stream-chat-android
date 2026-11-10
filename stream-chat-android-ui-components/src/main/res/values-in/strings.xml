@@ -173,6 +173,7 @@
   <string name="stream_ui_poll_max_number_of_answers_hint">"Jumlah jawaban maksimum"</string>
   <string name="stream_ui_poll_multiple_answers_label">"Jawaban ganda"</string>
   <string name="stream_ui_poll_option_results_error">"Terjadi kesalahan saat memuat hasil opsi. Silakan coba lagi nanti."</string>
+  <string name="stream_ui_poll_answers_error">"Terjadi kesalahan saat memuat komentar polling. Silakan coba lagi nanti."</string>
   <string name="stream_ui_poll_options_label">"Opsi"</string>
   <string name="stream_ui_poll_options_title">"Opsi Jajak Pendapat"</string>
   <string name="stream_ui_poll_question_label">"Pertanyaan"</string>
