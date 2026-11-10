@@ -570,7 +570,7 @@ internal class QueryChannelsLogic(
             addChannels(channels)
             return channels
         }
-        val pageCids = channels.mapTo(mutableSetOf()) { it.cid }
+        val pageCids: Set<String> = channels.mapTo(mutableSetOf()) { it.cid }
         val notUpdatedCids = existingChannels.keys - pageCids
         logger.v { "[updateOnlineChannels] notUpdatedCids.size: ${notUpdatedCids.size}" }
         if (notUpdatedCids.isEmpty()) {
@@ -605,7 +605,7 @@ internal class QueryChannelsLogic(
         }
         storeChannels(laterChannels)
         val removedMeanwhile = loadedCids - queryChannelsStateLogic.getQuerySpecs().cids
-        val remoteCids = laterChannels.mapTo(mutableSetOf()) { it.cid }
+        val remoteCids: Set<String> = laterChannels.mapTo(mutableSetOf()) { it.cid }
         val cidsToRemove = notUpdatedCids - remoteCids
         logger.v {
             "[refreshLaterPages] laterChannels.size: ${laterChannels.size}, cidsToRemove.size: ${cidsToRemove.size}, " +
