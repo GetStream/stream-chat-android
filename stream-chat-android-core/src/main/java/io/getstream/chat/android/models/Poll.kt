@@ -42,7 +42,7 @@ import java.util.Date
  * @property updatedAt The last update date of the poll.
  * @property closed If set to true, the poll is closed and no more votes can be cast.
  * @property answersCount The total number of answers in the poll.
- * @property answers The latest answers, plus the current user's own answer.
+ * @property answers The latest answers when loaded, plus answers received live and the current user's own answer.
  * @property createdBy The user who created the poll. This property is optional and might be null.
  * @property extraData Any additional data associated with the poll.
  * @property nameI18n Automatic translations of [name]. Key `language` contains the original language,
