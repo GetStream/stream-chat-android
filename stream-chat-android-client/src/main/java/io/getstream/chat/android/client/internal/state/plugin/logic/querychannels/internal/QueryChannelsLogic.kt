@@ -539,8 +539,8 @@ internal class QueryChannelsLogic(
     /**
      * Updates the state based on the channels collection we received from the API.
      *
-     * A first page for a list that has more channels loaded also re-queries the later pages: see
-     * [refreshLaterPages]. Any other page is added to the list.
+     * A first page that leaves out loaded channels also re-queries the later pages: see [refreshLaterPages]. Any other
+     * page is added to the list.
      *
      * @param request The [QueryChannelsRequest].
      * @param channels The list of channels to update.
@@ -574,8 +574,8 @@ internal class QueryChannelsLogic(
      * [firstPage]. The [notUpdatedCids] none of the pages returns are removed. The next page then starts after the
      * listed channels, so a page loaded while the pages are re-queried is kept.
      *
-     * When a page fails, only the [firstPage] is listed: nothing is removed and the offset is left as it is, since a
-     * page can load while the pages are re-queried.
+     * When a page fails, only the [firstPage] is added and the loaded channels stay: nothing is removed and the offset
+     * is left as it is, since a page can load while the pages are re-queried.
      */
     private suspend fun refreshLaterPages(
         request: QueryChannelsRequest,
