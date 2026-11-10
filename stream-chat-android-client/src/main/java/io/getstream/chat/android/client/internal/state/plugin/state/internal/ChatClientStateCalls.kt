@@ -65,7 +65,13 @@ internal class ChatClientStateCalls(
         chatClient.state
     }
 
-    /** Reference request of the channels query. */
+    /**
+     * Runs the channels query and returns the [QueryChannelsState] of its identifier, once the user is connected.
+     *
+     * @param request The channels query to run.
+     * @param chatEventHandlerFactory The factory set on the returned state.
+     * @param trackedFlow The flow to track in the user's [StateRegistry], or null to track nothing.
+     */
     internal suspend fun queryChannels(
         request: QueryChannelsRequest,
         chatEventHandlerFactory: ChatEventHandlerFactory,

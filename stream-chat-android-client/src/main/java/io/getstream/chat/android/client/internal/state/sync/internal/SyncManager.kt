@@ -870,6 +870,12 @@ internal class SyncManager(
         return (tracked + untracked).take(QUERIES_TO_RETRY)
     }
 
+    /**
+     * Refreshes the first page of the standard channel lists picked by [queryLogicsToRestore].
+     *
+     * @param recoverAll Whether to refresh the lists that do not need recovery too.
+     * @return The cids of the refreshed channels, or the last error when a list failed to refresh.
+     */
     private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Result<Set<String>> {
         // 2. update the results for queries that are actively being shown right now (synchronous)
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
