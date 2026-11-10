@@ -177,6 +177,7 @@ import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.core.utils.date.max
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -212,6 +213,7 @@ import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushSchedule
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollAnswersResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryReactionsResult
@@ -2531,6 +2533,34 @@ internal constructor(
         sort: QuerySorter<Vote>? = null,
     ): Call<QueryPollVotesResult> {
         return api.queryPollVotes(pollId, filter, limit, next, sort)
+    }
+
+    /**
+     * Query the answers (comments) of a poll with optional filtering, pagination, and sorting.
+     *
+     * Unlike [Poll.answers], which holds only the latest answers and the current user's own, this pages through
+     * all of them.
+     *
+     * @param pollId The poll id.
+     * @param filter Additional filter conditions, combined with the answers-only condition. For available
+     * fields check
+     * [Votes Queryable Fields](https://getstream.io/chat/docs/android/polls_api/#votes-queryable-built-in-fields).
+     * @param limit The maximum number of answers to return.
+     * @param next The pagination token for fetching the next set of results.
+     * @param sort The sort object for the query. Supported fields:
+     *  - `created_at` Answer creation timestamp
+     *
+     * @return Executable async [Call] responsible for querying the answers of a poll.
+     */
+    @CheckResult
+    public fun queryPollAnswers(
+        pollId: String,
+        filter: FilterObject? = null,
+        limit: Int? = null,
+        next: String? = null,
+        sort: QuerySorter<Answer>? = null,
+    ): Call<QueryPollAnswersResult> {
+        return api.queryPollAnswers(pollId, filter, limit, next, sort)
     }
 
     /**

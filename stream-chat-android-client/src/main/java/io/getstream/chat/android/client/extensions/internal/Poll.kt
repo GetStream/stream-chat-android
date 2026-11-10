@@ -82,9 +82,11 @@ public fun VoteRemovedEvent.processPoll(
 ): Poll {
     val oldPoll = getOldPoll(poll.id)
     val ownVotes = (oldPoll?.ownVotes?.associateBy { it.id } ?: emptyMap()) - removedVote.id
+    // A removed answer arrives as a removed vote with the answer's id
+    val answers = (oldPoll?.answers ?: poll.answers).filterNot { it.id == removedVote.id }
     return poll.copy(
         ownVotes = ownVotes.values.toList(),
-        answers = oldPoll?.answers ?: poll.answers,
+        answers = answers,
     )
 }
 

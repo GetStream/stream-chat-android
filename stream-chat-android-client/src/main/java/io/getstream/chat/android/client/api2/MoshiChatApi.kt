@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -91,6 +92,7 @@ import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushSchedule
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollAnswersResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryReactionsResult
@@ -1952,6 +1954,24 @@ constructor(
             sort = sort?.toSortParams(),
         )
         return endpoint { queryPollVotes(pollId = pollId, queryPollVotesRequest = request) }.mapDomain { it.toDomain() }
+    }
+
+    override fun queryPollAnswers(
+        pollId: String,
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Answer>?,
+    ): Call<QueryPollAnswersResult> {
+        val request = QueryPollVotesRequest(
+            // Merged flat; is_answer overrides any caller-supplied value.
+            filter = filter?.toMap().orEmpty() + ("is_answer" to true),
+            limit = limit,
+            next = next,
+            sort = sort?.toSortParams(),
+        )
+        return endpoint { queryPollVotes(pollId = pollId, queryPollVotesRequest = request) }
+            .mapDomain { it.toAnswersDomain() }
     }
 
     override fun queryPolls(

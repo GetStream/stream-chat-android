@@ -46,6 +46,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.QueryPollAnswersResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
@@ -1317,6 +1318,14 @@ internal object Mother {
         votes = votes,
         next = next,
         prev = prev,
+    )
+
+    fun randomQueryPollAnswersResult(
+        answers: List<io.getstream.chat.android.models.Answer> = listOf(io.getstream.chat.android.randomPollAnswer()),
+        next: String? = randomString(),
+    ): QueryPollAnswersResult = QueryPollAnswersResult(
+        answers = answers,
+        next = next,
     )
 
     fun randomQueryPollVotesResult(

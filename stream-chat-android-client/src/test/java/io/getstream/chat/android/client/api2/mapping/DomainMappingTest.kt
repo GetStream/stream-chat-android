@@ -95,6 +95,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryPollAnswersResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
@@ -1828,6 +1829,29 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `PollResponseData keeps the own answer among the answers`() {
+        val latestAnswer = randomPollVoteResponseData(isAnswer = true, answerText = randomString())
+        val ownAnswer = randomPollVoteResponseData(isAnswer = true, answerText = randomString())
+        val ownVote = randomPollVoteResponseData(isAnswer = false)
+        val pollDto = randomPollResponseData(
+            latestAnswers = listOf(latestAnswer, ownAnswer),
+            ownVotes = listOf(ownVote, ownAnswer),
+        )
+        val olderOwnAnswer = randomPollVoteResponseData(isAnswer = true, answerText = randomString())
+        val pollWithOlderOwnAnswer = randomPollResponseData(
+            latestAnswers = listOf(latestAnswer),
+            ownVotes = listOf(ownVote, olderOwnAnswer),
+        )
+        val sut = Fixture().get()
+
+        val answerIds = with(sut) { pollDto.toDomain() }.answers.map { it.id }
+        val olderAnswerIds = with(sut) { pollWithOlderOwnAnswer.toDomain() }.answers.map { it.id }
+
+        assertEquals(listOf(latestAnswer.id, ownAnswer.id), answerIds)
+        assertEquals(listOf(latestAnswer.id, olderOwnAnswer.id), olderAnswerIds)
+    }
+
+    @Test
     fun `Poll voting visibility public is correctly mapped`() {
         val value = "public"
         val sut = Fixture().get()
@@ -2268,6 +2292,21 @@ internal class DomainMappingTest {
             next = input.next,
         )
         assertEquals(expected, result)
+    }
+
+    @Test
+    fun `PollVotesResponse holding answers is correctly mapped to QueryPollAnswersResult`() {
+        val input = randomPollVotesResponse(
+            votes = listOf(randomPollVoteResponseData(isAnswer = true, answerText = "A comment")),
+        )
+        val sut = Fixture().get()
+        val result = with(sut) { input.toAnswersDomain() }
+        val expected = QueryPollAnswersResult(
+            answers = input.votes.map { with(sut) { it.toAnswerDomain() } },
+            next = input.next,
+        )
+        assertEquals(expected, result)
+        assertEquals("A comment", result.answers.single().text)
     }
 
     @Test
