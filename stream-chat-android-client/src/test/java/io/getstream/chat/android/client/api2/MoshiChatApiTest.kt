@@ -25,9 +25,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
-import io.getstream.chat.android.client.api2.endpoint.GeneralApi
-import io.getstream.chat.android.client.api2.endpoint.MessageApi
-import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
@@ -37,7 +34,6 @@ import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -92,6 +88,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.network.apis.ChatEndpoints
 import io.getstream.chat.android.network.infrastructure.ExactDate
+import io.getstream.chat.android.network.infrastructure.JsonQuery
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest
@@ -116,7 +113,6 @@ import io.getstream.chat.android.network.models.DeleteScheduledMessageResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
-import io.getstream.chat.android.network.models.GetRepliesResponse
 import io.getstream.chat.android.network.models.GroupedChannelsBucket
 import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
@@ -126,7 +122,6 @@ import io.getstream.chat.android.network.models.MarkChannelsReadRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
-import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
@@ -141,7 +136,6 @@ import io.getstream.chat.android.network.models.PushProviderName
 import io.getstream.chat.android.network.models.PushScheduleInput
 import io.getstream.chat.android.network.models.PushScheduleResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
-import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryMembersPayload
@@ -158,7 +152,6 @@ import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.ScheduledMessageResponse
 import io.getstream.chat.android.network.models.ScheduledMessagesFilter
-import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SendMessageResponse
 import io.getstream.chat.android.network.models.SendScheduledMessageNowResponse
@@ -249,6 +242,7 @@ import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
 import org.mockito.kotlin.wheneverBlocking
 import org.mockito.stubbing.OngoingStubbing
+import java.util.Date
 import kotlin.reflect.KClass
 import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
@@ -1256,12 +1250,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryBannedUsersInput")
-    fun testQueryBannedUsers(call: RetrofitCall<QueryBannedUsersResponse>, expected: KClass<*>) = runTest {
+    fun testQueryBannedUsers(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
-        whenever(api.queryBannedUsers(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryBannedUsers(any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val filter = Filters.neutral()
@@ -1294,7 +1288,7 @@ internal class MoshiChatApiTest {
             createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryBannedUsers(expectedPayload)
+        verifyBlocking(api, times(1)) { queryBannedUsers(JsonQuery(expectedPayload)) }
     }
 
     @ParameterizedTest
@@ -1338,12 +1332,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#stopWatchingInput")
-    fun testStopWatching(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testStopWatching(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.stopWatching(any(), any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.stopWatchingChannel(any(), any(), anyOrNull(), any()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val userId = randomString()
@@ -1354,17 +1348,22 @@ internal class MoshiChatApiTest {
         val result = sut.stopWatching(channelType, channelId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).stopWatching(channelType, channelId, connectionId, emptyMap())
+        verifyBlocking(api, times(1)) { stopWatchingChannel(channelType, channelId, connectionId, emptyMap()) }
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getPinnedMessagesInput")
-    fun testGetPinnedMessages(call: RetrofitCall<GetPinnedMessagesResponse>, expected: KClass<*>) = runTest {
+    fun testGetPinnedMessages(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
-        whenever(api.getPinnedMessages(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking {
+            api.getPinnedMessages(
+                any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(),
+                anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(),
+            )
+        }.thenRespond(outcome)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -1374,13 +1373,53 @@ internal class MoshiChatApiTest {
         val pagination = PinnedMessagesPagination.AroundMessage(randomString())
         val result = sut.getPinnedMessages(channelType, channelId, limit, sort, pagination).await()
         // then
-        val expectedPayload = PinnedMessagesRequest.create(
-            limit = limit,
-            sort = sort,
-            pagination = pagination,
-        )
         result `should be instance of` expected
-        verify(api, times(1)).getPinnedMessages(channelType, channelId, expectedPayload)
+        verifyBlocking(api, times(1)) {
+            getPinnedMessages(
+                type = channelType,
+                id = channelId,
+                limit = limit,
+                idAround = pagination.messageId,
+                sort = JsonQuery(listOf(SortParamRequest(field = "created_at", direction = 1))),
+            )
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getPinnedMessagesPaginationInput")
+    fun testGetPinnedMessagesPagination(pagination: PinnedMessagesPagination, bound: Map<String, Any>) = runTest {
+        // given
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking {
+            api.getPinnedMessages(
+                any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(),
+                anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(),
+            )
+        }.thenRespond(GetPinnedMessagesResponse(duration = "1ms", messages = emptyList()))
+        val sut = Fixture()
+            .withChatEndpoints(api)
+            .get()
+        // when
+        sut.getPinnedMessages("messaging", "general", 10, QuerySortByField.descByName("pinned_at"), pagination).await()
+        // then
+        verifyBlocking(api, times(1)) {
+            getPinnedMessages(
+                type = "messaging",
+                id = "general",
+                limit = 10,
+                idGte = bound["id_gte"] as String?,
+                idGt = bound["id_gt"] as String?,
+                idLte = bound["id_lte"] as String?,
+                idLt = bound["id_lt"] as String?,
+                pinnedAtAfterOrEqual = bound["pinned_at_after_or_equal"] as Date?,
+                pinnedAtAfter = bound["pinned_at_after"] as Date?,
+                pinnedAtBeforeOrEqual = bound["pinned_at_before_or_equal"] as Date?,
+                pinnedAtBefore = bound["pinned_at_before"] as Date?,
+                idAround = bound["id_around"] as String?,
+                pinnedAtAround = bound["pinned_at_around"] as Date?,
+                sort = JsonQuery(listOf(SortParamRequest(field = "pinned_at", direction = -1))),
+            )
+        }
     }
 
     @ParameterizedTest
@@ -1429,7 +1468,7 @@ internal class MoshiChatApiTest {
     fun testShowChannel(outcome: Any, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChatEndpoints>()
-        wheneverBlocking { api.showChannel(any(), any()) }.thenRespond(outcome)
+        wheneverBlocking { api.showChannel(any(), any(), any()) }.thenRespond(outcome)
         val sut = Fixture()
             .withChatEndpoints(api)
             .get()
@@ -1439,7 +1478,7 @@ internal class MoshiChatApiTest {
         val result = sut.showChannel(channelType, channelId).await()
         // then
         result `should be instance of` expected
-        verifyBlocking(api, times(1)) { showChannel(channelType, channelId) }
+        verifyBlocking(api, times(1)) { showChannel(channelType, channelId, emptyMap()) }
     }
 
     @ParameterizedTest
@@ -1860,12 +1899,14 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getNewerRepliesInput")
-    fun testGetNewerReplies(call: RetrofitCall<GetRepliesResponse>, expected: KClass<*>) = runTest {
+    fun testGetNewerReplies(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
-        whenever(api.getNewerReplies(any(), any(), any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking {
+            api.getReplies(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        }.thenRespond(outcome)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val parentId = randomString()
@@ -1874,7 +1915,14 @@ internal class MoshiChatApiTest {
         val result = sut.getNewerReplies(parentId, limit, lastId).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).getNewerReplies(parentId, limit, lastId)
+        verifyBlocking(api, times(1)) {
+            getReplies(
+                parentId = parentId,
+                limit = limit,
+                idGt = lastId,
+                sort = JsonQuery(listOf(SortParamRequest(field = "created_at", direction = 1))),
+            )
+        }
     }
 
     @ParameterizedTest
@@ -2127,12 +2175,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#searchMessagesInput")
-    fun testSearchMessages(call: RetrofitCall<SearchResponse>, expected: KClass<*>) = runTest {
+    fun testSearchMessages(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<GeneralApi>()
-        whenever(api.searchMessages(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.search(anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withGeneralApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelFilter = Filters.neutral()
@@ -2152,7 +2200,7 @@ internal class MoshiChatApiTest {
             sort = sort.toSortParams(),
         )
         result `should be instance of` expected
-        verify(api, times(1)).searchMessages(expectedPayload)
+        verifyBlocking(api, times(1)) { search(JsonQuery(expectedPayload)) }
     }
 
     @ParameterizedTest
@@ -2852,12 +2900,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryMembersInput")
-    fun testQueryMembers(call: RetrofitCall<MembersResponse>, expected: KClass<*>) = runTest {
+    fun testQueryMembers(outcome: Any, expected: KClass<*>) = runTest {
         // given
-        val api = mock<GeneralApi>()
-        whenever(api.queryMembers(any())).doReturn(call)
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.queryMembers(anyOrNull()) }.thenRespond(outcome)
         val sut = Fixture()
-            .withGeneralApi(api)
+            .withChatEndpoints(api)
             .get()
         // when
         val channelType = randomString()
@@ -2889,7 +2937,7 @@ internal class MoshiChatApiTest {
             ),
         )
         result `should be instance of` expected
-        verify(api, times(1)).queryMembers(expectedPayload)
+        verifyBlocking(api, times(1)) { queryMembers(JsonQuery(expectedPayload)) }
     }
 
     @ParameterizedTest
@@ -4547,11 +4595,8 @@ internal class MoshiChatApiTest {
             userTransformer = NoOpUserTransformer,
         )
         private var userApi: UserApi = mock()
-        private var messageApi: MessageApi = mock()
         private var channelApi: ChannelApi = mock()
-        private var moderationApi: ModerationApi = mock()
         private var moderationV1Api: ModerationV1Api = mock()
-        private var generalApi: GeneralApi = mock()
         private var syncApi: SyncApi = mock()
         private var fileDownloadApi: FileDownloadApi = mock()
         private var chatEndpoints: ChatEndpoints = mock()
@@ -4568,24 +4613,12 @@ internal class MoshiChatApiTest {
             this.userApi = userApi
         }
 
-        fun withMessageApi(messageApi: MessageApi) = apply {
-            this.messageApi = messageApi
-        }
-
         fun withChannelApi(channelApi: ChannelApi) = apply {
             this.channelApi = channelApi
         }
 
-        fun withModerationApi(moderationApi: ModerationApi) = apply {
-            this.moderationApi = moderationApi
-        }
-
         fun withModerationV1Api(moderationV1Api: ModerationV1Api) = apply {
             this.moderationV1Api = moderationV1Api
-        }
-
-        fun withGeneralApi(generalApi: GeneralApi) = apply {
-            this.generalApi = generalApi
         }
 
         fun withSyncApi(syncApi: SyncApi) = apply {
@@ -4632,12 +4665,9 @@ internal class MoshiChatApiTest {
                 fileUploader = fileUploader,
                 fileTransformer = fileTransformer,
                 userApi = userApi,
-                messageApi = messageApi,
                 channelApi = channelApi,
                 v2EventParser = V2EventParser(domainMapping),
-                moderationApi = moderationApi,
                 moderationV1Api = moderationV1Api,
-                generalApi = generalApi,
                 syncApi = syncApi,
                 fileDownloadApi = fileDownloadApi,
                 chatEndpoints = chatEndpoints,
