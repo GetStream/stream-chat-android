@@ -517,15 +517,10 @@ internal class QueryChannelsLogic(
 
         when (result) {
             is Result.Success -> {
-                // store the results in the database
-                val channelsResponse = result.value.toSet()
-                queryChannelsStateLogic.setEndOfChannels(channelsResponse.size < request.limit)
-
-                val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
-                // first things first, store the configs
-                queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
-                logger.i { "[onOnlineQueryResult] api call returned ${channelsResponse.size} channels" }
-                queryChannelsDatabaseLogic.storeStateForChannels(channelsResponse)
+                val channelsCount = result.value.toSet().size
+                queryChannelsStateLogic.setEndOfChannels(channelsCount < request.limit)
+                logger.i { "[onOnlineQueryResult] api call returned $channelsCount channels" }
+                storeChannels(result.value)
             }
 
             is Result.Failure -> {
@@ -534,128 +529,108 @@ internal class QueryChannelsLogic(
         }
     }
 
+    /** Stores the configs and the state of [channels] from a query response in the database. */
+    private suspend fun storeChannels(channels: List<Channel>) {
+        val channelSet = channels.toSet()
+        queryChannelsDatabaseLogic.insertChannelConfigs(channelSet.map { ChannelConfig(it.type, it.config) })
+        queryChannelsDatabaseLogic.storeStateForChannels(channelSet)
+    }
+
     /**
      * Updates the state based on the channels collection we received from the API.
      *
-     * If it's the first page [QueryChannelsRequest.isFirstPage] we set/replace the list of results.
-     * If it's not the first page we add to the list.
+     * A first page for a list that has more channels loaded also re-queries the later pages: see
+     * [refreshLaterPages]. Any other page is added to the list.
      *
      * @param request The [QueryChannelsRequest].
      * @param channels The list of channels to update.
      */
     private suspend fun updateOnlineChannels(request: QueryChannelsRequest, channels: List<Channel>) {
-        queryChannelsStateLogic.run {
-            val existingChannels = getChannels()
-            val currentChannelsOffset = getChannelsOffset()
-
-            logger.d {
-                "[updateOnlineChannels] isFirstPage: ${request.isFirstPage}, " +
-                    "channels.size: ${channels.size}, " +
-                    "existingChannels.size: ${existingChannels?.size ?: "null"}, " +
-                    "currentChannelsOffset: $currentChannelsOffset"
-            }
-
-            if (request.isFirstPage && !existingChannels.isNullOrEmpty()) {
-                val notUpdatedChannels = existingChannels - channels.map { it.cid }.toSet()
-                logger.v { "[updateOnlineChannels] notUpdatedChannels.size: ${notUpdatedChannels.size}" }
-                val laterChannelsCount = if (notUpdatedChannels.isEmpty()) {
-                    0
-                } else {
-                    removeChannelsMissingFromLaterPages(
-                        localCids = notUpdatedChannels.values.map { it.cid },
-                        limit = request.limit,
-                        loadedCount = existingChannels.size,
-                    )
-                }
-                // A failed later page leaves the offset as it is, since a page can load while the pages are re-queried
-                if (laterChannelsCount != null) {
-                    val newChannelsOffset = channels.size + laterChannelsCount
-                    logger.v {
-                        "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset"
-                    }
-                    setChannelsOffset(newChannelsOffset)
-                }
-            } else {
-                incrementChannelsOffset(channels.size)
-            }
+        val existingChannels = queryChannelsStateLogic.getChannels()
+        logger.d {
+            "[updateOnlineChannels] isFirstPage: ${request.isFirstPage}, " +
+                "channels.size: ${channels.size}, " +
+                "existingChannels.size: ${existingChannels?.size ?: "null"}, " +
+                "currentChannelsOffset: ${queryChannelsStateLogic.getChannelsOffset()}"
         }
-
-        addChannels(channels)
+        if (!request.isFirstPage || existingChannels.isNullOrEmpty()) {
+            queryChannelsStateLogic.incrementChannelsOffset(channels.size)
+            addChannels(channels)
+            return
+        }
+        val pageCids = channels.mapTo(mutableSetOf()) { it.cid }
+        val notUpdatedCids = existingChannels.keys - pageCids
+        logger.v { "[updateOnlineChannels] notUpdatedCids.size: ${notUpdatedCids.size}" }
+        if (notUpdatedCids.isEmpty()) {
+            addChannels(channels)
+            queryChannelsStateLogic.setChannelsOffset(queryChannelsStateLogic.getQuerySpecs().cids.size)
+        } else {
+            refreshLaterPages(request, channels, notUpdatedCids, loadedCount = existingChannels.size)
+        }
     }
 
     /**
-     * Re-queries the pages after the first one and removes the [localCids] none of them returns. Removes nothing when
-     * a page fails.
+     * Re-queries the pages after the first one, up to [loadedCount] channels, and lists their channels with the
+     * [firstPage]. The [notUpdatedCids] none of the pages returns are removed. The next page then starts after the
+     * listed channels, so a page loaded while the pages are re-queried is kept.
      *
-     * @return The number of channels the later pages returned, or null when a page failed.
+     * When a page fails, only the [firstPage] is listed: nothing is removed and the offset is left as it is, since a
+     * page can load while the pages are re-queried.
      */
-    private suspend fun removeChannelsMissingFromLaterPages(
-        localCids: List<String>,
-        limit: Int,
+    private suspend fun refreshLaterPages(
+        request: QueryChannelsRequest,
+        firstPage: List<Channel>,
+        notUpdatedCids: Set<String>,
         loadedCount: Int,
-    ): Int? {
-        val remoteCids = getRemoteCids(limit, limit, loadedCount) ?: return null
-        val cidsToRemove = localCids - remoteCids
-        logger.v { "[removeChannelsMissingFromLaterPages] cidsToRemove.size: ${cidsToRemove.size}" }
-        removeChannels(cidsToRemove)
-        return remoteCids.size
+    ) {
+        val laterChannels = fetchLaterPages(request, loadedCount)
+        if (laterChannels == null) {
+            addChannels(firstPage)
+            return
+        }
+        storeChannels(laterChannels)
+        val remoteCids = laterChannels.mapTo(mutableSetOf()) { it.cid }
+        val cidsToRemove = notUpdatedCids - remoteCids
+        logger.v {
+            "[refreshLaterPages] laterChannels.size: ${laterChannels.size}, cidsToRemove.size: ${cidsToRemove.size}"
+        }
+        removeChannels(cidsToRemove.toList())
+        addChannels((firstPage + laterChannels).distinctBy { it.cid })
+        queryChannelsStateLogic.setChannelsOffset(queryChannelsStateLogic.getQuerySpecs().cids.size)
     }
 
     /**
-     * Returns the channel cids by re-issuing the same query (matching this logic's [identifier])
-     * at advancing offsets, until [thresholdCount] is reached or the server returns a short page.
-     * Might produce several requests.
+     * Returns the channels of the pages after the first one, by re-issuing [firstPageRequest] at advancing offsets
+     * until [loadedCount] is reached or the server returns a short page. Might produce several requests.
      *
-     * For [QueryChannelsIdentifier.Predefined] we issue another predefined-filter request — we
-     * never substitute the server-resolved filter, since the server owns the actual filter
-     * definition and our cached resolved value may be stale (e.g. if the template changed).
+     * For [QueryChannelsIdentifier.Predefined] this is another predefined-filter request. The server-resolved filter
+     * is never used instead, since the server owns the filter definition and the cached resolved value may be stale
+     * (e.g. if the template changed).
      *
-     * @return The cids, or null when a page fails.
+     * @return The channels, or null when a page fails.
      */
-    private suspend fun getRemoteCids(
-        initialOffset: Int,
-        step: Int,
-        thresholdCount: Int,
-    ): Set<String>? {
-        logger.d { "[getRemoteCids] initialOffset: $initialOffset, step: $step, thresholdCount: $thresholdCount" }
-        val remoteCids = hashSetOf<String>()
-        var offset = initialOffset
-
-        while (offset < thresholdCount) {
-            logger.v { "[getRemoteCids] offset: $offset, limit: $step, thresholdCount: $thresholdCount" }
-            val channels = fetchPage(offset = offset, limit = step) ?: return null
-            remoteCids.addAll(channels.map { it.cid })
-            logger.v { "[getRemoteCids] remoteCids.size: ${remoteCids.size}" }
-            offset += step
-            if (channels.size < step) {
-                return remoteCids
-            }
+    private suspend fun fetchLaterPages(firstPageRequest: QueryChannelsRequest, loadedCount: Int): List<Channel>? {
+        // Grouped queries do not use offset pagination; this path is unreachable in practice.
+        if (identifier is QueryChannelsIdentifier.Grouped) return emptyList()
+        val limit = firstPageRequest.limit
+        logger.d { "[fetchLaterPages] limit: $limit, loadedCount: $loadedCount" }
+        val laterChannels = mutableListOf<Channel>()
+        var offset = limit
+        while (offset < loadedCount) {
+            val channels = fetchPage(firstPageRequest, offset) ?: return null
+            laterChannels += channels
+            offset += limit
+            if (channels.size < limit) break
         }
-        return remoteCids
+        return laterChannels
     }
 
-    /** @return The channels of the page, or null when the request fails. */
-    private suspend fun fetchPage(offset: Int, limit: Int): List<Channel>? {
-        val request = when (identifier) {
-            is QueryChannelsIdentifier.Standard -> QueryChannelsRequest(
-                filter = identifier.filter,
-                offset = offset,
-                limit = limit,
-                querySort = identifier.sort,
-                messageLimit = 0,
-                memberLimit = 0,
-            )
-            is QueryChannelsIdentifier.Predefined -> QueryChannelsRequest(
-                predefinedFilter = identifier.name,
-                limit = limit,
-                filterValues = identifier.filterValues,
-                sortValues = identifier.sortValues,
-                offset = offset,
-                messageLimit = 0,
-                memberLimit = 0,
-            )
-            // Grouped queries do not use offset pagination; this path is unreachable in practice.
-            is QueryChannelsIdentifier.Grouped -> return emptyList()
+    /** @return The channels of the page at [offset], or null when the request fails. */
+    private suspend fun fetchPage(firstPageRequest: QueryChannelsRequest, offset: Int): List<Channel>? {
+        logger.v { "[fetchPage] offset: $offset, limit: ${firstPageRequest.limit}" }
+        // copy() resets the properties declared in the class body.
+        val request = firstPageRequest.copy(offset = offset).apply {
+            includeScheduledMessages = firstPageRequest.includeScheduledMessages
         }
         return when (val result = client.queryChannelsInternal(request).await()) {
             is Result.Success -> result.value.channels

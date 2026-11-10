@@ -469,7 +469,33 @@ internal class QueryChannelsLogicTest {
         logic.queryFirstPage()
 
         verify(queryChannelsStateLogic).removeChannels(setOf(leftChannel.cid))
-        verify(queryChannelsStateLogic).setChannelsOffset(LOADED_CHANNELS_COUNT - 1)
+        verify(queryChannelsStateLogic).addChannelsState(loadedChannels - leftChannel)
+    }
+
+    @Test
+    fun `queryFirstPage re-queries the later pages with the limits of the first page`() = runTest {
+        val priorRequest = QueryChannelsRequest(
+            filter = filter,
+            offset = PAGE_SIZE,
+            limit = PAGE_SIZE,
+            querySort = sort,
+            messageLimit = 5,
+            memberLimit = 50,
+        ).apply { includeScheduledMessages = true }
+        whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(priorRequest)
+        val loadedChannels = List(LOADED_CHANNELS_COUNT) { randomChannel() }
+        givenLoadedChannels(loadedChannels)
+        givenPages(firstPage = loadedChannels.take(PAGE_SIZE), laterPage = loadedChannels.drop(PAGE_SIZE))
+
+        logic.queryFirstPage()
+
+        verify(client).queryChannelsInternal(
+            argThat {
+                offset == PAGE_SIZE && limit == PAGE_SIZE && messageLimit == 5 && memberLimit == 50 &&
+                    includeScheduledMessages
+            },
+        )
+        verify(queryChannelsDatabaseLogic).storeStateForChannels(loadedChannels.drop(PAGE_SIZE).toSet())
     }
 
     // endregion
