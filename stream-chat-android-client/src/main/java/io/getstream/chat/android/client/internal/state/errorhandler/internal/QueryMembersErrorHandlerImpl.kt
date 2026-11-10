@@ -69,9 +69,11 @@ internal class QueryMembersErrorHandlerImpl(
                 // retrieve from database
                 val clampedOffset = offset.coerceAtLeast(0)
                 val clampedLimit = limit.coerceAtLeast(0)
+                val cid = Pair(channelType, channelId).toCid()
                 val membersFromDatabase = channelRepository
-                    .selectMembersForChannel(Pair(channelType, channelId).toCid())
-                    .sortedWith(sort.comparator)
+                    .selectMembersForChannel(cid)
+                    .filter { filter.matchesMember(it, cid) }
+                    .sortedWith(sort.memberComparator)
                     .drop(clampedOffset)
                     .let { members ->
                         if (clampedLimit > 0) {
