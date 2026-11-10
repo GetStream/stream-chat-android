@@ -226,6 +226,7 @@
   <string name="stream_compose_poll_option_move_up">"Mover arriba"</string>
   <string name="stream_compose_poll_option_reorder">"Reordenar opción %s"</string>
   <string name="stream_compose_poll_option_results_error">"Se produjo un error al cargar los resultados de la opción de la encuesta. Inténtalo de nuevo más tarde."</string>
+  <string name="stream_compose_poll_answers_error">"Se produjo un error al cargar los comentarios de la encuesta. Inténtalo de nuevo más tarde."</string>
   <string name="stream_compose_poll_option_switch_add_comment">"Añadir un comentario"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"Permitir que otros añadan comentarios"</string>
   <string name="stream_compose_poll_option_switch_anonymous_poll">"Encuesta anónima"</string>

@@ -296,6 +296,7 @@
   <string name="stream_compose_poll_option_description">"विकल्प जोड़ें"</string>
   <string name="stream_compose_poll_option_hint">"विकल्प जोड़ें"</string>
   <string name="stream_compose_poll_option_results_error">"पोल विकल्प परिणाम लोड करते समय त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।"</string>
+  <string name="stream_compose_poll_answers_error">"पोल टिप्पणियाँ लोड करते समय त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।"</string>
   <string name="stream_compose_poll_question_label">"प्रश्न"</string>
   <string name="stream_compose_poll_questions_description">"एक प्रश्न पूछें"</string>
   <string name="stream_compose_poll_questions_title">"प्रश्न"</string>

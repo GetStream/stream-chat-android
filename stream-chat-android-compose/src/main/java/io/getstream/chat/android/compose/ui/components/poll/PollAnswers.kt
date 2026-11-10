@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.poll
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,8 +28,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +42,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,11 +52,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
+import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.StreamScreenBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
@@ -63,16 +73,22 @@ import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
+import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.ui.util.autoTranslationEnabledFor
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.PollAnswersViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollAnswersViewAction
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollAnswersViewEvent
+import io.getstream.chat.android.ui.common.state.messages.poll.PollAnswersViewState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.chat.android.ui.common.utils.extensions.displayedText
+import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,27 +112,54 @@ public fun PollAnswersDialog(
             },
         )
     }
+    val context = LocalContext.current
     StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
-        Content(
-            poll = selectedPoll.poll,
-            currentUser = user,
-            autoTranslationEnabled = autoTranslationEnabled,
-            currentUserAnswer = currentUserAnswer,
-            onBackPressed = onBackPressed,
-            onAddOrEditClick = { showAddAnswerDialog = true },
-        )
+        ViewModelStore {
+            val viewModel = viewModel { PollAnswersViewModel(poll = selectedPoll.poll) }
+            SideEffect { viewModel.latestPoll = selectedPoll.poll }
+            val state by viewModel.state.collectAsState()
+
+            Content(
+                poll = selectedPoll.poll,
+                state = state,
+                currentUser = user,
+                autoTranslationEnabled = autoTranslationEnabled,
+                currentUserAnswer = currentUserAnswer,
+                onLoadMoreRequested = { viewModel.onViewAction(PollAnswersViewAction.LoadMoreRequested) },
+                onBackPressed = onBackPressed,
+                onAddOrEditClick = { showAddAnswerDialog = true },
+            )
+
+            LaunchedEffect(viewModel) {
+                viewModel.events.collectLatest { event ->
+                    when (event) {
+                        is PollAnswersViewEvent.LoadError -> {
+                            val errorMessage = context.getString(R.string.stream_compose_poll_answers_error)
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun Content(
     poll: Poll,
+    state: PollAnswersViewState,
     currentUser: User? = null,
     autoTranslationEnabled: Boolean = false,
     currentUserAnswer: Answer? = null,
+    onLoadMoreRequested: () -> Unit = {},
     onBackPressed: () -> Unit = {},
     onAddOrEditClick: () -> Unit = {},
 ) {
+    val listState = rememberLazyListState()
+    LoadMoreHandler(lazyListState = listState, loadMore = onLoadMoreRequested)
+    FollowTopInsertions(listState = listState, topKey = currentUserAnswer?.id ?: state.results.firstOrNull()?.id)
+
     Column(
         modifier = Modifier
             .systemBarsPadding()
@@ -141,28 +184,37 @@ private fun Content(
             },
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = StreamTokens.spacingMd)
-                .padding(top = StreamTokens.spacing2xl),
-            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
+        ContentBox(
+            isLoading = state.isLoading,
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopCenter,
+            loadingIndicator = { LoadingIndicator(modifier = Modifier.fillMaxSize()) },
         ) {
             val showAvatar = poll.votingVisibility == VotingVisibility.PUBLIC
-
-            if (currentUserAnswer != null) {
-                PollAnswersItem(
-                    answer = currentUserAnswer,
-                    currentUser = currentUser,
-                    autoTranslationEnabled = autoTranslationEnabled,
-                    showAvatar = showAvatar,
-                    showUpdateButton = !poll.closed,
-                    onUpdateClick = onAddOrEditClick,
-                )
-            }
-            poll.answers.forEach { answer ->
-                if (answer.id != currentUserAnswer?.id) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = StreamTokens.spacingMd)
+                    .padding(top = StreamTokens.spacing2xl),
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
+            ) {
+                if (currentUserAnswer != null) {
+                    item(key = currentUserAnswer.id) {
+                        PollAnswersItem(
+                            answer = currentUserAnswer,
+                            currentUser = currentUser,
+                            autoTranslationEnabled = autoTranslationEnabled,
+                            showAvatar = showAvatar,
+                            showUpdateButton = !poll.closed,
+                            onUpdateClick = onAddOrEditClick,
+                        )
+                    }
+                }
+                items(
+                    items = state.results.filterNot { it.id == currentUserAnswer?.id },
+                    key = Answer::id,
+                ) { answer ->
                     PollAnswersItem(
                         answer = answer,
                         currentUser = currentUser,
@@ -170,8 +222,36 @@ private fun Content(
                         showAvatar = showAvatar,
                     )
                 }
+                if (state.isLoadingMore) {
+                    item {
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            LoadingIndicator(
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .align(Alignment.Center),
+                            )
+                        }
+                    }
+                }
             }
         }
+    }
+}
+
+/**
+ * Scrolls [listState] back to the top when an item with a new [topKey] is inserted above the first one while the
+ * list is at the top. A lazy list otherwise stays anchored on the item that was first, so the new one lands
+ * off-screen.
+ */
+@Composable
+internal fun FollowTopInsertions(listState: LazyListState, topKey: Any?) {
+    var previousTopKey by remember { mutableStateOf(topKey) }
+    LaunchedEffect(topKey) {
+        val firstVisible = listState.layoutInfo.visibleItemsInfo.firstOrNull()
+        val wasAtTop = firstVisible == null ||
+            (firstVisible.key == previousTopKey && listState.firstVisibleItemScrollOffset == 0)
+        if (wasAtTop) listState.scrollToItem(0)
+        previousTopKey = topKey
     }
 }
 
@@ -342,8 +422,9 @@ private fun PollAnswersContentPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PollAnswersContent() {
+    val poll = previewPollWithAnswers()
     StreamScreenBottomSheet(onDismissRequest = {}) {
-        Content(poll = previewPollWithAnswers())
+        Content(poll = poll, state = poll.loadedAnswersState())
     }
 }
 
@@ -363,7 +444,7 @@ internal fun PollAnswersWithCurrentUserContent() {
     val poll = previewPollWithAnswers()
     val currentUserAnswer = poll.answers.first { it.user?.id == PreviewUserData.user1.id }
     StreamScreenBottomSheet(onDismissRequest = {}) {
-        Content(poll = poll, currentUserAnswer = currentUserAnswer)
+        Content(poll = poll, state = poll.loadedAnswersState(), currentUserAnswer = currentUserAnswer)
     }
 }
 
@@ -380,15 +461,20 @@ private fun PollAnswersClosedAnonymousContentPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PollAnswersClosedAnonymousContent() {
+    val poll = previewPollWithAnswers().copy(
+        closed = true,
+        votingVisibility = VotingVisibility.ANONYMOUS,
+    )
     StreamScreenBottomSheet(onDismissRequest = {}) {
-        Content(
-            poll = previewPollWithAnswers().copy(
-                closed = true,
-                votingVisibility = VotingVisibility.ANONYMOUS,
-            ),
-        )
+        Content(poll = poll, state = poll.loadedAnswersState())
     }
 }
+
+private fun Poll.loadedAnswersState() = PollAnswersViewState(
+    isLoading = false,
+    results = answers,
+    canLoadMore = false,
+)
 
 private fun previewPollWithAnswers(): Poll {
     val previewDate = Date(0)

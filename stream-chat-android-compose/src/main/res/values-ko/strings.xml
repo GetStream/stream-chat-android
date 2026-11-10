@@ -247,6 +247,7 @@
   <string name="stream_compose_poll_option_move_up">"위로 이동"</string>
   <string name="stream_compose_poll_option_reorder">"옵션 %s 재정렬"</string>
   <string name="stream_compose_poll_option_results_error">"투표 옵션 결과를 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해 주세요."</string>
+  <string name="stream_compose_poll_answers_error">"투표 댓글을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해 주세요."</string>
   <string name="stream_compose_poll_option_switch_add_comment">"댓글 추가"</string>
   <string name="stream_compose_poll_option_switch_add_comment_description">"다른 사용자가 댓글을 추가할 수 있도록 허용"</string>
   <string name="stream_compose_poll_option_switch_anonymous_poll">"익명 투표"</string>

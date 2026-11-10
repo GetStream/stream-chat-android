@@ -178,6 +178,7 @@
   <string name="stream_ui_poll_max_number_of_answers_hint">"अधिकतम उत्तरों की संख्या"</string>
   <string name="stream_ui_poll_multiple_answers_label">"एकाधिक उत्तर"</string>
   <string name="stream_ui_poll_option_results_error">"पोल विकल्प परिणाम लोड करते समय त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।"</string>
+  <string name="stream_ui_poll_answers_error">"पोल टिप्पणियाँ लोड करते समय त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।"</string>
   <string name="stream_ui_poll_options_label">"विकल्प"</string>
   <string name="stream_ui_poll_options_title">"पोल विकल्प"</string>
   <string name="stream_ui_poll_question_label">"सवाल"</string>
