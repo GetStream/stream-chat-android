@@ -46,6 +46,7 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doReturnConsecutively
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
@@ -53,6 +54,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class WhenUploadAttachmentsTests {
 
@@ -426,6 +428,64 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
+    fun `Given the message was marked failed during the upload Should keep it failed`() = runTest {
+        val pending = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+        val uploaded = pending.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url1", extraData = emptyMap())
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doReturn Result.Success(uploaded)
+        }
+        val failedAt = Date(1_000)
+        val message = randomMessage(
+            id = "messageId123",
+            attachments = mutableListOf(pending),
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+        )
+        val failed = message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = failedAt)
+        val repository = mock<MessageRepository> {
+            // The sync marks the message failed after the upload stored its first attachment
+            onBlocking { it.selectMessage(message.id) }.doReturnConsecutively(listOf(message, failed))
+        }
+        val fixture = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessageRepository(repository)
+            .givenMessageInChannelState(message)
+
+        fixture.get().uploadAttachmentsForMessage(message.id)
+
+        val inserted = argumentCaptor<Message>()
+        verify(repository, times(2)).insertMessage(inserted.capture())
+        inserted.firstValue.syncStatus shouldBeEqualTo SyncStatus.AWAITING_ATTACHMENTS
+        inserted.lastValue.syncStatus shouldBeEqualTo SyncStatus.FAILED_PERMANENTLY
+        inserted.lastValue.updatedLocallyAt shouldBeEqualTo failedAt
+        inserted.lastValue.attachments shouldBeEqualTo listOf(uploaded)
+        verify(fixture.channelStateLogic()).upsertMessage(
+            argThat { attachments == listOf(uploaded) && syncStatus == SyncStatus.FAILED_PERMANENTLY },
+        )
+    }
+
+    @Test
+    fun `Given no channel state Should still store the uploaded attachments`() = runTest {
+        val pending = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+        val uploaded = pending.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url1", extraData = emptyMap())
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doReturn Result.Success(uploaded)
+        }
+        val message = randomMessage(id = "messageId123", attachments = mutableListOf(pending))
+        val repository = mock<MessageRepository> {
+            onBlocking { it.selectMessage(message.id) } doReturn message
+        }
+        val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessageRepository(repository)
+            .givenNoChannelState()
+            .get()
+
+        sut.uploadAttachmentsForMessage(message.id)
+
+        val inserted = argumentCaptor<Message>()
+        verify(repository, times(2)).insertMessage(inserted.capture())
+        inserted.lastValue.attachments shouldBeEqualTo listOf(uploaded)
+    }
+
+    @Test
     fun `Given an attachment without a file Should not upload it`() = runTest {
         val link = randomAttachment().copy(upload = null, uploadState = null)
         val attachmentUploader = mock<AttachmentUploader>()
@@ -500,6 +560,7 @@ internal class WhenUploadAttachmentsTests {
         private var uploader: AttachmentUploader = mock()
         private var messageRepository: MessageRepository = mock()
         private val channelStateLegacyImpl: ChannelStateLegacyImpl = mock()
+        private var hasChannelState = true
 
         private val channelStateLogic: ChannelStateLogic =
             mock {
@@ -531,6 +592,10 @@ internal class WhenUploadAttachmentsTests {
             whenever(messageRepository.selectMessage(any())) doReturn message
         }
 
+        fun givenNoChannelState() = apply {
+            hasChannelState = false
+        }
+
         fun givenChatClientNoStoredCredentials() = apply {
             whenever(chatClient.containsStoredCredentials()) doReturn false
         }
@@ -539,7 +604,7 @@ internal class WhenUploadAttachmentsTests {
             return UploadAttachmentsWorker(
                 channelType,
                 channelId,
-                channelStateLogic = channelStateLogic,
+                channelStateLogic = channelStateLogic.takeIf { hasChannelState },
                 messageRepository = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader,

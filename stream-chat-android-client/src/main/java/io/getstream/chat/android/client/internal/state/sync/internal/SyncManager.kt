@@ -604,8 +604,8 @@ internal class SyncManager(
         entitiesRetryMutex.withLock {
             logger.d { "[retryFailedEntities] no args" }
             // retry channels, messages and reactions in that order..
-            val uncreatedCids = retryChannels()
-            retryMessages(uncreatedCids)
+            val channels = retryChannels()
+            retryMessages(channels.uncreatedCids, channels.discardedCids)
             retryReactions()
             logger.v { "[retryFailedEntities] completed" }
         }
@@ -1063,12 +1063,17 @@ internal class SyncManager(
     }
 
     /**
-     * @return The cids of the channels the server has not created yet, whose messages can only be sent once it has.
+     * @param uncreatedCids The cids of the channels the server has not created yet, whose messages can only be sent
+     * once it has.
+     * @param discardedCids The cids of the channels deleted locally because they were too old to create.
      */
-    private suspend fun retryChannels(): Set<String> {
+    private class RetriedChannels(val uncreatedCids: Set<String>, val discardedCids: Set<String>)
+
+    private suspend fun retryChannels(): RetriedChannels {
         val cids = repos.selectChannelCidsBySyncNeeded()
         logger.d { "[retryChannels] cids.size: ${cids.size}" }
         val uncreatedCids = mutableSetOf<String>()
+        val discardedCids = mutableSetOf<String>()
         cids.forEach { cid ->
             logger.v { "[retryChannels] channel.cid: $cid" }
             val channel = repos.selectChannel(cid) ?: return@forEach
@@ -1076,6 +1081,7 @@ internal class SyncManager(
                 logger.w { "[retryChannels] outdated channel($cid)" }
                 repos.deleteChannel(cid)
                 uncreatedCids += cid
+                discardedCids += cid
                 Result.Success(Unit)
             } else {
                 logger.v { "[retryChannels] sending channel($cid)" }
@@ -1109,18 +1115,23 @@ internal class SyncManager(
             }
             logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }
         }
-        return uncreatedCids
+        return RetriedChannels(uncreatedCids, discardedCids)
     }
 
     /**
      * @param uncreatedCids The cids of the channels the server has not created yet. Their messages wait for a later
      * retry instead of failing against a channel that does not exist, until they are outdated.
+     * @param discardedCids The cids of the channels deleted locally because they were too old to create. Their
+     * outdated messages are deleted with them.
      */
     @VisibleForTesting
-    internal suspend fun retryMessages(uncreatedCids: Set<String> = emptySet()) {
+    internal suspend fun retryMessages(
+        uncreatedCids: Set<String> = emptySet(),
+        discardedCids: Set<String> = emptySet(),
+    ) {
         logger.d { "[retryMessages] uncreatedCids.size: ${uncreatedCids.size}" }
-        retryMessagesWithSyncedAttachments(uncreatedCids)
-        retryMessagesWithPendingAttachments(uncreatedCids)
+        retryMessagesWithSyncedAttachments(uncreatedCids, discardedCids)
+        retryMessagesWithPendingAttachments(uncreatedCids, discardedCids)
         logger.v { "[retryMessages] completed" }
     }
 
@@ -1142,7 +1153,7 @@ internal class SyncManager(
         }
     }
 
-    private suspend fun retryMessagesWithSyncedAttachments(uncreatedCids: Set<String>) {
+    private suspend fun retryMessagesWithSyncedAttachments(uncreatedCids: Set<String>, discardedCids: Set<String>) {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
         logger.d { "[retryMgsWithSyncedAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
@@ -1160,7 +1171,7 @@ internal class SyncManager(
                     retryUpdateOfMessageWithSyncedAttachments(id, message, channelClient)
                 }
 
-                else -> retrySendingOfMessageWithSyncedAttachments(message, id, channelClient)
+                else -> retrySendingOfMessageWithSyncedAttachments(message, id, channelClient, discardedCids)
             }
             logger.v { "[retryMgsWithSyncedAttachments] result(${message.id}).isSuccess: ${result is Result.Success}" }
         }
@@ -1174,21 +1185,24 @@ internal class SyncManager(
     /**
      * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
      */
-    private suspend fun retryMessagesWithPendingAttachments(uncreatedCids: Set<String>) {
+    private suspend fun retryMessagesWithPendingAttachments(uncreatedCids: Set<String>, discardedCids: Set<String>) {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
         logger.d { "[retryMessagesWithPendingAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
             logger.d { "[retryMessagesWithPendingAttachments] process message($id)" }
             val message = repos.selectMessage(id) ?: return@forEach
             val isFailed = message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
-            if (isFailed) {
+            if (isFailed && message.cid in discardedCids) {
+                logger.v { "[retryMessagesWithPendingAttachments] removing message($id) of a discarded channel" }
+                removeMessage(message).await()
+            } else if (isFailed) {
                 logger.v { "[retryMessagesWithPendingAttachments] marking message($id) as failed" }
-                repos.markMessageAsFailed(message)
+                markMessageAsFailed(message)
             } else {
                 logger.v { "[retryMessagesWithPendingAttachments] sending message($id)" }
                 if (message.createdLocallyAt.exceedsSyncThresholdServerTime()) {
                     logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
-                    removeMessage(message).await()
+                    dropOutdatedSending(message, discardedCids)
                 } else if (message.waitsForChannel(uncreatedCids)) {
                     logger.v { "[retryMessagesWithPendingAttachments] waiting for channel(${message.cid})" }
                 } else {
@@ -1199,8 +1213,31 @@ internal class SyncManager(
         }
     }
 
-    private suspend fun RepositoryFacade.markMessageAsFailed(message: Message) =
-        insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date(now())))
+    /**
+     * Stops retrying a message that was never sent and is now too old. It is kept as failed so the user can resend
+     * or delete it, unless its channel was deleted as too old to create, or it has no local creation date.
+     */
+    private suspend fun dropOutdatedSending(message: Message, discardedCids: Set<String>): Result<Unit> =
+        if (message.cid in discardedCids || message.createdLocallyAt == null) {
+            removeMessage(message).await()
+        } else {
+            markMessageAsFailed(message)
+        }
+
+    private suspend fun markMessageAsFailed(message: Message): Result<Unit> = try {
+        val failed = message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date(now()))
+        repos.insertMessage(failed)
+        logicRegistry.channelFromMessage(failed)?.upsertMessage(failed)
+        logicRegistry.getActiveQueryThreadsLogic().forEach { it.upsertMessage(failed) }
+        logicRegistry.threadFromMessage(failed)?.upsertMessage(failed)
+        logicRegistry.getActiveQueryChannelsLogic().forEach { it.refreshChannelState(failed.cid) }
+        Result.Success(Unit)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Throwable) {
+        logger.e { "[markMessageAsFailed] failed(${message.id}): $e" }
+        Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
+    }
 
     private suspend fun retryReactionDeletion(
         id: Int,
@@ -1260,11 +1297,12 @@ internal class SyncManager(
         message: Message,
         id: String,
         channelClient: ChannelClient,
+        discardedCids: Set<String>,
     ): Result<Any> {
         logger.v { "[retrySendingOfMessageWithSyncedAttachments] sending message(${message.id})" }
         return if (message.createdLocallyAt.exceedsSyncThresholdServerTime()) {
             logger.w { "[retrySendingOfMessageWithSyncedAttachments] outdated sending($id)" }
-            removeMessage(message).await()
+            dropOutdatedSending(message, discardedCids)
         } else {
             // Do not persist the local message here. The SendMessageListener plugins already store the
             // outcome: the server's reply, which for a rejected send is a type "error" echo rather than

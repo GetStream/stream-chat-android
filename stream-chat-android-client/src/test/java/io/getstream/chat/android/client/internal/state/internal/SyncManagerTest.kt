@@ -32,8 +32,10 @@ import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.ReconnectGroupQueries
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.internal.state.sync.internal.sameInstant
@@ -50,6 +52,7 @@ import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.Tube
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ConnectionState
@@ -59,6 +62,7 @@ import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.InFilterObject
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
@@ -906,14 +910,87 @@ internal class SyncManagerTest {
         syncManager.onEvent(randomConnectedEvent())
 
         /* Then */
-        verify(repositoryFacade).deleteChannelMessage(message1)
+        verify(repositoryFacade).insertMessage(
+            argThat { id == message1.id && syncStatus == SyncStatus.FAILED_PERMANENTLY },
+        )
         verify(repositoryFacade).deleteChannelMessage(message2)
         verify(repositoryFacade).deleteChannelMessage(message3)
-        verify(repositoryFacade).deleteChannelMessage(message4)
+        verify(repositoryFacade).insertMessage(
+            argThat { id == message4.id && syncStatus == SyncStatus.FAILED_PERMANENTLY },
+        )
+        verify(repositoryFacade, never()).deleteChannelMessage(message1)
+        verify(repositoryFacade, never()).deleteChannelMessage(message4)
 
         verify(chatClient, never()).sendMessage(any(), any(), any(), any())
         verify(chatClient, never()).deleteMessage(any(), any())
         verify(chatClient, never()).updateMessage(any())
+    }
+
+    @Test
+    fun `an outdated unsent message is shown as failed in its channel and threads`() = runTest(testDispatcher) {
+        verifyShownAsFailed(localRandomMessage().copy(syncStatus = SyncStatus.SYNC_NEEDED))
+    }
+
+    @Test
+    fun `an outdated message awaiting attachments is shown as failed in its channel and threads`() =
+        runTest(testDispatcher) {
+            verifyShownAsFailed(
+                localRandomMessage().copy(syncStatus = SyncStatus.AWAITING_ATTACHMENTS, attachments = emptyList()),
+            )
+        }
+
+    @Test
+    fun `a message whose attachment upload failed is shown as failed in its channel and threads`() =
+        runTest(testDispatcher) {
+            verifyShownAsFailed(failedUploadMessage())
+        }
+
+    @Test
+    fun `a message whose attachment upload failed is removed with its channel when the channel is too old to create`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            val message = failedUploadMessage().copy(cid = placeholder.cid)
+            delay(7_000)
+            whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+            whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+                listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(repositoryFacade).deleteChannel(placeholder.cid)
+            verify(repositoryFacade).deleteChannelMessage(message)
+            verify(repositoryFacade, never()).insertMessage(any())
+        }
+
+    private fun TestScope.failedUploadMessage(): Message = localRandomMessage().copy(
+        syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+        attachments = listOf(Attachment(uploadState = Attachment.UploadState.Failed(Error.GenericError("upload")))),
+    )
+
+    private suspend fun TestScope.verifyShownAsFailed(message: Message) {
+        whenever(repositoryFacade.selectMessageIdsBySyncState(message.syncStatus)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val channelLogic: ChannelLogic = mock()
+        val threadLogic: ThreadLogic = mock()
+        val queryThreadsLogic: QueryThreadsLogic = mock()
+        val queryChannelsLogic: QueryChannelsLogic = mock()
+        whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
+        whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
+        whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn listOf(queryThreadsLogic)
+        whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryChannelsLogic)
+
+        val sut = buildSyncManager()
+        delay(7_000)
+        sut.retryMessages()
+
+        val isFailed: Message.() -> Boolean = { id == message.id && syncStatus == SyncStatus.FAILED_PERMANENTLY }
+        verify(channelLogic).upsertMessage(argThat(isFailed))
+        verify(threadLogic).upsertMessage(argThat(isFailed))
+        verify(queryThreadsLogic).upsertMessage(argThat(isFailed))
+        verify(queryChannelsLogic).refreshChannelState(message.cid)
+        verify(channelLogic, never()).deleteMessage(any())
     }
 
     @Test
@@ -3264,7 +3341,7 @@ internal class SyncManagerTest {
         }
 
     @Test
-    fun `an outdated message stops waiting for its channel and is removed`() = runTest(testDispatcher) {
+    fun `an outdated message stops waiting for its channel and is marked as failed`() = runTest(testDispatcher) {
         val message = localRandomMessage().copy(cid = "messaging:!members-a, b", syncStatus = SyncStatus.SYNC_NEEDED)
         delay(7_000)
         val placeholder = placeholderChannel(id = "!members-a, b")
@@ -3274,7 +3351,40 @@ internal class SyncManagerTest {
 
         buildSyncManager().onEvent(randomConnectedEvent())
 
+        verify(repositoryFacade).insertMessage(
+            argThat { id == message.id && syncStatus == SyncStatus.FAILED_PERMANENTLY },
+        )
+        verify(repositoryFacade, never()).deleteChannelMessage(message)
+    }
+
+    @Test
+    fun `an outdated message is removed with its channel when the channel is too old to create`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            val message = localRandomMessage().copy(cid = placeholder.cid, syncStatus = SyncStatus.SYNC_NEEDED)
+            delay(7_000)
+            whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+            whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(repositoryFacade).deleteChannel(placeholder.cid)
+            verify(repositoryFacade).deleteChannelMessage(message)
+            verify(repositoryFacade, never()).insertMessage(any())
+        }
+
+    @Test
+    fun `an outdated message without a local creation date is removed`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(createdLocallyAt = null, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        buildSyncManager().retryMessages()
+
         verify(repositoryFacade).deleteChannelMessage(message)
+        verify(repositoryFacade, never()).insertMessage(any())
     }
 
     @Test
