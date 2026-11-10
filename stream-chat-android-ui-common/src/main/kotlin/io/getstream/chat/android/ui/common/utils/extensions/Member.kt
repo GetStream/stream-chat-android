@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.common.utils.ExpandableList
  * Returns the number of online members, including the ones hidden while the list is collapsed.
  */
 @InternalStreamChatApi
-public fun ExpandableList<Member>.onlineMemberCount(): Int = allItems.countOnline(currentUserId = null)
+public fun ExpandableList<Member>.onlineMemberCount(): Int = items.count { it.user.online }
 
 internal fun List<Member>.countOnline(
     currentUserId: String?,

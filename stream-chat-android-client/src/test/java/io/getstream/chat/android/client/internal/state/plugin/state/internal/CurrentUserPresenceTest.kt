@@ -86,6 +86,13 @@ internal class CurrentUserPresenceTest {
     }
 
     @Test
+    fun `overlaid users are not rebuilt on every read`() = runTest {
+        val sut = sut(cached = listOf(currentUser.copy(online = true)), connectionState = ConnectionState.Offline)
+
+        assertSame(sut.value, sut.value)
+    }
+
+    @Test
     fun `reconnecting keeps the previous presence`() = runTest {
         val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Connected)
         val sut = sut(cached = listOf(currentUser), connectionState = connectionState)

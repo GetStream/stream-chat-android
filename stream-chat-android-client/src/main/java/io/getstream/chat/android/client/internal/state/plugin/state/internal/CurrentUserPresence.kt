@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.internal
 
-import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -42,9 +42,10 @@ internal fun StateFlow<Map<String, User>>.withCurrentUserPresence(
         .filterNot { it == ConnectionState.Connecting }
         .map { it == ConnectionState.Connected }
         .stateIn(scope, SharingStarted.Eagerly, connectionState.value == ConnectionState.Connected)
-    return combineStates(this, currentUser, connected) { users, user, isConnected ->
+    // Shared by every channel state, so compute once per change rather than on every read.
+    return combine(this, currentUser, connected) { users, user, isConnected ->
         users.withCurrentUserPresence(user, isConnected)
-    }
+    }.stateIn(scope, SharingStarted.Eagerly, value.withCurrentUserPresence(currentUser.value, connected.value))
 }
 
 private fun Map<String, User>.withCurrentUserPresence(currentUser: User?, connected: Boolean): Map<String, User> {

@@ -40,7 +40,7 @@ package io.getstream.chat.android.ui.common.utils
  * or `0` if fully expanded or not expandable.
  */
 public data class ExpandableList<T>(
-    private val items: List<T>,
+    internal val items: List<T>,
     private val minimumVisibleItems: Int = items.size,
     val isCollapsed: Boolean = true,
 ) : List<T> by visibleItems(items, minimumVisibleItems, isCollapsed) {
@@ -61,9 +61,6 @@ public data class ExpandableList<T>(
         } else {
             0
         }
-
-    internal val allItems: List<T>
-        get() = items
 }
 
 /**
