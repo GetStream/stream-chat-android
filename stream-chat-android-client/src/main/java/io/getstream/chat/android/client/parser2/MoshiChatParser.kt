@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
-import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.parser.ChatParser
@@ -47,7 +46,6 @@ internal class MoshiChatParser : ChatParser {
 
     override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {
         return builder
-            .addConverterFactory(MoshiUrlQueryPayloadFactory(moshi))
             .addConverterFactory(MoshiConverterFactory.create(moshi).withErrorLogging())
     }
 

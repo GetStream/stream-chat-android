@@ -38,12 +38,10 @@ import io.getstream.chat.android.client.api.internal.DistinctChatApi
 import io.getstream.chat.android.client.api.internal.DistinctChatApiEnabler
 import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.MoshiChatApi
-import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.cdn.CDN
@@ -350,7 +348,6 @@ constructor(
             dtoMapping = dtoMapping,
             fileUploader = fileUploader ?: defaultFileUploader,
             fileTransformer = fileTransformer,
-            userApi = buildV2RetrofitApi<UserApi>(),
             channelApi = buildV2RetrofitApi<ChannelApi>(),
             v2EventParser = v2EventParser,
             moderationV1Api = buildRetrofitApi<ModerationV1Api>(),
@@ -403,7 +400,6 @@ constructor(
             isAnonymousApi,
         ) { builder ->
             builder
-                .addConverterFactory(MoshiUrlQueryPayloadFactory(Serializer.moshi))
                 .addConverterFactory(QueryConverterFactory(Serializer.moshi))
                 .addConverterFactory(MoshiConverterFactory.create(Serializer.moshi).withErrorLogging())
         }.create(apiClass)

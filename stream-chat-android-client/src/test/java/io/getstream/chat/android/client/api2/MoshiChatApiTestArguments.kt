@@ -596,14 +596,8 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun queryUsersInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                QueryUsersResponse(duration = randomString(), users = listOf(Mother.randomFullUserResponse())),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<QueryUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    fun queryUsersInput() = endpointArgs(
+        QueryUsersResponse(duration = randomString(), users = listOf(Mother.randomFullUserResponse())),
     )
 
     @JvmStatic
