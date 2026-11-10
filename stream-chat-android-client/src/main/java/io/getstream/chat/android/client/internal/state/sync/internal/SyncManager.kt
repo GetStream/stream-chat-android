@@ -1175,7 +1175,10 @@ internal class SyncManager(
             logger.d { "[retryMessagesWithPendingAttachments] process message($id)" }
             val message = repos.selectMessage(id) ?: return@forEach
             val isFailed = message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
-            if (isFailed) {
+            if (isFailed && message.cid in discardedCids) {
+                logger.v { "[retryMessagesWithPendingAttachments] removing message($id) of a discarded channel" }
+                removeMessage(message).await()
+            } else if (isFailed) {
                 logger.v { "[retryMessagesWithPendingAttachments] marking message($id) as failed" }
                 markMessageAsFailed(message)
             } else {

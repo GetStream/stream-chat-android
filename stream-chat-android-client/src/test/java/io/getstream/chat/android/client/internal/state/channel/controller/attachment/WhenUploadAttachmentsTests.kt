@@ -463,6 +463,29 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
+    fun `Given no channel state Should still store the uploaded attachments`() = runTest {
+        val pending = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+        val uploaded = pending.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url1", extraData = emptyMap())
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doReturn Result.Success(uploaded)
+        }
+        val message = randomMessage(id = "messageId123", attachments = mutableListOf(pending))
+        val repository = mock<MessageRepository> {
+            onBlocking { it.selectMessage(message.id) } doReturn message
+        }
+        val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessageRepository(repository)
+            .givenNoChannelState()
+            .get()
+
+        sut.uploadAttachmentsForMessage(message.id)
+
+        val inserted = argumentCaptor<Message>()
+        verify(repository, times(2)).insertMessage(inserted.capture())
+        inserted.lastValue.attachments shouldBeEqualTo listOf(uploaded)
+    }
+
+    @Test
     fun `Given an attachment without a file Should not upload it`() = runTest {
         val link = randomAttachment().copy(upload = null, uploadState = null)
         val attachmentUploader = mock<AttachmentUploader>()
@@ -537,6 +560,7 @@ internal class WhenUploadAttachmentsTests {
         private var uploader: AttachmentUploader = mock()
         private var messageRepository: MessageRepository = mock()
         private val channelStateLegacyImpl: ChannelStateLegacyImpl = mock()
+        private var hasChannelState = true
 
         private val channelStateLogic: ChannelStateLogic =
             mock {
@@ -568,6 +592,10 @@ internal class WhenUploadAttachmentsTests {
             whenever(messageRepository.selectMessage(any())) doReturn message
         }
 
+        fun givenNoChannelState() = apply {
+            hasChannelState = false
+        }
+
         fun givenChatClientNoStoredCredentials() = apply {
             whenever(chatClient.containsStoredCredentials()) doReturn false
         }
@@ -576,7 +604,7 @@ internal class WhenUploadAttachmentsTests {
             return UploadAttachmentsWorker(
                 channelType,
                 channelId,
-                channelStateLogic = channelStateLogic,
+                channelStateLogic = channelStateLogic.takeIf { hasChannelState },
                 messageRepository = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader,

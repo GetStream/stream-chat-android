@@ -57,7 +57,7 @@ import io.getstream.chat.android.models.TimeDuration
  * threshold. If it does, the operation is removed from the local database instead of being retried, preventing
  * the SDK from attempting to sync stale operations that are no longer relevant. A message that was never sent is
  * kept instead, marked as failed, so the user can resend or delete it. It is removed only when it has no local
- * creation date, or when its channel was never created and is removed as too old too.
+ * creation date, or when its channel was never created and was itself removed as too old.
  *
  * @param now A function that provides the current time in milliseconds since epoch (Unix timestamp). Defaults to
  * [System.currentTimeMillis]. This is used throughout the state plugin for time-based operations such as:

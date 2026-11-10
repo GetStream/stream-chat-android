@@ -201,7 +201,8 @@ public class UploadAttachmentsWorker(
                     message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }
                 } ?: SyncStatus.FAILED_PERMANENTLY,
         )
-        channelStateLogic?.upsertMessage(insertMessageIfStored(updatedMessage) ?: updatedMessage)
+        val storedMessage = insertMessageIfStored(updatedMessage) ?: updatedMessage
+        channelStateLogic?.upsertMessage(storedMessage)
         AttachmentsUploadStates.updateMessageAttachments(updatedMessage)
     }
 

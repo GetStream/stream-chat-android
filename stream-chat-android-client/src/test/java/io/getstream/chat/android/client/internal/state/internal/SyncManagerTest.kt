@@ -51,6 +51,7 @@ import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.Tube
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ConnectionState
@@ -926,18 +927,48 @@ internal class SyncManagerTest {
 
     @Test
     fun `an outdated unsent message is shown as failed in its channel and threads`() = runTest(testDispatcher) {
-        verifyOutdatedMessageShownAsFailed(localRandomMessage().copy(syncStatus = SyncStatus.SYNC_NEEDED))
+        verifyShownAsFailed(localRandomMessage().copy(syncStatus = SyncStatus.SYNC_NEEDED))
     }
 
     @Test
     fun `an outdated message awaiting attachments is shown as failed in its channel and threads`() =
         runTest(testDispatcher) {
-            verifyOutdatedMessageShownAsFailed(
+            verifyShownAsFailed(
                 localRandomMessage().copy(syncStatus = SyncStatus.AWAITING_ATTACHMENTS, attachments = emptyList()),
             )
         }
 
-    private suspend fun TestScope.verifyOutdatedMessageShownAsFailed(message: Message) {
+    @Test
+    fun `a message whose attachment upload failed is shown as failed in its channel and threads`() =
+        runTest(testDispatcher) {
+            verifyShownAsFailed(failedUploadMessage())
+        }
+
+    @Test
+    fun `a message whose attachment upload failed is removed with its channel when the channel is too old to create`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            val message = failedUploadMessage().copy(cid = placeholder.cid)
+            delay(7_000)
+            whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+            whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+                listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(repositoryFacade).deleteChannel(placeholder.cid)
+            verify(repositoryFacade).deleteChannelMessage(message)
+            verify(repositoryFacade, never()).insertMessage(any())
+        }
+
+    private fun TestScope.failedUploadMessage(): Message = localRandomMessage().copy(
+        syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+        attachments = listOf(Attachment(uploadState = Attachment.UploadState.Failed(Error.GenericError("upload")))),
+    )
+
+    private suspend fun TestScope.verifyShownAsFailed(message: Message) {
         whenever(repositoryFacade.selectMessageIdsBySyncState(message.syncStatus)) doReturn listOf(message.id)
         whenever(repositoryFacade.selectMessage(message.id)) doReturn message
         val channelLogic: ChannelLogic = mock()
