@@ -277,14 +277,15 @@ internal fun Messages(
     // failure, only a drag by the user or a change in the number of messages allows the next request.
     val loadingOlderMessagesError by rememberUpdatedState(messagesState.loadingOlderMessagesError)
     val currentOnMessagesStartReached by rememberUpdatedState(onMessagesStartReached)
-    var retryAfterFailureAllowed by remember { mutableStateOf(false) }
-    val messageCount = remember(messages) { messages.count { it is MessageItemState } }
-    LaunchedEffect(messageCount) {
-        retryAfterFailureAllowed = true
-    }
+    // Updated during composition, so the layout-driven handlers below already see the new count.
+    val messageCount by rememberUpdatedState(remember(messages) { messages.count { it is MessageItemState } })
+    var messageCountAtLastRequest by remember { mutableStateOf(-1) }
+    var dragAllowsRetry by remember { mutableStateOf(false) }
     val requestOlderMessages = {
-        if (!endOfOldMessages && (!loadingOlderMessagesError || retryAfterFailureAllowed)) {
-            retryAfterFailureAllowed = false
+        val retryAllowed = dragAllowsRetry || messageCount != messageCountAtLastRequest
+        if (!endOfOldMessages && (!loadingOlderMessagesError || retryAllowed)) {
+            dragAllowsRetry = false
+            messageCountAtLastRequest = messageCount
             currentOnMessagesStartReached()
         }
     }
@@ -292,7 +293,7 @@ internal fun Messages(
         lazyListState.interactionSource.interactions
             .filterIsInstance<DragInteraction.Start>()
             .collect {
-                retryAfterFailureAllowed = true
+                dragAllowsRetry = true
                 // At the top, or on a list too short to scroll, the drag moves nothing the handlers below observe.
                 if (!lazyListState.canScrollForward) requestOlderMessages()
             }
