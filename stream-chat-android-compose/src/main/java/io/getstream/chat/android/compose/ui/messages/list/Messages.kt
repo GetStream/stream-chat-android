@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -272,11 +273,32 @@ internal fun Messages(
         }
     }
 
-    LoadMoreHandler(lazyListState = lazyListState) {
-        if (!endOfOldMessages) {
-            onMessagesStartReached()
+    // The loading item appears and disappears with every attempt, which re-triggers both handlers below. After a
+    // failure, only a drag by the user or a change in the number of messages allows the next request.
+    val loadingOlderMessagesError by rememberUpdatedState(messagesState.loadingOlderMessagesError)
+    val currentOnMessagesStartReached by rememberUpdatedState(onMessagesStartReached)
+    var retryAfterFailureAllowed by remember { mutableStateOf(false) }
+    val messageCount = remember(messages) { messages.count { it is MessageItemState } }
+    LaunchedEffect(messageCount) {
+        retryAfterFailureAllowed = true
+    }
+    val requestOlderMessages = {
+        if (!endOfOldMessages && (!loadingOlderMessagesError || retryAfterFailureAllowed)) {
+            retryAfterFailureAllowed = false
+            currentOnMessagesStartReached()
         }
     }
+    LaunchedEffect(lazyListState) {
+        lazyListState.interactionSource.interactions
+            .filterIsInstance<DragInteraction.Start>()
+            .collect {
+                retryAfterFailureAllowed = true
+                // At the top, or on a list too short to scroll, the drag moves nothing the handlers below observe.
+                if (!lazyListState.canScrollForward) requestOlderMessages()
+            }
+    }
+
+    LoadMoreHandler(lazyListState = lazyListState, loadMore = requestOlderMessages)
 
     // Handle edge case: list content doesn't fill the screen but there are older messages to load.
     // This can happen when the message list is cleared and replaced with only a few messages (after a re-watch).
@@ -284,8 +306,8 @@ internal fun Messages(
         snapshotFlow { lazyListState.layoutInfo.totalItemsCount to lazyListState.canScrollForward }
             .distinctUntilChanged()
             .collect { (totalItems, canScrollForward) ->
-                if (totalItems > 0 && !canScrollForward && !endOfOldMessages) {
-                    onMessagesStartReached()
+                if (totalItems > 0 && !canScrollForward) {
+                    requestOlderMessages()
                 }
             }
     }

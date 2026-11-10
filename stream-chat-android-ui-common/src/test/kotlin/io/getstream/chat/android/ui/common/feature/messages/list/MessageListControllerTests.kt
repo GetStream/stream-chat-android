@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.api.state.ThreadState
+import io.getstream.chat.android.client.api.state.loadOlderMessages
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
@@ -77,6 +78,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
+import io.getstream.result.call.CoroutineCall
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -99,6 +102,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Answers
+import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.clearInvocations
@@ -2001,6 +2005,91 @@ internal class MessageListControllerTests {
         }
 
     @Test
+    fun `Given the older page fails When loading older messages Should report the failure as the loading ends`() =
+        runTest {
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+
+            withOlderMessagesPage(Error.GenericError("").asCall()) {
+                controller.loadOlderMessages()
+            }
+
+            controller.messageListState.value.isLoadingOlderMessages.shouldBeFalse()
+            controller.messageListState.value.loadingOlderMessagesError.shouldBeTrue()
+        }
+
+    @Test
+    fun `Given the older page loads after a failure When loading older messages Should clear the failure`() =
+        runTest {
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+            withOlderMessagesPage(Error.GenericError("").asCall()) {
+                controller.loadOlderMessages()
+            }
+
+            withOlderMessagesPage(Channel().asCall()) {
+                controller.loadOlderMessages()
+            }
+
+            controller.messageListState.value.loadingOlderMessagesError.shouldBeFalse()
+        }
+
+    @Test
+    fun `Given the channel state ends the load first When the older page is pending Should keep loading`() =
+        runTest {
+            val loadingOlderMessages = MutableStateFlow(false)
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState(loadingOlderMessages = loadingOlderMessages)
+                .get()
+            val result = CompletableDeferred<Result<Channel>>()
+            val pendingPage = CoroutineCall(testCoroutines.scope) { result.await() }
+
+            withOlderMessagesPage(pendingPage) {
+                controller.loadOlderMessages()
+                loadingOlderMessages.value = true
+                loadingOlderMessages.value = false
+
+                controller.messageListState.value.isLoadingOlderMessages.shouldBeTrue()
+                controller.messageListState.value.loadingOlderMessagesError.shouldBeFalse()
+
+                result.complete(Result.Failure(Error.GenericError("")))
+            }
+
+            controller.messageListState.value.isLoadingOlderMessages.shouldBeFalse()
+            controller.messageListState.value.loadingOlderMessagesError.shouldBeTrue()
+        }
+
+    @Test
+    fun `Given the older thread page fails When loading older replies Should report the failure as the loading ends`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(mockThreadState(parentMessage = parentMessage, messages = randomMessageList(3)))
+                .givenGetReplies()
+                .get()
+            whenever(chatClient.getRepliesMore(any(), any(), any())) doReturn
+                Error.GenericError("").asCall<List<Message>>()
+            controller.enterThreadMode(parentMessage)
+
+            controller.loadOlderMessages()
+
+            controller.threadListState.value.isLoadingOlderMessages.shouldBeFalse()
+            controller.threadListState.value.loadingOlderMessagesError.shouldBeTrue()
+        }
+
+    @Test
     fun `Given the newest thread page is loaded When scrolling to the bottom Should scroll without loading`() =
         runTest {
             val chatClient = mock<ChatClient>()
@@ -2205,6 +2294,7 @@ internal class MessageListControllerTests {
             typingState: StateFlow<TypingEvent> = MutableStateFlow(TypingEvent(cid, typingUsers)),
             read: StateFlow<ChannelUserRead?> = MutableStateFlow(randomChannelUserRead(lastReadMessageId = null)),
             config: Config = Config(),
+            loadingOlderMessages: StateFlow<Boolean> = MutableStateFlow(false),
         ) = apply {
             whenever(channelState.cid) doReturn CID
             whenever(channelState.channelData) doReturn channelDataState
@@ -2226,7 +2316,7 @@ internal class MessageListControllerTests {
             whenever(channelState.unreadCount) doReturn MutableStateFlow(0)
             whenever(channelState.insideSearch) doReturn MutableStateFlow(false)
             whenever(channelState.loadingNewerMessages) doReturn MutableStateFlow(false)
-            whenever(channelState.loadingOlderMessages) doReturn MutableStateFlow(false)
+            whenever(channelState.loadingOlderMessages) doReturn loadingOlderMessages
             whenever(channelState.hidden) doReturn MutableStateFlow(false)
             whenever(channelState.toChannel()) doAnswer {
                 channelState.convertToChannel()
@@ -2306,6 +2396,21 @@ internal class MessageListControllerTests {
 
         private val user1 = User(id = "Jc", name = "Jc Miñarro")
         private val user2 = User(id = "NotJc", name = "Not Jc Miñarro")
+
+        /**
+         * Runs [block] with `ChatClient.loadOlderMessages` returning [page]. The extension resolves the state
+         * plugin's internal channel logic, which these tests can't provide.
+         */
+        private inline fun withOlderMessagesPage(page: Call<Channel>, block: () -> Unit) {
+            Mockito.mockStatic(
+                Class.forName("io.getstream.chat.android.client.api.state.ChatClientExtensions"),
+                Answers.CALLS_REAL_METHODS,
+            ).use { extensions ->
+                extensions.`when`<Call<Channel>> { any<ChatClient>().loadOlderMessages(any(), any()) }
+                    .thenReturn(page)
+                block()
+            }
+        }
 
         @OptIn(ExperimentalCoroutinesApi::class)
         private fun nowDate() = Date(testCoroutines.dispatcher.scheduler.currentTime)

@@ -36,6 +36,8 @@ import io.getstream.chat.android.models.User
  * @param unreadLabel Snapshot of the active unread label, or `null` when there is no unread
  * boundary to display. Sticky once set: it persists across auto-read events until the user leaves
  * the channel, marks messages unread, or explicitly hides it.
+ * @param loadingOlderMessagesError Whether the latest request for a page with older messages failed. Cleared when the
+ * next one starts.
  */
 public data class MessageListState(
     public val messageItems: List<MessageListItemState> = emptyList(),
@@ -50,6 +52,7 @@ public data class MessageListState(
     public val newMessageState: NewMessageState? = null,
     public val selectedMessageState: SelectedMessageState? = null,
     public val unreadLabel: UnreadLabel? = null,
+    public val loadingOlderMessagesError: Boolean = false,
 )
 
 internal fun MessageListState.stringify(): String {
@@ -61,6 +64,7 @@ internal fun MessageListState.stringify(): String {
         "isLoading: $isLoading, " +
         "isLoadingNewerMessages: $isLoadingNewerMessages, " +
         "isLoadingOlderMessages: $isLoadingOlderMessages, " +
+        "loadingOlderMessagesError: $loadingOlderMessagesError, " +
         "currentUser.id: ${currentUser?.id}, " +
         "parentMessageId: $parentMessageId, " +
         "unreadCount: $unreadCount, " +
