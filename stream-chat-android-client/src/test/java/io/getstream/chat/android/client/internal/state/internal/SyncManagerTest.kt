@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.ReconnectGroupQueries
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
@@ -2943,6 +2944,89 @@ internal class SyncManagerTest {
         val outcome = syncManager.performSync(listOf("messaging:1"), watch = true)
 
         assertEquals(emptySet<String>(), outcome.syncedCids)
+    }
+
+    @Test
+    fun `on reconnect the tracked channel list is refreshed when 4 lists were queried before it`() =
+        runTest(testDispatcher) {
+            val untracked = (1..4).map { standardListLogic("untracked-$it") }
+            val tracked = standardListLogic("tracked")
+            val trackedIdentifiers = listOf(tracked.identifier)
+            whenever(stateRegistry.getTrackedQueryChannels()) doReturn trackedIdentifiers
+
+            givenStandardListsReconnect(untracked + tracked)
+
+            verify(tracked, times(2)).queryFirstPage()
+            inOrder(tracked, untracked[0], untracked[1]) {
+                verify(tracked).queryFirstPage()
+                verify(untracked[0]).queryFirstPage()
+                verify(untracked[1]).queryFirstPage()
+            }
+            verify(untracked[2], never()).queryFirstPage()
+            verify(untracked[3], never()).queryFirstPage()
+        }
+
+    @Test
+    fun `on reconnect the most recently tracked channel lists are refreshed first`() = runTest(testDispatcher) {
+        val lists = (1..4).map { standardListLogic("list-$it") }
+        // Newest first: list-4 was tracked last, list-1 first.
+        val trackedIdentifiers = lists.reversed().map { it.identifier }
+        whenever(stateRegistry.getTrackedQueryChannels()) doReturn trackedIdentifiers
+
+        givenStandardListsReconnect(lists)
+
+        inOrder(lists[3], lists[2], lists[1]) {
+            verify(lists[3]).queryFirstPage()
+            verify(lists[2]).queryFirstPage()
+            verify(lists[1]).queryFirstPage()
+        }
+        verify(lists[0], never()).queryFirstPage()
+    }
+
+    @Test
+    fun `on reconnect a released channel list is no longer refreshed first`() = runTest(testDispatcher) {
+        val untracked = (1..4).map { standardListLogic("untracked-$it") }
+        val released = standardListLogic("released")
+        // The flow of the list was released, so it is no longer tracked.
+        whenever(stateRegistry.getTrackedQueryChannels()) doReturn emptyList()
+
+        givenStandardListsReconnect(untracked + released)
+
+        untracked.take(3).forEach { verify(it, times(2)).queryFirstPage() }
+        verify(untracked[3], never()).queryFirstPage()
+        verify(released, never()).queryFirstPage()
+    }
+
+    private fun standardListLogic(name: String): QueryChannelsLogic {
+        val identifier = QueryChannelsIdentifier.Standard(
+            filter = Filters.eq("name", name),
+            sort = QuerySortByField.descByName("last_message_at"),
+        )
+        return mock {
+            on(it.identifier) doReturn identifier
+            on(it.groupKey()) doReturn null
+            on(it.recoveryNeeded()) doReturn MutableStateFlow(true)
+            onBlocking { it.queryFirstPage() } doReturn Result.Success(emptyList())
+        }
+    }
+
+    /**
+     * Connects, then reconnects, with the standard [queryLogics] active.
+     */
+    private suspend fun TestScope.givenStandardListsReconnect(queryLogics: List<QueryChannelsLogic>) {
+        val createdAt = localDate()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn queryLogics
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+        whenever(stateRegistry.getActiveChannelStates()) doReturn emptyMap()
+        whenever(clientState.isOnline) doReturn true
+        whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+        val syncManager = buildSyncManager()
+        syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+        delay(100)
+        syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+        delay(100)
     }
 
     private fun groupedQueryLogic(

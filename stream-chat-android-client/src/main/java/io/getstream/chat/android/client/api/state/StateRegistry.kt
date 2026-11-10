@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.client.internal.state.plugin.state.internal.TrackedQueryChannelsStateFlow
 import io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.internal.state.plugin.state.querythreads.internal.QueryThreadsMutableState
@@ -47,6 +48,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.Collections
 import java.util.WeakHashMap
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Registry of all state objects exposed in the offline plugin. This class should have only one instance for the SDK.
@@ -91,6 +93,10 @@ public class StateRegistry @JvmOverloads constructor(
 
     private val watchedChannelFlows: MutableMap<WatchedChannelStateFlow, String> =
         Collections.synchronizedMap(WeakHashMap())
+
+    private val queryChannelsFlows: MutableMap<TrackedQueryChannelsStateFlow, Long> =
+        Collections.synchronizedMap(WeakHashMap())
+    private val queryChannelsTrackingOrder = AtomicLong()
 
     /**
      * Returns [QueryChannelsState] associated with particular [filter] and [sort].
@@ -282,6 +288,36 @@ public class StateRegistry @JvmOverloads constructor(
     }
 
     /**
+     * Tracks a channel list that was queried via [ChatClient.queryChannelsAsState].
+     * The entry lives as long as the caller holds the [flow]; once the caller releases it, the
+     * underlying [WeakHashMap] drops the entry automatically.
+     * Each call marks the [flow] as the most recently tracked one.
+     * Used during reconnect to refresh the channel lists the user still has open first.
+     *
+     * @param flow The [TrackedQueryChannelsStateFlow] identifying the channel list.
+     */
+    internal fun trackQueryChannels(flow: TrackedQueryChannelsStateFlow) {
+        queryChannelsFlows[flow] = queryChannelsTrackingOrder.incrementAndGet()
+    }
+
+    /**
+     * Retrieves the identifiers of the channel lists which were registered via [trackQueryChannels], are still
+     * strongly referenced and whose scope is still active, the most recently tracked first, without duplicates.
+     * The scope check drops a replaced list before garbage collection clears its flow.
+     */
+    internal fun getTrackedQueryChannels(): List<QueryChannelsIdentifier> {
+        val entries = synchronized(queryChannelsFlows) {
+            queryChannelsFlows
+                .filterKeys { flow -> flow.isActive }
+                .map { (flow, order) -> flow.identifier to order }
+        }
+        return entries
+            .sortedByDescending { (_, order) -> order }
+            .map { (identifier, _) -> identifier }
+            .distinct()
+    }
+
+    /**
      * Clear state of all state objects.
      */
     public fun clear() {
@@ -297,6 +333,7 @@ public class StateRegistry @JvmOverloads constructor(
         threads.forEach { it.value.destroy() }
         threads.clear()
         watchedChannelFlows.clear()
+        queryChannelsFlows.clear()
     }
 
     internal fun handleBatchEvent(batchEvent: BatchEvent) {

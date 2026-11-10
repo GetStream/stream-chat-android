@@ -19,19 +19,27 @@ package io.getstream.chat.android.client.internal.state.extensions
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.api.state.queryChannelsAsState
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.client.internal.state.plugin.state.internal.TrackedQueryChannelsStateFlow
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.awaitCollected
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionData
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
@@ -41,20 +49,26 @@ import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(InternalStreamChatApi::class)
@@ -76,6 +90,8 @@ internal class ChatClientExtensionTests {
     private lateinit var chatClient: ChatClient
     private lateinit var pluginFactories: List<PluginFactory>
     private lateinit var plugins: List<Plugin>
+    private lateinit var stateRegistry: StateRegistry
+    private val queryChannelsRequest = QueryChannelsRequest(filter = Filters.neutral(), limit = 30)
 
     @Suppress("LongMethod")
     @BeforeEach
@@ -89,8 +105,10 @@ internal class ChatClientExtensionTests {
             on(it.channelType) doReturn channel.type
             on(it.channelId) doReturn channel.id
         }
-        val stateRegistry: StateRegistry = mock { stateRegistry ->
+        val queryChannelsState: QueryChannelsState = mock()
+        stateRegistry = mock { stateRegistry ->
             on(stateRegistry.channel(channel.type, channel.id)) doReturn channelState
+            on(stateRegistry.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsState
         }
 
         val request = QueryChannelPaginationRequest(MESSAGE_LIMIT)
@@ -141,6 +159,7 @@ internal class ChatClientExtensionTests {
             on(it.plugins) doReturn plugins
             on(it.queryChannel(channel.type, channel.id, request)) doReturn channel.asCall()
             on(it.queryChannel(channel.type, channel.id, aroundMessageRequest)) doReturn channel.asCall()
+            on(it.queryChannels(queryChannelsRequest)) doReturn emptyList<Channel>().asCall()
             on(it.connectAnonymousUser()) doAnswer {
                 userFlow.value = connectionData.user
                 initializationStateFlow.value = InitializationState.COMPLETE
@@ -297,5 +316,72 @@ internal class ChatClientExtensionTests {
         }
         userFlow.value = randomUser(id = "123")
         verify(chatClient, times(2)).queryChannel(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `queryChannelsAsState tracks the returned flow for the connected user`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+
+        val flow = chatClient.queryChannelsAsState(queryChannelsRequest, coroutineScope = testCoroutines.scope + Job())
+        advanceUntilIdle()
+
+        val captor = argumentCaptor<TrackedQueryChannelsStateFlow>()
+        verify(stateRegistry).trackQueryChannels(captor.capture())
+        (captor.firstValue === flow) shouldBeEqualTo true
+        captor.firstValue.identifier shouldBeEqualTo queryChannelsRequest.identifier
+    }
+
+    @Test
+    fun `queryChannelsAsState stops counting the flow as open when its scope is cancelled`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val scopeJob = Job()
+
+        val flow = chatClient.queryChannelsAsState(queryChannelsRequest, coroutineScope = testCoroutines.scope + scopeJob)
+        advanceUntilIdle()
+        val tracked = flow as TrackedQueryChannelsStateFlow
+        tracked.isActive shouldBeEqualTo true
+
+        scopeJob.cancel()
+
+        tracked.isActive shouldBeEqualTo false
+    }
+
+    @Test
+    fun `queryChannelsAsState tracks the returned flow again for a different user`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val flow = chatClient.queryChannelsAsState(queryChannelsRequest, coroutineScope = testCoroutines.scope + Job())
+        advanceUntilIdle()
+
+        userFlow.value = randomUser(id = "123")
+        advanceUntilIdle()
+
+        val captor = argumentCaptor<TrackedQueryChannelsStateFlow>()
+        verify(stateRegistry, times(2)).trackQueryChannels(captor.capture())
+        captor.allValues.all { it === flow } shouldBeEqualTo true
+    }
+
+    @Test
+    fun `queryChannelsAsState does not keep the returned flow alive`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        // The scope stays active, as it does while a screen is open.
+        val scope = testCoroutines.scope + Job()
+        var flow: StateFlow<QueryChannelsState?>? = chatClient.queryChannelsAsState(
+            request = queryChannelsRequest,
+            coroutineScope = scope,
+        )
+        advanceUntilIdle()
+        verify(stateRegistry).trackQueryChannels(any())
+        val flowRef = WeakReference(flow)
+        // Mockito keeps the arguments of recorded calls.
+        clearInvocations(stateRegistry)
+
+        flow = null
+
+        awaitCollected(flowRef)
+        flowRef.get().shouldBeNull()
     }
 }

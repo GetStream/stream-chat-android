@@ -65,15 +65,23 @@ internal class ChatClientStateCalls(
         chatClient.state
     }
 
-    /** Reference request of the channels query. */
+    /**
+     * Runs the channels query and returns the [QueryChannelsState] of its identifier, once the user is connected.
+     *
+     * @param request The channels query to run.
+     * @param chatEventHandlerFactory The factory set on the returned state.
+     * @param trackedFlow The flow to track in the user's [StateRegistry], or null to track nothing.
+     */
     internal suspend fun queryChannels(
         request: QueryChannelsRequest,
         chatEventHandlerFactory: ChatEventHandlerFactory,
+        trackedFlow: TrackedQueryChannelsStateFlow? = null,
     ): QueryChannelsState {
         logger.d { "[queryChannels] request: $request" }
         chatClient.queryChannels(request).launch(scope)
-        return deferredState
-            .await()
+        val stateRegistry = deferredState.await()
+        trackedFlow?.let(stateRegistry::trackQueryChannels)
+        return stateRegistry
             .queryChannels(request.identifier)
             .also { queryChannelsState -> queryChannelsState.chatEventHandlerFactory = chatEventHandlerFactory }
     }

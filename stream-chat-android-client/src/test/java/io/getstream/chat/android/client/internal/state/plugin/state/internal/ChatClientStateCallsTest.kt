@@ -18,9 +18,11 @@ package io.getstream.chat.android.client.internal.state.plugin.state.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -28,12 +30,15 @@ import io.getstream.chat.android.client.internal.state.plugin.state.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -100,6 +105,30 @@ internal class ChatClientStateCallsTest {
         }
 
         chatClientStateCalls = ChatClientStateCalls(chatClient, testCoroutines.scope)
+    }
+
+    @Test
+    fun `queryChannels tracks the given flow in the state registry of the user`() = runTest {
+        userFlow.value = User(id = "test-user")
+        val request = QueryChannelsRequest(filter = Filters.neutral(), limit = 30)
+        whenever(chatClient.queryChannels(request)) doReturn TestCall(Result.Success(emptyList()))
+        val trackedFlow = TrackedQueryChannelsStateFlow(request.identifier) { MutableStateFlow(null) }
+
+        chatClientStateCalls.queryChannels(request, ChatEventHandlerFactory(clientState), trackedFlow)
+
+        verify(stateRegistry).trackQueryChannels(trackedFlow)
+        verify(stateRegistry).queryChannels(request.identifier)
+    }
+
+    @Test
+    fun `queryChannels without a flow tracks nothing`() = runTest {
+        userFlow.value = User(id = "test-user")
+        val request = QueryChannelsRequest(filter = Filters.neutral(), limit = 30)
+        whenever(chatClient.queryChannels(request)) doReturn TestCall(Result.Success(emptyList()))
+
+        chatClientStateCalls.queryChannels(request, ChatEventHandlerFactory(clientState))
+
+        verify(stateRegistry, never()).trackQueryChannels(any())
     }
 
     @Test

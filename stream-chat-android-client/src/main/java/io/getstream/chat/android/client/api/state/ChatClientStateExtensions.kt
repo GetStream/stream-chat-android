@@ -37,7 +37,9 @@ import io.getstream.chat.android.client.internal.state.extensions.internal.parse
 import io.getstream.chat.android.client.internal.state.extensions.internal.requestsAsState
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.client.internal.state.plugin.state.internal.TrackedQueryChannelsStateFlow
 import io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
@@ -124,6 +126,10 @@ private val ChatClient.chatClientConfig: ChatClientConfig
  *
  * You can pass option [chatEventHandlerFactory] parameter which will be associated with this query channels request.
  *
+ * After a reconnect, the channel lists whose returned StateFlow is still referenced and whose [coroutineScope] is
+ * still active are refreshed first, the most recently tracked first. Keep a reference to the returned StateFlow while
+ * the list is shown, not only to a flow derived from it, so the list keeps this priority.
+ *
  * @see [ChatEventHandler]
  *
  * @param request The request's parameters combined into [QueryChannelsRequest] class.
@@ -141,8 +147,11 @@ public fun ChatClient.queryChannelsAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
     StreamLog.d(TAG) { "[queryChannelsAsState] request: $request" }
-    return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).queryChannels(request, chatEventHandlerFactory)
+    return TrackedQueryChannelsStateFlow(request.identifier, coroutineScope.coroutineContext[Job]) { flowRef ->
+        getStateOrNull(coroutineScope) {
+            // Tracked per user: each user gets a new StateRegistry and the producer runs once per user.
+            requestsAsState(coroutineScope).queryChannels(request, chatEventHandlerFactory, flowRef.get())
+        }
     }
 }
 
