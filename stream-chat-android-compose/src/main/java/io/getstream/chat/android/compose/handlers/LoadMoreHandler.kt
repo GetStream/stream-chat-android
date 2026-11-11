@@ -135,4 +135,4 @@ internal fun shouldLoadMore(
         totalItemsCount > loadMoreThreshold && // Ensure list is large enough
         lastVisibleItemIndex > totalItemsCount - loadMoreThreshold - 1
 
-private const val DefaultLoadMoreThreshold = 3
+internal const val DefaultLoadMoreThreshold = 3

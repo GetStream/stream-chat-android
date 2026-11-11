@@ -54,7 +54,9 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import io.getstream.chat.android.compose.handlers.DefaultLoadMoreThreshold
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
+import io.getstream.chat.android.compose.handlers.shouldLoadMore
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageListHelperContentParams
@@ -294,8 +296,15 @@ internal fun Messages(
             .filterIsInstance<DragInteraction.Start>()
             .collect {
                 dragAllowsRetry = true
-                // At the top, or on a list too short to scroll, the drag moves nothing the handlers below observe.
-                if (!lazyListState.canScrollForward) requestOlderMessages()
+                // At the top, on a list too short to scroll, or within the load threshold, the drag may change
+                // nothing the handlers below observe.
+                val layoutInfo = lazyListState.layoutInfo
+                val withinLoadThreshold = shouldLoadMore(
+                    totalItemsCount = layoutInfo.totalItemsCount,
+                    lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1,
+                    loadMoreThreshold = DefaultLoadMoreThreshold,
+                )
+                if (!lazyListState.canScrollForward || withinLoadThreshold) requestOlderMessages()
             }
     }
 

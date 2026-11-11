@@ -26,9 +26,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipe
 import androidx.compose.ui.test.swipeDown
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -48,6 +50,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -161,6 +164,22 @@ internal class MessagesOlderPageFailureTest : MockedChatClientTest {
     }
 
     @Test
+    fun `a short drag within the load threshold after a failed older page allows one more request`() {
+        setMessages(messageCount = LONG_LIST_SIZE)
+        scrollUntilLastVisibleIndexIs(LONG_LIST_SIZE - LOAD_MORE_THRESHOLD)
+        composeTestRule.mainClock.advanceTimeBy(FAILURE_WINDOW_MS)
+
+        composeTestRule.onNodeWithTag("Stream_Messages").performTouchInput {
+            swipe(start = center, end = center + Offset(0f, SHORT_DRAG_DP.dp.toPx()), durationMillis = 1_000)
+        }
+        composeTestRule.mainClock.advanceTimeBy(FAILURE_WINDOW_MS)
+        composeTestRule.waitForIdle()
+
+        assertTrue(composeTestRule.runOnIdle { messagesLazyListState.lazyListState.canScrollForward })
+        assertEquals(2, olderPageRequests)
+    }
+
+    @Test
     fun `a scroll the user did not start after a failed older page does not allow another request`() {
         setMessages(messageCount = LONG_LIST_SIZE)
         scrollTo(LONG_LIST_SIZE - 1)
@@ -249,5 +268,6 @@ internal class MessagesOlderPageFailureTest : MockedChatClientTest {
         const val LOAD_MORE_THRESHOLD = 3
         const val FAILED_REQUEST_DURATION_MS = 100L
         const val FAILURE_WINDOW_MS = 2_000L
+        const val SHORT_DRAG_DP = 30
     }
 }
