@@ -17,6 +17,9 @@
 package io.getstream.chat.android.ai.compose.ui.component
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -38,6 +41,8 @@ import io.getstream.chat.android.ai.compose.conversation.rememberAIConversationS
 import io.getstream.chat.android.ai.compose.conversation.reply
 import io.getstream.chat.android.ai.compose.conversation.user
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -138,5 +143,37 @@ internal class AIConversationStateViewsTest {
 
         rule.onNodeWithText("Day one in Alfama").assertIsDisplayed()
         rule.onNodeWithContentDescription("Good response").assertDoesNotExist()
+    }
+
+    @Test
+    fun `remembered state made for a new transport disconnects the old one`() {
+        val first = FakeTransport()
+        val second = FakeTransport()
+        var transport by mutableStateOf(first)
+        rule.setContent { state = rememberAIConversationState(transport) }
+        rule.runOnIdle { assertTrue(first.feed?.isConnected == true) }
+
+        rule.runOnIdle { transport = second }
+
+        rule.runOnIdle {
+            assertFalse(first.feed?.isConnected == true)
+            assertTrue(second.feed?.isConnected == true)
+            assertEquals(1, first.connections)
+            assertEquals(1, second.connections)
+            first.update(user("u1", "Late"))
+            assertEquals(emptyList<ChatMessage>(), state.messages.value)
+        }
+    }
+
+    @Test
+    fun `remembered state that leaves the composition disconnects its transport`() {
+        val transport = FakeTransport()
+        var shown by mutableStateOf(true)
+        rule.setContent { if (shown) state = rememberAIConversationState(transport) }
+        rule.runOnIdle { assertTrue(transport.feed?.isConnected == true) }
+
+        rule.runOnIdle { shown = false }
+
+        rule.runOnIdle { assertFalse(transport.feed?.isConnected == true) }
     }
 }

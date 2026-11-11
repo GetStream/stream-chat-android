@@ -40,6 +40,7 @@ internal open class FakeTransport(private val initialMessages: List<ChatMessage>
     AIConversationTransport<ChatMessage> {
 
     var feed: AIConversationFeed<ChatMessage>? = null
+    var connections = 0
     val requests = mutableListOf<AIConversationRequest<ChatMessage>>()
     var stops = 0
     var loads = 0
@@ -63,6 +64,7 @@ internal open class FakeTransport(private val initialMessages: List<ChatMessage>
     val lastRequest: AIConversationRequest<ChatMessage>? get() = requests.lastOrNull()
 
     override fun connect(feed: AIConversationFeed<ChatMessage>) {
+        connections += 1
         this.feed = feed
         feed.update(messages = initialMessages)
     }

@@ -18,6 +18,7 @@ package io.getstream.chat.android.ai.compose.conversation
 
 import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import io.getstream.chat.android.ai.compose.generativeui.AIUIAction
@@ -26,12 +27,14 @@ import io.getstream.chat.android.ai.compose.ui.component.MessageData
 import io.getstream.chat.android.ai.compose.util.internal.simpleLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -546,6 +549,10 @@ public class AIConversationState<M : AIMessage>(
  * @param transport How the state reaches the agent and learns what the conversation holds.
  * @param approver Who answers tool calls' questions and sign-ins on this device.
  * @param replyTimeout How long the state waits for the agent to start its reply.
+ * A transport is connected once per state. When [transport], [approver] or [replyTimeout] changes,
+ * a new state is made and calls [AIConversationTransport.connect] again with a new feed, and the
+ * old state's feed reports [AIConversationFeed.isConnected] as false.
+ *
  * @return A state made anew, and connected anew, when any of them changes.
  */
 @Composable
@@ -554,8 +561,32 @@ public fun <M : AIMessage> rememberAIConversationState(
     approver: AIToolApprover? = null,
     replyTimeout: Duration? = AIConversationState.DefaultReplyTimeout,
 ): AIConversationState<M> {
-    val scope = rememberCoroutineScope()
-    return remember(transport, approver, replyTimeout, scope) {
-        AIConversationState(transport = transport, scope = scope, approver = approver, replyTimeout = replyTimeout)
+    val parent = rememberCoroutineScope()
+    return remember(transport, approver, replyTimeout, parent) {
+        RememberedConversationState(parent) { scope ->
+            AIConversationState(transport = transport, scope = scope, approver = approver, replyTimeout = replyTimeout)
+        }
+    }.state
+}
+
+/**
+ * A remembered state with a scope of its own, a child of the composition's, which is cancelled
+ * when the state is replaced or leaves the composition: its feed then goes nowhere.
+ */
+private class RememberedConversationState<M : AIMessage>(
+    parent: CoroutineScope,
+    create: (CoroutineScope) -> AIConversationState<M>,
+) : RememberObserver {
+    private val job = SupervisorJob(parent.coroutineContext[Job])
+    val state: AIConversationState<M> = create(parent + job)
+
+    override fun onRemembered() = Unit
+
+    override fun onForgotten() {
+        job.cancel()
+    }
+
+    override fun onAbandoned() {
+        job.cancel()
     }
 }

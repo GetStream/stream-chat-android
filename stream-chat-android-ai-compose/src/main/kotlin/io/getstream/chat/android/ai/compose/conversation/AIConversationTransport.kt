@@ -55,6 +55,10 @@ public interface AIConversationTransport<M : AIMessage> {
      * whether there are older ones to load, and what the agent says it is doing. The state calls
      * it once, as it is made. Call the feed on the state's thread.
      *
+     * A transport is connected once per state: a new state, such as one `rememberAIConversationState`
+     * makes when its keys change, calls it again with a new feed. Follow the latest feed, and stop
+     * following an old one once its [AIConversationFeed.isConnected] is false.
+     *
      * @param feed Where to tell the state what the conversation holds.
      */
     public fun connect(feed: AIConversationFeed<M>)
