@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.internal.ChannelId
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
@@ -39,6 +40,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import java.util.Date
 
 /**
  * Marking a channel as read must not create a state for a channel that has none, since channel lists would copy it as a
@@ -78,6 +80,37 @@ internal class LogicRegistryMarkReadTest {
         assertEquals(MarkReadResult.NotNeeded, fixture.logicRegistry.markRead(CHANNEL_TYPE, CHANNEL_ID))
     }
 
+    @ParameterizedTest(name = "legacy channel state: {0}")
+    @ValueSource(booleans = [false, true])
+    fun `a failed mark read through the registry restores the cleared unread count`(legacy: Boolean) {
+        val fixture = Fixture(legacy)
+        val channel = fixture.logicRegistry.channel(CHANNEL_TYPE, CHANNEL_ID)
+        val read = ChannelUserRead(
+            user = fixture.currentUser,
+            lastReceivedEventDate = Date(500),
+            unreadMessages = 3,
+            lastRead = Date(500),
+            lastReadMessageId = null,
+        )
+        if (legacy) {
+            fixture.stateRegistry.legacyChannelState(CHANNEL).upsertMessages(listOf(message()))
+            fixture.stateRegistry.legacyChannelState(CHANNEL).upsertReads(listOf(read))
+        } else {
+            fixture.stateRegistry.channelState(CHANNEL).setMessages(listOf(message()))
+            fixture.stateRegistry.channelState(CHANNEL).replaceRead(read)
+        }
+
+        fixture.logicRegistry.markRead(CHANNEL_TYPE, CHANNEL_ID)
+        channel.onMarkReadFailed()
+
+        val state = if (legacy) {
+            fixture.stateRegistry.legacyChannelState(CHANNEL)
+        } else {
+            fixture.stateRegistry.channelState(CHANNEL)
+        }
+        assertEquals(3, state.read.value?.unreadMessages)
+    }
+
     private fun message() = randomMessage(
         cid = CHANNEL.cid,
         type = "regular",
@@ -87,7 +120,7 @@ internal class LogicRegistryMarkReadTest {
     )
 
     private class Fixture(legacy: Boolean) {
-        private val currentUser = randomUser()
+        val currentUser = randomUser()
         private val userFlow = MutableStateFlow<User?>(currentUser)
         val stateRegistry = StateRegistry(
             userStateFlow = userFlow,

@@ -286,12 +286,16 @@ internal class ChannelLogicImpl(
         state.setRepliedMessage(message)
     }
 
-    override fun markRead(): MarkReadResult {
-        val result = state.markRead()
+    override fun markRead(restoreOnFailure: Boolean): MarkReadResult {
+        val result = state.markRead(trackClearedUnread = restoreOnFailure)
         if (result == MarkReadResult.HandledLocally) {
             persistCurrentReads()
         }
         return result
+    }
+
+    override fun onMarkReadFailed() {
+        state.restoreClearedUnread()
     }
 
     /** Persists the in-memory reads so the locally tracked unread count survives a restart. */

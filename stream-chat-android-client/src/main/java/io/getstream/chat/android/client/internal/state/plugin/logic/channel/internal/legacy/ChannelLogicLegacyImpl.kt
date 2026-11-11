@@ -215,8 +215,8 @@ internal class ChannelLogicLegacyImpl(
         stateLogic.setRepliedMessage(message)
     }
 
-    override fun markRead(): MarkReadResult {
-        val result = stateLogic.markRead()
+    override fun markRead(restoreOnFailure: Boolean): MarkReadResult {
+        val result = stateLogic.markRead(trackClearedUnread = restoreOnFailure)
         if (result == MarkReadResult.HandledLocally) {
             // Persist the reset read so the on-device unread count survives a restart.
             val reads = mutableState.reads.value
@@ -227,6 +227,10 @@ internal class ChannelLogicLegacyImpl(
             }
         }
         return result
+    }
+
+    override fun onMarkReadFailed() {
+        mutableState.restoreClearedUnread()
     }
 
     override fun typingEventsEnabled(): Boolean {

@@ -97,6 +97,7 @@ internal class ChannelStateLegacyImpl(
     private var _pinnedMessages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _typing: MutableStateFlow<TypingEvent>? = MutableStateFlow(TypingEvent(channelId, emptyList()))
     private var _rawReads: MutableStateFlow<Map<String, ChannelUserRead>>? = MutableStateFlow(emptyMap())
+    private val clearedUnread = AtomicInteger(0)
     private var rawReads: StateFlow<Map<String, ChannelUserRead>> = _rawReads!!
     private var _members: MutableStateFlow<Map<String, Member>>? = MutableStateFlow(emptyMap())
     private var _watchers: MutableStateFlow<Map<String, User>>? = MutableStateFlow(emptyMap())
@@ -597,6 +598,27 @@ internal class ChannelStateLegacyImpl(
         cachedLatestMessages.apply { value = refresh(value) }
     }
 
+    /**
+     * Adds back the unread count the last tracked [markChannelAsRead] cleared, when its mark read request failed.
+     * Nothing is added once a read from the server replaced the local one since.
+     */
+    fun restoreClearedUnread() {
+        val cleared = clearedUnread.getAndSet(0)
+        val userId = userFlow.value?.id
+        if (cleared == 0 || userId == null) return
+        _rawReads?.update { current ->
+            val read = current[userId] ?: return@update current
+            current + (userId to read.copy(unreadMessages = read.unreadMessages + cleared))
+        }
+    }
+
+    /**
+     * Forgets the unread count the last tracked [markChannelAsRead] cleared, as a read from the server already has it.
+     */
+    fun forgetClearedUnread() {
+        clearedUnread.set(0)
+    }
+
     fun upsertReads(reads: List<ChannelUserRead>) {
         _rawReads?.apply {
             value = value + reads.associateBy(ChannelUserRead::getUserId)
@@ -634,8 +656,12 @@ internal class ChannelStateLegacyImpl(
     /**
      * Marks the channel as read for the current user and returns how the request was handled:
      * remotely, on-device (read events disabled + local tracking enabled), or not at all.
+     *
+     * @param trackClearedUnread True to keep the unread count cleared for the remote request, so
+     * [restoreClearedUnread] can add it back if the request fails.
      */
-    fun markChannelAsRead(): MarkReadResult {
+    fun markChannelAsRead(trackClearedUnread: Boolean = false): MarkReadResult {
+        if (trackClearedUnread) clearedUnread.set(0)
         if (!channelConfig.value.readEventsEnabled) {
             if (!isLocalUnreadCountEnabled) {
                 return MarkReadResult.NotNeeded
@@ -653,6 +679,7 @@ internal class ChannelStateLegacyImpl(
             // Stamping them with the newest loaded message's date here made messages still queued
             // behind this call count as already seen.
             upsertReads(listOf(currentUserRead.copy(unreadMessages = 0)))
+            if (trackClearedUnread) clearedUnread.set(currentUserRead.unreadMessages)
             MarkReadResult.RemoteRequired
         } else {
             MarkReadResult.NotNeeded

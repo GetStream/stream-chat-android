@@ -4188,8 +4188,9 @@ internal constructor(
             .doOnStart(userScope) {
                 logger.d { "[markRead] #doOnStart; cid: $channelType:$channelId" }
             }
-            .doOnResult(userScope) {
-                logger.v { "[markRead] #doOnResult; completed($channelType:$channelId): $it" }
+            .doOnResult(userScope) { result ->
+                logger.v { "[markRead] #doOnResult; completed($channelType:$channelId): $result" }
+                if (result is Result.Failure) channelUpdateResponseHandler?.onMarkReadFailed(channelType, channelId)
             }
             .share(userScope) { MarkReadIdentifier(channelType, channelId) }
     }

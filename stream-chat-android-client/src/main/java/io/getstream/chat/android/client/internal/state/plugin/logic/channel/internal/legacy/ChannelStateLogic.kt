@@ -220,6 +220,11 @@ internal class ChannelStateLogic(
             reads
         }
 
+        // A read from the server that replaces the local one already has the count a mark read cleared; a local read
+        // kept as more recent does not.
+        if (readsToUpsert.any { read -> read.getUserId() == currentUserId && reads.any { it === read } }) {
+            mutableState.forgetClearedUnread()
+        }
         mutableState.upsertReads(readsToUpsert)
     }
 
@@ -658,9 +663,11 @@ internal class ChannelStateLogic(
      * Marks the channel as read for the current user.
      *
      * @return A [MarkReadResult] describing how the mark-read request was handled.
+     *
+     * @param trackClearedUnread True to keep the unread count cleared for the remote request.
      */
-    fun markRead(): MarkReadResult {
-        return mutableState.markChannelAsRead()
+    fun markRead(trackClearedUnread: Boolean = false): MarkReadResult {
+        return mutableState.markChannelAsRead(trackClearedUnread)
     }
 
     /**

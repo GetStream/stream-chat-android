@@ -280,6 +280,25 @@ internal class ChannelUpdateResponseHandlerTest {
         verify(queryChannelsLogic).refreshChannelState(CID)
     }
 
+    @Test
+    fun `onMarkReadFailed restores the active channel's cleared unread count`() = runTest {
+        givenActiveChannel()
+
+        handler.onMarkReadFailed(CHANNEL_TYPE, CHANNEL_ID)
+
+        verify(channelLogic).onMarkReadFailed()
+        verify(queryChannelsLogic).refreshChannelState(CID)
+    }
+
+    @Test
+    fun `onMarkReadFailed does not create state for a channel without state`() = runTest {
+        whenever(logic.isActiveChannel(CHANNEL_TYPE, CHANNEL_ID)) doReturn false
+
+        handler.onMarkReadFailed(CHANNEL_TYPE, CHANNEL_ID)
+
+        verify(logic, never()).channel(any<String>(), any())
+    }
+
     private fun givenActiveChannel() {
         whenever(logic.isActiveChannel(CHANNEL_TYPE, CHANNEL_ID)) doReturn true
     }
