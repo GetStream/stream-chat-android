@@ -306,10 +306,9 @@ internal class SyncManager(
 
     /**
      * Loads the stored drafts like [syncOfflineDraftMessages], first marking the local changes that have not reached
-     * the server yet, so the drafts from the server do not replace them before [retryDrafts] sends them. Holds the
-     * retry lock, so a retry that settles a draft cannot run before its pending mark.
+     * the server yet, so the drafts from the server do not replace them before [retryDrafts] sends them.
      */
-    private suspend fun restorePendingDraftMessages() = entitiesRetryMutex.withLock {
+    private suspend fun restorePendingDraftMessages() {
         repos.selectDeletedDraftMessages().forEach(mutableGlobalState::removePendingDraftMessage)
         repos.selectPendingDraftMessages().forEach(mutableGlobalState::updatePendingDraftMessage)
         syncOfflineDraftMessages()

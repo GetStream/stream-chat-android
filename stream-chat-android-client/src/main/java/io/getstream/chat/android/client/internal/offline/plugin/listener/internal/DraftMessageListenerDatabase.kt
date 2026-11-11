@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.internal.offline.plugin.listener.intern
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
-import io.getstream.chat.android.client.utils.message.LatestDraftRequests
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
@@ -31,8 +30,6 @@ import io.getstream.result.onSuccessSuspend
 internal class DraftMessageListenerDatabase(
     private val messageRepository: MessageRepository,
 ) : DraftMessageListener {
-
-    private val latestRequests = LatestDraftRequests()
 
     /**
      * Method called before the request to create a draft message in the API is launched. Persists the draft upfront so
@@ -48,7 +45,6 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        latestRequests.onRequest(message, deleted = false)
         messageRepository.insertPendingDraftMessage(message)
     }
 
@@ -68,8 +64,6 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        // A newer save or deletion of the same draft is still pending, and its own result settles it.
-        if (!latestRequests.finish(message, deleted = false)) return
         when (result) {
             is Result.Success -> messageRepository.completeDraftMessage(result.value)
             is Result.Failure -> if (result.value.isPermanent()) messageRepository.completeDraftMessage(message)
@@ -90,7 +84,6 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        latestRequests.onRequest(message, deleted = true)
         messageRepository.markDraftMessageDeleted(message)
     }
 
@@ -110,7 +103,6 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        if (!latestRequests.finish(message, deleted = true)) return
         when (result) {
             is Result.Success -> messageRepository.removeDeletedDraftMessage(message)
             // A missing draft is a permanent failure too, so a deletion that already landed is not sent forever.

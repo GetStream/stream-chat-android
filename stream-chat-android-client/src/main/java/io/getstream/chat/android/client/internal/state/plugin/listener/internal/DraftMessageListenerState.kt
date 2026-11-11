@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
-import io.getstream.chat.android.client.utils.message.LatestDraftRequests
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
@@ -34,8 +33,6 @@ internal class DraftMessageListenerState(
     private val mutableGlobalState: MutableGlobalState,
 ) : DraftMessageListener {
 
-    private val latestRequests = LatestDraftRequests()
-
     /**
      * Keeps a reference of the [DraftMessage] in the [MutableGlobalState] before the request to create a draft message
      * is launched, so it shows up right away. Drafts from the server do not replace it until the request succeeds.
@@ -49,7 +46,6 @@ internal class DraftMessageListenerState(
         channelId: String,
         message: DraftMessage,
     ) {
-        latestRequests.onRequest(message, deleted = false)
         mutableGlobalState.updatePendingDraftMessage(message)
     }
 
@@ -69,8 +65,6 @@ internal class DraftMessageListenerState(
         channelId: String,
         message: DraftMessage,
     ) {
-        // A newer save or deletion of the same draft is still pending, and its own result settles it.
-        if (!latestRequests.finish(message, deleted = false)) return
         when (result) {
             is Result.Success -> {
                 mutableGlobalState.completeDraftMessage(message)
@@ -94,7 +88,6 @@ internal class DraftMessageListenerState(
         channelId: String,
         message: DraftMessage,
     ) {
-        latestRequests.onRequest(message, deleted = true)
         mutableGlobalState.removePendingDraftMessage(message)
     }
 
@@ -113,7 +106,6 @@ internal class DraftMessageListenerState(
         channelId: String,
         message: DraftMessage,
     ) {
-        if (!latestRequests.finish(message, deleted = true)) return
         when (result) {
             is Result.Success -> mutableGlobalState.completeDraftMessage(message)
             is Result.Failure -> if (result.value.isPermanent()) mutableGlobalState.completeDraftMessage(message)
