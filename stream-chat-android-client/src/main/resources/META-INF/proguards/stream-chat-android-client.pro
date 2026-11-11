@@ -4,16 +4,10 @@
 # name of the fields of the classes being used by QuerySort, change, the sort won't work as expected.
 -keep class io.getstream.chat.android.models.** { *; }
 
-# CustomObjectDtoAdapter tells custom data apart by matching the DTOs' field names against the JSON keys, so the
-# names must survive minification. Unused DTOs and members can still be removed.
--keepnames class io.getstream.chat.android.client.api2.model.** { *; }
-
-# ExtraDataDto can't be minified because we check for extraData using reflection in
-# io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter. If the name of extraData
-# is changed, we will have problem with serialization.
--keep class * extends io.getstream.chat.android.client.api2.model.dto.ExtraDataDto {
-    public kotlin.collections.Map extraData;
- }
+# CustomObjectDtoAdapter tells custom data apart by matching the field names of the DTOs it parses against the JSON
+# keys, so those names must survive minification. Unused DTOs and members can still be removed.
+-keepnames class * extends io.getstream.chat.android.client.api2.model.dto.ExtraDataDto { *; }
+-keepnames class io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto { *; }
 
 # Rules necessary for R8 full mode
 -keep class io.getstream.chat.android.client.api2.endpoint.** { *; }
