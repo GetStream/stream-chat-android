@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
@@ -353,12 +354,17 @@ internal interface ChatApi {
         sort: QuerySorter<DraftsSort>,
     ): Call<QueryDraftsResult>
 
+    /**
+     * Mutes the channel for the current user.
+     *
+     * @return The channel mutes the server returns for the request.
+     */
     @CheckResult
     fun muteChannel(
         channelType: String,
         channelId: String,
         expiration: Int?,
-    ): Call<Unit>
+    ): Call<List<ChannelMute>>
 
     @CheckResult
     fun unmuteChannel(

@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.internal.state.event.handler.grouped.int
 import io.getstream.chat.android.client.internal.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.client.internal.state.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.refreshChannelsOnScheduledMessages
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
@@ -132,6 +133,12 @@ public class StreamStatePluginFactory(
         )
 
         chatClient.logicRegistry = logic
+        chatClient.channelUpdateResponseHandler = ChannelUpdateResponseHandler(
+            logic = logic,
+            repos = repositoryFacade,
+            mutableGlobalState = mutableGlobalState,
+            getCurrentUserId = { clientState.user.value?.id },
+        )
         scope.refreshChannelsOnScheduledMessages(chatClient.scheduledMessages, logic::getActiveQueryChannelsLogic)
 
         val groupedUnreadChannelsUpdater = GroupedUnreadChannelsUpdater(

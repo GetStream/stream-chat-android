@@ -116,6 +116,7 @@ import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -183,6 +184,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionData
@@ -339,6 +341,7 @@ internal constructor(
     private val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
+    private val channelMutesMutex = Mutex()
 
     /**
      * The user's id for which the client is initialized.
@@ -478,6 +481,11 @@ internal constructor(
         get() = plugins.mapNotNull { it.getErrorHandler() }.sorted()
 
     public var logicRegistry: ChannelStateLogicProvider? = null
+
+    /**
+     * Stores the responses of the channel changes the current user makes. Set by the state plugin.
+     */
+    internal var channelUpdateResponseHandler: ChannelUpdateResponseHandler? = null
 
     internal lateinit var attachmentsSender: AttachmentsSender
 
@@ -3538,6 +3546,13 @@ internal constructor(
         .saveScheduledMessages(request.includeScheduledMessages, ::listOf)
 
     /**
+     * Stores the channel returned by a channel update of the current user, see [ChannelUpdateResponseHandler].
+     */
+    private fun Call<Channel>.saveChannelUpdateResponse(): Call<Channel> = doOnResult(userScope) { result ->
+        result.onSuccessSuspend { channelUpdateResponseHandler?.onChannelUpdated(it) }
+    }
+
+    /**
      * Saves the scheduled messages of the returned channels in [scheduledMessages] when [isIncluded]. A channel
      * returned with them has all the ones the server has, so its others are removed.
      */
@@ -3777,6 +3792,7 @@ internal constructor(
                 plugins.forEach { listener ->
                     listener.onDeleteChannelResult(channelType, channelId, result)
                 }
+                result.onSuccessSuspend { channelUpdateResponseHandler?.onChannelDeleted(it) }
             }
             .precondition(plugins) {
                 onDeleteChannelPrecondition(getCurrentUser(), channelType, channelId)
@@ -3932,7 +3948,9 @@ internal constructor(
             systemMessage = systemMessage,
             hardDelete = hardDelete,
             skipPush = skipPush,
-        )
+        ).doOnResult(userScope) { result ->
+            result.onSuccessSuspend { channelUpdateResponseHandler?.onChannelTruncated(it) }
+        }
     }
 
     /**
@@ -3973,7 +3991,7 @@ internal constructor(
             channelId,
             channelExtraData,
             updateMessage,
-        )
+        ).saveChannelUpdateResponse()
 
     /**
      * Updates specific fields of channel data retaining the custom data fields which were set previously.
@@ -3997,7 +4015,7 @@ internal constructor(
             channelId = channelId,
             set = set,
             unset = unset,
-        )
+        ).saveChannelUpdateResponse()
     }
 
     /**
@@ -4416,7 +4434,10 @@ internal constructor(
             hideHistory = params.hideHistory,
             hideHistoryBefore = params.hideHistoryBefore,
             skipPush = params.skipPush,
-        )
+        ).doOnResult(userScope) { result ->
+            val addedIds = params.members.map(MemberData::userId)
+            result.onSuccessSuspend { channelUpdateResponseHandler?.onMembersAdded(it, addedIds) }
+        }
     }
 
     /**
@@ -4443,7 +4464,9 @@ internal constructor(
         memberIds,
         systemMessage,
         skipPush,
-    )
+    ).doOnResult(userScope) { result ->
+        result.onSuccessSuspend { channelUpdateResponseHandler?.onMembersRemoved(it, memberIds) }
+    }
 
     /**
      * Invites members to a given channel.
@@ -4469,7 +4492,9 @@ internal constructor(
         memberIds,
         systemMessage,
         skipPush,
-    )
+    ).doOnResult(userScope) { result ->
+        result.onSuccessSuspend { channelUpdateResponseHandler?.onMembersAdded(it, memberIds) }
+    }
 
     /**
      * Mutes a channel for the current user. Messages added to the channel will not trigger
@@ -4497,7 +4522,15 @@ internal constructor(
             channelType = channelType,
             channelId = channelId,
             expiration = expiration,
-        )
+        ).doOnResult(userScope) { result ->
+            result.onSuccessSuspend { mutes ->
+                val cid = "$channelType:$channelId"
+                val mutedCids = mutes.mapNotNull { it.channel?.cid }.toSet() + cid
+                updateChannelMutes(channelType, channelId, muted = true) { current ->
+                    current.filterNot { it.channel?.cid in mutedCids } + mutes
+                }
+            }
+        }.toUnitCall()
     }
 
     /**
@@ -4516,7 +4549,32 @@ internal constructor(
         channelType: String,
         channelId: String,
     ): Call<Unit> {
-        return api.unmuteChannel(channelType, channelId)
+        return api.unmuteChannel(channelType, channelId).doOnResult(userScope) { result ->
+            result.onSuccessSuspend {
+                val cid = "$channelType:$channelId"
+                updateChannelMutes(channelType, channelId, muted = false) { current ->
+                    current.filterNot { it.channel?.cid == cid }
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates the current user's channel mutes after a channel mute or unmute, as
+     * [NotificationChannelMutesUpdatedEvent] does, so they show at once and stay when the event is late or missed.
+     * Results of several requests can arrive at the same time, so each update reads and writes under a lock and
+     * none of them is lost.
+     */
+    private suspend fun updateChannelMutes(
+        channelType: String,
+        channelId: String,
+        muted: Boolean,
+        update: (List<ChannelMute>) -> List<ChannelMute>,
+    ) = channelMutesMutex.withLock {
+        val currentUser = mutableClientState.user.value ?: return@withLock
+        val channelMutes = update(currentUser.channelMutes)
+        mutableClientState.setUser(currentUser.copy(channelMutes = channelMutes))
+        channelUpdateResponseHandler?.onChannelMuteChanged(channelType, channelId, muted, channelMutes)
     }
 
     /**

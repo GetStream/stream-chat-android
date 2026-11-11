@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.mergeChannelUpdate
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -39,6 +40,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.toChannelData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
@@ -170,6 +172,27 @@ internal class ChannelLogicLegacyImpl(
 
     override fun upsertMembers(members: List<Member>) {
         stateLogic.upsertMembers(members)
+    }
+
+    override fun applyChannelUpdate(channel: Channel) {
+        val channelData = channel.toChannelData()
+        stateLogic.updateChannelData { current -> current?.mergeChannelUpdate(channelData) ?: channelData }
+    }
+
+    override fun addMembers(members: List<Member>) {
+        members.forEach(stateLogic::addMember)
+    }
+
+    override fun truncate(truncatedAt: Date) {
+        stateLogic.removeTruncatedMessages(truncatedAt)
+    }
+
+    override fun deleteChannel(deletedAt: Date) {
+        stateLogic.deleteChannel(deletedAt)
+    }
+
+    override fun setMuted(muted: Boolean) {
+        stateLogic.updateMute(muted)
     }
 
     override fun setHidden(hidden: Boolean) {

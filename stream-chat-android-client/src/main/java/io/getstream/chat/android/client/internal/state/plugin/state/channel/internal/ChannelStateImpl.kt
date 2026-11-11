@@ -882,11 +882,19 @@ internal class ChannelStateImpl(
      *
      * @param event The [MemberAddedEvent] informing the channel of the new member.
      */
-    fun addMember(event: MemberAddedEvent) {
-        val memberToAdd = event.member
-        val isAlreadyMember = _members.value.any { it.getUserId() == memberToAdd.getUserId() }
+    fun addMember(event: MemberAddedEvent) = addMember(event.member)
+
+    /**
+     * Adds the [member] to the channel.
+     *
+     * **Important:** Increments [membersCount] if the member wasn't already a member.
+     *
+     * @param member The member added to the channel.
+     */
+    fun addMember(member: Member) {
+        val isAlreadyMember = _members.value.any { it.getUserId() == member.getUserId() }
         if (!isAlreadyMember) {
-            _members.update { current -> current + memberToAdd }
+            _members.update { current -> current + member }
             _memberCount.update { current -> current + 1 }
         }
     }

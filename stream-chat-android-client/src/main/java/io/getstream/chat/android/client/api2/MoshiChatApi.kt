@@ -68,6 +68,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
@@ -777,9 +778,12 @@ constructor(
         channelType: String,
         channelId: String,
         expiration: Int?,
-    ): Call<Unit> {
+    ): Call<List<ChannelMute>> {
         val request = MuteChannelRequest(channelCids = listOf("$channelType:$channelId"), expiration = expiration)
-        return endpoint { muteChannel(muteChannelRequest = request) }.toUnitCall()
+        return endpoint { muteChannel(muteChannelRequest = request) }
+            .mapDomain { response ->
+                response.channelMutes?.map { it.toDomain() } ?: listOfNotNull(response.channelMute?.toDomain())
+            }
     }
 
     override fun unmuteChannel(

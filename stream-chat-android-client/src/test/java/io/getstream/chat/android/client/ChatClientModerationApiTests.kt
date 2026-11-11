@@ -23,20 +23,25 @@ import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBannedUser
+import io.getstream.chat.android.randomChannelMute
 import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomFlag
 import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -146,11 +151,12 @@ internal class ChatClientModerationApiTests : BaseChatClientTest() {
     @Test
     fun muteChannelSuccess() = runTest {
         // given
+        whenever(mutableClientState.user) doReturn MutableStateFlow(randomUser())
         val channelType = randomString()
         val channelId = randomString()
         val expiration = positiveRandomInt()
         whenever(api.muteChannel(any(), any(), any()))
-            .thenReturn(RetroSuccess(Unit).toRetrofitCall())
+            .thenReturn(RetroSuccess(listOf(randomChannelMute())).toRetrofitCall())
         // when
         val result = chatClient.muteChannel(channelType, channelId, expiration).await()
         // then
@@ -165,7 +171,7 @@ internal class ChatClientModerationApiTests : BaseChatClientTest() {
         val expiration = positiveRandomInt()
         val errorCode = positiveRandomInt()
         whenever(api.muteChannel(any(), any(), any()))
-            .thenReturn(RetroError<Unit>(errorCode).toRetrofitCall())
+            .thenReturn(RetroError<List<ChannelMute>>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.muteChannel(channelType, channelId, expiration).await()
         // then
@@ -175,6 +181,7 @@ internal class ChatClientModerationApiTests : BaseChatClientTest() {
     @Test
     fun unmuteChannelSuccess() = runTest {
         // given
+        whenever(mutableClientState.user) doReturn MutableStateFlow(randomUser())
         val channelType = randomString()
         val channelId = randomString()
         whenever(api.unmuteChannel(any(), any()))

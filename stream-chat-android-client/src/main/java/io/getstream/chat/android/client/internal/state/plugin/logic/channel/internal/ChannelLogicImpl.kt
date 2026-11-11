@@ -245,6 +245,27 @@ internal class ChannelLogicImpl(
         state.upsertMembers(members)
     }
 
+    override fun applyChannelUpdate(channel: Channel) {
+        val channelData = channel.toChannelData()
+        state.updateChannelData { current -> current?.mergeChannelUpdate(channelData) ?: channelData }
+    }
+
+    override fun addMembers(members: List<Member>) {
+        members.forEach(state::addMember)
+    }
+
+    override fun truncate(truncatedAt: Date) {
+        state.removeTruncatedMessages(truncatedAt, systemMessage = null)
+    }
+
+    override fun deleteChannel(deletedAt: Date) {
+        state.deleteChannel(deletedAt)
+    }
+
+    override fun setMuted(muted: Boolean) {
+        state.setMuted(muted)
+    }
+
     override fun setHidden(hidden: Boolean) {
         state.setHidden(hidden)
     }
