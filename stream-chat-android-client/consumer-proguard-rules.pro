@@ -11,14 +11,18 @@
     public *** is*();
 }
 
+# ChatModule reads these annotations off each Retrofit API to pick its HTTP client. Retrofit's own rules keep the
+# endpoint methods; this only keeps the interfaces, and with them their annotations. No allowshrinking: Retrofit
+# implements them at runtime, and R8 would otherwise assume nothing does and fail the cast to them.
+-keep,allowobfuscation @io.getstream.chat.android.client.api.AuthenticatedApi interface *
+-keep,allowobfuscation @io.getstream.chat.android.client.api.AnonymousApi interface *
+
 # Rules necessary for R8 full mode
--keep class io.getstream.chat.android.client.api2.endpoint.** { *; }
--keep class io.getstream.chat.android.client.call.RetrofitCall { *; }
 -keep class com.squareup.moshi.JsonReader
 -keep class com.squareup.moshi.JsonAdapter
 
 # Rules to improve the logs by keeping the names of the classes
 -keep class * extends io.getstream.chat.android.client.clientstate.UserState
 
-# Classes that are used by reflection.
--keep class io.getstream.chat.android.client.notifications.ChatPushDelegate { *; }
+# The push library finds this class through manifest metadata and builds it with its no-argument constructor.
+-keep class io.getstream.chat.android.client.notifications.ChatPushDelegate { <init>(); }
