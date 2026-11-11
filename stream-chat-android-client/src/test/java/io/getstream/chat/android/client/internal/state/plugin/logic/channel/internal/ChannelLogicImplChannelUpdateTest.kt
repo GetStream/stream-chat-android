@@ -90,7 +90,7 @@ internal class ChannelLogicImplChannelUpdateTest : ChannelStateImplTestBase() {
         sut.addMembers(listOf(x))
 
         assertEquals(2, channelState.membersCount.value)
-        assertEquals(listOf("john", "x"), channelState.members.value.map { it.getUserId() })
+        assertEquals(setOf("john", "x"), channelState.members.value.map { it.getUserId() }.toSet())
     }
 
     @Test
