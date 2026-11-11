@@ -16,7 +16,10 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -24,6 +27,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -71,6 +75,31 @@ internal class ChannelStateLegacyImplTruncationTest {
         assertEquals(setOf("message_2"), channelState.cachedLatestMessages.value.keys)
     }
 
+    @Test
+    fun `removeTruncatedMessages recalculates the reads for the remaining messages`() = runTest {
+        channelState.setMessages(listOf(message(index = 1, createdAt = Date(1_000))))
+        channelState.updateCachedLatestMessages(
+            listOf(message(index = 2, createdAt = Date(3_000))).associateBy(Message::id),
+        )
+        channelState.upsertReads(
+            listOf(
+                ChannelUserRead(
+                    user = currentUser,
+                    lastReceivedEventDate = Date(500),
+                    unreadMessages = 4,
+                    lastRead = Date(500),
+                    lastReadMessageId = "message_0",
+                ),
+            ),
+        )
+
+        channelState.removeTruncatedMessages(Date(2_000))
+
+        val read = channelState.read.value!!
+        assertEquals(1, read.unreadMessages)
+        assertNull(read.lastReadMessageId)
+    }
+
     private fun message(index: Int, createdAt: Date?, createdLocallyAt: Date? = null) = randomMessage(
         id = "message_$index",
         cid = CID,
@@ -81,6 +110,8 @@ internal class ChannelStateLegacyImplTruncationTest {
         showInChannel = true,
         deletedAt = null,
         shadowed = false,
+        syncStatus = SyncStatus.COMPLETED,
+        type = MessageType.REGULAR,
     )
 
     companion object {

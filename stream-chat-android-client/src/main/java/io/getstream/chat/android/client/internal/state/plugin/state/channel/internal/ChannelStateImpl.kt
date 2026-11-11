@@ -27,7 +27,9 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.afterTruncationAt
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
+import io.getstream.chat.android.client.extensions.internal.serverMessageIds
 import io.getstream.chat.android.client.extensions.internal.survivesTruncationAt
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
@@ -546,27 +548,38 @@ internal class ChannelStateImpl(
      * @param date The cutoff date; messages created before this date will be removed.
      */
     fun removeMessagesBefore(date: Date) {
-        retainMessages(systemMessage = null) { it.wasCreatedAfter(date) }
+        retainMessages { it.wasCreatedAfter(date) }
     }
 
     /**
-     * Removes the messages a truncation at [truncatedAt] removed on the server.
+     * Removes the messages a truncation at [truncatedAt] removed on the server and recalculates the reads as the
+     * server does.
      *
      * @param truncatedAt The channel's truncation date.
      * @param systemMessage The truncation's system message, upserted after removal.
      */
     fun removeTruncatedMessages(truncatedAt: Date, systemMessage: Message?) {
-        retainMessages(systemMessage) { it.survivesTruncationAt(truncatedAt) }
+        retainMessages { it.survivesTruncationAt(truncatedAt) }
+        val remainingMessageIds = serverMessageIds(_messages.value, _cachedLatestMessages.value)
+        _reads.update { current ->
+            current.mapValues { (_, read) -> read.afterTruncationAt(truncatedAt, remainingMessageIds) }
+        }
+        logger.d { "[removeTruncatedMessages] cid: $cid; unreadMessages: ${read.value?.unreadMessages}" }
+        systemMessage?.let { message ->
+            // The server counts the system message after recalculating the reads, and its message.new is skipped
+            // once the message is in the state, so it is counted here
+            updateCurrentUserRead(message.createdAt ?: truncatedAt, message)
+            upsertMessage(message)
+        }
     }
 
-    private fun retainMessages(systemMessage: Message?, keep: (Message) -> Boolean) {
+    private fun retainMessages(keep: (Message) -> Boolean) {
         _messages.update { current ->
             if (current.all(keep)) current else current.filter(keep)
         }
         moveOldestFetchedMessageIf { !keep(it) }
         _cachedLatestMessages.update { current -> current.filter(keep) }
         _pinnedMessages.update { current -> current.filter(keep) }
-        systemMessage?.let(::upsertMessage)
     }
 
     /**

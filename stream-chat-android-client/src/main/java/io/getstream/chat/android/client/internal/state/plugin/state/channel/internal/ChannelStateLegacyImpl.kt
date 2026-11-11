@@ -19,7 +19,9 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.afterTruncationAt
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
+import io.getstream.chat.android.client.extensions.internal.serverMessageIds
 import io.getstream.chat.android.client.extensions.internal.survivesTruncationAt
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
@@ -688,12 +690,22 @@ internal class ChannelStateLegacyImpl(
         retainMessages { it.wasCreatedAfter(date) }
     }
 
-    /** Removes the messages a truncation at [truncatedAt] removed on the server, including the cached latest page. */
+    /**
+     * Removes the messages a truncation at [truncatedAt] removed on the server, including the cached latest page, and
+     * recalculates the reads as the server does.
+     */
     fun removeTruncatedMessages(truncatedAt: Date) {
         logger.d { "[removeTruncatedMessages] truncatedAt: $truncatedAt" }
         val keep: (Message) -> Boolean = { it.survivesTruncationAt(truncatedAt) }
         retainMessages(keep)
         cachedLatestMessages.value = cachedLatestMessages.value.filterValues(keep)
+        val remainingMessageIds = serverMessageIds(
+            _messages?.value?.values.orEmpty(),
+            cachedLatestMessages.value.values,
+        )
+        _rawReads?.apply {
+            value = value.mapValues { (_, read) -> read.afterTruncationAt(truncatedAt, remainingMessageIds) }
+        }
     }
 
     private fun retainMessages(keep: (Message) -> Boolean) {

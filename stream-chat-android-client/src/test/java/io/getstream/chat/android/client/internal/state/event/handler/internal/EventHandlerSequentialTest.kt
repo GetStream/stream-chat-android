@@ -56,12 +56,14 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
@@ -419,6 +421,48 @@ internal class EventHandlerSequentialTest {
             handler.handleEvents(event)
             // then
             verify(repos).deleteChannelMessagesBefore(event.cid, truncatedAt)
+        }
+
+    @Test
+    fun `When handling ChannelTruncatedEvent, the stored reads are recalculated for the remaining messages`() =
+        runTest {
+            val truncatedAt = Date(2_000)
+            val storedChannel = randomChannel(
+                messages = listOf(randomMessage(id = "removed", createdAt = Date(1_000))),
+                read = listOf(randomChannelUserRead(unreadMessages = 3, lastRead = Date(500))),
+            )
+            val event = randomChannelTruncatedEvent(
+                cid = storedChannel.cid,
+                createdAt = Date(2_020),
+                channel = storedChannel.copy(truncatedAt = truncatedAt, read = emptyList()),
+            )
+
+            val read = storedChannelAfter(storedChannel, event).read.single()
+
+            read.unreadMessages `should be equal to` 0
+            read.lastReadMessageId `should be equal to` null
+        }
+
+    @Test
+    fun `When handling NotificationChannelTruncatedEvent, the stored reads are recalculated for the remaining messages`() =
+        runTest {
+            val truncatedAt = Date(2_000)
+            val storedChannel = randomChannel(
+                messages = listOf(
+                    randomMessage(id = "kept", createdAt = Date(3_000), syncStatus = SyncStatus.COMPLETED),
+                ),
+                read = listOf(randomChannelUserRead(unreadMessages = 3, lastRead = Date(500))),
+            )
+            val event = randomNotificationChannelTruncatedEvent(
+                cid = storedChannel.cid,
+                createdAt = Date(2_020),
+                channel = storedChannel.copy(truncatedAt = truncatedAt, read = emptyList()),
+            )
+
+            val read = storedChannelAfter(storedChannel, event).read.single()
+
+            read.unreadMessages `should be equal to` 1
+            read.lastReadMessageId `should be equal to` null
         }
 
     @Test

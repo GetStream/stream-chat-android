@@ -484,14 +484,20 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Removes the messages a truncation at [truncatedAt] removed on the server.
+     * Removes the messages a truncation at [truncatedAt] removed on the server and recalculates the reads as the
+     * server does.
      *
      * @param truncatedAt The channel's truncation date.
      * @param systemMessage The truncation's system message, added after removal.
      */
     fun removeTruncatedMessages(truncatedAt: Date, systemMessage: Message? = null) {
         mutableState.removeTruncatedMessages(truncatedAt)
-        systemMessage?.let(mutableState::upsertMessage)
+        systemMessage?.let { message ->
+            // The server counts the system message after recalculating the reads, and its message.new is skipped
+            // once the message is in the state, so it is counted here
+            updateCurrentUserRead(message.createdAt ?: truncatedAt, message)
+            mutableState.upsertMessage(message)
+        }
     }
 
     /**

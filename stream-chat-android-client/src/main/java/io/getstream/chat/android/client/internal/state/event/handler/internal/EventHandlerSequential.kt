@@ -107,6 +107,7 @@ import io.getstream.chat.android.client.extensions.internal.updateMembership
 import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.client.extensions.internal.updateParentOrReply
 import io.getstream.chat.android.client.extensions.internal.updateReads
+import io.getstream.chat.android.client.extensions.internal.withReadsAfterTruncationAt
 import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.SocketEventCollector
@@ -853,7 +854,7 @@ internal class EventHandlerSequential(
                 is ChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
                         ?.mergeSharedEventChannel(event.channel) ?: event.channel
-                    batch.addChannel(channel)
+                    batch.addChannel(channel.withReadsAfterTruncationAt(event.truncatedBefore))
                 }
                 is NotificationChannelDeletedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
@@ -863,7 +864,7 @@ internal class EventHandlerSequential(
                 is NotificationChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
                         ?.mergeSharedEventChannel(event.channel) ?: event.channel
-                    batch.addChannel(channel)
+                    batch.addChannel(channel.withReadsAfterTruncationAt(event.truncatedBefore))
                 }
 
                 // get the channel, update reads, write the channel
