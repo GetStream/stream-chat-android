@@ -210,10 +210,20 @@ internal interface ChannelLogic {
     /**
      * Marks the channel as read for the current user.
      *
+     * @param restoreOnFailure True when a mark read request follows and reports through
+     * [onMarkReadFailed] if it fails: the unread count cleared here is then added back.
      * @return A [MarkReadResult] describing whether the channel should be marked as read remotely,
      * was marked as read on-device, or does not need to be marked as read.
      */
-    fun markRead(): MarkReadResult
+    fun markRead(restoreOnFailure: Boolean = false): MarkReadResult
+
+    /**
+     * Adds back the unread count [markRead] cleared when the mark read request that followed it failed, unless a read
+     * from the server was applied since.
+     *
+     * @return True if a count was added back.
+     */
+    fun onMarkReadFailed(): Boolean
 
     /**
      * Checks if typing events are enabled for the channel.

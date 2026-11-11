@@ -191,7 +191,8 @@ internal class LogicRegistry internal constructor(
     fun markRead(channelType: String, channelId: String): MarkReadResult {
         val id = ChannelId.fromTypeAndId(channelType, channelId)
         return when {
-            id == null || stateRegistry.isActiveChannel(id) -> channel(channelType, channelId).markRead()
+            id == null || stateRegistry.isActiveChannel(id) ->
+                channel(channelType, channelId).markRead(restoreOnFailure = true)
             // An empty legacy state has no message to mark; an empty state asks the server.
             useLegacyChannelLogic -> MarkReadResult.NotNeeded
             else -> MarkReadResult.RemoteRequired

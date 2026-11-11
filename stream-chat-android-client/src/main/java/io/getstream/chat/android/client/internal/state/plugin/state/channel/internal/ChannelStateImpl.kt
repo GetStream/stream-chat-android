@@ -134,6 +134,7 @@ internal class ChannelStateImpl(
 
     // Read state
     private val _reads = MutableStateFlow<Map<UserId, ChannelUserRead>>(emptyMap())
+    private val clearedUnread = AtomicInteger(0)
 
     // Members
     private val _memberCount = MutableStateFlow(0)
@@ -1113,6 +1114,7 @@ internal class ChannelStateImpl(
      */
     fun updateReads(reads: List<ChannelUserRead>) {
         val currentUserId = currentUser.value?.id
+        if (reads.any { it.getUserId() == currentUserId }) clearedUnread.set(0)
         val before = read.value?.unreadMessages
         // Merge inside the update, against the live map, so a concurrent increment is not lost to a
         // pre-increment snapshot.
@@ -1135,6 +1137,25 @@ internal class ChannelStateImpl(
     }
 
     /**
+     * Adds back the unread count the last tracked [markRead] cleared, when its mark read request failed. Nothing is
+     * added once a read from the server was applied since: that read already has the count.
+     *
+     * @return True if a count was added back.
+     */
+    fun restoreClearedUnread(): Boolean {
+        val cleared = clearedUnread.getAndSet(0)
+        val userId = currentUser.value?.id
+        if (cleared == 0 || userId == null) return false
+        var restored = false
+        _reads.update { current ->
+            val read = current[userId] ?: return@update current.also { restored = false }
+            restored = true
+            current + (userId to read.copy(unreadMessages = read.unreadMessages + cleared))
+        }
+        return restored
+    }
+
+    /**
      * Replaces the read state of [read]'s user with no arbitration against the local one.
      *
      * For read states the server reports explicitly, where the reported position and count are
@@ -1142,6 +1163,7 @@ internal class ChannelStateImpl(
      * cannot be used for those, because it protects the local count against stale payloads.
      */
     fun replaceRead(read: ChannelUserRead) {
+        if (read.getUserId() == currentUser.value?.id) clearedUnread.set(0)
         val previous = _reads.value[read.getUserId()]?.unreadMessages
         logger.d { "[replaceRead] cid: $cid; unreadMessages: $previous -> ${read.unreadMessages}" }
         _reads.update { current -> current + (read.getUserId() to read) }
@@ -1237,8 +1259,12 @@ internal class ChannelStateImpl(
     /**
      * Marks the channel as read for the current user and returns how the request was handled:
      * remotely, on-device (read events disabled + local tracking enabled), or not at all.
+     *
+     * @param restoreOnFailure True to keep the unread count cleared for the remote request, so
+     * [restoreClearedUnread] can add it back if the request fails.
      */
-    fun markRead(): MarkReadResult {
+    fun markRead(restoreOnFailure: Boolean = false): MarkReadResult {
+        if (restoreOnFailure) clearedUnread.set(0)
         if (!channelConfig.value.readEventsEnabled) {
             if (!isLocalUnreadCountEnabled) {
                 // Ignore request, `read_events = false`
@@ -1264,10 +1290,13 @@ internal class ChannelStateImpl(
             // advances them. Stamping them with the newest loaded message's date here made
             // messages that were still queued behind this call count as already seen.
             // Zero the live read, not the snapshot, so a concurrent write is not overwritten.
+            var cleared = 0
             _reads.update { current ->
                 val latest = current[currentUserRead.getUserId()] ?: currentUserRead
+                cleared = latest.unreadMessages
                 current + (latest.getUserId() to latest.copy(unreadMessages = 0))
             }
+            if (restoreOnFailure) clearedUnread.set(cleared)
             MarkReadResult.RemoteRequired
         } else {
             // Already marked up to the latest message

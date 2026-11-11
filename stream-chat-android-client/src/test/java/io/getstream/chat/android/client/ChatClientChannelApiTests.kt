@@ -1153,6 +1153,36 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun markReadSuccessRestoresNothing() = runTest {
+        // given
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenPlugin(mock<Plugin>())
+            .givenMarkReadResult(RetroSuccess(Unit).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.markRead("messaging", "123").await()
+        // then
+        verifyNoInteractions(handler)
+    }
+
+    @Test
+    fun markReadErrorReportsTheFailure() = runTest {
+        // given
+        val handler = mock<ChannelUpdateResponseHandler>()
+        val sut = Fixture()
+            .givenPlugin(mock<Plugin>())
+            .givenMarkReadResult(RetroError<Unit>(positiveRandomInt()).toRetrofitCall())
+            .get()
+            .apply { channelUpdateResponseHandler = handler }
+        // when
+        sut.markRead("messaging", "123").await()
+        // then
+        verify(handler).onMarkReadFailed("messaging", "123")
+    }
+
+    @Test
     fun markUnreadFromMessageSuccess() = runTest {
         // given
         val channelType = randomString()

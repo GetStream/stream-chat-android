@@ -130,6 +130,17 @@ internal class ChannelUpdateResponseHandler(
         }
     }
 
+    /**
+     * Adds back the unread count a failed mark read request of the current user cleared ahead of time, unless a read
+     * from the server was applied since.
+     */
+    fun onMarkReadFailed(channelType: String, channelId: String) = safely("onMarkReadFailed") {
+        // A request the precondition skipped also ends here, with nothing to add back and nothing to refresh
+        if (logic.isActiveChannel(channelType, channelId) && logic.channel(channelType, channelId).onMarkReadFailed()) {
+            refreshChannelLists("$channelType:$channelId")
+        }
+    }
+
     private suspend fun applyChannel(channel: Channel, addedMembers: List<Member> = emptyList()) {
         saveChannel(channel) { stored -> addedMembers.fold(stored) { acc, member -> acc.addMember(member) } }
         val channelLogic = activeChannel(channel) ?: return

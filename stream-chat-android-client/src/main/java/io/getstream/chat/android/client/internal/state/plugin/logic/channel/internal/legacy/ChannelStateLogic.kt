@@ -220,6 +220,12 @@ internal class ChannelStateLogic(
             reads
         }
 
+        // A read from the server that replaces the local one already has the count a mark read cleared; a local read
+        // kept as more recent does not.
+        val serverRead = reads.firstOrNull { it.getUserId() == currentUserId }
+        if (serverRead != null && (currentUserRead == null || serverReadWins(currentUserRead, serverRead))) {
+            mutableState.forgetClearedUnread()
+        }
         mutableState.upsertReads(readsToUpsert)
     }
 
@@ -251,7 +257,7 @@ internal class ChannelStateLogic(
                 lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
             )
         }
-        return if (localRead.lastReceivedEventDate.after(serverRead.lastReceivedEventDate)) {
+        return if (!serverReadWins(localRead, serverRead)) {
             // Local state is more recent, preserve it but merge other fields from server
             logger.d {
                 "[updateReads] Local read state is more recent, preserving: " +
@@ -273,6 +279,13 @@ internal class ChannelStateLogic(
             serverRead
         }
     }
+
+    /**
+     * Whether [serverRead] replaces [localRead] in [mergeCurrentUserRead]: a locally tracked read is never replaced,
+     * and a local read more recent than the server one is kept.
+     */
+    private fun serverReadWins(localRead: ChannelUserRead, serverRead: ChannelUserRead): Boolean =
+        !isReadTrackedLocally && !localRead.lastReceivedEventDate.after(serverRead.lastReceivedEventDate)
 
     /**
      * Updates the read information of this channel.
@@ -658,9 +671,11 @@ internal class ChannelStateLogic(
      * Marks the channel as read for the current user.
      *
      * @return A [MarkReadResult] describing how the mark-read request was handled.
+     *
+     * @param restoreOnFailure True to keep the unread count cleared for the remote request.
      */
-    fun markRead(): MarkReadResult {
-        return mutableState.markChannelAsRead()
+    fun markRead(restoreOnFailure: Boolean = false): MarkReadResult {
+        return mutableState.markChannelAsRead(restoreOnFailure = restoreOnFailure)
     }
 
     /**
