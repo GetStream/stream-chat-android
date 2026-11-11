@@ -1959,7 +1959,8 @@ public class MessageListController(
     }
 
     /**
-     * Pins the message from the current channel.
+     * Pins the message from the current channel. When the device has no network, the pin is shown at once and sent on
+     * the next connection, and no [ErrorEvent.PinMessageError] is emitted.
      *
      * @param message The message to pin.
      */
@@ -1976,7 +1977,8 @@ public class MessageListController(
     }
 
     /**
-     * Unpins the message from the current channel.
+     * Unpins the message from the current channel. When the device has no network, the unpin is shown at once and sent
+     * on the next connection, and no [ErrorEvent.UnpinMessageError] is emitted.
      *
      * @param message The message to unpin.
      */

@@ -3419,6 +3419,10 @@ internal constructor(
     /**
      * Pins the message.
      *
+     * With the state plugin, a pin that fails because the device has no network is applied to the local state at once
+     * and sent again on the next connection. The returned [Call] still fails with that error. The change is kept in
+     * memory only, so it is not sent if the app process ends first.
+     *
      * @param message The message object containing the ID of the message to be pinned.
      * @param expirationDate The exact expiration date.
      *
@@ -3444,8 +3448,12 @@ internal constructor(
     /**
      * Pins the message.
      *
+     * With the state plugin, a pin that fails because the device has no network is applied to the local state at once
+     * and sent again on the next connection. The returned [Call] still fails with that error. The change is kept in
+     * memory only, so it is not sent if the app process ends first.
+     *
      * @param message The message object containing the ID of the message to be pinned.
-     * @param timeout The expiration timeout in seconds.
+     * @param timeout The expiration timeout in seconds, counted from this call.
      *
      * @return Executable async [Call] responsible for pinning the message.
      */
@@ -3470,7 +3478,11 @@ internal constructor(
     }
 
     /**
-     * Unpins the message that was previously pinned
+     * Unpins the message that was previously pinned.
+     *
+     * With the state plugin, an unpin that fails because the device has no network is applied to the local state at
+     * once and sent again on the next connection. The returned [Call] still fails with that error. The change is kept
+     * in memory only, so it is not sent if the app process ends first.
      *
      * @param message The message object containing the ID of the message to be unpinned.
      *

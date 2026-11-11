@@ -31,8 +31,7 @@ import java.util.concurrent.ConcurrentHashMap
  * show at once and are sent again on the next connection. A failure while the network is available is left to the
  * caller, as before.
  *
- * Only the last pin or unpin of a message is kept. It is sent again as a partial update with only the pin fields,
- * so the server checks only the pin permission and never gets an older copy of the message.
+ * Only the last pin or unpin of a message is kept. It is sent again as a partial update with only the pin fields.
  * Kept in memory only, so they are not sent if the process ends first. The local change is not stored either, so
  * the next start shows the server value.
  *
