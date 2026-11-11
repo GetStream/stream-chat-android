@@ -61,8 +61,11 @@ internal class PollAnswersDialogTest : MockedChatClientTest {
 
     private val poll = randomPoll(answers = emptyList())
 
-    // Load more only triggers once the list is longer than its threshold of 3 items
-    private val firstPage = List(4) { randomPollAnswer(pollId = poll.id, text = "First page answer $it") }
+    // Load more only triggers once the list is longer than its threshold of 3 items.
+    // Newest first, so the first answer is at the top and on screen.
+    private val firstPage = List(4) {
+        randomPollAnswer(pollId = poll.id, text = "First page answer $it", createdAt = Date(1_000L - it))
+    }
 
     @Test
     fun `shows the next page of answers`() {
