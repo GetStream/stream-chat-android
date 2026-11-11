@@ -368,13 +368,13 @@ private fun PollAnswersButton(
     onViewAnswers: () -> Unit,
     onAddAnswer: () -> Unit,
 ) {
-    if (poll.answers.isNotEmpty()) {
+    if (poll.answersCount > 0) {
         PollOptionButton(
             modifier = Modifier.testTag("Stream_PollViewCommentsButton"),
             text = pluralStringResource(
                 UiCommonR.plurals.stream_ui_poll_action_view_comments,
-                poll.answers.size,
-                poll.answers.size,
+                poll.answersCount,
+                poll.answersCount,
             ),
             style = style,
             onButtonClicked = onViewAnswers,
