@@ -114,6 +114,75 @@ internal class AIConversationStateAgentTest {
     }
 
     @Test
+    fun `a send that fails after a stop keeps the stopped reply finished`() = runTest {
+        val transport = FakeTransport(listOf(user("u1"), reply("a1", "", generating = true)))
+        val state = conversation(transport)
+        state.stop()
+        runCurrent()
+        // The transport still says the reply is being written.
+        transport.update(user("u1"), reply("a1", "", generating = true))
+
+        transport.sendError = TransportError()
+        state.send("Something else")
+        runCurrent()
+
+        assertEquals(AIConversationStatus.Error, state.status.value)
+        assertTrue(state.error.value is TransportError)
+        // It showed nothing, so it stays left out.
+        assertEquals(listOf("u1"), state.shown)
+        assertEquals("Something else", state.pendingMessage.value?.text)
+
+        transport.update(user("u1"), reply("a1", "", generating = true))
+
+        assertEquals(AIConversationStatus.Error, state.status.value)
+        assertEquals(listOf("u1"), state.shown)
+    }
+
+    @Test
+    fun `a send that fails after a stop shows the error rather than the stopped reply streaming`() = runTest {
+        val transport = FakeTransport(listOf(user("u1"), reply("a1", "Day one", generating = true)))
+        val state = conversation(transport)
+        state.stop()
+        runCurrent()
+
+        transport.sendError = TransportError()
+        state.send("Something else")
+        runCurrent()
+
+        assertEquals(AIConversationStatus.Error, state.status.value)
+        assertEquals(listOf("u1", "a1"), state.shown)
+    }
+
+    @Test
+    fun `a stopped reply streams again once it was finished and is written anew`() = runTest {
+        val transport = FakeTransport(listOf(user("u1"), reply("a1", "Day one", generating = true)))
+        val state = conversation(transport)
+        state.stop()
+        runCurrent()
+
+        transport.update(user("u1"), reply("a1", "Day one"))
+        transport.update(user("u1"), reply("a1", "Another plan", generating = true))
+
+        assertEquals(AIConversationStatus.Streaming, state.status.value)
+    }
+
+    @Test
+    fun `a stopped reply that is no longer the latest is done with`() = runTest {
+        val transport = FakeTransport(listOf(user("u1"), reply("a1", "", generating = true)))
+        val state = conversation(transport)
+        state.stop()
+        runCurrent()
+        assertEquals(listOf("u1"), state.shown)
+
+        transport.update(user("u1"), reply("a1", "", generating = true), user("u2", "Porto?"))
+        transport.update(user("u1"), reply("a1", "Late words", generating = true))
+
+        // Written to again as the latest message, it streams.
+        assertEquals(AIConversationStatus.Streaming, state.status.value)
+        assertEquals(listOf("u1", "a1"), state.shown)
+    }
+
+    @Test
     fun `send after a stop waits for the stop to reach the transport`() = runTest {
         val transport = FakeTransport(listOf(user("u1"), reply("a1", "Day one", generating = true)))
         transport.holdsStops = true

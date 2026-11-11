@@ -136,7 +136,8 @@ public class AIConversationState<M : AIMessage>(
     // Counts the requests and stops, so the outcome of one that was overtaken is ignored.
     private var generation = 0
 
-    // Replies stopped while they were written, which are finished whatever they say.
+    // Replies stopped while they were written, which are finished whatever they say. Each stays
+    // stopped across requests until it stops generating or is no longer the latest message.
     private val stopped = mutableSetOf<String>()
 
     // Whether what the agent says it is doing is ignored, after it was stopped, until it stops
@@ -323,6 +324,9 @@ public class AIConversationState<M : AIMessage>(
         received = messages.toList()
         val exchange = exchange
         exchange?.reply(received)?.let { receiveReply(it, exchange) }
+        // A stopped reply is done with once it finishes or another message follows it.
+        val latest = received.lastOrNull()?.takeIf { it.isGenerating }?.id
+        stopped.retainAll { it == latest }
         refresh()
     }
 
@@ -357,7 +361,6 @@ public class AIConversationState<M : AIMessage>(
         loadError = null
         _activity.value = null
         ignoresActivity = false
-        stopped.clear()
         exchange = AIConversationExchange(id, request, received)
         refresh()
         val previousStop = stopping
