@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.channel.int
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImplTestBase
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
+import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
@@ -57,7 +58,7 @@ internal class ChannelLogicImplChannelUpdateTest : ChannelStateImplTestBase() {
             ChannelData(id = CHANNEL_ID, type = CHANNEL_TYPE, name = "old", ownCapabilities = capabilities)
         }
 
-        sut.applyChannelUpdate(channel(name = "new").copy(ownCapabilities = emptySet()), withMembers = false)
+        sut.applyChannelUpdate(channel(name = "new").copy(ownCapabilities = emptySet()))
 
         assertEquals("new", channelState.channelData.value.name)
         assertEquals(capabilities, channelState.channelData.value.ownCapabilities)
@@ -68,11 +69,28 @@ internal class ChannelLogicImplChannelUpdateTest : ChannelStateImplTestBase() {
         val jane = randomMember(user = randomUser(id = "jane"))
         channelState.setMemberCount(1)
 
-        sut.applyChannelUpdate(channel(members = listOf(jane), memberCount = 2), withMembers = true)
+        sut.addMembers(listOf(jane))
         sut.handleEvent(randomMemberAddedEvent(cid = CID, channelType = CHANNEL_TYPE, channelId = CHANNEL_ID, member = jane))
 
         assertEquals(2, channelState.membersCount.value)
         assertEquals(listOf("jane"), channelState.members.value.map { it.getUserId() })
+    }
+
+    @Test
+    fun `an add response keeps a removal processed before it`() {
+        val john = randomMember(user = randomUser(id = "john"))
+        val y = randomMember(user = randomUser(id = "y"))
+        val x = randomMember(user = randomUser(id = "x"))
+        channelState.setMembers(listOf(john, y))
+        channelState.setMemberCount(2)
+        sut.handleEvent(randomMemberRemovedEvent(cid = CID, channelType = CHANNEL_TYPE, channelId = CHANNEL_ID, member = y))
+
+        // The response predates the removal: it still lists y, with the older count
+        sut.applyChannelUpdate(channel(members = listOf(john, y, x), memberCount = 3))
+        sut.addMembers(listOf(x))
+
+        assertEquals(2, channelState.membersCount.value)
+        assertEquals(listOf("john", "x"), channelState.members.value.map { it.getUserId() })
     }
 
     @Test
@@ -84,10 +102,7 @@ internal class ChannelLogicImplChannelUpdateTest : ChannelStateImplTestBase() {
             ChannelData(id = CHANNEL_ID, type = CHANNEL_TYPE, lastMessageAt = Date(5_000), messageCount = 10)
         }
 
-        sut.applyChannelUpdate(
-            channel(name = "new").copy(lastMessageAt = Date(4_000), messageCount = 9),
-            withMembers = false,
-        )
+        sut.applyChannelUpdate(channel(name = "new").copy(lastMessageAt = Date(4_000), messageCount = 9))
 
         assertEquals("new", channelState.channelData.value.name)
         assertEquals(Date(5_000), channelState.channelData.value.lastMessageAt)

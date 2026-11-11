@@ -174,14 +174,13 @@ internal class ChannelLogicLegacyImpl(
         stateLogic.upsertMembers(members)
     }
 
-    override fun applyChannelUpdate(channel: Channel, withMembers: Boolean) {
+    override fun applyChannelUpdate(channel: Channel) {
         val channelData = channel.toChannelData()
-        stateLogic.updateChannelData { current -> current?.mergeChannelUpdate(channelData, withMembers) ?: channelData }
-        if (withMembers) {
-            val members = mutableState.members.value.associateBy(Member::getUserId) +
-                channel.members.associateBy(Member::getUserId)
-            stateLogic.setMembers(members.values.toList(), channel.memberCount)
-        }
+        stateLogic.updateChannelData { current -> current?.mergeChannelUpdate(channelData) ?: channelData }
+    }
+
+    override fun addMembers(members: List<Member>) {
+        members.forEach(stateLogic::addMember)
     }
 
     override fun truncate(truncatedAt: Date) {

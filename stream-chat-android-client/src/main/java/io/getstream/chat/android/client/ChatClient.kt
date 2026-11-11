@@ -341,6 +341,7 @@ internal constructor(
     private val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
+    private val channelMutesMutex = Mutex()
 
     /**
      * The user's id for which the client is initialized.
@@ -4522,7 +4523,7 @@ internal constructor(
             channelId = channelId,
             expiration = expiration,
         ).doOnResult(userScope) { result ->
-            result.onSuccess { mutes ->
+            result.onSuccessSuspend { mutes ->
                 val cid = "$channelType:$channelId"
                 val mutedCids = mutes.mapNotNull { it.channel?.cid }.toSet() + cid
                 updateChannelMutes(channelType, channelId, muted = true) { current ->
@@ -4549,7 +4550,7 @@ internal constructor(
         channelId: String,
     ): Call<Unit> {
         return api.unmuteChannel(channelType, channelId).doOnResult(userScope) { result ->
-            result.onSuccess {
+            result.onSuccessSuspend {
                 val cid = "$channelType:$channelId"
                 updateChannelMutes(channelType, channelId, muted = false) { current ->
                     current.filterNot { it.channel?.cid == cid }
@@ -4561,14 +4562,16 @@ internal constructor(
     /**
      * Updates the current user's channel mutes after a channel mute or unmute, as
      * [NotificationChannelMutesUpdatedEvent] does, so they show at once and stay when the event is late or missed.
+     * Results of several requests can arrive at the same time, so each update reads and writes under a lock and
+     * none of them is lost.
      */
-    private fun updateChannelMutes(
+    private suspend fun updateChannelMutes(
         channelType: String,
         channelId: String,
         muted: Boolean,
         update: (List<ChannelMute>) -> List<ChannelMute>,
-    ) {
-        val currentUser = mutableClientState.user.value ?: return
+    ) = channelMutesMutex.withLock {
+        val currentUser = mutableClientState.user.value ?: return@withLock
         val channelMutes = update(currentUser.channelMutes)
         mutableClientState.setUser(currentUser.copy(channelMutes = channelMutes))
         channelUpdateResponseHandler?.onChannelMuteChanged(channelType, channelId, muted, channelMutes)

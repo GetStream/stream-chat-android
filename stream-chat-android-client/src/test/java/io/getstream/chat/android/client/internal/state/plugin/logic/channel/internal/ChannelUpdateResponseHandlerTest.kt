@@ -103,7 +103,7 @@ internal class ChannelUpdateResponseHandlerTest {
 
         handler.onChannelUpdated(response)
 
-        verify(channelLogic).applyChannelUpdate(response, withMembers = false)
+        verify(channelLogic).applyChannelUpdate(response)
         verify(queryChannelsLogic).refreshChannelState(CID)
     }
 
@@ -116,7 +116,7 @@ internal class ChannelUpdateResponseHandlerTest {
         handler.onChannelUpdated(channel(updatedAt = Date(2_000)))
 
         verify(repos, never()).insertChannel(any<Channel>())
-        verify(channelLogic, never()).applyChannelUpdate(any(), any())
+        verify(channelLogic, never()).applyChannelUpdate(any())
     }
 
     @Test
@@ -144,34 +144,56 @@ internal class ChannelUpdateResponseHandlerTest {
 
         handler.onChannelUpdated(channel())
 
-        verify(channelLogic, never()).applyChannelUpdate(any(), any())
+        verify(channelLogic, never()).applyChannelUpdate(any())
     }
 
     @Test
-    fun `onMembersAdded stores and applies a response that lists every added member`() = runTest {
+    fun `onMembersAdded adds the listed added members and counts each of them once`() = runTest {
         givenActiveChannel()
+        val john = randomMember(user = randomUser(id = "john"))
         val jane = randomMember(user = randomUser(id = "jane"))
-        whenever(repos.selectChannel(CID)) doReturn channel(members = emptyList(), memberCount = 1)
-        val response = channel(members = listOf(jane), memberCount = 2)
+        whenever(repos.selectChannel(CID)) doReturn channel(members = listOf(john), memberCount = 1)
+        val response = channel(members = listOf(john, jane), memberCount = 2)
 
         handler.onMembersAdded(response, listOf("jane"))
 
         val saved = argumentCaptor<Channel>().apply { verify(repos).insertChannel(capture()) }.firstValue
-        saved.members shouldBeEqualTo listOf(jane)
+        saved.members shouldBeEqualTo listOf(john, jane)
         saved.memberCount shouldBeEqualTo 2
-        verify(channelLogic).applyChannelUpdate(response, withMembers = true)
+        verify(channelLogic).applyChannelUpdate(response)
+        verify(channelLogic).addMembers(listOf(jane))
     }
 
     @Test
-    fun `onMembersAdded skips a response that does not list every added member`() = runTest {
+    fun `onMembersAdded keeps a removal processed before the response`() = runTest {
         givenActiveChannel()
-        whenever(repos.selectChannel(CID)) doReturn channel()
-        val response = channel(members = listOf(randomMember(user = randomUser(id = "jane"))), memberCount = 200)
+        // Y was removed by someone else, and member.removed was processed before this response
+        val john = randomMember(user = randomUser(id = "john"))
+        val y = randomMember(user = randomUser(id = "y"))
+        val x = randomMember(user = randomUser(id = "x"))
+        whenever(repos.selectChannel(CID)) doReturn channel(members = listOf(john), memberCount = 1)
+        val response = channel(members = listOf(john, y, x), memberCount = 3)
 
-        handler.onMembersAdded(response, listOf("jane", "john"))
+        handler.onMembersAdded(response, listOf("x"))
 
-        verify(repos, never()).insertChannel(any<Channel>())
-        verify(channelLogic, never()).applyChannelUpdate(any(), any())
+        val saved = argumentCaptor<Channel>().apply { verify(repos).insertChannel(capture()) }.firstValue
+        saved.members.map { it.getUserId() } shouldBeEqualTo listOf("john", "x")
+        saved.memberCount shouldBeEqualTo 2
+        verify(channelLogic).addMembers(listOf(x))
+    }
+
+    @Test
+    fun `onMembersAdded leaves an added member the response does not list to the event`() = runTest {
+        givenActiveChannel()
+        whenever(repos.selectChannel(CID)) doReturn channel(members = emptyList(), memberCount = 150)
+        // A large channel's response lists a limited number of members
+        val response = channel(members = emptyList(), memberCount = 151)
+
+        handler.onMembersAdded(response, listOf("jane"))
+
+        val saved = argumentCaptor<Channel>().apply { verify(repos).insertChannel(capture()) }.firstValue
+        saved.memberCount shouldBeEqualTo 150
+        verify(channelLogic).addMembers(emptyList())
     }
 
     @Test
@@ -181,15 +203,15 @@ internal class ChannelUpdateResponseHandlerTest {
             val jane = randomMember(user = randomUser(id = "jane"))
             val john = randomMember(user = randomUser(id = "john"))
             whenever(repos.selectChannel(CID)) doReturn channel(members = listOf(jane, john), memberCount = 2)
-            // A large channel's response lists no members
-            val response = channel(members = emptyList(), memberCount = 1)
+            // The response predates another removal: it still lists jane, with the older count
+            val response = channel(members = listOf(jane), memberCount = 5)
 
             handler.onMembersRemoved(response, listOf("john"))
 
             val saved = argumentCaptor<Channel>().apply { verify(repos).insertChannel(capture()) }.firstValue
             saved.members.map { it.getUserId() } shouldBeEqualTo listOf("jane")
             saved.memberCount shouldBeEqualTo 1
-            verify(channelLogic, never()).applyChannelUpdate(any(), any())
+            verify(channelLogic, never()).applyChannelUpdate(any())
         }
 
     @Test
@@ -211,7 +233,7 @@ internal class ChannelUpdateResponseHandlerTest {
 
         verify(repos).deleteChannelMessagesBefore(CID, truncatedAt)
         verify(channelLogic).truncate(truncatedAt)
-        verify(channelLogic).applyChannelUpdate(response, withMembers = false)
+        verify(channelLogic).applyChannelUpdate(response)
     }
 
     @Test

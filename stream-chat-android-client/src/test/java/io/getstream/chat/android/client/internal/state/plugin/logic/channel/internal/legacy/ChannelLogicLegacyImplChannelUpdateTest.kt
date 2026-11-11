@@ -77,7 +77,8 @@ internal class ChannelLogicLegacyImplChannelUpdateTest {
         val jane = randomMember(user = randomUser(id = "jane"))
         state.setMembers(listOf(john), membersCount = 1)
 
-        sut.applyChannelUpdate(channel(members = listOf(john, jane), memberCount = 2), withMembers = true)
+        sut.applyChannelUpdate(channel(members = listOf(john, jane), memberCount = 2))
+        sut.addMembers(listOf(jane))
         sut.handleEvent(randomMemberAddedEvent(cid = CID, channelType = CHANNEL_TYPE, channelId = CHANNEL_ID, member = jane))
 
         assertEquals(2, state.membersCount.value)
@@ -92,7 +93,6 @@ internal class ChannelLogicLegacyImplChannelUpdateTest {
 
         sut.applyChannelUpdate(
             channel(name = "new", members = emptyList(), memberCount = 0).copy(lastMessageAt = Date(4_000)),
-            withMembers = false,
         )
 
         assertEquals("new", state.channelData.value.name)

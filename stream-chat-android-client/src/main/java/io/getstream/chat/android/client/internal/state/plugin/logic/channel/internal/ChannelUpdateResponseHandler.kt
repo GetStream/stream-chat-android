@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal
 
+import io.getstream.chat.android.client.extensions.internal.addMember
+import io.getstream.chat.android.client.extensions.internal.removeMember
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -23,6 +25,7 @@ import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.mergeChannelFromEvent
 import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.log.taggedLogger
@@ -36,7 +39,12 @@ import java.util.Date
  * A response can arrive after events that are newer than it, so it never takes back newer data:
  * - A response older than the stored channel or the open state (an earlier `updatedAt`) is ignored.
  * - The last message date and the message count keep the later value, as new messages do not move `updatedAt`.
- * - The members and the member count are taken only from a member addition or removal response.
+ * - The member list and the member count of a response are never used. A member addition or removal changes only
+ *   the members it added or removed, counted the same way as `member.added` and `member.removed`, so a member event
+ *   processed before the response is kept and the later event changes nothing.
+ *
+ * The stored channel is read, merged and written outside the lock of the event handler, as the event and query paths
+ * also do: an event batch written in between is replaced until the next event or query.
  *
  * A failure here is logged and never changes the result of the request.
  */
@@ -50,38 +58,33 @@ internal class ChannelUpdateResponseHandler(
     private val logger by taggedLogger("Chat:ChannelUpdateResponse")
 
     /**
-     * Applies the channel returned by an update or a partial update. The members are kept as they are: these
-     * requests do not change them, and a member event processed before the response is newer.
+     * Applies the channel returned by an update or a partial update.
      */
     suspend fun onChannelUpdated(channel: Channel) = safely("onChannelUpdated") {
-        applyChannel(channel, withMembers = false)
+        applyChannel(channel)
     }
 
     /**
-     * Applies the channel returned by a member addition or invite. A response that does not list every added member
-     * (it lists a limited number of members) is left to the events: `member.added` counts a member only when it is
-     * not listed yet, so a count taken from such a response would be raised twice.
+     * Applies the channel returned by a member addition or invite, and adds the members it lists among the
+     * [addedMemberIds]. A member the response does not list (it lists a limited number of members) is left to
+     * `member.added`.
      */
     suspend fun onMembersAdded(channel: Channel, addedMemberIds: List<String>) = safely("onMembersAdded") {
-        val listedIds = channel.members.map { it.getUserId() }.toSet()
-        if (listedIds.containsAll(addedMemberIds)) {
-            applyChannel(channel, withMembers = true)
-        } else {
-            logger.d { "[onMembersAdded] skipped; ${channel.cid} response does not list every added member" }
-        }
+        val addedIds = addedMemberIds.toSet()
+        applyChannel(channel, addedMembers = channel.members.filter { it.getUserId() in addedIds })
     }
 
     /**
-     * Stores the channel returned by a member removal. The open channel state waits for `member.removed`: it still
-     * lists the removed member and lowers the member count when the event arrives, so a count taken from the response
-     * first would be lowered twice. When the current user left, the channel is left to the events: they also remove
-     * the membership and the channel from the lists.
+     * Stores the channel returned by a member removal without the removed members. The open channel state waits for
+     * `member.removed`: it lowers the member count on every removal, as its member list can be partial, so removing
+     * the member first would lower the count twice. When the current user left, the channel is left to the events:
+     * they also remove the membership and the channel from the lists.
      */
     suspend fun onMembersRemoved(channel: Channel, removedMemberIds: List<String>) = safely("onMembersRemoved") {
         if (getCurrentUserId() in removedMemberIds) {
             logger.d { "[onMembersRemoved] skipped; the current user left ${channel.cid}" }
         } else {
-            saveChannel(channel, withMembers = true, removedMemberIds = removedMemberIds.toSet())
+            saveChannel(channel) { stored -> removedMemberIds.fold(stored) { acc, id -> acc.removeMember(id) } }
         }
     }
 
@@ -93,7 +96,7 @@ internal class ChannelUpdateResponseHandler(
             repos.deleteChannelMessagesBefore(channel.cid, truncatedAt)
             activeChannel(channel)?.truncate(truncatedAt)
         }
-        applyChannel(channel, withMembers = false)
+        applyChannel(channel)
     }
 
     /**
@@ -127,43 +130,37 @@ internal class ChannelUpdateResponseHandler(
         }
     }
 
-    private suspend fun applyChannel(channel: Channel, withMembers: Boolean) {
-        saveChannel(channel, withMembers)
+    private suspend fun applyChannel(channel: Channel, addedMembers: List<Member> = emptyList()) {
+        saveChannel(channel) { stored -> addedMembers.fold(stored) { acc, member -> acc.addMember(member) } }
         val channelLogic = activeChannel(channel) ?: return
         val stateUpdatedAt = channelLogic.messagesUpdateLogic.channelState().channelData.value.updatedAt
         if (stateUpdatedAt.isAfter(channel.updatedAt)) {
             logger.d { "[applyChannel] state of ${channel.cid} is newer than the response" }
             return
         }
-        channelLogic.applyChannelUpdate(channel, withMembers)
+        channelLogic.applyChannelUpdate(channel)
+        channelLogic.addMembers(addedMembers)
         refreshChannelLists(channel.cid)
     }
 
-    private suspend fun saveChannel(
-        channel: Channel,
-        withMembers: Boolean,
-        removedMemberIds: Set<String> = emptySet(),
-    ) {
+    /**
+     * Stores the [channel] merged into the stored one, keeping the stored members, then applies [updateMembers].
+     */
+    private suspend fun saveChannel(channel: Channel, updateMembers: (Channel) -> Channel) {
         // A channel not stored yet is left to the next query: the response has no messages or reads.
         val stored = repos.selectChannel(channel.cid) ?: return
         if (stored.updatedAt.isAfter(channel.updatedAt)) {
             logger.d { "[saveChannel] stored ${channel.cid} is newer than the response" }
             return
         }
-        val merged = stored.mergeChannelFromEvent(channel)
-        repos.insertChannel(
-            merged.copy(
-                hidden = channel.hidden ?: stored.hidden,
-                lastMessageAt = max(stored.lastMessageAt, channel.lastMessageAt),
-                messageCount = maxOfOrNull(stored.messageCount, channel.messageCount),
-                members = if (withMembers) {
-                    merged.members.filterNot { it.getUserId() in removedMemberIds }
-                } else {
-                    stored.members
-                },
-                memberCount = if (withMembers) merged.memberCount else stored.memberCount,
-            ),
+        val merged = stored.mergeChannelFromEvent(channel).copy(
+            hidden = channel.hidden ?: stored.hidden,
+            lastMessageAt = max(stored.lastMessageAt, channel.lastMessageAt),
+            messageCount = maxOfOrNull(stored.messageCount, channel.messageCount),
+            members = stored.members,
+            memberCount = stored.memberCount,
         )
+        repos.insertChannel(updateMembers(merged))
     }
 
     // Only a channel with state is updated: creating one here would add a channel with no messages to the lists.
@@ -189,13 +186,13 @@ internal class ChannelUpdateResponseHandler(
 /**
  * Applies the channel data returned by a channel update of the current user to this data. Unlike
  * [ChannelData.mergeFromEvent], newer data that the response can predate is kept: the later last message date, the
- * higher message count and, unless [withMembers], the member count.
+ * higher message count and the member count.
  */
-internal fun ChannelData.mergeChannelUpdate(update: ChannelData, withMembers: Boolean): ChannelData =
+internal fun ChannelData.mergeChannelUpdate(update: ChannelData): ChannelData =
     mergeFromEvent(update).copy(
         lastMessageAt = max(lastMessageAt, update.lastMessageAt),
         messageCount = maxOfOrNull(messageCount, update.messageCount),
-        memberCount = if (withMembers) update.memberCount else memberCount,
+        memberCount = memberCount,
     )
 
 private fun maxOfOrNull(a: Int?, b: Int?): Int? = listOfNotNull(a, b).maxOrNull()

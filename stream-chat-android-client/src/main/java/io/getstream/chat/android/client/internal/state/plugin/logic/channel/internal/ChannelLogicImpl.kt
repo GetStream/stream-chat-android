@@ -245,13 +245,13 @@ internal class ChannelLogicImpl(
         state.upsertMembers(members)
     }
 
-    override fun applyChannelUpdate(channel: Channel, withMembers: Boolean) {
+    override fun applyChannelUpdate(channel: Channel) {
         val channelData = channel.toChannelData()
-        state.updateChannelData { current -> current?.mergeChannelUpdate(channelData, withMembers) ?: channelData }
-        if (withMembers) {
-            state.setMemberCount(channel.memberCount)
-            state.upsertMembers(channel.members)
-        }
+        state.updateChannelData { current -> current?.mergeChannelUpdate(channelData) ?: channelData }
+    }
+
+    override fun addMembers(members: List<Member>) {
+        members.forEach(state::addMember)
     }
 
     override fun truncate(truncatedAt: Date) {
