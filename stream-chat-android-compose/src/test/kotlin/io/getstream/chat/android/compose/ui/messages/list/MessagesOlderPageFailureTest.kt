@@ -139,6 +139,24 @@ internal class MessagesOlderPageFailureTest : MockedChatClientTest {
     }
 
     @Test
+    fun `another thread with the same message count after a failed older page allows one more request`() {
+        setMessages(messageCount = 3)
+        composeTestRule.mainClock.advanceTimeBy(FAILURE_WINDOW_MS)
+
+        composeTestRule.runOnIdle {
+            state = state.copy(parentMessageId = "other-thread", messageItems = emptyList())
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.runOnIdle {
+            state = state.copy(messageItems = (10 until 13).map(::messageItem))
+        }
+        composeTestRule.mainClock.advanceTimeBy(FAILURE_WINDOW_MS)
+        composeTestRule.waitForIdle()
+
+        assertEquals(2, olderPageRequests)
+    }
+
+    @Test
     fun `dragging a short list after a failed older page allows one more request`() {
         setMessages(messageCount = 3)
         composeTestRule.mainClock.advanceTimeBy(FAILURE_WINDOW_MS)

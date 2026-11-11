@@ -276,18 +276,20 @@ internal fun Messages(
     }
 
     // The loading item appears and disappears with every attempt, which re-triggers both handlers below. After a
-    // failure, only a drag by the user or a change in the number of messages allows the next request.
+    // failure, only a drag by the user or a change in the number of messages or the thread allows the next request.
     val loadingOlderMessagesError by rememberUpdatedState(messagesState.loadingOlderMessagesError)
     val currentOnMessagesStartReached by rememberUpdatedState(onMessagesStartReached)
     // Updated during composition, so the layout-driven handlers below already see the new count.
     val messageCount by rememberUpdatedState(remember(messages) { messages.count { it is MessageItemState } })
-    var messageCountAtLastRequest by remember { mutableStateOf(-1) }
+    // Includes the thread, because another thread can reuse this list with the same number of messages.
+    val listContent by rememberUpdatedState(messagesState.parentMessageId to messageCount)
+    var listContentAtLastRequest by remember { mutableStateOf<Pair<String?, Int>?>(null) }
     var dragAllowsRetry by remember { mutableStateOf(false) }
     val requestOlderMessages = {
-        val retryAllowed = dragAllowsRetry || messageCount != messageCountAtLastRequest
+        val retryAllowed = dragAllowsRetry || listContent != listContentAtLastRequest
         if (!endOfOldMessages && (!loadingOlderMessagesError || retryAllowed)) {
             dragAllowsRetry = false
-            messageCountAtLastRequest = messageCount
+            listContentAtLastRequest = listContent
             currentOnMessagesStartReached()
         }
     }
