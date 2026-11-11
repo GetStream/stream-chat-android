@@ -9,7 +9,6 @@
 -keep class io.getstream.chat.android.client.call.RetrofitCall { *; }
 -keep class com.squareup.moshi.JsonReader
 -keep class com.squareup.moshi.JsonAdapter
--keep class kotlin.reflect.jvm.internal.* { *; }
 
 # Rules to improve the logs by keeping the names of the classes
 -keep class * extends io.getstream.chat.android.client.clientstate.UserState
