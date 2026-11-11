@@ -1,8 +1,9 @@
 ## Stream Chat Android Client Proguard Rules
 
 # QuerySortByReflection reads model properties by name through kotlin-reflect, which needs each property's field and
-# getter under its original name; without the getter it fails reading the private field. Public constructors stay so
-# apps can still build the models reflectively. Model classes nothing uses can still be removed.
+# getter under its original name; without the getter it fails reading the private field. Public constructors stay
+# because the offline database stores some models, such as UserGroup, as JSON through reflective Moshi. Model classes
+# nothing uses can still be removed.
 -keepnames class io.getstream.chat.android.models.**
 -keepclassmembers class io.getstream.chat.android.models.** {
     <fields>;
