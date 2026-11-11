@@ -187,14 +187,15 @@ public interface ChatAiComponentFactory {
      * What the person can do with a finished reply, shown under it in [AIConversation] once its
      * answer is written out.
      *
-     * Empty by default. [AIReplyActionsRow] is a row of buttons to render here.
+     * The default renders [AIReplyActionsRow] with the params' `actions`, which a conversation that
+     * shows an `AIConversationState` passes: copy, share and rate. Without them it renders nothing.
      *
      * @param params The parameters for the actions.
      */
-    @Suppress("EmptyFunctionBlock")
     @Composable
     public fun AIConversationReplyActions(params: AIConversationReplyActionsParams) {
-        // No actions unless the app chooses some, such as with AIReplyActionsRow.
+        val actions = params.actions ?: return
+        AIReplyActionsRow(text = params.text, actions = actions, modifier = params.modifier)
     }
 
     /**
