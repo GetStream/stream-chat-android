@@ -118,6 +118,7 @@ import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
+import io.getstream.chat.android.client.internal.state.sync.internal.PendingMessagePins
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -488,6 +489,12 @@ internal constructor(
      * Stores the responses of the channel changes the current user makes. Set by the state plugin.
      */
     internal var channelUpdateResponseHandler: ChannelUpdateResponseHandler? = null
+
+    /**
+     * Keeps the pins and unpins that failed offline, to send them again on the next connection. Set by the state
+     * plugin.
+     */
+    internal var pendingMessagePins: PendingMessagePins? = null
 
     internal lateinit var attachmentsSender: AttachmentsSender
 
@@ -3429,7 +3436,9 @@ internal constructor(
         return partialUpdateMessage(
             messageId = message.id,
             set = set,
-        )
+        ).doOnResult(userScope) { result ->
+            pendingMessagePins?.onPinResult(message, pinned = true, pinExpires = expirationDate, result = result)
+        }
     }
 
     /**
@@ -3455,7 +3464,9 @@ internal constructor(
                 "pinned" to true,
                 "pin_expires" to calendar.time,
             ),
-        )
+        ).doOnResult(userScope) { result ->
+            pendingMessagePins?.onPinResult(message, pinned = true, pinExpires = calendar.time, result = result)
+        }
     }
 
     /**
@@ -3471,7 +3482,9 @@ internal constructor(
         return partialUpdateMessage(
             messageId = message.id,
             set = mapOf("pinned" to false),
-        )
+        ).doOnResult(userScope) { result ->
+            pendingMessagePins?.onPinResult(message, pinned = false, pinExpires = null, result = result)
+        }
     }
 
     /**

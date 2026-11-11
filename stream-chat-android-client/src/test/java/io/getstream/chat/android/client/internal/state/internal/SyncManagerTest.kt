@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.internal.Log
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.internal.state.sync.internal.PendingMessagePins
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.internal.state.sync.internal.sameInstant
 import io.getstream.chat.android.client.parser2.SyncedEvents
@@ -117,6 +118,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.io.IOException
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -1294,6 +1296,32 @@ internal class SyncManagerTest {
 
             verify(chatClient, times(1)).partialUpdateMessage(messageId = message.id, set = liveLocationEndedSet)
         }
+
+    @Test
+    fun `a pin that failed offline is sent on the next connection`() = runTest(testDispatcher) {
+        val message = randomMessage()
+        val sent = mutableListOf<Pair<String, Map<String, Any>>>()
+        val pins = PendingMessagePins(
+            logic = logicRegistry,
+            sendPin = { messageId, set ->
+                sent += messageId to set
+                Result.Success(message)
+            },
+            getCurrentUser = { user },
+        )
+        val sut = buildSyncManager(pendingMessagePins = pins)
+        val offline = Error.NetworkError(
+            message = "offline",
+            serverErrorCode = ChatErrorCode.NETWORK_FAILED.code,
+            statusCode = -1,
+            cause = IOException("offline"),
+        )
+        pins.onPinResult(message, pinned = true, pinExpires = null, result = Result.Failure(offline))
+
+        sut.onEvent(randomConnectedEvent())
+
+        sent shouldBeEqualTo listOf(message.id to mapOf<String, Any>("pinned" to true))
+    }
 
     @Test
     fun `a live location that ends online is ended locally and sent to the server`() = runTest(testDispatcher) {
@@ -3442,6 +3470,7 @@ internal class SyncManagerTest {
         isAutomaticSyncOnReconnectEnabled: Boolean = true,
         syncMaxThreshold: TimeDuration = TimeDuration.seconds(5),
         eventReplayMaxCount: Int = 250,
+        pendingMessagePins: PendingMessagePins? = null,
     ): SyncManager {
         return SyncManager(
             eventReplayMaxCount = eventReplayMaxCount,
@@ -3460,6 +3489,7 @@ internal class SyncManagerTest {
             syncMaxThreshold = syncMaxThreshold,
             now = { currentTime },
             serverClockOffset = ServerClockOffset(localTimeMs = { currentTime }),
+            pendingMessagePins = pendingMessagePins,
         )
     }
 }

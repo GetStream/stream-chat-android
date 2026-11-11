@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.refreshChannelsOnScheduledMessages
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.internal.state.sync.internal.PendingMessagePins
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
@@ -139,6 +140,12 @@ public class StreamStatePluginFactory(
             mutableGlobalState = mutableGlobalState,
             getCurrentUserId = { clientState.user.value?.id },
         )
+        val pendingMessagePins = PendingMessagePins(
+            logic = logic,
+            sendPin = { messageId, set -> chatClient.partialUpdateMessage(messageId, set).await() },
+            getCurrentUser = { clientState.user.value },
+        )
+        chatClient.pendingMessagePins = pendingMessagePins
         scope.refreshChannelsOnScheduledMessages(chatClient.scheduledMessages, logic::getActiveQueryChannelsLogic)
 
         val groupedUnreadChannelsUpdater = GroupedUnreadChannelsUpdater(
@@ -160,6 +167,7 @@ public class StreamStatePluginFactory(
             syncMaxThreshold = config.syncMaxThreshold,
             serverClockOffset = chatClient.serverClockOffset,
             now = { System.currentTimeMillis() },
+            pendingMessagePins = pendingMessagePins,
         )
 
         val eventHandler: EventHandler = createEventHandler(
