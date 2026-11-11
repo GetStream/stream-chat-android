@@ -1,8 +1,14 @@
 ## Stream Chat Android Client Proguard Rules
 
-# Classes that are using with QuerySort can't be minified, because QuerySort uses reflection. If the
-# name of the fields of the classes being used by QuerySort, change, the sort won't work as expected.
--keep class io.getstream.chat.android.models.** { *; }
+# QuerySortByReflection reads model properties by name through kotlin-reflect, which needs each property's field and
+# getter under its original name; without the getter it fails reading the private field. Model classes nothing uses
+# can still be removed.
+-keepnames class io.getstream.chat.android.models.**
+-keepclassmembers class io.getstream.chat.android.models.** {
+    <fields>;
+    public *** get*();
+    public *** is*();
+}
 
 # CustomObjectDtoAdapter tells custom data apart by matching the field names of the DTOs it parses against the JSON
 # keys, so those names must survive minification. Unused DTOs and members can still be removed.
