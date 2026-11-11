@@ -23,6 +23,8 @@ import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
@@ -84,6 +86,8 @@ internal class PendingMessagePins(
     suspend fun sendPending() {
         pending.forEach { (messageId, pendingPin) ->
             val result = sendPin(messageId, pendingPin.change.toSet())
+            // A cancelled call returns an error instead of throwing, so the change is kept for the next connection.
+            currentCoroutineContext().ensureActive()
             if (result is Result.Failure && result.value.isTemporaryNetworkError()) return@forEach
             // A newer pin or unpin made while this one was sent stays kept.
             if (!pending.remove(messageId, pendingPin)) return@forEach

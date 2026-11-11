@@ -24,6 +24,8 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
@@ -178,6 +180,32 @@ internal class PendingMessagePinsTest {
             pins.sendPending()
             sent.size shouldBeEqualTo 1
         }
+
+    @Test
+    fun `a send cancelled by a disconnect keeps the pin and does not revert it`() = runTest {
+        lateinit var job: Job
+        val target = PendingMessagePins(
+            logic = logic,
+            sendPin = { _, set ->
+                sent += set
+                // Call.await returns an error instead of throwing when the coroutine is cancelled.
+                job.cancel()
+                Result.Failure(Error.GenericError("The call was canceled before completion"))
+            },
+            getCurrentUser = { me },
+            isNetworkAvailable = { false },
+            now = { now },
+        )
+        target.onPinResult(stored, pinned = true, pinExpires = null, result = offline())
+
+        job = launch { target.sendPending() }
+        job.join()
+
+        verify(channelLogic, times(1)).upsertMessage(any())
+        sent.clear()
+        target.sendPending()
+        sent shouldBeEqualTo listOf(mapOf<String, Any>("pinned" to true))
+    }
 
     @Test
     fun `an unpin made while the kept pin is sent stays kept`() = runTest {
