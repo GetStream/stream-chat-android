@@ -23,14 +23,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.ai.compose.conversation.AIAgentActivity
+import io.getstream.chat.android.ai.compose.conversation.AIConversationState
+import io.getstream.chat.android.ai.compose.conversation.AIConversationStatus
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.conversation.AIPendingMessage
@@ -143,6 +149,91 @@ public fun AIConversation(
         AIConversationEntryContent(entry = entry, approver = approver, ui = ui)
     }
 }
+
+/**
+ * Shows an [AIConversationState]: its messages and the message on its way, the agent thinking
+ * until its reply starts, what the agent says it is doing, and older messages as the person
+ * scrolls to the start. The state's [AIConversationState.approver] answers tool calls' questions.
+ *
+ * ```
+ * Column {
+ *     AIConversation(state = conversation, modifier = Modifier.weight(1f))
+ *     ChatComposer(state = conversation)
+ * }
+ * ```
+ *
+ * While the agent says it is doing something besides thinking, such as checking external sources,
+ * the latest turn ends with an [AITypingIndicator] showing what it says, in place of [AIThinking].
+ *
+ * @param state The conversation to show.
+ * @param modifier The modifier to apply.
+ * @param footer A view under the latest turn's messages, such as the state's error with a way to
+ * [AIConversationState.retry].
+ * @param emptyContent What the list shows while there are no messages, centered in it.
+ * @param colors The palette of the list's own views: the button that brings the end back into view,
+ * and the spinner while older messages load.
+ * @param icons The icons of the list's own views.
+ * @param contentPadding Space at the edges of the list that something drawn over it covers, such as
+ * a composer floating over its bottom.
+ * @param ui The conversation's generated UI. Make its host with [AIConversationState.send] as the
+ * action callback, so what the person does in a reply's UI reaches the agent.
+ */
+@Suppress("LongParameterList")
+@Composable
+public fun AIConversation(
+    state: AIConversationState<*>,
+    modifier: Modifier = Modifier,
+    footer: @Composable () -> Unit = {},
+    emptyContent: @Composable () -> Unit = {},
+    colors: AIConversationColors = AIConversationDefaults.colors(),
+    icons: AIConversationIcons = AIConversationDefaults.icons(),
+    contentPadding: PaddingValues = PaddingValues(),
+    ui: AIUIHost? = null,
+) {
+    val messages by state.messages.collectAsState()
+    val pending by state.pendingMessage.collectAsState()
+    val status by state.status.collectAsState()
+    val activity by state.activity.collectAsState()
+    val hasOlderMessages by state.hasOlderMessages.collectAsState()
+    val loadOlderMessages = remember<suspend () -> Unit>(state) { { state.loadOlderMessages() } }
+    val working = activity?.takeIf { it.isWorking }
+    AIConversation(
+        messages = messages,
+        modifier = modifier,
+        pendingMessage = pending,
+        isThinking = status == AIConversationStatus.Submitted && working == null,
+        approver = state.approver,
+        loadOlderMessages = loadOlderMessages.takeIf { hasOlderMessages },
+        footer = {
+            if (working != null && status.isAnswering) {
+                val text = working.text
+                if (text.isNullOrBlank()) {
+                    AITypingIndicator()
+                } else {
+                    AITypingIndicator(label = {
+                        Text(
+                            text = text,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    })
+                }
+            }
+            footer()
+        },
+        emptyContent = emptyContent,
+        colors = colors,
+        icons = icons,
+        contentPadding = contentPadding,
+        ui = ui,
+    )
+}
+
+/** Whether the agent says it is doing something besides thinking about or writing its answer. */
+private val AIAgentActivity.isWorking: Boolean
+    get() = state != AIAgentActivity.State.Thinking &&
+        state != AIAgentActivity.State.Generating &&
+        state != AIAgentActivity.State.Error
 
 /**
  * The [AIConversation] signature without `ui`, kept so apps compiled against it keep working.

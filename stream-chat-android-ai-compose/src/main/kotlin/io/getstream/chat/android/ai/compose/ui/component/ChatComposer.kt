@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import io.getstream.chat.android.ai.compose.conversation.AIConversationState
 
 /**
  * Chat composer with attach, voice, and send buttons.
@@ -222,6 +224,39 @@ public fun ChatComposer(
             ComposerTrailingContent(ComposerTrailingContentParams(isGenerating = isGenerating))
         }
     }
+}
+
+/**
+ * Chat composer that sends to an [AIConversationState]: the person's message goes through
+ * [AIConversationState.send], the stop button calls [AIConversationState.stop], and the composer
+ * offers to stop while the agent is answering.
+ *
+ * ```
+ * ChatComposer(state = conversation)
+ * ```
+ *
+ * @param state The conversation to send to.
+ * @param modifier The modifier to be applied to the composer.
+ * @param messageData The initial message data to be displayed in the input field.
+ * @param focusRequester Attached to the text field, so you can put the cursor in it with
+ * [FocusRequester.requestFocus].
+ */
+@Composable
+public fun ChatComposer(
+    state: AIConversationState<*>,
+    modifier: Modifier = Modifier,
+    messageData: MessageData = MessageData(),
+    focusRequester: FocusRequester? = null,
+) {
+    val status by state.status.collectAsState()
+    ChatComposer(
+        onSendClick = state::send,
+        onStopClick = state::stop,
+        isGenerating = status.isAnswering,
+        modifier = modifier,
+        messageData = messageData,
+        focusRequester = focusRequester,
+    )
 }
 
 /**
