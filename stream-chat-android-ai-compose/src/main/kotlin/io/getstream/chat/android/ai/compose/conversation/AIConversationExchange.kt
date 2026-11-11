@@ -99,18 +99,19 @@ internal class AIConversationExchange<M : AIMessage>(
     }
 
     /**
-     * What a retry sends: the request again, or, when the agent had the person's message but
-     * couldn't answer it, a request for its reply, since sending it again would add it twice.
+     * What a retry sends: the request again, or null when the agent had the person's message but
+     * couldn't answer it. Sending the message again would add it twice, so the person asks again
+     * instead.
      */
-    fun retryRequest(conversation: List<M>): AIConversationRequest<M> {
-        val asksForReply = state == State.Unanswered &&
-            request.kind == AIConversationRequestKind.Message &&
-            hasMessageArrived(conversation)
-        return if (asksForReply) {
-            AIConversationRequest(kind = AIConversationRequestKind.Regenerate, text = request.text)
-        } else {
-            request
+    fun retryRequest(conversation: List<M>): AIConversationRequest<M>? {
+        if (state != State.Unanswered) return request
+        val hadMessage = when (request.kind) {
+            AIConversationRequestKind.Message -> hasMessageArrived(conversation)
+            // A reply to the person's latest message, which the conversation already holds.
+            AIConversationRequestKind.Regenerate -> request.message == null
+            else -> false
         }
+        return request.takeUnless { hadMessage }
     }
 }
 

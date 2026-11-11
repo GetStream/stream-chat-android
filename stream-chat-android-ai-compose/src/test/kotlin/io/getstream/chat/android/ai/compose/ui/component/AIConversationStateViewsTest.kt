@@ -20,7 +20,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.core.net.toUri
@@ -29,6 +31,7 @@ import io.getstream.chat.android.ai.compose.conversation.AIAgentActivity
 import io.getstream.chat.android.ai.compose.conversation.AIConversationFeed
 import io.getstream.chat.android.ai.compose.conversation.AIConversationState
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
+import io.getstream.chat.android.ai.compose.conversation.AIMessageRating
 import io.getstream.chat.android.ai.compose.conversation.ChatMessage
 import io.getstream.chat.android.ai.compose.conversation.FakeTransport
 import io.getstream.chat.android.ai.compose.conversation.rememberAIConversationState
@@ -111,5 +114,29 @@ internal class AIConversationStateViewsTest {
             assertEquals(listOf(photo), transport.lastRequest?.attachments)
             assertEquals(listOf(AIMessageAttachment.image(photo)), state.pendingMessage.value?.attachments)
         }
+    }
+
+    @Test
+    fun `conversation offers to rate a finished reply and rates it through the state`() {
+        val transport = FakeTransport(listOf(user("u1", "Plan Lisbon"), reply("a1", "Day one in Alfama")))
+        show(transport)
+
+        rule.onNodeWithContentDescription("Copy").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Good response").performClick()
+
+        rule.runOnIdle {
+            assertEquals(AIMessageRating.Positive, state.ratings.value["a1"])
+            assertEquals(listOf("a1" to AIMessageRating.Positive), transport.ratings)
+        }
+    }
+
+    @Test
+    fun `conversation of messages alone offers no reply actions by default`() {
+        rule.setContent {
+            AIConversation(messages = listOf(user("u1", "Plan Lisbon"), reply("a1", "Day one in Alfama")))
+        }
+
+        rule.onNodeWithText("Day one in Alfama").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Good response").assertDoesNotExist()
     }
 }

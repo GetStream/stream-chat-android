@@ -45,8 +45,8 @@ public value class AIConversationStatus(public val rawValue: String) {
         public val Streaming: AIConversationStatus = AIConversationStatus("streaming")
 
         /**
-         * The latest request failed, or the agent couldn't answer it. [AIConversationState.retry]
-         * tries again.
+         * The latest request failed, the agent couldn't answer it, or older messages couldn't load.
+         * [AIConversationState.error] says why, and [AIConversationState.retry] tries again.
          */
         public val Error: AIConversationStatus = AIConversationStatus("error")
     }

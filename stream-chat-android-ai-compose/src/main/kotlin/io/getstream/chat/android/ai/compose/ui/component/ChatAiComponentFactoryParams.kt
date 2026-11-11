@@ -20,9 +20,11 @@ import android.net.Uri
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.TextStyle
+import io.getstream.chat.android.ai.compose.conversation.AIConversationState
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
+import io.getstream.chat.android.ai.compose.conversation.AIReplyActions
 import io.getstream.chat.android.ai.compose.parts.AIMessagePart
 import io.getstream.chat.android.ai.compose.parts.AIReasoningPart
 import io.getstream.chat.android.ai.compose.parts.AIToolAuthorization
@@ -185,13 +187,34 @@ public data class AIConversationAssistantMessageParams(
  * @param isLatestReply Whether it is the latest reply in the conversation, such as the only one an
  * app offers to regenerate.
  * @param modifier The modifier to apply.
+ * @param actions What the conversation offers to do with the reply, such as rating it, when it
+ * shows an [AIConversationState]. Null otherwise.
  */
 public data class AIConversationReplyActionsParams(
     val message: AIMessage,
     val text: String,
     val isLatestReply: Boolean,
     val modifier: Modifier = Modifier,
-)
+    val actions: AIReplyActions? = null,
+) {
+
+    @Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        message: AIMessage,
+        text: String,
+        isLatestReply: Boolean,
+        modifier: Modifier = Modifier,
+    ) : this(message = message, text = text, isLatestReply = isLatestReply, modifier = modifier, actions = null)
+
+    @Deprecated("Kept for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        message: AIMessage = this.message,
+        text: String = this.text,
+        isLatestReply: Boolean = this.isLatestReply,
+        modifier: Modifier = this.modifier,
+    ): AIConversationReplyActionsParams =
+        copy(message = message, text = text, isLatestReply = isLatestReply, modifier = modifier, actions = actions)
+}
 
 /**
  * Parameters for [ChatAiComponentFactory.AIConversationAttachment].

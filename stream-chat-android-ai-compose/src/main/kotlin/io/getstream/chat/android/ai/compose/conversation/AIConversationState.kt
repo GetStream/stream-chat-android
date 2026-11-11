@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import io.getstream.chat.android.ai.compose.generativeui.AIUIAction
 import io.getstream.chat.android.ai.compose.ui.component.AIToolApprover
 import io.getstream.chat.android.ai.compose.ui.component.MessageData
+import io.getstream.chat.android.ai.compose.util.internal.simpleLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -111,8 +112,9 @@ public class AIConversationState<M : AIMessage>(
 
     /**
      * Why the latest request failed: what the transport threw, or, as an [AIAgentError], what the
-     * agent said when it couldn't answer or that it didn't answer in time. It stays until the next
-     * request, until [clearError], or until a reply starts after all.
+     * agent said when it couldn't answer or that it didn't answer in time. Also why loading older
+     * messages failed. It stays until the next request, until [clearError] or [retry], or until a
+     * reply starts after all. A failed load's error also goes once older messages load.
      */
     public val error: StateFlow<Throwable?> = _error.asStateFlow()
 
@@ -150,6 +152,10 @@ public class AIConversationState<M : AIMessage>(
     private val ratingChanges = mutableMapOf<String, RatingChange>()
     private var ratingAttempts = 0
     private var isLoadingOlderMessages = false
+
+    // Why loading older messages failed, while it is the error shown.
+    private var loadError: Throwable? = null
+    private val logger = simpleLogger("AIConversationState")
 
     // A rating the person gave a reply, and what the transport has, which it goes back to when the
     // transport can't take the new one.
@@ -234,16 +240,25 @@ public class AIConversationState<M : AIMessage>(
 
     /**
      * Tries again after [error]: sends the request that failed again, with the same message id, or
-     * asks the agent again for the reply it couldn't write. Does nothing without an error.
+     * asks the agent again for a reply it was writing when it couldn't go on.
+     *
+     * When the agent had the person's message but couldn't answer it, nothing is sent again, since
+     * the message would be added twice: retrying forgets the error, as [clearError] does, and the
+     * person asks again. The same goes for an error loading older messages, which load again as
+     * the person scrolls to the start. Does nothing without an error.
      */
     public fun retry() {
-        val exchange = exchange?.takeIf { it.hasFailed } ?: return
-        start(exchange.retryRequest(received))
+        val request = exchange?.takeIf { it.hasFailed }?.retryRequest(received)
+        when {
+            request != null -> start(request)
+            _error.value != null -> clearError()
+        }
     }
 
     /** Forgets [error], and the request that failed. */
     public fun clearError() {
         _error.value = null
+        loadError = null
         if (exchange?.hasFailed == true) exchange = null
         refresh()
     }
@@ -276,20 +291,34 @@ public class AIConversationState<M : AIMessage>(
 
     /**
      * Loads the messages before the first one, one load at a time, while there are any. A load
-     * that fails can be made again.
+     * that fails shows as [error] and can be made again; one that succeeds forgets it.
      */
     public suspend fun loadOlderMessages() {
         if (!_hasOlderMessages.value || isLoadingOlderMessages) return
         isLoadingOlderMessages = true
         try {
             transport.loadOlderMessages()
+            if (loadError != null && _error.value === loadError) _error.value = null
+            loadError = null
         } catch (cancellation: CancellationException) {
             throw cancellation
-        } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") _: Exception) {
-            // The list asks again as the person scrolls to its start.
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+            logger.e(e) { "Couldn't load older messages" }
+            loadError = e
+            _error.value = e
         } finally {
             isLoadingOlderMessages = false
         }
+        refresh()
+    }
+
+    // What the conversation's views offer under a finished reply: rating it, with its rating.
+    internal fun replyActions(reply: AIMessage, ratings: Map<String, AIMessageRating>): AIReplyActions {
+        val message = received.lastOrNull { it.id == reply.id }
+        return AIReplyActions(
+            rating = ratings[reply.id],
+            onRate = message?.let { { rating -> rate(it, rating) } },
+        )
     }
 
     internal fun receiveMessages(messages: List<M>) {
@@ -327,6 +356,7 @@ public class AIConversationState<M : AIMessage>(
         generation += 1
         val id = generation
         _error.value = null
+        loadError = null
         _activity.value = null
         ignoresActivity = false
         stopped.clear()

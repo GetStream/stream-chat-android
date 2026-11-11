@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ai.compose.conversation
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -26,10 +27,15 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.shadows.ShadowLog
 import kotlin.time.Duration
 
+// Robolectric, for the log of a failed load.
+@RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class AIConversationStateRecoveryTest {
 
@@ -134,18 +140,72 @@ internal class AIConversationStateRecoveryTest {
     }
 
     @Test
-    fun `loadOlderMessages when the transport fails can load again`() = runTest {
-        val transport = FakeTransport()
-        transport.loadError = TransportError()
+    fun `loadOlderMessages when the transport fails shows the error and logs it`() = runTest {
+        val transport = FakeTransport(listOf(user("u1"), reply("a1")))
+        val error = TransportError()
+        transport.loadError = error
         val state = conversation(transport)
         transport.feed?.update(hasOlderMessages = true)
 
         state.loadOlderMessages()
+
+        assertSame(error, state.error.value)
+        assertEquals(AIConversationStatus.Error, state.status.value)
+        assertTrue(ShadowLog.getLogsForTag("AIConversationState").any { it.throwable === error })
+    }
+
+    @Test
+    fun `loadOlderMessages that succeeds after failing forgets its error`() = runTest {
+        val transport = FakeTransport()
+        transport.loadError = TransportError()
+        val state = conversation(transport)
+        transport.feed?.update(hasOlderMessages = true)
+        state.loadOlderMessages()
+
+        transport.loadError = null
         state.loadOlderMessages()
 
         assertEquals(2, transport.loads)
-        // Not a request of the person's.
         assertNull(state.error.value)
+        assertEquals(AIConversationStatus.Ready, state.status.value)
+    }
+
+    @Test
+    fun `loadOlderMessages that succeeds keeps the error of a request`() = runTest {
+        val transport = FakeTransport()
+        transport.sendError = TransportError()
+        val state = conversation(transport)
+        state.send("Hi")
+        runCurrent()
+        transport.feed?.update(hasOlderMessages = true)
+
+        state.loadOlderMessages()
+
+        assertTrue(state.error.value is TransportError)
+        assertEquals(AIConversationStatus.Error, state.status.value)
+    }
+
+    @Test
+    fun `an error loading older messages goes with retry or the next request`() = runTest {
+        val transport = FakeTransport()
+        transport.loadError = TransportError()
+        val state = conversation(transport)
+        transport.feed?.update(hasOlderMessages = true)
+        state.loadOlderMessages()
+
+        state.retry()
+        runCurrent()
+
+        // Nothing to send: the list loads again as the person scrolls.
+        assertTrue(transport.requests.isEmpty())
+        assertNull(state.error.value)
+
+        state.loadOlderMessages()
+        assertTrue(state.error.value is TransportError)
+        state.send("Hi")
+
+        assertNull(state.error.value)
+        assertEquals(AIConversationStatus.Submitted, state.status.value)
     }
 
     @Test

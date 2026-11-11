@@ -40,6 +40,7 @@ import io.getstream.chat.android.ai.compose.conversation.AIConversationStatus
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.conversation.AIPendingMessage
+import io.getstream.chat.android.ai.compose.conversation.AIReplyActions
 import io.getstream.chat.android.ai.compose.generativeui.AIUIDocument
 import io.getstream.chat.android.ai.compose.generativeui.AIUIEntranceStage
 import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
@@ -123,6 +124,41 @@ public fun AIConversation(
     contentPadding: PaddingValues = PaddingValues(),
     ui: AIUIHost? = null,
 ) {
+    AIConversationContent(
+        messages = messages,
+        modifier = modifier,
+        pendingMessage = pendingMessage,
+        isThinking = isThinking,
+        approver = approver,
+        loadOlderMessages = loadOlderMessages,
+        footer = footer,
+        emptyContent = emptyContent,
+        colors = colors,
+        icons = icons,
+        contentPadding = contentPadding,
+        ui = ui,
+        replyActions = null,
+    )
+}
+
+// The list of AIMessages, with what the conversation offers under each finished reply, if anything.
+@Suppress("LongParameterList")
+@Composable
+private fun AIConversationContent(
+    messages: List<AIMessage>,
+    modifier: Modifier,
+    pendingMessage: AIPendingMessage?,
+    isThinking: Boolean,
+    approver: AIToolApprover?,
+    loadOlderMessages: (suspend () -> Unit)?,
+    footer: @Composable () -> Unit,
+    emptyContent: @Composable () -> Unit,
+    colors: AIConversationColors,
+    icons: AIConversationIcons,
+    contentPadding: PaddingValues,
+    ui: AIUIHost?,
+    replyActions: ((AIMessage) -> AIReplyActions)?,
+) {
     val tracker = remember { AIPendingMessageTracker() }
     // A copy, so a list changed in place still counts as changed.
     val shown = messages.toList()
@@ -146,7 +182,7 @@ public fun AIConversation(
         icons = icons,
         contentPadding = contentPadding,
     ) { entry ->
-        AIConversationEntryContent(entry = entry, approver = approver, ui = ui)
+        AIConversationEntryContent(entry = entry, approver = approver, ui = ui, replyActions = replyActions)
     }
 }
 
@@ -161,6 +197,9 @@ public fun AIConversation(
  *     ChatComposer(state = conversation)
  * }
  * ```
+ *
+ * Under each finished reply, [ChatAiComponentFactory.AIConversationReplyActions] gets the reply's
+ * actions: by default a row that copies, shares and rates it, through [AIConversationState.rate].
  *
  * While the agent says it is doing something besides thinking, such as checking external sources,
  * the latest turn ends with an [AITypingIndicator] showing what it says, in place of [AIThinking].
@@ -196,8 +235,9 @@ public fun AIConversation(
     val activity by state.activity.collectAsState()
     val hasOlderMessages by state.hasOlderMessages.collectAsState()
     val loadOlderMessages = remember<suspend () -> Unit>(state) { { state.loadOlderMessages() } }
+    val ratings by state.ratings.collectAsState()
     val working = activity?.takeIf { it.isWorking }
-    AIConversation(
+    AIConversationContent(
         messages = messages,
         modifier = modifier,
         pendingMessage = pending,
@@ -226,6 +266,7 @@ public fun AIConversation(
         icons = icons,
         contentPadding = contentPadding,
         ui = ui,
+        replyActions = { reply -> state.replyActions(reply, ratings) },
     )
 }
 
@@ -330,7 +371,12 @@ public fun AIConversation(
 }
 
 @Composable
-private fun AIConversationEntryContent(entry: AIConversationEntry, approver: AIToolApprover?, ui: AIUIHost?) {
+private fun AIConversationEntryContent(
+    entry: AIConversationEntry,
+    approver: AIToolApprover?,
+    ui: AIUIHost?,
+    replyActions: ((AIMessage) -> AIReplyActions)?,
+) {
     val factory = LocalChatAiComponentFactory.current
     val message = entry.message
     val pending = entry.pending
@@ -355,12 +401,19 @@ private fun AIConversationEntryContent(entry: AIConversationEntry, approver: AIT
             isLatestReply = entry.isLatestReply,
             approver = approver,
             ui = ui,
+            actions = replyActions?.invoke(message),
         )
     }
 }
 
 @Composable
-private fun AIConversationReply(message: AIMessage, isLatestReply: Boolean, approver: AIToolApprover?, ui: AIUIHost?) {
+private fun AIConversationReply(
+    message: AIMessage,
+    isLatestReply: Boolean,
+    approver: AIToolApprover?,
+    ui: AIUIHost?,
+    actions: AIReplyActions?,
+) {
     val factory = LocalChatAiComponentFactory.current
     // Whether the reply's answer is still being written out, which its actions wait for so they
     // do not move down with it. Null while its view has not said.
@@ -404,6 +457,7 @@ private fun AIConversationReply(message: AIMessage, isLatestReply: Boolean, appr
                         message = message,
                         text = message.text,
                         isLatestReply = isLatestReply,
+                        actions = actions,
                     ),
                 )
             }

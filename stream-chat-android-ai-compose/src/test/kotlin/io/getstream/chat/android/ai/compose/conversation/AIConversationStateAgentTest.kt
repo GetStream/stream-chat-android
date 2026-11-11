@@ -19,6 +19,7 @@ package io.getstream.chat.android.ai.compose.conversation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -26,6 +27,8 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class AIConversationStateAgentTest {
@@ -298,16 +301,6 @@ internal class AIConversationStateAgentTest {
 
         // It stays until the next request.
         assertEquals(AIConversationStatus.Error, state.status.value)
-
-        state.retry()
-        runCurrent()
-
-        assertEquals(AIConversationRequestKind.Regenerate, transport.lastRequest?.kind)
-        assertEquals("Porto?", transport.lastRequest?.text)
-        // The message has no reply to replace.
-        assertNull(transport.lastRequest?.message)
-        assertEquals(AIConversationStatus.Submitted, state.status.value)
-        assertNull(state.error.value)
     }
 
     @Test
@@ -367,22 +360,68 @@ internal class AIConversationStateAgentTest {
     }
 
     @Test
-    fun `an error activity before the person's message arrives lets retry ask for its reply once it is there`() =
-        runTest {
-            val transport = FakeTransport(listOf(user("u1", "Lisbon?"), reply("a1")))
-            val state = conversation(transport)
-            state.send("Porto?")
-            runCurrent()
+    fun `retry after the agent couldn't answer a message it has sends nothing and forgets the error`() = runTest {
+        val transport = FakeTransport(listOf(user("u1", "Lisbon?"), reply("a1")))
+        val state = conversation(transport)
+        state.send("Porto?")
+        runCurrent()
 
-            transport.update(AIAgentActivity(AIAgentActivity.State.Error))
-            transport.update(user("u1", "Lisbon?"), reply("a1"), user("u2", "Porto?"))
-            state.retry()
-            runCurrent()
+        transport.update(AIAgentActivity(AIAgentActivity.State.Error))
+        transport.update(user("u1", "Lisbon?"), reply("a1"), user("u2", "Porto?"))
+        state.retry()
+        runCurrent()
 
-            assertEquals(AIConversationRequestKind.Regenerate, transport.lastRequest?.kind)
-            assertEquals("Porto?", transport.lastRequest?.text)
-            assertNull(transport.lastRequest?.message)
-        }
+        // Sending it again would add it twice: the person asks again.
+        assertEquals(1, transport.requests.size)
+        assertNull(state.error.value)
+        assertNull(state.pendingMessage.value)
+        assertEquals(AIConversationStatus.Ready, state.status.value)
+    }
+
+    @Test
+    fun `retry after the reply didn't start in time for a message the agent has sends nothing`() = runTest {
+        val transport = FakeTransport(listOf(user("u1"), reply("a1")))
+        val state = conversation(transport, replyTimeout = 1.seconds)
+        state.send("Porto?")
+        runCurrent()
+        transport.update(user("u1"), reply("a1"), user("u2", "Porto?"))
+        advanceTimeBy(1.seconds + 1.milliseconds)
+        assertEquals(AIAgentError(), state.error.value)
+
+        state.retry()
+        runCurrent()
+
+        assertEquals(1, transport.requests.size)
+        assertNull(state.error.value)
+        assertEquals(AIConversationStatus.Ready, state.status.value)
+    }
+
+    @Test
+    fun `retry after the agent couldn't answer the person's latest message sends nothing`() = runTest {
+        val transport = FakeTransport(listOf(user("u1"), reply("a1"), user("u2", "Porto?")))
+        val state = conversation(transport)
+
+        transport.update(AIAgentActivity(AIAgentActivity.State.Error, text = "Rate limited"))
+        assertEquals(AIConversationStatus.Error, state.status.value)
+        state.retry()
+        runCurrent()
+
+        assertTrue(transport.requests.isEmpty())
+        assertNull(state.error.value)
+        assertEquals(AIConversationStatus.Ready, state.status.value)
+    }
+
+    @Test
+    fun `the agent answering the person's latest message after all forgets its error`() = runTest {
+        val transport = FakeTransport(listOf(user("u1"), reply("a1"), user("u2", "Porto?")))
+        val state = conversation(transport)
+        transport.update(AIAgentActivity(AIAgentActivity.State.Error))
+
+        transport.update(user("u1"), reply("a1"), user("u2", "Porto?"), reply("a2", "Porto it is", generating = true))
+
+        assertNull(state.error.value)
+        assertEquals(AIConversationStatus.Streaming, state.status.value)
+    }
 
     @Test
     fun `an error activity is forgotten once a new reply starts`() = runTest {
