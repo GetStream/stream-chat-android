@@ -173,8 +173,7 @@ public interface MessageRepository {
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
 
     /**
-     * Insert a draft message. The draft is a copy from the server, so it is skipped when its channel or thread has a
-     * local change that has not reached the server yet.
+     * Insert a draft message.
      *
      * @param message [DraftMessage] to be inserted.
      */
@@ -182,26 +181,16 @@ public interface MessageRepository {
     public suspend fun insertDraftMessage(message: DraftMessage)
 
     /**
-     * Stores [message] as a local change that has not reached the server yet. Copies from the server do not replace
-     * it until [completeDraftMessage] or [removeDeletedDraftMessage] is called.
+     * Stores [message] as a local change that has not reached the server yet. [insertDraftMessage] stores the draft as
+     * synced again.
      */
     public suspend fun insertPendingDraftMessage(message: DraftMessage) { /* No-Op */ }
 
     /**
-     * Hides the draft of the channel or thread of [message] until its deletion reaches the server. Until then, copies
-     * from the server do not bring it back.
+     * Hides the draft of the channel or thread of [message] until its deletion reaches the server, when
+     * [deleteDraftMessage] removes it.
      */
     public suspend fun markDraftMessageDeleted(message: DraftMessage) { /* No-Op */ }
-
-    /**
-     * Stores [message] as the draft of its channel or thread, ending any local change that was not sent yet.
-     */
-    public suspend fun completeDraftMessage(message: DraftMessage) { /* No-Op */ }
-
-    /**
-     * Removes the draft hidden by [markDraftMessageDeleted] once its deletion has reached the server.
-     */
-    public suspend fun removeDeletedDraftMessage(message: DraftMessage) { /* No-Op */ }
 
     /**
      * Selects the drafts saved locally that have not reached the server yet.
@@ -235,8 +224,7 @@ public interface MessageRepository {
 
     /**
      * Deletes the draft message of a channel, or of a thread when [parentId] is not null. Used when the draft is only
-     * identified by the channel/thread it belongs to, as happens with the `draft.deleted` event. A draft with a local
-     * change that has not reached the server yet is kept.
+     * identified by the channel/thread it belongs to, as happens with the `draft.deleted` event.
      */
     public suspend fun deleteDraftMessage(cid: String, parentId: String?)
 

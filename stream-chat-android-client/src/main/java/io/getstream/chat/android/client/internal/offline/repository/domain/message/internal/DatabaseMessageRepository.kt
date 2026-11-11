@@ -192,7 +192,7 @@ internal class DatabaseMessageRepository(
 
     override suspend fun insertDraftMessage(message: DraftMessage) {
         message.replyMessage?.let { insertMessage(it) }
-        messageDao.replaceDraftMessageUnlessPending(message.toEntity())
+        messageDao.replaceDraftMessage(message.toEntity())
     }
 
     override suspend fun insertPendingDraftMessage(message: DraftMessage) {
@@ -206,21 +206,15 @@ internal class DatabaseMessageRepository(
         )
     }
 
-    override suspend fun completeDraftMessage(message: DraftMessage) {
-        message.replyMessage?.let { insertMessage(it) }
-        messageDao.replaceDraftMessage(message.toEntity())
-    }
-
-    override suspend fun removeDeletedDraftMessage(message: DraftMessage) {
-        messageDao.deleteDeletedDraftMessage(message.id)
-    }
-
     override suspend fun deleteDraftMessage(message: DraftMessage) {
         messageDao.deleteDraftMessage(message.id)
     }
 
     override suspend fun deleteDraftMessage(cid: String, parentId: String?) {
-        messageDao.deleteDraftMessageUnlessPending(cid, parentId)
+        when (parentId) {
+            null -> messageDao.deleteDraftMessageByCid(cid)
+            else -> messageDao.deleteDraftMessageByParentId(parentId)
+        }
     }
 
     override suspend fun selectDraftMessages(): List<DraftMessage> = messageDao.selectDraftMessages()

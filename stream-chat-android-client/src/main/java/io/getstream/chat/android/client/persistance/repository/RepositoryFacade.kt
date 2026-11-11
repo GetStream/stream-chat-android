@@ -126,11 +126,6 @@ public class RepositoryFacade private constructor(
         messageRepository.insertPendingDraftMessage(message)
     }
 
-    override suspend fun completeDraftMessage(message: DraftMessage) {
-        if (message.mentionedUsers.isNotEmpty()) insertUsers(message.mentionedUsers)
-        messageRepository.completeDraftMessage(message)
-    }
-
     override suspend fun insertMessage(message: Message) {
         insertUsers(message.users())
         messageRepository.insertMessage(message)

@@ -58,7 +58,7 @@ internal class DraftMessageListenerDatabaseTest {
     }
 
     @Test
-    fun `onCreateDraftMessageResult should store the server copy as completed on success`() = runTest {
+    fun `onCreateDraftMessageResult should store the server copy as synced on success`() = runTest {
         val draftMessage = randomDraftMessage()
         val serverCopy = draftMessage.copy(createdAt = Date())
 
@@ -69,7 +69,7 @@ internal class DraftMessageListenerDatabaseTest {
             message = draftMessage,
         )
 
-        verify(messageRepository).completeDraftMessage(serverCopy)
+        verify(messageRepository).insertDraftMessage(serverCopy)
     }
 
     @Test
@@ -83,12 +83,11 @@ internal class DraftMessageListenerDatabaseTest {
             message = draftMessage,
         )
 
-        verify(messageRepository, never()).completeDraftMessage(any())
         verify(messageRepository, never()).insertDraftMessage(any())
     }
 
     @Test
-    fun `onCreateDraftMessageResult should keep the local draft as completed on a permanent error`() = runTest {
+    fun `onCreateDraftMessageResult should store the local draft as synced on a permanent error`() = runTest {
         val draftMessage = randomDraftMessage()
 
         listener.onCreateDraftMessageResult(
@@ -98,7 +97,7 @@ internal class DraftMessageListenerDatabaseTest {
             message = draftMessage,
         )
 
-        verify(messageRepository).completeDraftMessage(draftMessage)
+        verify(messageRepository).insertDraftMessage(draftMessage)
     }
 
     @Test
@@ -115,7 +114,7 @@ internal class DraftMessageListenerDatabaseTest {
     }
 
     @Test
-    fun `onDeleteDraftMessagesResult should remove the hidden draft on success`() = runTest {
+    fun `onDeleteDraftMessagesResult should delete the hidden draft on success`() = runTest {
         val draftMessage = randomDraftMessage()
 
         listener.onDeleteDraftMessagesResult(
@@ -125,11 +124,11 @@ internal class DraftMessageListenerDatabaseTest {
             message = draftMessage,
         )
 
-        verify(messageRepository).removeDeletedDraftMessage(draftMessage)
+        verify(messageRepository).deleteDraftMessage(draftMessage)
     }
 
     @Test
-    fun `onDeleteDraftMessagesResult should remove the hidden draft when the server has no draft`() = runTest {
+    fun `onDeleteDraftMessagesResult should delete the hidden draft when the server has no draft`() = runTest {
         val draftMessage = randomDraftMessage()
 
         listener.onDeleteDraftMessagesResult(
@@ -139,7 +138,7 @@ internal class DraftMessageListenerDatabaseTest {
             message = draftMessage,
         )
 
-        verify(messageRepository).removeDeletedDraftMessage(draftMessage)
+        verify(messageRepository).deleteDraftMessage(draftMessage)
     }
 
     @Test
@@ -153,7 +152,6 @@ internal class DraftMessageListenerDatabaseTest {
             message = draftMessage,
         )
 
-        verify(messageRepository, never()).removeDeletedDraftMessage(any())
         verify(messageRepository, never()).deleteDraftMessage(any())
     }
 

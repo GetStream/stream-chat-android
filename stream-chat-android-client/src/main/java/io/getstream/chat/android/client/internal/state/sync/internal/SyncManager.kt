@@ -187,7 +187,7 @@ internal class SyncManager(
         eventsDisposable = chatClient.subscribe(::onEvent)
         rescueScope.launch { rescueEntitiesStuckInProgress() }
         // Not tied to ConnectedEvent, so drafts also show when the app starts offline.
-        rescueScope.launch { restorePendingDraftMessages() }
+        rescueScope.launch { syncOfflineDraftMessages() }
         // Not tied to the connection, so live locations also end on time while offline.
         liveLocationEndJob = rescueScope.launch { endLiveLocationsOnTime() }
     }
@@ -302,16 +302,6 @@ internal class SyncManager(
         repos.selectDraftMessages().forEach { draftMessage ->
             mutableGlobalState.updateDraftMessage(draftMessage)
         }
-    }
-
-    /**
-     * Loads the stored drafts like [syncOfflineDraftMessages], first marking the local changes that have not reached
-     * the server yet, so the drafts from the server do not replace them before [retryDrafts] sends them.
-     */
-    private suspend fun restorePendingDraftMessages() {
-        repos.selectDeletedDraftMessages().forEach(mutableGlobalState::removePendingDraftMessage)
-        repos.selectPendingDraftMessages().forEach(mutableGlobalState::updatePendingDraftMessage)
-        syncOfflineDraftMessages()
     }
 
     private fun setSyncState(state: SyncState?) {

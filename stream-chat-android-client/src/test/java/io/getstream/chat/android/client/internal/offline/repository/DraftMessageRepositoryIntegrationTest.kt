@@ -20,7 +20,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.internal.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.randomCID
-import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -184,98 +183,42 @@ internal class DraftMessageRepositoryIntegrationTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `a server copy should not replace a draft saved locally that has not reached the server`(): Unit = runTest {
-        val serverCopy = randomDraftMessage(parentId = null, replyMessage = null)
-        val localDraft = serverCopy.copy(text = randomString())
-        repos.insertPendingDraftMessage(localDraft)
-
-        repos.insertDraftMessage(serverCopy)
-
-        repos.selectDraftMessagesByCid(serverCopy.cid) shouldBeEqualTo localDraft
-        repos.selectPendingDraftMessages() shouldContainSame listOf(localDraft)
-    }
-
-    @Test
-    fun `a channel response should not replace a draft saved locally that has not reached the server`(): Unit =
-        runTest {
-            val channel = randomChannel(messages = emptyList())
-            val serverCopy = randomDraftMessage(cid = channel.cid, parentId = null, replyMessage = null)
-            val localDraft = serverCopy.copy(text = randomString())
-            repos.insertPendingDraftMessage(localDraft)
-
-            repos.insertChannels(listOf(channel.copy(draftMessage = serverCopy)))
-
-            repos.selectDraftMessagesByCid(channel.cid) shouldBeEqualTo localDraft
-        }
-
-    @Test
-    fun `a server copy should not replace a thread draft saved locally that has not reached the server`(): Unit =
-        runTest {
-            val serverCopy = randomDraftMessage(parentId = randomString(), replyMessage = null)
-            val localDraft = serverCopy.copy(text = randomString())
-            repos.insertPendingDraftMessage(localDraft)
-
-            repos.insertDraftMessage(serverCopy)
-
-            repos.selectDraftMessageByParentId(serverCopy.parentId!!) shouldBeEqualTo localDraft
-        }
-
-    @Test
-    fun `a draft deleted locally should be hidden and not brought back by a server copy`(): Unit = runTest {
-        val serverCopy = randomDraftMessage(parentId = null, replyMessage = null)
-        repos.insertDraftMessage(serverCopy)
-        repos.markDraftMessageDeleted(serverCopy)
-
-        repos.insertDraftMessage(serverCopy)
-
-        repos.selectDraftMessagesByCid(serverCopy.cid).shouldBeNull()
-        repos.selectDraftMessages() shouldBeEqualTo emptyList()
-        repos.selectDeletedDraftMessages() shouldContainSame listOf(serverCopy)
-        repos.selectPendingDraftMessages() shouldBeEqualTo emptyList()
-    }
-
-    @Test
-    fun `a draft deleted event should keep a draft saved locally that has not reached the server`(): Unit = runTest {
+    fun `a draft saved locally should stay visible and pending until stored as synced`(): Unit = runTest {
         val localDraft = randomDraftMessage(parentId = null, replyMessage = null)
         repos.insertPendingDraftMessage(localDraft)
-
-        repos.deleteDraftMessage(cid = localDraft.cid, parentId = null)
 
         repos.selectDraftMessagesByCid(localDraft.cid) shouldBeEqualTo localDraft
-    }
+        repos.selectPendingDraftMessages() shouldContainSame listOf(localDraft)
 
-    @Test
-    fun `completing a pending draft should let later server copies replace it`(): Unit = runTest {
-        val localDraft = randomDraftMessage(parentId = null, replyMessage = null)
-        val laterCopy = localDraft.copy(text = randomString())
-        repos.insertPendingDraftMessage(localDraft)
+        repos.insertDraftMessage(localDraft)
 
-        repos.completeDraftMessage(localDraft)
-        repos.insertDraftMessage(laterCopy)
-
-        repos.selectDraftMessagesByCid(localDraft.cid) shouldBeEqualTo laterCopy
         repos.selectPendingDraftMessages() shouldBeEqualTo emptyList()
     }
 
     @Test
-    fun `removing a deleted draft should let later server copies in`(): Unit = runTest {
-        val serverCopy = randomDraftMessage(parentId = null, replyMessage = null)
-        repos.markDraftMessageDeleted(serverCopy)
+    fun `a draft deleted locally should be hidden until its deletion reaches the server`(): Unit = runTest {
+        val draft = randomDraftMessage(parentId = null, replyMessage = null)
+        repos.insertDraftMessage(draft)
 
-        repos.removeDeletedDraftMessage(serverCopy)
-        repos.insertDraftMessage(serverCopy)
+        repos.markDraftMessageDeleted(draft)
+
+        repos.selectDraftMessagesByCid(draft.cid).shouldBeNull()
+        repos.selectDraftMessages() shouldBeEqualTo emptyList()
+        repos.selectDeletedDraftMessages() shouldContainSame listOf(draft)
+        repos.selectPendingDraftMessages() shouldBeEqualTo emptyList()
+
+        repos.deleteDraftMessage(draft)
 
         repos.selectDeletedDraftMessages() shouldBeEqualTo emptyList()
-        repos.selectDraftMessagesByCid(serverCopy.cid) shouldBeEqualTo serverCopy
     }
 
     @Test
-    fun `removing a deleted draft should keep a visible draft with the same id`(): Unit = runTest {
-        val draft = randomDraftMessage(parentId = null, replyMessage = null)
-        repos.insertPendingDraftMessage(draft)
+    fun `a thread draft deleted locally should be hidden from its thread`(): Unit = runTest {
+        val draft = randomDraftMessage(parentId = randomString(), replyMessage = null)
+        repos.insertDraftMessage(draft)
 
-        repos.removeDeletedDraftMessage(draft)
+        repos.markDraftMessageDeleted(draft)
 
-        repos.selectDraftMessagesByCid(draft.cid) shouldBeEqualTo draft
+        repos.selectDraftMessageByParentId(draft.parentId!!).shouldBeNull()
     }
 }

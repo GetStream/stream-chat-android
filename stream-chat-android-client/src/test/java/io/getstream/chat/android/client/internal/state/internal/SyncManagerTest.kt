@@ -1263,25 +1263,6 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `start should mark the drafts not sent yet as pending before loading the stored drafts`() =
-        runTest(testDispatcher) {
-            val sut = buildSyncManager()
-            val deleted = randomDraftMessage()
-            val pending = randomDraftMessage()
-            whenever(repositoryFacade.selectDeletedDraftMessages()).thenReturn(listOf(deleted))
-            whenever(repositoryFacade.selectPendingDraftMessages()).thenReturn(listOf(pending))
-            whenever(repositoryFacade.selectDraftMessages()).thenReturn(listOf(pending))
-
-            sut.start()
-
-            inOrder(mutableGlobalState) {
-                verify(mutableGlobalState).removePendingDraftMessage(deleted)
-                verify(mutableGlobalState).updatePendingDraftMessage(pending)
-                verify(mutableGlobalState).updateDraftMessage(pending)
-            }
-        }
-
-    @Test
     fun `reconnect should send the drafts saved or deleted offline before refreshing the channels`() =
         runTest(testDispatcher) {
             val sut = buildSyncManager()

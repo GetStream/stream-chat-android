@@ -131,45 +131,6 @@ internal interface MessageDao {
         insertDraftMessages(draftMessage)
     }
 
-    /**
-     * Stores [draftMessage], a copy from the server, like [replaceDraftMessage], unless its channel or thread has a
-     * local change that has not reached the server yet.
-     */
-    @Transaction
-    suspend fun replaceDraftMessageUnlessPending(draftMessage: DraftMessageEntity) {
-        if (countPendingDrafts(draftMessage.cid, draftMessage.parentId) == 0) replaceDraftMessage(draftMessage)
-    }
-
-    /**
-     * Deletes the draft of a channel, or of a thread when [parentId] is not null, unless it has a local change that
-     * has not reached the server yet.
-     */
-    @Transaction
-    suspend fun deleteDraftMessageUnlessPending(cid: String, parentId: String?) {
-        if (countPendingDrafts(cid, parentId) > 0) return
-        when (parentId) {
-            null -> deleteDraftMessageByCid(cid)
-            else -> deleteDraftMessageByParentId(parentId)
-        }
-    }
-
-    suspend fun countPendingDrafts(cid: String, parentId: String?): Int = when (parentId) {
-        null -> countChannelDraftsBySyncStatus(cid, SyncStatus.SYNC_NEEDED)
-        else -> countThreadDraftsBySyncStatus(parentId, SyncStatus.SYNC_NEEDED)
-    }
-
-    @Query(
-        "SELECT COUNT(*) FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME " +
-            "WHERE cid = :cid AND parentId IS NULL AND syncStatus = :syncStatus",
-    )
-    suspend fun countChannelDraftsBySyncStatus(cid: String, syncStatus: SyncStatus): Int
-
-    @Query(
-        "SELECT COUNT(*) FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME " +
-            "WHERE parentId = :parentId AND syncStatus = :syncStatus",
-    )
-    suspend fun countThreadDraftsBySyncStatus(parentId: String, syncStatus: SyncStatus): Int
-
     @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE deletedLocally = 0")
     suspend fun selectDraftMessages(): List<DraftMessageEntity>
 
@@ -187,9 +148,6 @@ internal interface MessageDao {
 
     @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE id = :messageId")
     suspend fun deleteDraftMessage(messageId: String)
-
-    @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE id = :messageId AND deletedLocally = 1")
-    suspend fun deleteDeletedDraftMessage(messageId: String)
 
     @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE cid = :cid AND parentId IS NULL")
     suspend fun deleteDraftMessageByCid(cid: String)

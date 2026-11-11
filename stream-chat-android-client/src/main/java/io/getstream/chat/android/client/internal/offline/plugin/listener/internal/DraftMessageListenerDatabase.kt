@@ -65,8 +65,8 @@ internal class DraftMessageListenerDatabase(
         message: DraftMessage,
     ) {
         when (result) {
-            is Result.Success -> messageRepository.completeDraftMessage(result.value)
-            is Result.Failure -> if (result.value.isPermanent()) messageRepository.completeDraftMessage(message)
+            is Result.Success -> messageRepository.insertDraftMessage(result.value)
+            is Result.Failure -> if (result.value.isPermanent()) messageRepository.insertDraftMessage(message)
         }
     }
 
@@ -104,9 +104,9 @@ internal class DraftMessageListenerDatabase(
         message: DraftMessage,
     ) {
         when (result) {
-            is Result.Success -> messageRepository.removeDeletedDraftMessage(message)
+            is Result.Success -> messageRepository.deleteDraftMessage(message)
             // A missing draft is a permanent failure too, so a deletion that already landed is not sent forever.
-            is Result.Failure -> if (result.value.isPermanent()) messageRepository.removeDeletedDraftMessage(message)
+            is Result.Failure -> if (result.value.isPermanent()) messageRepository.deleteDraftMessage(message)
         }
     }
 
