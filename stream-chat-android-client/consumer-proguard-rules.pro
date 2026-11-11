@@ -22,7 +22,6 @@
 -keep,allowobfuscation @io.getstream.chat.android.client.api.AnonymousApi interface *
 
 # Rules necessary for R8 full mode
--keep class io.getstream.chat.android.client.call.RetrofitCall { *; }
 -keep class com.squareup.moshi.JsonReader
 -keep class com.squareup.moshi.JsonAdapter
 
