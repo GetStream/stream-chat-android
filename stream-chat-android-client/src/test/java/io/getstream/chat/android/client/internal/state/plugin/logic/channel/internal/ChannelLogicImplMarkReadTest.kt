@@ -74,7 +74,7 @@ internal class ChannelLogicImplMarkReadTest : ChannelStateImplTestBase() {
         assertEquals(MarkReadResult.RemoteRequired, sut.markRead(restoreOnFailure = true))
         assertEquals(0, unreadMessages())
 
-        sut.onMarkReadFailed()
+        assertEquals(true, sut.onMarkReadFailed())
 
         assertEquals(3, unreadMessages())
     }
@@ -108,7 +108,7 @@ internal class ChannelLogicImplMarkReadTest : ChannelStateImplTestBase() {
     fun `a mark read that is not tracked restores nothing on failure`() {
         sut.markRead()
 
-        sut.onMarkReadFailed()
+        assertEquals(false, sut.onMarkReadFailed())
 
         assertEquals(0, unreadMessages())
     }

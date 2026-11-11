@@ -229,9 +229,7 @@ internal class ChannelLogicLegacyImpl(
         return result
     }
 
-    override fun onMarkReadFailed() {
-        mutableState.restoreClearedUnread()
-    }
+    override fun onMarkReadFailed(): Boolean = mutableState.restoreClearedUnread()
 
     override fun typingEventsEnabled(): Boolean {
         return mutableState.channelConfig.value.typingEventsEnabled

@@ -135,8 +135,8 @@ internal class ChannelUpdateResponseHandler(
      * from the server was applied since.
      */
     fun onMarkReadFailed(channelType: String, channelId: String) = safely("onMarkReadFailed") {
-        if (logic.isActiveChannel(channelType, channelId)) {
-            logic.channel(channelType, channelId).onMarkReadFailed()
+        // A request the precondition skipped also ends here, with nothing to add back and nothing to refresh
+        if (logic.isActiveChannel(channelType, channelId) && logic.channel(channelType, channelId).onMarkReadFailed()) {
             refreshChannelLists("$channelType:$channelId")
         }
     }

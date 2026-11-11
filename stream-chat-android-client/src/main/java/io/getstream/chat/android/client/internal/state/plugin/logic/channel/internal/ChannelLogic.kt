@@ -220,8 +220,10 @@ internal interface ChannelLogic {
     /**
      * Adds back the unread count [markRead] cleared when the mark read request that followed it failed, unless a read
      * from the server was applied since.
+     *
+     * @return True if a count was added back.
      */
-    fun onMarkReadFailed()
+    fun onMarkReadFailed(): Boolean
 
     /**
      * Checks if typing events are enabled for the channel.

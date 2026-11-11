@@ -294,9 +294,7 @@ internal class ChannelLogicImpl(
         return result
     }
 
-    override fun onMarkReadFailed() {
-        state.restoreClearedUnread()
-    }
+    override fun onMarkReadFailed(): Boolean = state.restoreClearedUnread()
 
     /** Persists the in-memory reads so the locally tracked unread count survives a restart. */
     private fun persistCurrentReads() {

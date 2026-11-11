@@ -281,13 +281,25 @@ internal class ChannelUpdateResponseHandlerTest {
     }
 
     @Test
-    fun `onMarkReadFailed restores the active channel's cleared unread count`() = runTest {
+    fun `onMarkReadFailed restores the active channel's cleared unread count and refreshes the lists`() = runTest {
         givenActiveChannel()
+        whenever(channelLogic.onMarkReadFailed()) doReturn true
 
         handler.onMarkReadFailed(CHANNEL_TYPE, CHANNEL_ID)
 
         verify(channelLogic).onMarkReadFailed()
         verify(queryChannelsLogic).refreshChannelState(CID)
+    }
+
+    @Test
+    fun `onMarkReadFailed does not refresh the lists when nothing was restored`() = runTest {
+        givenActiveChannel()
+        // A request the precondition skipped: nothing was cleared, so nothing comes back
+        whenever(channelLogic.onMarkReadFailed()) doReturn false
+
+        handler.onMarkReadFailed(CHANNEL_TYPE, CHANNEL_ID)
+
+        verify(queryChannelsLogic, never()).refreshChannelState(any())
     }
 
     @Test

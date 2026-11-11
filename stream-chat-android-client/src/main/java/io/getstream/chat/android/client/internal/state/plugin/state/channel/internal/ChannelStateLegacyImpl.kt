@@ -601,15 +601,20 @@ internal class ChannelStateLegacyImpl(
     /**
      * Adds back the unread count the last tracked [markChannelAsRead] cleared, when its mark read request failed.
      * Nothing is added once a read from the server replaced the local one since.
+     *
+     * @return True if a count was added back.
      */
-    fun restoreClearedUnread() {
+    fun restoreClearedUnread(): Boolean {
         val cleared = clearedUnread.getAndSet(0)
         val userId = userFlow.value?.id
-        if (cleared == 0 || userId == null) return
+        if (cleared == 0 || userId == null) return false
+        var restored = false
         _rawReads?.update { current ->
-            val read = current[userId] ?: return@update current
+            val read = current[userId] ?: return@update current.also { restored = false }
+            restored = true
             current + (userId to read.copy(unreadMessages = read.unreadMessages + cleared))
         }
+        return restored
     }
 
     /**
