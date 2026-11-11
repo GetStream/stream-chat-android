@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
+import java.util.Collections
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
@@ -56,6 +57,9 @@ internal class MutableGlobalState(
 
     /** End time of each live location ended by [endLiveLocation], by message id. */
     private val locallyEndedLiveLocations = ConcurrentHashMap<String, Date>()
+
+    /** Channels and threads whose draft has a local change that has not reached the server yet. */
+    private val pendingDrafts: MutableSet<String> = Collections.newSetFromMap(ConcurrentHashMap())
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
     override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount!!
@@ -90,6 +94,7 @@ internal class MutableGlobalState(
         _threadDraftMessages = null
         _activeLiveLocations.value = emptyList()
         locallyEndedLiveLocations.clear()
+        pendingDrafts.clear()
     }
 
     fun setTotalUnreadCount(totalUnreadCount: Int) {
@@ -149,7 +154,45 @@ internal class MutableGlobalState(
         _mutedUsers?.value = mutedUsers
     }
 
+    /**
+     * Stores a draft from the server, unless its channel or thread has a local change that has not reached the server
+     * yet.
+     */
     fun updateDraftMessage(draftMessage: DraftMessage) {
+        if (draftMessage.pendingKey() !in pendingDrafts) putDraftMessage(draftMessage)
+    }
+
+    /** Adds the drafts the server returned with [channels]. */
+    fun updateChannelDrafts(channels: List<Channel>) {
+        channels.forEach { channel -> channel.draftMessage?.let(::updateDraftMessage) }
+    }
+
+    /**
+     * Removes a draft deleted on the server, unless its channel or thread has a local change that has not reached the
+     * server yet.
+     */
+    fun removeDraftMessage(draftMessage: DraftMessage) {
+        if (draftMessage.pendingKey() !in pendingDrafts) dropDraftMessage(draftMessage)
+    }
+
+    /** Stores a draft saved locally. Drafts from the server do not replace it until [completeDraftMessage]. */
+    fun updatePendingDraftMessage(draftMessage: DraftMessage) {
+        pendingDrafts += draftMessage.pendingKey()
+        putDraftMessage(draftMessage)
+    }
+
+    /** Removes a draft deleted locally. Drafts from the server do not bring it back until [completeDraftMessage]. */
+    fun removePendingDraftMessage(draftMessage: DraftMessage) {
+        pendingDrafts += draftMessage.pendingKey()
+        dropDraftMessage(draftMessage)
+    }
+
+    /** Ends the local change of the channel or thread of [draftMessage], so drafts from the server apply again. */
+    fun completeDraftMessage(draftMessage: DraftMessage) {
+        pendingDrafts -= draftMessage.pendingKey()
+    }
+
+    private fun putDraftMessage(draftMessage: DraftMessage) {
         draftMessage.parentId?.let { parentId ->
             _threadDraftMessages?.let { it.value += (parentId to draftMessage) }
         }
@@ -158,12 +201,7 @@ internal class MutableGlobalState(
             ?.let { it.value += (draftMessage.cid to draftMessage) }
     }
 
-    /** Adds the drafts the server returned with [channels]. */
-    fun updateChannelDrafts(channels: List<Channel>) {
-        channels.forEach { channel -> channel.draftMessage?.let(::updateDraftMessage) }
-    }
-
-    fun removeDraftMessage(draftMessage: DraftMessage) {
+    private fun dropDraftMessage(draftMessage: DraftMessage) {
         draftMessage.parentId?.let { parentId ->
             _threadDraftMessages?.let { it.value -= parentId }
         }
@@ -171,6 +209,8 @@ internal class MutableGlobalState(
             ?.takeUnless { draftMessage.parentId != null }
             ?.let { it.value -= draftMessage.cid }
     }
+
+    private fun DraftMessage.pendingKey(): String = parentId?.let { "thread:$it" } ?: "channel:$cid"
 
     /**
      * Tries emit typing event for a particular channel.
