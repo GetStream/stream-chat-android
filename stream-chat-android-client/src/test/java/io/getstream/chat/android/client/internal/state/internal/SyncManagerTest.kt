@@ -1308,6 +1308,7 @@ internal class SyncManagerTest {
                 Result.Success(message)
             },
             getCurrentUser = { user },
+            isNetworkAvailable = { false },
         )
         val sut = buildSyncManager(pendingMessagePins = pins)
         val offline = Error.NetworkError(

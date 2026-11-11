@@ -27,8 +27,9 @@ import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Keeps the pins and unpins that failed with a temporary network error, so they show at once and are sent again
- * on the next connection.
+ * Keeps the pins and unpins that failed with a temporary network error while the network was not available, so they
+ * show at once and are sent again on the next connection. A failure while the network is available is left to the
+ * caller, as before.
  *
  * Only the last pin or unpin of a message is kept. It is sent again as a partial update with only the pin fields,
  * so the server checks only the pin permission and never gets an older copy of the message.
@@ -37,11 +38,13 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * @param sendPin Sends the pin fields of a message to the server.
  * @param getCurrentUser Returns the current user, shown as the user who pinned the message.
+ * @param isNetworkAvailable Returns whether the device has a network connection.
  */
 internal class PendingMessagePins(
     private val logic: LogicRegistry,
     private val sendPin: suspend (messageId: String, set: Map<String, Any>) -> Result<Message>,
     private val getCurrentUser: () -> User?,
+    private val isNetworkAvailable: () -> Boolean,
     private val now: () -> Date = { Date() },
 ) {
 
@@ -50,13 +53,14 @@ internal class PendingMessagePins(
     private val pending = ConcurrentHashMap<String, PendingPin>()
 
     /**
-     * Handles the result of a pin or unpin of [message]. A temporary network error applies the change locally and
-     * keeps it to send again. A success drops a change kept before, so it is not sent over this newer one.
+     * Handles the result of a pin or unpin of [message]. A temporary network error without a network applies the
+     * change locally and keeps it to send again. A success drops a change kept before, so it is not sent over this
+     * newer one.
      */
     fun onPinResult(message: Message, pinned: Boolean, pinExpires: Date?, result: Result<Message>) {
         when (result) {
             is Result.Success -> pending.remove(message.id)
-            is Result.Failure -> if (result.value.isTemporaryNetworkError()) {
+            is Result.Failure -> if (!isNetworkAvailable() && result.value.isTemporaryNetworkError()) {
                 val current = logic.getMessageById(message.id) ?: message
                 val change = PinFields(
                     pinned = pinned,

@@ -144,6 +144,7 @@ public class StreamStatePluginFactory(
             logic = logic,
             sendPin = { messageId, set -> chatClient.partialUpdateMessage(messageId, set).await() },
             getCurrentUser = { clientState.user.value },
+            isNetworkAvailable = { clientState.isNetworkAvailable },
         )
         chatClient.pendingMessagePins = pendingMessagePins
         scope.refreshChannelsOnScheduledMessages(chatClient.scheduledMessages, logic::getActiveQueryChannelsLogic)

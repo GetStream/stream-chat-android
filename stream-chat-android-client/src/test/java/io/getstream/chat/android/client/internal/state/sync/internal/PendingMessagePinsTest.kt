@@ -61,6 +61,7 @@ internal class PendingMessagePinsTest {
     }
     private val sent = mutableListOf<Map<String, Any>>()
     private var sendResult: Result<Message> = Result.Success(stored)
+    private var isNetworkAvailable = false
     private val pins = PendingMessagePins(
         logic = logic,
         sendPin = { _, set ->
@@ -68,8 +69,20 @@ internal class PendingMessagePinsTest {
             sendResult
         },
         getCurrentUser = { me },
+        isNetworkAvailable = { isNetworkAvailable },
         now = { now },
     )
+
+    @Test
+    fun `a pin that times out while the network is available is not kept`() = runTest {
+        isNetworkAvailable = true
+
+        pins.onPinResult(stored, pinned = true, pinExpires = null, result = offline())
+        pins.sendPending()
+
+        verify(channelLogic, never()).upsertMessage(any())
+        sent shouldBeEqualTo emptyList()
+    }
 
     @Test
     fun `a pin that fails offline is shown at once and sent on the next connection`() = runTest {
@@ -179,6 +192,7 @@ internal class PendingMessagePinsTest {
                 Result.Success(stored)
             },
             getCurrentUser = { me },
+            isNetworkAvailable = { false },
             now = { now },
         )
         target.onPinResult(stored, pinned = true, pinExpires = null, result = offline())
