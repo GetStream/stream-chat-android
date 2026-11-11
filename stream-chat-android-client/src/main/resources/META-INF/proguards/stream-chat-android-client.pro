@@ -28,5 +28,5 @@
 # Rules to improve the logs by keeping the names of the classes
 -keep class * extends io.getstream.chat.android.client.clientstate.UserState
 
-# Classes that are used by reflection.
--keep class io.getstream.chat.android.client.notifications.ChatPushDelegate { *; }
+# The push library finds this class through manifest metadata and builds it with its no-argument constructor.
+-keep class io.getstream.chat.android.client.notifications.ChatPushDelegate { <init>(); }
