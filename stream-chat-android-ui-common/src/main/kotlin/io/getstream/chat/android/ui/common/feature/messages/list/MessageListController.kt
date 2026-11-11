@@ -1345,9 +1345,15 @@ public class MessageListController(
             firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
             limit = messageLimit,
         ).enqueue { result ->
+            // After a switch to another thread, the result says nothing about its pages.
+            val isCurrentThread = _mode.value === threadMode
             _threadListState.value = _threadListState.value.copy(
                 isLoadingOlderMessages = false,
-                loadingOlderMessagesError = result is Result.Failure,
+                loadingOlderMessagesError = if (isCurrentThread) {
+                    result is Result.Failure
+                } else {
+                    _threadListState.value.loadingOlderMessagesError
+                },
             )
         }
     }

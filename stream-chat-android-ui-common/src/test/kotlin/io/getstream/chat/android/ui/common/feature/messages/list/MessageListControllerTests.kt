@@ -2090,6 +2090,33 @@ internal class MessageListControllerTests {
         }
 
     @Test
+    fun `Given the older thread page is pending When switching to another thread Should not report its failure`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(mockThreadState(parentMessage = parentMessage, messages = randomMessageList(3)))
+                .givenGetReplies()
+                .get()
+            var callback: Call.Callback<List<Message>>? = null
+            val call = mock<Call<List<Message>>> {
+                on { enqueue(any()) } doAnswer { callback = it.getArgument(0) }
+            }
+            whenever(chatClient.getRepliesMore(any(), any(), any())) doReturn call
+            controller.enterThreadMode(parentMessage)
+            controller.loadOlderMessages()
+
+            controller.enterThreadMode(randomMessage())
+            callback.shouldNotBeNull().onResult(Result.Failure(Error.GenericError("")))
+
+            controller.threadListState.value.isLoadingOlderMessages.shouldBeFalse()
+            controller.threadListState.value.loadingOlderMessagesError.shouldBeFalse()
+        }
+
+    @Test
     fun `Given the newest thread page is loaded When scrolling to the bottom Should scroll without loading`() =
         runTest {
             val chatClient = mock<ChatClient>()
