@@ -239,16 +239,14 @@ public class AIConversationState<M : AIMessage>(
     }
 
     /**
-     * Tries again after [error]: sends the request that failed again, with the same message id, or
-     * asks the agent again for a reply it was writing when it couldn't go on.
-     *
-     * When the agent had the person's message but couldn't answer it, nothing is sent again, since
-     * the message would be added twice: retrying forgets the error, as [clearError] does, and the
-     * person asks again. The same goes for an error loading older messages, which load again as
-     * the person scrolls to the start. Does nothing without an error.
+     * Tries again after [error]. When the transport couldn't send the person's message, it sends
+     * it again, with the same message id. Otherwise nothing is sent: the agent had the request but
+     * couldn't answer it, stopped partway through its reply, or didn't answer in time, or older
+     * messages couldn't load. Sending the message again would add it twice, so retrying forgets the
+     * error, as [clearError] does, and the person asks again. Does nothing without an error.
      */
     public fun retry() {
-        val request = exchange?.takeIf { it.hasFailed }?.retryRequest(received)
+        val request = exchange?.retryRequest()
         when {
             request != null -> start(request)
             _error.value != null -> clearError()

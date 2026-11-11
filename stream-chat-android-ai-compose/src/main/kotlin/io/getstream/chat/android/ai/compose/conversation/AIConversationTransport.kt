@@ -66,10 +66,12 @@ public interface AIConversationTransport<M : AIMessage> {
      * attempt reached your backend, or you keep a copy of the failed message, use the id so the
      * message isn't added twice.
      *
-     * The state leaves out the messages a [AIConversationRequestKind.Regenerate] replaces only
-     * until the new reply starts. From then on it shows the messages as the feed has them, so
-     * update the conversation before the new reply arrives: remove the request's `message` and
-     * the messages after it, or write the new reply in place of `message`, under its id.
+     * The state sends only [AIConversationRequestKind.Message] requests today. Once it asks for
+     * replies written again, it leaves out the messages a [AIConversationRequestKind.Regenerate]
+     * replaces only until the new reply starts. From then on it shows the messages as the feed
+     * has them, so update the conversation before the new reply arrives: remove the request's
+     * `message` and the messages after it, or write the new reply in place of `message`, under
+     * its id.
      *
      * @param request What the person asks.
      */

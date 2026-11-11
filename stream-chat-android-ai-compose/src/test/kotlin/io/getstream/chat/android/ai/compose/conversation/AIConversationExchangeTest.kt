@@ -118,46 +118,22 @@ internal class AIConversationExchangeTest {
     }
 
     @Test
-    fun `the message arrives with its id or as the person's first new message`() {
+    fun `retry sends the request again only when it never reached the transport`() {
         val exchange = exchange(message())
 
-        assertFalse(exchange.hasMessageArrived(conversation))
-        assertTrue(exchange.hasMessageArrived(conversation + user("m1")))
-        assertTrue(exchange.hasMessageArrived(conversation + user("u3")))
-        // Older messages loaded above.
-        assertFalse(exchange.hasMessageArrived(listOf(user("u0"), reply("a0")) + conversation))
-        assertFalse(exchange.hasMessageArrived(conversation + reply("a3")))
-    }
-
-    @Test
-    fun `retry sends the request again unless the agent couldn't answer a message it has`() {
-        val exchange = exchange(message())
         exchange.state = AIConversationExchange.State.Failed
-
         // The same message, which the transport can tell.
-        assertEquals("m1", exchange.retryRequest(conversation + user("m1"))?.messageId)
-        assertEquals(AIConversationRequestKind.Message, exchange.retryRequest(conversation + user("m1"))?.kind)
+        assertEquals("m1", exchange.retryRequest()?.messageId)
+        assertEquals(AIConversationRequestKind.Message, exchange.retryRequest()?.kind)
 
         exchange.state = AIConversationExchange.State.Unanswered
+        assertNull(exchange.retryRequest())
 
-        // Its message never arrived.
-        assertEquals(AIConversationRequestKind.Message, exchange.retryRequest(conversation)?.kind)
-        // Sending it again would add it twice.
-        assertNull(exchange.retryRequest(conversation + user("m1")))
-        assertNull(exchange.retryRequest(conversation + user("u3")))
-    }
+        exchange.state = AIConversationExchange.State.Stopped
+        assertNull(exchange.retryRequest())
 
-    @Test
-    fun `retry of a reply written again asks for it again unless it answers the latest message`() {
-        val again = exchange(
-            AIConversationRequest(kind = AIConversationRequestKind.Regenerate, text = "", message = reply("a2")),
-        )
-        val latest = exchange(AIConversationRequest(kind = AIConversationRequestKind.Regenerate, text = "Hi"))
-        again.state = AIConversationExchange.State.Unanswered
-        latest.state = AIConversationExchange.State.Unanswered
-
-        assertEquals("a2", again.retryRequest(conversation)?.message?.id)
-        assertNull(latest.retryRequest(conversation))
+        exchange.state = AIConversationExchange.State.Waiting
+        assertNull(exchange.retryRequest())
     }
 
     @Test

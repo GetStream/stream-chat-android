@@ -89,30 +89,11 @@ internal class AIConversationExchange<M : AIMessage>(
         reply(conversation)?.let { !it.hasEmptyContent || !it.isGenerating } ?: false
 
     /**
-     * Whether the person's message is in the conversation: one with its id, or one of theirs
-     * after the messages there were.
+     * What a retry sends: the request again, with the same message id, when it never reached the
+     * transport. Null once the transport had it, since the agent can't write a reply again and
+     * asking again would add the person's message twice: the person asks again instead.
      */
-    fun hasMessageArrived(conversation: List<M>): Boolean {
-        if (conversation.any { it.id == request.messageId }) return true
-        val lastKnown = conversation.indexOfLast { it.id in known }
-        return conversation.drop(lastKnown + 1).any { it.role == AIMessageRole.User }
-    }
-
-    /**
-     * What a retry sends: the request again, or null when the agent had the person's message but
-     * couldn't answer it. Sending the message again would add it twice, so the person asks again
-     * instead.
-     */
-    fun retryRequest(conversation: List<M>): AIConversationRequest<M>? {
-        if (state != State.Unanswered) return request
-        val hadMessage = when (request.kind) {
-            AIConversationRequestKind.Message -> hasMessageArrived(conversation)
-            // A reply to the person's latest message, which the conversation already holds.
-            AIConversationRequestKind.Regenerate -> request.message == null
-            else -> false
-        }
-        return request.takeUnless { hadMessage }
-    }
+    fun retryRequest(): AIConversationRequest<M>? = request.takeIf { state == State.Failed }
 }
 
 /** Whether a message shows nothing: no text, steps, attachments or generated UI. */

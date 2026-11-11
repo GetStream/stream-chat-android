@@ -59,8 +59,10 @@ public value class AIConversationRequestKind(public val rawValue: String) {
 
         /**
          * A new reply in place of the request's `message`, which is a reply, and of those after
-         * it. Without `message`, a reply to the latest message, which has none, such as after the
-         * agent couldn't answer it.
+         * it. Without `message`, a reply to the latest message, which has none.
+         *
+         * [AIConversationState] doesn't send it yet: it is kept for asking the agent for a reply
+         * again, which a later version adds.
          */
         public val Regenerate: AIConversationRequestKind = AIConversationRequestKind("regenerate")
     }

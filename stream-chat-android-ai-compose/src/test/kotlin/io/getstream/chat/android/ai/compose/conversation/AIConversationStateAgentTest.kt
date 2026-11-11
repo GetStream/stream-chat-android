@@ -114,20 +114,6 @@ internal class AIConversationStateAgentTest {
     }
 
     @Test
-    fun `stop while waiting for a reply written again brings the reply back`() = runTest {
-        val transport = FakeTransport(listOf(user("u1"), reply("a1", "Day one", generating = true)))
-        val state = conversation(transport)
-        transport.update(AIAgentActivity(AIAgentActivity.State.Error))
-        state.retry()
-        assertEquals(listOf("u1"), state.shown)
-
-        state.stop()
-
-        assertEquals(listOf("u1", "a1"), state.shown)
-        assertEquals(AIConversationStatus.Ready, state.status.value)
-    }
-
-    @Test
     fun `send after a stop waits for the stop to reach the transport`() = runTest {
         val transport = FakeTransport(listOf(user("u1"), reply("a1", "Day one", generating = true)))
         transport.holdsStops = true
@@ -316,9 +302,11 @@ internal class AIConversationStateAgentTest {
         state.retry()
         runCurrent()
 
-        assertEquals(AIConversationRequestKind.Regenerate, transport.lastRequest?.kind)
-        assertEquals("a1", transport.lastRequest?.message?.id)
-        assertEquals("Plan a weekend in Lisbon", transport.lastRequest?.text)
+        // The agent can't write it again, and asking again would add the message twice.
+        assertTrue(transport.requests.isEmpty())
+        assertNull(state.error.value)
+        assertEquals(listOf("u1", "a1"), state.shown)
+        assertEquals(AIConversationStatus.Ready, state.status.value)
     }
 
     @Test
@@ -337,12 +325,11 @@ internal class AIConversationStateAgentTest {
     }
 
     @Test
-    fun `an error activity before the person's message arrives lets retry send it again`() = runTest {
+    fun `retry after the agent couldn't answer before the person's message arrived sends nothing`() = runTest {
         val transport = FakeTransport(listOf(user("u1", "Lisbon?"), reply("a1")))
         val state = conversation(transport)
         state.send("Porto?")
         runCurrent()
-        val sent = transport.lastRequest
 
         transport.update(AIAgentActivity(AIAgentActivity.State.Error, text = "Couldn't read it"))
         transport.update(activity = null)
@@ -353,10 +340,11 @@ internal class AIConversationStateAgentTest {
         state.retry()
         runCurrent()
 
-        // Not a1 written again.
-        assertEquals(AIConversationRequestKind.Message, transport.lastRequest?.kind)
-        assertEquals(sent?.messageId, transport.lastRequest?.messageId)
-        assertEquals("Porto?", transport.lastRequest?.text)
+        // The transport had it: the person asks again.
+        assertEquals(1, transport.requests.size)
+        assertNull(state.error.value)
+        assertNull(state.pendingMessage.value)
+        assertEquals(AIConversationStatus.Ready, state.status.value)
     }
 
     @Test
