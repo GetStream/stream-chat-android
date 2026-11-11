@@ -128,6 +128,7 @@ internal class ChatClientTest {
     private val userCredentialStorage: UserCredentialStorage = mock()
     private val audioPlayer: AudioPlayer = mock()
     private val messageReceiptManager: MessageReceiptManager = mock()
+    private val mutableClientState = Mother.mockedClientState()
     private val userRepository: UserRepository = mock()
     private val repositoryFactoryProvider = object : RepositoryFactory.Provider {
         override fun createRepositoryFactory(user: User): RepositoryFactory =
@@ -187,7 +188,7 @@ internal class ChatClientTest {
             chatSocket = fakeChatSocket,
             serverClockOffset = ServerClockOffset(),
             pluginFactories = emptyList(),
-            mutableClientState = Mother.mockedClientState(),
+            mutableClientState = mutableClientState,
             repositoryFactoryProvider = repositoryFactoryProvider,
             currentUserFetcher = mock(),
             audioPlayer = audioPlayer,
@@ -244,6 +245,17 @@ internal class ChatClientTest {
 
         verify(messageReceiptManager).markMessageAsDelivered(firstEvent.message)
         verify(messageReceiptManager).markMessageAsDelivered(secondEvent.message)
+    }
+
+    @Test
+    fun `confirm the user of a ConnectedEvent`() {
+        val connectedUser = user.copy(name = randomString())
+
+        fakeChatSocket.mockEventReceived(
+            ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, connectedUser, randomString()),
+        )
+
+        assertEquals(connectedUser, mutableClientState.confirmedUser)
     }
 
     private fun newMessageEvent(): NewMessageEvent {

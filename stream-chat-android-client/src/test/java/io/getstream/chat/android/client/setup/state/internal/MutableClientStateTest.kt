@@ -107,10 +107,11 @@ internal class MutableClientStateTest {
 
     @Test
     fun `clearState resets the confirmed user`() {
-        mutableClientState.setConfirmedUser(randomUser())
+        val user = randomUser()
+        mutableClientState.setConfirmedUser(user)
         mutableClientState.clearState()
 
-        mutableClientState.setUser(randomUser())
+        mutableClientState.setUser(user)
 
         mutableClientState.confirmedUser shouldBeEqualTo null
     }
