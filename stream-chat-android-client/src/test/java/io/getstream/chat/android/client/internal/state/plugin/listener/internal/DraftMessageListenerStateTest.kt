@@ -81,6 +81,30 @@ internal class DraftMessageListenerStateTest {
     }
 
     @Test
+    fun `an older create result should not replace or settle a newer change of the same draft`() = runTest {
+        val newerDraft = localDraft.copy(text = randomString())
+        listener.onCreateDraftMessageRequest(channel.type, channel.id, localDraft)
+        listener.onCreateDraftMessageRequest(channel.type, channel.id, newerDraft)
+
+        listener.onCreateDraftMessageResult(Result.Success(localDraft), channel.type, channel.id, localDraft)
+        listener.onCreateDraftMessageResult(Result.Failure(temporaryError()), channel.type, channel.id, newerDraft)
+        mutableGlobalState.updateChannelDrafts(listOf(channel.copy(draftMessage = serverCopy)))
+
+        channelDraft() shouldBeEqualTo newerDraft
+    }
+
+    @Test
+    fun `an older create result should not bring back a draft deleted after it`() = runTest {
+        listener.onCreateDraftMessageRequest(channel.type, channel.id, localDraft)
+        listener.onDeleteDraftMessagesRequest(channel.type, channel.id, localDraft)
+
+        listener.onCreateDraftMessageResult(Result.Success(localDraft), channel.type, channel.id, localDraft)
+        mutableGlobalState.updateChannelDrafts(listOf(channel.copy(draftMessage = serverCopy)))
+
+        channelDraft().shouldBeNull()
+    }
+
+    @Test
     fun `onCreateDraftMessageResult should keep the local draft and accept later copies on a permanent error`() =
         runTest {
             listener.onCreateDraftMessageRequest(channel.type, channel.id, localDraft)

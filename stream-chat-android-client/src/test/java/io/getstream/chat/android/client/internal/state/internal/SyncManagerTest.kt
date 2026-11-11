@@ -1282,6 +1282,31 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `reconnect should send the drafts only after start marked them as pending`() = runTest(testDispatcher) {
+        val pending = randomDraftMessage(cid = "messaging:pending")
+        var deletedReads = 0
+        // The first read is the one of start(); it is slower than the connection.
+        whenever(repositoryFacade.selectDeletedDraftMessages()) doSuspendableAnswer {
+            if (deletedReads++ == 0) delay(100)
+            emptyList()
+        }
+        whenever(repositoryFacade.selectPendingDraftMessages()).thenReturn(listOf(pending))
+        whenever(repositoryFacade.selectDraftMessages()).thenReturn(listOf(pending))
+        whenever(chatClient.subscribe(any())).thenReturn(mock())
+        whenever(chatClient.createDraftMessage(any(), any(), any())) doReturn pending.asCall()
+        val sut = buildSyncManager()
+
+        sut.start()
+        sut.onEvent(randomConnectedEvent())
+        advanceTimeBy(200)
+
+        inOrder(mutableGlobalState, chatClient) {
+            verify(mutableGlobalState).updatePendingDraftMessage(pending)
+            verify(chatClient).createDraftMessage("messaging", "pending", pending)
+        }
+    }
+
+    @Test
     fun `reconnect should send the drafts saved or deleted offline before refreshing the channels`() =
         runTest(testDispatcher) {
             val sut = buildSyncManager()

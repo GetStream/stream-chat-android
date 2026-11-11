@@ -62,6 +62,7 @@ internal class DraftMessageListenerDatabaseTest {
         val draftMessage = randomDraftMessage()
         val serverCopy = draftMessage.copy(createdAt = Date())
 
+        listener.onCreateDraftMessageRequest(randomString(), randomString(), draftMessage)
         listener.onCreateDraftMessageResult(
             result = Result.Success(serverCopy),
             channelType = randomString(),
@@ -76,6 +77,7 @@ internal class DraftMessageListenerDatabaseTest {
     fun `onCreateDraftMessageResult should keep the draft pending on a temporary error`() = runTest {
         val draftMessage = randomDraftMessage()
 
+        listener.onCreateDraftMessageRequest(randomString(), randomString(), draftMessage)
         listener.onCreateDraftMessageResult(
             result = Result.Failure(temporaryError()),
             channelType = randomString(),
@@ -91,6 +93,7 @@ internal class DraftMessageListenerDatabaseTest {
     fun `onCreateDraftMessageResult should keep the local draft as completed on a permanent error`() = runTest {
         val draftMessage = randomDraftMessage()
 
+        listener.onCreateDraftMessageRequest(randomString(), randomString(), draftMessage)
         listener.onCreateDraftMessageResult(
             result = Result.Failure(permanentError()),
             channelType = randomString(),
@@ -99,6 +102,30 @@ internal class DraftMessageListenerDatabaseTest {
         )
 
         verify(messageRepository).completeDraftMessage(draftMessage)
+    }
+
+    @Test
+    fun `an older create result should not settle a newer change of the same draft`() = runTest {
+        val older = randomDraftMessage()
+        val newer = older.copy(text = randomString())
+        listener.onCreateDraftMessageRequest(randomString(), randomString(), older)
+        listener.onCreateDraftMessageRequest(randomString(), randomString(), newer)
+
+        listener.onCreateDraftMessageResult(Result.Success(older), randomString(), randomString(), older)
+        listener.onCreateDraftMessageResult(Result.Failure(temporaryError()), randomString(), randomString(), newer)
+
+        verify(messageRepository, never()).completeDraftMessage(any())
+    }
+
+    @Test
+    fun `an older create result should not settle a newer deletion of the same draft`() = runTest {
+        val draftMessage = randomDraftMessage()
+        listener.onCreateDraftMessageRequest(randomString(), randomString(), draftMessage)
+        listener.onDeleteDraftMessagesRequest(randomString(), randomString(), draftMessage)
+
+        listener.onCreateDraftMessageResult(Result.Success(draftMessage), randomString(), randomString(), draftMessage)
+
+        verify(messageRepository, never()).completeDraftMessage(any())
     }
 
     @Test
@@ -118,6 +145,7 @@ internal class DraftMessageListenerDatabaseTest {
     fun `onDeleteDraftMessagesResult should remove the hidden draft on success`() = runTest {
         val draftMessage = randomDraftMessage()
 
+        listener.onDeleteDraftMessagesRequest(randomString(), randomString(), draftMessage)
         listener.onDeleteDraftMessagesResult(
             result = Result.Success(Unit),
             channelType = randomString(),
@@ -132,6 +160,7 @@ internal class DraftMessageListenerDatabaseTest {
     fun `onDeleteDraftMessagesResult should remove the hidden draft when the server has no draft`() = runTest {
         val draftMessage = randomDraftMessage()
 
+        listener.onDeleteDraftMessagesRequest(randomString(), randomString(), draftMessage)
         listener.onDeleteDraftMessagesResult(
             result = Result.Failure(permanentError()),
             channelType = randomString(),
@@ -146,6 +175,7 @@ internal class DraftMessageListenerDatabaseTest {
     fun `onDeleteDraftMessagesResult should keep the deletion pending on a temporary error`() = runTest {
         val draftMessage = randomDraftMessage()
 
+        listener.onDeleteDraftMessagesRequest(randomString(), randomString(), draftMessage)
         listener.onDeleteDraftMessagesResult(
             result = Result.Failure(temporaryError()),
             channelType = randomString(),
