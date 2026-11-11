@@ -100,7 +100,9 @@ public class AIConversationState<M : AIMessage>(
 
     /**
      * The conversation as it shows, oldest message first: the transport's messages, minus those a
-     * request replaces until its reply starts, and minus a stopped reply that showed nothing.
+     * request replaces until its reply starts, and minus replies with nothing to show that won't
+     * show more: one that finished empty, such as the one a failed turn ends with, and one stopped
+     * before it showed anything.
      */
     public val messages: StateFlow<List<M>> = _messages.asStateFlow()
 
@@ -152,6 +154,10 @@ public class AIConversationState<M : AIMessage>(
 
     // Ends the wait for the latest request's reply when the agent says nothing for too long.
     private var replyTimer: Job? = null
+
+    // A reply that first arrived after the person stopped its request, while that stop was on its
+    // way: it streams again if the stop fails.
+    private var stoppedLateReply: String? = null
 
     private val ratingChanges = mutableMapOf<String, RatingChange>()
     private var ratingAttempts = 0
@@ -226,6 +232,7 @@ public class AIConversationState<M : AIMessage>(
         val id = generation
         _activity.value = null
         ignoresActivity = true
+        stoppedLateReply = null
         exchange?.takeIf { it.state == AIConversationExchange.State.Waiting }?.state =
             AIConversationExchange.State.Stopped
         val writing = writingReply
@@ -327,6 +334,8 @@ public class AIConversationState<M : AIMessage>(
         received = messages.toList()
         val exchange = exchange
         exchange?.reply(received)?.let { receiveReply(it, exchange) }
+        // The person stopped the request it answers, so it is finished whatever it says.
+        exchange?.lateReplyOfStoppedRequest(received)?.takeIf { it.isGenerating }?.let { stopped += it.id }
         // A stopped reply is done with once it finishes or another message follows it.
         val latest = received.lastOrNull()?.takeIf { it.isGenerating }?.id
         stopped.retainAll { it == latest }
@@ -342,7 +351,8 @@ public class AIConversationState<M : AIMessage>(
             ignoresActivity = false
             _activity.value = null
             // The agent stopped saying it is working without starting its reply.
-            exchange?.takeIf { it.state == AIConversationExchange.State.Waiting }?.let { waitForReply(it.id) }
+            exchange?.takeIf { it.state == AIConversationExchange.State.Waiting && it.isSent }
+                ?.let { waitForReply(it.id) }
             refresh()
             return
         }
@@ -364,12 +374,20 @@ public class AIConversationState<M : AIMessage>(
         loadError = null
         _activity.value = null
         ignoresActivity = false
-        exchange = AIConversationExchange(id, request, received)
+        stoppedLateReply = null
+        // The person's messages of requests stopped before this one may still arrive, with replies.
+        val lateTurns = exchange?.lateTurnsAfterStop(received) ?: 0
+        val exchange = AIConversationExchange(id, request, received, lateTurns)
+        this.exchange = exchange
         refresh()
-        val previousStop = stopping
+        val previousStop = stopping?.takeIf { it.isActive }
         scope.launch {
             // The agent would stop a request that reaches it before the stop made before it.
-            previousStop?.join()
+            if (previousStop != null) {
+                previousStop.join()
+                if (!stillSends(exchange)) return@launch
+            }
+            exchange.isSending = true
             try {
                 transport.send(request)
             } catch (cancellation: CancellationException) {
@@ -383,13 +401,33 @@ public class AIConversationState<M : AIMessage>(
         }
     }
 
+    // Whether a request that waited for an earlier stop still goes to the transport: not when the
+    // person stopped it, or sent another, meanwhile.
+    private fun stillSends(exchange: AIConversationExchange<M>): Boolean {
+        val current = this.exchange
+        if (current != null && current.id > exchange.id) return false
+        if (current === exchange && exchange.state == AIConversationExchange.State.Stopped) {
+            // Stopped before it left: nothing reached the agent, so its message goes.
+            this.exchange = null
+            refresh()
+            return false
+        }
+        return true
+    }
+
     // The reply to the latest request arrived: once it shows something, or as soon as it arrives
     // after the person stopped the request.
     private fun receiveReply(reply: M, exchange: AIConversationExchange<M>) {
         if (exchange.state == AIConversationExchange.State.Stopped) {
-            if (reply.isGenerating) stopped += reply.id
+            if (reply.isGenerating) {
+                stopped += reply.id
+                stoppedLateReply = reply.id
+            }
             this.exchange = null
         } else if (!reply.hasEmptyContent || !reply.isGenerating) {
+            // A finished reply with nothing in it, such as the one a failed turn ends with, is no
+            // answer: the agent's error stays.
+            if (exchange.hasFailed && reply.hasEmptyContent) return
             this.exchange = null
             if (exchange.hasFailed) {
                 // The agent answered after all.
@@ -400,9 +438,10 @@ public class AIConversationState<M : AIMessage>(
     }
 
     private fun requestSent(id: Int) {
+        val exchange = exchange?.takeIf { it.id == id } ?: return
+        exchange.isSent = true
         // The agent may already say it is working on it.
-        exchange?.takeIf { it.id == id && it.state == AIConversationExchange.State.Waiting } ?: return
-        if (_activity.value == null) waitForReply(id)
+        if (exchange.state == AIConversationExchange.State.Waiting && _activity.value == null) waitForReply(id)
     }
 
     private fun requestFailed(id: Int, error: Throwable) {
@@ -410,8 +449,13 @@ public class AIConversationState<M : AIMessage>(
         // failed.
         val exchange = exchange ?: return
         if (exchange.id != id || exchange.hasFailed) return
-        exchange.state = AIConversationExchange.State.Failed
-        _error.value = error
+        if (exchange.state == AIConversationExchange.State.Stopped) {
+            // The person stopped it, and it never reached the agent: nothing to try again.
+            this.exchange = null
+        } else {
+            exchange.state = AIConversationExchange.State.Failed
+            _error.value = error
+        }
         refresh()
     }
 
@@ -426,9 +470,11 @@ public class AIConversationState<M : AIMessage>(
     private fun stopFailed(id: Int, writing: String?) {
         if (id != generation) return
         writing?.let(stopped::remove)
+        stoppedLateReply?.let(stopped::remove)
+        stoppedLateReply = null
         exchange?.takeIf { it.state == AIConversationExchange.State.Stopped }?.let {
             it.state = AIConversationExchange.State.Waiting
-            waitForReply(it.id)
+            if (it.isSent) waitForReply(it.id)
         }
         ignoresActivity = false
         refresh()
@@ -505,18 +551,22 @@ public class AIConversationState<M : AIMessage>(
     // Works out what the conversation shows and where it is, after anything changes.
     private fun refresh() {
         val replaced = exchange?.takeIf { it.state == AIConversationExchange.State.Waiting }?.replaced.orEmpty()
-        _messages.value = if (replaced.isEmpty() && stopped.isEmpty()) {
+        _messages.value = if (replaced.isEmpty() && received.none { it.showsNothingHere }) {
             received
         } else {
-            // A reply stopped before it showed anything has nothing to show, and the conversation
-            // would think it is still on its way.
-            received.filter { it.id !in replaced && !(it.id in stopped && it.hasEmptyContent) }
+            received.filter { it.id !in replaced && !it.showsNothingHere }
         }
         val pending = exchange?.shownPending
         if (_pendingMessage.value?.id != pending?.id) _pendingMessage.value = pending
         _ratings.value = ratingChanges.mapNotNull { (id, change) -> change.shown?.let { id to it } }.toMap()
         _status.value = currentStatus
     }
+
+    // A reply with nothing to show that won't show more: one that finished empty, such as the one
+    // a failed turn ends with, or one stopped before it showed anything, which the conversation
+    // would think is still on its way.
+    private val M.showsNothingHere: Boolean
+        get() = role != AIMessageRole.User && hasEmptyContent && (!isGenerating || id in stopped)
 
     private val currentStatus: AIConversationStatus
         get() {

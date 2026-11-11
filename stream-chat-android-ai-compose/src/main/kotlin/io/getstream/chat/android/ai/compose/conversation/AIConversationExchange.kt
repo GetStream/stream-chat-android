@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.ai.compose.conversation
 
+import android.net.Uri
+import io.getstream.chat.android.ai.compose.util.internal.pathExtension
+
 /**
  * A request the person made, from when they make it until its reply starts or another request
  * takes its place.
@@ -23,11 +26,14 @@ package io.getstream.chat.android.ai.compose.conversation
  * @param id Tells it apart from the requests before and after it.
  * @param request What the person asked.
  * @param conversation The messages there were when it was made, none of which is its reply.
+ * @param lateTurns How many of the person's messages, of requests stopped before it, may still
+ * arrive with their replies after the [conversation]: its reply comes after those.
  */
 internal class AIConversationExchange<M : AIMessage>(
     val id: Int,
     val request: AIConversationRequest<M>,
     conversation: List<M>,
+    private val lateTurns: Int = 0,
 ) {
     /**
      * Where the request is: waiting for its reply, stopped by the person before it started, not
@@ -36,6 +42,12 @@ internal class AIConversationExchange<M : AIMessage>(
     enum class State { Waiting, Stopped, Failed, Unanswered }
 
     var state: State = State.Waiting
+
+    /** Whether the transport has the request: its send returned. */
+    var isSent: Boolean = false
+
+    /** Whether the request went to the transport, whatever came of it. */
+    var isSending: Boolean = false
 
     private val known: Set<String> = conversation.mapTo(HashSet()) { it.id }
 
@@ -59,7 +71,7 @@ internal class AIConversationExchange<M : AIMessage>(
         AIPendingMessage(
             id = request.messageId,
             text = request.text,
-            attachments = request.attachments.map { AIMessageAttachment.image(it) },
+            attachments = request.attachments.map(::attachmentOnItsWay),
         )
     }
 
@@ -81,7 +93,44 @@ internal class AIConversationExchange<M : AIMessage>(
     fun reply(conversation: List<M>): M? {
         val last = conversation.lastOrNull()?.takeIf { it.role != AIMessageRole.User } ?: return null
         val isRewritten = replaced[last.id]?.let { last.isRewrittenFrom(it) } ?: false
-        return last.takeIf { it.id !in known || isRewritten }
+        if (last.id in known && !isRewritten) return null
+        return last.takeIf { lateTurns == 0 || followsOwnMessage(conversation) }
+    }
+
+    /**
+     * The latest message when it is the late reply of a request stopped before this one: a new
+     * reply that came before this request's own message.
+     */
+    fun lateReplyOfStoppedRequest(conversation: List<M>): M? {
+        if (lateTurns == 0) return null
+        val last = conversation.lastOrNull()?.takeIf { it.role != AIMessageRole.User && it.id !in known } ?: return null
+        return last.takeUnless { followsOwnMessage(conversation) }
+    }
+
+    /**
+     * Whether the person's messages still to come, of the requests stopped before it, arrived
+     * before its reply: this request's own message is the one after them, or the one with its id.
+     */
+    private fun followsOwnMessage(conversation: List<M>): Boolean {
+        if (conversation.any { it.id == request.messageId }) return true
+        val own = if (request.kind == AIConversationRequestKind.Regenerate) 0 else 1
+        return newMessagesOfThePerson(conversation) >= lateTurns + own
+    }
+
+    /** How many of the person's messages arrived after those there were when it was made. */
+    private fun newMessagesOfThePerson(conversation: List<M>): Int {
+        val lastKnown = conversation.indexOfLast { it.id in known }
+        return conversation.drop(lastKnown + 1).count { it.role == AIMessageRole.User }
+    }
+
+    /**
+     * How many of the person's messages, of this request and those stopped before it, may still
+     * arrive with their replies after [conversation], once it is stopped before its reply came.
+     */
+    fun lateTurnsAfterStop(conversation: List<M>): Int {
+        if (state != State.Stopped || !isSending) return 0
+        val own = if (request.kind == AIConversationRequestKind.Regenerate) 0 else 1
+        return (lateTurns + own - newMessagesOfThePerson(conversation)).coerceAtLeast(0)
     }
 
     /** Whether its reply has started: it shows something, or it is already finished. */
@@ -95,6 +144,13 @@ internal class AIConversationExchange<M : AIMessage>(
      */
     fun retryRequest(): AIConversationRequest<M>? = request.takeIf { state == State.Failed }
 }
+
+/**
+ * A file the person picked, on its way: by its extension when its name has one, else an image,
+ * as the composer's photo picker gives, such as an extensionless `content://` URI.
+ */
+private fun attachmentOnItsWay(uri: Uri): AIMessageAttachment =
+    if (pathExtension(null, uri) != null) AIMessageAttachment.from(uri) else AIMessageAttachment.image(uri)
 
 /** Whether a message shows nothing: no text, steps, attachments or generated UI. */
 internal val AIMessage.hasEmptyContent: Boolean

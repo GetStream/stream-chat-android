@@ -33,10 +33,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.compose.conversation.AIAgentActivity
 import io.getstream.chat.android.ai.compose.conversation.AIConversationFeed
 import io.getstream.chat.android.ai.compose.conversation.AIConversationState
+import io.getstream.chat.android.ai.compose.conversation.AIConversationStatus
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRating
 import io.getstream.chat.android.ai.compose.conversation.ChatMessage
 import io.getstream.chat.android.ai.compose.conversation.FakeTransport
+import io.getstream.chat.android.ai.compose.conversation.TransportError
 import io.getstream.chat.android.ai.compose.conversation.rememberAIConversationState
 import io.getstream.chat.android.ai.compose.conversation.reply
 import io.getstream.chat.android.ai.compose.conversation.user
@@ -175,5 +177,59 @@ internal class AIConversationStateViewsTest {
         rule.runOnIdle { shown = false }
 
         rule.runOnIdle { assertFalse(transport.feed?.isConnected == true) }
+    }
+
+    @Test
+    fun `conversation shows the agent thinking while a message is on its way`() {
+        val transport = FakeTransport()
+        transport.holdsSends = true
+        show(transport)
+
+        rule.runOnIdle { state.send("Plan a weekend in Porto") }
+
+        rule.onNodeWithText("Thinking", substring = true, useUnmergedTree = true).assertExists()
+    }
+
+    @Test
+    fun `conversation stops thinking once the send fails`() {
+        val transport = FakeTransport()
+        transport.sendError = TransportError()
+        show(transport)
+
+        rule.runOnIdle { state.send("Plan a weekend in Porto") }
+
+        rule.runOnIdle { assertEquals(AIConversationStatus.Error, state.status.value) }
+        rule.onNodeWithText("Plan a weekend in Porto").assertIsDisplayed()
+        rule.onNodeWithText("Thinking", substring = true, useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun `conversation shows what the agent is doing in place of thinking after a send`() {
+        val transport = FakeTransport()
+        transport.holdsSends = true
+        show(transport)
+        rule.runOnIdle { state.send("Plan a weekend in Porto") }
+
+        rule.runOnIdle {
+            transport.update(AIAgentActivity(AIAgentActivity.State.CheckingExternalSources, text = "Searching the web"))
+        }
+
+        rule.onNodeWithText("Searching the web").assertIsDisplayed()
+        rule.onNodeWithText("Thinking", substring = true, useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun `a file the person sends is on its way as a file, and a picked photo as an image`() {
+        val transport = FakeTransport()
+        show(transport)
+        val plan = "file:///storage/itinerary.pdf".toUri()
+        val photo = "content://media/external/images/media/42".toUri()
+
+        rule.runOnIdle { state.send("", attachments = listOf(plan, photo)) }
+
+        rule.runOnIdle {
+            val kinds = state.pendingMessage.value?.attachments?.map { it.kind }
+            assertEquals(listOf(AIMessageAttachment.Kind.File, AIMessageAttachment.Kind.Image), kinds)
+        }
     }
 }

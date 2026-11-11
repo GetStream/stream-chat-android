@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.conversation.AIAgentActivity
 import io.getstream.chat.android.ai.compose.conversation.AIConversationState
@@ -47,6 +48,7 @@ import io.getstream.chat.android.ai.compose.generativeui.AIUIHost
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIConversationEntry
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIPendingMessageTracker
 import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWriting
+import io.getstream.chat.android.ai.compose.ui.component.internal.withMediaTypes
 
 /**
  * Shows [AIMessage]s with the views of [LocalChatAiComponentFactory]: each message the person sent
@@ -138,6 +140,8 @@ public fun AIConversation(
         contentPadding = contentPadding,
         ui = ui,
         replyActions = null,
+        pendingAwaitsReply = true,
+        showsThinking = true,
     )
 }
 
@@ -158,23 +162,26 @@ private fun AIConversationContent(
     contentPadding: PaddingValues,
     ui: AIUIHost?,
     replyActions: ((AIMessage) -> AIReplyActions)?,
+    pendingAwaitsReply: Boolean,
+    showsThinking: Boolean,
 ) {
     val tracker = remember { AIPendingMessageTracker() }
     // A copy, so a list changed in place still counts as changed.
     val shown = messages.toList()
     // The list composes only the replies on screen, so the engines take every reply's UI first.
     ui?.receive(shown)
-    val (entries, isAwaitingReply) = remember(tracker, shown, pendingMessage, ui) {
+    val (entries, isAwaitingReply) = remember(tracker, shown, pendingMessage, ui, pendingAwaitsReply) {
         // A reply's UI counts only when the host reads its format; otherwise the reply waits.
         val canShow: (AIUIDocument) -> Boolean = { document -> ui?.canShow(document) == true }
-        tracker.entries(shown, pendingMessage, canShow) to tracker.isAwaitingReply(shown, pendingMessage, canShow)
+        tracker.entries(shown, pendingMessage, canShow) to
+            tracker.isAwaitingReply(shown, pendingMessage.takeIf { pendingAwaitsReply }, canShow)
     }
     AIConversation(
         messages = entries,
         key = AIConversationEntry::id,
         isFromUser = AIConversationEntry::isFromUser,
         modifier = modifier,
-        isThinking = isThinking || isAwaitingReply,
+        isThinking = showsThinking && (isThinking || isAwaitingReply),
         loadOlderMessages = loadOlderMessages,
         footer = footer,
         emptyContent = emptyContent,
@@ -237,10 +244,12 @@ public fun AIConversation(
     val loadOlderMessages = remember<suspend () -> Unit>(state) { { state.loadOlderMessages() } }
     val ratings by state.ratings.collectAsState()
     val working = activity?.takeIf { it.isWorking }
+    val context = LocalContext.current
+    val shownPending = remember(pending, context) { pending?.withMediaTypes(context.contentResolver) }
     AIConversationContent(
         messages = messages,
         modifier = modifier,
-        pendingMessage = pending,
+        pendingMessage = shownPending,
         isThinking = status == AIConversationStatus.Submitted && working == null,
         approver = state.approver,
         loadOlderMessages = loadOlderMessages.takeIf { hasOlderMessages },
@@ -267,6 +276,11 @@ public fun AIConversation(
         contentPadding = contentPadding,
         ui = ui,
         replyActions = { reply -> state.replyActions(reply, ratings) },
+        // The message on its way waits for its reply only while the agent answers: not once its
+        // send failed, the agent couldn't answer it, or the person stopped it.
+        pendingAwaitsReply = status.isAnswering,
+        // What the agent says it is doing shows in place of thinking.
+        showsThinking = working == null,
     )
 }
 
