@@ -1,0 +1,378 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>AIConversationState</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.19.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-ai-compose/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-ai-compose/main" data-filter=":stream-chat-android-ai-compose/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ai-compose::io.getstream.chat.android.ai.compose.conversation/AIConversationState///PointingToDeclaration//-1081916106">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ai-compose</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ai.compose.conversation</a><span class="delimiter">/</span><span class="current">AIConversationState</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>AIConversation</span><wbr><span><span>State</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">AIConversationState</a><span class="token operator">&lt;</span><a href="index.html">M</a><span class="token operator"> : </span><a href="../-a-i-message/index.html">AIMessage</a><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">transport<span class="token operator">: </span><a href="../-a-i-conversation-transport/index.html">AIConversationTransport</a><span class="token operator">&lt;</span><a href="index.html">M</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>approver<span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.compose.ui.component/-a-i-tool-approver/index.html">AIToolApprover</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">replyTimeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/index.html">Duration</a><span class="token operator">?</span><span class="token operator"> = </span>DefaultReplyTimeout</span></span><span class="token punctuation">)</span></div><p class="paragraph">The state behind a conversation with an AI agent, and what the person does in it.</p><p class="paragraph">It holds the conversation's messages, where the latest exchange with the agent is and why it failed, and it sends what the person asks through its <a href="../-a-i-conversation-transport/index.html">AIConversationTransport</a>. Give it to <code class="lang-kotlin">AIConversation(state)</code> and <code class="lang-kotlin">ChatComposer(state)</code>, which show it and act on it:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">class ChatViewModel(transport: AgentTransport) : ViewModel() {<br>    val conversation = AIConversationState(transport, viewModelScope)<br>}<br><br>Column {<br>    AIConversation(<br>        state = viewModel.conversation,<br>        modifier = Modifier.weight(1f),<br>        footer = {<br>            if (status == AIConversationStatus.Error) {<br>                Button(onClick = viewModel.conversation::retry) { Text("Try again") }<br>            }<br>        },<br>    )<br>    ChatComposer(state = viewModel.conversation)<br>}</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><p class="paragraph">What the person sends shows straight away as <a href="pending-message.html">pendingMessage</a>, and the agent thinks until its reply starts. Requests and stops are numbered, so the outcome of one that a newer one replaced is ignored. After a stop, the reply counts as finished even while the transport still marks it as generating, and one that showed nothing is left out of <a href="messages.html">messages</a>.</p><p class="paragraph">It is confined to the thread of <a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.conversation/-a-i-conversation-state/--root--.html">scope</a>: pass one that runs on the main thread, such as a <code class="lang-kotlin">viewModelScope</code>, and call it and its feed there. It lives as long as <a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.conversation/-a-i-conversation-state/--root--.html">scope</a>.</p><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>transport</span></span></u></div></span></div><div><div class="title"><p class="paragraph">How the state reaches the agent and learns what the conversation holds. The state connects to it straight away.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>scope</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Where requests, stops and the reply timeout run.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>approver</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Who answers tool calls' questions and sign-ins on this device, which the conversation asks them.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>reply</span><wbr><span><span>Timeout</span></span></u></div></span></div><div><div class="title"><p class="paragraph">How long the state waits, once the agent has a request, for the agent to start its reply or say what it is doing, before it shows an <a href="../-a-i-agent-error/index.html">AIAgentError</a>. While the agent says it is working, such as thinking, it waits as long as that takes. Null or <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/-companion/-i-n-f-i-n-i-t-e.html">Duration.INFINITE</a> waits as long as it takes.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="2059010570%2FConstructors%2F-1081916106" anchor-label="AIConversationState" id="2059010570%2FConstructors%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-conversation-state.html"><span>AIConversation</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2059010570%2FConstructors%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">transport<span class="token operator">: </span><a href="../-a-i-conversation-transport/index.html">AIConversationTransport</a><span class="token operator">&lt;</span><a href="index.html">M</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span><span class="token punctuation">, </span></span><span class="parameter ">approver<span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.compose.ui.component/-a-i-tool-approver/index.html">AIToolApprover</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">replyTimeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/index.html">Duration</a><span class="token operator">?</span><span class="token operator"> = </span>DefaultReplyTimeout</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="173472620%2FClasslikes%2F-1081916106" anchor-label="Companion" id="173472620%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="173472620%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-2140275674%2FProperties%2F-1081916106" anchor-label="activity" id="-2140275674%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="activity.html"><span><span>activity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2140275674%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="activity.html">activity</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../-a-i-agent-activity/index.html">AIAgentActivity</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">What the agent says it is doing besides what its reply shows, such as checking sources.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-838008528%2FProperties%2F-1081916106" anchor-label="approver" id="-838008528%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="approver.html"><span><span>approver</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-838008528%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="approver.html">approver</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.compose.ui.component/-a-i-tool-approver/index.html">AIToolApprover</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1063494941%2FProperties%2F-1081916106" anchor-label="error" id="1063494941%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="error.html"><span><span>error</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1063494941%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="error.html">error</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Why the latest request failed: what the transport threw, or, as an <a href="../-a-i-agent-error/index.html">AIAgentError</a>, what the agent said when it couldn't answer or that it didn't answer in time. Also why loading older messages failed. It stays until the next request, until <a href="clear-error.html">clearError</a> or <a href="retry.html">retry</a>, or until a reply starts after all. A failed load's error also goes once older messages load.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-417905393%2FProperties%2F-1081916106" anchor-label="hasOlderMessages" id="-417905393%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-older-messages.html"><span>has</span><wbr><span>Older</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-417905393%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="has-older-messages.html">hasOlderMessages</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Whether the conversation has messages before the first one, which <a href="load-older-messages.html">loadOlderMessages</a> loads.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1128694647%2FProperties%2F-1081916106" anchor-label="messages" id="-1128694647%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="messages.html"><span><span>messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1128694647%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="messages.html">messages</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="index.html">M</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The conversation as it shows, oldest message first: the transport's messages, minus those a request replaces until its reply starts, and minus replies with nothing to show that won't show more: one that finished empty, such as the one a failed turn ends with, and one stopped before it showed anything.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1350855195%2FProperties%2F-1081916106" anchor-label="pendingMessage" id="-1350855195%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pending-message.html"><span>pending</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1350855195%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="pending-message.html">pendingMessage</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../-a-i-pending-message/index.html">AIPendingMessage</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The message the person sent last that is not in the conversation yet. It stays until its reply starts, and after it was stopped or failed, while <a href="retry.html">retry</a> can send it again.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1109740945%2FProperties%2F-1081916106" anchor-label="ratings" id="-1109740945%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ratings.html"><span><span>ratings</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1109740945%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="ratings.html">ratings</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../-a-i-message-rating/index.html">AIMessageRating</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">How the person rated replies on this device, by the reply's id.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-767911261%2FProperties%2F-1081916106" anchor-label="status" id="-767911261%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="status.html"><span><span>status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-767911261%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="status.html">status</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../-a-i-conversation-status/index.html">AIConversationStatus</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Where the latest exchange with the agent is.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-544346374%2FFunctions%2F-1081916106" anchor-label="clearError" id="-544346374%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-error.html"><span>clear</span><wbr><span><span>Error</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-544346374%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="clear-error.html"><span class="token function">clearError</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Forgets <a href="error.html">error</a>, and the request that failed.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-665778133%2FFunctions%2F-1081916106" anchor-label="loadOlderMessages" id="-665778133%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-older-messages.html"><span>load</span><wbr><span>Older</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-665778133%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="load-older-messages.html"><span class="token function">loadOlderMessages</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Loads the messages before the first one, one load at a time, while there are any. A load that fails shows as <a href="error.html">error</a> and can be made again; one that succeeds forgets it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="554047510%2FFunctions%2F-1081916106" anchor-label="rate" id="554047510%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="rate.html"><span><span>rate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="554047510%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="rate.html"><span class="token function">rate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reply<span class="token operator">: </span><a href="index.html">M</a><span class="token punctuation">, </span></span><span class="parameter ">rating<span class="token operator">: </span><a href="../-a-i-message-rating/index.html">AIMessageRating</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Rates a reply, or takes the rating back with null. Ratings reach the transport in the order the person gives them, and the reply's rating goes back to the one the transport has if it can't take the new one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-912242563%2FFunctions%2F-1081916106" anchor-label="retry" id="-912242563%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="retry.html"><span><span>retry</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-912242563%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="retry.html"><span class="token function">retry</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Tries again after <a href="error.html">error</a>. When the transport couldn't send the person's message, it sends it again, with the same message id. Otherwise nothing is sent: the agent had the request but couldn't answer it, stopped partway through its reply, or didn't answer in time, or older messages couldn't load. Sending the message again would add it twice, so retrying forgets the error, as <a href="clear-error.html">clearError</a> does, and the person asks again. Does nothing without an error.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="240812368%2FFunctions%2F-1081916106" anchor-label="send" id="240812368%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="send.html"><span><span>send</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="240812368%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="send.html"><span class="token function">send</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">action<span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.compose.generativeui/-a-i-u-i-action/index.html">AIUIAction</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sends what the person did in a reply's generated UI, as their next message: its label is the text, and the request's <a href="../-a-i-conversation-request/ui-action.html">AIConversationRequest.uiAction</a> the action. Pass it as the action callback of the conversation's <code class="lang-kotlin">AIUIHost</code>.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="send.html"><span class="token function">send</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../io.getstream.chat.android.ai.compose.ui.component/-message-data/index.html">MessageData</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sends what the person wrote in the composer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="send.html"><span class="token function">send</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">attachments<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyList()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sends a message. A message with no text and no attachments is not sent.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1752849043%2FFunctions%2F-1081916106" anchor-label="stop" id="1752849043%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stop.html"><span><span>stop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1752849043%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="stop.html"><span class="token function">stop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Stops the reply the agent is writing. What it wrote so far stays. When the reply hasn't started yet, the person's message stays, and a reply that still arrives is finished whatever it says. Does nothing while the agent isn't answering.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
