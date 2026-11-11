@@ -116,7 +116,6 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
     @Suppress("LongMethod")
     private fun createOfflinePlugin(user: User): OfflinePlugin {
         logger.v { "[createOfflinePlugin] user.id: ${user.id}" }
-        ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
         val chatClient = ChatClient.instance()
         val clientState = chatClient.clientState

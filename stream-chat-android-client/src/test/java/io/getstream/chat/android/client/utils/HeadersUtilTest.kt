@@ -23,7 +23,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.BuildConfig
-import io.getstream.chat.android.client.ChatClient
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -47,14 +46,14 @@ internal class HeadersUtilTest {
 
     @Test
     fun `buildSdkTrackingHeaders should include correct values`() {
-        val headersUtil = HeadersUtil(context, appName = "Chat App", appVersion = "1.3.1-DEBUG")
+        val headersUtil = HeadersUtil(context, appName = "Chat App", appVersion = "1.3.1-DEBUG", offlineEnabled = false)
         val header = headersUtil.buildSdkTrackingHeaders()
 
         assertTrue(header.contains(BuildConfig.STREAM_CHAT_VERSION))
         assertTrue(header.contains("|os=Android ${Build.VERSION.RELEASE}"))
         assertTrue(header.contains("|api_version=${Build.VERSION.SDK_INT}"))
         assertTrue(header.contains("|device_model=${Build.MANUFACTURER} ${Build.MODEL}"))
-        assertTrue(header.contains("|offline_enabled=${ChatClient.OFFLINE_SUPPORT_ENABLED}"))
+        assertTrue(header.contains("|offline_enabled=false"))
         assertTrue(header.contains("|app=Chat App"))
         assertTrue(header.contains("|app_version=1.3.1-DEBUG"))
     }

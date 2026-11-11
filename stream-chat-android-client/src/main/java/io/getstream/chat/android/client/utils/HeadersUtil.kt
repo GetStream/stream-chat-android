@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.utils
 import android.content.Context
 import android.os.Build
 import io.getstream.chat.android.client.BuildConfig
-import io.getstream.chat.android.client.ChatClient.Companion.OFFLINE_SUPPORT_ENABLED
 import io.getstream.chat.android.client.ChatClient.Companion.VERSION_PREFIX_HEADER
 import java.text.Normalizer
 
@@ -34,8 +33,14 @@ import java.text.Normalizer
  * @param context The application context used to retrieve package-related data.
  * @param appName The application name which is using the Chat SDK
  * @param appVersion The application version which is using the Chat SDK. Eg: 1.0.0
+ * @param offlineEnabled Whether offline support is enabled.
  */
-internal class HeadersUtil(var context: Context, private var appName: String?, private var appVersion: String?) {
+internal class HeadersUtil(
+    var context: Context,
+    private var appName: String?,
+    private var appVersion: String?,
+    private val offlineEnabled: Boolean = true,
+) {
 
     /**
      * Retrieves the version name of the application.
@@ -128,7 +133,7 @@ internal class HeadersUtil(var context: Context, private var appName: String?, p
             append("|os=$osName")
             append("|api_version=$apiLevel")
             append("|device_model=$deviceManufacturer $buildModel")
-            append("|offline_enabled=$OFFLINE_SUPPORT_ENABLED")
+            append("|offline_enabled=$offlineEnabled")
             append("|app=$appNameValue")
             append("|app_version=$appVersionValue")
         }.sanitize()
