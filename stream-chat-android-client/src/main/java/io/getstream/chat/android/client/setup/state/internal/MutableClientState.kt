@@ -40,6 +40,16 @@ internal class MutableClientState(private val networkStateProvider: NetworkState
     override val user: StateFlow<User?>
         get() = _user
 
+    @Volatile
+    private var confirmedUserId: String? = null
+
+    /**
+     * The current user, once the server has returned it. Until then [user] is the one the app passed when
+     * connecting, which has no own-user fields such as mutes and privacy settings.
+     */
+    val confirmedUser: User?
+        get() = _user.value?.takeIf { it.id == confirmedUserId }
+
     override val isOnline: Boolean
         get() = _connectionState.value is ConnectionState.Connected
 
@@ -65,6 +75,7 @@ internal class MutableClientState(private val networkStateProvider: NetworkState
         _initializationState.value = InitializationState.NOT_INITIALIZED
         _connectionState.value = ConnectionState.Offline
         _user.value = null
+        confirmedUserId = null
     }
 
     /**
@@ -93,5 +104,13 @@ internal class MutableClientState(private val networkStateProvider: NetworkState
      */
     fun setUser(user: User) {
         _user.value = user
+    }
+
+    /**
+     * Sets the current user as returned by the server, which makes it the [confirmedUser].
+     */
+    fun setConfirmedUser(user: User) {
+        _user.value = user
+        confirmedUserId = user.id
     }
 }

@@ -186,6 +186,21 @@ public class StateRegistry @JvmOverloads constructor(
     internal fun activeChannel(channelId: ChannelId): ChannelState? =
         if (useLegacyChannelState) legacyChannels[channelId] else channels[channelId]
 
+    /**
+     * Returns a channel holding only the config and reads of the channel's state, or null if it has no state.
+     * Never creates the state.
+     */
+    internal fun activeChannelReadState(cid: String): Channel? {
+        val channelId = ChannelId.fromCid(cid) ?: return null
+        val state = activeChannel(channelId) ?: return null
+        return Channel(
+            type = state.channelType,
+            id = state.channelId,
+            config = state.channelConfig.value,
+            read = state.reads.value,
+        )
+    }
+
     private fun newChannelState(channelType: String, channelId: String): ChannelState =
         if (useLegacyChannelState) {
             buildLegacyChannelState(channelType, channelId)

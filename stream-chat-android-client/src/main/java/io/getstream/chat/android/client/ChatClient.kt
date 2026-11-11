@@ -64,6 +64,7 @@ import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdenti
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getRepliesAroundIdentifier
+import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.AttachmentsSender
@@ -261,6 +262,7 @@ import io.getstream.result.call.withPrecondition
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
 import io.getstream.result.onSuccessSuspend
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -521,12 +523,13 @@ internal constructor(
                 notifications.onSetUser(user)
 
                 mutableClientState.setConnectionState(ConnectionState.Connected)
-                mutableClientState.setUser(user)
+                mutableClientState.setConfirmedUser(user)
             }
 
             is NewMessageEvent -> {
                 notifications.onChatEvent(event)
-                messageReceiptManager.markMessageAsDelivered(event.message)
+                // The receipt can need a network call, so it must not hold up the events behind this one
+                userScope.launch { markReceivedMessageAsDelivered(event.message) }
             }
 
             is NotificationReminderDueEvent -> notifications.onChatEvent(event)
@@ -592,6 +595,25 @@ internal constructor(
             )
         }
     }
+
+    @Suppress("TooGenericExceptionCaught")
+    private suspend fun markReceivedMessageAsDelivered(message: Message) {
+        try {
+            messageReceiptManager.markMessageAsDelivered(message)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.e(e) { "[markReceivedMessageAsDelivered] failed for message ${message.id}" }
+        }
+    }
+
+    /**
+     * The config and reads of the channel as held in memory by the state plugin, or null if it has no state for it.
+     * Never creates the state.
+     */
+    private fun activeChannelReadState(cid: String): Channel? =
+        // Not resolvePluginDependency: it waits for initialization and throws, and this runs for every new message
+        plugins.firstNotNullOfOrNull { it.resolveDependency(StateRegistry::class) }?.activeChannelReadState(cid)
 
     /**
      * Either entirely extracts current user from the event
@@ -1469,7 +1491,7 @@ internal constructor(
         }.doOnResult(userScope) { result ->
             logger.v { "[fetchCurrentUser] completed: $result" }
             result.getOrNull()?.also { currentUser ->
-                mutableClientState.setUser(currentUser)
+                mutableClientState.setConfirmedUser(currentUser)
             }
             plugins.forEach { plugin ->
                 logger.v { "[fetchCurrentUser] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
@@ -5986,6 +6008,7 @@ internal constructor(
             val allPluginFactories = setupPluginFactories(
                 chatClientConfig = chatClientConfig,
             )
+            val mutableClientState = MutableClientState(module.networkStateProvider)
 
             return ChatClient(
                 config = config,
@@ -6007,7 +6030,7 @@ internal constructor(
                     .filterIsInstance<RepositoryFactory.Provider>()
                     .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
-                mutableClientState = MutableClientState(module.networkStateProvider),
+                mutableClientState = mutableClientState,
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
                 repository = repository,
@@ -6020,6 +6043,8 @@ internal constructor(
                 messageReceiptManager = MessageReceiptManager(
                     now = ::Date,
                     getRepositoryFacade = { instance().repositoryFacade },
+                    getConfirmedUser = { mutableClientState.confirmedUser },
+                    getActiveChannel = { cid -> instance().activeChannelReadState(cid) },
                     messageReceiptRepository = repository,
                     api = api,
                 ),

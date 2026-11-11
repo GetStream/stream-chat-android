@@ -79,6 +79,55 @@ internal class MutableClientStateTest {
     }
 
     @Test
+    fun `confirmedUser is null when the user is set by the app`() {
+        mutableClientState.setUser(randomUser())
+
+        mutableClientState.confirmedUser shouldBeEqualTo null
+    }
+
+    @Test
+    fun `confirmedUser is the user set from the server`() {
+        val user = randomUser()
+
+        mutableClientState.setConfirmedUser(user)
+
+        mutableClientState.confirmedUser shouldBeEqualTo user
+    }
+
+    @Test
+    fun `confirmedUser follows later updates of a confirmed user`() {
+        val user = randomUser()
+        val updatedUser = user.copy(name = "updated")
+        mutableClientState.setConfirmedUser(user)
+
+        mutableClientState.setUser(updatedUser)
+
+        mutableClientState.confirmedUser shouldBeEqualTo updatedUser
+    }
+
+    @Test
+    fun `clearState resets the confirmed user`() {
+        val user = randomUser()
+        mutableClientState.setConfirmedUser(user)
+        mutableClientState.clearState()
+
+        mutableClientState.setUser(user)
+
+        mutableClientState.confirmedUser shouldBeEqualTo null
+    }
+
+    @Test
+    fun `confirmedUser is null for a new user after a late confirmation of the previous one`() {
+        val previousUser = randomUser()
+        mutableClientState.clearState()
+        mutableClientState.setConfirmedUser(previousUser)
+
+        mutableClientState.setUser(randomUser())
+
+        mutableClientState.confirmedUser shouldBeEqualTo null
+    }
+
+    @Test
     fun `isOnline should return true when connection state is Connected`() {
         mutableClientState.setConnectionState(ConnectionState.Connected)
         mutableClientState.isOnline shouldBeEqualTo true
