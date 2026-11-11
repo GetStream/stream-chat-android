@@ -1255,11 +1255,11 @@ internal class ChannelStateImpl(
      * Marks the channel as read for the current user and returns how the request was handled:
      * remotely, on-device (read events disabled + local tracking enabled), or not at all.
      *
-     * @param trackClearedUnread True to keep the unread count cleared for the remote request, so
+     * @param restoreOnFailure True to keep the unread count cleared for the remote request, so
      * [restoreClearedUnread] can add it back if the request fails.
      */
-    fun markRead(trackClearedUnread: Boolean = false): MarkReadResult {
-        if (trackClearedUnread) clearedUnread.set(0)
+    fun markRead(restoreOnFailure: Boolean = false): MarkReadResult {
+        if (restoreOnFailure) clearedUnread.set(0)
         if (!channelConfig.value.readEventsEnabled) {
             if (!isLocalUnreadCountEnabled) {
                 // Ignore request, `read_events = false`
@@ -1291,7 +1291,7 @@ internal class ChannelStateImpl(
                 cleared = latest.unreadMessages
                 current + (latest.getUserId() to latest.copy(unreadMessages = 0))
             }
-            if (trackClearedUnread) clearedUnread.set(cleared)
+            if (restoreOnFailure) clearedUnread.set(cleared)
             MarkReadResult.RemoteRequired
         } else {
             // Already marked up to the latest message

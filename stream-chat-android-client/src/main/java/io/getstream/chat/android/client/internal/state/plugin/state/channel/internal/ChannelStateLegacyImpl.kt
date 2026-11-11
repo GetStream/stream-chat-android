@@ -657,11 +657,11 @@ internal class ChannelStateLegacyImpl(
      * Marks the channel as read for the current user and returns how the request was handled:
      * remotely, on-device (read events disabled + local tracking enabled), or not at all.
      *
-     * @param trackClearedUnread True to keep the unread count cleared for the remote request, so
+     * @param restoreOnFailure True to keep the unread count cleared for the remote request, so
      * [restoreClearedUnread] can add it back if the request fails.
      */
-    fun markChannelAsRead(trackClearedUnread: Boolean = false): MarkReadResult {
-        if (trackClearedUnread) clearedUnread.set(0)
+    fun markChannelAsRead(restoreOnFailure: Boolean = false): MarkReadResult {
+        if (restoreOnFailure) clearedUnread.set(0)
         if (!channelConfig.value.readEventsEnabled) {
             if (!isLocalUnreadCountEnabled) {
                 return MarkReadResult.NotNeeded
@@ -679,7 +679,7 @@ internal class ChannelStateLegacyImpl(
             // Stamping them with the newest loaded message's date here made messages still queued
             // behind this call count as already seen.
             upsertReads(listOf(currentUserRead.copy(unreadMessages = 0)))
-            if (trackClearedUnread) clearedUnread.set(currentUserRead.unreadMessages)
+            if (restoreOnFailure) clearedUnread.set(currentUserRead.unreadMessages)
             MarkReadResult.RemoteRequired
         } else {
             MarkReadResult.NotNeeded

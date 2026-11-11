@@ -287,7 +287,7 @@ internal class ChannelLogicImpl(
     }
 
     override fun markRead(restoreOnFailure: Boolean): MarkReadResult {
-        val result = state.markRead(trackClearedUnread = restoreOnFailure)
+        val result = state.markRead(restoreOnFailure = restoreOnFailure)
         if (result == MarkReadResult.HandledLocally) {
             persistCurrentReads()
         }
