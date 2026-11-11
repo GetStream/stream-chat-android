@@ -15,8 +15,13 @@
 -keepnames class * extends io.getstream.chat.android.client.api2.model.dto.ExtraDataDto { *; }
 -keepnames class io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto { *; }
 
+# ChatModule reads these annotations off each Retrofit API to pick its HTTP client. Retrofit's own rules keep the
+# endpoint methods; this only keeps the interfaces, and with them their annotations. No allowshrinking: Retrofit
+# implements them at runtime, and R8 would otherwise assume nothing does and fail the cast to them.
+-keep,allowobfuscation @io.getstream.chat.android.client.api.AuthenticatedApi interface *
+-keep,allowobfuscation @io.getstream.chat.android.client.api.AnonymousApi interface *
+
 # Rules necessary for R8 full mode
--keep class io.getstream.chat.android.client.api2.endpoint.** { *; }
 -keep class io.getstream.chat.android.client.call.RetrofitCall { *; }
 -keep class com.squareup.moshi.JsonReader
 -keep class com.squareup.moshi.JsonAdapter
