@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.notifications.handler
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -26,14 +25,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
-import io.getstream.android.push.permissions.DefaultNotificationPermissionHandler
 import io.getstream.android.push.permissions.NotificationPermissionHandler
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
-import kotlin.reflect.full.primaryConstructor
 
 /**
  * Factory for default [NotificationHandler].
@@ -50,7 +47,8 @@ public object NotificationHandlerFactory {
      * @param notificationChannel Lambda expression used to generate a [NotificationChannel].
      * Used in SDK_INT >= VERSION_CODES.O.
      * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
-     * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
+     * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle, for
+     * example to tell the user why notifications won't show after a denial. Nothing is shown by default.
      * @param notificationTextFormatter Lambda expression used to formats the text of the notification.
      * @param actionsProvider Lambda expression used to provide actions for the notification.
      * See [NotificationActionsFactory] for customizing the default actions.
@@ -75,7 +73,7 @@ public object NotificationHandlerFactory {
         newMessageIntent: ((message: Message, channel: Channel) -> Intent) = getDefaultNewMessageIntentFun(context),
         notificationChannel: (() -> NotificationChannel) = getDefaultNotificationChannel(context),
         userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
-        permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
+        permissionHandler: NotificationPermissionHandler? = null,
         notificationTextFormatter: ((currentUser: User?, message: Message) -> CharSequence) =
             getDefaultNotificationTextFormatter(notificationConfig),
         actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> =
@@ -151,59 +149,15 @@ public object NotificationHandlerFactory {
         }
     }
 
-    private fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
-        // We search for the StreamCoilUserIconBuilder by reflection and this is slow - we need
-        // to postpone to not block the SDK initialisation
-        return object : UserIconBuilder {
-            private val builder by lazy {
-                val appContext = context.applicationContext
-                runCatching {
-                    Class.forName(
-                        "io.getstream.chat.android.ui.common.notifications." +
-                            "StreamCoilUserIconBuilder",
-                    )
-                        .kotlin.primaryConstructor
-                        ?.call(appContext) as UserIconBuilder
-                }.getOrDefault(DefaultUserIconBuilder(appContext))
-            }
-
-            override suspend fun buildIcon(user: User): IconCompat? {
-                return builder.buildIcon(user)
-            }
+    internal fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
+        val appContext = context.applicationContext
+        // Resolved on first use, so it doesn't matter whether the UI module registers before or after the handler is
+        // created.
+        val builder by lazy {
+            NotificationDefaults.userIconBuilderFactory?.invoke(appContext) ?: DefaultUserIconBuilder(appContext)
         }
-    }
-
-    private fun provideDefaultNotificationPermissionHandler(context: Context): NotificationPermissionHandler {
-        // We search for the SnackbarNotificationPermissionHandler by reflection and this is slow - we need
-        // to postpone to not block the SDK initialisation
-        return object : NotificationPermissionHandler {
-            private val handler by lazy {
-                val appContext = context.applicationContext
-                runCatching {
-                    Class.forName(
-                        "io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler",
-                    ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
-                }.getOrDefault(
-                    DefaultNotificationPermissionHandler
-                        .createDefaultNotificationPermissionHandler(appContext as Application),
-                )
-            }
-
-            override fun onPermissionDenied() {
-                handler.onPermissionDenied()
-            }
-
-            override fun onPermissionGranted() {
-                handler.onPermissionGranted()
-            }
-
-            override fun onPermissionRationale() {
-                handler.onPermissionRationale()
-            }
-
-            override fun onPermissionRequested() {
-                handler.onPermissionRequested()
-            }
+        return object : UserIconBuilder {
+            override suspend fun buildIcon(user: User): IconCompat? = builder.buildIcon(user)
         }
     }
 }
