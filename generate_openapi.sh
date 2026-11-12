@@ -8,8 +8,11 @@
 #
 # A vendored file with a `// Patched:` comment is left as it is; the comment says why it differs from the spec and when
 # the patch can go. The script lists the fields such a file lacks or has beyond the spec. To refresh it and keep the
-# patch, copy the generated version over it, run spotlessApply, and restore the patched lines from the diff. To vendor
-# a new model or endpoint, copy it from the generated output in build/ by hand.
+# patch, copy the generated version over it, run spotlessApply, and restore the patched lines from the diff.
+#
+# To call a new endpoint, run the script once, copy its function from build/openapi/generated/apis/ChatEndpoints.kt
+# into the vendored ChatEndpoints.kt, and run the script again: it refreshes the function from then on and lists the
+# models it references that aren't vendored yet. Copy those from build/openapi/generated/models the same way.
 #
 # Usage:
 #   ./generate_openapi.sh                             # backend master, fetched into build/openapi/chat
