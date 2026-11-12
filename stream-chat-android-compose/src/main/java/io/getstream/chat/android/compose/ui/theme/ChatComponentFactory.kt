@@ -1717,7 +1717,36 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSendButton(
             onClick = params.onClick,
             onClickLabel = params.onClickLabel,
+            onLongClick = params.onLongClick,
+            onLongClickLabel = params.onLongClickLabel,
         )
+    }
+
+    /**
+     * The default sheet to schedule the message of the composer, opened by a long press on the send button. It lists
+     * quick dates and a row that opens [ScheduleMessageTimeSheet] to pick a custom time.
+     *
+     * Shown only when the user has the `schedule-message` capability in the channel and
+     * [ComposerConfig.scheduledMessagesEnabled] is true.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduleMessageSheet(params: ScheduleMessageSheetParams) {
+        io.getstream.chat.android.compose.ui.messages.composer.schedule.ScheduleMessageSheet(params)
+    }
+
+    /**
+     * The default sheet to pick the date and the time a message is sent at. It shows a preview of the message, Date
+     * and Time rows that open the Material date and time pickers, a time zone note, and the errors that prevent
+     * scheduling. It schedules a new message, or reschedules one when [ScheduleMessageTimeSheetParams.scheduledAt] is
+     * set.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduleMessageTimeSheet(params: ScheduleMessageTimeSheetParams) {
+        io.getstream.chat.android.compose.ui.messages.composer.schedule.ScheduleMessageTimeSheet(params)
     }
 
     /**

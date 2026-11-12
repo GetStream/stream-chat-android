@@ -34,12 +34,14 @@ import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.mentionRegex
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.isPending
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
@@ -53,6 +55,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
 import io.getstream.chat.android.ui.common.state.messages.composer.sortedByAvailability
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
@@ -86,8 +89,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -288,6 +293,37 @@ public class MessageComposerController(
 
     /** Full message composer state holding all the required information. */
     public val state: StateFlow<MessageComposerState> = _state.asStateFlow()
+
+    /**
+     * What the composer knows to schedule its message in the channel: the capability, the limits and the lead times
+     * of the channel config, and the pending scheduled messages of the current user. Computed while it is collected.
+     */
+    public val scheduleMessageState: StateFlow<ScheduleMessageState> = combine(
+        ownCapabilities,
+        channelState.filterNotNull().flatMapLatest { it.channelConfig },
+        // Deferred, so the scheduled messages are read only while this state is collected.
+        flow { emitAll(chatClient.scheduledMessages) },
+    ) { ownCapabilities, channelConfig, scheduledMessages ->
+        val now = Date()
+        val pending = scheduledMessages.filter { it.isPending(now) }
+        val defaults = ScheduleMessageState()
+        ScheduleMessageState(
+            canSchedule = ChannelCapabilities.SCHEDULE_MESSAGE in ownCapabilities,
+            pendingInChannel = pending.count { it.cid == channelCid },
+            maxPerChannel = channelConfig.scheduledMessagesMaxPerChannel,
+            pendingForUser = pending.size,
+            maxPerUser = channelConfig.scheduledMessagesMaxPerUser,
+            minLeadTimeSeconds = channelConfig.scheduledMessagesMinLeadTimeSeconds ?: defaults.minLeadTimeSeconds,
+            maxLeadTimeSeconds = channelConfig.scheduledMessagesMaxLeadTimeSeconds ?: defaults.maxLeadTimeSeconds,
+            hasCommands = channelConfig.commands.isNotEmpty(),
+        )
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = ScheduleMessageState(),
+    )
+
+    private var isScheduling = false
 
     private val _messageInput = MutableStateFlow(MessageInput())
 
@@ -913,6 +949,44 @@ public class MessageComposerController(
             }
         } else {
             enqueueSendMessage(preparedMessage, callback)
+        }
+    }
+
+    /**
+     * Schedules [message] to be sent at [scheduledAt], with the thread and "also send to channel" state of the
+     * composer, like [sendMessage] sends it. The message is saved locally first, and sent to the server once its
+     * attachments are uploaded and the device is online, so it can be scheduled offline.
+     *
+     * Once it is saved, the composer is emptied. When it is refused before it is saved, for example because of a
+     * limit, the composer keeps its content. Does nothing while another message is being scheduled.
+     *
+     * @param message The message to schedule, built with [buildNewMessage].
+     * @param scheduledAt The date when the message is sent.
+     * @param resolveAttachments Copies the attachments picked in the composer to local files, so they can be
+     * uploaded, or null when they already are.
+     * @param onResult Called with the scheduled message as saved locally, or with the reason it was refused.
+     */
+    public fun scheduleMessage(
+        message: Message,
+        scheduledAt: Date,
+        resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)? = null,
+        onResult: (Result<ScheduledMessage>) -> Unit = {},
+    ) {
+        logger.i { "[scheduleMessage] scheduledAt: $scheduledAt, attachments.size: ${message.attachments.size}" }
+        if (isScheduling) return
+        isScheduling = true
+        val preparedMessage = message.copy(
+            showInChannel = isInThread && _state.value.alsoSendToChannel,
+            skipEnrichUrl = shouldSkipEnrichUrl(message),
+        )
+        scope.launch {
+            val resolvedMessage = resolveAttachments?.let { resolve ->
+                preparedMessage.copy(attachments = resolve(preparedMessage.attachments))
+            } ?: preparedMessage
+            val result = chatClient.scheduleMessage(channelType, channelId, resolvedMessage, scheduledAt).await()
+            isScheduling = false
+            if (result is Result.Success) clearData()
+            onResult(result)
         }
     }
 

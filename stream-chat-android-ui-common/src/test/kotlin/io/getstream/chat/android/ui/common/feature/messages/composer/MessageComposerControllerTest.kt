@@ -40,12 +40,15 @@ import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Role
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomCommand
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.MockRetrofitCall
@@ -61,6 +64,8 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
@@ -92,6 +97,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 @Suppress("LargeClass")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -3737,6 +3743,158 @@ internal class MessageComposerControllerTest {
         override val type: MentionType = MentionType("channel")
     }
 
+    @Test
+    fun `When scheduleMessage succeeds Then the message is scheduled and the composer is emptied`() = runTest {
+        val scheduledAt = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+        val scheduled = randomScheduledMessage(cid = CID, scheduledAt = scheduledAt)
+        fixture.givenScheduleMessage(Result.Success(scheduled))
+        val controller = fixture.get()
+        controller.setMessageInput("Heads up")
+        val results = mutableListOf<Result<ScheduledMessage>>()
+
+        controller.scheduleMessage(Message(cid = CID, text = "Heads up"), scheduledAt, onResult = results::add)
+        advanceUntilIdle()
+
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).scheduleMessage(
+            eq(CHANNEL_TYPE),
+            eq(CHANNEL_ID),
+            messageCaptor.capture(),
+            eq(scheduledAt),
+        )
+        assertEquals("Heads up", messageCaptor.firstValue.text)
+        assertFalse(messageCaptor.firstValue.showInChannel)
+        assertEquals(listOf(Result.Success(scheduled)), results)
+        assertEquals("", controller.messageInput.value.text)
+    }
+
+    @Test
+    fun `When scheduleMessage is refused Then the composer keeps its content`() = runTest {
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+        val error = Error.GenericError("The channel has the maximum of 10 scheduled messages.")
+        fixture.givenScheduleMessage(Result.Failure(error))
+        val controller = fixture.get()
+        controller.setMessageInput("Heads up")
+        val results = mutableListOf<Result<ScheduledMessage>>()
+
+        controller.scheduleMessage(Message(cid = CID, text = "Heads up"), Date(), onResult = results::add)
+        advanceUntilIdle()
+
+        assertEquals(listOf(Result.Failure(error)), results)
+        assertEquals("Heads up", controller.messageInput.value.text)
+    }
+
+    @Test
+    fun `Given thread mode with alsoSendToChannel When scheduleMessage called Then showInChannel is true`() = runTest {
+        val parentMessage = randomMessage(id = "parent-id", cid = CID)
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .givenGetReplies()
+            .givenScheduleMessage(Result.Success(randomScheduledMessage(cid = CID)))
+        val controller = fixture.get()
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        controller.setAlsoSendToChannel(true)
+
+        controller.scheduleMessage(Message(cid = CID, text = "Reply", parentId = "parent-id"), Date())
+        advanceUntilIdle()
+
+        val messageCaptor = argumentCaptor<Message>()
+        verify(fixture.chatClient).scheduleMessage(any(), any(), messageCaptor.capture(), any())
+        assertTrue(messageCaptor.firstValue.showInChannel)
+        assertEquals("parent-id", messageCaptor.firstValue.parentId)
+    }
+
+    @Test
+    fun `scheduleMessageState counts the pending scheduled messages and reads the channel config`() = runTest {
+        val later = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+        val earlier = Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+        val scheduledMessages = MutableStateFlow(
+            listOf(
+                randomScheduledMessage(cid = CID, scheduledAt = later),
+                randomScheduledMessage(cid = CID, scheduledAt = later, status = ScheduledMessageStatus.Sending),
+                randomScheduledMessage(cid = CID, scheduledAt = later, status = ScheduledMessageStatus.Failed),
+                randomScheduledMessage(cid = CID, scheduledAt = earlier),
+                randomScheduledMessage(cid = "messaging:other", scheduledAt = later),
+            ),
+        )
+        val config = Config(
+            commands = listOf(randomCommand()),
+            scheduledMessagesMaxPerChannel = 10,
+            scheduledMessagesMaxPerUser = 100,
+            scheduledMessagesMinLeadTimeSeconds = 120,
+            scheduledMessagesMaxLeadTimeSeconds = 3600,
+        )
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState(
+                channelDataState = MutableStateFlow(
+                    ChannelData(
+                        CHANNEL_ID,
+                        CHANNEL_TYPE,
+                        ownCapabilities = setOf(ChannelCapabilities.SCHEDULE_MESSAGE),
+                    ),
+                ),
+                configState = MutableStateFlow(config),
+            )
+            .givenScheduledMessages(scheduledMessages)
+        val controller = fixture.get()
+
+        controller.scheduleMessageState.test {
+            assertEquals(
+                ScheduleMessageState(
+                    canSchedule = true,
+                    pendingInChannel = 2,
+                    maxPerChannel = 10,
+                    pendingForUser = 3,
+                    maxPerUser = 100,
+                    minLeadTimeSeconds = 120,
+                    maxLeadTimeSeconds = 3600,
+                    hasCommands = true,
+                ),
+                expectMostRecentItem(),
+            )
+            scheduledMessages.value = emptyList()
+            assertEquals(0, awaitItem().pendingInChannel)
+        }
+    }
+
+    @Test
+    fun `scheduleMessageState can't schedule without the capability and keeps the default lead times`() = runTest {
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .givenScheduledMessages(MutableStateFlow(emptyList()))
+        val controller = fixture.get()
+
+        controller.scheduleMessageState.test {
+            val state = expectMostRecentItem()
+            assertFalse(state.canSchedule)
+            assertEquals(ScheduleMessageState().minLeadTimeSeconds, state.minLeadTimeSeconds)
+            assertEquals(ScheduleMessageState().maxLeadTimeSeconds, state.maxLeadTimeSeconds)
+        }
+    }
+
     private class Fixture(
         val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -3825,6 +3983,17 @@ internal class MessageComposerControllerTest {
         fun givenSendMessage(message: Message) = apply {
             whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
             whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
+        }
+
+        fun givenScheduleMessage(result: Result<ScheduledMessage>) = apply {
+            whenever(chatClient.scheduleMessage(any(), any(), any(), any())) doReturn when (result) {
+                is Result.Success -> result.value.asCall()
+                is Result.Failure -> result.value.asCall()
+            }
+        }
+
+        fun givenScheduledMessages(scheduledMessages: StateFlow<List<ScheduledMessage>>) = apply {
+            whenever(chatClient.scheduledMessages) doReturn scheduledMessages
         }
 
         fun givenMessageById(message: Message) = apply {

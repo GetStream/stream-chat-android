@@ -18,21 +18,35 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerScheduleAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingButtonParams
@@ -78,6 +92,8 @@ internal fun MessageComposerInputTrailingContent(
         else -> null
     }
 
+    val scheduleAction = LocalMessageComposerScheduleAction.current
+
     Crossfade(targetState = actionButton) { button ->
         when (button) {
             is ActionButton.CoolDown -> ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
@@ -98,6 +114,10 @@ internal fun MessageComposerInputTrailingContent(
                 params = MessageComposerSendButtonParams(
                     onClick = { onSendClick(inputText, attachments) },
                     onClickLabel = sendActionLabel,
+                    onLongClick = scheduleAction,
+                    onLongClickLabel = scheduleAction?.let {
+                        stringResource(R.string.stream_compose_schedule_message_title)
+                    },
                 ),
             )
 
@@ -124,8 +144,19 @@ private sealed interface ActionButton {
 internal fun MessageComposerSendButton(
     onClick: () -> Unit,
     onClickLabel: String? = null,
+    onLongClick: (() -> Unit)? = null,
+    onLongClickLabel: String? = null,
 ) {
     val resolvedLabel = onClickLabel ?: stringResource(R.string.stream_compose_message_composer_send_action)
+    if (onLongClick != null) {
+        MessageComposerSendButtonWithLongClick(
+            onClick = onClick,
+            onClickLabel = resolvedLabel,
+            onLongClick = onLongClick,
+            onLongClickLabel = onLongClickLabel,
+        )
+        return
+    }
     FilledIconButton(
         modifier = Modifier
             .size(48.dp)
@@ -146,6 +177,56 @@ internal fun MessageComposerSendButton(
         Icon(
             painter = painterResource(id = R.drawable.stream_design_ic_send),
             contentDescription = stringResource(id = R.string.stream_compose_message_composer_send_button),
+        )
+    }
+}
+
+/**
+ * The send button with a long click action, which [FilledIconButton] does not support. It looks the same, and also
+ * exposes the long click as a named accessibility action, so a screen reader user can run it without a long press.
+ */
+@Composable
+private fun MessageComposerSendButtonWithLongClick(
+    onClick: () -> Unit,
+    onClickLabel: String,
+    onLongClick: () -> Unit,
+    onLongClickLabel: String?,
+) {
+    val haptics = LocalHapticFeedback.current
+    val currentOnLongClick by rememberUpdatedState(onLongClick)
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .padding(StreamTokens.spacingXs)
+            .testTag("Stream_ComposerSendButton")
+            .clip(CircleShape)
+            .background(ChatTheme.colors.accentPrimary)
+            .combinedClickable(
+                onClickLabel = onClickLabel,
+                role = Role.Button,
+                onLongClickLabel = onLongClickLabel,
+                onLongClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onLongClick()
+                },
+                onClick = onClick,
+            )
+            .semantics {
+                onLongClickLabel?.let { label ->
+                    customActions = listOf(
+                        CustomAccessibilityAction(label) {
+                            currentOnLongClick()
+                            true
+                        },
+                    )
+                }
+            },
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.stream_design_ic_send),
+            contentDescription = stringResource(id = R.string.stream_compose_message_composer_send_button),
+            tint = ChatTheme.colors.buttonPrimaryTextOnAccent,
         )
     }
 }
