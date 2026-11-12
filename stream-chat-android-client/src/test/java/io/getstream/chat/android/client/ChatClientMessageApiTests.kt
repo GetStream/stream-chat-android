@@ -272,6 +272,21 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun `resending a failed message that was already sent keeps its local creation date`() = runTest {
+        val oldDate = Date(1_000)
+        val message = randomMessage(
+            createdAt = Date(2_000),
+            createdLocallyAt = oldDate,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+            parentId = null,
+        )
+
+        val sent = sendAndCaptureMessage(message)
+
+        assertEquals(oldDate, sent.createdLocallyAt)
+    }
+
+    @Test
     fun `retrying a message that is still pending keeps its local creation date`() = runTest {
         val oldDate = Date(1_000)
         val message = randomMessage(
