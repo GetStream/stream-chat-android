@@ -56,7 +56,6 @@ dependencies {
     implementation(project(":stream-chat-android-ui-utils"))
 
     implementation(libs.stream.log)
-    implementation(libs.stream.push.permissions.snackbar)
     implementation(libs.stream.result)
     implementation(libs.androidx.compose.runtime)
 

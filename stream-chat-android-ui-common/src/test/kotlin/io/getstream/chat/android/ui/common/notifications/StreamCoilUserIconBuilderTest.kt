@@ -18,17 +18,17 @@ package io.getstream.chat.android.ui.common.notifications
 
 import android.content.Context
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertInstanceOf
 import org.mockito.kotlin.mock
-import kotlin.reflect.full.primaryConstructor
 
 internal class StreamCoilUserIconBuilderTest {
 
-    private val FULL_CLASS_NAME = "io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder"
-
     @Test
-    fun `Verify StreamCoilUserIconBuilder can be created by reflection`() {
-        Class.forName(FULL_CLASS_NAME)
-            .kotlin.primaryConstructor
-            ?.call(mock<Context>()) as StreamCoilUserIconBuilder
+    fun `StreamCoilUserIconBuilder can be built the way NotificationHandlerFactory looks it up`() {
+        val builder = Class.forName("io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder")
+            .getConstructor(Context::class.java)
+            .newInstance(mock<Context>())
+
+        assertInstanceOf<StreamCoilUserIconBuilder>(builder)
     }
 }
