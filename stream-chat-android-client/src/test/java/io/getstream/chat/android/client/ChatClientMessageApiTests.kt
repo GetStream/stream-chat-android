@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
@@ -52,16 +53,19 @@ import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
+import java.util.Date
 
 /**
  * Tests for the [ChatClient] message endpoints.
@@ -250,6 +254,62 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         // then
         assertEquals(requestResult, result)
         verify(plugin, never()).onMessageSendResult(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `resending a failed message that was never sent renews its local creation date`() = runTest {
+        val oldDate = Date(1_000)
+        val message = randomMessage(
+            createdAt = null,
+            createdLocallyAt = oldDate,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+            parentId = null,
+        )
+
+        val sent = sendAndCaptureMessage(message)
+
+        assertTrue(sent.createdLocallyAt!!.after(oldDate))
+    }
+
+    @Test
+    fun `resending a failed message that was already sent keeps its local creation date`() = runTest {
+        val oldDate = Date(1_000)
+        val message = randomMessage(
+            createdAt = Date(2_000),
+            createdLocallyAt = oldDate,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+            parentId = null,
+        )
+
+        val sent = sendAndCaptureMessage(message)
+
+        assertEquals(oldDate, sent.createdLocallyAt)
+    }
+
+    @Test
+    fun `retrying a message that is still pending keeps its local creation date`() = runTest {
+        val oldDate = Date(1_000)
+        val message = randomMessage(
+            createdAt = null,
+            createdLocallyAt = oldDate,
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            parentId = null,
+        )
+
+        val sent = sendAndCaptureMessage(message)
+
+        assertEquals(oldDate, sent.createdLocallyAt)
+    }
+
+    private suspend fun sendAndCaptureMessage(message: Message): Message {
+        val sut = Fixture()
+            .givenSendMessageResult(message.asCall())
+            .givenSendAttachmentsResult(Result.Success(message))
+            .get()
+        sut.sendMessage("messaging", "channelId", message).await()
+        val sent = argumentCaptor<Message>()
+        verify(attachmentsSender).sendAttachments(sent.capture(), any(), any(), any())
+        return sent.firstValue
     }
 
     @Test
