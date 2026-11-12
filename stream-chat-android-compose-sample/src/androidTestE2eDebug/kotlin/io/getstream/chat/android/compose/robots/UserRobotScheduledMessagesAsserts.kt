@@ -21,10 +21,12 @@ import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Actions
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Banner
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.ScheduleSheet
+import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.ScheduleTimeSheet
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Screen
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Snackbar
 import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
+import io.getstream.chat.android.e2e.test.uiautomator.isEnabled
 import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertFalse
@@ -56,7 +58,18 @@ fun UserRobot.assertScheduledMessage(text: String, time: String? = null): UserRo
     return this
 }
 
-/** Asserts the snackbar that tells the server has the scheduled message. */
+/**
+ * Asserts the server has the new scheduled message [text]: its row in the list opened from the
+ * banner is no longer in progress. Then goes back to the channel.
+ */
+fun UserRobot.assertScheduledMessageOnServer(text: String): UserRobot {
+    openScheduledMessagesFromBanner()
+    assertScheduledMessage(text)
+    pressBack()
+    return this
+}
+
+/** Asserts the snackbar that tells the server has the change of an edited scheduled message. */
 fun UserRobot.assertScheduledMessageSaved(): UserRobot {
     assertTrue(Snackbar.scheduled.waitDisplayed())
     return this
@@ -100,5 +113,12 @@ fun UserRobot.assertMessageWithImage(text: String): UserRobot {
 
 fun UserRobot.assertScheduleSheetIsNotShown(): UserRobot {
     assertFalse(ScheduleSheet.view.waitDisplayed(timeOutMillis = 3_000))
+    return this
+}
+
+/** Asserts the open time sheet shows the [error] note and can't schedule. */
+fun UserRobot.assertScheduleTimeSheetError(error: String): UserRobot {
+    assertTrue(ScheduleTimeSheet.error(error).waitDisplayed())
+    assertFalse(ScheduleTimeSheet.confirmButton.isEnabled())
     return this
 }

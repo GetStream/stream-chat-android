@@ -27,12 +27,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
@@ -51,12 +54,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.sample.R
@@ -66,10 +69,13 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerSendButtonParams
+import io.getstream.chat.android.compose.ui.theme.ScheduleMessageTimeSheetParams
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -81,15 +87,15 @@ import java.util.Date
 import io.getstream.chat.android.compose.R as ComposeR
 
 /**
- * Adds scheduled messages to the channel screen in [content]: a long press on send schedules the content of the
- * composer, a banner under the header tells about the scheduled messages of the channel or the thread, and a
- * scheduled message can be edited in the composer. Shown only when the user has the
- * [ChannelCapabilities.SCHEDULE_MESSAGE] capability in the channel.
+ * Adds scheduled messages to the channel screen in [content]: a banner under the header tells about the scheduled
+ * messages of the channel or the thread, and a scheduled message can be edited, rescheduled or scheduled again in the
+ * composer. The banner is shown only when the user has the [ChannelCapabilities.SCHEDULE_MESSAGE] capability in the
+ * channel. Scheduling a new message comes from the SDK composer.
  *
  * @param composerViewModel The view model of the composer of [content].
  * @param attachmentsPickerViewModel The view model of the attachment picker of [content].
  * @param viewModel Schedules and edits the scheduled messages.
- * @param channelName The name of the channel, for the preview of the message to schedule.
+ * @param channelName The name of the channel, for the preview of the edited message.
  * @param onViewClick Called to show all the scheduled messages.
  * @param content The channel screen.
  */
@@ -128,14 +134,7 @@ internal fun ScheduledMessagesComposer(
                     composerViewModel = composerViewModel,
                     viewModel = viewModel,
                     onViewClick = onViewClick,
-                    onSendLongClick = {
-                        requestedSheet = when {
-                            viewModel.editedMessage.value == null -> ScheduleSheet.Quick
-                            viewModel.isScheduledAgain -> ScheduleSheet.ScheduleAgain
-                            else -> ScheduleSheet.Reschedule
-                        }
-                    },
-                    onScheduleAgainClick = { requestedSheet = ScheduleSheet.ScheduleAgain },
+                    onSheetRequest = { requestedSheet = it },
                 )
             },
             content = content,
@@ -156,7 +155,7 @@ internal fun ScheduledMessagesComposer(
             composerViewModel = composerViewModel,
             viewModel = viewModel,
             channelName = channelName,
-            onSheetChange = { sheet = it },
+            onDismiss = { sheet = null },
         )
     }
 
@@ -195,72 +194,56 @@ private fun ThreadTracker(composerViewModel: MessageComposerViewModel, viewModel
 }
 
 /**
- * Shows [sheet], and calls [onSheetChange] with the next sheet, or null when it is dismissed.
+ * Shows [sheet] for the edited message, with the time sheet of the SDK.
  */
-@Suppress("LongMethod")
+@OptIn(InternalStreamChatApi::class)
 @Composable
 private fun ScheduleSheetHost(
     sheet: ScheduleSheet,
     composerViewModel: MessageComposerViewModel,
     viewModel: ChannelScheduledMessagesViewModel,
     channelName: String,
-    onSheetChange: (ScheduleSheet?) -> Unit,
+    onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val composerState by composerViewModel.messageComposerState.collectAsStateWithLifecycle()
-    val editedMessage by viewModel.editedMessage.collectAsStateWithLifecycle()
-    val banner by viewModel.banner.collectAsStateWithLifecycle()
-    val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
-    when (sheet) {
-        ScheduleSheet.Quick -> ScheduleMessageSheet(
-            onDateSelected = { viewModel.onScheduleClick(composerViewModel.buildScheduledMessage(), it) },
-            onCustomTimeClick = { onSheetChange(ScheduleSheet.Custom) },
-            onDismiss = { onSheetChange(null) },
-        )
-        ScheduleSheet.Custom,
-        ScheduleSheet.ScheduleAgain,
-        -> ScheduleTimeSheet(
-            title = stringResource(R.string.scheduled_messages_schedule_title),
-            confirmLabel = stringResource(R.string.scheduled_messages_schedule),
-            previewTitle = stringResource(R.string.scheduled_messages_message_to, channelName),
-            previewText = composerState.inputValue,
-            initialDate = scheduleMessagePresets(Date()).first(),
-            note = banner?.takeIf { it is ScheduledMessagesBanner.Pending }?.let {
-                pluralStringResource(R.plurals.scheduled_messages_in_this_channel_count, it.count, it.count)
+    val scheduleState by composerViewModel.scheduleMessageState.collectAsStateWithLifecycle()
+    val edited by viewModel.editedMessage.collectAsStateWithLifecycle()
+    val editedMessage = edited ?: return
+    val message = remember(sheet) { composerViewModel.buildScheduledMessage() }
+    val params = when (sheet) {
+        ScheduleSheet.Reschedule -> ScheduleMessageTimeSheetParams(
+            message = message,
+            channelName = channelName,
+            initialDate = editedMessage.scheduledAt,
+            state = scheduleState,
+            // The edited message already counts toward the limits.
+            error = null,
+            onConfirm = { date ->
+                onDismiss()
+                viewModel.onRescheduleEditClick(message, date)
             },
-            isOffline = isOffline,
-            onConfirm = { viewModel.onScheduleClick(composerViewModel.buildScheduledMessage(), it) },
-            onDismiss = { onSheetChange(null) },
+            onDismiss = onDismiss,
+            scheduledAt = editedMessage.scheduledAt,
         )
-        ScheduleSheet.Reschedule -> editedMessage?.let { edited ->
-            ScheduleTimeSheet(
-                title = stringResource(R.string.scheduled_messages_reschedule_title),
-                confirmLabel = stringResource(R.string.scheduled_messages_reschedule),
-                previewTitle = stringResource(
-                    R.string.scheduled_messages_scheduled_at,
-                    context.formatScheduledDate(edited.scheduledAt),
-                ),
-                previewText = composerState.inputValue,
-                initialDate = edited.scheduledAt,
-                note = null,
-                isOffline = isOffline,
-                onConfirm = { viewModel.onRescheduleEditClick(composerViewModel.buildScheduledMessage(), it) },
-                onDismiss = { onSheetChange(null) },
-            )
-        }
+        ScheduleSheet.ScheduleAgain -> ScheduleMessageTimeSheetParams(
+            message = message,
+            channelName = channelName,
+            initialDate = remember { scheduleMessageQuickDates(Date()).first() },
+            state = scheduleState,
+            error = scheduleState.messageError(message),
+            onConfirm = { date ->
+                onDismiss()
+                viewModel.onScheduleAgainClick(message, date)
+            },
+            onDismiss = onDismiss,
+        )
     }
+    ChatTheme.componentFactory.ScheduleMessageTimeSheet(params)
 }
 
 /**
- * The sheet open to pick when the content of the composer is sent.
+ * The sheet open to pick when the edited message is sent.
  */
 private enum class ScheduleSheet {
-    /** The quick times to schedule a new message. */
-    Quick,
-
-    /** A custom time to schedule a new message. */
-    Custom,
-
     /** A new time for the edited message. */
     Reschedule,
 
@@ -284,8 +267,7 @@ private class ScheduledMessagesComponentFactory(
     private val composerViewModel: MessageComposerViewModel,
     private val viewModel: ChannelScheduledMessagesViewModel,
     private val onViewClick: () -> Unit,
-    private val onSendLongClick: () -> Unit,
-    private val onScheduleAgainClick: () -> Unit,
+    private val onSheetRequest: (ScheduleSheet) -> Unit,
 ) : ChatComponentFactory by delegate {
 
     @Composable
@@ -325,27 +307,22 @@ private class ScheduledMessagesComponentFactory(
 
     @Composable
     override fun MessageComposerSendButton(params: MessageComposerSendButtonParams) {
-        val composerState by composerViewModel.messageComposerState.collectAsStateWithLifecycle()
         val editedMessage by viewModel.editedMessage.collectAsStateWithLifecycle()
-        when {
-            editedMessage != null -> ScheduleSendButton(
-                isEditing = true,
-                onClick = {
-                    if (viewModel.isScheduledAgain) {
-                        onScheduleAgainClick()
-                    } else {
-                        viewModel.onSaveEditClick(composerViewModel.buildScheduledMessage())
-                    }
-                },
-                onLongClick = onSendLongClick,
-            )
-            composerState.canSchedule -> ScheduleSendButton(
-                isEditing = false,
-                onClick = params.onClick,
-                onLongClick = onSendLongClick,
-            )
-            else -> delegate.MessageComposerSendButton(params)
+        if (editedMessage == null) {
+            delegate.MessageComposerSendButton(params)
+            return
         }
+        val sheet = if (viewModel.isScheduledAgain) ScheduleSheet.ScheduleAgain else ScheduleSheet.Reschedule
+        ScheduledMessageSaveButton(
+            onClick = {
+                if (viewModel.isScheduledAgain) {
+                    onSheetRequest(sheet)
+                } else {
+                    viewModel.onSaveEditClick(composerViewModel.buildScheduledMessage())
+                }
+            },
+            onLongClick = { onSheetRequest(sheet) },
+        )
     }
 }
 
@@ -353,50 +330,31 @@ private val MessageComposerState.canSchedule: Boolean
     get() = ChannelCapabilities.SCHEDULE_MESSAGE in ownCapabilities
 
 /**
- * The send button, which also schedules on a long press. While a scheduled message is edited, a click saves the edit.
+ * The send button while a scheduled message is edited: a click saves the edit, and a long press picks a new time.
  */
 @Composable
-private fun ScheduleSendButton(
-    isEditing: Boolean,
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-) {
-    val icon = if (isEditing) ComposeR.drawable.stream_design_ic_checkmark else ComposeR.drawable.stream_design_ic_send
-    val description = if (isEditing) {
-        stringResource(R.string.scheduled_messages_save)
-    } else {
-        stringResource(ComposeR.string.stream_compose_message_composer_send_button)
-    }
-    val clickLabel = if (isEditing) {
-        stringResource(R.string.scheduled_messages_save)
-    } else {
-        stringResource(ComposeR.string.stream_compose_message_composer_send_action)
-    }
-    val longClickLabel = if (isEditing) {
-        stringResource(R.string.scheduled_messages_reschedule_title)
-    } else {
-        stringResource(R.string.scheduled_messages_schedule_title)
-    }
+private fun ScheduledMessageSaveButton(onClick: () -> Unit, onLongClick: () -> Unit) {
+    val saveLabel = stringResource(R.string.scheduled_messages_save)
     Box(
         modifier = Modifier
             .size(48.dp)
             .padding(8.dp)
             .clip(CircleShape)
             .background(ChatTheme.colors.accentPrimary)
-            .testTag(if (isEditing) "Stream_ScheduledMessageSaveButton" else "Stream_ComposerSendButton")
+            .testTag("Stream_ScheduledMessageSaveButton")
             .combinedClickable(
                 interactionSource = null,
                 indication = ripple(),
-                onClickLabel = clickLabel,
-                onLongClickLabel = longClickLabel,
+                onClickLabel = saveLabel,
+                onLongClickLabel = stringResource(R.string.scheduled_messages_reschedule_title),
                 onClick = onClick,
                 onLongClick = onLongClick,
             ),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(icon),
-            contentDescription = description,
+            painter = painterResource(ComposeR.drawable.stream_design_ic_checkmark),
+            contentDescription = saveLabel,
             tint = ChatTheme.colors.textOnAccent,
         )
     }
@@ -477,6 +435,44 @@ private fun ScheduledMessageEditHeader(title: String, text: String, onCancelClic
                 painter = painterResource(ComposeR.drawable.stream_design_ic_xmark),
                 contentDescription = stringResource(R.string.scheduled_messages_cancel_edit),
                 tint = ChatTheme.colors.textSecondary,
+            )
+        }
+    }
+}
+
+/**
+ * The edited message: what is edited, and its text.
+ */
+@Composable
+private fun MessagePreview(title: String, text: String, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(ChatTheme.colors.backgroundCoreSurfaceDefault)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .width(2.dp)
+                .height(32.dp)
+                .background(ChatTheme.colors.accentPrimary),
+        )
+        Column(modifier = Modifier.padding(start = 8.dp)) {
+            Text(
+                text = title,
+                style = ChatTheme.typography.captionEmphasis,
+                color = ChatTheme.colors.textPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = text,
+                style = ChatTheme.typography.captionDefault,
+                color = ChatTheme.colors.textSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

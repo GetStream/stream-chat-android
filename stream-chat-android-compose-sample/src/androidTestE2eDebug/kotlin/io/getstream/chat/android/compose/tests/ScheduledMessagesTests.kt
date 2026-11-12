@@ -23,10 +23,12 @@ import io.getstream.chat.android.compose.robots.assertMessage
 import io.getstream.chat.android.compose.robots.assertMessageCount
 import io.getstream.chat.android.compose.robots.assertMessageWithImage
 import io.getstream.chat.android.compose.robots.assertScheduleSheetIsNotShown
+import io.getstream.chat.android.compose.robots.assertScheduleTimeSheetError
 import io.getstream.chat.android.compose.robots.assertScheduledMessage
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActions
 import io.getstream.chat.android.compose.robots.assertScheduledMessageFailed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotShown
+import io.getstream.chat.android.compose.robots.assertScheduledMessageOnServer
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSaved
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesAreEmpty
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBanner
@@ -46,6 +48,7 @@ import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 import java.util.Calendar
+import io.getstream.chat.android.compose.R as ComposeR
 import io.getstream.chat.android.compose.sample.R as SampleR
 
 /**
@@ -113,7 +116,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
         step("AND the server has it") {
             userRobot
-                .assertScheduledMessageSaved()
+                .assertScheduledMessageOnServer(sampleText)
                 .assertScheduledMessagesBanner(Banner.messages(1))
         }
         step("WHEN the time of the message comes") {
@@ -210,6 +213,7 @@ class ScheduledMessagesTests : StreamTestCase() {
     @Test
     fun test_scheduledThreadReplyIsSentInTheThread() {
         val parentText = "Parent"
+        val threadReplyText = appContext.getString(SampleR.string.scheduled_messages_thread_reply, sampleText)
         step("GIVEN user opens a thread") {
             userRobot
                 .login()
@@ -222,7 +226,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
         step("THEN the thread banner counts the reply, and the reply is not in the thread") {
             userRobot
-                .assertScheduledMessageSaved()
+                .assertScheduledMessageOnServer(threadReplyText)
                 .assertScheduledMessagesBanner(Banner.replies(1))
                 .assertMessage(sampleText, isDisplayed = false)
         }
@@ -250,7 +254,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
         step("THEN the message is scheduled, and not in the channel") {
             userRobot
-                .assertScheduledMessageSaved()
+                .assertScheduledMessageOnServer(sampleText)
                 .assertScheduledMessagesBanner(Banner.messages(1))
                 .assertMessage(sampleText, isDisplayed = false)
         }
@@ -347,7 +351,7 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot.login().openChannel().scheduleMessage(sampleText)
         }
         step("AND user goes to the background once the server has it") {
-            userRobot.assertScheduledMessageSaved()
+            userRobot.assertScheduledMessageOnServer(sampleText)
             device.goToBackground()
             backendRobot.waitForWebSocketDisconnection()
         }
@@ -376,7 +380,7 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot.login().openChannel().scheduleMessage(sampleText)
         }
         step("WHEN the server fails to send it, as the user is banned") {
-            userRobot.assertScheduledMessageSaved()
+            userRobot.assertScheduledMessageOnServer(sampleText)
             backendRobot.failScheduledMessage(failureReason = "banned")
         }
         step("THEN the list shows the reason") {
@@ -465,6 +469,84 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @Test
+    fun test_messageIsScheduledAtACustomTime() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("WHEN user schedules a message for tomorrow at 10:00 from the custom time") {
+            userRobot
+                .typeText(sampleText)
+                .scheduleComposerContentAt(hour = 10)
+        }
+        step("THEN the list shows the message for tomorrow at 10:00") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessage(sampleText, time = tomorrowAt(10))
+        }
+    }
+
+    @Test
+    fun test_timeTooSoonCantBeScheduled() {
+        val tooSoon = appContext.resources.getQuantityString(
+            ComposeR.plurals.stream_compose_schedule_message_error_too_soon,
+            1,
+            1,
+        )
+        step("GIVEN user opens the custom time for a message") {
+            userRobot
+                .login()
+                .openChannel()
+                .typeText(sampleText)
+                .openCustomTimeSheet()
+        }
+        step("WHEN user picks today at midnight, which has passed") {
+            userRobot
+                .pickScheduleToday()
+                .pickScheduleTime(hour = 0)
+        }
+        step("THEN the sheet tells the time is too soon, and can't schedule") {
+            userRobot.assertScheduleTimeSheetError(tooSoon)
+        }
+    }
+
+    @Test
+    fun test_timeTooFarCantBeScheduled() {
+        val tooFar = appContext.getString(ComposeR.string.stream_compose_schedule_message_error_too_far)
+        val lastDay = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, MAX_LEAD_DAYS) }.time
+        step("GIVEN user opens the custom time for a message") {
+            userRobot
+                .login()
+                .openChannel()
+                .typeText(sampleText)
+                .openCustomTimeSheet()
+        }
+        step("WHEN user picks the last day the app allows, late at night") {
+            userRobot
+                .typeScheduleDate(lastDay)
+                .pickScheduleTime(hour = 23, minute = 59)
+        }
+        step("THEN the sheet tells the time is too far ahead, and can't schedule") {
+            userRobot.assertScheduleTimeSheetError(tooFar)
+        }
+    }
+
+    @Test
+    fun test_commandCantBeScheduled() {
+        val commandError = appContext.getString(ComposeR.string.stream_compose_schedule_message_error_command)
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("WHEN user opens the custom time for a message with a command") {
+            userRobot
+                .typeText("/giphy hi")
+                .openCustomTimeSheet()
+        }
+        step("THEN the sheet tells commands can't be scheduled, and can't schedule") {
+            userRobot.assertScheduleTimeSheetError(commandError)
+        }
+    }
+
     /** The time of tomorrow at [hour] o'clock, as the list shows it. */
     private fun tomorrowAt(hour: Int): String {
         val date = Calendar.getInstance().apply {
@@ -473,5 +555,10 @@ class ScheduledMessagesTests : StreamTestCase() {
             set(Calendar.MINUTE, 0)
         }.time
         return DateFormat.getTimeFormat(appContext).format(date)
+    }
+
+    private companion object {
+        /** How far ahead the server allows a message by default, as the mock channels set no limit. */
+        const val MAX_LEAD_DAYS = 120
     }
 }

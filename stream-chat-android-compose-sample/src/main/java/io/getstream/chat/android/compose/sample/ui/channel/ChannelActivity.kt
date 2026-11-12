@@ -104,6 +104,7 @@ class ChannelActivity : ComponentActivity() {
                 composer = ComposerConfig(
                     linkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
                     floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
+                    scheduledMessagesEnabled = settings.isScheduledMessagesShown,
                 ),
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
             ),

@@ -50,7 +50,6 @@ import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.Date
 
 @ExtendWith(TestCoroutineExtension::class)
 internal class ChannelScheduledMessagesViewModelTest {
@@ -108,39 +107,21 @@ internal class ChannelScheduledMessagesViewModelTest {
     }
 
     @Test
-    fun `schedule sends the composed message with its attachments resolved, then empties the composer`() = runTest {
-        val composed = randomMessage(cid = cid, attachments = listOf(randomAttachment()))
-        val scheduledAt = randomDate()
-        val local = scheduled(id = composed.id, status = ScheduledMessageStatus.PreparingToSchedule)
-        whenever(client.scheduleMessage(eq(channelType), eq(channelId), any(), eq(scheduledAt))).thenAnswer {
-            scheduledMessages.value = listOf(local)
-            local.asCall()
-        }
-        val viewModel = viewModel()
-
-        viewModel.events.test {
-            viewModel.onScheduleClick(composed, scheduledAt)
-            awaitItem() shouldBeEqualTo ScheduledMessagesEvent.ClearComposer
-
-            val serverDate = Date(scheduledAt.time + 30_000)
-            scheduledMessages.value = listOf(local.copy(scheduledAt = serverDate, status = ScheduledMessageStatus.Scheduled))
-            awaitItem() shouldBeEqualTo ScheduledMessagesEvent.Scheduled(serverDate)
-        }
-        verify(client).scheduleMessage(channelType, channelId, composed.copy(attachments = resolvedAttachments), scheduledAt)
-    }
-
-    @Test
-    fun `a refused schedule keeps the content of the composer`() = runTest {
+    fun `a refused schedule again keeps the edit and the content of the composer`() = runTest {
+        val failed = scheduled(status = ScheduledMessageStatus.Failed)
+        scheduledMessages.value = listOf(failed)
         val error = Error.GenericError(randomString())
         whenever(client.scheduleMessage(any(), any(), any(), any())) doAnswer { error.asCall<ScheduledMessage>() }
-        val viewModel = viewModel()
+        val viewModel = viewModel(editedMessageId = failed.id, isScheduledAgain = true)
 
         viewModel.events.test {
-            viewModel.onScheduleClick(randomMessage(), randomDate())
+            skipItems(1) // The content to edit.
+            viewModel.onScheduleAgainClick(randomMessage(), randomDate())
 
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.Error(error.message)
             expectNoEvents()
         }
+        viewModel.editedMessage.value shouldBeEqualTo failed
     }
 
     @Test
@@ -220,7 +201,7 @@ internal class ChannelScheduledMessagesViewModelTest {
 
         viewModel.events.test {
             skipItems(1) // The content to edit.
-            viewModel.onScheduleClick(composed, scheduledAt)
+            viewModel.onScheduleAgainClick(composed, scheduledAt)
 
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.ClearComposer
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.Scheduled(new.scheduledAt)
@@ -248,7 +229,7 @@ internal class ChannelScheduledMessagesViewModelTest {
         whenever(client.deleteScheduledMessage(failed.id)) doAnswer { Unit.asCall() }
         val viewModel = viewModel(editedMessageId = failed.id, isScheduledAgain = true)
 
-        viewModel.onScheduleClick(randomMessage(cid = cid), randomDate())
+        viewModel.onScheduleAgainClick(randomMessage(cid = cid), randomDate())
 
         // The new message is still waiting for the server.
         verify(client).deleteScheduledMessage(failed.id)
@@ -269,7 +250,7 @@ internal class ChannelScheduledMessagesViewModelTest {
 
         viewModel.events.test {
             skipItems(1) // The content to edit.
-            viewModel.onScheduleClick(randomMessage(cid = cid), randomDate())
+            viewModel.onScheduleAgainClick(randomMessage(cid = cid), randomDate())
 
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.ClearComposer
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.Scheduled(new.scheduledAt)
@@ -292,16 +273,20 @@ internal class ChannelScheduledMessagesViewModelTest {
     }
 
     @Test
-    fun `a schedule made offline tells it is queued`() = runTest {
+    fun `a schedule again made offline tells it is queued`() = runTest {
         connectionState.value = ConnectionState.Offline
+        val failed = scheduled(status = ScheduledMessageStatus.Failed)
+        scheduledMessages.value = listOf(failed)
         val composed = randomMessage(cid = cid)
         whenever(client.scheduleMessage(any(), any(), any(), any())) doAnswer {
             scheduled(id = composed.id, status = ScheduledMessageStatus.PreparingToSchedule).asCall()
         }
-        val viewModel = viewModel()
+        whenever(client.deleteScheduledMessage(failed.id)) doAnswer { Unit.asCall() }
+        val viewModel = viewModel(editedMessageId = failed.id, isScheduledAgain = true)
 
         viewModel.events.test {
-            viewModel.onScheduleClick(composed, randomDate())
+            skipItems(1) // The content to edit.
+            viewModel.onScheduleAgainClick(composed, randomDate())
 
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.ClearComposer
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.Queued
@@ -309,15 +294,19 @@ internal class ChannelScheduledMessagesViewModelTest {
     }
 
     @Test
-    fun `a message sent right away, as its date had passed, tells so`() = runTest {
+    fun `a message scheduled again and sent right away, as its date had passed, tells so`() = runTest {
+        val failed = scheduled(status = ScheduledMessageStatus.Failed)
+        scheduledMessages.value = listOf(failed)
         val composed = randomMessage(cid = cid)
         whenever(client.scheduleMessage(any(), any(), any(), any())) doAnswer {
             scheduled(id = composed.id, status = ScheduledMessageStatus.PreparingToSchedule).asCall()
         }
-        val viewModel = viewModel()
+        whenever(client.deleteScheduledMessage(failed.id)) doAnswer { Unit.asCall() }
+        val viewModel = viewModel(editedMessageId = failed.id, isScheduledAgain = true)
 
         viewModel.events.test {
-            viewModel.onScheduleClick(composed, randomDate())
+            skipItems(1) // The content to edit.
+            viewModel.onScheduleAgainClick(composed, randomDate())
 
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.ClearComposer
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.SentRightAway

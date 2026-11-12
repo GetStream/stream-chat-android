@@ -151,27 +151,10 @@
 
     <!--  Scheduled messages  -->
     <string name="scheduled_messages_title">Scheduled messages</string>
-    <string name="scheduled_messages_schedule_title">Schedule message</string>
     <string name="scheduled_messages_reschedule_title">Reschedule message</string>
-    <string name="scheduled_messages_schedule">Schedule</string>
-    <string name="scheduled_messages_custom_time">Custom time</string>
-    <string name="scheduled_messages_message_to">Message to %1$s</string>
-    <string name="scheduled_messages_date">Date</string>
-    <string name="scheduled_messages_time">Time</string>
-    <string name="scheduled_messages_enter_time">Enter time</string>
-    <string name="scheduled_messages_ok">OK</string>
-    <string name="scheduled_messages_time_zone">Sent in your time zone (%1$s)</string>
-    <string name="scheduled_messages_time_too_soon">Pick a time at least 1 minute from now</string>
-    <string name="scheduled_messages_time_too_far">That\'s further ahead than your app allows</string>
-    <string name="scheduled_messages_offline_note">You\'re offline. We\'ll schedule this when you reconnect.</string>
-    <plurals name="scheduled_messages_in_this_channel_count">
-        <item quantity="one">%1$d scheduled in this channel</item>
-        <item quantity="other">%1$d scheduled in this channel</item>
-    </plurals>
     <string name="scheduled_messages_today">Today</string>
     <string name="scheduled_messages_tomorrow">Tomorrow</string>
     <string name="scheduled_messages_date_at_time">%1$s at %2$s</string>
-    <string name="scheduled_messages_scheduled_at">Scheduled for %1$s</string>
     <string name="scheduled_messages_scheduled_for">Message scheduled for %1$s</string>
     <string name="scheduled_messages_queued_until_online">Queued until you\'re online</string>
     <string name="scheduled_messages_sent_right_away">Sent now: time had passed</string>

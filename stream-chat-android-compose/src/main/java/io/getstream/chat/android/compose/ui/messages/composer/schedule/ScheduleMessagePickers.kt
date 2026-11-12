@@ -35,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.util.Calendar
@@ -80,7 +82,10 @@ internal fun ScheduleMessageDatePicker(
         selectedYearContentColor = ChatTheme.colors.textOnAccent,
     )
     DatePickerDialog(
-        modifier = Modifier.testTag("Stream_ScheduleMessageDatePicker"),
+        // The dialog renders in its own window, which the app-level `testTagsAsResourceId` does not reach.
+        modifier = Modifier
+            .testTag("Stream_ScheduleMessageDatePicker")
+            .semantics { testTagsAsResourceId = true },
         onDismissRequest = onDismiss,
         colors = colors,
         confirmButton = {
@@ -119,7 +124,10 @@ internal fun ScheduleMessageTimePicker(
         is24Hour = DateFormat.is24HourFormat(context),
     )
     AlertDialog(
-        modifier = Modifier.testTag("Stream_ScheduleMessageTimePicker"),
+        // The dialog renders in its own window, which the app-level `testTagsAsResourceId` does not reach.
+        modifier = Modifier
+            .testTag("Stream_ScheduleMessageTimePicker")
+            .semantics { testTagsAsResourceId = true },
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.stream_compose_schedule_message_enter_time)) },
         text = {
