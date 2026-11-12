@@ -75,6 +75,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -85,6 +86,8 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import io.getstream.result.Result
+import java.util.Date
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -119,6 +122,9 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param onMentionSelected Handler when the user taps any mention suggestion item. This is the
  * canonical callback for all mention selections.
+ * @param onScheduleMessage Handler when the user schedules the message from the schedule sheets, with the date to send
+ * it at. By default it delegates this to the ViewModel. Call `onResult` with the result: the sheet closes on success
+ * and shows the error on failure.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -145,6 +151,11 @@ public fun MessageComposer(
         sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
     ),
     onMentionSelected: (Mention) -> Unit = viewModel::selectMention,
+    onScheduleMessage: (
+        message: Message,
+        scheduledAt: Date,
+        onResult: (Result<ScheduledMessage>) -> Unit,
+    ) -> Unit = { message, scheduledAt, onResult -> viewModel.scheduleMessage(message, scheduledAt, onResult) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         val inputFocusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) {
@@ -193,7 +204,7 @@ public fun MessageComposer(
     }
 
     CompositionLocalProvider(LocalMessageComposerSnackbarHostState provides snackbarHostState) {
-        MessageComposerScheduling(viewModel = viewModel) {
+        MessageComposerScheduling(viewModel = viewModel, onScheduleMessage = onScheduleMessage) {
             ChatTheme.componentFactory.MessageComposer(
                 params = MessageComposerParams(
                     modifier = modifier,

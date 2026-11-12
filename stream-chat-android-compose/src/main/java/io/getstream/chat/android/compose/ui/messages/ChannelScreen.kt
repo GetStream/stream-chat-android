@@ -67,8 +67,6 @@ import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialo
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.messages.composer.ComposerInputTestTag
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.composer.schedule.LocalMessageScheduleOptions
-import io.getstream.chat.android.compose.ui.messages.composer.schedule.MessageScheduleOptions
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.SelectedMessageSnapshot
@@ -107,6 +105,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageSt
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.updateMessage
+import io.getstream.result.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -449,49 +448,47 @@ internal fun DefaultBottomBarContent(
         viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
 
     Column {
-        CompositionLocalProvider(
-            LocalMessageScheduleOptions provides remember(
-                skipPushNotification,
-                skipEnrichUrl,
-                attachmentsPickerViewModel,
-            ) {
-                MessageScheduleOptions(
-                    skipPushNotification = skipPushNotification,
-                    skipEnrichUrl = skipEnrichUrl,
-                    onMessageScheduled = {
-                        attachmentsPickerViewModel.setPickerVisible(visible = false)
-                        attachmentsPickerViewModel.clearSelection()
-                    },
+        MessageComposer(
+            modifier = Modifier.fillMaxWidth(),
+            viewModel = composerViewModel,
+            isAttachmentPickerVisible = attachmentsPickerViewModel.isPickerVisible,
+            onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
+            onAttachmentRemoved = { attachment ->
+                attachment.extraData[EXTRA_SOURCE_URI]
+                    ?.let { it as? String }
+                    ?.let(attachmentsPickerViewModel::removeFromSelection)
+                composerViewModel.removeAttachment(attachment)
+            },
+            onCancelAction = {
+                listViewModel.dismissAllMessageActions()
+                composerViewModel.dismissMessageActions()
+            },
+            onSendMessage = { message ->
+                attachmentsPickerViewModel.setPickerVisible(visible = false)
+                attachmentsPickerViewModel.clearSelection()
+                composerViewModel.sendMessage(
+                    message.copy(
+                        skipPushNotification = skipPushNotification,
+                        skipEnrichUrl = skipEnrichUrl,
+                    ),
                 )
             },
-        ) {
-            MessageComposer(
-                modifier = Modifier.fillMaxWidth(),
-                viewModel = composerViewModel,
-                isAttachmentPickerVisible = attachmentsPickerViewModel.isPickerVisible,
-                onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
-                onAttachmentRemoved = { attachment ->
-                    attachment.extraData[EXTRA_SOURCE_URI]
-                        ?.let { it as? String }
-                        ?.let(attachmentsPickerViewModel::removeFromSelection)
-                    composerViewModel.removeAttachment(attachment)
-                },
-                onCancelAction = {
-                    listViewModel.dismissAllMessageActions()
-                    composerViewModel.dismissMessageActions()
-                },
-                onSendMessage = { message ->
-                    attachmentsPickerViewModel.setPickerVisible(visible = false)
-                    attachmentsPickerViewModel.clearSelection()
-                    composerViewModel.sendMessage(
-                        message.copy(
-                            skipPushNotification = skipPushNotification,
-                            skipEnrichUrl = skipEnrichUrl,
-                        ),
-                    )
-                },
-            )
-        }
+            onScheduleMessage = { message, scheduledAt, onResult ->
+                composerViewModel.scheduleMessage(
+                    message = message.copy(
+                        skipPushNotification = skipPushNotification,
+                        skipEnrichUrl = skipEnrichUrl,
+                    ),
+                    scheduledAt = scheduledAt,
+                ) { result ->
+                    if (result is Result.Success) {
+                        attachmentsPickerViewModel.setPickerVisible(visible = false)
+                        attachmentsPickerViewModel.clearSelection()
+                    }
+                    onResult(result)
+                }
+            },
+        )
 
         ChatTheme.componentFactory.AttachmentPickerMenu(
             params = AttachmentPickerMenuParams(

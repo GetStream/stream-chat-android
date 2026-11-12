@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.ui.theme.ScheduleMessageSheetParams
 import io.getstream.chat.android.compose.ui.theme.ScheduleMessageTimeSheetParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -51,12 +52,14 @@ import java.util.Date
  * sheet, from which the custom time sheet can be opened. Does nothing when the user can't schedule messages in the
  * channel, or when [io.getstream.chat.android.compose.ui.theme.ComposerConfig.scheduledMessagesEnabled] is false.
  *
- * @param viewModel The view model of the composer, which schedules its content.
+ * @param viewModel The view model of the composer, which builds the message to schedule.
+ * @param onScheduleMessage Schedules the message at the picked date, and calls back with the result.
  * @param content The composer.
  */
 @Composable
 internal fun MessageComposerScheduling(
     viewModel: MessageComposerViewModel,
+    onScheduleMessage: (Message, Date, (Result<ScheduledMessage>) -> Unit) -> Unit,
     content: @Composable () -> Unit,
 ) {
     if (!ChatTheme.config.composer.scheduledMessagesEnabled) {
@@ -71,7 +74,12 @@ internal fun MessageComposerScheduling(
         content = content,
     )
     if (scheduleState.canSchedule) {
-        ScheduleMessageSheetHost(viewModel = viewModel, state = scheduleState, host = host)
+        ScheduleMessageSheetHost(
+            viewModel = viewModel,
+            state = scheduleState,
+            host = host,
+            onScheduleMessage = onScheduleMessage,
+        )
     }
 }
 
@@ -112,9 +120,9 @@ private fun ScheduleMessageSheetHost(
     viewModel: MessageComposerViewModel,
     state: ScheduleMessageState,
     host: ScheduleMessageSheetHostState,
+    onScheduleMessage: (Message, Date, (Result<ScheduledMessage>) -> Unit) -> Unit,
 ) {
     val composerState by viewModel.messageComposerState.collectAsState()
-    val options = LocalMessageScheduleOptions.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val isImeVisible by rememberUpdatedState(WindowInsets.isImeVisible)
     LaunchedEffect(host.requested) {
@@ -143,13 +151,9 @@ private fun ScheduleMessageSheetHost(
             return
         }
         val message = viewModel.buildNewMessage(composerState.inputValue, composerState.attachments)
-            .copy(skipPushNotification = options.skipPushNotification, skipEnrichUrl = options.skipEnrichUrl)
-        viewModel.scheduleMessage(message, date) { result ->
+        onScheduleMessage(message, date) { result ->
             when (result) {
-                is Result.Success -> {
-                    host.shown = null
-                    options.onMessageScheduled()
-                }
+                is Result.Success -> host.shown = null
 
                 is Result.Failure -> host.shown = ScheduleSheet.Custom(
                     initialDate = date,

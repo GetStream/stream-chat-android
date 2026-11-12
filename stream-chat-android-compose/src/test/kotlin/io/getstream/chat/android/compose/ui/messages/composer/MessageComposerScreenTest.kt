@@ -36,23 +36,24 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
-import io.getstream.chat.android.compose.ui.messages.composer.schedule.LocalMessageScheduleOptions
-import io.getstream.chat.android.compose.ui.messages.composer.schedule.MessageScheduleOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.randomCommand
 import io.getstream.chat.android.randomFloat
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.state.messages.MessageMode.MessageThread
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
@@ -293,32 +294,34 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
     @Test
     @UiThread
-    fun `a scheduled message skips the push and the URL enrichment like the screen asks`() {
+    fun `an app schedules through onScheduleMessage, and the sheet closes on success`() {
         val message = givenComposerWithText(canSchedule = true)
+        var scheduled: Message? = null
+        var reportResult: ((Result<ScheduledMessage>) -> Unit)? = null
 
         composeTestRule.setContent {
             ChatTheme {
-                CompositionLocalProvider(
-                    LocalMessageScheduleOptions provides MessageScheduleOptions(
-                        skipPushNotification = true,
-                        skipEnrichUrl = true,
-                    ),
-                ) {
-                    MessageComposer(viewModel = mockViewModel)
-                }
+                MessageComposer(
+                    viewModel = mockViewModel,
+                    onScheduleMessage = { scheduledMessage, _, onResult ->
+                        scheduled = scheduledMessage
+                        reportResult = onResult
+                    },
+                )
             }
         }
-
         composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
         waitForKeyboardToHide()
         composeTestRule.onNodeWithTag("Stream_ScheduleMessageQuickDate0")
             .performSemanticsAction(SemanticsActions.OnClick)
 
-        verify(mockViewModel).scheduleMessage(
-            eq(message.copy(skipPushNotification = true, skipEnrichUrl = true)),
-            any(),
-            any(),
-        )
+        assertEquals(message, scheduled)
+        verify(mockViewModel, never()).scheduleMessage(any(), any(), any())
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageSheet").assertExists()
+
+        composeTestRule.runOnUiThread { reportResult?.invoke(Result.Success(randomScheduledMessage())) }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageSheet").assertDoesNotExist()
     }
 
     @Test
