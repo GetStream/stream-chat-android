@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.handlers
 
-import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.pager.PagerState
@@ -125,7 +124,6 @@ public fun LoadMoreHandler(
     }
 }
 
-@VisibleForTesting
 internal fun shouldLoadMore(
     totalItemsCount: Int,
     lastVisibleItemIndex: Int,
@@ -135,4 +133,4 @@ internal fun shouldLoadMore(
         totalItemsCount > loadMoreThreshold && // Ensure list is large enough
         lastVisibleItemIndex > totalItemsCount - loadMoreThreshold - 1
 
-private const val DefaultLoadMoreThreshold = 3
+internal const val DefaultLoadMoreThreshold = 3

@@ -351,6 +351,14 @@ public class MessageListController(
     public val messageListState: StateFlow<MessageListState> = _messageListState
 
     /**
+     * Awaits the result of the page of older messages requested by [loadOlderMessages].
+     */
+    private var olderMessagesJob: Job? = null
+
+    private val isAwaitingOlderMessagesResult: Boolean
+        get() = olderMessagesJob?.isActive == true
+
+    /**
      * Current state of the poll.
      */
     private val _pollState: MutableStateFlow<PollState> =
@@ -801,7 +809,12 @@ public class MessageListController(
 
     private fun updateIsLoadingOlderMessages(isLoadingOlderMessages: Boolean) {
         logger.d { "[updateIsLoadingOlderMessages] #messageList; isLoadingOlderMessages: $isLoadingOlderMessages" }
-        setMessageListState(_messageListState.value.copy(isLoadingOlderMessages = isLoadingOlderMessages))
+        // Kept on until the result arrives, so a failure is published in the same update that ends the load.
+        setMessageListState(
+            _messageListState.value.copy(
+                isLoadingOlderMessages = isLoadingOlderMessages || isAwaitingOlderMessagesResult,
+            ),
+        )
     }
 
     private fun updateIsLoadingNewerMessages(isLoadingNewerMessages: Boolean) {
@@ -1287,8 +1300,20 @@ public class MessageListController(
             is MessageMode.Normal -> {
                 val endOfOlderMessages = channelState.value?.endOfOlderMessages?.value == true
                 val loadingOlderMessages = channelState.value?.loadingOlderMessages?.value == true
-                if (endOfOlderMessages || loadingOlderMessages) return
-                chatClient.loadOlderMessages(cid, messageLimit).enqueue()
+                if (endOfOlderMessages || loadingOlderMessages || isAwaitingOlderMessagesResult) return
+                setMessageListState(
+                    _messageListState.value.copy(isLoadingOlderMessages = true, loadingOlderMessagesError = false),
+                )
+                val call = chatClient.loadOlderMessages(cid, messageLimit)
+                olderMessagesJob = scope.launch {
+                    val result = call.await()
+                    setMessageListState(
+                        _messageListState.value.copy(
+                            isLoadingOlderMessages = channelState.value?.loadingOlderMessages?.value == true,
+                            loadingOlderMessagesError = result is Result.Failure,
+                        ),
+                    )
+                }
             }
 
             is MessageMode.MessageThread -> threadLoadMore(mode)
@@ -1312,13 +1337,25 @@ public class MessageListController(
             return
         }
 
-        _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = true)
+        _threadListState.value = _threadListState.value.copy(
+            isLoadingOlderMessages = true,
+            loadingOlderMessagesError = false,
+        )
         chatClient.getRepliesMore(
             messageId = threadMode.parentMessage.id,
             firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
             limit = messageLimit,
-        ).enqueue {
-            _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = false)
+        ).enqueue { result ->
+            // After a switch to another thread, the result says nothing about its pages.
+            val isCurrentThread = _mode.value === threadMode
+            _threadListState.value = _threadListState.value.copy(
+                isLoadingOlderMessages = false,
+                loadingOlderMessagesError = if (isCurrentThread) {
+                    result is Result.Failure
+                } else {
+                    _threadListState.value.loadingOlderMessagesError
+                },
+            )
         }
     }
 

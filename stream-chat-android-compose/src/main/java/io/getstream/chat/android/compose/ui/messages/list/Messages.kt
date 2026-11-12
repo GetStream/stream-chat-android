@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -53,7 +54,9 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import io.getstream.chat.android.compose.handlers.DefaultLoadMoreThreshold
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
+import io.getstream.chat.android.compose.handlers.shouldLoadMore
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageListHelperContentParams
@@ -272,11 +275,42 @@ internal fun Messages(
         }
     }
 
-    LoadMoreHandler(lazyListState = lazyListState) {
-        if (!endOfOldMessages) {
-            onMessagesStartReached()
+    // The loading item appears and disappears with every attempt, which re-triggers both handlers below. After a
+    // failure, only a drag by the user or a change in the number of messages or the thread allows the next request.
+    val loadingOlderMessagesError by rememberUpdatedState(messagesState.loadingOlderMessagesError)
+    val currentOnMessagesStartReached by rememberUpdatedState(onMessagesStartReached)
+    // Updated during composition, so the layout-driven handlers below already see the new count.
+    val messageCount by rememberUpdatedState(remember(messages) { messages.count { it is MessageItemState } })
+    // Includes the thread, because another thread can reuse this list with the same number of messages.
+    val listContent by rememberUpdatedState(messagesState.parentMessageId to messageCount)
+    var listContentAtLastRequest by remember { mutableStateOf<Pair<String?, Int>?>(null) }
+    var dragAllowsRetry by remember { mutableStateOf(false) }
+    val requestOlderMessages = {
+        val retryAllowed = dragAllowsRetry || listContent != listContentAtLastRequest
+        if (!endOfOldMessages && (!loadingOlderMessagesError || retryAllowed)) {
+            dragAllowsRetry = false
+            listContentAtLastRequest = listContent
+            currentOnMessagesStartReached()
         }
     }
+    LaunchedEffect(lazyListState) {
+        lazyListState.interactionSource.interactions
+            .filterIsInstance<DragInteraction.Start>()
+            .collect {
+                dragAllowsRetry = true
+                // At the top, on a list too short to scroll, or within the load threshold, the drag may change
+                // nothing the handlers below observe.
+                val layoutInfo = lazyListState.layoutInfo
+                val withinLoadThreshold = shouldLoadMore(
+                    totalItemsCount = layoutInfo.totalItemsCount,
+                    lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1,
+                    loadMoreThreshold = DefaultLoadMoreThreshold,
+                )
+                if (!lazyListState.canScrollForward || withinLoadThreshold) requestOlderMessages()
+            }
+    }
+
+    LoadMoreHandler(lazyListState = lazyListState, loadMore = requestOlderMessages)
 
     // Handle edge case: list content doesn't fill the screen but there are older messages to load.
     // This can happen when the message list is cleared and replaced with only a few messages (after a re-watch).
@@ -284,8 +318,8 @@ internal fun Messages(
         snapshotFlow { lazyListState.layoutInfo.totalItemsCount to lazyListState.canScrollForward }
             .distinctUntilChanged()
             .collect { (totalItems, canScrollForward) ->
-                if (totalItems > 0 && !canScrollForward && !endOfOldMessages) {
-                    onMessagesStartReached()
+                if (totalItems > 0 && !canScrollForward) {
+                    requestOlderMessages()
                 }
             }
     }
