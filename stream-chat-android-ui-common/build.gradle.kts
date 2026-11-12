@@ -13,6 +13,7 @@ android {
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-proguard-rules.pro")
     }
 
     resourcePrefix = "stream_"

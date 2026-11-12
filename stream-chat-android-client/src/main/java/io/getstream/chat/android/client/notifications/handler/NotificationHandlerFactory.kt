@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
+import io.getstream.log.taggedLogger
 
 /**
  * Factory for default [NotificationHandler].
@@ -149,15 +150,34 @@ public object NotificationHandlerFactory {
         }
     }
 
-    internal fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
+    private fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
         val appContext = context.applicationContext
-        // Resolved on first use, so it doesn't matter whether the UI module registers before or after the handler is
-        // created.
-        val builder by lazy {
-            NotificationDefaults.userIconBuilderFactory?.invoke(appContext) ?: DefaultUserIconBuilder(appContext)
-        }
+        // Resolved on first use, off SDK initialisation.
+        val builder by lazy { coilUserIconBuilder(appContext) ?: DefaultUserIconBuilder(appContext) }
         return object : UserIconBuilder {
             override suspend fun buildIcon(user: User): IconCompat? = builder.buildIcon(user)
         }
     }
+
+    /**
+     * Builds ui-common's Coil icon builder, which caches avatars and applies the CDN and image headers. The client
+     * can't depend on ui-common, so it's looked up by name; ui-common's consumer rules keep it for R8.
+     */
+    private fun coilUserIconBuilder(context: Context): UserIconBuilder? = try {
+        val builder = Class.forName(COIL_USER_ICON_BUILDER).getConstructor(Context::class.java).newInstance(context)
+        logger.d { "[coilUserIconBuilder] using the Coil user icon builder" }
+        builder as UserIconBuilder
+    } catch (_: ClassNotFoundException) {
+        logger.d { "[coilUserIconBuilder] ui-common not found, using the default user icon builder" }
+        null
+    } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
+        // Also linkage errors, so a broken lookup falls back instead of crashing the notification.
+        logger.e(e) { "[coilUserIconBuilder] failed to build $COIL_USER_ICON_BUILDER" }
+        null
+    }
+
+    private const val COIL_USER_ICON_BUILDER =
+        "io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder"
+
+    private val logger by taggedLogger("Chat:NotificationHandlerFactory")
 }
