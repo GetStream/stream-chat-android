@@ -5977,6 +5977,7 @@ internal constructor(
                 notificationConfig = notificationConfig,
                 fastEventParsing = chatClientConfig.fastEventParsing,
                 isEventProtocolV3Enabled = chatClientConfig.isEventProtocolV3Enabled,
+                offlineEnabled = chatClientConfig.offlineEnabled,
             )
             setupStreamLog()
 
@@ -6169,8 +6170,9 @@ internal constructor(
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.Default
 
         /**
-         * Flag used to track whether offline support is enabled.
+         * Flag used to track whether offline support is enabled. No longer read or written by the SDK.
          */
+        @Deprecated("Use ChatClientConfig.offlineEnabled instead. This flag will be removed in v8.")
         @InternalStreamChatApi
         @JvmStatic
         public var OFFLINE_SUPPORT_ENABLED: Boolean = false

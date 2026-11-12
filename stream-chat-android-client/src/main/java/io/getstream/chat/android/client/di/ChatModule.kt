@@ -141,7 +141,7 @@ constructor(
     private val serverClockOffset: ServerClockOffset,
 ) {
 
-    private val headersUtil = HeadersUtil(appContext, appName, appVersion)
+    private val headersUtil = HeadersUtil(appContext, appName, appVersion, config.offlineEnabled)
 
     private val domainMapping by lazy {
         DomainMapping(
