@@ -15,6 +15,7 @@
     limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="io.getstream.chat.android.ui.common"
     >
 
@@ -28,6 +29,18 @@
     </queries>
 
     <application>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge"
+            >
+            <meta-data
+                android:name="io.getstream.chat.android.ui.common.notifications.NotificationDefaultsInitializer"
+                android:value="androidx.startup"
+                />
+        </provider>
+
         <provider
             android:name=".StreamFileProvider"
             android:authorities="${applicationId}.streamfileprovider"

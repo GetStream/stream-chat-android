@@ -224,7 +224,6 @@ stream-push-delegate = { module = "io.getstream:stream-android-push-delegate", v
 stream-push-firebase = { module = "io.getstream:stream-android-push-firebase", version.ref = "streamPush"}
 stream-push-huawei = { module = "io.getstream:stream-android-push-huawei", version.ref = "streamPush"}
 stream-push-permissions = { module = "io.getstream:stream-android-push-permissions", version.ref = "streamPush"}
-stream-push-permissions-snackbar = { module = "io.getstream:stream-android-push-permissions-snackbar", version.ref = "streamPush"}
 stream-push-xiaomi = { module = "io.getstream:stream-android-push-xiaomi", version.ref = "streamPush"}
 stream-log = { module = "io.getstream:stream-log", version.ref = "streamLog"}
 stream-photoview = { module = "io.getstream:photoview", version.ref = "photoview"}

@@ -13,7 +13,6 @@ android {
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-proguard-rules.pro")
     }
 
     resourcePrefix = "stream_"
@@ -54,7 +53,6 @@ dependencies {
     api(project(":stream-chat-android-client"))
 
     implementation(libs.stream.log)
-    implementation(libs.stream.push.permissions.snackbar)
     implementation(libs.stream.result)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.runtime)

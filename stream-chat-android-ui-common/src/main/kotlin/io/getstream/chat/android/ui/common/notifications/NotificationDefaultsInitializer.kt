@@ -17,18 +17,19 @@
 package io.getstream.chat.android.ui.common.notifications
 
 import android.content.Context
-import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
-import kotlin.reflect.full.primaryConstructor
+import androidx.startup.Initializer
+import io.getstream.chat.android.client.notifications.handler.NotificationDefaults
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal class StreamCoilUserIconBuilderTest {
+/**
+ * Makes notifications load the user's avatar with Coil when the app doesn't pass its own user icon builder.
+ */
+@InternalStreamChatApi
+public class NotificationDefaultsInitializer : Initializer<Unit> {
 
-    private val FULL_CLASS_NAME = "io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder"
-
-    @Test
-    fun `Verify StreamCoilUserIconBuilder can be created by reflection`() {
-        Class.forName(FULL_CLASS_NAME)
-            .kotlin.primaryConstructor
-            ?.call(mock<Context>()) as StreamCoilUserIconBuilder
+    override fun create(context: Context) {
+        NotificationDefaults.userIconBuilderFactory = ::StreamCoilUserIconBuilder
     }
+
+    override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
 }
