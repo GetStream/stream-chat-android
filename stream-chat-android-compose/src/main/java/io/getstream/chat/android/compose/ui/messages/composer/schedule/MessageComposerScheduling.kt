@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.ui.theme.ScheduleMessageSheetParams
 import io.getstream.chat.android.compose.ui.theme.ScheduleMessageTimeSheetParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageError
@@ -180,7 +181,7 @@ private fun ScheduleMessageSheetHost(
         is ScheduleSheet.Custom -> ChatTheme.componentFactory.ScheduleMessageTimeSheet(
             params = ScheduleMessageTimeSheetParams(
                 message = preview,
-                channelName = rememberChannelName(viewModel),
+                channelName = rememberChannelName(viewModel, composerState.currentUser),
                 initialDate = sheet.initialDate,
                 state = state,
                 error = state.messageError(preview) ?: sheet.error,
@@ -194,9 +195,8 @@ private fun ScheduleMessageSheetHost(
 }
 
 @Composable
-private fun rememberChannelName(viewModel: MessageComposerViewModel): String {
+private fun rememberChannelName(viewModel: MessageComposerViewModel, currentUser: User?): String {
     val formatter = ChatTheme.channelNameFormatter
-    val currentUser = viewModel.messageComposerState.value.currentUser
     return remember(viewModel, formatter, currentUser) {
         viewModel.channelState.value?.toChannel()?.let { formatter.formatChannelName(it, currentUser) }.orEmpty()
     }
