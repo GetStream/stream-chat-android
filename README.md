@@ -144,7 +144,7 @@ For more, see the [SDK's website](https://getstream.io/chat/sdk/android/).
 
 When utilizing **R8**, the rules for shrinking and obfuscation are applied automatically.
 
-If you are using **ProGuard**, you will need to add the rules from the [client](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/consumer-proguard-rules.pro) module to your application.
+If you are using **ProGuard**, you will need to add the following rules from [client](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/consumer-proguard-rules.pro) and [ui-common](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/consumer-proguard-rules.pro) modules to your application.
 
 You might also need apply rules for [Coroutines](https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/resources/META-INF/proguard/coroutines.pro), [Retrofit](https://github.com/square/retrofit/blob/master/retrofit/src/main/resources/META-INF/proguard/retrofit2.pro), [kotlin-reflect](https://github.com/JetBrains/kotlin/blob/master/core/reflection.jvm/resources/META-INF/proguard/kotlin-reflect.pro) and [OkHttp](https://github.com/square/okhttp/blob/master/okhttp/src/jvmMain/resources/META-INF/proguard/okhttp3.pro) which are dependencies of the SDK.
 
