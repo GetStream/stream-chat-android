@@ -55,6 +55,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
@@ -429,7 +430,12 @@ internal class EventHandlerSequentialTest {
             val truncatedAt = Date(2_000)
             val storedChannel = randomChannel(
                 messages = listOf(
-                    randomMessage(id = "removed", createdAt = Date(1_000), syncStatus = SyncStatus.COMPLETED),
+                    randomMessage(
+                        id = "removed",
+                        createdAt = Date(1_000),
+                        syncStatus = SyncStatus.COMPLETED,
+                        type = MessageType.REGULAR,
+                    ),
                 ),
                 read = listOf(randomChannelUserRead(unreadMessages = 3, lastRead = Date(500))),
             )

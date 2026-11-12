@@ -59,9 +59,9 @@ internal fun ChannelUserRead.afterTruncationAt(truncatedAt: Date, remainingMessa
 }
 
 /**
- * The ids of the server messages a truncation at [truncatedAt] leaves, taken from [latestPage], the loaded page that
- * ends at the newest message. Null when the page neither reaches back past [truncatedAt] nor starts at the channel's
- * [oldest][startsAtOldest] message, because remaining messages may then not be loaded.
+ * The ids of the server messages a truncation at [truncatedAt] leaves that count as unread, taken from [latestPage],
+ * the loaded page that ends at the newest message. Null when the page neither reaches back past [truncatedAt] nor
+ * starts at the channel's [oldest][startsAtOldest] message, because remaining messages may then not be loaded.
  */
 internal fun remainingMessageIdsAfterTruncationAt(
     truncatedAt: Date,
@@ -71,11 +71,16 @@ internal fun remainingMessageIdsAfterTruncationAt(
     val serverMessages = latestPage.filterNot(Message::isLocalOnly)
     val complete = startsAtOldest || serverMessages.any { !it.survivesTruncationAt(truncatedAt) }
     return if (complete) {
-        serverMessages.filter { it.survivesTruncationAt(truncatedAt) }.mapTo(HashSet(), Message::id)
+        serverMessages
+            .filter { it.survivesTruncationAt(truncatedAt) && it.countsAsUnread() }
+            .mapTo(HashSet(), Message::id)
     } else {
         null
     }
 }
+
+/** Whether the server counts the message as unread: deleted, silent and shadowed messages never are. */
+private fun Message.countsAsUnread(): Boolean = deletedAt == null && !silent && !shadowed
 
 /** The channel with its reads recalculated for a truncation at [truncatedAt], from its latest messages. */
 internal fun Channel.withReadsAfterTruncationAt(truncatedAt: Date): Channel {

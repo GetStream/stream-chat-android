@@ -117,6 +117,28 @@ internal class TruncationTest {
     }
 
     @Test
+    fun `remainingMessageIdsAfterTruncationAt leaves out messages the server does not count as unread`() {
+        val page = listOf(
+            serverMessage("kept", Date(3_000)),
+            serverMessage("deleted", Date(3_100)).copy(deletedAt = Date(3_200)),
+            serverMessage("silent", Date(3_300)).copy(silent = true),
+            serverMessage("shadowed", Date(3_400)).copy(shadowed = true),
+        )
+
+        assertEquals(setOf("kept"), remainingMessageIdsAfterTruncationAt(truncatedAt, page, startsAtOldest = true))
+    }
+
+    @Test
+    fun `remainingMessageIdsAfterTruncationAt is complete when only a deleted message reaches back past the truncation`() {
+        val page = listOf(
+            serverMessage("removed", Date(1_000)).copy(deletedAt = Date(1_500)),
+            serverMessage("kept", Date(3_000)),
+        )
+
+        assertEquals(setOf("kept"), remainingMessageIdsAfterTruncationAt(truncatedAt, page, startsAtOldest = false))
+    }
+
+    @Test
     fun `remainingMessageIdsAfterTruncationAt is unknown when the page starts after the truncation`() {
         val page = listOf(serverMessage("kept", Date(3_000)))
 
@@ -144,5 +166,13 @@ internal class TruncationTest {
     }
 
     private fun serverMessage(id: String, createdAt: Date) =
-        randomMessage(id = id, createdAt = createdAt, syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        randomMessage(
+            id = id,
+            createdAt = createdAt,
+            deletedAt = null,
+            syncStatus = SyncStatus.COMPLETED,
+            type = MessageType.REGULAR,
+            silent = false,
+            shadowed = false,
+        )
 }

@@ -1113,7 +1113,13 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
     }
 
     private fun serverMessage(index: Int, timestamp: Long) =
-        createMessage(index, timestamp = timestamp).copy(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        createMessage(index, timestamp = timestamp).copy(
+            syncStatus = SyncStatus.COMPLETED,
+            type = MessageType.REGULAR,
+            deletedAt = null,
+            silent = false,
+            shadowed = false,
+        )
 
     private fun read(user: User, unreadMessages: Int, lastRead: Date, lastReadMessageId: String? = null) =
         ChannelUserRead(

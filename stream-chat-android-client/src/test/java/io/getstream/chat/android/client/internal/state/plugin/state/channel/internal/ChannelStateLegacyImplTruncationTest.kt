@@ -132,6 +132,7 @@ internal class ChannelStateLegacyImplTruncationTest {
         shadowed = false,
         syncStatus = SyncStatus.COMPLETED,
         type = MessageType.REGULAR,
+        silent = false,
     )
 
     companion object {
