@@ -21,33 +21,56 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.randomCommand
 import io.getstream.chat.android.randomFloat
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomScheduledMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.state.messages.MessageMode.MessageThread
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
@@ -59,6 +82,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
     val mockViewModel: MessageComposerViewModel = mock {
         on { inputFocusEvents } doReturn MutableSharedFlow()
         on { events } doReturn MutableSharedFlow()
+        on { scheduleMessageState } doReturn MutableStateFlow(ScheduleMessageState())
     }
 
     @Test
@@ -206,5 +230,204 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
         composeTestRule.onNodeWithText("02:00").assertExists()
         composeTestRule.onNodeWithText("Slide to cancel").assertExists()
+    }
+
+    @Test
+    @UiThread
+    fun `long press on send opens the schedule sheet and a tap still sends`() {
+        givenComposerWithText(canSchedule = true)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithText("Schedule message").assertExists()
+        composeTestRule.onNodeWithText("Custom time").assertExists()
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performClick()
+        verify(mockViewModel).sendMessage(any(), any())
+    }
+
+    @Test
+    @UiThread
+    fun `a screen reader can open the schedule sheet with a named action`() {
+        givenComposerWithText(canSchedule = true)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        val sendButton = composeTestRule.onNodeWithTag("Stream_ComposerSendButton")
+        val actions = sendButton.fetchSemanticsNode().config[SemanticsActions.CustomActions]
+        assertEquals(listOf("Schedule message"), actions.map { it.label })
+        composeTestRule.runOnUiThread { actions.single().action() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithText("Custom time").assertExists()
+    }
+
+    @Test
+    @UiThread
+    fun `picking a quick date schedules the message of the composer`() {
+        val message = givenComposerWithText(canSchedule = true)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageQuickDate0")
+            .performSemanticsAction(SemanticsActions.OnClick)
+
+        val dateCaptor = argumentCaptor<Date>()
+        verify(mockViewModel).scheduleMessage(eq(message), dateCaptor.capture(), any())
+        assertEquals(scheduleMessageQuickDates(Date()).first(), dateCaptor.firstValue)
+    }
+
+    @Test
+    @UiThread
+    fun `an app schedules through onScheduleMessage, and the sheet closes on success`() {
+        val message = givenComposerWithText(canSchedule = true)
+        var scheduled: Message? = null
+        var reportResult: ((Result<ScheduledMessage>) -> Unit)? = null
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(
+                    viewModel = mockViewModel,
+                    onScheduleMessage = { scheduledMessage, _, onResult ->
+                        scheduled = scheduledMessage
+                        reportResult = onResult
+                    },
+                )
+            }
+        }
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageQuickDate0")
+            .performSemanticsAction(SemanticsActions.OnClick)
+
+        assertEquals(message, scheduled)
+        verify(mockViewModel, never()).scheduleMessage(any(), any(), any())
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageSheet").assertExists()
+
+        composeTestRule.runOnUiThread { reportResult?.invoke(Result.Success(randomScheduledMessage())) }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageSheet").assertDoesNotExist()
+    }
+
+    @Test
+    @UiThread
+    fun `a sheet closed by an emptied composer does not open again when the user types`() {
+        givenComposerWithText(canSchedule = true)
+        val composerState = MutableStateFlow(
+            MessageComposerState(inputValue = "Heads up", ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE)),
+        )
+        whenever(mockViewModel.messageComposerState) doReturn composerState
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageSheet").assertExists()
+
+        // For example, the draft was deleted on another device.
+        composerState.value = composerState.value.copy(inputValue = "")
+        composeTestRule.waitForIdle()
+        composerState.value = composerState.value.copy(inputValue = "Next message")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageSheet").assertDoesNotExist()
+    }
+
+    @Test
+    @UiThread
+    fun `the message is built only when it is scheduled`() {
+        val message = givenComposerWithText(canSchedule = true)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageCustomTime")
+            .performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageCancel").performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.waitForIdle()
+        verify(mockViewModel, never()).buildNewMessage(any(), any())
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageCustomTime")
+            .performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageConfirm").performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.waitForIdle()
+
+        verify(mockViewModel, times(1)).buildNewMessage(any(), any())
+        verify(mockViewModel).scheduleMessage(eq(message), any(), any())
+    }
+
+    @Test
+    @UiThread
+    fun `send has no schedule action without the capability`() {
+        givenComposerWithText(canSchedule = false)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton")
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsActions.CustomActions))
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsActions.OnLongClick))
+    }
+
+    @Test
+    @UiThread
+    fun `send has no schedule action when the app turns scheduled messages off`() {
+        givenComposerWithText(canSchedule = true)
+
+        composeTestRule.setContent {
+            ChatTheme(config = ChatUiConfig(composer = ComposerConfig(scheduledMessagesEnabled = false))) {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton")
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsActions.CustomActions))
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsActions.OnLongClick))
+    }
+
+    /** The schedule sheet opens once the keyboard is hidden, which the test window never reports. */
+    private fun waitForKeyboardToHide() {
+        composeTestRule.mainClock.advanceTimeBy(1_000)
+        composeTestRule.waitForIdle()
+        composeTestRule.mainClock.advanceTimeBy(1_000)
+    }
+
+    private fun givenComposerWithText(canSchedule: Boolean): Message {
+        val message = Message(text = "Heads up")
+        whenever(mockViewModel.messageComposerState) doReturn MutableStateFlow(
+            MessageComposerState(inputValue = "Heads up", ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE)),
+        )
+        whenever(mockViewModel.scheduleMessageState) doReturn
+            MutableStateFlow(ScheduleMessageState(canSchedule = canSchedule))
+        whenever(mockViewModel.buildNewMessage(any(), any())) doReturn message
+        whenever(mockViewModel.channelState) doReturn MutableStateFlow(null)
+        return message
     }
 }

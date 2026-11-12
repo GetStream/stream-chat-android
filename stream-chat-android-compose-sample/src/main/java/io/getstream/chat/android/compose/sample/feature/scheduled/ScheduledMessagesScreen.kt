@@ -72,9 +72,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ScheduleMessageTimeSheetParams
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.chat.android.compose.R as ComposeR
 
 /**
@@ -100,7 +102,7 @@ internal fun ScheduledMessagesScreen(
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var selectedItem by remember { mutableStateOf<ScheduledMessageItemState?>(null) }
-    var messageToReschedule by remember { mutableStateOf<ScheduledMessage?>(null) }
+    var itemToReschedule by remember { mutableStateOf<ScheduledMessageItemState?>(null) }
     var messageToSendNow by remember { mutableStateOf<ScheduledMessage?>(null) }
     var itemToDelete by remember { mutableStateOf<ScheduledMessageItemState?>(null) }
     val onActionClick: (ScheduledMessageItemState, ScheduledMessageAction) -> Unit = { item, action ->
@@ -108,7 +110,7 @@ internal fun ScheduledMessagesScreen(
         when (action) {
             ScheduledMessageAction.Edit -> onEditClick(scheduledMessage, false)
             ScheduledMessageAction.ScheduleAgain -> onEditClick(scheduledMessage, true)
-            ScheduledMessageAction.Reschedule -> messageToReschedule = scheduledMessage
+            ScheduledMessageAction.Reschedule -> itemToReschedule = item
             ScheduledMessageAction.SendNow -> messageToSendNow = scheduledMessage
             ScheduledMessageAction.Retry -> viewModel.onRetryClick(scheduledMessage.id)
             ScheduledMessageAction.CopyText -> context.copyText(scheduledMessage.message.text)
@@ -147,20 +149,23 @@ internal fun ScheduledMessagesScreen(
             onDismiss = { selectedItem = null },
         )
     }
-    messageToReschedule?.let { scheduledMessage ->
-        ScheduleTimeSheet(
-            title = stringResource(R.string.scheduled_messages_reschedule_title),
-            confirmLabel = stringResource(R.string.scheduled_messages_reschedule),
-            previewTitle = stringResource(
-                R.string.scheduled_messages_scheduled_at,
-                context.formatScheduledDate(scheduledMessage.scheduledAt),
+    itemToReschedule?.let { item ->
+        val scheduledMessage = item.scheduledMessage
+        ChatTheme.componentFactory.ScheduleMessageTimeSheet(
+            params = ScheduleMessageTimeSheetParams(
+                message = scheduledMessage.message,
+                channelName = item.channelName(currentUser),
+                initialDate = scheduledMessage.scheduledAt,
+                // The server default lead times. The message already counts toward the limits.
+                state = ScheduleMessageState(),
+                error = null,
+                onConfirm = { date ->
+                    itemToReschedule = null
+                    viewModel.onRescheduleClick(scheduledMessage.id, date)
+                },
+                onDismiss = { itemToReschedule = null },
+                scheduledAt = scheduledMessage.scheduledAt,
             ),
-            previewText = scheduledMessage.message.text,
-            initialDate = scheduledMessage.scheduledAt,
-            note = null,
-            isOffline = state.isOffline,
-            onConfirm = { viewModel.onRescheduleClick(scheduledMessage.id, it) },
-            onDismiss = { messageToReschedule = null },
         )
     }
     messageToSendNow?.let { scheduledMessage ->

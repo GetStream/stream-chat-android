@@ -105,6 +105,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageSt
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.updateMessage
+import io.getstream.result.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -471,6 +472,21 @@ internal fun DefaultBottomBarContent(
                         skipEnrichUrl = skipEnrichUrl,
                     ),
                 )
+            },
+            onScheduleMessage = { message, scheduledAt, onResult ->
+                composerViewModel.scheduleMessage(
+                    message = message.copy(
+                        skipPushNotification = skipPushNotification,
+                        skipEnrichUrl = skipEnrichUrl,
+                    ),
+                    scheduledAt = scheduledAt,
+                ) { result ->
+                    if (result is Result.Success) {
+                        attachmentsPickerViewModel.setPickerVisible(visible = false)
+                        attachmentsPickerViewModel.clearSelection()
+                    }
+                    onResult(result)
+                }
             },
         )
 

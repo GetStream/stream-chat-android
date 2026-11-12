@@ -18,11 +18,12 @@ package io.getstream.chat.android.compose.pages
 
 import androidx.test.uiautomator.By
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
+import io.getstream.chat.android.compose.R as ComposeR
 import io.getstream.chat.android.compose.sample.R as SampleR
 
 /**
- * The sample's scheduled messages: the banner under the channel header, the sheets that pick when
- * a message is sent, and the Scheduled messages screen.
+ * Scheduled messages: the SDK sheets that pick when a message is sent, and the sample's banner under
+ * the channel header and Scheduled messages screen.
  */
 class ScheduledMessagesPage {
 
@@ -48,27 +49,63 @@ class ScheduledMessagesPage {
         }
     }
 
-    /** The quick times, opened with a long press on send. */
+    /** The SDK sheet with the quick times, opened with a long press on send. */
     class ScheduleSheet {
 
         companion object {
             val view get() = By.res("Stream_ScheduleMessageSheet")
 
             /** Tomorrow at 9:00. */
-            val tomorrowMorning get() = By.res("Stream_ScheduleMessagePreset0")
+            val tomorrowMorning get() = quickDate(0)
+            val customTime get() = By.res("Stream_ScheduleMessageCustomTime")
+
+            /** The quick time at [index]: tomorrow at 9:00, tomorrow at 13:00, Monday at 9:00. */
+            fun quickDate(index: Int) = By.res("Stream_ScheduleMessageQuickDate$index")
+
+            /** The title when the channel has [limit] scheduled messages, the most it allows. */
+            fun limitReachedTitle(limit: Int) =
+                By.text(appContext.getString(ComposeR.string.stream_compose_schedule_message_limit_reached, limit))
         }
     }
 
-    /** The date and time pickers, for a custom time or a reschedule. */
+    /** The SDK sheet with the date and time pickers, for a custom time or a reschedule. */
     class ScheduleTimeSheet {
 
         companion object {
-            val time get() = By.res("Stream_ScheduleTimeTime")
-            val confirmButton get() = By.res("Stream_ScheduleTimeConfirm")
+            val view get() = By.res("Stream_ScheduleMessageTimeSheet")
+            val preview get() = By.res("Stream_ScheduleMessagePreview")
+            val date get() = By.res("Stream_ScheduleMessageDate")
+            val time get() = By.res("Stream_ScheduleMessageTime")
+            val error get() = By.res("Stream_ScheduleMessageError")
+            val cancelButton get() = By.res("Stream_ScheduleMessageCancel")
+            val confirmButton get() = By.res("Stream_ScheduleMessageConfirm")
 
-            /** The hour field of the time dialog: its first text field. */
-            val hourField get() = By.clazz("android.widget.EditText")
-            val timeDialogConfirmButton get() = By.text(appContext.getString(SampleR.string.scheduled_messages_ok))
+            /** The error that tells [text]. */
+            fun error(text: String) = error.hasDescendant(By.text(text))
+        }
+    }
+
+    /**
+     * The Material date and time dialogs the time sheet opens. Their own labels come from Material
+     * and are in English, like the device of the tests.
+     */
+    class Pickers {
+
+        companion object {
+            val datePicker get() = By.res("Stream_ScheduleMessageDatePicker")
+            val timePicker get() = By.res("Stream_ScheduleMessageTimePicker")
+            val okButton get() = By.text(appContext.getString(ComposeR.string.stream_compose_schedule_message_ok))
+
+            val textInputModeButton get() = By.desc("Switch to text input mode")
+            val dateField get() = By.clazz("android.widget.EditText").hasAncestor(datePicker)
+
+            val hourSelector get() = By.desc("Select hour")
+            val minuteSelector get() = By.desc("Select minutes")
+
+            /** The field of the time dialog that has the focus: the hour when the dialog opens. */
+            val focusedField get() = By.clazz("android.widget.EditText").focused(true).hasAncestor(timePicker)
+            val amButton get() = By.text("AM").hasAncestor(timePicker)
+            val pmButton get() = By.text("PM").hasAncestor(timePicker)
         }
     }
 

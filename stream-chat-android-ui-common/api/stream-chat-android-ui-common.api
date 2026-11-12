@@ -2577,6 +2577,111 @@ public final class io/getstream/chat/android/ui/common/state/messages/composer/R
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording;
 }
 
+public abstract class io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError {
+	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$ChannelLimitReached : io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$ChannelLimitReached;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$ChannelLimitReached;IILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$ChannelLimitReached;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLimit ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$CommandNotAllowed : io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$CommandNotAllowed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$Failed : io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/result/Error;)V
+	public final fun component1 ()Lio/getstream/result/Error;
+	public final fun copy (Lio/getstream/result/Error;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$Failed;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$Failed;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$Failed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Lio/getstream/result/Error;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$TooFar : io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$TooFar;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$TooFar;IILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$TooFar;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMaxLeadTimeSeconds ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$TooSoon : io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$TooSoon;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$TooSoon;IILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$TooSoon;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMinLeadTimeSeconds ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$UserLimitReached : io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$UserLimitReached;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$UserLimitReached;IILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError$UserLimitReached;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLimit ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageState {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (ZILjava/lang/Integer;ILjava/lang/Integer;IIZ)V
+	public synthetic fun <init> (ZILjava/lang/Integer;ILjava/lang/Integer;IIZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun component4 ()I
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun component6 ()I
+	public final fun component7 ()I
+	public final fun component8 ()Z
+	public final fun copy (ZILjava/lang/Integer;ILjava/lang/Integer;IIZ)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageState;ZILjava/lang/Integer;ILjava/lang/Integer;IIZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageState;
+	public final fun dateError (Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError;
+	public static synthetic fun dateError$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageState;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCanSchedule ()Z
+	public final fun getHasCommands ()Z
+	public final fun getMaxLeadTimeSeconds ()I
+	public final fun getMaxPerChannel ()Ljava/lang/Integer;
+	public final fun getMaxPerUser ()Ljava/lang/Integer;
+	public final fun getMinLeadTimeSeconds ()I
+	public final fun getPendingForUser ()I
+	public final fun getPendingInChannel ()I
+	public fun hashCode ()I
+	public final fun isChannelLimitReached ()Z
+	public final fun isUserLimitReached ()Z
+	public final fun messageError (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduleMessageError;
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract class io/getstream/chat/android/ui/common/state/messages/composer/ValidationError {
 	public static final field $stable I
 }

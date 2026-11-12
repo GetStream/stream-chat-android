@@ -73,6 +73,7 @@ import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberTrailingContentParams
@@ -157,6 +158,7 @@ class ChatsActivity : ComponentActivity() {
                             isPinChannelVisible = settings.isChannelPinningEnabled,
                         ),
                     ),
+                    composer = ComposerConfig(scheduledMessagesEnabled = settings.isScheduledMessagesShown),
                 ),
             ) {
                 ScreenContent()

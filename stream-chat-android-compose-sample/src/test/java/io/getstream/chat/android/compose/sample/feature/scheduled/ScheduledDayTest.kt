@@ -17,52 +17,14 @@
 package io.getstream.chat.android.compose.sample.feature.scheduled
 
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
-import java.util.concurrent.TimeUnit
 
-internal class ScheduledMessageDatesTest {
+internal class ScheduledDayTest {
 
     private val timeZone = TimeZone.getTimeZone("Europe/Lisbon")
-
-    @Test
-    fun `the presets are tomorrow at 9 and at 13, and the next Monday at 9`() {
-        // Wednesday
-        val now = date(2026, Calendar.OCTOBER, 28, 15, 30)
-
-        val presets = scheduleMessagePresets(now, timeZone)
-
-        presets shouldBeEqualTo listOf(
-            date(2026, Calendar.OCTOBER, 29, 9, 0),
-            date(2026, Calendar.OCTOBER, 29, 13, 0),
-            date(2026, Calendar.NOVEMBER, 2, 9, 0),
-        )
-    }
-
-    @Test
-    fun `when tomorrow is Monday, the Monday preset is a week later`() {
-        // Sunday
-        val now = date(2026, Calendar.NOVEMBER, 1, 22, 0)
-
-        val presets = scheduleMessagePresets(now, timeZone)
-
-        presets shouldBeEqualTo listOf(
-            date(2026, Calendar.NOVEMBER, 2, 9, 0),
-            date(2026, Calendar.NOVEMBER, 2, 13, 0),
-            date(2026, Calendar.NOVEMBER, 9, 9, 0),
-        )
-    }
-
-    @Test
-    fun `tomorrow at 9 keeps the local time across a daylight saving change`() {
-        // Lisbon leaves summer time on 25 October 2026.
-        val now = date(2026, Calendar.OCTOBER, 24, 20, 0)
-
-        scheduleMessagePresets(now, timeZone).first() shouldBeEqualTo date(2026, Calendar.OCTOBER, 25, 9, 0)
-    }
 
     @Test
     fun `the day of a date counts calendar days from today`() {
@@ -83,17 +45,6 @@ internal class ScheduledMessageDatesTest {
 
         scheduledDay(date(2026, Calendar.OCTOBER, 25, 23, 30), now, timeZone) shouldBeEqualTo ScheduledDay.Tomorrow
         scheduledDay(date(2026, Calendar.OCTOBER, 26, 0, 30), now, timeZone) shouldBeEqualTo ScheduledDay.ThisWeek
-    }
-
-    @Test
-    fun `a date must be at least a minute away and at most 120 days away`() {
-        val now = date(2026, Calendar.OCTOBER, 28, 15, 30)
-
-        scheduleDateError(Date(now.time + 59_000), now) shouldBeEqualTo ScheduleDateError.TooSoon
-        scheduleDateError(Date(now.time + 60_000), now).shouldBeNull()
-        scheduleDateError(Date(now.time + TimeUnit.DAYS.toMillis(120)), now).shouldBeNull()
-        scheduleDateError(Date(now.time + TimeUnit.DAYS.toMillis(120) + 1), now) shouldBeEqualTo
-            ScheduleDateError.TooFar
     }
 
     private fun date(year: Int, month: Int, day: Int, hour: Int, minute: Int): Date =

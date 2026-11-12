@@ -445,4 +445,33 @@
         <item quantity="one">1 reply</item>
         <item quantity="other">%d replies</item>
     </plurals>
+    <!-- Schedule message -->
+    <string name="stream_compose_schedule_message_title">Schedule message</string>
+    <string name="stream_compose_schedule_message_reschedule_title">Reschedule message</string>
+    <string name="stream_compose_schedule_message_limit_reached">Limit reached (%1$d max)</string>
+    <string name="stream_compose_schedule_message_tomorrow_at">Tomorrow at %1$s</string>
+    <string name="stream_compose_schedule_message_day_at">%1$s at %2$s</string>
+    <string name="stream_compose_schedule_message_custom_time">Custom time</string>
+    <string name="stream_compose_schedule_message_to">Message to %1$s</string>
+    <string name="stream_compose_schedule_message_reply_to">Reply to %1$s</string>
+    <string name="stream_compose_schedule_message_scheduled_for">Scheduled for %1$s</string>
+    <string name="stream_compose_schedule_message_date">Date</string>
+    <string name="stream_compose_schedule_message_time">Time</string>
+    <string name="stream_compose_schedule_message_time_zone">Sent in your time zone (%1$s)</string>
+    <string name="stream_compose_schedule_message_channel_count">%1$d of %2$d scheduled in this channel</string>
+    <string name="stream_compose_schedule_message_cancel">Cancel</string>
+    <string name="stream_compose_schedule_message_schedule">Schedule</string>
+    <string name="stream_compose_schedule_message_reschedule">Reschedule</string>
+    <string name="stream_compose_schedule_message_ok">OK</string>
+    <string name="stream_compose_schedule_message_enter_time">Enter time</string>
+    <plurals name="stream_compose_schedule_message_error_too_soon">
+        <item quantity="one">Pick a time at least %d minute from now</item>
+        <item quantity="other">Pick a time at least %d minutes from now</item>
+    </plurals>
+    <string name="stream_compose_schedule_message_error_too_soon_reschedule">Pick a later time. Editing can\'t send a message right away.</string>
+    <string name="stream_compose_schedule_message_error_too_far">That\'s further ahead than your app allows</string>
+    <string name="stream_compose_schedule_message_error_channel_limit">You\'ve reached the limit of %1$d scheduled messages in this channel.</string>
+    <string name="stream_compose_schedule_message_error_user_limit">You\'ve reached your limit of %1$d scheduled messages.</string>
+    <string name="stream_compose_schedule_message_error_command">Commands can\'t be scheduled. Remove the / command to continue.</string>
+    <string name="stream_compose_schedule_message_error_failed">Couldn\'t schedule message. Try again</string>
 </resources>

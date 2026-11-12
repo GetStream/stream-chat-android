@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.robots
 
+import android.text.format.DateFormat
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.pages.ChannelInfoPage
@@ -34,6 +35,7 @@ import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
+import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import io.getstream.chat.android.e2e.test.uiautomator.defaultTimeout
 import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
@@ -52,6 +54,9 @@ import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearAndClick
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertFalse
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class UserRobot {
 
@@ -116,6 +121,64 @@ class UserRobot {
         return this
     }
 
+    /** Opens the schedule sheet with a long press on send. */
+    fun openScheduleSheet(): UserRobot {
+        longPressSendButton()
+        ScheduledMessagesPage.ScheduleSheet.view.wait()
+        return this
+    }
+
+    /** Opens the custom time sheet for what the composer holds, from the schedule sheet. */
+    fun openCustomTimeSheet(): UserRobot {
+        openScheduleSheet()
+        // The sheet slides in once the keyboard is hidden, and a tap that lands while it moves is
+        // lost, so tap again while the custom time sheet is not shown.
+        repeat(3) {
+            ScheduledMessagesPage.ScheduleSheet.customTime.waitToAppearAndClick()
+            if (ScheduledMessagesPage.ScheduleTimeSheet.view.waitDisplayed(timeOutMillis = 3_000)) return this
+        }
+        return this
+    }
+
+    /** Types the day of [date] in the date dialog of the open time sheet, keeping the time. */
+    fun typeScheduleDate(date: Date): UserRobot {
+        ScheduledMessagesPage.ScheduleTimeSheet.date.waitToAppearAndClick()
+        ScheduledMessagesPage.Pickers.textInputModeButton.waitToAppearAndClick()
+        // The field takes the digits of the day in the order of the locale, like 03122027.
+        val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "MMddyyyy").filter(Char::isLetter)
+        val digits = SimpleDateFormat(pattern, Locale.getDefault()).format(date)
+        ScheduledMessagesPage.Pickers.dateField.waitToAppear().typeText(digits)
+        ScheduledMessagesPage.Pickers.okButton.waitToAppearAndClick()
+        return this
+    }
+
+    /** Sets [hour]:[minute], in 24-hour time, in the time dialog of the open time sheet, keeping the day. */
+    fun pickScheduleTime(hour: Int, minute: Int = 0): UserRobot {
+        ScheduledMessagesPage.ScheduleTimeSheet.time.waitToAppearAndClick()
+        val is24Hour = DateFormat.is24HourFormat(appContext)
+        val shownHour = if (is24Hour) hour else (hour + 11) % 12 + 1
+        // The hour field has the focus when the dialog opens, and typing the hour moves it to the minutes on its own, so
+        // the minutes go first.
+        ScheduledMessagesPage.Pickers.minuteSelector.waitToAppearAndClick()
+        ScheduledMessagesPage.Pickers.focusedField.waitToAppear().typeText(minute.toString().padStart(2, '0'))
+        ScheduledMessagesPage.Pickers.hourSelector.waitToAppearAndClick()
+        ScheduledMessagesPage.Pickers.focusedField.waitToAppear().typeText(shownHour.toString())
+        if (!is24Hour) {
+            val period = if (hour < 12) ScheduledMessagesPage.Pickers.amButton else ScheduledMessagesPage.Pickers.pmButton
+            period.waitToAppearAndClick()
+        }
+        ScheduledMessagesPage.Pickers.okButton.waitToAppearAndClick()
+        return this
+    }
+
+    /** Schedules what the composer holds at [hour] o'clock tomorrow, from the custom time sheet. */
+    fun scheduleComposerContentAt(hour: Int): UserRobot {
+        openCustomTimeSheet()
+        pickScheduleTime(hour)
+        ScheduledMessagesPage.ScheduleTimeSheet.confirmButton.waitToAppearAndClick()
+        return this
+    }
+
     /** Opens the actions of the scheduled message whose row shows [text]. */
     fun openScheduledMessageActions(text: String): UserRobot {
         ScheduledMessagesPage.Screen.item(text).waitToAppearAndClick()
@@ -157,9 +220,7 @@ class UserRobot {
     fun rescheduleScheduledMessage(text: String, hour: Int): UserRobot {
         openScheduledMessageActions(text)
         ScheduledMessagesPage.Actions.reschedule.waitToAppearAndClick()
-        ScheduledMessagesPage.ScheduleTimeSheet.time.waitToAppearAndClick()
-        ScheduledMessagesPage.ScheduleTimeSheet.hourField.waitToAppear().typeText(hour.toString())
-        ScheduledMessagesPage.ScheduleTimeSheet.timeDialogConfirmButton.waitToAppearAndClick()
+        pickScheduleTime(hour)
         ScheduledMessagesPage.ScheduleTimeSheet.confirmButton.waitToAppearAndClick()
         return this
     }

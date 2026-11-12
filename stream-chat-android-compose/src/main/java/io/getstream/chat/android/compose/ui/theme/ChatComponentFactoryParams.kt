@@ -85,6 +85,8 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageError
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
@@ -101,6 +103,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.ExpandableList
+import java.util.Date
 
 /**
  * Parameters for [ChatComponentFactory.ChannelListHeader].
@@ -1319,10 +1322,60 @@ public data class MessageComposerCoolDownIndicatorParams(
  *
  * @param onClick Action invoked when the button is clicked.
  * @param onClickLabel Semantic / accessibility label for [onClick].
+ * @param onLongClick Action invoked when the button is long clicked, or null when it has no long click action. By
+ * default, it opens the schedule message sheet when the user can schedule messages in the channel. Also expose it as a
+ * named accessibility action, so a screen reader user can run it without a long press.
+ * @param onLongClickLabel Semantic / accessibility label for [onLongClick].
  */
 public data class MessageComposerSendButtonParams(
     val onClick: () -> Unit,
     val onClickLabel: String? = null,
+    val onLongClick: (() -> Unit)? = null,
+    val onLongClickLabel: String? = null,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduleMessageSheet].
+ *
+ * @param dates The quick dates to schedule the message at, in the user's time zone.
+ * @param state What the composer knows to schedule the message. When [ScheduleMessageState.isChannelLimitReached],
+ * the options are disabled and the title says why.
+ * @param onDateClick Called with the quick date the user picked.
+ * @param onCustomTimeClick Called when the user wants to pick a custom date and time.
+ * @param onDismiss Called when the sheet is dismissed.
+ */
+public data class ScheduleMessageSheetParams(
+    val dates: List<Date>,
+    val state: ScheduleMessageState,
+    val onDateClick: (Date) -> Unit,
+    val onCustomTimeClick: () -> Unit,
+    val onDismiss: () -> Unit,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduleMessageTimeSheet].
+ *
+ * @param message The message to schedule or reschedule, for the preview.
+ * @param channelName The name of the channel of the message, for the preview.
+ * @param initialDate The date the date and time pickers start at.
+ * @param state What the composer knows to schedule the message, for the lead times and the count of the channel.
+ * @param error Why the message can't be scheduled whatever the picked date, or why the last request failed, or null.
+ * The errors of the picked date come from [ScheduleMessageState.dateError].
+ * @param onConfirm Called with the picked date.
+ * @param onDismiss Called when the sheet is dismissed.
+ * @param scheduledAt The current date of the scheduled message to reschedule, or null to schedule a new message. When
+ * it is set, the sheet reschedules the message: its title, preview and button say so, and the count of the channel is
+ * not shown.
+ */
+public data class ScheduleMessageTimeSheetParams(
+    val message: Message,
+    val channelName: String,
+    val initialDate: Date,
+    val state: ScheduleMessageState,
+    val error: ScheduleMessageError?,
+    val onConfirm: (Date) -> Unit,
+    val onDismiss: () -> Unit,
+    val scheduledAt: Date? = null,
 )
 
 /**

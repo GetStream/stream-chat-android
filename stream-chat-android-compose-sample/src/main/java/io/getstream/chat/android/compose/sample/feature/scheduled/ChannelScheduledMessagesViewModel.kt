@@ -40,7 +40,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -49,8 +48,8 @@ import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Date
 
 /**
- * Schedules the content of the composer of a channel or a thread, edits a scheduled message in the composer, and
- * tells the state of the scheduled messages of the channel or the thread for the banner.
+ * Edits, reschedules or schedules again a scheduled message in the composer of a channel or a thread, and tells the
+ * state of the scheduled messages of the channel or the thread for the banner.
  *
  * @param cid The channel, in the format `type:id`.
  * @param editedMessageId The ID of the scheduled message to edit in the composer, or null.
@@ -87,11 +86,6 @@ internal class ChannelScheduledMessagesViewModel(
         if (editedMessage == null) scheduledMessagesBanner(scheduledMessages, connectionState) else null
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    /** Whether the device is offline, so a scheduled message waits for the connection. */
-    val isOffline: StateFlow<Boolean> = client.clientState.connectionState
-        .map { it is ConnectionState.Offline }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
-
     /** The results of the actions, and the changes of the composer content. */
     val events: Flow<ScheduledMessagesEvent> = _events.receiveAsFlow()
 
@@ -120,23 +114,22 @@ internal class ChannelScheduledMessagesViewModel(
     }
 
     /**
-     * Schedules [message], built by the composer, at [scheduledAt]. When the edited message is scheduled again, the
-     * new message replaces it.
+     * Schedules the edited message, which failed to send, again at [scheduledAt] with the content of [message], built
+     * by the composer. The new message replaces it.
      */
-    fun onScheduleClick(message: Message, scheduledAt: Date) {
+    fun onScheduleAgainClick(message: Message, scheduledAt: Date) {
+        val replaced = _editedMessage.value ?: return
         val (channelType, channelId) = cid.cidToTypeAndId()
-        val replaced = _editedMessage.value?.takeIf { isScheduledAgain }
         var deleteError: Error? = null
         submit(
-            endsEditing = replaced != null,
             // Told after the answer, so the snackbar of the answer does not hide it.
             afterAnswer = { deleteError?.let { _events.send(ScheduledMessagesEvent.Error(it.message)) } },
         ) {
             // A new message, with a new ID, that keeps the content of the one it replaces.
-            val content = replaced?.withContentOf(message)?.copy(id = "") ?: message.withResolvedAttachments()
+            val content = replaced.withContentOf(message).copy(id = "")
             client.scheduleMessage(channelType, channelId, content, scheduledAt).await().also { result ->
                 // Deleted right away, as deletes are local first too, so leaving the screen does not cancel it.
-                if (result is Result.Success && replaced != null) {
+                if (result is Result.Success) {
                     deleteError = (client.deleteScheduledMessage(replaced.id).await() as? Result.Failure)?.value
                 }
             }
@@ -202,7 +195,6 @@ internal class ChannelScheduledMessagesViewModel(
      * another change runs.
      */
     private fun submit(
-        endsEditing: Boolean = true,
         afterAnswer: suspend () -> Unit = {},
         change: suspend () -> Result<ScheduledMessage>,
     ) {
@@ -210,11 +202,10 @@ internal class ChannelScheduledMessagesViewModel(
         isSubmitting = true
         viewModelScope.launch {
             val result = change()
-            if (result is Result.Success && endsEditing) endEditing()
+            if (result is Result.Success) endEditing()
             isSubmitting = false
             when (result) {
                 is Result.Success -> {
-                    if (!endsEditing) _events.send(ScheduledMessagesEvent.ClearComposer)
                     _events.send(client.answerOf(result.value.id))
                     afterAnswer()
                 }
@@ -222,8 +213,6 @@ internal class ChannelScheduledMessagesViewModel(
             }
         }
     }
-
-    private suspend fun Message.withResolvedAttachments(): Message = copy(attachments = resolveAttachments(attachments))
 
     /**
      * The content of the scheduled message with the changes of the composer, keeping its custom data. The composer

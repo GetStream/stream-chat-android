@@ -16,21 +16,15 @@
 
 package io.getstream.chat.android.compose.sample.feature.scheduled
 
+import android.content.Context
+import android.text.format.DateFormat
+import io.getstream.chat.android.compose.sample.R
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
-
-/**
- * Why a date can't be picked to schedule a message.
- */
-internal enum class ScheduleDateError {
-    /** Less than a minute away: the server would send the message right away. */
-    TooSoon,
-
-    /** Further away than the server allows by default. */
-    TooFar,
-}
 
 /**
  * How far a scheduled date is from today, which decides how the day is written.
@@ -43,42 +37,6 @@ internal enum class ScheduledDay {
     ThisWeek,
     ThisYear,
     OtherYear,
-}
-
-/**
- * The quick times to schedule a message: tomorrow at 9:00 and at 13:00, and the next Monday at 9:00 after tomorrow.
- *
- * @param now The current date.
- * @param timeZone The time zone of the dates.
- */
-internal fun scheduleMessagePresets(now: Date, timeZone: TimeZone = TimeZone.getDefault()): List<Date> {
-    val tomorrowMorning = Calendar.getInstance(timeZone).apply {
-        time = now
-        add(Calendar.DAY_OF_YEAR, 1)
-        set(Calendar.HOUR_OF_DAY, MorningHour)
-        set(Calendar.MINUTE, 0)
-        set(Calendar.SECOND, 0)
-        set(Calendar.MILLISECOND, 0)
-    }
-    val tomorrowAfternoon = (tomorrowMorning.clone() as Calendar).apply { set(Calendar.HOUR_OF_DAY, AfternoonHour) }
-    val nextMondayMorning = (tomorrowMorning.clone() as Calendar).apply {
-        do {
-            add(Calendar.DAY_OF_YEAR, 1)
-        } while (get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY)
-    }
-    return listOf(tomorrowMorning.time, tomorrowAfternoon.time, nextMondayMorning.time)
-}
-
-/**
- * Why [date] can't be picked to schedule a message, or null when it can. The server sends a message with a past date
- * right away, and by default rejects a date more than 120 days away.
- *
- * @param now The current date.
- */
-internal fun scheduleDateError(date: Date, now: Date): ScheduleDateError? = when {
-    date.time < now.time + TimeUnit.MINUTES.toMillis(1) -> ScheduleDateError.TooSoon
-    date.time > now.time + TimeUnit.DAYS.toMillis(MaxLeadDays) -> ScheduleDateError.TooFar
-    else -> null
 }
 
 /**
@@ -111,7 +69,30 @@ private fun Calendar.startOfDay(): Long {
     return start.timeInMillis + start.get(Calendar.ZONE_OFFSET) + start.get(Calendar.DST_OFFSET)
 }
 
-private const val MorningHour = 9
-private const val AfternoonHour = 13
-private const val MaxLeadDays = 120L
+/**
+ * Formats [date] as "Today at 9:00", "Tomorrow at 9:00", "Monday at 9:00" within a week, or with the month and day.
+ */
+internal fun Context.formatScheduledDate(date: Date, now: Date = Date()): String =
+    getString(
+        R.string.scheduled_messages_date_at_time,
+        formatScheduledDay(date, now),
+        DateFormat.getTimeFormat(this).format(date),
+    )
+
+/**
+ * Formats the day of [date] as "Today", "Tomorrow", the name of the day within a week, or with the month and day.
+ */
+internal fun Context.formatScheduledDay(date: Date, now: Date = Date()): String {
+    val locale = Locale.getDefault()
+    return when (scheduledDay(date, now)) {
+        ScheduledDay.Today -> getString(R.string.scheduled_messages_today)
+        ScheduledDay.Tomorrow -> getString(R.string.scheduled_messages_tomorrow)
+        ScheduledDay.ThisWeek -> SimpleDateFormat("EEEE", locale).format(date)
+        ScheduledDay.ThisYear -> SimpleDateFormat(DateFormat.getBestDateTimePattern(locale, "EEEMMMd"), locale)
+            .format(date)
+        ScheduledDay.OtherYear -> SimpleDateFormat(DateFormat.getBestDateTimePattern(locale, "EEEMMMdy"), locale)
+            .format(date)
+    }
+}
+
 private const val DaysInWeek = 7

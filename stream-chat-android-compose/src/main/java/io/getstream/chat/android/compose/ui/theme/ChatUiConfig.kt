@@ -195,12 +195,15 @@ public data class MediaGalleryOptionsConfig(
  * If `false`, attaches it for manual sending.
  * @param linkPreviewEnabled Whether link previews are shown in the composer.
  * @param floatingStyleEnabled Whether the message composer uses the floating style.
+ * @param scheduledMessagesEnabled Whether a long press on the send button opens the sheet to schedule the message.
+ * It is shown only when the user also has the `schedule-message` capability in the channel.
  */
 public data class ComposerConfig(
     val audioRecordingEnabled: Boolean = true,
     val audioRecordingSendOnComplete: Boolean = false,
     val linkPreviewEnabled: Boolean = false,
     val floatingStyleEnabled: Boolean = false,
+    val scheduledMessagesEnabled: Boolean = true,
 )
 
 /**
