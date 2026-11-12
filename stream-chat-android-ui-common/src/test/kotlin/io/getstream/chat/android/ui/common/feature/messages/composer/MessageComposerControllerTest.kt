@@ -69,6 +69,7 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -3793,6 +3794,32 @@ internal class MessageComposerControllerTest {
 
         assertEquals(listOf(Result.Failure(error)), results)
         assertEquals("Heads up", controller.messageInput.value.text)
+    }
+
+    @Test
+    fun `When resolving the attachments of a schedule is cancelled Then the next schedule still runs`() = runTest {
+        val scheduledAt = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+        val scheduled = randomScheduledMessage(cid = CID, scheduledAt = scheduledAt)
+        fixture.givenScheduleMessage(Result.Success(scheduled))
+        val controller = fixture.get()
+
+        controller.scheduleMessage(
+            message = Message(cid = CID, text = "First"),
+            scheduledAt = scheduledAt,
+            resolveAttachments = { throw CancellationException("cancelled") },
+        )
+        advanceUntilIdle()
+        val results = mutableListOf<Result<ScheduledMessage>>()
+        controller.scheduleMessage(Message(cid = CID, text = "Second"), scheduledAt, onResult = results::add)
+        advanceUntilIdle()
+
+        assertEquals(listOf(Result.Success(scheduled)), results)
     }
 
     @Test

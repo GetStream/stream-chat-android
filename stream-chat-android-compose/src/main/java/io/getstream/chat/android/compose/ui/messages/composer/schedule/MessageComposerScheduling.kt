@@ -126,8 +126,8 @@ private fun ScheduleMessageSheetHost(
         host.requested = null
     }
 
-    // The message the sheets show and check. Unlike buildNewMessage, it has no side effect: building the message
-    // clears the mentions picked in the composer, so it is built only once, when it is scheduled.
+    // The message the sheets show and check, made from the composer state. The message to schedule is built only on
+    // Schedule.
     val preview = remember(composerState) {
         Message(
             text = composerState.inputValue.trim(),

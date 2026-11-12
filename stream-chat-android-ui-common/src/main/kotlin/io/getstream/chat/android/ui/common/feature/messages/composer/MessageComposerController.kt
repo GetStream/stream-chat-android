@@ -982,11 +982,14 @@ public class MessageComposerController(
             skipEnrichUrl = shouldSkipEnrichUrl(message),
         )
         scope.launch {
-            val resolvedMessage = resolveAttachments?.let { resolve ->
-                preparedMessage.copy(attachments = resolve(preparedMessage.attachments))
-            } ?: preparedMessage
-            val result = chatClient.scheduleMessage(channelType, channelId, resolvedMessage, scheduledAt).await()
-            isScheduling = false
+            val result = try {
+                val resolvedMessage = resolveAttachments?.let { resolve ->
+                    preparedMessage.copy(attachments = resolve(preparedMessage.attachments))
+                } ?: preparedMessage
+                chatClient.scheduleMessage(channelType, channelId, resolvedMessage, scheduledAt).await()
+            } finally {
+                isScheduling = false
+            }
             if (result is Result.Success) clearData()
             onResult(result)
         }

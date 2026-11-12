@@ -209,8 +209,7 @@ private fun ScheduleSheetHost(
     val composerState by composerViewModel.messageComposerState.collectAsStateWithLifecycle()
     val edited by viewModel.editedMessage.collectAsStateWithLifecycle()
     val editedMessage = edited ?: return
-    // Building the message clears the mentions picked in the composer, so the sheet shows a preview, and the message
-    // is built only when it is confirmed.
+    // The sheet shows a preview made from the composer state. The message is built only when it is confirmed.
     val preview = remember(composerState) {
         Message(
             text = composerState.inputValue.trim(),

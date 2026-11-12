@@ -350,7 +350,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
     @Test
     @UiThread
-    fun `the message is built only when it is scheduled, as building clears the picked mentions`() {
+    fun `the message is built only when it is scheduled`() {
         val message = givenComposerWithText(canSchedule = true)
 
         composeTestRule.setContent {
