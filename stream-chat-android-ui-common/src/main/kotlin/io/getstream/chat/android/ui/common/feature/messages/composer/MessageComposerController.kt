@@ -863,7 +863,8 @@ public class MessageComposerController(
     }
 
     /**
-     * Clears all the data from the input — text, attachments, validation errors, actions, and active command.
+     * Clears all the data from the input: text, attachments, selected mentions, validation errors, actions, and active
+     * command.
      * In thread mode, [MessageComposerState.alsoSendToChannel] is preserved until the user toggles it;
      * otherwise it is reset.
      */
@@ -878,7 +879,8 @@ public class MessageComposerController(
         clearActiveCommand()
         linkPreviewJob?.cancel()
         dismissedLinkPreviewUrl = null
-        _state.update { it.copy(validationErrors = emptyList()) }
+        selectedMentions.clear()
+        _state.update { it.copy(validationErrors = emptyList(), selectedMentions = emptySet()) }
         if (!isInThread) {
             _state.update { it.copy(alsoSendToChannel = false) }
         }
@@ -1053,7 +1055,7 @@ public class MessageComposerController(
         val trimmedMessage = fullText.trim()
         val activeMessage = activeAction?.message ?: Message()
         val replyMessage = (activeAction as? Reply)?.message
-        val mentions = filterMentions(selectedMentions, trimmedMessage)
+        val mentions = collectMentions(selectedMentions, trimmedMessage)
 
         return if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
             activeMessage.copy(
@@ -1081,16 +1083,6 @@ public class MessageComposerController(
             )
         }
     }
-
-    /**
-     * Drops any selected mention whose `@<token>` is no longer present in [message] and returns
-     * the metadata to attach to the outgoing message.
-     */
-    private fun filterMentions(selectedMentions: Set<Mention>, message: String): FilteredMentions =
-        collectMentions(selectedMentions, message).also {
-            this.selectedMentions.clear()
-            _state.update { it.copy(selectedMentions = emptySet()) }
-        }
 
     /** Returns the metadata of the [selectedMentions] whose `@<token>` is still present in [message]. */
     private fun collectMentions(selectedMentions: Set<Mention>, message: String): FilteredMentions {

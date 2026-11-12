@@ -226,17 +226,17 @@ public fun MessageComposer(
 }
 
 /**
- * Hands the [SnackbarHostState] from the VM-bound [MessageComposer] down to the factory's default
- * `MessageComposer` impl so that command-related events emitted by [MessageComposerViewModel] can
- * surface as snackbars rendered inside the composer's surface. Customer factory overrides may read
- * `current` to render the same snackbar; otherwise they will not see event-driven snackbars.
- */
-/**
  * Hands the action that opens the schedule sheet from the VM-bound [MessageComposer] down to the default send button,
  * which runs it on a long press. Null when the user can't schedule messages in the channel.
  */
 internal val LocalMessageComposerScheduleAction = compositionLocalOf<(() -> Unit)?> { null }
 
+/**
+ * Hands the [SnackbarHostState] from the VM-bound [MessageComposer] down to the factory's default
+ * `MessageComposer` impl so that command-related events emitted by [MessageComposerViewModel] can
+ * surface as snackbars rendered inside the composer's surface. Customer factory overrides may read
+ * `current` to render the same snackbar; otherwise they will not see event-driven snackbars.
+ */
 internal val LocalMessageComposerSnackbarHostState =
     staticCompositionLocalOf<SnackbarHostState?> { null }
 

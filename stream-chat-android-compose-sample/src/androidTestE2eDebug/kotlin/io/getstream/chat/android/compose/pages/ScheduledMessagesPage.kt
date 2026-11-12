@@ -96,14 +96,13 @@ class ScheduledMessagesPage {
             val timePicker get() = By.res("Stream_ScheduleMessageTimePicker")
             val okButton get() = By.text(appContext.getString(ComposeR.string.stream_compose_schedule_message_ok))
 
-            /** The day of today in the calendar of the date dialog. */
-            val today get() = By.textStartsWith("Today").hasAncestor(datePicker)
             val textInputModeButton get() = By.desc("Switch to text input mode")
             val dateField get() = By.clazz("android.widget.EditText").hasAncestor(datePicker)
 
-            /** The hour field of the time dialog: its first text field. */
-            val hourField get() = By.clazz("android.widget.EditText").hasAncestor(timePicker)
+            val hourSelector get() = By.desc("Select hour")
             val minuteSelector get() = By.desc("Select minutes")
+
+            /** The field of the time dialog that has the focus: the hour when the dialog opens. */
             val focusedField get() = By.clazz("android.widget.EditText").focused(true).hasAncestor(timePicker)
             val amButton get() = By.text("AM").hasAncestor(timePicker)
             val pmButton get() = By.text("PM").hasAncestor(timePicker)

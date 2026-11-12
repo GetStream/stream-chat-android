@@ -67,7 +67,8 @@ import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialo
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.messages.composer.ComposerInputTestTag
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.composer.schedule.LocalOnMessageScheduled
+import io.getstream.chat.android.compose.ui.messages.composer.schedule.LocalMessageScheduleOptions
+import io.getstream.chat.android.compose.ui.messages.composer.schedule.MessageScheduleOptions
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.SelectedMessageSnapshot
@@ -449,9 +450,19 @@ internal fun DefaultBottomBarContent(
 
     Column {
         CompositionLocalProvider(
-            LocalOnMessageScheduled provides {
-                attachmentsPickerViewModel.setPickerVisible(visible = false)
-                attachmentsPickerViewModel.clearSelection()
+            LocalMessageScheduleOptions provides remember(
+                skipPushNotification,
+                skipEnrichUrl,
+                attachmentsPickerViewModel,
+            ) {
+                MessageScheduleOptions(
+                    skipPushNotification = skipPushNotification,
+                    skipEnrichUrl = skipEnrichUrl,
+                    onMessageScheduled = {
+                        attachmentsPickerViewModel.setPickerVisible(visible = false)
+                        attachmentsPickerViewModel.clearSelection()
+                    },
+                )
             },
         ) {
             MessageComposer(

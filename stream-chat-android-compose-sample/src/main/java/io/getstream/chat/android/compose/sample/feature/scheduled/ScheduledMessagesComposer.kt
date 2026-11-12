@@ -206,12 +206,17 @@ private fun ScheduleSheetHost(
     onDismiss: () -> Unit,
 ) {
     val scheduleState by composerViewModel.scheduleMessageState.collectAsStateWithLifecycle()
+    val composerState by composerViewModel.messageComposerState.collectAsStateWithLifecycle()
     val edited by viewModel.editedMessage.collectAsStateWithLifecycle()
     val editedMessage = edited ?: return
-    val message = remember(sheet) { composerViewModel.buildScheduledMessage() }
+    // Building the message clears the mentions picked in the composer, so the sheet shows a preview, and the message
+    // is built only when it is confirmed.
+    val preview = remember(composerState) {
+        Message(text = composerState.inputValue.trim(), attachments = composerState.attachments)
+    }
     val params = when (sheet) {
         ScheduleSheet.Reschedule -> ScheduleMessageTimeSheetParams(
-            message = message,
+            message = preview,
             channelName = channelName,
             initialDate = editedMessage.scheduledAt,
             state = scheduleState,
@@ -219,20 +224,20 @@ private fun ScheduleSheetHost(
             error = null,
             onConfirm = { date ->
                 onDismiss()
-                viewModel.onRescheduleEditClick(message, date)
+                viewModel.onRescheduleEditClick(composerViewModel.buildScheduledMessage(), date)
             },
             onDismiss = onDismiss,
             scheduledAt = editedMessage.scheduledAt,
         )
         ScheduleSheet.ScheduleAgain -> ScheduleMessageTimeSheetParams(
-            message = message,
+            message = preview,
             channelName = channelName,
             initialDate = remember { scheduleMessageQuickDates(Date()).first() },
             state = scheduleState,
-            error = scheduleState.messageError(message),
+            error = scheduleState.messageError(preview),
             onConfirm = { date ->
                 onDismiss()
-                viewModel.onScheduleAgainClick(message, date)
+                viewModel.onScheduleAgainClick(composerViewModel.buildScheduledMessage(), date)
             },
             onDismiss = onDismiss,
         )

@@ -36,6 +36,8 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
+import io.getstream.chat.android.compose.ui.messages.composer.schedule.LocalMessageScheduleOptions
+import io.getstream.chat.android.compose.ui.messages.composer.schedule.MessageScheduleOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
@@ -62,6 +64,8 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
@@ -285,6 +289,92 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
         val dateCaptor = argumentCaptor<Date>()
         verify(mockViewModel).scheduleMessage(eq(message), dateCaptor.capture(), any())
         assertEquals(scheduleMessageQuickDates(Date()).first(), dateCaptor.firstValue)
+    }
+
+    @Test
+    @UiThread
+    fun `a scheduled message skips the push and the URL enrichment like the screen asks`() {
+        val message = givenComposerWithText(canSchedule = true)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                CompositionLocalProvider(
+                    LocalMessageScheduleOptions provides MessageScheduleOptions(
+                        skipPushNotification = true,
+                        skipEnrichUrl = true,
+                    ),
+                ) {
+                    MessageComposer(viewModel = mockViewModel)
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageQuickDate0")
+            .performSemanticsAction(SemanticsActions.OnClick)
+
+        verify(mockViewModel).scheduleMessage(
+            eq(message.copy(skipPushNotification = true, skipEnrichUrl = true)),
+            any(),
+            any(),
+        )
+    }
+
+    @Test
+    @UiThread
+    fun `a sheet closed by an emptied composer does not open again when the user types`() {
+        givenComposerWithText(canSchedule = true)
+        val composerState = MutableStateFlow(
+            MessageComposerState(inputValue = "Heads up", ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE)),
+        )
+        whenever(mockViewModel.messageComposerState) doReturn composerState
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageSheet").assertExists()
+
+        // For example, the draft was deleted on another device.
+        composerState.value = composerState.value.copy(inputValue = "")
+        composeTestRule.waitForIdle()
+        composerState.value = composerState.value.copy(inputValue = "Next message")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageSheet").assertDoesNotExist()
+    }
+
+    @Test
+    @UiThread
+    fun `the message is built only when it is scheduled, as building clears the picked mentions`() {
+        val message = givenComposerWithText(canSchedule = true)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageCustomTime")
+            .performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageCancel").performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.waitForIdle()
+        verify(mockViewModel, never()).buildNewMessage(any(), any())
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageCustomTime")
+            .performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageConfirm").performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.waitForIdle()
+
+        verify(mockViewModel, times(1)).buildNewMessage(any(), any())
+        verify(mockViewModel).scheduleMessage(eq(message), any(), any())
     }
 
     @Test

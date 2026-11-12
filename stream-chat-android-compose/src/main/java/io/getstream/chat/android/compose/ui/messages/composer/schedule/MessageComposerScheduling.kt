@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerScheduleAction
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -38,18 +37,13 @@ import io.getstream.chat.android.compose.ui.theme.ScheduleMessageTimeSheetParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
+import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageError
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Date
-
-/**
- * Called once the content of the composer is scheduled, so the screen can reset what it keeps about it, like the
- * selection of the attachment picker.
- */
-internal val LocalOnMessageScheduled = staticCompositionLocalOf<() -> Unit> { {} }
 
 /**
  * Lets the user schedule the content of the composer in [content]: a long press on the send button opens the schedule
@@ -88,9 +82,11 @@ private sealed interface ScheduleSheet {
     /** The quick dates. */
     data object Quick : ScheduleSheet
 
-    /** A custom date, starting at [initialDate], with an [error] that does not depend on the picked date. */
+    /**
+     * A custom date for the content of the composer, starting at [initialDate], with an [error] that does not depend
+     * on the picked date.
+     */
     data class Custom(
-        val message: Message,
         val initialDate: Date,
         val error: ScheduleMessageError.Failed? = null,
     ) : ScheduleSheet
@@ -117,7 +113,7 @@ private fun ScheduleMessageSheetHost(
     host: ScheduleMessageSheetHostState,
 ) {
     val composerState by viewModel.messageComposerState.collectAsState()
-    val onMessageScheduled = LocalOnMessageScheduled.current
+    val options = LocalMessageScheduleOptions.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val isImeVisible by rememberUpdatedState(WindowInsets.isImeVisible)
     LaunchedEffect(host.requested) {
@@ -129,23 +125,32 @@ private fun ScheduleMessageSheetHost(
         host.requested = null
     }
 
-    fun buildMessage(): Message = viewModel.buildNewMessage(composerState.inputValue, composerState.attachments)
+    // The message the sheets show and check. Unlike buildNewMessage, it has no side effect: building the message
+    // clears the mentions picked in the composer, so it is built only once, when it is scheduled.
+    val preview = remember(composerState) {
+        Message(
+            text = composerState.inputValue.trim(),
+            attachments = composerState.attachments,
+            replyTo = (composerState.action as? Reply)?.message,
+        )
+    }
 
-    fun schedule(message: Message, date: Date) {
-        if (state.messageError(message) != null || state.dateError(date) != null) {
+    fun schedule(date: Date) {
+        if (state.messageError(preview) != null || state.dateError(date) != null) {
             // The custom time sheet shows why.
-            host.shown = ScheduleSheet.Custom(message = message, initialDate = date)
+            host.shown = ScheduleSheet.Custom(initialDate = date)
             return
         }
+        val message = viewModel.buildNewMessage(composerState.inputValue, composerState.attachments)
+            .copy(skipPushNotification = options.skipPushNotification, skipEnrichUrl = options.skipEnrichUrl)
         viewModel.scheduleMessage(message, date) { result ->
             when (result) {
                 is Result.Success -> {
                     host.shown = null
-                    onMessageScheduled()
+                    options.onMessageScheduled()
                 }
 
                 is Result.Failure -> host.shown = ScheduleSheet.Custom(
-                    message = message,
                     initialDate = date,
                     error = ScheduleMessageError.Failed(result.value),
                 )
@@ -153,17 +158,20 @@ private fun ScheduleMessageSheetHost(
         }
     }
 
-    when (val sheet = host.shown) {
+    // Like the send button, a sheet needs content to schedule. Once the composer is emptied, for example by a draft
+    // deleted on another device, the sheet closes.
+    val hasContent = composerState.inputValue.isNotBlank() || composerState.attachments.isNotEmpty()
+    LaunchedEffect(hasContent) {
+        if (!hasContent) host.shown = null
+    }
+    when (val sheet = host.shown.takeIf { hasContent }) {
         ScheduleSheet.Quick -> ChatTheme.componentFactory.ScheduleMessageSheet(
             params = ScheduleMessageSheetParams(
                 dates = remember { scheduleMessageQuickDates(Date()) },
                 state = state,
-                onDateClick = { date -> schedule(buildMessage(), date) },
+                onDateClick = ::schedule,
                 onCustomTimeClick = {
-                    host.shown = ScheduleSheet.Custom(
-                        message = buildMessage(),
-                        initialDate = scheduleMessageQuickDates(Date()).first(),
-                    )
+                    host.shown = ScheduleSheet.Custom(initialDate = scheduleMessageQuickDates(Date()).first())
                 },
                 onDismiss = { host.shown = null },
             ),
@@ -171,12 +179,12 @@ private fun ScheduleMessageSheetHost(
 
         is ScheduleSheet.Custom -> ChatTheme.componentFactory.ScheduleMessageTimeSheet(
             params = ScheduleMessageTimeSheetParams(
-                message = sheet.message,
+                message = preview,
                 channelName = rememberChannelName(viewModel),
                 initialDate = sheet.initialDate,
                 state = state,
-                error = state.messageError(sheet.message) ?: sheet.error,
-                onConfirm = { date -> schedule(sheet.message, date) },
+                error = state.messageError(preview) ?: sheet.error,
+                onConfirm = ::schedule,
                 onDismiss = { host.shown = null },
             ),
         )

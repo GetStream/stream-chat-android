@@ -48,6 +48,7 @@ import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 import java.util.Calendar
+import java.util.Date
 import io.getstream.chat.android.compose.R as ComposeR
 import io.getstream.chat.android.compose.sample.R as SampleR
 
@@ -502,7 +503,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
         step("WHEN user picks today at midnight, which has passed") {
             userRobot
-                .pickScheduleToday()
+                .typeScheduleDate(Date())
                 .pickScheduleTime(hour = 0)
         }
         step("THEN the sheet tells the time is too soon, and can't schedule") {

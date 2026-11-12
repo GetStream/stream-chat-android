@@ -140,14 +140,6 @@ class UserRobot {
         return this
     }
 
-    /** Picks today in the date dialog of the open time sheet, keeping the time. */
-    fun pickScheduleToday(): UserRobot {
-        ScheduledMessagesPage.ScheduleTimeSheet.date.waitToAppearAndClick()
-        ScheduledMessagesPage.Pickers.today.waitToAppearAndClick()
-        ScheduledMessagesPage.Pickers.okButton.waitToAppearAndClick()
-        return this
-    }
-
     /** Types the day of [date] in the date dialog of the open time sheet, keeping the time. */
     fun typeScheduleDate(date: Date): UserRobot {
         ScheduledMessagesPage.ScheduleTimeSheet.date.waitToAppearAndClick()
@@ -165,11 +157,14 @@ class UserRobot {
         ScheduledMessagesPage.ScheduleTimeSheet.time.waitToAppearAndClick()
         val is24Hour = DateFormat.is24HourFormat(appContext)
         val shownHour = if (is24Hour) hour else (hour + 11) % 12 + 1
-        ScheduledMessagesPage.Pickers.hourField.waitToAppear().typeText(shownHour.toString())
         if (minute != 0) {
+            // The hour field has the focus when the dialog opens, and typing the hour moves it to the minutes on its
+            // own, so the minutes go first.
             ScheduledMessagesPage.Pickers.minuteSelector.waitToAppearAndClick()
             ScheduledMessagesPage.Pickers.focusedField.waitToAppear().typeText(minute.toString())
+            ScheduledMessagesPage.Pickers.hourSelector.waitToAppearAndClick()
         }
+        ScheduledMessagesPage.Pickers.focusedField.waitToAppear().typeText(shownHour.toString())
         if (!is24Hour) {
             val period = if (hour < 12) ScheduledMessagesPage.Pickers.amButton else ScheduledMessagesPage.Pickers.pmButton
             period.waitToAppearAndClick()

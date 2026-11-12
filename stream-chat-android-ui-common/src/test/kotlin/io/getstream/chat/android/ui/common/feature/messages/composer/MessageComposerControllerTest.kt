@@ -3796,6 +3796,70 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `When scheduleMessage is refused Then the picked mentions are kept for the next try`() = runTest {
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+        fixture.givenScheduleMessage(Result.Failure(Error.GenericError("The quoted message was deleted.")))
+        val controller = fixture.get()
+        val user = User(id = "bob", name = "Bob")
+        controller.setMessageInput("Hi @")
+        controller.selectMention(user)
+        advanceUntilIdle()
+
+        val text = controller.messageInput.value.text
+        controller.scheduleMessage(controller.buildNewMessage(text), Date())
+        advanceUntilIdle()
+
+        assertEquals(setOf(Mention.User(user)), controller.state.value.selectedMentions)
+        assertEquals(listOf("bob"), controller.buildNewMessage(text).mentionedUsersIds)
+    }
+
+    @Test
+    fun `When scheduleMessage succeeds Then the picked mentions are cleared with the composer`() = runTest {
+        val scheduledAt = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+        fixture.givenScheduleMessage(Result.Success(randomScheduledMessage(cid = CID, scheduledAt = scheduledAt)))
+        val controller = fixture.get()
+        controller.setMessageInput("Hi @")
+        controller.selectMention(User(id = "bob", name = "Bob"))
+        advanceUntilIdle()
+
+        controller.scheduleMessage(controller.buildNewMessage(controller.messageInput.value.text), scheduledAt)
+        advanceUntilIdle()
+
+        assertEquals(emptySet<Mention>(), controller.state.value.selectedMentions)
+    }
+
+    @Test
+    fun `When a message is sent Then the picked mentions are cleared with the composer`() = runTest {
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .givenSendMessage(randomMessage(cid = CID))
+            .get()
+        controller.setMessageInput("Hi @")
+        controller.selectMention(User(id = "bob", name = "Bob"))
+        advanceUntilIdle()
+
+        controller.sendMessage(controller.buildNewMessage(controller.messageInput.value.text), callback = mock())
+        advanceUntilIdle()
+
+        assertEquals(emptySet<Mention>(), controller.state.value.selectedMentions)
+    }
+
+    @Test
     fun `Given thread mode with alsoSendToChannel When scheduleMessage called Then showInChannel is true`() = runTest {
         val parentMessage = randomMessage(id = "parent-id", cid = CID)
         val fixture = Fixture()
