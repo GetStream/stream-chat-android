@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 #
-# Refreshes the vendored OpenAPI models in stream-chat-android-client from the chat backend's spec.
+# Refreshes the vendored OpenAPI models and ChatEndpoints in stream-chat-android-client from the chat backend's spec.
 #
-# Only files already vendored are refreshed: the generator emits every model of the spec, but the client keeps the
-# ones it uses. A vendored file with a `// Patched:` comment is left as it is; the comment says why it differs from the
-# spec and when the patch can go. The script lists the fields such a file lacks or has beyond the spec. To refresh it
-# and keep the patch, copy the generated version over it, run spotlessApply, and restore the patched lines from the
-# diff. To vendor a new model, copy it from the generated output in build/ by hand.
+# Only what is already vendored is refreshed: the generator emits every model and endpoint of the spec, but the client
+# keeps the ones it uses. ChatEndpoints keeps the functions it already declares, matched by name and by whether they
+# take a body (the generator emits a body-less overload next to every endpoint with an optional body).
+#
+# A vendored file with a `// Patched:` comment is left as it is; the comment says why it differs from the spec and when
+# the patch can go. The script lists the fields such a file lacks or has beyond the spec. To refresh it and keep the
+# patch, copy the generated version over it, run spotlessApply, and restore the patched lines from the diff. To vendor
+# a new model or endpoint, copy it from the generated output in build/ by hand.
 #
 # Usage:
 #   ./generate_openapi.sh                             # backend master, fetched into build/openapi/chat
@@ -142,9 +145,54 @@ for vendored in "$VENDORED_DIR"/models/*.kt "$VENDORED_DIR"/infrastructure/*.kt;
   fi
 done
 
+# Refresh the ChatEndpoints functions already vendored, keyed by name and by whether they take a body. A vendored
+# function the generator no longer emits is kept as it is, like a model.
+VENDORED_API="$VENDORED_DIR/apis/ChatEndpoints.kt"
+if grep -q "// Patched:" "$VENDORED_API"; then
+  echo "Kept (patched): apis/ChatEndpoints.kt"
+else
+  awk -v out="$BUILD_DIR/ChatEndpoints.kt" '
+    # A function runs from its KDoc, or its method annotation when it has none, to the line closing its parameters.
+    !inside && (/^    \/\*\*/ || /^    @(GET|POST|PUT|PATCH|DELETE)\(/) {
+      inside = 1; block = ""; name = ""; body = "nobody"; started[FILENAME] = 1
+    }
+    !started[FILENAME] { if (FILENAME == ARGV[2]) header = header $0 "\n"; next }
+    !inside { next }
+    { block = block $0 "\n" }
+    name != "" && /@Body/ { body = "body" }
+    name == "" && match($0, /suspend fun [A-Za-z0-9_]+/) {
+      name = substr($0, RSTART + 12, RLENGTH - 12)
+      if (substr($0, RSTART + RLENGTH) ~ /@Body/) body = "body"
+    }
+    name != "" && /\): / {
+      inside = 0
+      key = name " " body
+      if (FILENAME == ARGV[1]) { if (!(key in vendored)) { vendored[key] = block; order[++count] = key } }
+      else if ((key in vendored) && !(key in generated)) generated[key] = block
+    }
+    END {
+      if (!count) { print "No functions parsed from " ARGV[1] > "/dev/stderr"; exit 1 }
+      if (!started[ARGV[2]]) { print "No functions parsed from " ARGV[2] > "/dev/stderr"; exit 1 }
+      printf "%s", header > out
+      for (i = 1; i <= count; i++) {
+        key = order[i]
+        if (key in generated) printf "\n%s", generated[key] > out
+        else {
+          print "No longer generated: ChatEndpoints." key " (kept as vendored)"
+          printf "\n%s", vendored[key] > out
+        }
+      }
+      print "}" > out
+      print "Refreshed ChatEndpoints: " count " functions"
+    }
+  ' "$VENDORED_API" "$GENERATED_DIR/apis/ChatEndpoints.kt" || exit 1
+  mv "$BUILD_DIR/ChatEndpoints.kt" "$VENDORED_API"
+fi
+
 # Models the vendored ones reference but which aren't vendored yet: the build fails until they are.
 { grep -ho "io\.getstream\.chat\.android\.network\.models\.[A-Z][A-Za-z0-9_]*" \
-  "$VENDORED_DIR"/models/*.kt "$VENDORED_DIR"/infrastructure/*.kt || true; } | sed 's/.*\.//' | sort -u |
+  "$VENDORED_DIR"/models/*.kt "$VENDORED_DIR"/infrastructure/*.kt "$VENDORED_API" || true; } |
+  sed 's/.*\.//' | sort -u |
   while IFS= read -r name; do
     if [[ ! -f "$VENDORED_DIR/models/$name.kt" ]]; then
       echo "Referenced but not vendored: models/$name.kt (copy it from $GENERATED_DIR/models)"
