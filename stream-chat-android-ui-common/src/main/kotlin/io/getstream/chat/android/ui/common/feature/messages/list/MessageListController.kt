@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.extractCause
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.deliveredReadsOf
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
@@ -1958,7 +1959,8 @@ public class MessageListController(
     }
 
     /**
-     * Pins the message from the current channel.
+     * Pins the message from the current channel. When the device has no network, the pin is shown at once and sent on
+     * the next connection, and no [ErrorEvent.PinMessageError] is emitted.
      *
      * @param message The message to pin.
      */
@@ -1966,6 +1968,8 @@ public class MessageListController(
     public fun pinMessage(message: Message, expiresAt: Date? = null) {
         logger.d { "[pinMessage] message.id: ${message.id}, message.text: ${message.text}, expiresAt: $expiresAt" }
         chatClient.pinMessage(message, expiresAt).enqueue(onError = { error ->
+            // The client pins it locally and sends it again on the next connection.
+            if (error.isKeptOffline()) return@enqueue
             onActionResult(error) {
                 ErrorEvent.PinMessageError(it)
             }
@@ -1973,13 +1977,16 @@ public class MessageListController(
     }
 
     /**
-     * Unpins the message from the current channel.
+     * Unpins the message from the current channel. When the device has no network, the unpin is shown at once and sent
+     * on the next connection, and no [ErrorEvent.UnpinMessageError] is emitted.
      *
      * @param message The message to unpin.
      */
     public fun unpinMessage(message: Message) {
         logger.d { "[unpinMessage] message.id: ${message.id}, message.text: ${message.text}" }
         chatClient.unpinMessage(message).enqueue(onError = { error ->
+            // The client unpins it locally and sends it again on the next connection.
+            if (error.isKeptOffline()) return@enqueue
             onActionResult(error) {
                 ErrorEvent.UnpinMessageError(it)
             }
@@ -2505,6 +2512,9 @@ public class MessageListController(
         logger.e { errorMessage }
         emitEvent(onError(error))
     }
+
+    private fun Error.isKeptOffline(): Boolean =
+        !clientState.isNetworkAvailable && this is Error.NetworkError && !isPermanent()
 
     /**
      * Cancels any pending work when the parent ViewModel is about to be destroyed.

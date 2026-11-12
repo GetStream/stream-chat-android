@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -110,6 +111,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.io.IOException
 import java.util.Date
 
 @Suppress("LargeClass")
@@ -1459,6 +1461,56 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `When pinMessage fails without a network, no errorEvent is emitted`() = runTest {
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState()
+            .givenNetworkAvailable(false)
+            .givenPinMessage(TestCall(Result.Failure(networkFailure())))
+            .get()
+
+        controller.pinMessage(randomMessage())
+
+        controller.errorEvents.value.shouldBeNull()
+    }
+
+    @Test
+    fun `When pinMessage fails with a network, errorEvent is emitted`() = runTest {
+        val error = networkFailure()
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState()
+            .givenNetworkAvailable(true)
+            .givenPinMessage(TestCall(Result.Failure(error)))
+            .get()
+
+        controller.pinMessage(randomMessage())
+
+        controller.errorEvents.value `should be equal to` MessageListController.ErrorEvent.PinMessageError(error)
+    }
+
+    @Test
+    fun `When unpinMessage fails without a network, no errorEvent is emitted`() = runTest {
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState()
+            .givenNetworkAvailable(false)
+            .givenUnpinMessage(TestCall(Result.Failure(networkFailure())))
+            .get()
+
+        controller.unpinMessage(randomMessage())
+
+        controller.errorEvents.value.shouldBeNull()
+    }
+
+    private fun networkFailure() = Error.NetworkError(
+        message = "offline",
+        serverErrorCode = ChatErrorCode.NETWORK_FAILED.code,
+        statusCode = -1,
+        cause = IOException("offline"),
+    )
+
+    @Test
     fun `When castVote fails, errorEvent is emitted`() = runTest {
         val messageId = randomString()
         val pollId = randomString()
@@ -2170,6 +2222,18 @@ internal class MessageListControllerTests {
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
             whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
+        }
+
+        fun givenNetworkAvailable(isAvailable: Boolean) = apply {
+            whenever(clientState.isNetworkAvailable) doReturn isAvailable
+        }
+
+        fun givenPinMessage(call: Call<Message>) = apply {
+            whenever(chatClient.pinMessage(any(), anyOrNull<Date>())) doReturn call
+        }
+
+        fun givenUnpinMessage(call: Call<Message>) = apply {
+            whenever(chatClient.unpinMessage(any())) doReturn call
         }
 
         fun givenMarkRead() = apply {

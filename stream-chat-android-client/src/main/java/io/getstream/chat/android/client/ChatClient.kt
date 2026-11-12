@@ -118,6 +118,7 @@ import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
+import io.getstream.chat.android.client.internal.state.sync.internal.PendingMessagePins
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -488,6 +489,12 @@ internal constructor(
      * Stores the responses of the channel changes the current user makes. Set by the state plugin.
      */
     internal var channelUpdateResponseHandler: ChannelUpdateResponseHandler? = null
+
+    /**
+     * Keeps the pins and unpins that failed offline, to send them again on the next connection. Set by the state
+     * plugin.
+     */
+    internal var pendingMessagePins: PendingMessagePins? = null
 
     internal lateinit var attachmentsSender: AttachmentsSender
 
@@ -3412,6 +3419,10 @@ internal constructor(
     /**
      * Pins the message.
      *
+     * With the state plugin, a pin that fails because the device has no network is applied to the local state at once
+     * and sent again on the next connection. The returned [Call] still fails with that error. The change is kept in
+     * memory only, so it is not sent if the app process ends first.
+     *
      * @param message The message object containing the ID of the message to be pinned.
      * @param expirationDate The exact expiration date.
      *
@@ -3429,14 +3440,20 @@ internal constructor(
         return partialUpdateMessage(
             messageId = message.id,
             set = set,
-        )
+        ).doOnResult(userScope) { result ->
+            pendingMessagePins?.onPinResult(message, pinned = true, pinExpires = expirationDate, result = result)
+        }
     }
 
     /**
      * Pins the message.
      *
+     * With the state plugin, a pin that fails because the device has no network is applied to the local state at once
+     * and sent again on the next connection. The returned [Call] still fails with that error. The change is kept in
+     * memory only, so it is not sent if the app process ends first.
+     *
      * @param message The message object containing the ID of the message to be pinned.
-     * @param timeout The expiration timeout in seconds.
+     * @param timeout The expiration timeout in seconds, counted from this call.
      *
      * @return Executable async [Call] responsible for pinning the message.
      */
@@ -3455,11 +3472,17 @@ internal constructor(
                 "pinned" to true,
                 "pin_expires" to calendar.time,
             ),
-        )
+        ).doOnResult(userScope) { result ->
+            pendingMessagePins?.onPinResult(message, pinned = true, pinExpires = calendar.time, result = result)
+        }
     }
 
     /**
-     * Unpins the message that was previously pinned
+     * Unpins the message that was previously pinned.
+     *
+     * With the state plugin, an unpin that fails because the device has no network is applied to the local state at
+     * once and sent again on the next connection. The returned [Call] still fails with that error. The change is kept
+     * in memory only, so it is not sent if the app process ends first.
      *
      * @param message The message object containing the ID of the message to be unpinned.
      *
@@ -3471,7 +3494,9 @@ internal constructor(
         return partialUpdateMessage(
             messageId = message.id,
             set = mapOf("pinned" to false),
-        )
+        ).doOnResult(userScope) { result ->
+            pendingMessagePins?.onPinResult(message, pinned = false, pinExpires = null, result = result)
+        }
     }
 
     /**

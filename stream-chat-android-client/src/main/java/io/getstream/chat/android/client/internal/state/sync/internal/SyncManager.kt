@@ -148,6 +148,7 @@ internal class SyncManager(
     scope: CoroutineScope,
     private val events: Tube<List<ChatEvent>> = Tube(),
     private val syncState: MutableStateFlow<SyncState?> = MutableStateFlow(null),
+    private val pendingMessagePins: PendingMessagePins? = null,
 ) : SyncHistoryManager {
 
     private val logger by taggedLogger("Chat:SyncManager")
@@ -281,6 +282,7 @@ internal class SyncManager(
                 onConnectionEstablished(currentUserId)
                 syncScope.launch { syncOfflineDraftMessages() }
                 syncScope.launch { notifyEndedLiveLocations() }
+                pendingMessagePins?.let { syncScope.launch { it.sendPending() } }
             }
 
             is DisconnectedEvent -> syncScope.launch {
