@@ -210,9 +210,10 @@ public class RepositoryFacade private constructor(
         val messages = messageRepository.selectLocalOnlyMessagesForChannel(placeholderCid)
         // Re-inserted rather than deleted: both writes are async, and a read between them would find neither copy
         messageRepository.insertMessages(messages.map { it.copy(cid = serverCid) })
-        messageRepository.selectDraftMessagesByCid(placeholderCid)?.let { draft ->
+        messageRepository.selectDraftMessagesByCid(placeholderCid)?.let {
             messageRepository.deleteDraftMessage(serverCid, parentId = null)
-            messageRepository.insertDraftMessage(draft.copy(cid = serverCid))
+            // Moved in place, so a draft that has not reached the server yet is still sent on the next retry
+            messageRepository.moveChannelDraftMessage(placeholderCid, serverCid)
         }
         threadsRepository.deleteChannelThreads(placeholderCid)
         channelsRepository.deleteChannel(placeholderCid)

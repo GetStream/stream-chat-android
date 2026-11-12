@@ -334,7 +334,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         val order = inOrder(messages)
         order.verify(messages).deleteDraftMessage(serverCid, null)
-        order.verify(messages).insertDraftMessage(draft.copy(cid = serverCid))
+        order.verify(messages).moveChannelDraftMessage(placeholderCid, serverCid)
     }
 
     @Test

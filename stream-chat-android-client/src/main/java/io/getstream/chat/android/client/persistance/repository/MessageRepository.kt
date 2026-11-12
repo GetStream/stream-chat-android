@@ -193,6 +193,11 @@ public interface MessageRepository {
     public suspend fun markDraftMessageDeleted(message: DraftMessage) { /* No-Op */ }
 
     /**
+     * Moves the channel draft of [fromCid] to [toCid], keeping whether it still has to reach the server.
+     */
+    public suspend fun moveChannelDraftMessage(fromCid: String, toCid: String) { /* No-Op */ }
+
+    /**
      * Selects the drafts saved locally that have not reached the server yet.
      */
     public suspend fun selectPendingDraftMessages(): List<DraftMessage> = emptyList()

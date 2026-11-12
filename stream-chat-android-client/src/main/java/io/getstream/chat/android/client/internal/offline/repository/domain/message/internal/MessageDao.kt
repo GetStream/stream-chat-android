@@ -149,6 +149,9 @@ internal interface MessageDao {
     @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE id = :messageId")
     suspend fun deleteDraftMessage(messageId: String)
 
+    @Query("UPDATE $DRAFT_MESSAGE_ENTITY_TABLE_NAME SET cid = :toCid WHERE cid = :fromCid AND parentId IS NULL")
+    suspend fun moveChannelDraftMessage(fromCid: String, toCid: String)
+
     @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE cid = :cid AND parentId IS NULL")
     suspend fun deleteDraftMessageByCid(cid: String)
 

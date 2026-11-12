@@ -221,4 +221,17 @@ internal class DraftMessageRepositoryIntegrationTest : BaseDomainTest2() {
 
         repos.selectDraftMessageByParentId(draft.parentId!!).shouldBeNull()
     }
+
+    @Test
+    fun `replacing a placeholder channel should keep its pending draft pending under the server cid`(): Unit = runTest {
+        val placeholderCid = "messaging:!members-a, b"
+        val serverCid = randomCID()
+        val draft = randomDraftMessage(cid = placeholderCid, parentId = null, replyMessage = null)
+        repos.insertPendingDraftMessage(draft)
+
+        repos.replacePlaceholderChannel(placeholderCid, serverCid)
+
+        repos.selectPendingDraftMessages() shouldContainSame listOf(draft.copy(cid = serverCid))
+        repos.selectDraftMessagesByCid(placeholderCid).shouldBeNull()
+    }
 }

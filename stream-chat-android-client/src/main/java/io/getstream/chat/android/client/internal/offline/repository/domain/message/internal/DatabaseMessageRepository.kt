@@ -210,6 +210,10 @@ internal class DatabaseMessageRepository(
         messageDao.deleteDraftMessage(message.id)
     }
 
+    override suspend fun moveChannelDraftMessage(fromCid: String, toCid: String) {
+        messageDao.moveChannelDraftMessage(fromCid, toCid)
+    }
+
     override suspend fun deleteDraftMessage(cid: String, parentId: String?) {
         when (parentId) {
             null -> messageDao.deleteDraftMessageByCid(cid)
