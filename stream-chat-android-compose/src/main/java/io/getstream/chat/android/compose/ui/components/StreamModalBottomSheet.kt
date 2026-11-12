@@ -175,7 +175,7 @@ internal fun StreamScreenBottomSheet(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun rememberStreamSheetState(
+internal fun rememberStreamSheetState(
     initialValueInInspection: SheetValue,
     skipPartiallyExpanded: Boolean = false,
 ): SheetState {

@@ -2150,6 +2150,7 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/intern
 public final class io/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$MessageComposerInputTrailingContentKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$MessageComposerInputTrailingContentKt;
 	public fun <init> ()V
+	public final fun getLambda$-1684953874$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-217848873$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1159305765$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
@@ -2207,6 +2208,23 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/schedu
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/composer/schedule/ComposableSingletons$ScheduleMessagePickersKt;
 	public fun <init> ()V
 	public final fun getLambda$1857856469$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/composer/schedule/ComposableSingletons$ScheduleMessageSheetsKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/composer/schedule/ComposableSingletons$ScheduleMessageSheetsKt;
+	public fun <init> ()V
+	public final fun getLambda$-1177803495$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1527284741$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1985566303$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-342254962$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-433037649$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-889248866$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1403215988$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1476147761$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1839237908$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1842040695$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1928373395$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$803706778$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/ChannelHeaderKt {

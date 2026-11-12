@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.compose.ui.messages.composer.schedule
 
 import android.content.Context
@@ -34,6 +36,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -59,6 +62,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
@@ -66,12 +70,17 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleD
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessageAttachmentPreview
 import io.getstream.chat.android.compose.ui.components.messages.rememberBodyBuilder
+import io.getstream.chat.android.compose.ui.components.rememberStreamSheetState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ScheduleMessageSheetParams
 import io.getstream.chat.android.compose.ui.theme.ScheduleMessageTimeSheetParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageError
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.result.Error
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -191,6 +200,11 @@ internal fun ScheduleMessageTimeSheet(params: ScheduleMessageTimeSheetParams) {
     StreamCardBottomSheet(
         modifier = Modifier.testTag("Stream_ScheduleMessageTimeSheet"),
         onDismissRequest = params.onDismiss,
+        // Fully expanded, so an error shown later does not push the buttons off screen.
+        sheetState = rememberStreamSheetState(
+            initialValueInInspection = SheetValue.Expanded,
+            skipPartiallyExpanded = true,
+        ),
     ) {
         ScheduleMessageTimeSheetContent(
             params = params,
@@ -567,3 +581,254 @@ private val NoteIconSize = 20.dp
 private val NoteMinHeight = 46.dp
 private val ListItemMinHeight = 48.dp
 private val PickerValueWidth = 120.dp
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageSheetPreview() {
+    ChatTheme {
+        ScheduleMessageSheetContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageSheetContent() {
+    PreviewQuickSheet(
+        state = ScheduleMessageState(canSchedule = true, pendingInChannel = 2, maxPerChannel = 10),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageSheetLimitReachedPreview() {
+    ChatTheme {
+        ScheduleMessageSheetLimitReachedContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageSheetLimitReachedContent() {
+    PreviewQuickSheet(
+        state = ScheduleMessageState(canSchedule = true, pendingInChannel = 10, maxPerChannel = 10),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true, pendingInChannel = 2, maxPerChannel = 10),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetWithoutCountPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetWithoutCountContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetWithoutCountContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true, maxPerChannel = 10),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetTooSoonPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetTooSoonContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetTooSoonContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true),
+        date = Date(PreviewNow.time + PreviewTooSoonMillis),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetTooFarPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetTooFarContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetTooFarContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true, maxLeadTimeSeconds = PreviewShortMaxLeadTimeSeconds),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetUserLimitPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetUserLimitContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetUserLimitContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true, pendingForUser = 100, maxPerUser = 100),
+        error = ScheduleMessageError.UserLimitReached(limit = 100),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetCommandPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetCommandContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetCommandContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true, hasCommands = true),
+        message = Message(text = "/giphy launch day"),
+        error = ScheduleMessageError.CommandNotAllowed,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetFailedPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetFailedContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetFailedContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true),
+        error = ScheduleMessageError.Failed(Error.GenericError("Failed")),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetReplyPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetReplyContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetReplyContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true),
+        message = Message(
+            text = "@Maya Ross, can you check the final plan?",
+            replyTo = Message(user = User(id = "alex", name = "Alex Ross")),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetReschedulePreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetRescheduleContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetRescheduleContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true, pendingInChannel = 2),
+        scheduledAt = PreviewTomorrow,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleMessageTimeSheetRescheduleTooSoonPreview() {
+    ChatTheme {
+        ScheduleMessageTimeSheetRescheduleTooSoonContent()
+    }
+}
+
+@Composable
+internal fun ScheduleMessageTimeSheetRescheduleTooSoonContent() {
+    PreviewTimeSheet(
+        state = ScheduleMessageState(canSchedule = true),
+        date = Date(PreviewNow.time + PreviewTooSoonMillis),
+        scheduledAt = PreviewTomorrow,
+    )
+}
+
+@Composable
+private fun PreviewQuickSheet(state: ScheduleMessageState) {
+    Column(modifier = Modifier.background(ChatTheme.colors.backgroundCoreElevation1)) {
+        ScheduleMessageSheetContent(
+            params = ScheduleMessageSheetParams(
+                dates = scheduleMessageQuickDates(PreviewNow, PreviewTimeZone),
+                state = state,
+                onDateClick = {},
+                onCustomTimeClick = {},
+                onDismiss = {},
+            ),
+            now = PreviewNow,
+            timeZone = PreviewTimeZone,
+        )
+    }
+}
+
+@Composable
+private fun PreviewTimeSheet(
+    state: ScheduleMessageState,
+    message: Message = Message(text = "Heads up: the launch moved to Monday. I'll post the final plan there."),
+    date: Date = PreviewTomorrow,
+    error: ScheduleMessageError? = null,
+    scheduledAt: Date? = null,
+) {
+    Column(modifier = Modifier.background(ChatTheme.colors.backgroundCoreElevation1)) {
+        ScheduleMessageTimeSheetContent(
+            params = ScheduleMessageTimeSheetParams(
+                message = message,
+                channelName = "Maya Ross",
+                initialDate = date,
+                state = state,
+                error = error,
+                onConfirm = {},
+                onDismiss = {},
+                scheduledAt = scheduledAt,
+            ),
+            date = date,
+            now = PreviewNow,
+            onDateClick = {},
+            onTimeClick = {},
+            timeZone = PreviewTimeZone,
+        )
+    }
+}
+
+private val PreviewTimeZone: TimeZone = TimeZone.getTimeZone("UTC")
+
+/** Saturday, January 16, 2027 at 10:00 UTC. */
+private val PreviewNow = Date(PreviewNowMillis)
+
+/** Sunday, January 17, 2027 at 09:00 UTC. */
+private val PreviewTomorrow = Date(PreviewTomorrowMillis)
+
+private const val PreviewNowMillis = 1_800_093_600_000L
+private const val PreviewTomorrowMillis = 1_800_176_400_000L
+private const val PreviewTooSoonMillis = 30_000L
+private const val PreviewShortMaxLeadTimeSeconds = 3600
