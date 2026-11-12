@@ -150,7 +150,7 @@ public object NotificationHandlerFactory {
         }
     }
 
-    private fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
+    internal fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
         val appContext = context.applicationContext
         // Resolved on first use, off SDK initialisation.
         val builder by lazy { coilUserIconBuilder(appContext) ?: DefaultUserIconBuilder(appContext) }
@@ -163,8 +163,11 @@ public object NotificationHandlerFactory {
      * Builds ui-common's Coil icon builder, which caches avatars and applies the CDN and image headers. The client
      * can't depend on ui-common, so it's looked up by name; ui-common's consumer rules keep it for R8.
      */
-    private fun coilUserIconBuilder(context: Context): UserIconBuilder? = try {
-        val builder = Class.forName(COIL_USER_ICON_BUILDER).getConstructor(Context::class.java).newInstance(context)
+    internal fun coilUserIconBuilder(
+        context: Context,
+        className: String = COIL_USER_ICON_BUILDER,
+    ): UserIconBuilder? = try {
+        val builder = Class.forName(className).getConstructor(Context::class.java).newInstance(context)
         logger.d { "[coilUserIconBuilder] using the Coil user icon builder" }
         builder as UserIconBuilder
     } catch (_: ClassNotFoundException) {
@@ -172,7 +175,7 @@ public object NotificationHandlerFactory {
         null
     } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
         // Also linkage errors, so a broken lookup falls back instead of crashing the notification.
-        logger.e(e) { "[coilUserIconBuilder] failed to build $COIL_USER_ICON_BUILDER" }
+        logger.e(e) { "[coilUserIconBuilder] failed to build $className" }
         null
     }
 
