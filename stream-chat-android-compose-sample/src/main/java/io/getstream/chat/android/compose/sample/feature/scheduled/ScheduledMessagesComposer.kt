@@ -212,7 +212,11 @@ private fun ScheduleSheetHost(
     // Building the message clears the mentions picked in the composer, so the sheet shows a preview, and the message
     // is built only when it is confirmed.
     val preview = remember(composerState) {
-        Message(text = composerState.inputValue.trim(), attachments = composerState.attachments)
+        Message(
+            text = composerState.inputValue.trim(),
+            attachments = composerState.attachments,
+            replyTo = (composerState.action as? Reply)?.message,
+        )
     }
     val params = when (sheet) {
         ScheduleSheet.Reschedule -> ScheduleMessageTimeSheetParams(
