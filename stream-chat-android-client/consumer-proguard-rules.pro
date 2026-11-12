@@ -1,26 +1,33 @@
 ## Stream Chat Android Client Proguard Rules
 
-# Classes that are using with QuerySort can't be minified, because QuerySort uses reflection. If the
-# name of the fields of the classes being used by QuerySort, change, the sort won't work as expected.
--keep class io.getstream.chat.android.models.** { *; }
--keep class io.getstream.chat.android.client.api2.model.** { *; }
+# QuerySortByReflection reads model properties by name through kotlin-reflect, which needs each property's field and
+# getter under its original name; without the getter it fails reading the private field. Public constructors stay so
+# apps can still build the models reflectively. Model classes nothing uses can still be removed.
+-keepnames class io.getstream.chat.android.models.**
+-keepclassmembers class io.getstream.chat.android.models.** {
+    <fields>;
+    public <init>(...);
+    public *** get*();
+    public *** is*();
+}
 
-# ExtraDataDto can't be minified because we check for extraData using reflection in
-# io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter. If the name of extraData
-# is changed, we will have problem with serialization.
--keep class * extends io.getstream.chat.android.client.api2.model.dto.ExtraDataDto {
-    public kotlin.collections.Map extraData;
- }
+# CustomObjectDtoAdapter tells custom data apart by matching the field names of the DTOs it parses against the JSON
+# keys, so those names must survive minification. Unused DTOs and members can still be removed.
+-keepnames class * extends io.getstream.chat.android.client.api2.model.dto.ExtraDataDto { *; }
+-keepnames class io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto { *; }
+
+# ChatModule reads these annotations off each Retrofit API to pick its HTTP client. Retrofit's own rules keep the
+# endpoint methods; this only keeps the interfaces, and with them their annotations. No allowshrinking: Retrofit
+# implements them at runtime, and R8 would otherwise assume nothing does and fail the cast to them.
+-keep,allowobfuscation @io.getstream.chat.android.client.api.AuthenticatedApi interface *
+-keep,allowobfuscation @io.getstream.chat.android.client.api.AnonymousApi interface *
 
 # Rules necessary for R8 full mode
--keep class io.getstream.chat.android.client.api2.endpoint.** { *; }
--keep class io.getstream.chat.android.client.call.RetrofitCall { *; }
 -keep class com.squareup.moshi.JsonReader
 -keep class com.squareup.moshi.JsonAdapter
--keep class kotlin.reflect.jvm.internal.* { *; }
 
 # Rules to improve the logs by keeping the names of the classes
 -keep class * extends io.getstream.chat.android.client.clientstate.UserState
 
-# Classes that are used by reflection.
--keep class io.getstream.chat.android.client.notifications.ChatPushDelegate { *; }
+# The push library finds this class through manifest metadata and builds it with its no-argument constructor.
+-keep class io.getstream.chat.android.client.notifications.ChatPushDelegate { <init>(); }
