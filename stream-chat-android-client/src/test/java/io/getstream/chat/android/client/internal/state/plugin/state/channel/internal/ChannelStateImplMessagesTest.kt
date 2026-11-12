@@ -406,8 +406,7 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
         fun `removeTruncatedMessages should recalculate the reads for the remaining messages`() = runTest {
             // given
             val other = randomUser(id = "other")
-            val kept = createMessage(2, timestamp = 3000).copy(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
-            channelState.setMessages(listOf(createMessage(1, timestamp = 1000), kept))
+            channelState.setMessages(listOf(serverMessage(1, timestamp = 1000), serverMessage(2, timestamp = 3000)))
             channelState.updateReads(
                 listOf(
                     read(currentUser, unreadMessages = 2, lastRead = Date(500), lastReadMessageId = "message_0"),
@@ -427,7 +426,7 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
         @Test
         fun `removeTruncatedMessages should count another user's system message once`() = runTest {
             // given
-            channelState.setMessages(listOf(createMessage(1, timestamp = 1000)))
+            channelState.setMessages(listOf(serverMessage(1, timestamp = 1000)))
             channelState.updateRead(read(currentUser, unreadMessages = 1, lastRead = Date(500)))
             val systemMessage = createMessage(99, timestamp = 2001, user = randomUser(id = "other"))
             // when
@@ -440,7 +439,7 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
         @Test
         fun `removeTruncatedMessages should not count the current user's system message`() = runTest {
             // given
-            channelState.setMessages(listOf(createMessage(1, timestamp = 1000)))
+            channelState.setMessages(listOf(serverMessage(1, timestamp = 1000)))
             channelState.updateRead(read(currentUser, unreadMessages = 1, lastRead = Date(500)))
             val systemMessage = createMessage(99, timestamp = 2001)
             // when
@@ -448,6 +447,21 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
             // then
             assertEquals(0, channelState.read.value?.unreadMessages)
         }
+
+        @Test
+        fun `removeTruncatedMessages should keep the unread count when the loaded messages start after the truncation`() =
+            runTest {
+                // given
+                channelState.setMessages(listOf(serverMessage(1, timestamp = 3000)))
+                channelState.updateRead(
+                    read(currentUser, unreadMessages = 5, lastRead = Date(500), lastReadMessageId = "message_0"),
+                )
+                // when
+                channelState.removeTruncatedMessages(Date(2000), systemMessage = null)
+                // then
+                assertEquals(5, channelState.read.value?.unreadMessages)
+                assertNull(channelState.read.value?.lastReadMessageId)
+            }
 
         @Test
         fun `removeMessagesBefore should not change state if all messages are after date`() = runTest {
@@ -1097,6 +1111,9 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
             assertEquals("message_3", channelState.getOldestMessage()?.id)
         }
     }
+
+    private fun serverMessage(index: Int, timestamp: Long) =
+        createMessage(index, timestamp = timestamp).copy(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
 
     private fun read(user: User, unreadMessages: Int, lastRead: Date, lastReadMessageId: String? = null) =
         ChannelUserRead(

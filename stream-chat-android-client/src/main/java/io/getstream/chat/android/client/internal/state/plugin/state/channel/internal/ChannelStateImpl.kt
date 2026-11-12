@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.afterTruncationAt
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
-import io.getstream.chat.android.client.extensions.internal.serverMessageIds
+import io.getstream.chat.android.client.extensions.internal.remainingMessageIdsAfterTruncationAt
 import io.getstream.chat.android.client.extensions.internal.survivesTruncationAt
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
@@ -559,8 +559,13 @@ internal class ChannelStateImpl(
      * @param systemMessage The truncation's system message, upserted after removal.
      */
     fun removeTruncatedMessages(truncatedAt: Date, systemMessage: Message?) {
+        val showsLatest = !_insideSearch.value && endOfNewerMessages.value
+        val remainingMessageIds = remainingMessageIdsAfterTruncationAt(
+            truncatedAt = truncatedAt,
+            latestPage = if (showsLatest) _messages.value else _cachedLatestMessages.value,
+            startsAtOldest = showsLatest && endOfOlderMessages.value,
+        )
         retainMessages { it.survivesTruncationAt(truncatedAt) }
-        val remainingMessageIds = serverMessageIds(_messages.value, _cachedLatestMessages.value)
         _reads.update { current ->
             current.mapValues { (_, read) -> read.afterTruncationAt(truncatedAt, remainingMessageIds) }
         }

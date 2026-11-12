@@ -428,7 +428,9 @@ internal class EventHandlerSequentialTest {
         runTest {
             val truncatedAt = Date(2_000)
             val storedChannel = randomChannel(
-                messages = listOf(randomMessage(id = "removed", createdAt = Date(1_000))),
+                messages = listOf(
+                    randomMessage(id = "removed", createdAt = Date(1_000), syncStatus = SyncStatus.COMPLETED),
+                ),
                 read = listOf(randomChannelUserRead(unreadMessages = 3, lastRead = Date(500))),
             )
             val event = randomChannelTruncatedEvent(
@@ -444,7 +446,7 @@ internal class EventHandlerSequentialTest {
         }
 
     @Test
-    fun `When handling NotificationChannelTruncatedEvent, the stored reads are recalculated for the remaining messages`() =
+    fun `When handling NotificationChannelTruncatedEvent, a stored last message after the truncation keeps the unread count`() =
         runTest {
             val truncatedAt = Date(2_000)
             val storedChannel = randomChannel(
@@ -461,7 +463,7 @@ internal class EventHandlerSequentialTest {
 
             val read = storedChannelAfter(storedChannel, event).read.single()
 
-            read.unreadMessages `should be equal to` 1
+            read.unreadMessages `should be equal to` 3
             read.lastReadMessageId `should be equal to` null
         }
 

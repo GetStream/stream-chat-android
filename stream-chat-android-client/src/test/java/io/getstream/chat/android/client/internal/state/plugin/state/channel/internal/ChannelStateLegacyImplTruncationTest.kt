@@ -77,21 +77,8 @@ internal class ChannelStateLegacyImplTruncationTest {
 
     @Test
     fun `removeTruncatedMessages recalculates the reads for the remaining messages`() = runTest {
-        channelState.setMessages(listOf(message(index = 1, createdAt = Date(1_000))))
-        channelState.updateCachedLatestMessages(
-            listOf(message(index = 2, createdAt = Date(3_000))).associateBy(Message::id),
-        )
-        channelState.upsertReads(
-            listOf(
-                ChannelUserRead(
-                    user = currentUser,
-                    lastReceivedEventDate = Date(500),
-                    unreadMessages = 4,
-                    lastRead = Date(500),
-                    lastReadMessageId = "message_0",
-                ),
-            ),
-        )
+        channelState.setMessages(listOf(message(index = 1, createdAt = Date(1_000)), message(index = 2, createdAt = Date(3_000))))
+        channelState.upsertReads(listOf(read(unreadMessages = 4)))
 
         channelState.removeTruncatedMessages(Date(2_000))
 
@@ -99,6 +86,39 @@ internal class ChannelStateLegacyImplTruncationTest {
         assertEquals(1, read.unreadMessages)
         assertNull(read.lastReadMessageId)
     }
+
+    @Test
+    fun `removeTruncatedMessages counts the cached latest messages while inside a search`() = runTest {
+        channelState.setMessages(listOf(message(index = 2, createdAt = Date(1_000)), message(index = 3, createdAt = Date(3_000))))
+        channelState.setInsideSearch(true)
+        channelState.setMessages(listOf(message(index = 1, createdAt = Date(500))))
+        channelState.upsertReads(listOf(read(unreadMessages = 4)))
+
+        channelState.removeTruncatedMessages(Date(2_000))
+
+        assertEquals(1, channelState.read.value!!.unreadMessages)
+    }
+
+    @Test
+    fun `removeTruncatedMessages keeps the unread count when the loaded messages start after the truncation`() =
+        runTest {
+            channelState.setMessages(listOf(message(index = 2, createdAt = Date(3_000))))
+            channelState.upsertReads(listOf(read(unreadMessages = 4)))
+
+            channelState.removeTruncatedMessages(Date(2_000))
+
+            val read = channelState.read.value!!
+            assertEquals(4, read.unreadMessages)
+            assertNull(read.lastReadMessageId)
+        }
+
+    private fun read(unreadMessages: Int) = ChannelUserRead(
+        user = currentUser,
+        lastReceivedEventDate = Date(500),
+        unreadMessages = unreadMessages,
+        lastRead = Date(500),
+        lastReadMessageId = "message_0",
+    )
 
     private fun message(index: Int, createdAt: Date?, createdLocallyAt: Date? = null) = randomMessage(
         id = "message_$index",

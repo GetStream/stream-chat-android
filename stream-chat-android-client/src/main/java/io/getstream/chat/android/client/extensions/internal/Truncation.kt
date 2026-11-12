@@ -44,28 +44,42 @@ internal val NotificationChannelTruncatedEvent.truncatedBefore: Date
 internal fun Message.survivesTruncationAt(truncatedAt: Date): Boolean = createdAt?.before(truncatedAt) != true
 
 /**
- * The read after a truncation at [truncatedAt] left the messages with [remainingMessageIds], recalculated as the
- * backend does: the unread count is capped at the remaining messages, and the last read message is cleared unless it
- * was read after the truncation and still exists.
+ * The read after a truncation at [truncatedAt], recalculated as the backend does: the unread count is capped at the
+ * [remainingMessageIds], and the last read message is cleared unless it was read after the truncation and still
+ * exists. With the remaining messages unknown (null), only a read from before the truncation loses its last read
+ * message.
  */
-internal fun ChannelUserRead.afterTruncationAt(truncatedAt: Date, remainingMessageIds: Set<String>): ChannelUserRead {
-    val keepsLastReadMessage = lastRead.after(truncatedAt) && lastReadMessageId in remainingMessageIds
+internal fun ChannelUserRead.afterTruncationAt(truncatedAt: Date, remainingMessageIds: Set<String>?): ChannelUserRead {
+    val readAfterTruncation = lastRead.after(truncatedAt)
+    if (remainingMessageIds == null) return if (readAfterTruncation) this else copy(lastReadMessageId = null)
     return copy(
         unreadMessages = minOf(unreadMessages, remainingMessageIds.size),
-        lastReadMessageId = lastReadMessageId.takeIf { keepsLastReadMessage },
+        lastReadMessageId = lastReadMessageId.takeIf { readAfterTruncation && it in remainingMessageIds },
     )
 }
 
 /**
- * The ids of the messages in [pages] the server counts, leaving out local-only ones, as the remaining messages a
- * truncation's recalculated reads are capped at.
+ * The ids of the server messages a truncation at [truncatedAt] leaves, taken from [latestPage], the loaded page that
+ * ends at the newest message. Null when the page neither reaches back past [truncatedAt] nor starts at the channel's
+ * [oldest][startsAtOldest] message, because remaining messages may then not be loaded.
  */
-internal fun serverMessageIds(vararg pages: Collection<Message>): Set<String> =
-    pages.flatMapTo(HashSet()) { page -> page.filterNot(Message::isLocalOnly).map(Message::id) }
+internal fun remainingMessageIdsAfterTruncationAt(
+    truncatedAt: Date,
+    latestPage: Collection<Message>,
+    startsAtOldest: Boolean,
+): Set<String>? {
+    val serverMessages = latestPage.filterNot(Message::isLocalOnly)
+    val complete = startsAtOldest || serverMessages.any { !it.survivesTruncationAt(truncatedAt) }
+    return if (complete) {
+        serverMessages.filter { it.survivesTruncationAt(truncatedAt) }.mapTo(HashSet(), Message::id)
+    } else {
+        null
+    }
+}
 
-/** The channel with its reads recalculated for a truncation at [truncatedAt], from the messages it holds. */
+/** The channel with its reads recalculated for a truncation at [truncatedAt], from its latest messages. */
 internal fun Channel.withReadsAfterTruncationAt(truncatedAt: Date): Channel {
-    val remainingMessageIds = serverMessageIds(messages.filter { it.survivesTruncationAt(truncatedAt) })
+    val remainingMessageIds = remainingMessageIdsAfterTruncationAt(truncatedAt, messages, startsAtOldest = false)
     return copy(read = read.map { it.afterTruncationAt(truncatedAt, remainingMessageIds) })
 }
 

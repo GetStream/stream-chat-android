@@ -86,23 +86,54 @@ internal class TruncationTest {
     }
 
     @Test
-    fun `serverMessageIds leaves out the messages the server does not count`() {
-        val sent = randomMessage(id = "sent", syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
-        val pending = randomMessage(id = "pending", syncStatus = SyncStatus.SYNC_NEEDED, type = MessageType.REGULAR)
-        val ephemeral = randomMessage(id = "ephemeral", syncStatus = SyncStatus.COMPLETED, type = MessageType.EPHEMERAL)
+    fun `afterTruncationAt keeps the unread count when the remaining messages are unknown`() {
+        val read = randomChannelUserRead(unreadMessages = 5, lastRead = Date(1_000), lastReadMessageId = "old")
 
-        val result = serverMessageIds(listOf(sent, pending), listOf(ephemeral, sent))
+        val result = read.afterTruncationAt(truncatedAt, remainingMessageIds = null)
 
-        assertEquals(setOf("sent"), result)
+        assertEquals(5, result.unreadMessages)
+        assertNull(result.lastReadMessageId)
+    }
+
+    @Test
+    fun `afterTruncationAt keeps a read after the truncation when the remaining messages are unknown`() {
+        val read = randomChannelUserRead(unreadMessages = 2, lastRead = Date(3_000), lastReadMessageId = "kept")
+
+        assertEquals(read, read.afterTruncationAt(truncatedAt, remainingMessageIds = null))
+    }
+
+    @Test
+    fun `remainingMessageIdsAfterTruncationAt returns the server messages after the truncation`() {
+        val page = listOf(
+            serverMessage("removed", Date(1_000)),
+            serverMessage("kept", Date(3_000)),
+            serverMessage("pending", Date(3_500)).copy(syncStatus = SyncStatus.SYNC_NEEDED),
+            serverMessage("ephemeral", Date(3_600)).copy(type = MessageType.EPHEMERAL),
+        )
+
+        val result = remainingMessageIdsAfterTruncationAt(truncatedAt, page, startsAtOldest = false)
+
+        assertEquals(setOf("kept"), result)
+    }
+
+    @Test
+    fun `remainingMessageIdsAfterTruncationAt is unknown when the page starts after the truncation`() {
+        val page = listOf(serverMessage("kept", Date(3_000)))
+
+        assertNull(remainingMessageIdsAfterTruncationAt(truncatedAt, page, startsAtOldest = false))
+    }
+
+    @Test
+    fun `remainingMessageIdsAfterTruncationAt is known when the page starts at the oldest message`() {
+        val page = listOf(serverMessage("kept", Date(3_000)))
+
+        assertEquals(setOf("kept"), remainingMessageIdsAfterTruncationAt(truncatedAt, page, startsAtOldest = true))
     }
 
     @Test
     fun `withReadsAfterTruncationAt counts only the channel messages the truncation kept`() {
         val channel = randomChannel(
-            messages = listOf(
-                randomMessage(id = "removed", createdAt = Date(1_000)),
-                randomMessage(id = "kept", createdAt = Date(3_000), syncStatus = SyncStatus.COMPLETED),
-            ),
+            messages = listOf(serverMessage("removed", Date(1_000)), serverMessage("kept", Date(3_000))),
             read = listOf(randomChannelUserRead(unreadMessages = 5, lastRead = Date(500), lastReadMessageId = "removed")),
         )
 
@@ -111,4 +142,7 @@ internal class TruncationTest {
         assertEquals(1, result.unreadMessages)
         assertNull(result.lastReadMessageId)
     }
+
+    private fun serverMessage(id: String, createdAt: Date) =
+        randomMessage(id = id, createdAt = createdAt, syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
 }
