@@ -181,6 +181,33 @@ public interface MessageRepository {
     public suspend fun insertDraftMessage(message: DraftMessage)
 
     /**
+     * Stores [message] as a local change that has not reached the server yet. [insertDraftMessage] stores the draft as
+     * synced again.
+     */
+    public suspend fun insertPendingDraftMessage(message: DraftMessage) { /* No-Op */ }
+
+    /**
+     * Hides the draft of the channel or thread of [message] until its deletion reaches the server, when
+     * [deleteDraftMessage] removes it.
+     */
+    public suspend fun markDraftMessageDeleted(message: DraftMessage) { /* No-Op */ }
+
+    /**
+     * Moves the channel draft of [fromCid] to [toCid], keeping whether it still has to reach the server.
+     */
+    public suspend fun moveChannelDraftMessage(fromCid: String, toCid: String) { /* No-Op */ }
+
+    /**
+     * Selects the drafts saved locally that have not reached the server yet.
+     */
+    public suspend fun selectPendingDraftMessages(): List<DraftMessage> = emptyList()
+
+    /**
+     * Selects the drafts deleted locally whose deletion has not reached the server yet.
+     */
+    public suspend fun selectDeletedDraftMessages(): List<DraftMessage> = emptyList()
+
+    /**
      * Selects all draft messages.
      */
     public suspend fun selectDraftMessages(): List<DraftMessage>

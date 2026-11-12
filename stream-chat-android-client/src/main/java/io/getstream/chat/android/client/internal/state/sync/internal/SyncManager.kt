@@ -609,6 +609,7 @@ internal class SyncManager(
             val channels = retryChannels()
             retryMessages(channels.uncreatedCids, channels.discardedCids)
             retryReactions()
+            retryDrafts()
             logger.v { "[retryFailedEntities] completed" }
         }
     } catch (e: Throwable) {
@@ -1152,6 +1153,21 @@ internal class SyncManager(
                 retryReactionSending(reaction, id)
             }.await()
             logger.v { "[retryReactions] result(${reaction.id}).isSuccess: ${result is Result.Success}" }
+        }
+    }
+
+    /** Sends the drafts saved or deleted while the request could not reach the server. */
+    private suspend fun retryDrafts() {
+        val deleted = repos.selectDeletedDraftMessages()
+        val pending = repos.selectPendingDraftMessages()
+        logger.d { "[retryDrafts] deleted.size: ${deleted.size}, pending.size: ${pending.size}" }
+        deleted.forEach { draftMessage ->
+            val (channelType, channelId) = draftMessage.cid.cidToTypeAndId()
+            chatClient.deleteDraftMessages(channelType, channelId, draftMessage).await()
+        }
+        pending.forEach { draftMessage ->
+            val (channelType, channelId) = draftMessage.cid.cidToTypeAndId()
+            chatClient.createDraftMessage(channelType, channelId, draftMessage).await()
         }
     }
 

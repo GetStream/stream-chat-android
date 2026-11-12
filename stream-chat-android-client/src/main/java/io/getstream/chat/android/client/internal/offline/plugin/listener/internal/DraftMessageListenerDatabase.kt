@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.models.DraftMessage
@@ -32,7 +33,8 @@ internal class DraftMessageListenerDatabase(
 
     /**
      * Method called before the request to create a draft message in the API is launched. Persists the draft upfront so
-     * it is not lost if the process dies while the request is in flight.
+     * it is not lost if the process dies while the request is in flight, and keeps it pending until the request
+     * succeeds, so it is sent again when the connection comes back.
      *
      * @param channelType The type of the channel
      * @param channelId The id of the channel
@@ -43,12 +45,13 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        messageRepository.insertDraftMessage(message)
+        messageRepository.insertPendingDraftMessage(message)
     }
 
     /**
      * Method called when a request to create a draft message in the API happens. Replaces the draft persisted by
-     * [onCreateDraftMessageRequest] with the server copy, leaving it untouched on failure.
+     * [onCreateDraftMessageRequest] with the server copy. On a failure the server will never accept, the local draft
+     * stops being pending; on any other failure it stays pending.
      *
      * @param result The result of the create draft message request
      * @param channelType The type of the channel
@@ -61,12 +64,16 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        result.onSuccessSuspend { draftMessage -> messageRepository.insertDraftMessage(draftMessage) }
+        when (result) {
+            is Result.Success -> messageRepository.insertDraftMessage(result.value)
+            is Result.Failure -> if (result.value.isPermanent()) messageRepository.insertDraftMessage(message)
+        }
     }
 
     /**
-     * Method called before the request to delete draft messages in the API is launched. Removes the draft upfront so it
-     * stays deleted if the process dies while the request is in flight.
+     * Method called before the request to delete draft messages in the API is launched. Hides the draft upfront so it
+     * stays deleted if the process dies while the request is in flight, and keeps the deletion pending until the
+     * request succeeds, so it is sent again when the connection comes back.
      *
      * @param channelType The type of the channel
      * @param channelId The id of the channel
@@ -77,12 +84,13 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        messageRepository.deleteDraftMessage(message)
+        messageRepository.markDraftMessageDeleted(message)
     }
 
     /**
-     * Method called when a request to delete draft messages in the API happens. No-op, as the draft is already removed
-     * by [onDeleteDraftMessagesRequest].
+     * Method called when a request to delete draft messages in the API happens. Removes the draft hidden by
+     * [onDeleteDraftMessagesRequest] once the server has no draft any more, or on a failure the server will never
+     * accept. On any other failure the deletion stays pending.
      *
      * @param result The result of the delete draft messages request
      * @param channelType The type of the channel
@@ -95,7 +103,11 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        /* No-Op */
+        when (result) {
+            is Result.Success -> messageRepository.deleteDraftMessage(message)
+            // A missing draft is a permanent failure too, so a deletion that already landed is not sent forever.
+            is Result.Failure -> if (result.value.isPermanent()) messageRepository.deleteDraftMessage(message)
+        }
     }
 
     /**

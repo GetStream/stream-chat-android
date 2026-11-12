@@ -171,6 +171,8 @@ internal class SyncManagerTest {
                 on(it.selectMessageIdsBySyncState(any())) doReturn emptyList()
                 on(it.selectReactionIdsBySyncStatus(any())) doReturn emptyList()
                 on(it.selectDraftMessages()) doReturn emptyList()
+                on(it.selectPendingDraftMessages()) doReturn emptyList()
+                on(it.selectDeletedDraftMessages()) doReturn emptyList()
             }
         }
     }
@@ -1261,6 +1263,27 @@ internal class SyncManagerTest {
 
         draftMessages.forEach(verify(mutableGlobalState)::updateDraftMessage)
     }
+
+    @Test
+    fun `reconnect should send the drafts saved or deleted offline before refreshing the channels`() =
+        runTest(testDispatcher) {
+            val sut = buildSyncManager()
+            val deleted = randomDraftMessage(cid = "messaging:deleted")
+            val pending = randomDraftMessage(cid = "messaging:pending")
+            whenever(repositoryFacade.selectDeletedDraftMessages()).thenReturn(listOf(deleted))
+            whenever(repositoryFacade.selectPendingDraftMessages()).thenReturn(listOf(pending))
+            whenever(chatClient.deleteDraftMessages(any(), any(), any())) doReturn TestCall(Result.Success(Unit))
+            whenever(chatClient.createDraftMessage(any(), any(), any())) doReturn pending.asCall()
+
+            sut.onEvent(randomConnectedEvent())
+
+            inOrder(chatClient, repositoryFacade) {
+                verify(chatClient).deleteDraftMessages("messaging", "deleted", deleted)
+                verify(chatClient).createDraftMessage("messaging", "pending", pending)
+                // The sync after the retries is what brings the server copies of the channels.
+                verify(repositoryFacade).selectSyncState(any())
+            }
+        }
 
     @Test
     fun `a live location ends on time while offline without a server call`() = runTest(testDispatcher) {

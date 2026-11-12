@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.mess
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 @Entity(
@@ -39,6 +40,10 @@ internal data class DraftMessageEntity(
     val args: String? = null,
     val extraData: Map<String, Any> = mapOf(),
     val createdAt: Date? = null,
+    /** [SyncStatus.SYNC_NEEDED] while a local change of this draft has not reached the server yet. */
+    val syncStatus: SyncStatus = SyncStatus.COMPLETED,
+    /** `true` for a draft deleted locally: the row stays hidden until the deletion reaches the server. */
+    val deletedLocally: Boolean = false,
 )
 
 internal const val DRAFT_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_draft_message_entity"

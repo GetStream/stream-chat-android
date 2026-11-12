@@ -32,6 +32,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import java.util.Date
 
 internal class DraftMessageListenerDatabaseTest {
 
@@ -44,7 +45,7 @@ internal class DraftMessageListenerDatabaseTest {
     }
 
     @Test
-    fun `onCreateDraftMessageRequest should persist the draft before the request completes`() = runTest {
+    fun `onCreateDraftMessageRequest should persist the draft as pending before the request completes`() = runTest {
         val draftMessage = randomDraftMessage()
 
         listener.onCreateDraftMessageRequest(
@@ -53,43 +54,71 @@ internal class DraftMessageListenerDatabaseTest {
             message = draftMessage,
         )
 
-        verify(messageRepository).insertDraftMessage(draftMessage)
+        verify(messageRepository).insertPendingDraftMessage(draftMessage)
     }
 
     @Test
-    fun `onCreateDraftMessageResult should update state on success`() = runTest {
+    fun `onCreateDraftMessageResult should store the server copy as synced on success`() = runTest {
         val draftMessage = randomDraftMessage()
+        val serverCopy = draftMessage.copy(createdAt = Date())
 
         listener.onCreateDraftMessageResult(
-            result = Result.Success(draftMessage),
+            result = Result.Success(serverCopy),
             channelType = randomString(),
             channelId = randomString(),
             message = draftMessage,
         )
 
-        verify(messageRepository).insertDraftMessage(draftMessage)
+        verify(messageRepository).insertDraftMessage(serverCopy)
     }
 
     @Test
-    fun `onCreateDraftMessageResult should keep the persisted draft on any error`() = runTest {
+    fun `onCreateDraftMessageResult should keep the draft pending on a temporary error`() = runTest {
         val draftMessage = randomDraftMessage()
 
         listener.onCreateDraftMessageResult(
-            result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
+            result = Result.Failure(temporaryError()),
             channelType = randomString(),
             channelId = randomString(),
             message = draftMessage,
         )
 
-        verify(messageRepository, never()).deleteDraftMessage(any())
         verify(messageRepository, never()).insertDraftMessage(any())
     }
 
     @Test
-    fun `onDeleteDraftMessagesRequest should remove the draft before the request completes`() = runTest {
+    fun `onCreateDraftMessageResult should store the local draft as synced on a permanent error`() = runTest {
+        val draftMessage = randomDraftMessage()
+
+        listener.onCreateDraftMessageResult(
+            result = Result.Failure(permanentError()),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = draftMessage,
+        )
+
+        verify(messageRepository).insertDraftMessage(draftMessage)
+    }
+
+    @Test
+    fun `onDeleteDraftMessagesRequest should hide the draft before the request completes`() = runTest {
         val draftMessage = randomDraftMessage()
 
         listener.onDeleteDraftMessagesRequest(
+            channelType = randomString(),
+            channelId = randomString(),
+            message = draftMessage,
+        )
+
+        verify(messageRepository).markDraftMessageDeleted(draftMessage)
+    }
+
+    @Test
+    fun `onDeleteDraftMessagesResult should delete the hidden draft on success`() = runTest {
+        val draftMessage = randomDraftMessage()
+
+        listener.onDeleteDraftMessagesResult(
+            result = Result.Success(Unit),
             channelType = randomString(),
             channelId = randomString(),
             message = draftMessage,
@@ -99,17 +128,25 @@ internal class DraftMessageListenerDatabaseTest {
     }
 
     @Test
-    fun `onDeleteDraftMessagesResult should not touch storage on any outcome`() = runTest {
+    fun `onDeleteDraftMessagesResult should delete the hidden draft when the server has no draft`() = runTest {
         val draftMessage = randomDraftMessage()
 
         listener.onDeleteDraftMessagesResult(
-            result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
+            result = Result.Failure(permanentError()),
             channelType = randomString(),
             channelId = randomString(),
             message = draftMessage,
         )
+
+        verify(messageRepository).deleteDraftMessage(draftMessage)
+    }
+
+    @Test
+    fun `onDeleteDraftMessagesResult should keep the deletion pending on a temporary error`() = runTest {
+        val draftMessage = randomDraftMessage()
+
         listener.onDeleteDraftMessagesResult(
-            result = Result.Success(Unit),
+            result = Result.Failure(temporaryError()),
             channelType = randomString(),
             channelId = randomString(),
             message = draftMessage,
@@ -147,4 +184,8 @@ internal class DraftMessageListenerDatabaseTest {
 
         verify(messageRepository, never()).insertDraftMessage(any())
     }
+
+    private fun permanentError() = Error.NetworkError(message = randomString(), serverErrorCode = 4, statusCode = 404)
+
+    private fun temporaryError() = Error.NetworkError(message = randomString(), serverErrorCode = -1, statusCode = 500)
 }

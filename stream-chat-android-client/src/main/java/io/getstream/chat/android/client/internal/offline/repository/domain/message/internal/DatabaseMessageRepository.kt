@@ -195,8 +195,23 @@ internal class DatabaseMessageRepository(
         messageDao.replaceDraftMessage(message.toEntity())
     }
 
+    override suspend fun insertPendingDraftMessage(message: DraftMessage) {
+        message.replyMessage?.let { insertMessage(it) }
+        messageDao.replaceDraftMessage(message.toEntity().copy(syncStatus = SyncStatus.SYNC_NEEDED))
+    }
+
+    override suspend fun markDraftMessageDeleted(message: DraftMessage) {
+        messageDao.replaceDraftMessage(
+            message.toEntity().copy(syncStatus = SyncStatus.SYNC_NEEDED, deletedLocally = true),
+        )
+    }
+
     override suspend fun deleteDraftMessage(message: DraftMessage) {
         messageDao.deleteDraftMessage(message.id)
+    }
+
+    override suspend fun moveChannelDraftMessage(fromCid: String, toCid: String) {
+        messageDao.moveChannelDraftMessage(fromCid, toCid)
     }
 
     override suspend fun deleteDraftMessage(cid: String, parentId: String?) {
@@ -208,6 +223,16 @@ internal class DatabaseMessageRepository(
 
     override suspend fun selectDraftMessages(): List<DraftMessage> = messageDao.selectDraftMessages()
         .map { it.toModel(::selectMessage, getUser) }
+
+    override suspend fun selectPendingDraftMessages(): List<DraftMessage> =
+        messageDao.selectDraftMessagesBySyncStatus(SyncStatus.SYNC_NEEDED)
+            .filterNot(DraftMessageEntity::deletedLocally)
+            .map { it.toModel(::selectMessage, getUser) }
+
+    override suspend fun selectDeletedDraftMessages(): List<DraftMessage> =
+        messageDao.selectDraftMessagesBySyncStatus(SyncStatus.SYNC_NEEDED)
+            .filter(DraftMessageEntity::deletedLocally)
+            .map { it.toModel(::selectMessage, getUser) }
 
     override suspend fun selectDraftMessagesByCid(cid: String): DraftMessage? = messageDao.selectDraftMessageByCid(cid)
         ?.toModel(::selectMessage, getUser)

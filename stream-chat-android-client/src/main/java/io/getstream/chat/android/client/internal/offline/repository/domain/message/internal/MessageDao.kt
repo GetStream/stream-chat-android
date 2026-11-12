@@ -131,17 +131,26 @@ internal interface MessageDao {
         insertDraftMessages(draftMessage)
     }
 
-    @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME")
+    @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE deletedLocally = 0")
     suspend fun selectDraftMessages(): List<DraftMessageEntity>
 
-    @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE cid = :cid AND parentId IS NULL")
+    @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE syncStatus = :syncStatus")
+    suspend fun selectDraftMessagesBySyncStatus(syncStatus: SyncStatus): List<DraftMessageEntity>
+
+    @Query(
+        "SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME " +
+            "WHERE cid = :cid AND parentId IS NULL AND deletedLocally = 0",
+    )
     suspend fun selectDraftMessageByCid(cid: String): DraftMessageEntity?
 
-    @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE parentId = :parentId")
+    @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE parentId = :parentId AND deletedLocally = 0")
     suspend fun selectDraftMessageByParentId(parentId: String): DraftMessageEntity?
 
     @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE id = :messageId")
     suspend fun deleteDraftMessage(messageId: String)
+
+    @Query("UPDATE $DRAFT_MESSAGE_ENTITY_TABLE_NAME SET cid = :toCid WHERE cid = :fromCid AND parentId IS NULL")
+    suspend fun moveChannelDraftMessage(fromCid: String, toCid: String)
 
     @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE cid = :cid AND parentId IS NULL")
     suspend fun deleteDraftMessageByCid(cid: String)

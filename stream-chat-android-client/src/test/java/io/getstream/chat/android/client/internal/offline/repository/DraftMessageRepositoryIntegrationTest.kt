@@ -181,4 +181,57 @@ internal class DraftMessageRepositoryIntegrationTest : BaseDomainTest2() {
 
         repos.selectDraftMessagesByCid(draft.cid).shouldBeNull()
     }
+
+    @Test
+    fun `a draft saved locally should stay visible and pending until stored as synced`(): Unit = runTest {
+        val localDraft = randomDraftMessage(parentId = null, replyMessage = null)
+        repos.insertPendingDraftMessage(localDraft)
+
+        repos.selectDraftMessagesByCid(localDraft.cid) shouldBeEqualTo localDraft
+        repos.selectPendingDraftMessages() shouldContainSame listOf(localDraft)
+
+        repos.insertDraftMessage(localDraft)
+
+        repos.selectPendingDraftMessages() shouldBeEqualTo emptyList()
+    }
+
+    @Test
+    fun `a draft deleted locally should be hidden until its deletion reaches the server`(): Unit = runTest {
+        val draft = randomDraftMessage(parentId = null, replyMessage = null)
+        repos.insertDraftMessage(draft)
+
+        repos.markDraftMessageDeleted(draft)
+
+        repos.selectDraftMessagesByCid(draft.cid).shouldBeNull()
+        repos.selectDraftMessages() shouldBeEqualTo emptyList()
+        repos.selectDeletedDraftMessages() shouldContainSame listOf(draft)
+        repos.selectPendingDraftMessages() shouldBeEqualTo emptyList()
+
+        repos.deleteDraftMessage(draft)
+
+        repos.selectDeletedDraftMessages() shouldBeEqualTo emptyList()
+    }
+
+    @Test
+    fun `a thread draft deleted locally should be hidden from its thread`(): Unit = runTest {
+        val draft = randomDraftMessage(parentId = randomString(), replyMessage = null)
+        repos.insertDraftMessage(draft)
+
+        repos.markDraftMessageDeleted(draft)
+
+        repos.selectDraftMessageByParentId(draft.parentId!!).shouldBeNull()
+    }
+
+    @Test
+    fun `replacing a placeholder channel should keep its pending draft pending under the server cid`(): Unit = runTest {
+        val placeholderCid = "messaging:!members-a, b"
+        val serverCid = randomCID()
+        val draft = randomDraftMessage(cid = placeholderCid, parentId = null, replyMessage = null)
+        repos.insertPendingDraftMessage(draft)
+
+        repos.replacePlaceholderChannel(placeholderCid, serverCid)
+
+        repos.selectPendingDraftMessages() shouldContainSame listOf(draft.copy(cid = serverCid))
+        repos.selectDraftMessagesByCid(placeholderCid).shouldBeNull()
+    }
 }
