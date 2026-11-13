@@ -179,6 +179,30 @@ internal interface ChatEndpoints {
     ): io.getstream.chat.android.network.models.SendMessageResponse
 
     /**
+     * Get pinned messages
+     * Returns pinned messages for the channel
+     */
+    @GET("/api/v2/chat/channels/{type}/{id}/pinned_messages")
+    suspend fun getPinnedMessages(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Query("limit") limit: Int? = null,
+        @Query("offset") offset: Int? = null,
+        @Query("id_gte") idGte: String? = null,
+        @Query("id_gt") idGt: String? = null,
+        @Query("id_lte") idLte: String? = null,
+        @Query("id_lt") idLt: String? = null,
+        @Query("pinned_at_after_or_equal") pinnedAtAfterOrEqual: java.util.Date? = null,
+        @Query("pinned_at_after") pinnedAtAfter: java.util.Date? = null,
+        @Query("pinned_at_before_or_equal") pinnedAtBeforeOrEqual: java.util.Date? = null,
+        @Query("pinned_at_before") pinnedAtBefore: java.util.Date? = null,
+        @Query("id_around") idAround: String? = null,
+        @Query("pinned_at_around") pinnedAtAround: java.util.Date? = null,
+        @Query("sort") sort: io.getstream.chat.android.network.infrastructure.JsonQuery<List<io.getstream.chat.android.network.models.SortParamRequest>>? = null,
+        @Query("member_custom_include") memberCustomInclude: List<String>? = null,
+    ): io.getstream.chat.android.network.models.GetPinnedMessagesResponse
+
+    /**
      * Get or create channel
      * This Method creates a channel or returns an existing one with matching attributes
      */
@@ -209,7 +233,20 @@ internal interface ChatEndpoints {
     suspend fun showChannel(
         @Path("type") type: String,
         @Path("id") id: String,
+        @Body body: kotlin.collections.Map<kotlin.String, @JvmSuppressWildcards kotlin.Any> = emptyMap(),
     ): io.getstream.chat.android.network.models.ShowChannelResponse
+
+    /**
+     * Stop watching channel
+     * Call this Method to stop receiving channel events
+     */
+    @POST("/api/v2/chat/channels/{type}/{id}/stop-watching")
+    suspend fun stopWatchingChannel(
+        @Path("type") type: String,
+        @Path("id") id: String,
+        @Query("connection_id") connectionId: String? = null,
+        @Body body: kotlin.collections.Map<kotlin.String, @JvmSuppressWildcards kotlin.Any> = emptyMap(),
+    ): io.getstream.chat.android.network.models.Response
 
     /**
      * Truncate channel
@@ -241,6 +278,15 @@ internal interface ChatEndpoints {
     suspend fun queryDrafts(
         @Body queryDraftsRequest: io.getstream.chat.android.network.models.QueryDraftsRequest,
     ): io.getstream.chat.android.network.models.QueryDraftsResponse
+
+    /**
+     * Query members
+     * Find and filter channel members
+     */
+    @GET("/api/v2/chat/members")
+    suspend fun queryMembers(
+        @Query("payload") payload: io.getstream.chat.android.network.infrastructure.JsonQuery<io.getstream.chat.android.network.models.QueryMembersPayload>? = null,
+    ): io.getstream.chat.android.network.models.MembersResponse
 
     /**
      * Delete message
@@ -407,7 +453,7 @@ internal interface ChatEndpoints {
         @Query("id_lte") idLte: String? = null,
         @Query("id_lt") idLt: String? = null,
         @Query("id_around") idAround: String? = null,
-        @Query("sort") sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
+        @Query("sort") sort: io.getstream.chat.android.network.infrastructure.JsonQuery<List<io.getstream.chat.android.network.models.SortParamRequest>>? = null,
         @Query("member_custom_include") memberCustomInclude: List<String>? = null,
     ): io.getstream.chat.android.network.models.GetRepliesResponse
 
@@ -428,6 +474,15 @@ internal interface ChatEndpoints {
     suspend fun unmuteChannel(
         @Body unmuteChannelRequest: io.getstream.chat.android.network.models.UnmuteChannelRequest,
     ): io.getstream.chat.android.network.models.UnmuteResponse
+
+    /**
+     * Query Banned Users
+     * Find and filter channel scoped or global user bans
+     */
+    @GET("/api/v2/chat/query_banned_users")
+    suspend fun queryBannedUsers(
+        @Query("payload") payload: io.getstream.chat.android.network.infrastructure.JsonQuery<io.getstream.chat.android.network.models.QueryBannedUsersPayload>? = null,
+    ): io.getstream.chat.android.network.models.QueryBannedUsersResponse
 
     /**
      * Query reminders
@@ -474,6 +529,15 @@ internal interface ChatEndpoints {
     suspend fun sendScheduledMessageNow(
         @Path("id") id: String,
     ): io.getstream.chat.android.network.models.SendScheduledMessageNowResponse
+
+    /**
+     * Search messages
+     * Search messages across channels
+     */
+    @GET("/api/v2/chat/search")
+    suspend fun search(
+        @Query("payload") payload: io.getstream.chat.android.network.infrastructure.JsonQuery<io.getstream.chat.android.network.models.SearchPayload>? = null,
+    ): io.getstream.chat.android.network.models.SearchResponse
 
     /**
      * Query Threads
