@@ -17,16 +17,20 @@
 package io.getstream.chat.android.client.notifications.handler
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat.PNG
 import androidx.core.graphics.drawable.IconCompat
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.models.User
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.assertInstanceOf
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
@@ -52,9 +56,11 @@ internal class NotificationHandlerFactoryTest {
 
     @Test
     fun `default user icon builder falls back to the default builder without ui-common`() = runTest {
+        val image = File(context.cacheDir, "avatar.png")
+        image.outputStream().use { Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888).compress(PNG, 100, it) }
         val builder = NotificationHandlerFactory.provideDefaultUserIconBuilder(context)
 
-        assertNull(builder.buildIcon(User(id = "user", image = "")))
+        assertNotNull(builder.buildIcon(User(id = "user", image = image.toURI().toString())))
     }
 
     @Test
