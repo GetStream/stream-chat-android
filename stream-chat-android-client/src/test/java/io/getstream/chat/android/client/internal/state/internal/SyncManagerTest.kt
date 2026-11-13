@@ -1025,6 +1025,78 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `an outdated unsent reaction is removed from its message in the database, channel and threads`() =
+        runTest(testDispatcher) {
+            val reaction = randomReaction(score = 1, deletedAt = null, syncStatus = SyncStatus.SYNC_NEEDED)
+            val message = randomMessage(
+                id = reaction.messageId,
+                reactionCounts = mapOf(reaction.type to 1),
+                reactionScores = mapOf(reaction.type to 1),
+                latestReactions = listOf(reaction),
+                ownReactions = listOf(reaction),
+            )
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(1)
+            whenever(repositoryFacade.selectReactionById(1)) doReturn reaction
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            val channelLogic: ChannelLogic = mock { on(it.getMessage(message.id)) doReturn message }
+            val threadLogic: ThreadLogic = mock { on(it.getMessage(message.id)) doReturn message }
+            val queryThreadsLogic: QueryThreadsLogic = mock { on(it.getMessage(message.id)) doReturn message }
+            whenever(logicRegistry.channelFromMessageId(message.id)) doReturn channelLogic
+            whenever(logicRegistry.threadFromMessageId(message.id)) doReturn threadLogic
+            whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn listOf(queryThreadsLogic)
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            val hasNoReaction: Message.() -> Boolean = {
+                id == message.id && ownReactions.isEmpty() && latestReactions.isEmpty() &&
+                    reactionCounts.isEmpty() && reactionScores.isEmpty()
+            }
+            // The row goes last: a message read after it is deleted no longer lists the reaction, and a failed
+            // message write must leave the row for the next sync.
+            inOrder(repositoryFacade) {
+                verify(repositoryFacade).selectMessage(message.id)
+                verify(repositoryFacade).insertMessage(argThat(hasNoReaction))
+                verify(repositoryFacade).deleteReaction(reaction)
+            }
+            verify(channelLogic).upsertMessage(argThat(hasNoReaction))
+            verify(threadLogic).upsertMessage(argThat(hasNoReaction))
+            verify(queryThreadsLogic).upsertMessage(argThat(hasNoReaction))
+            verify(chatClient, never()).sendReaction(any(), any(), any(), any())
+        }
+
+    @Test
+    fun `an outdated unsent reaction stays pending when its message cannot be stored`() = runTest(testDispatcher) {
+        val reaction = randomReaction(deletedAt = null, syncStatus = SyncStatus.SYNC_NEEDED)
+        val message = randomMessage(id = reaction.messageId, ownReactions = listOf(reaction))
+        whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(1)
+        whenever(repositoryFacade.selectReactionById(1)) doReturn reaction
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(repositoryFacade.insertMessage(any())).thenThrow(IllegalStateException("database closed"))
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(repositoryFacade, never()).deleteReaction(any())
+    }
+
+    @Test
+    fun `an outdated reaction deletion is dropped without changing its message again`() = runTest(testDispatcher) {
+        val reaction = randomReaction(deletedAt = Date(0), syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(1)
+        whenever(repositoryFacade.selectReactionById(1)) doReturn reaction
+        val channelLogic: ChannelLogic = mock()
+        whenever(logicRegistry.channelFromMessageId(reaction.messageId)) doReturn channelLogic
+
+        val sut = buildSyncManager()
+        delay(7_000)
+        sut.onEvent(randomConnectedEvent())
+
+        verify(repositoryFacade).deleteReaction(reaction)
+        verify(repositoryFacade, never()).insertMessage(any())
+        verify(channelLogic, never()).upsertMessage(any())
+        verify(chatClient, never()).deleteReaction(any(), any(), any())
+    }
+
+    @Test
     fun `test too many events to sync error`() = runTest(testDispatcher) {
         /* Given */
         val createdAt = localDate()

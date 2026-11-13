@@ -1333,19 +1333,32 @@ internal class SyncManager(
         return CoroutineCall(syncScope) {
             try {
                 logger.d { "[removeReaction] reaction.id: ${reaction.id}" }
+                // A dropped deletion leaves its message alone: the reaction is still on the server.
+                if (reaction.deletedAt == null) {
+                    removeReactionFromState(reaction)
+                    repos.selectMessage(reaction.messageId)?.let { repos.insertMessage(it.removeMyReaction(reaction)) }
+                }
+                // Deleted last, so a failure above leaves the row for the next sync to drop again.
                 repos.deleteReaction(reaction)
-                logicRegistry.channelFromMessageId(reaction.messageId)
-                    ?.getMessage(reaction.messageId)
-                    ?.removeMyReaction(reaction)
-                logicRegistry.threadFromMessageId(reaction.messageId)
-                    ?.getMessage(reaction.messageId)
-                    ?.removeMyReaction(reaction)
                 logger.v { "[removeReaction] completed: ${reaction.id}" }
                 Result.Success(Unit)
             } catch (e: Throwable) {
                 logger.e { "[removeReaction] failed(${reaction.id}): $e" }
                 Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
             }
+        }
+    }
+
+    private fun removeReactionFromState(reaction: Reaction) {
+        val messageId = reaction.messageId
+        logicRegistry.channelFromMessageId(messageId)?.let { logic ->
+            logic.getMessage(messageId)?.let { logic.upsertMessage(it.removeMyReaction(reaction)) }
+        }
+        logicRegistry.getActiveQueryThreadsLogic().forEach { logic ->
+            logic.getMessage(messageId)?.let { logic.upsertMessage(it.removeMyReaction(reaction)) }
+        }
+        logicRegistry.threadFromMessageId(messageId)?.let { logic ->
+            logic.getMessage(messageId)?.let { logic.upsertMessage(it.removeMyReaction(reaction)) }
         }
     }
 
