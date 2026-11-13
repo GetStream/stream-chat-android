@@ -16,7 +16,10 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -24,6 +27,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -71,6 +75,51 @@ internal class ChannelStateLegacyImplTruncationTest {
         assertEquals(setOf("message_2"), channelState.cachedLatestMessages.value.keys)
     }
 
+    @Test
+    fun `removeTruncatedMessages recalculates the reads for the remaining messages`() = runTest {
+        channelState.setMessages(listOf(message(index = 1, createdAt = Date(1_000)), message(index = 2, createdAt = Date(3_000))))
+        channelState.upsertReads(listOf(read(unreadMessages = 4)))
+
+        channelState.removeTruncatedMessages(Date(2_000))
+
+        val read = channelState.read.value!!
+        assertEquals(1, read.unreadMessages)
+        assertNull(read.lastReadMessageId)
+    }
+
+    @Test
+    fun `removeTruncatedMessages counts the cached latest messages while inside a search`() = runTest {
+        channelState.setMessages(listOf(message(index = 2, createdAt = Date(1_000)), message(index = 3, createdAt = Date(3_000))))
+        channelState.setInsideSearch(true)
+        channelState.setMessages(listOf(message(index = 1, createdAt = Date(500))))
+        channelState.upsertReads(listOf(read(unreadMessages = 4)))
+
+        channelState.removeTruncatedMessages(Date(2_000))
+
+        assertEquals(1, channelState.read.value!!.unreadMessages)
+    }
+
+    @Test
+    fun `removeTruncatedMessages keeps the unread count when the loaded messages start after the truncation`() =
+        runTest {
+            channelState.setMessages(listOf(message(index = 2, createdAt = Date(3_000))))
+            channelState.upsertReads(listOf(read(unreadMessages = 4)))
+
+            channelState.removeTruncatedMessages(Date(2_000))
+
+            val read = channelState.read.value!!
+            assertEquals(4, read.unreadMessages)
+            assertNull(read.lastReadMessageId)
+        }
+
+    private fun read(unreadMessages: Int) = ChannelUserRead(
+        user = currentUser,
+        lastReceivedEventDate = Date(500),
+        unreadMessages = unreadMessages,
+        lastRead = Date(500),
+        lastReadMessageId = "message_0",
+    )
+
     private fun message(index: Int, createdAt: Date?, createdLocallyAt: Date? = null) = randomMessage(
         id = "message_$index",
         cid = CID,
@@ -81,6 +130,9 @@ internal class ChannelStateLegacyImplTruncationTest {
         showInChannel = true,
         deletedAt = null,
         shadowed = false,
+        syncStatus = SyncStatus.COMPLETED,
+        type = MessageType.REGULAR,
+        silent = false,
     )
 
     companion object {

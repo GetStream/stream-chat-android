@@ -618,6 +618,33 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given a truncation system message from another user, When removeTruncatedMessages is called, Then it is counted after the reads are recalculated`() {
+        // given
+        _read.value = randomChannelUserRead(user = user, unreadMessages = 0, lastRead = Date(10L))
+        val truncatedAt = Date(20L)
+        val systemMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = Date(21L),
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.removeTruncatedMessages(truncatedAt, systemMessage)
+        channelStateLogic.updateCurrentUserRead(Date(22L), systemMessage)
+
+        // then
+        val reads = argumentCaptor<List<ChannelUserRead>>()
+        inOrder(mutableState) {
+            verify(mutableState).removeTruncatedMessages(truncatedAt)
+            verify(mutableState).upsertReads(reads.capture())
+            verify(mutableState).upsertMessage(systemMessage)
+        }
+        reads.allValues.single().single().unreadMessages `should be equal to` 1
+    }
+
+    @Test
     fun `Given channel is muted, When updateCurrentUserRead is called, Then unread count is not updated`() {
         // given
         val initialUnreadCount = 5
