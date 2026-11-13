@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package io.getstream.chat.android.models.querysort
 
 import io.getstream.chat.android.models.Channel
