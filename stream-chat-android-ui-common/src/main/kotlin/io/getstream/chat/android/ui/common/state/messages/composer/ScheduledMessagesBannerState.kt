@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.state.messages.composer
 
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.isPending
 import java.util.Date
 
 /**
@@ -46,7 +47,7 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
     /**
      * The channel or the thread has scheduled messages that are not sent yet.
      *
-     * @property count The number of scheduled messages that did not fail.
+     * @property count The number of scheduled messages that did not fail and whose date has not passed.
      * @property nextScheduledAt The date of the next one to be sent.
      * @property isInThread Whether they are replies of a thread.
      */
@@ -64,14 +65,17 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
  * @param scheduledMessages The scheduled messages of the channel or the thread.
  * @param scheduleMessageState The scheduling state of the channel, for the capability and the channel limit.
  * @param isInThread Whether [scheduledMessages] are the replies of a thread.
+ * @param now The current date. Messages whose date has passed are not shown as scheduled.
  */
 internal fun scheduledMessagesBannerState(
     scheduledMessages: List<ScheduledMessage>,
     scheduleMessageState: ScheduleMessageState,
     isInThread: Boolean,
+    now: Date,
 ): ScheduledMessagesBannerState? {
     if (!scheduleMessageState.canSchedule) return null
-    val (failed, scheduled) = scheduledMessages.partition { it.status == ScheduledMessageStatus.Failed }
+    val failed = scheduledMessages.filter { it.status == ScheduledMessageStatus.Failed }
+    val scheduled = scheduledMessages.filter { it.isPending(now) }
     val maxPerChannel = scheduleMessageState.maxPerChannel
     return when {
         failed.isNotEmpty() -> ScheduledMessagesBannerState.Failed(failed.size)

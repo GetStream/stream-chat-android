@@ -344,7 +344,12 @@ public class MessageComposerController(
                 scheduleMessageState,
                 chatClient.scheduledMessages(channelCid, parentId),
             ) { scheduleState, scheduledMessages ->
-                scheduledMessagesBannerState(scheduledMessages, scheduleState, isInThread = parentId != null)
+                scheduledMessagesBannerState(
+                    scheduledMessages = scheduledMessages,
+                    scheduleMessageState = scheduleState,
+                    isInThread = parentId != null,
+                    now = Date(),
+                )
             }
         }
         .stateIn(
