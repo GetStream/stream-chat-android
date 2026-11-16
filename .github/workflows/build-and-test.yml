@@ -57,7 +57,12 @@ jobs:
           path: ./**/build/reports/tests/**
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Sonar
-        run: bundle exec fastlane run_sonar_analysis
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "::warning title=Sonar skipped::SONAR_TOKEN is not set, so the Sonar analysis did not run."
+            exit 0
+          fi
+          bundle exec fastlane run_sonar_analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   size_check_xml:
