@@ -38,7 +38,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">7.19.0
+        <div class="library-version" id="library-version">7.20.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -280,6 +280,21 @@
               </div>
             </div>
           </div>
+<a data-name="770146826%2FFunctions%2F1662354712" anchor-label="insertPendingDraftMessage" id="770146826%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="insert-pending-draft-message.html"><span>insert</span><wbr><span>Pending</span><wbr><span>Draft</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="770146826%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="insert-pending-draft-message.html"><span class="token function">insertPendingDraftMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-draft-message/index.html">DraftMessage</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Stores <a href="insert-pending-draft-message.html">message</a> as a local change that has not reached the server yet. <a href="insert-draft-message.html">insertDraftMessage</a> stores the draft as synced again.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="1700274297%2FFunctions%2F1662354712" anchor-label="markDeletesInProgressAsCompleted" id="1700274297%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
           <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
             <div class="main-subrow keyValue ">
@@ -291,6 +306,36 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="mark-deletes-in-progress-as-completed.html"><span class="token function">markDeletesInProgressAsCompleted</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">deletedBefore<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Date.html">Date</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Moves the messages in <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-sync-status/-i-n_-p-r-o-g-r-e-s-s/index.html">SyncStatus.IN_PROGRESS</a> that were deleted before <a href="mark-deletes-in-progress-as-completed.html">deletedBefore</a>, or deleted for the current user, to <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-sync-status/-c-o-m-p-l-e-t-e-d/index.html">SyncStatus.COMPLETED</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1195426092%2FFunctions%2F1662354712" anchor-label="markDraftMessageDeleted" id="1195426092%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mark-draft-message-deleted.html"><span>mark</span><wbr><span>Draft</span><wbr><span>Message</span><wbr><span><span>Deleted</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1195426092%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="mark-draft-message-deleted.html"><span class="token function">markDraftMessageDeleted</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-draft-message/index.html">DraftMessage</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Hides the draft of the channel or thread of <a href="mark-draft-message-deleted.html">message</a> until its deletion reaches the server, when <a href="delete-draft-message.html">deleteDraftMessage</a> removes it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="683278650%2FFunctions%2F1662354712" anchor-label="moveChannelDraftMessage" id="683278650%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="move-channel-draft-message.html"><span>move</span><wbr><span>Channel</span><wbr><span>Draft</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="683278650%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="move-channel-draft-message.html"><span class="token function">moveChannelDraftMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fromCid<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">toCid<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Moves the channel draft of <a href="move-channel-draft-message.html">fromCid</a> to <a href="move-channel-draft-message.html">toCid</a>, keeping whether it still has to reach the server.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -321,6 +366,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="select-all-user-messages.html"><span class="token function">selectAllUserMessages</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Selects all messages from a given user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-525095389%2FFunctions%2F1662354712" anchor-label="selectDeletedDraftMessages" id="-525095389%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="select-deleted-draft-messages.html"><span>select</span><wbr><span>Deleted</span><wbr><span>Draft</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-525095389%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="select-deleted-draft-messages.html"><span class="token function">selectDeletedDraftMessages</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-draft-message/index.html">DraftMessage</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Selects the drafts deleted locally whose deletion has not reached the server yet.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -486,6 +546,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="select-messages-with-poll.html"><span class="token function">selectMessagesWithPoll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pollId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Selects all messages with a poll with the passed ID.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1133050145%2FFunctions%2F1662354712" anchor-label="selectPendingDraftMessages" id="1133050145%2FFunctions%2F1662354712" data-filterable-set=":stream-chat-android-client/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-client/main" data-filterable-set=":stream-chat-android-client/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="select-pending-draft-messages.html"><span>select</span><wbr><span>Pending</span><wbr><span>Draft</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1133050145%2FFunctions%2F1662354712"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="select-pending-draft-messages.html"><span class="token function">selectPendingDraftMessages</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-draft-message/index.html">DraftMessage</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Selects the drafts saved locally that have not reached the server yet.</p></div></div></div>
                 </div>
               </div>
             </div>
