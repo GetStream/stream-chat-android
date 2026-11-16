@@ -16,10 +16,9 @@
 
 package io.getstream.chat.android.client.api2
 
+import io.getstream.chat.android.client.di.addV2Converters
 import io.getstream.chat.android.network.apis.ChatEndpoints
 import io.getstream.chat.android.network.infrastructure.JsonQuery
-import io.getstream.chat.android.network.infrastructure.QueryConverterFactory
-import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.SortParamRequest
 import kotlinx.coroutines.test.runTest
@@ -31,12 +30,12 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
- * Checks what the generated [ChatEndpoints] put on the wire through the converters the SDK registers.
+ * Checks what the generated [ChatEndpoints] put on the wire through the converters the SDK registers on the v2
+ * Retrofit.
  */
 internal class ChatEndpointsRequestTest {
 
@@ -48,10 +47,7 @@ internal class ChatEndpointsRequestTest {
         server.start()
         api = Retrofit.Builder()
             .baseUrl(server.url("/"))
-            // The converters ChatModule registers on the v2 Retrofit, in the same order.
-            .addConverterFactory(MoshiUrlQueryPayloadFactory(Serializer.moshi))
-            .addConverterFactory(QueryConverterFactory(Serializer.moshi))
-            .addConverterFactory(MoshiConverterFactory.create(Serializer.moshi))
+            .addV2Converters()
             .build()
             .create(ChatEndpoints::class.java)
     }

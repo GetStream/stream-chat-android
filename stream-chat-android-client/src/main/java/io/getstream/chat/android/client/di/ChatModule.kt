@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api.internal.DistinctChatApi
 import io.getstream.chat.android.client.api.internal.DistinctChatApiEnabler
 import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.MoshiChatApi
-import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
@@ -63,7 +62,6 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.DirectEventParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.parser2.V2EventParser
-import io.getstream.chat.android.client.parser2.withErrorLogging
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -80,13 +78,11 @@ import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.network.apis.ChatEndpoints
-import io.getstream.chat.android.network.infrastructure.QueryConverterFactory
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.log.StreamLog
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
 import java.util.concurrent.TimeUnit
 
@@ -401,12 +397,7 @@ constructor(
             config,
             moshiParser,
             isAnonymousApi,
-        ) { builder ->
-            builder
-                .addConverterFactory(MoshiUrlQueryPayloadFactory(Serializer.moshi))
-                .addConverterFactory(QueryConverterFactory(Serializer.moshi))
-                .addConverterFactory(MoshiConverterFactory.create(Serializer.moshi).withErrorLogging())
-        }.create(apiClass)
+        ) { builder -> builder.addV2Converters() }.create(apiClass)
     }
 
     /**
