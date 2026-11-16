@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessage
@@ -30,26 +29,20 @@ import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Date
 
 /**
- * Edits, reschedules or schedules again a scheduled message in the composer of a channel or a thread, and tells the
- * state of the scheduled messages of the channel or the thread for the banner.
+ * Edits, reschedules or schedules again a scheduled message in the composer of a channel or a thread.
  *
  * @param cid The channel, in the format `type:id`.
  * @param editedMessageId The ID of the scheduled message to edit in the composer, or null.
@@ -57,7 +50,6 @@ import java.util.Date
  * replaces it.
  * @param resolveAttachments Copies the attachments picked in the composer to local files, so they can be uploaded.
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChannelScheduledMessagesViewModel(
     private val cid: String,
     editedMessageId: String?,
@@ -66,7 +58,6 @@ internal class ChannelScheduledMessagesViewModel(
     private val client: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
-    private val parentId = MutableStateFlow<String?>(null)
     private val _editedMessage = MutableStateFlow<ScheduledMessage?>(null)
     private val _events = Channel<ScheduledMessagesEvent>(Channel.BUFFERED)
     private var isSubmitting = false
@@ -76,15 +67,6 @@ internal class ChannelScheduledMessagesViewModel(
 
     /** The scheduled message edited in the composer, or null. */
     val editedMessage: StateFlow<ScheduledMessage?> = _editedMessage.asStateFlow()
-
-    /** The banner about the scheduled messages of the channel or the thread, or null while editing or with none. */
-    val banner: StateFlow<ScheduledMessagesBanner?> = combine(
-        parentId.flatMapLatest { client.scheduledMessages(cid, it) },
-        client.clientState.connectionState,
-        _editedMessage,
-    ) { scheduledMessages, connectionState, editedMessage ->
-        if (editedMessage == null) scheduledMessagesBanner(scheduledMessages, connectionState) else null
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /** The results of the actions, and the changes of the composer content. */
     val events: Flow<ScheduledMessagesEvent> = _events.receiveAsFlow()
@@ -104,13 +86,6 @@ internal class ChannelScheduledMessagesViewModel(
                 }
             }
         }
-    }
-
-    /**
-     * Tells the banner about the scheduled messages of the thread with [parentId], or of the channel when it is null.
-     */
-    fun onThreadChanged(parentId: String?) {
-        this.parentId.value = parentId
     }
 
     /**
@@ -241,43 +216,6 @@ internal class ChannelScheduledMessagesViewModel(
             // A client can't send the mml of a message a backend scheduled.
             extraData = message.extraData - "mml",
         )
-    }
-}
-
-/**
- * What the banner of a channel or a thread tells about its scheduled messages.
- */
-internal sealed interface ScheduledMessagesBanner {
-
-    /** The number of messages that are pending. */
-    val count: Int
-
-    /** Messages are scheduled. */
-    data class Pending(override val count: Int) : ScheduledMessagesBanner
-
-    /** Messages wait for the connection to be scheduled. */
-    data class Waiting(override val count: Int) : ScheduledMessagesBanner
-
-    /** Messages failed. */
-    data class Failed(override val count: Int) : ScheduledMessagesBanner
-}
-
-/**
- * The banner for [scheduledMessages]: the failed ones first, then the ones waiting for the connection, then the
- * pending ones. Null when there are none.
- */
-internal fun scheduledMessagesBanner(
-    scheduledMessages: List<ScheduledMessage>,
-    connectionState: ConnectionState,
-): ScheduledMessagesBanner? {
-    val failed = scheduledMessages.count { it.status == ScheduledMessageStatus.Failed }
-    val waiting = scheduledMessages.count { it.status == ScheduledMessageStatus.PreparingToSchedule }
-    val pending = scheduledMessages.size - failed
-    return when {
-        failed > 0 -> ScheduledMessagesBanner.Failed(failed)
-        waiting > 0 && connectionState is ConnectionState.Offline -> ScheduledMessagesBanner.Waiting(waiting)
-        pending > 0 -> ScheduledMessagesBanner.Pending(pending)
-        else -> null
     }
 }
 

@@ -65,6 +65,7 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -75,6 +76,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
@@ -3986,6 +3988,51 @@ internal class MessageComposerControllerTest {
         }
     }
 
+    @Test
+    fun `scheduledMessagesBannerState shows the scheduled messages of the channel, then of the thread`() = runTest {
+        val later = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+        val parentMessage = randomMessage(cid = CID, parentId = null)
+        val scheduledMessages = MutableStateFlow(
+            listOf(
+                randomScheduledMessage(cid = CID, message = randomMessage(cid = CID, parentId = null), scheduledAt = later),
+                randomScheduledMessage(cid = CID, message = randomMessage(cid = CID, parentId = null), scheduledAt = later),
+                randomScheduledMessage(
+                    cid = CID,
+                    message = randomMessage(cid = CID, parentId = parentMessage.id),
+                    scheduledAt = later,
+                ),
+            ),
+        )
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState(
+                channelDataState = MutableStateFlow(
+                    ChannelData(
+                        CHANNEL_ID,
+                        CHANNEL_TYPE,
+                        ownCapabilities = setOf(ChannelCapabilities.SCHEDULE_MESSAGE),
+                    ),
+                ),
+            )
+            .givenScheduledMessages(scheduledMessages)
+        val controller = fixture.get()
+
+        controller.scheduledMessagesBannerState.test {
+            assertEquals(
+                ScheduledMessagesBannerState.Scheduled(count = 2, nextScheduledAt = later, isInThread = false),
+                expectMostRecentItem(),
+            )
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+            assertEquals(
+                ScheduledMessagesBannerState.Scheduled(count = 1, nextScheduledAt = later, isInThread = true),
+                expectMostRecentItem(),
+            )
+        }
+    }
+
     private class Fixture(
         val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -4085,6 +4132,11 @@ internal class MessageComposerControllerTest {
 
         fun givenScheduledMessages(scheduledMessages: StateFlow<List<ScheduledMessage>>) = apply {
             whenever(chatClient.scheduledMessages) doReturn scheduledMessages
+            whenever(chatClient.scheduledMessages(any(), anyOrNull())) doAnswer { invocation ->
+                val cid = invocation.getArgument<String>(0)
+                val parentId = invocation.getArgument<String?>(1)
+                scheduledMessages.map { list -> list.filter { it.cid == cid && it.message.parentId == parentId } }
+            }
         }
 
         fun givenMessageById(message: Message) = apply {

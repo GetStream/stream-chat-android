@@ -35,8 +35,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,6 +49,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
@@ -66,6 +70,7 @@ import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.messages.composer.ComposerInputTestTag
+import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerSnackbarMaxBottom
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -76,7 +81,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageActionsParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionPickerParams
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
+import io.getstream.chat.android.compose.ui.theme.ScheduledMessagesBannerParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarVisuals
 import io.getstream.chat.android.compose.ui.util.rememberIsTouchExplorationEnabled
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.ui.util.requestAccessibilityFocusForTestTag
@@ -95,6 +103,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
 import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageFailedModerationState
@@ -107,7 +116,10 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.updateMessage
 import io.getstream.result.Result
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
  * Default root Channel screen component, that provides the necessary ViewModels and
@@ -132,6 +144,8 @@ import kotlinx.coroutines.launch
  * Default: [Arrangement.Bottom].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
+ * @param onScheduledMessagesBannerClick Called when the user taps the scheduled messages banner above the composer, to
+ * show the scheduled messages. The banner can't be tapped when it is null.
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
  * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
  */
@@ -148,6 +162,7 @@ public fun ChannelScreen(
     skipEnrichUrl: Boolean = false,
     verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    onScheduledMessagesBannerClick: (() -> Unit)? = null,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(
             viewModelFactory = viewModelFactory,
@@ -201,6 +216,7 @@ public fun ChannelScreen(
 
     val snackbarHostState = remember(::SnackbarHostState)
     EventHandler(listViewModel, snackbarHostState)
+    ScheduledMessageSentSnackbar(composerViewModel, listViewModel, snackbarHostState)
 
     BackHandler(enabled = true, onBack = backAction)
 
@@ -216,8 +232,17 @@ public fun ChannelScreen(
                 }
             },
             bottomBar = {
-                Box(Modifier.traversalRegion(ComposerTraversalIndex)) {
-                    bottomBarContent()
+                Column(Modifier.traversalRegion(ComposerTraversalIndex)) {
+                    val bannerTop = remember { mutableStateOf<Int?>(null) }
+                    ChannelScreenScheduledMessagesBanner(
+                        composerViewModel = composerViewModel,
+                        onClick = onScheduledMessagesBannerClick,
+                        onTopChange = { bannerTop.value = it },
+                    )
+                    // The composer snackbars open above the banner.
+                    CompositionLocalProvider(LocalMessageComposerSnackbarMaxBottom provides bannerTop) {
+                        Box { bottomBarContent() }
+                    }
                 }
             },
             snackbarHost = { StreamSnackbarHost(snackbarHostState) },
@@ -394,6 +419,80 @@ private fun EventHandler(viewModel: MessageListViewModel, snackbarHostState: Sna
                     showSnackbar(R.string.stream_compose_poll_ended_failure)
 
                 else -> {}
+            }
+        }
+    }
+}
+
+/**
+ * Places the scheduled messages banner above the composer, unless the composer shows suggestions.
+ *
+ * @param composerViewModel The [MessageComposerViewModel] of the composer, for the banner state and the suggestions.
+ * @param onClick Called when the banner is tapped, or null when it can't be tapped.
+ * @param onTopChange Called with the top of the banner in the window, in pixels, or null when no banner is shown.
+ */
+@Composable
+private fun ChannelScreenScheduledMessagesBanner(
+    composerViewModel: MessageComposerViewModel,
+    onClick: (() -> Unit)?,
+    onTopChange: (Int?) -> Unit,
+) {
+    if (!ChatTheme.config.composer.scheduledMessagesEnabled) return
+    val state by composerViewModel.scheduledMessagesBannerState.collectAsState()
+    val hasSuggestions by remember(composerViewModel) {
+        composerViewModel.messageComposerState.map { it.hasSuggestions }.distinctUntilChanged()
+    }.collectAsState(initial = false)
+    val bannerState = state
+    if (bannerState == null || hasSuggestions) return
+    DisposableEffect(Unit) { onDispose { onTopChange(null) } }
+    Box(
+        modifier = Modifier.onGloballyPositioned { coordinates ->
+            onTopChange(coordinates.positionInWindow().y.roundToInt().takeIf { coordinates.size.height > 0 })
+        },
+    ) {
+        ChatTheme.componentFactory.ScheduledMessagesBanner(
+            params = ScheduledMessagesBannerParams(
+                state = bannerState,
+                onClick = onClick,
+                modifier = Modifier.padding(
+                    start = StreamTokens.spacingMd,
+                    end = StreamTokens.spacingMd,
+                    bottom = StreamTokens.spacingMd,
+                ),
+            ),
+        )
+    }
+}
+
+private val MessageComposerState.hasSuggestions: Boolean
+    get() = suggestedMentions.isNotEmpty() || commandSuggestions.isNotEmpty()
+
+/**
+ * Shows a "Scheduled message sent" snackbar when the server sends right away a message scheduled while offline. Its
+ * View action scrolls to the message and highlights it.
+ *
+ * @param composerViewModel The [MessageComposerViewModel] that tells the messages sent right away.
+ * @param listViewModel The [MessageListViewModel] that scrolls to the message.
+ * @param snackbarHostState The [SnackbarHostState] of the screen.
+ */
+@Composable
+private fun ScheduledMessageSentSnackbar(
+    composerViewModel: MessageComposerViewModel,
+    listViewModel: MessageListViewModel,
+    snackbarHostState: SnackbarHostState,
+) {
+    if (!ChatTheme.config.composer.scheduledMessagesEnabled) return
+    val resources = LocalResources.current
+    LaunchedEffect(composerViewModel, listViewModel) {
+        composerViewModel.scheduledMessagesSentNow.collect { message ->
+            val result = snackbarHostState.showSnackbar(
+                StreamSnackbarVisuals(
+                    message = resources.getString(R.string.stream_compose_scheduled_messages_sent),
+                    actionLabel = resources.getString(R.string.stream_compose_scheduled_messages_view),
+                ),
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                listViewModel.scrollToMessage(messageId = message.id, parentMessageId = message.parentId)
             }
         }
     }

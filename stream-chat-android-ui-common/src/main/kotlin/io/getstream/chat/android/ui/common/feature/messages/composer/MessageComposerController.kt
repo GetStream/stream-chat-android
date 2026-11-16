@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 import androidx.lifecycle.SavedStateHandle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.getMessageUsingCache
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.loadNewestMessages
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -42,6 +43,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Men
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.mentionRegex
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.isPending
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.sentNow
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
@@ -56,7 +58,9 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
+import io.getstream.chat.android.ui.common.state.messages.composer.scheduledMessagesBannerState
 import io.getstream.chat.android.ui.common.state.messages.composer.sortedByAvailability
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
@@ -88,6 +92,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
@@ -322,6 +327,42 @@ public class MessageComposerController(
         started = SharingStarted.WhileSubscribed(),
         initialValue = ScheduleMessageState(),
     )
+
+    /** The ID of the thread the composer writes in, or null in the channel. */
+    private val threadParentId: Flow<String?> = _state
+        .map { (it.messageMode as? MessageMode.MessageThread)?.parentMessage?.id }
+        .distinctUntilChanged()
+
+    /**
+     * What the scheduled messages banner of the channel, or of the thread the composer writes in, shows, or null when
+     * the user can't schedule messages in the channel or there is nothing to show. Computed while it is collected.
+     */
+    @InternalStreamChatApi
+    public val scheduledMessagesBannerState: StateFlow<ScheduledMessagesBannerState?> = threadParentId
+        .flatMapLatest { parentId ->
+            combine(
+                scheduleMessageState,
+                chatClient.scheduledMessages(channelCid, parentId),
+            ) { scheduleState, scheduledMessages ->
+                scheduledMessagesBannerState(scheduledMessages, scheduleState, isInThread = parentId != null)
+            }
+        }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = null,
+        )
+
+    /**
+     * Emits the messages of the channel, or of the thread the composer writes in, that were scheduled while offline
+     * and that the server sent right away once the device was back online, because their date had passed. Only the
+     * messages sent while it is collected are emitted.
+     */
+    @InternalStreamChatApi
+    public val scheduledMessagesSentNow: Flow<Message> = threadParentId.flatMapLatest { parentId ->
+        chatClient.scheduledMessages(channelCid, parentId)
+            .sentNow { id -> chatClient.getMessageUsingCache(id).await().getOrNull() }
+    }
 
     private var isScheduling = false
 

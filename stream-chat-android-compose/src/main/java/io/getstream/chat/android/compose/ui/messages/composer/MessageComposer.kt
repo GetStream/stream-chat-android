@@ -33,6 +33,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -252,6 +253,13 @@ internal val LocalMessageComposerSnackbarHostState =
     staticCompositionLocalOf<SnackbarHostState?> { null }
 
 /**
+ * The highest bottom edge, in window pixels, of the snackbars shown above the composer, so they open above what the
+ * screen places right above the composer, like the scheduled messages banner. A null state or value opens them right
+ * above the composer. Read only while a snackbar shows, so moving the banner does not recompose the composer.
+ */
+internal val LocalMessageComposerSnackbarMaxBottom = staticCompositionLocalOf<State<Int?>?> { null }
+
+/**
  * Hands the audio recording hint's [SnackbarHostState] from the composer to the mic button, so the
  * hint popup is rendered by the composer (anchored above it) while the mic button drives showing and
  * dismissing it. This keeps the hint anchored to the composer's top rather than the mic button,
@@ -469,7 +477,11 @@ private fun ComposerSnackbar(
     snackbar: @Composable (SnackbarData) -> Unit,
 ) {
     if (hostState.currentSnackbarData != null) {
-        SnackbarPopup(hostState = hostState, snackbar = snackbar)
+        SnackbarPopup(
+            hostState = hostState,
+            snackbar = snackbar,
+            maxBottom = LocalMessageComposerSnackbarMaxBottom.current?.value,
+        )
     }
 }
 

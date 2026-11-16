@@ -55,6 +55,7 @@ import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertFalse
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -168,6 +169,22 @@ class UserRobot {
             period.waitToAppearAndClick()
         }
         ScheduledMessagesPage.Pickers.okButton.waitToAppearAndClick()
+        return this
+    }
+
+    /** Schedules what the composer holds at [date], to the minute, from the custom time sheet. */
+    fun scheduleComposerContentAt(date: Date): UserRobot {
+        val calendar = Calendar.getInstance().apply { time = date }
+        openCustomTimeSheet()
+        typeScheduleDate(date)
+        pickScheduleTime(hour = calendar.get(Calendar.HOUR_OF_DAY), minute = calendar.get(Calendar.MINUTE))
+        ScheduledMessagesPage.ScheduleTimeSheet.confirmButton.waitToAppearAndClick()
+        return this
+    }
+
+    /** Taps View on the snackbar that tells a message scheduled offline was sent. */
+    fun openScheduledMessageSentFromSnackbar(): UserRobot {
+        ScheduledMessagesPage.Snackbar.viewButton.waitToAppearAndClick()
         return this
     }
 

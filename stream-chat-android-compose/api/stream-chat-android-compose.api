@@ -1841,7 +1841,7 @@ public final class io/getstream/chat/android/compose/ui/mentions/MentionListKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/ChannelScreenKt {
-	public static final fun ChannelScreen (Lio/getstream/chat/android/compose/viewmodel/messages/ChannelViewModelFactory;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ZZLandroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChannelScreen (Lio/getstream/chat/android/compose/viewmodel/messages/ChannelViewModelFactory;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ZZLandroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
 	public static final fun MessageDialogs (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/runtime/Composer;I)V
 	public static final fun MessageMenus (Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;ZZLandroidx/compose/runtime/Composer;I)V
 	public static final fun MessageModerationDialog (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;ZZLandroidx/compose/runtime/Composer;I)V
@@ -2309,6 +2309,13 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessagesLa
 
 public abstract interface class io/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState$MessageOffsetHandler : java/io/Serializable {
 	public abstract fun calculateOffset-TemP2vQ (JJ)I
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/scheduled/ComposableSingletons$ScheduledMessagesBannerKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/scheduled/ComposableSingletons$ScheduledMessagesBannerKt;
+	public fun <init> ()V
+	public final fun getLambda$-2102413814$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1902612382$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/pinned/ComposableSingletons$PinnedMessageItemKt {
@@ -3692,6 +3699,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun ReactionsMenuContent (Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ScheduleMessageSheet (Lio/getstream/chat/android/compose/ui/theme/ScheduleMessageSheetParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ScheduleMessageTimeSheet (Lio/getstream/chat/android/compose/ui/theme/ScheduleMessageTimeSheetParams;Landroidx/compose/runtime/Composer;I)V
+	public fun ScheduledMessagesBanner (Lio/getstream/chat/android/compose/ui/theme/ScheduledMessagesBannerParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ScrollToBottomButton (Lio/getstream/chat/android/compose/ui/theme/ScrollToBottomButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ScrollToFirstUnreadButton (Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public fun SearchInputClearButton (Lio/getstream/chat/android/compose/ui/theme/SearchInputClearButtonParams;Landroidx/compose/runtime/Composer;I)V
@@ -3894,6 +3902,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ReactionsMenuContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ReactionsMenuContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ScheduleMessageSheet (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScheduleMessageSheetParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ScheduleMessageTimeSheet (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScheduleMessageTimeSheetParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun ScheduledMessagesBanner (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScheduledMessagesBannerParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ScrollToBottomButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScrollToBottomButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ScrollToFirstUnreadButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ScrollToFirstUnreadButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputClearButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/SearchInputClearButtonParams;Landroidx/compose/runtime/Composer;I)V
@@ -6148,6 +6157,23 @@ public final class io/getstream/chat/android/compose/ui/theme/ScheduleMessageTim
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/ui/theme/ScheduledMessagesBannerParams {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState;
+	public final fun component2 ()Lkotlin/jvm/functions/Function0;
+	public final fun component3 ()Landroidx/compose/ui/Modifier;
+	public final fun copy (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/ScheduledMessagesBannerParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ScheduledMessagesBannerParams;Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ScheduledMessagesBannerParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getModifier ()Landroidx/compose/ui/Modifier;
+	public final fun getOnClick ()Lkotlin/jvm/functions/Function0;
+	public final fun getState ()Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/ScrollToBottomButtonParams {
 	public static final field $stable I
 	public fun <init> (ZILkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;)V
@@ -6779,7 +6805,7 @@ public final class io/getstream/chat/android/compose/ui/util/ComposableSingleton
 public final class io/getstream/chat/android/compose/ui/util/ComposableSingletons$SnackbarPopupKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/util/ComposableSingletons$SnackbarPopupKt;
 	public fun <init> ()V
-	public final fun getLambda$-100203581$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-140560768$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/ComposableSingletons$StreamSnackbarKt {

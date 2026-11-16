@@ -474,4 +474,21 @@
     <string name="stream_compose_schedule_message_error_user_limit">You\'ve reached your limit of %1$d scheduled messages.</string>
     <string name="stream_compose_schedule_message_error_command">Commands can\'t be scheduled. Remove the / command to continue.</string>
     <string name="stream_compose_schedule_message_error_failed">Couldn\'t schedule message. Try again</string>
+    <!-- Scheduled messages -->
+    <plurals name="stream_compose_scheduled_messages_count">
+        <item quantity="one">%d scheduled message</item>
+        <item quantity="other">%d scheduled messages</item>
+    </plurals>
+    <plurals name="stream_compose_scheduled_messages_replies_count">
+        <item quantity="one">%d scheduled reply</item>
+        <item quantity="other">%d scheduled replies</item>
+    </plurals>
+    <plurals name="stream_compose_scheduled_messages_failed_count">
+        <item quantity="one">%d failed to send</item>
+        <item quantity="other">%d failed to send</item>
+    </plurals>
+    <string name="stream_compose_scheduled_messages_limit_reached">%1$d of %2$d scheduled messages</string>
+    <string name="stream_compose_scheduled_messages_view">View</string>
+    <string name="stream_compose_scheduled_messages_view_all">View all</string>
+    <string name="stream_compose_scheduled_messages_sent">Scheduled message sent</string>
 </resources>

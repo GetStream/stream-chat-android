@@ -163,22 +163,6 @@
     <string name="scheduled_messages_deleted">Scheduled message deleted</string>
     <string name="scheduled_messages_still_sending">Still sending. Try again in a moment.</string>
     <string name="scheduled_messages_view">View</string>
-    <plurals name="scheduled_messages_count">
-        <item quantity="one">%1$d scheduled message</item>
-        <item quantity="other">%1$d scheduled messages</item>
-    </plurals>
-    <plurals name="scheduled_messages_replies_count">
-        <item quantity="one">%1$d scheduled reply</item>
-        <item quantity="other">%1$d scheduled replies</item>
-    </plurals>
-    <plurals name="scheduled_messages_waiting_count">
-        <item quantity="one">%1$d scheduled message waiting for connection</item>
-        <item quantity="other">%1$d scheduled messages waiting for connection</item>
-    </plurals>
-    <plurals name="scheduled_messages_failed_count">
-        <item quantity="one">%1$d failed to send</item>
-        <item quantity="other">%1$d failed to send</item>
-    </plurals>
     <string name="scheduled_messages_failed_header">Failed to send</string>
     <string name="scheduled_messages_waiting_header">Waiting for connection</string>
     <string name="scheduled_messages_queued">Queued</string>

@@ -18,12 +18,13 @@ package io.getstream.chat.android.compose.pages
 
 import androidx.test.uiautomator.By
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
+import java.util.regex.Pattern
 import io.getstream.chat.android.compose.R as ComposeR
 import io.getstream.chat.android.compose.sample.R as SampleR
 
 /**
- * Scheduled messages: the SDK sheets that pick when a message is sent, and the sample's banner under
- * the channel header and Scheduled messages screen.
+ * Scheduled messages: the SDK sheets that pick when a message is sent, the SDK banner above the
+ * composer, and the sample's Scheduled messages screen.
  */
 class ScheduledMessagesPage {
 
@@ -32,20 +33,33 @@ class ScheduledMessagesPage {
         companion object {
             val view get() = By.res("Stream_ScheduledMessagesBanner")
 
-            /** The banner of a channel with [count] scheduled messages. */
-            fun messages(count: Int) = view.hasDescendant(By.text(quantityString(SampleR.plurals.scheduled_messages_count, count)))
+            private val scheduledForPrefix
+                get() = appContext.getString(ComposeR.string.stream_compose_schedule_message_scheduled_for, "")
 
-            /** The banner of a thread with [count] scheduled replies. */
-            fun replies(count: Int) =
-                view.hasDescendant(By.text(quantityString(SampleR.plurals.scheduled_messages_replies_count, count)))
+            /** The banner of a single scheduled message or reply, whatever its date. */
+            val scheduledFor get() = view.hasDescendant(By.textStartsWith(scheduledForPrefix))
 
-            /** The banner of a channel with [count] scheduled messages waiting for the connection. */
-            fun waiting(count: Int) =
-                view.hasDescendant(By.text(quantityString(SampleR.plurals.scheduled_messages_waiting_count, count)))
+            /** The banner of a single scheduled message or reply, sent at [time]. */
+            fun scheduledFor(time: String) = view.hasDescendant(
+                By.text(Pattern.compile(Pattern.quote(scheduledForPrefix) + ".* " + Pattern.quote(time))),
+            )
+
+            /** The banner of a channel with [count] scheduled messages, more than one. */
+            fun messages(count: Int) =
+                view.hasDescendant(By.text(quantityString(ComposeR.plurals.stream_compose_scheduled_messages_count, count)))
+
+            /** The banner of a channel with [count] of [limit] scheduled messages, the most it allows. */
+            fun limitReached(count: Int, limit: Int) = view.hasDescendant(
+                By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_messages_limit_reached, count, limit)),
+            )
 
             /** The banner of a channel with [count] scheduled messages that failed. */
-            fun failed(count: Int) =
-                view.hasDescendant(By.text(quantityString(SampleR.plurals.scheduled_messages_failed_count, count)))
+            fun failed(count: Int) = view.hasDescendant(
+                By.text(quantityString(ComposeR.plurals.stream_compose_scheduled_messages_failed_count, count)),
+            )
+
+            /** The link of a banner about several messages. */
+            val viewAll get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_messages_view_all))
         }
     }
 
@@ -147,6 +161,10 @@ class ScheduledMessagesPage {
     class Snackbar {
 
         companion object {
+            /** Shown when a message scheduled offline is sent right away, as its time passed. */
+            val sent get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_messages_sent))
+            val viewButton get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_messages_view))
+
             /** Shown once the server has the scheduled message. */
             val scheduled
                 get() = By.textStartsWith(appContext.getString(SampleR.string.scheduled_messages_scheduled_for, ""))

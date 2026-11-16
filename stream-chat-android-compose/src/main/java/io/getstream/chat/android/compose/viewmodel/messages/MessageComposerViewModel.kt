@@ -35,9 +35,11 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.result.Result
 import io.getstream.result.call.Call
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
@@ -190,6 +192,21 @@ public class MessageComposerViewModel(
      * Kept up to date while it is collected.
      */
     public val scheduleMessageState: StateFlow<ScheduleMessageState> = messageComposerController.scheduleMessageState
+
+    /**
+     * What the scheduled messages banner of the channel, or of the thread the composer writes in, shows, or null when
+     * the user can't schedule messages in the channel or there is nothing to show. Kept up to date while it is
+     * collected.
+     */
+    internal val scheduledMessagesBannerState: StateFlow<ScheduledMessagesBannerState?> =
+        messageComposerController.scheduledMessagesBannerState
+
+    /**
+     * Emits the messages of the channel, or of the thread the composer writes in, that were scheduled while offline
+     * and that the server sent right away once the device was back online, because their date had passed. Only the
+     * messages sent while it is collected are emitted.
+     */
+    internal val scheduledMessagesSentNow: Flow<Message> = messageComposerController.scheduledMessagesSentNow
 
     /**
      * Schedules [message] to be sent at [scheduledAt], with the thread state of the composer. The message is saved

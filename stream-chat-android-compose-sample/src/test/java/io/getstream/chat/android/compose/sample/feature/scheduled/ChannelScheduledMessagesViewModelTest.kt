@@ -33,14 +33,12 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
-import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -66,45 +64,8 @@ internal class ChannelScheduledMessagesViewModelTest {
         on { scheduledMessages } doAnswer { scheduledMessages }
         on { clientState } doReturn clientState
         on { queryUsers(any()) } doAnswer { emptyList<User>().asCall() }
-        on { scheduledMessages(any(), anyOrNull()) } doAnswer { invocation ->
-            val cid = invocation.getArgument<String>(0)
-            val parentId = invocation.getArgument<String?>(1)
-            scheduledMessages.map { list -> list.filter { it.cid == cid && it.message.parentId == parentId } }
-        }
     }
     private val resolvedAttachments = listOf(randomAttachment())
-
-    @Test
-    fun `the banner counts the pending messages of the channel or of the thread`() = runTest {
-        val parentId = randomString()
-        scheduledMessages.value = listOf(
-            scheduled(),
-            scheduled(),
-            scheduled(parentId = parentId),
-            randomScheduledMessage(status = ScheduledMessageStatus.Scheduled),
-        )
-        val viewModel = viewModel()
-        viewModel.banner.value shouldBeEqualTo ScheduledMessagesBanner.Pending(2)
-
-        viewModel.onThreadChanged(parentId)
-
-        viewModel.banner.value shouldBeEqualTo ScheduledMessagesBanner.Pending(1)
-    }
-
-    @Test
-    fun `the banner tells first about the failed messages, then the ones waiting for the connection`() {
-        val pending = scheduled()
-        val preparing = scheduled(status = ScheduledMessageStatus.PreparingToSchedule)
-        val failed = scheduled(status = ScheduledMessageStatus.Failed)
-
-        scheduledMessagesBanner(listOf(pending, preparing, failed), ConnectionState.Offline) shouldBeEqualTo
-            ScheduledMessagesBanner.Failed(1)
-        scheduledMessagesBanner(listOf(pending, preparing), ConnectionState.Offline) shouldBeEqualTo
-            ScheduledMessagesBanner.Waiting(1)
-        scheduledMessagesBanner(listOf(pending, preparing), ConnectionState.Connected) shouldBeEqualTo
-            ScheduledMessagesBanner.Pending(2)
-        scheduledMessagesBanner(emptyList(), ConnectionState.Connected).shouldBeNull()
-    }
 
     @Test
     fun `a refused schedule again keeps the edit and the content of the composer`() = runTest {
@@ -125,7 +86,7 @@ internal class ChannelScheduledMessagesViewModelTest {
     }
 
     @Test
-    fun `editing fills the composer with the scheduled message and its quote, and hides the banner`() = runTest {
+    fun `editing fills the composer with the scheduled message and its quote`() = runTest {
         val quoted = randomMessage()
         val edited = scheduled(message = randomMessage(cid = cid, parentId = null, replyMessageId = quoted.id, replyTo = null))
         scheduledMessages.value = listOf(edited, scheduled())
@@ -134,7 +95,6 @@ internal class ChannelScheduledMessagesViewModelTest {
         val viewModel = viewModel(editedMessageId = edited.id)
 
         viewModel.editedMessage.value shouldBeEqualTo edited
-        viewModel.banner.value.shouldBeNull()
         viewModel.events.test {
             awaitItem() shouldBeEqualTo ScheduledMessagesEvent.EditInComposer(edited, quoted)
         }

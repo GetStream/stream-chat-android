@@ -1750,6 +1750,25 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default banner about the scheduled messages of the channel or the thread, placed by the channel screen above
+     * the composer: the failed messages, the channel limit reached, the date of the only scheduled message, or the
+     * number of scheduled messages. Its changes are announced to screen readers.
+     *
+     * Shown only when the user has the `schedule-message` capability in the channel,
+     * [ComposerConfig.scheduledMessagesEnabled] is true and no suggestions are open in the composer.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessagesBanner(params: ScheduledMessagesBannerParams) {
+        io.getstream.chat.android.compose.ui.messages.scheduled.ScheduledMessagesBanner(
+            state = params.state,
+            onClick = params.onClick,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
      * The default "Save" button of the message composer, shown when editing a message.
      * Displays a checkmark icon in a filled circular button.
      *
