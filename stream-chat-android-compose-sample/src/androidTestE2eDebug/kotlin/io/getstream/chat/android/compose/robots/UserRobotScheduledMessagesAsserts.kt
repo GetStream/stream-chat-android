@@ -69,6 +69,12 @@ fun UserRobot.assertScheduledMessageOnServer(text: String): UserRobot {
     return this
 }
 
+/** Asserts the snackbar that tells a message scheduled offline was sent right away. */
+fun UserRobot.assertScheduledMessageSentSnackbar(): UserRobot {
+    assertTrue(Snackbar.sent.waitDisplayed())
+    return this
+}
+
 /** Asserts the snackbar that tells the server has the change of an edited scheduled message. */
 fun UserRobot.assertScheduledMessageSaved(): UserRobot {
     assertTrue(Snackbar.scheduled.waitDisplayed())
@@ -113,6 +119,13 @@ fun UserRobot.assertMessageWithImage(text: String): UserRobot {
 
 fun UserRobot.assertScheduleSheetIsNotShown(): UserRobot {
     assertFalse(ScheduleSheet.view.waitDisplayed(timeOutMillis = 3_000))
+    return this
+}
+
+/** Asserts the open schedule sheet says the channel has [limit] scheduled messages, and its options are disabled. */
+fun UserRobot.assertScheduleSheetLimitReached(limit: Int): UserRobot {
+    assertTrue(ScheduleSheet.limitReachedTitle(limit).waitDisplayed())
+    assertFalse(ScheduleSheet.tomorrowMorning.isEnabled())
     return this
 }
 

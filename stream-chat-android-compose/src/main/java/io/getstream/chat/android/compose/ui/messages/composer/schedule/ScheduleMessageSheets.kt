@@ -527,7 +527,7 @@ internal fun Context.formatQuickDate(date: Date, now: Date, timeZone: TimeZone =
 /**
  * Formats a date with its day and its time, like "Fri, Oct 23 at 09:00".
  */
-private fun Context.formatFullDate(date: Date, timeZone: TimeZone): String =
+internal fun Context.formatFullDate(date: Date, timeZone: TimeZone = TimeZone.getDefault()): String =
     getString(
         R.string.stream_compose_schedule_message_day_at,
         formatPickerDate(date, timeZone),

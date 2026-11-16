@@ -87,6 +87,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageError
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
@@ -1376,6 +1377,20 @@ public data class ScheduleMessageTimeSheetParams(
     val onConfirm: (Date) -> Unit,
     val onDismiss: () -> Unit,
     val scheduledAt: Date? = null,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduledMessagesBanner].
+ *
+ * @param state What the banner shows.
+ * @param onClick Called when the banner is clicked, to show the scheduled messages, or null when the banner can't be
+ * clicked.
+ * @param modifier Modifier for styling.
+ */
+public data class ScheduledMessagesBannerParams(
+    val state: ScheduledMessagesBannerState,
+    val onClick: (() -> Unit)?,
+    val modifier: Modifier = Modifier,
 )
 
 /**

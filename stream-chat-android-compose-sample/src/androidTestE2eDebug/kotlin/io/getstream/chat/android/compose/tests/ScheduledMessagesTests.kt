@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.robots.assertMessage
 import io.getstream.chat.android.compose.robots.assertMessageCount
 import io.getstream.chat.android.compose.robots.assertMessageWithImage
 import io.getstream.chat.android.compose.robots.assertScheduleSheetIsNotShown
+import io.getstream.chat.android.compose.robots.assertScheduleSheetLimitReached
 import io.getstream.chat.android.compose.robots.assertScheduleTimeSheetError
 import io.getstream.chat.android.compose.robots.assertScheduledMessage
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActions
@@ -30,6 +31,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessageFailed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotShown
 import io.getstream.chat.android.compose.robots.assertScheduledMessageOnServer
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSaved
+import io.getstream.chat.android.compose.robots.assertScheduledMessageSentSnackbar
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesAreEmpty
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBanner
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBannerIsHidden
@@ -71,8 +73,8 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("WHEN user schedules a message") {
             userRobot.scheduleMessage(sampleText)
         }
-        step("THEN the banner counts the scheduled message") {
-            userRobot.assertScheduledMessagesBanner(Banner.messages(1))
+        step("THEN the banner shows when the message is sent") {
+            userRobot.assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
         }
         step("AND the message is not in the channel") {
             userRobot.assertMessage(sampleText, isDisplayed = false)
@@ -118,7 +120,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("AND the server has it") {
             userRobot
                 .assertScheduledMessageOnServer(sampleText)
-                .assertScheduledMessagesBanner(Banner.messages(1))
+                .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
         }
         step("WHEN the time of the message comes") {
             backendRobot.sendScheduledMessages()
@@ -225,10 +227,10 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("WHEN user schedules a reply") {
             userRobot.scheduleMessage(sampleText)
         }
-        step("THEN the thread banner counts the reply, and the reply is not in the thread") {
+        step("THEN the thread banner shows when the reply is sent, and the reply is not in the thread") {
             userRobot
                 .assertScheduledMessageOnServer(threadReplyText)
-                .assertScheduledMessagesBanner(Banner.replies(1))
+                .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
                 .assertMessage(sampleText, isDisplayed = false)
         }
         step("WHEN the time of the reply comes") {
@@ -256,7 +258,7 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("THEN the message is scheduled, and not in the channel") {
             userRobot
                 .assertScheduledMessageOnServer(sampleText)
-                .assertScheduledMessagesBanner(Banner.messages(1))
+                .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
                 .assertMessage(sampleText, isDisplayed = false)
         }
         step("WHEN the time of the message comes") {
@@ -321,15 +323,15 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("WHEN user schedules a message") {
             userRobot.scheduleMessage(sampleText)
         }
-        step("THEN the banner shows it waits for the connection") {
-            userRobot.assertScheduledMessagesBanner(Banner.waiting(1))
+        step("THEN the banner shows the message") {
+            userRobot.assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
         }
         step("WHEN user comes back online") {
             device.enableInternetConnection()
         }
         step("THEN the message is scheduled once") {
             userRobot
-                .assertScheduledMessagesBanner(Banner.messages(1))
+                .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
                 .openScheduledMessagesFromBanner()
                 .assertScheduledMessage(sampleText, time = tomorrowAt(9))
         }
@@ -460,13 +462,90 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("WHEN user schedules a message on another device") {
             backendRobot.createScheduledMessage(sampleText)
         }
-        step("THEN the banner counts it") {
-            userRobot.assertScheduledMessagesBanner(Banner.messages(1))
+        step("THEN the banner shows it") {
+            userRobot.assertScheduledMessagesBanner(Banner.scheduledFor)
         }
         step("AND the list shows it") {
             userRobot
                 .openScheduledMessagesFromBanner()
                 .assertScheduledMessage(sampleText)
+        }
+    }
+
+    @Test
+    fun test_bannerCountsSeveralScheduledMessages() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("WHEN user schedules two messages") {
+            userRobot
+                .scheduleMessage("First")
+                .scheduleMessage("Second")
+        }
+        step("THEN the banner counts them, and its link opens all of them") {
+            userRobot
+                .assertScheduledMessagesBanner(Banner.messages(2).hasDescendant(Banner.viewAll))
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessage("First", time = tomorrowAt(9))
+                .assertScheduledMessage("Second", time = tomorrowAt(9))
+        }
+    }
+
+    @Test
+    fun test_bannerShowsTheChannelLimitReached() {
+        step("GIVEN user can schedule one message in the channel, as its config tells") {
+            backendRobot.setScheduledMessagesLimit(1, inConfig = true)
+        }
+        step("WHEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+        }
+        step("THEN the banner shows the limit is reached, and its link opens all the messages") {
+            userRobot.assertScheduledMessagesBanner(Banner.limitReached(count = 1, limit = 1).hasDescendant(Banner.viewAll))
+        }
+        step("AND the schedule options say the limit is reached") {
+            userRobot
+                .typeText("Another")
+                .openScheduleSheet()
+                .assertScheduleSheetLimitReached(limit = 1)
+        }
+    }
+
+    @Test
+    fun test_messageScheduledOfflineIsSentRightAwayWhenItsTimeHasPassed() {
+        // At least the minimum lead time of one minute ahead once the sheet is confirmed.
+        val sendAt = Calendar.getInstance().apply {
+            add(Calendar.MINUTE, 3)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND user goes offline") {
+            device.disableInternetConnection()
+        }
+        step("WHEN user schedules a message a few minutes ahead") {
+            userRobot
+                .typeText(sampleText)
+                .scheduleComposerContentAt(sendAt.time)
+                .assertScheduledMessagesBanner(Banner.scheduledFor(timeOf(sendAt.time)))
+        }
+        step("AND user comes back online once its time has passed") {
+            userRobot.sleep(maxOf(0L, sendAt.timeInMillis - System.currentTimeMillis()) + 5.seconds)
+            device.enableInternetConnection()
+        }
+        step("THEN a snackbar tells the scheduled message was sent, and the banner is gone") {
+            userRobot
+                .assertScheduledMessageSentSnackbar()
+                .assertScheduledMessagesBannerIsHidden()
+        }
+        step("WHEN user taps View") {
+            userRobot.openScheduledMessageSentFromSnackbar()
+        }
+        step("THEN the message is in the channel once") {
+            userRobot
+                .assertMessage(sampleText)
+                .assertMessageCount(1)
         }
     }
 
@@ -555,8 +634,10 @@ class ScheduledMessagesTests : StreamTestCase() {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, 0)
         }.time
-        return DateFormat.getTimeFormat(appContext).format(date)
+        return timeOf(date)
     }
+
+    private fun timeOf(date: Date): String = DateFormat.getTimeFormat(appContext).format(date)
 
     private companion object {
         /** How far ahead the server allows a message by default, as the mock channels set no limit. */

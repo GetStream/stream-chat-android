@@ -17,9 +17,7 @@
 package io.getstream.chat.android.compose.sample.feature.scheduled
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -43,6 +41,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,49 +53,46 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.ui.theme.ChannelHeaderParams
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerSendButtonParams
 import io.getstream.chat.android.compose.ui.theme.ScheduleMessageTimeSheetParams
+import io.getstream.chat.android.compose.ui.theme.ScheduledMessagesBannerParams
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Date
 import io.getstream.chat.android.compose.R as ComposeR
 
 /**
- * Adds scheduled messages to the channel screen in [content]: a banner under the header tells about the scheduled
- * messages of the channel or the thread, and a scheduled message can be edited, rescheduled or scheduled again in the
- * composer. The banner is shown only when the user has the [ChannelCapabilities.SCHEDULE_MESSAGE] capability in the
- * channel. Scheduling a new message comes from the SDK composer.
+ * Adds the edit of a scheduled message to the channel screen in [content]: a scheduled message can be edited,
+ * rescheduled or scheduled again in the composer, and the SDK banner of the scheduled messages is hidden meanwhile.
+ * Scheduling a new message and the banner come from the SDK.
  *
  * @param composerViewModel The view model of the composer of [content].
  * @param attachmentsPickerViewModel The view model of the attachment picker of [content].
  * @param viewModel Schedules and edits the scheduled messages.
  * @param channelName The name of the channel, for the preview of the edited message.
- * @param onViewClick Called to show all the scheduled messages.
+ * @param onViewClick Called to show all the scheduled messages, from the View action of the snackbars.
  * @param content The channel screen.
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -124,7 +120,8 @@ internal fun ScheduledMessagesComposer(
         requestedSheet = null
     }
     val snackbarHostState = remember { SnackbarHostState() }
-    ThreadTracker(composerViewModel, viewModel)
+    // The height of the SDK banner above the composer, so the snackbars open above it.
+    var bannerHeight by remember { mutableStateOf(0.dp) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         CompoundComponentFactory(
@@ -133,8 +130,8 @@ internal fun ScheduledMessagesComposer(
                     delegate = base,
                     composerViewModel = composerViewModel,
                     viewModel = viewModel,
-                    onViewClick = onViewClick,
                     onSheetRequest = { requestedSheet = it },
+                    onBannerHeightChange = { bannerHeight = it },
                 )
             },
             content = content,
@@ -145,7 +142,7 @@ internal fun ScheduledMessagesComposer(
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
                 .imePadding()
-                .padding(bottom = SnackbarBottomPadding),
+                .padding(bottom = SnackbarBottomPadding + bannerHeight),
         )
     }
 
@@ -179,18 +176,6 @@ internal fun ScheduledMessagesComposer(
             else -> Unit
         }
     }
-}
-
-/**
- * Tells [viewModel] the thread of the composer, for its banner.
- */
-@Composable
-private fun ThreadTracker(composerViewModel: MessageComposerViewModel, viewModel: ChannelScheduledMessagesViewModel) {
-    val messageMode by remember(composerViewModel) {
-        composerViewModel.messageComposerState.map { it.messageMode }.distinctUntilChanged()
-    }.collectAsStateWithLifecycle(MessageMode.Normal)
-    val parentId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
-    LaunchedEffect(parentId) { viewModel.onThreadChanged(parentId) }
 }
 
 /**
@@ -269,28 +254,22 @@ private fun MessageComposerViewModel.buildScheduledMessage(): Message {
         .copy(showInChannel = isInThread && state.alsoSendToChannel)
 }
 
-@Suppress("LongParameterList")
 private class ScheduledMessagesComponentFactory(
     private val delegate: ChatComponentFactory,
     private val composerViewModel: MessageComposerViewModel,
     private val viewModel: ChannelScheduledMessagesViewModel,
-    private val onViewClick: () -> Unit,
     private val onSheetRequest: (ScheduleSheet) -> Unit,
+    private val onBannerHeightChange: (Dp) -> Unit,
 ) : ChatComponentFactory by delegate {
 
     @Composable
-    override fun ChannelHeader(params: ChannelHeaderParams) {
-        val composerState by composerViewModel.messageComposerState.collectAsStateWithLifecycle()
-        val banner by viewModel.banner.collectAsStateWithLifecycle()
-        Column {
-            delegate.ChannelHeader(params)
-            banner?.takeIf { composerState.canSchedule }?.let {
-                ScheduledMessagesBanner(
-                    banner = it,
-                    isInThread = params.messageMode is MessageMode.MessageThread,
-                    onClick = onViewClick,
-                )
-            }
+    override fun ScheduledMessagesBanner(params: ScheduledMessagesBannerParams) {
+        val editedMessage by viewModel.editedMessage.collectAsStateWithLifecycle()
+        if (editedMessage != null) return
+        val density = LocalDensity.current
+        DisposableEffect(Unit) { onDispose { onBannerHeightChange(0.dp) } }
+        Box(modifier = Modifier.onSizeChanged { onBannerHeightChange(with(density) { it.height.toDp() }) }) {
+            delegate.ScheduledMessagesBanner(params)
         }
     }
 
@@ -334,9 +313,6 @@ private class ScheduledMessagesComponentFactory(
     }
 }
 
-private val MessageComposerState.canSchedule: Boolean
-    get() = ChannelCapabilities.SCHEDULE_MESSAGE in ownCapabilities
-
 /**
  * The send button while a scheduled message is edited: a click saves the edit, and a long press picks a new time.
  */
@@ -364,61 +340,6 @@ private fun ScheduledMessageSaveButton(onClick: () -> Unit, onLongClick: () -> U
             painter = painterResource(ComposeR.drawable.stream_design_ic_checkmark),
             contentDescription = saveLabel,
             tint = ChatTheme.colors.textOnAccent,
-        )
-    }
-}
-
-@Composable
-private fun ScheduledMessagesBanner(
-    banner: ScheduledMessagesBanner,
-    isInThread: Boolean,
-    onClick: () -> Unit,
-) {
-    val isFailed = banner is ScheduledMessagesBanner.Failed
-    val accent = if (isFailed) ChatTheme.colors.accentError else ChatTheme.colors.accentPrimary
-    val icon = if (isFailed) {
-        ComposeR.drawable.stream_design_ic_exclamation_circle
-    } else {
-        ComposeR.drawable.stream_design_ic_clock
-    }
-    val text = when (banner) {
-        is ScheduledMessagesBanner.Failed ->
-            pluralStringResource(R.plurals.scheduled_messages_failed_count, banner.count, banner.count)
-        is ScheduledMessagesBanner.Waiting ->
-            pluralStringResource(R.plurals.scheduled_messages_waiting_count, banner.count, banner.count)
-        is ScheduledMessagesBanner.Pending -> if (isInThread) {
-            pluralStringResource(R.plurals.scheduled_messages_replies_count, banner.count, banner.count)
-        } else {
-            pluralStringResource(R.plurals.scheduled_messages_count, banner.count, banner.count)
-        }
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag("Stream_ScheduledMessagesBanner")
-            // Opaque, as the message list scrolls under the header.
-            .background(ChatTheme.colors.backgroundCoreApp)
-            .background(accent.copy(alpha = BannerBackgroundAlpha))
-            .clickable(
-                interactionSource = null,
-                indication = ripple(),
-                onClick = onClick,
-            )
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Icon(modifier = Modifier.size(16.dp), painter = painterResource(icon), contentDescription = null, tint = accent)
-        Text(
-            modifier = Modifier.weight(1f),
-            text = text,
-            style = ChatTheme.typography.captionEmphasis,
-            color = ChatTheme.colors.textPrimary,
-        )
-        Text(
-            text = stringResource(R.string.scheduled_messages_view),
-            style = ChatTheme.typography.captionEmphasis,
-            color = ChatTheme.colors.accentPrimary,
         )
     }
 }
@@ -486,6 +407,5 @@ private fun MessagePreview(title: String, text: String, modifier: Modifier = Mod
     }
 }
 
-private const val BannerBackgroundAlpha = 0.08f
 private const val KeyboardHideTimeoutMs = 500L
 private val SnackbarBottomPadding = 72.dp

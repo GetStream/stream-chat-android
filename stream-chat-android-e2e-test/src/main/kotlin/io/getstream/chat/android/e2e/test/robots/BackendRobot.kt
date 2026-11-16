@@ -185,10 +185,12 @@ public class BackendRobot(
      * rejected with `scheduled_limit_channel`.
      *
      * @param limit The limit per channel.
+     * @param inConfig Whether the channel config tells the new limit, so the app knows it from the
+     * channels it queries afterwards. When false, the config keeps the default limit.
      */
-    public fun setScheduledMessagesLimit(limit: Int): BackendRobot {
+    public fun setScheduledMessagesLimit(limit: Int, inConfig: Boolean = false): BackendRobot {
         waitForMockServerToStart()
-        mockServer.postRequest("scheduled_messages_limit?limit=$limit")
+        mockServer.postRequest("scheduled_messages_limit?limit=$limit&in_config=$inConfig")
         return this
     }
 

@@ -2682,6 +2682,52 @@ public final class io/getstream/chat/android/ui/common/state/messages/composer/S
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract class io/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState {
+	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$Failed : io/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$Failed;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$Failed;IILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$Failed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$LimitReached : io/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState {
+	public static final field $stable I
+	public fun <init> (II)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$LimitReached;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$LimitReached;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$LimitReached;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCount ()I
+	public final fun getLimit ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$Scheduled : io/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState {
+	public static final field $stable I
+	public fun <init> (ILjava/util/Date;Z)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Z
+	public final fun copy (ILjava/util/Date;Z)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$Scheduled;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$Scheduled;ILjava/util/Date;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/ScheduledMessagesBannerState$Scheduled;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCount ()I
+	public final fun getNextScheduledAt ()Ljava/util/Date;
+	public fun hashCode ()I
+	public final fun isInThread ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract class io/getstream/chat/android/ui/common/state/messages/composer/ValidationError {
 	public static final field $stable I
 }
