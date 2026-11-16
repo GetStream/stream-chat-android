@@ -28,12 +28,14 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ScheduledMessagesBannerParams
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
@@ -56,6 +58,30 @@ internal class ScheduledMessagesBannerScreenTest {
             .assert(SemanticsMatcher.keyIsDefined(SemanticsActions.OnClick))
             .performClick()
         composeTestRule.onNodeWithText("2 failed to send", useUnmergedTree = true).assertExists()
+        composeTestRule.onNodeWithText("View all", useUnmergedTree = true).assertExists()
+        assertEquals(1, clicks)
+    }
+
+    @Test
+    fun `the default component factory shows the banner and passes the click through`() {
+        var clicks = 0
+        composeTestRule.setContent {
+            ChatTheme {
+                ChatTheme.componentFactory.ScheduledMessagesBanner(
+                    params = ScheduledMessagesBannerParams(
+                        state = ScheduledMessagesBannerState.Scheduled(
+                            count = 3,
+                            nextScheduledAt = Date(),
+                            isInThread = false,
+                        ),
+                        onClick = { clicks++ },
+                    ),
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag(BannerTag).performClick()
+        composeTestRule.onNodeWithText("3 scheduled messages", useUnmergedTree = true).assertExists()
         composeTestRule.onNodeWithText("View all", useUnmergedTree = true).assertExists()
         assertEquals(1, clicks)
     }
