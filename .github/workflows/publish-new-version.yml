@@ -49,13 +49,14 @@ jobs:
     permissions:
       contents: write
     needs: pre_release_check
-    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@5821f7fdb8d656443b89fb0e28e219ba977cfe6a # v1.1.3
+    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@543e0270bcdecc42343240aa419367d742978270 # GetStream/stream-build-conventions-android#97, replace with the release
     with:
+      release-bot-app-id: ${{ vars.ANDROID_RELEASE_BOT_APP_ID }}
       bump: ${{ inputs.bump }}
       suffix: ${{ inputs.suffix }}
       publish-targets: ${{ inputs.publish-targets }}
     secrets:
-      github-token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+      release-bot-private-key: ${{ secrets.ANDROID_RELEASE_BOT_PRIVATE_KEY }}
       maven-central-username: ${{ secrets.OSSRH_USERNAME }}
       maven-central-password: ${{ secrets.OSSRH_PASSWORD }}
       signing-key: ${{ secrets.SIGNING_KEY }}
