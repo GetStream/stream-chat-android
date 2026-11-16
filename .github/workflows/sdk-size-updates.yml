@@ -13,12 +13,13 @@ concurrency:
 
 jobs:
   update-sdk-sizes:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@7569373df3b2794433d78371ed6b395ba2e897a6 # v1.1.2
+    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@500ef3b1a9a1823213f37cf269ef409042f7c7d2 # v1.2.0
     with:
+      release-bot-client-id: ${{ vars.ANDROID_RELEASE_BOT_CLIENT_ID }}
       modules: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
       metrics-project: "stream-chat-android-metrics"
     secrets:
-      GITHUB_PAT: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+      release-bot-private-key: ${{ secrets.ANDROID_RELEASE_BOT_PRIVATE_KEY }}
       BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
       BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
       BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
