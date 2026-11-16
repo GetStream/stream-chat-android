@@ -21,10 +21,10 @@ jobs:
       - name: Run Detekt Baseline
         run: ./gradlew detektBaseline
       # Minted after the build, and a PR opened with it runs CI, unlike one opened with GITHUB_TOKEN.
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3.3.0
         id: generate-token
         with:
-          app-id: ${{ vars.ANDROID_RELEASE_BOT_APP_ID }}
+          client-id: ${{ vars.ANDROID_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.ANDROID_RELEASE_BOT_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
