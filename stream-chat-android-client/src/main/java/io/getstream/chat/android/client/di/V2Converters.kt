@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.di
 
-import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.parser2.withErrorLogging
 import io.getstream.chat.android.network.infrastructure.QueryConverterFactory
 import io.getstream.chat.android.network.infrastructure.Serializer
@@ -28,6 +27,5 @@ import retrofit2.converter.moshi.MoshiConverterFactory
  * query parameter through `toString()`.
  */
 internal fun Retrofit.Builder.addV2Converters(): Retrofit.Builder = this
-    .addConverterFactory(MoshiUrlQueryPayloadFactory(Serializer.moshi))
     .addConverterFactory(QueryConverterFactory(Serializer.moshi))
     .addConverterFactory(MoshiConverterFactory.create(Serializer.moshi).withErrorLogging())

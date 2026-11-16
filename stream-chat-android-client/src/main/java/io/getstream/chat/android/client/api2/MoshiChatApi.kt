@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
@@ -228,7 +227,6 @@ constructor(
     private val dtoMapping: DtoMapping,
     private val fileUploader: FileUploader,
     private val fileTransformer: FileTransformer,
-    private val userApi: UserApi,
     private val channelApi: ChannelApi,
     private val v2EventParser: V2EventParser,
     private val moderationV1Api: ModerationV1Api,
@@ -1707,10 +1705,7 @@ constructor(
             presence = queryUsers.presence,
         )
         val lazyQueryUsersCall = {
-            userApi.queryUsers(
-                connectionId,
-                request,
-            ).mapDomain { response ->
+            endpoint { queryUsers(connectionId = connectionId, payload = JsonQuery(request)) }.mapDomain { response ->
                 response.users.map {
                     it.toDomain()
                 }
