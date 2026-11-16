@@ -155,6 +155,8 @@ if grep -q "// Patched:" "$VENDORED_API"; then
   echo "Kept (patched): apis/ChatEndpoints.kt"
 else
   awk -v out="$BUILD_DIR/ChatEndpoints.kt" '
+    # A file that ends inside a function did not parse.
+    FNR == 1 && inside { unterminated[ARGV[1]] = 1; inside = 0 }
     # A function runs from its KDoc, or its method annotation when it has none, to the line closing its parameters.
     !inside && (/^    \/\*\*/ || /^    @(GET|POST|PUT|PATCH|DELETE)\(/) {
       inside = 1; block = ""; name = ""; body = "nobody"; started[FILENAME] = 1
@@ -169,13 +171,17 @@ else
     }
     name != "" && /\): / {
       inside = 0
+      completed[FILENAME]++
       key = name " " body
       if (FILENAME == ARGV[1]) { if (!(key in vendored)) { vendored[key] = block; order[++count] = key } }
       else if ((key in vendored) && !(key in generated)) generated[key] = block
     }
     END {
-      if (!count) { print "No functions parsed from " ARGV[1] > "/dev/stderr"; exit 1 }
-      if (!started[ARGV[2]]) { print "No functions parsed from " ARGV[2] > "/dev/stderr"; exit 1 }
+      if (inside) unterminated[FILENAME] = 1
+      for (i = 1; i <= 2; i++) {
+        if (ARGV[i] in unterminated) { print "Unterminated function at the end of " ARGV[i] > "/dev/stderr"; exit 1 }
+        if (!completed[ARGV[i]]) { print "No functions parsed from " ARGV[i] > "/dev/stderr"; exit 1 }
+      }
       printf "%s", header > out
       for (i = 1; i <= count; i++) {
         key = order[i]
