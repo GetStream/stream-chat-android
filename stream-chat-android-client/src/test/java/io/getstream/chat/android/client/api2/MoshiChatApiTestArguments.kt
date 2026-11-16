@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.Mother.toChannelStateResponse
 import io.getstream.chat.android.client.api.FakeResponse
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.parser2.GetMessageResponseParityTest
@@ -108,6 +109,7 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.params.provider.Arguments
 import org.mockito.kotlin.any
 import org.mockito.kotlin.wheneverBlocking
+import java.util.Date
 
 @Suppress("UNUSED", "LargeClass")
 internal object MoshiChatApiTestArguments {
@@ -292,23 +294,19 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryBannedUsersInput() = listOf(
         Arguments.of(
-            RetroSuccess(
-                QueryBannedUsersResponse(duration = randomString(), bans = listOf(Mother.randomBanResponse())),
-            ).toRetrofitCall(),
+            QueryBannedUsersResponse(duration = randomString(), bans = listOf(Mother.randomBanResponse())),
             Result.Success::class,
         ),
         Arguments.of(
-            RetroError<QueryBannedUsersResponse>(statusCode = 500).toRetrofitCall(),
+            RetroError<QueryBannedUsersResponse>(statusCode = 500).toHttpException(),
             Result.Failure::class,
         ),
         // A ban the mapper cannot map fails the whole call rather than being dropped from the list.
         Arguments.of(
-            RetroSuccess(
-                QueryBannedUsersResponse(
-                    duration = randomString(),
-                    bans = listOf(Mother.randomBanResponse(user = null)),
-                ),
-            ).toRetrofitCall(),
+            QueryBannedUsersResponse(
+                duration = randomString(),
+                bans = listOf(Mother.randomBanResponse(user = null)),
+            ),
             Result.Failure::class,
         ),
     )
@@ -320,10 +318,37 @@ internal object MoshiChatApiTestArguments {
     fun disableSlowModeInput() = updateChannelPartialResponseArguments()
 
     @JvmStatic
-    fun stopWatchingInput() = completableResponseArguments()
+    fun stopWatchingInput() = endpointArgs(Response(""))
 
     @JvmStatic
     fun getPinnedMessagesInput() = pinnedMessagesResponseArguments()
+
+    // Each pagination sets exactly one bound, under the query parameter the backend reads it from.
+    @JvmStatic
+    fun getPinnedMessagesPaginationInput() = listOf(
+        Arguments.of(PinnedMessagesPagination.AroundMessage("m"), mapOf("id_around" to "m")),
+        Arguments.of(PinnedMessagesPagination.BeforeMessage("m", inclusive = true), mapOf("id_lte" to "m")),
+        Arguments.of(PinnedMessagesPagination.BeforeMessage("m", inclusive = false), mapOf("id_lt" to "m")),
+        Arguments.of(PinnedMessagesPagination.AfterMessage("m", inclusive = true), mapOf("id_gte" to "m")),
+        Arguments.of(PinnedMessagesPagination.AfterMessage("m", inclusive = false), mapOf("id_gt" to "m")),
+        Arguments.of(PinnedMessagesPagination.AroundDate(PINNED_AT), mapOf("pinned_at_around" to PINNED_AT)),
+        Arguments.of(
+            PinnedMessagesPagination.BeforeDate(PINNED_AT, inclusive = true),
+            mapOf("pinned_at_before_or_equal" to PINNED_AT),
+        ),
+        Arguments.of(
+            PinnedMessagesPagination.BeforeDate(PINNED_AT, inclusive = false),
+            mapOf("pinned_at_before" to PINNED_AT),
+        ),
+        Arguments.of(
+            PinnedMessagesPagination.AfterDate(PINNED_AT, inclusive = true),
+            mapOf("pinned_at_after_or_equal" to PINNED_AT),
+        ),
+        Arguments.of(
+            PinnedMessagesPagination.AfterDate(PINNED_AT, inclusive = false),
+            mapOf("pinned_at_after" to PINNED_AT),
+        ),
+    )
 
     @JvmStatic
     fun updateChannelInput() = updateChannelResponseArguments()
@@ -398,8 +423,8 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun getNewerRepliesInput() = listOf(
-        Arguments.of(RetroSuccess(randomRepliesResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<GetRepliesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(randomRepliesResponse(), Result.Success::class),
+        Arguments.of(RetroError<GetRepliesResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -584,12 +609,10 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryMembersInput() = listOf(
         Arguments.of(
-            RetroSuccess(
-                MembersResponse(duration = randomString(), members = listOf(Mother.randomChannelMemberResponse())),
-            ).toRetrofitCall(),
+            MembersResponse(duration = randomString(), members = listOf(Mother.randomChannelMemberResponse())),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<MembersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<MembersResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -900,12 +923,10 @@ internal object MoshiChatApiTestArguments {
 
     private fun pinnedMessagesResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(
-                GetPinnedMessagesResponse(duration = "1ms", messages = listOf(Mother.randomMessageResponse())),
-            ).toRetrofitCall(),
+            GetPinnedMessagesResponse(duration = "1ms", messages = listOf(Mother.randomMessageResponse())),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<GetPinnedMessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetPinnedMessagesResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     private fun updateUsersResponseArguments(): List<Arguments> {
@@ -924,18 +945,16 @@ internal object MoshiChatApiTestArguments {
 
     private fun searchMessagesResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(
-                SearchResponse(
-                    duration = randomString(),
-                    results = listOf(SearchResult(Mother.randomSearchResultMessage())),
-                    next = randomString(),
-                    previous = randomString(),
-                    resultsWarning = Mother.randomSearchWarningResponse(),
-                ),
-            ).toRetrofitCall(),
+            SearchResponse(
+                duration = randomString(),
+                results = listOf(SearchResult(Mother.randomSearchResultMessage())),
+                next = randomString(),
+                previous = randomString(),
+                resultsWarning = Mother.randomSearchWarningResponse(),
+            ),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<SearchResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<SearchResponse>(statusCode = 500).toHttpException(), Result.Failure::class),
     )
 
     private fun threadResponseArguments() = listOf(
@@ -1010,4 +1029,6 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun searchRolesInput() =
         endpointArgs(SearchRolesResponse(duration = randomString(), roles = listOf(Mother.randomRoleDto())))
+
+    private val PINNED_AT = Date(1_762_778_096_789)
 }
