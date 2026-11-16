@@ -1172,6 +1172,8 @@ HSPLio/getstream/chat/android/client/di/ChatModule$buildV2RetrofitApi$1;-><clini
 HSPLio/getstream/chat/android/client/di/ChatModule$buildV2RetrofitApi$1;-><init>()V
 HSPLio/getstream/chat/android/client/di/ChatModule$buildV2RetrofitApi$1;->invoke(Ljava/lang/Object;)Ljava/lang/Object;
 HSPLio/getstream/chat/android/client/di/ChatModule$buildV2RetrofitApi$1;->invoke(Lretrofit2/Retrofit$Builder;)Lretrofit2/Retrofit$Builder;
+Lio/getstream/chat/android/client/di/V2ConvertersKt;
+HSPLio/getstream/chat/android/client/di/V2ConvertersKt;->addV2Converters(Lretrofit2/Retrofit$Builder;)Lretrofit2/Retrofit$Builder;
 Lio/getstream/chat/android/client/errorhandler/factory/ErrorHandlerFactory;
 PLio/getstream/chat/android/client/errors/ChatErrorKt;->extractCause(Lio/getstream/result/Error;)Ljava/lang/Throwable;
 Lio/getstream/chat/android/client/events/AnswerCastedEvent;
@@ -5077,6 +5079,9 @@ HPLio/getstream/chat/android/network/infrastructure/IsoDateAdapter;->toJson$stre
 Lio/getstream/chat/android/network/infrastructure/IsoDateAdapter$Companion;
 HSPLio/getstream/chat/android/network/infrastructure/IsoDateAdapter$Companion;-><init>()V
 HSPLio/getstream/chat/android/network/infrastructure/IsoDateAdapter$Companion;-><init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+Lio/getstream/chat/android/network/infrastructure/QueryConverterFactory;
+HSPLio/getstream/chat/android/network/infrastructure/QueryConverterFactory;-><init>(Lcom/squareup/moshi/Moshi;)V
+HSPLio/getstream/chat/android/network/infrastructure/QueryConverterFactory;->stringConverter(Ljava/lang/reflect/Type;[Ljava/lang/annotation/Annotation;Lretrofit2/Retrofit;)Lretrofit2/Converter;
 Lio/getstream/chat/android/network/infrastructure/Serializer;
 HSPLio/getstream/chat/android/network/infrastructure/Serializer;->$r8$lambda$BV_0pCeju7S0hLeBBoIl2UBwNf8()Lcom/squareup/moshi/Moshi;
 HSPLio/getstream/chat/android/network/infrastructure/Serializer;-><clinit>()V
