@@ -11,14 +11,13 @@ concurrency:
 jobs:
   release:
     permissions:
-      contents: write
-    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@5821f7fdb8d656443b89fb0e28e219ba977cfe6a # v1.1.3
+      contents: read
+    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@500ef3b1a9a1823213f37cf269ef409042f7c7d2 # v1.2.0
     with:
       bump: patch
       snapshot: true
       publish-targets: streamRepo
     secrets:
-      github-token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
       maven-central-username: ${{ secrets.OSSRH_USERNAME }}
       maven-central-password: ${{ secrets.OSSRH_PASSWORD }}
       signing-key: ${{ secrets.SIGNING_KEY }}
