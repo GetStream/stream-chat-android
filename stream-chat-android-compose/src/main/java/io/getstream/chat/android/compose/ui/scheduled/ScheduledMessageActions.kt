@@ -86,11 +86,10 @@ internal fun ScheduledMessageActionsContent(
 ) {
     Column(modifier = modifier) {
         actions.forEach { action ->
-            action.content()?.let { (icon, label) ->
+            action.content()?.let { content ->
                 ScheduledMessageActionItem(
                     action = action,
-                    icon = icon,
-                    label = stringResource(label),
+                    content = content,
                     onClick = { onActionClick(action) },
                 )
             }
@@ -101,8 +100,7 @@ internal fun ScheduledMessageActionsContent(
 @Composable
 private fun ScheduledMessageActionItem(
     action: ScheduledMessageAction,
-    icon: Int,
-    label: String,
+    content: ActionContent,
     onClick: () -> Unit,
 ) {
     val color = if (action == ScheduledMessageAction.Delete) {
@@ -114,7 +112,7 @@ private fun ScheduledMessageActionItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(ActionItemHeight)
-            .testTag("Stream_ScheduledMessageAction_${action::class.simpleName}")
+            .testTag(content.testTag)
             .clickable(onClick = onClick)
             .padding(horizontal = StreamTokens.spacing2xs + StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
@@ -122,11 +120,11 @@ private fun ScheduledMessageActionItem(
     ) {
         Icon(
             modifier = Modifier.size(ActionIconSize),
-            painter = painterResource(icon),
+            painter = painterResource(content.icon),
             contentDescription = null,
             tint = color,
         )
-        Text(text = label, style = ChatTheme.typography.bodyDefault, color = color)
+        Text(text = stringResource(content.label), style = ChatTheme.typography.bodyDefault, color = color)
     }
 }
 
@@ -207,21 +205,44 @@ internal fun ScheduledMessageDeleteDialogContent(
 }
 
 /**
- * The icon and the label of the action, or null for an action this version does not know.
+ * The icon, the label and the test tag of an action.
  */
-private fun ScheduledMessageAction.content(): Pair<Int, Int>? = when (this) {
-    ScheduledMessageAction.Edit ->
-        R.drawable.stream_design_ic_edit to R.string.stream_compose_scheduled_message_action_edit
-    ScheduledMessageAction.EditAndReschedule ->
-        R.drawable.stream_design_ic_edit to R.string.stream_compose_scheduled_message_action_edit_and_reschedule
-    ScheduledMessageAction.Reschedule ->
-        R.drawable.stream_design_ic_clock to R.string.stream_compose_scheduled_message_action_reschedule
-    ScheduledMessageAction.SendNow ->
-        R.drawable.stream_design_ic_send to R.string.stream_compose_scheduled_message_action_send_now
-    ScheduledMessageAction.CopyText ->
-        R.drawable.stream_design_ic_copy to R.string.stream_compose_scheduled_message_action_copy_text
-    ScheduledMessageAction.Delete ->
-        R.drawable.stream_design_ic_delete to R.string.stream_compose_scheduled_message_action_delete
+private class ActionContent(val icon: Int, val label: Int, val testTag: String)
+
+/**
+ * The content of the action, or null for an action this version does not know.
+ */
+private fun ScheduledMessageAction.content(): ActionContent? = when (this) {
+    ScheduledMessageAction.Edit -> ActionContent(
+        icon = R.drawable.stream_design_ic_edit,
+        label = R.string.stream_compose_scheduled_message_action_edit,
+        testTag = "Stream_ScheduledMessageAction_Edit",
+    )
+    ScheduledMessageAction.EditAndReschedule -> ActionContent(
+        icon = R.drawable.stream_design_ic_edit,
+        label = R.string.stream_compose_scheduled_message_action_edit_and_reschedule,
+        testTag = "Stream_ScheduledMessageAction_EditAndReschedule",
+    )
+    ScheduledMessageAction.Reschedule -> ActionContent(
+        icon = R.drawable.stream_design_ic_clock,
+        label = R.string.stream_compose_scheduled_message_action_reschedule,
+        testTag = "Stream_ScheduledMessageAction_Reschedule",
+    )
+    ScheduledMessageAction.SendNow -> ActionContent(
+        icon = R.drawable.stream_design_ic_send,
+        label = R.string.stream_compose_scheduled_message_action_send_now,
+        testTag = "Stream_ScheduledMessageAction_SendNow",
+    )
+    ScheduledMessageAction.CopyText -> ActionContent(
+        icon = R.drawable.stream_design_ic_copy,
+        label = R.string.stream_compose_scheduled_message_action_copy_text,
+        testTag = "Stream_ScheduledMessageAction_CopyText",
+    )
+    ScheduledMessageAction.Delete -> ActionContent(
+        icon = R.drawable.stream_design_ic_delete,
+        label = R.string.stream_compose_scheduled_message_action_delete,
+        testTag = "Stream_ScheduledMessageAction_Delete",
+    )
     else -> null
 }
 

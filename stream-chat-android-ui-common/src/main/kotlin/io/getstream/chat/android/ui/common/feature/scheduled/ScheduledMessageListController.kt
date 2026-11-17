@@ -81,8 +81,9 @@ public class ScheduledMessageListController(
     private val ownScope = CoroutineScope(scope.coroutineContext + SupervisorJob(scope.coroutineContext[Job]))
     private val isLoadFailed = MutableStateFlow(false)
 
-    // Whether this controller loaded them once, so the list shows them, or that there are none.
-    private val hasLoaded = MutableStateFlow(false)
+    // Whether they were all loaded once, by this controller or before it, so the list shows them, or that there are
+    // none, also once the connection is lost.
+    private val hasLoaded = MutableStateFlow(cid == null && chatClient.hasLoadedAllScheduledMessages.value)
     private val channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
     private val quotedMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
 

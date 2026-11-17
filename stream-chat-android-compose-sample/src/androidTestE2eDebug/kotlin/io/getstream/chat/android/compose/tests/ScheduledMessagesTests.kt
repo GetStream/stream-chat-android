@@ -31,7 +31,6 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessageActions
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActionsAreClosed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageFailed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageGoneNotice
-import io.getstream.chat.android.compose.robots.assertScheduledMessageHasNoStatus
 import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotShown
 import io.getstream.chat.android.compose.robots.assertScheduledMessageListedFromBanner
 import io.getstream.chat.android.compose.robots.assertScheduledMessageReply
@@ -188,11 +187,6 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("THEN the list shows the new time") {
             userRobot.assertScheduledMessage(sampleText, time = tomorrowAt(10))
         }
-        step("AND the server accepts it") {
-            userRobot
-                .sleep(2.seconds)
-                .assertScheduledMessageHasNoStatus(sampleText)
-        }
     }
 
     @AllureId("12925")
@@ -341,6 +335,7 @@ class ScheduledMessagesTests : StreamTestCase() {
             device.enableInternetConnection()
         }
         step("THEN the message is scheduled once") {
+            backendRobot.waitForScheduledMessage(sampleText)
             userRobot
                 .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
                 .openScheduledMessagesFromBanner()

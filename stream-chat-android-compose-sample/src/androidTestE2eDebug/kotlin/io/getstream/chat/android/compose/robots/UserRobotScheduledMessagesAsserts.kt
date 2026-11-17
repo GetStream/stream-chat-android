@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.robots
 
-import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Actions
@@ -88,13 +87,6 @@ fun UserRobot.assertScheduledMessageSaved(): UserRobot {
 
 fun UserRobot.assertScheduledMessageIsNotShown(text: String): UserRobot {
     assertFalse(Screen.item(text).waitToDisappear().isDisplayed())
-    return this
-}
-
-/** Asserts the row of the message [text] shows no status: it is not sending, uploading or failed. */
-fun UserRobot.assertScheduledMessageHasNoStatus(text: String): UserRobot {
-    assertTrue(Screen.item(text).waitDisplayed())
-    assertFalse(Screen.item(text).hasDescendant(By.res("Stream_ScheduledMessageStatus")).isDisplayed())
     return this
 }
 

@@ -42,8 +42,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.messages.composer.schedule.formatFullDate
+import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Channel
@@ -101,10 +101,12 @@ internal fun ScheduledMessageItem(
                 maxLines = 1,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm)) {
-                ChannelAvatar(
-                    modifier = Modifier.size(AvatarSize.ExtraLarge),
-                    channel = item.channel ?: item.channelFromSummary(),
-                    currentUser = currentUser,
+                ChatTheme.componentFactory.ChannelAvatar(
+                    params = ChannelAvatarParams(
+                        channel = item.channel ?: item.channelFromSummary(),
+                        modifier = Modifier.size(AvatarSize.ExtraLarge),
+                        currentUser = currentUser,
+                    ),
                 )
                 Column(
                     modifier = Modifier.weight(1f),

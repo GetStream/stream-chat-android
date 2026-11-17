@@ -245,6 +245,18 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
+    fun `when the client already has them all, losing the connection keeps showing that there are none`() = runTest {
+        hasLoadedAll.value = true
+        val controller = controller()
+
+        connectionState.value = ConnectionState.Offline
+        hasLoadedAll.value = false
+
+        controller.state.value.isLoading shouldBeEqualTo false
+        controller.state.value.isLoadFailed shouldBeEqualTo false
+    }
+
+    @Test
     fun `offline with nothing known, the messages can't load`() = runTest {
         connectionState.value = ConnectionState.Offline
 
