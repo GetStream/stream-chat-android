@@ -82,11 +82,13 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -428,6 +430,43 @@ internal class SyncManagerTest {
             assertEquals(events, awaitItem())
         }
         verify(chatClient, never()).queryChannelsInternal(any<QueryChannelsRequest>())
+    }
+
+    @Test
+    fun `performSync stores the cursor only after the events are replayed`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = localDate()
+        givenOversizedSyncPayload(eventCount = 2, createdAt, streamDateFormatter.format(createdAt))
+        val previousSyncedAt = _syncState.value?.lastSyncedAt
+        var cursorDuringReplay: Date? = null
+        val replay = launch { _syncEvents.collect { cursorDuringReplay = _syncState.value?.lastSyncedAt } }
+
+        /* When */
+        buildSyncManager(eventReplayMaxCount = 2).performSync(cids = listOf("1", "2"))
+        replay.cancel()
+
+        /* Then */
+        assertEquals(previousSyncedAt, cursorDuringReplay)
+        assertEquals(createdAt, _syncState.value?.lastSyncedAt)
+    }
+
+    @Test
+    fun `performSync keeps the cursor when the replay is cancelled`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = localDate()
+        givenOversizedSyncPayload(eventCount = 2, createdAt, streamDateFormatter.format(createdAt))
+        val previousSyncedAt = _syncState.value?.lastSyncedAt
+        val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+        val sync = launch(start = CoroutineStart.LAZY) { syncManager.performSync(cids = listOf("1", "2")) }
+        val replay = launch { _syncEvents.collect { sync.cancel() } }
+
+        /* When */
+        sync.join()
+        replay.cancel()
+
+        /* Then */
+        assertEquals(previousSyncedAt, _syncState.value?.lastSyncedAt)
+        verify(repositoryFacade, never()).insertSyncState(any())
     }
 
     @Test

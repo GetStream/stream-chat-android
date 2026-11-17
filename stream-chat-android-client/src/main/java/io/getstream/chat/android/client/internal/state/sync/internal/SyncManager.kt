@@ -73,7 +73,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -479,23 +481,25 @@ internal class SyncManager(
         val latestEvent = sortedEvents.lastOrNull()
         val latestEventDate = latestEvent?.createdAt ?: Date(now())
         val rawLatestEventDate = latestEvent?.rawCreatedAt
-        updateLastSyncedDate(latestEventDate, rawLatestEventDate)
         sortedEvents.forEach {
             if (it is MarkAllReadEvent) {
                 logger.v { "[performSync] found MarkAllReadEvent (in ${sortedEvents.size} events)" }
                 updateAllReadStateForDate(it.user.id, it.createdAt)
             }
         }
-        if (sortedEvents.isEmpty()) {
-            logger.w { "[performSync] rejected (no events to emit)" }
-            return SyncOutcome(syncedCids = syncedCids)
+        when {
+            sortedEvents.isEmpty() -> logger.w { "[performSync] rejected (no events to emit)" }
+            sameInstant(rawLastSyncAt, rawLatestEventDate) ->
+                logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
+            else -> {
+                events.emit(sortedEvents)
+                // The emission swallows a cancellation, and a replay that was cut short must be requested again.
+                currentCoroutineContext().ensureActive()
+                logger.v { "[performSync] events emission completed" }
+            }
         }
-        if (sameInstant(rawLastSyncAt, rawLatestEventDate)) {
-            logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
-            return SyncOutcome(syncedCids = syncedCids)
-        }
-        events.emit(sortedEvents)
-        logger.v { "[performSync] events emission completed" }
+        // Stored after the replay, so events that were not applied are requested again by the next sync.
+        updateLastSyncedDate(latestEventDate, rawLatestEventDate)
         return SyncOutcome(syncedCids = syncedCids)
     }
 
