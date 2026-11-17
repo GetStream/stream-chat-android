@@ -1083,7 +1083,10 @@ internal class SyncManagerTest {
         val reaction = randomReaction(deletedAt = Date(0), syncStatus = SyncStatus.SYNC_NEEDED)
         whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(1)
         whenever(repositoryFacade.selectReactionById(1)) doReturn reaction
-        val channelLogic: ChannelLogic = mock()
+        // The server copy of the message still has the reaction.
+        val message = randomMessage(id = reaction.messageId, ownReactions = listOf(reaction.copy(deletedAt = null)))
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val channelLogic: ChannelLogic = mock { on(it.getMessage(message.id)) doReturn message }
         whenever(logicRegistry.channelFromMessageId(reaction.messageId)) doReturn channelLogic
 
         val sut = buildSyncManager()
