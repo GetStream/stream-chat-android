@@ -33,7 +33,8 @@ import kotlin.reflect.KProperty1
  */
 @Deprecated(
     message = "Use QuerySortByField, which reads fields by name through ComparableFieldProvider instead of " +
-        "reflection. Every model the SDK sorts implements it, custom data included.",
+        "reflection. Every model the SDK sorts implements it, custom data included. " +
+        "It will be removed in the next major version.",
 )
 @Suppress("TooManyFunctions", "DEPRECATION")
 public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
@@ -211,7 +212,7 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
          * @param fieldName Field name.
          */
         @Deprecated(
-            message = "Use QuerySortByField.ascByName.",
+            message = "Use QuerySortByField.ascByName. It will be removed in the next major version.",
             replaceWith = ReplaceWith(
                 "QuerySortByField.ascByName<T>(fieldName)",
                 "io.getstream.chat.android.models.querysort.QuerySortByField",
@@ -226,7 +227,7 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
          * @param fieldName Field name.
          */
         @Deprecated(
-            message = "Use QuerySortByField.descByName.",
+            message = "Use QuerySortByField.descByName. It will be removed in the next major version.",
             replaceWith = ReplaceWith(
                 "QuerySortByField.descByName<R>(fieldName)",
                 "io.getstream.chat.android.models.querysort.QuerySortByField",
@@ -240,7 +241,10 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
          *
          * @param field [KProperty1] from the class.
          */
-        @Deprecated("Use QuerySortByField.ascByName with the field's name, such as \"member_count\".")
+        @Deprecated(
+            "Use QuerySortByField.ascByName with the field's name, such as \"member_count\". " +
+                "It will be removed in the next major version.",
+        )
         public fun <T : Any> asc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> =
             QuerySortByReflection<T>().asc(field)
 
@@ -249,7 +253,10 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
          *
          * @param field [KProperty1] from the class.
          */
-        @Deprecated("Use QuerySortByField.descByName with the field's name, such as \"member_count\".")
+        @Deprecated(
+            "Use QuerySortByField.descByName with the field's name, such as \"member_count\". " +
+                "It will be removed in the next major version.",
+        )
         public fun <T : Any> desc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> =
             QuerySortByReflection<T>().desc(field)
     }
