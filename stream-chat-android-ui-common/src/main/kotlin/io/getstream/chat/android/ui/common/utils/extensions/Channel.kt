@@ -145,12 +145,11 @@ public fun Channel.getMembersStatusText(
                 memberCount,
             )
 
-            val onlineCount = members.count { member ->
-                member.user.online && when {
-                    member.user.id == currentUser?.id -> countCurrentUserAsOnlineMember
-                    else -> countOtherUsersAsOnlineMembers
-                }
-            }
+            val onlineCount = members.countOnline(
+                currentUserId = currentUser?.id,
+                countCurrentUser = countCurrentUserAsOnlineMember,
+                countOthers = countOtherUsersAsOnlineMembers,
+            )
 
             return if (onlineCount > 0) {
                 context.getString(
