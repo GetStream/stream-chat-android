@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package io.getstream.chat.android.client.internal.state.errorhandler.internal
 
 import io.getstream.chat.android.models.FilterObject
