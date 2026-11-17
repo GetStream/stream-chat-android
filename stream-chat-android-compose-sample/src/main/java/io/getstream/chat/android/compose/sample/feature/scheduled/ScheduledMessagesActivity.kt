@@ -20,42 +20,40 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
+import io.getstream.chat.android.compose.ui.scheduled.ScheduledMessagesScreen
 import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageFailure
 
-/**
- * Lists the current user's scheduled messages.
- */
 class ScheduledMessagesActivity : ComponentActivity() {
-
-    private val viewModel: ScheduledMessagesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SampleChatTheme {
-                ScheduledMessagesScreen(
-                    modifier = Modifier.statusBarsPadding(),
-                    viewModel = viewModel,
-                    onEditClick = ::openEditor,
-                    onBack = ::finish,
-                )
+                Box(modifier = Modifier.systemBarsPadding()) {
+                    ScheduledMessagesScreen(
+                        onBackPressed = ::finish,
+                        onEditClick = ::openEditor,
+                    )
+                }
             }
         }
     }
 
-    private fun openEditor(scheduledMessage: ScheduledMessage, isScheduledAgain: Boolean) {
+    private fun openEditor(scheduledMessage: ScheduledMessage) {
         startActivity(
             ChannelActivity.createIntent(
                 context = this,
                 channelId = scheduledMessage.cid,
                 parentMessageId = scheduledMessage.message.parentId,
                 scheduledMessageId = scheduledMessage.id,
-                isScheduledAgain = isScheduledAgain,
+                // The server can't edit a message it failed to send: it is scheduled again as a new message.
+                isScheduledAgain = scheduledMessage.failure is ScheduledMessageFailure.ServerFailedPublishing,
             ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), // Replaces the channel screen this one was opened from, if any.
         )
     }

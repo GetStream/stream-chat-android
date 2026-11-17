@@ -206,20 +206,34 @@ class UserRobot {
     fun sendScheduledMessageNow(text: String): UserRobot {
         openScheduledMessageActions(text)
         ScheduledMessagesPage.Actions.sendNow.waitToAppearAndClick()
-        ScheduledMessagesPage.Screen.dialogConfirmButton.waitToAppearAndClick()
         return this
     }
 
     fun deleteScheduledMessage(text: String): UserRobot {
         openScheduledMessageActions(text)
         ScheduledMessagesPage.Actions.delete.waitToAppearAndClick()
-        ScheduledMessagesPage.Screen.dialogConfirmButton.waitToAppearAndClick()
+        ScheduledMessagesPage.DeleteDialog.confirmButton.waitToAppearAndClick()
         return this
     }
 
-    fun retryScheduledMessage(text: String): UserRobot {
+    /** Copies the text of the scheduled message [text], whose channel was deleted. */
+    fun copyScheduledMessageText(text: String): UserRobot {
         openScheduledMessageActions(text)
-        ScheduledMessagesPage.Actions.retry.waitToAppearAndClick()
+        ScheduledMessagesPage.Actions.copyText.waitToAppearAndClick()
+        return this
+    }
+
+    /** Taps the row of the scheduled message [text], whatever it shows. */
+    fun tapScheduledMessage(text: String): UserRobot {
+        ScheduledMessagesPage.Screen.item(text).waitToAppearAndClick()
+        return this
+    }
+
+    /** Reschedules the failed message [text] at the date it had, which sends its changes again. */
+    fun rescheduleScheduledMessageAtItsDate(text: String): UserRobot {
+        openScheduledMessageActions(text)
+        ScheduledMessagesPage.Actions.reschedule.waitToAppearAndClick()
+        ScheduledMessagesPage.ScheduleTimeSheet.confirmButton.waitToAppearAndClick()
         return this
     }
 

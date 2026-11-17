@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.tests
 import android.text.format.DateFormat
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Actions
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Banner
+import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Screen
 import io.getstream.chat.android.compose.robots.assertMessage
 import io.getstream.chat.android.compose.robots.assertMessageCount
 import io.getstream.chat.android.compose.robots.assertMessageWithImage
@@ -27,14 +28,19 @@ import io.getstream.chat.android.compose.robots.assertScheduleSheetLimitReached
 import io.getstream.chat.android.compose.robots.assertScheduleTimeSheetError
 import io.getstream.chat.android.compose.robots.assertScheduledMessage
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActions
+import io.getstream.chat.android.compose.robots.assertScheduledMessageActionsAreClosed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageFailed
+import io.getstream.chat.android.compose.robots.assertScheduledMessageGoneNotice
+import io.getstream.chat.android.compose.robots.assertScheduledMessageHasNoStatus
 import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotShown
-import io.getstream.chat.android.compose.robots.assertScheduledMessageOnServer
+import io.getstream.chat.android.compose.robots.assertScheduledMessageListedFromBanner
+import io.getstream.chat.android.compose.robots.assertScheduledMessageReply
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSaved
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSentSnackbar
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesAreEmpty
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBanner
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBannerIsHidden
+import io.getstream.chat.android.compose.robots.assertScheduledMessagesLoadFailed
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesScreen
 import io.getstream.chat.android.compose.robots.assertThreadMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
@@ -52,7 +58,6 @@ import org.junit.Test
 import java.util.Calendar
 import java.util.Date
 import io.getstream.chat.android.compose.R as ComposeR
-import io.getstream.chat.android.compose.sample.R as SampleR
 
 /**
  * Covers scheduled messages in the sample: a long press on send schedules the message for
@@ -118,9 +123,8 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot.login().openChannel().scheduleMessage(sampleText)
         }
         step("AND the server has it") {
-            userRobot
-                .assertScheduledMessageOnServer(sampleText)
-                .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
+            backendRobot.waitForScheduledMessage(sampleText)
+            userRobot.assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
         }
         step("WHEN the time of the message comes") {
             backendRobot.sendScheduledMessages()
@@ -184,6 +188,11 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("THEN the list shows the new time") {
             userRobot.assertScheduledMessage(sampleText, time = tomorrowAt(10))
         }
+        step("AND the server accepts it") {
+            userRobot
+                .sleep(2.seconds)
+                .assertScheduledMessageHasNoStatus(sampleText)
+        }
     }
 
     @AllureId("12925")
@@ -216,7 +225,7 @@ class ScheduledMessagesTests : StreamTestCase() {
     @Test
     fun test_scheduledThreadReplyIsSentInTheThread() {
         val parentText = "Parent"
-        val threadReplyText = appContext.getString(SampleR.string.scheduled_messages_thread_reply, sampleText)
+        val threadReplyPreview = "${Screen.threadReplyPrefix} $sampleText"
         step("GIVEN user opens a thread") {
             userRobot
                 .login()
@@ -228,8 +237,9 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot.scheduleMessage(sampleText)
         }
         step("THEN the thread banner shows when the reply is sent, and the reply is not in the thread") {
+            backendRobot.waitForScheduledMessage(sampleText)
             userRobot
-                .assertScheduledMessageOnServer(threadReplyText)
+                .assertScheduledMessageListedFromBanner(threadReplyPreview)
                 .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
                 .assertMessage(sampleText, isDisplayed = false)
         }
@@ -256,8 +266,8 @@ class ScheduledMessagesTests : StreamTestCase() {
                 .scheduleComposerContent()
         }
         step("THEN the message is scheduled, and not in the channel") {
+            backendRobot.waitForScheduledMessage(sampleText)
             userRobot
-                .assertScheduledMessageOnServer(sampleText)
                 .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(9)))
                 .assertMessage(sampleText, isDisplayed = false)
         }
@@ -272,7 +282,7 @@ class ScheduledMessagesTests : StreamTestCase() {
     @AllureId("12928")
     @Test
     fun test_scheduledMessageWithFailedUploadIsRetried() {
-        val uploadFailed = appContext.getString(SampleR.string.scheduled_messages_failure_attachment_upload)
+        val uploadFailed = appContext.getString(ComposeR.string.stream_compose_scheduled_message_failure_upload)
         step("GIVEN uploads fail") {
             backendRobot.failUploads()
         }
@@ -292,13 +302,14 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("AND the list shows the upload failure") {
             userRobot
                 .openScheduledMessagesFromBanner()
-                .assertScheduledMessageFailed(uploadFailed)
+                .assertScheduledMessageFailed(sampleText, uploadFailed)
         }
-        step("WHEN uploads work again and user retries") {
+        step("WHEN uploads work again and user reschedules it at its date") {
             backendRobot.failUploads(enabled = false)
-            userRobot.retryScheduledMessage(uploadFailed)
+            userRobot.rescheduleScheduledMessageAtItsDate(sampleText)
         }
         step("THEN the message is scheduled") {
+            backendRobot.waitForScheduledMessage(sampleText)
             userRobot.assertScheduledMessage(sampleText, time = tomorrowAt(9))
         }
         step("WHEN the time of the message comes") {
@@ -354,7 +365,7 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot.login().openChannel().scheduleMessage(sampleText)
         }
         step("AND user goes to the background once the server has it") {
-            userRobot.assertScheduledMessageOnServer(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
             device.goToBackground()
             backendRobot.waitForWebSocketDisconnection()
         }
@@ -378,30 +389,30 @@ class ScheduledMessagesTests : StreamTestCase() {
     @AllureId("12931")
     @Test
     fun test_scheduledMessageFailedByTheServerCanOnlyBeScheduledAgainOrDeleted() {
-        val banned = appContext.getString(SampleR.string.scheduled_messages_failure_banned)
+        val banned = appContext.getString(ComposeR.string.stream_compose_scheduled_message_failure_banned)
         step("GIVEN user schedules a message") {
             userRobot.login().openChannel().scheduleMessage(sampleText)
         }
         step("WHEN the server fails to send it, as the user is banned") {
-            userRobot.assertScheduledMessageOnServer(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
             backendRobot.failScheduledMessage(failureReason = "banned")
         }
         step("THEN the list shows the reason") {
             userRobot
                 .assertScheduledMessagesBanner(Banner.failed(1))
                 .openScheduledMessagesFromBanner()
-                .assertScheduledMessageFailed(banned)
+                .assertScheduledMessageFailed(sampleText, banned)
         }
-        step("AND the message can't be edited, sent now or retried") {
+        step("AND the message can only be edited and scheduled again, or deleted") {
             userRobot
-                .openScheduledMessageActions(banned)
+                .openScheduledMessageActions(sampleText)
                 .assertScheduledMessageActions(
-                    shown = listOf(Actions.scheduleAgain, Actions.delete),
-                    hidden = listOf(Actions.edit, Actions.reschedule, Actions.sendNow, Actions.retry),
+                    shown = listOf(Actions.editAndReschedule, Actions.delete),
+                    hidden = listOf(Actions.edit, Actions.reschedule, Actions.sendNow),
                 )
         }
         step("WHEN user deletes it") {
-            userRobot.deleteScheduledMessage(banned)
+            userRobot.deleteScheduledMessage(sampleText)
         }
         step("THEN the message leaves the list") {
             userRobot.assertScheduledMessagesAreEmpty()
@@ -411,7 +422,7 @@ class ScheduledMessagesTests : StreamTestCase() {
     @AllureId("12932")
     @Test
     fun test_scheduledMessageOverTheChannelLimitFailsWithoutRetry() {
-        val limitReached = appContext.getString(SampleR.string.scheduled_messages_failure_limit_channel)
+        val limitReached = appContext.getString(ComposeR.string.stream_compose_scheduled_message_failure_limit_channel)
         step("GIVEN user can't schedule more messages in the channel") {
             backendRobot.setScheduledMessagesLimit(0)
         }
@@ -422,14 +433,14 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot
                 .assertScheduledMessagesBanner(Banner.failed(1))
                 .openScheduledMessagesFromBanner()
-                .assertScheduledMessageFailed(limitReached)
+                .assertScheduledMessageFailed(sampleText, limitReached)
         }
-        step("AND the message can't be retried") {
+        step("AND the message can be edited, rescheduled or deleted, but not sent now") {
             userRobot
-                .openScheduledMessageActions(limitReached)
+                .openScheduledMessageActions(sampleText)
                 .assertScheduledMessageActions(
-                    shown = listOf(Actions.edit, Actions.delete),
-                    hidden = listOf(Actions.retry),
+                    shown = listOf(Actions.edit, Actions.reschedule, Actions.delete),
+                    hidden = listOf(Actions.sendNow),
                 )
         }
     }
@@ -469,6 +480,117 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot
                 .openScheduledMessagesFromBanner()
                 .assertScheduledMessage(sampleText)
+        }
+    }
+
+    @Test
+    fun test_scheduledMessagesShowTheLoadErrorWhileOffline() {
+        step("GIVEN user is logged in") {
+            userRobot.login().waitForChannelListToLoad()
+        }
+        step("AND user goes offline") {
+            device.disableInternetConnection()
+        }
+        step("WHEN user opens the scheduled messages") {
+            userRobot.openScheduledMessages()
+        }
+        step("THEN the screen says they could not load, with Try again") {
+            userRobot.assertScheduledMessagesLoadFailed()
+        }
+        step("WHEN user comes back online") {
+            device.enableInternetConnection()
+        }
+        step("THEN the scheduled messages load") {
+            userRobot.assertScheduledMessagesAreEmpty()
+        }
+    }
+
+    @Test
+    fun test_scheduledMessageOfADeletedChannelCanOnlyBeCopiedOrDeleted() {
+        val channelDeleted =
+            appContext.getString(ComposeR.string.stream_compose_scheduled_message_failure_channel_deleted)
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("WHEN the server fails to send it, as the channel was deleted") {
+            backendRobot.failScheduledMessage(failureReason = "channel_deleted")
+        }
+        step("THEN the list shows the reason") {
+            userRobot
+                .assertScheduledMessagesBanner(Banner.failed(1))
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessageFailed(sampleText, channelDeleted)
+        }
+        step("AND its text can only be copied, or the message deleted") {
+            userRobot
+                .openScheduledMessageActions(sampleText)
+                .assertScheduledMessageActions(
+                    shown = listOf(Actions.copyText, Actions.delete),
+                    hidden = listOf(Actions.edit, Actions.editAndReschedule, Actions.reschedule, Actions.sendNow),
+                )
+        }
+    }
+
+    @Test
+    fun test_scheduledMessageSentWhileItsActionsAreOpenLeavesTheListWithANotice() {
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("AND user opens its actions in the scheduled messages") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .openScheduledMessageActions(sampleText)
+        }
+        step("WHEN the time of the message comes") {
+            backendRobot.sendScheduledMessages()
+        }
+        step("THEN the actions close, and a notice says the message was already sent") {
+            userRobot
+                .assertScheduledMessageActionsAreClosed()
+                .assertScheduledMessageGoneNotice()
+        }
+        step("AND the message left the list") {
+            userRobot.assertScheduledMessagesAreEmpty()
+        }
+    }
+
+    @Test
+    fun test_scheduledReplyToADeletedMessageCanOnlyBeEditedOrDeleted() {
+        val parentText = "Parent"
+        val quoteDeleted =
+            appContext.getString(ComposeR.string.stream_compose_scheduled_message_failure_quote_deleted)
+        step("GIVEN user schedules a reply to a message") {
+            userRobot
+                .login()
+                .openChannel()
+                .sendMessage(parentText)
+                .selectReplyFromContextMenu()
+                .scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("THEN the list shows that it is a reply") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessageReply(sampleText)
+                .pressBack()
+        }
+        step("WHEN user deletes the quoted message") {
+            userRobot.deleteMessage(parentText)
+        }
+        step("THEN the list says the quote was deleted") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessageFailed(sampleText, quoteDeleted)
+        }
+        step("AND the reply can only be edited or deleted") {
+            userRobot
+                .openScheduledMessageActions(sampleText)
+                .assertScheduledMessageActions(
+                    shown = listOf(Actions.edit, Actions.delete),
+                    hidden = listOf(Actions.reschedule, Actions.sendNow),
+                )
         }
     }
 

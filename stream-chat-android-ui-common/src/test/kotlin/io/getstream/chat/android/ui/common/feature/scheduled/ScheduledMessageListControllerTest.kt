@@ -1,0 +1,427 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.ui.common.feature.scheduled
+
+import app.cash.turbine.test
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.QueryScheduledMessagesResult
+import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageFailure
+import io.getstream.chat.android.models.ScheduledMessageFailure.LocalDeviceFailedScheduling
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPublishing
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
+import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomScheduledMessage
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction.CopyText
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction.Delete
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction.Edit
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction.EditAndReschedule
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction.Reschedule
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction.SendNow
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListEvent
+import io.getstream.result.Error
+import io.getstream.result.call.CoroutineCall
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEmpty
+import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.isNull
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import java.io.File
+import java.util.Date
+
+@ExtendWith(TestCoroutineExtension::class)
+internal class ScheduledMessageListControllerTest {
+
+    private lateinit var scheduledMessages: MutableStateFlow<List<ScheduledMessage>>
+    private lateinit var hasLoadedAll: MutableStateFlow<Boolean>
+    private lateinit var connectionState: MutableStateFlow<ConnectionState>
+    private lateinit var client: ChatClient
+    private lateinit var quotedMessages: MutableMap<String, Message>
+
+    @BeforeEach
+    fun setUp() {
+        scheduledMessages = MutableStateFlow(emptyList())
+        hasLoadedAll = MutableStateFlow(false)
+        connectionState = MutableStateFlow(ConnectionState.Connected)
+        quotedMessages = mutableMapOf()
+        val state: ClientState = mock {
+            on { connectionState } doReturn connectionState
+        }
+        client = mock {
+            on { scheduledMessages } doReturn scheduledMessages
+            on { hasLoadedAllScheduledMessages } doReturn hasLoadedAll
+            on { clientState } doReturn state
+            on { queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()) } doReturn
+                QueryScheduledMessagesResult(emptyList(), next = null).asCall()
+            on { queryChannels(any()) } doReturn emptyList<Channel>().asCall()
+        }
+    }
+
+    @Test
+    fun `sorts the messages by their date, then by their text, whatever their status`() = runTest {
+        val late = scheduled(scheduledAt = Date(3_000))
+        val failed = scheduled(scheduledAt = Date(2_000), status = ScheduledMessageStatus.Failed)
+        val sameTimeB = scheduled(scheduledAt = Date(1_000), text = "b")
+        val sameTimeA = scheduled(scheduledAt = Date(1_000), text = "a")
+        scheduledMessages.value = listOf(late, sameTimeB, sameTimeA, failed)
+
+        val items = controller().state.value.items
+
+        items.map { it.scheduledMessage } shouldBeEqualTo listOf(sameTimeA, sameTimeB, failed, late)
+    }
+
+    @Test
+    fun `the scope of a channel lists its messages only, thread replies included`() = runTest {
+        val cid = randomString()
+        val inChannel = scheduled(cid = cid)
+        val inThread = scheduled(cid = cid, parentId = randomString())
+        scheduledMessages.value = listOf(inChannel, inThread, scheduled())
+
+        val items = controller(cid = cid).state.value.items
+
+        items.map { it.scheduledMessage }.toSet() shouldBeEqualTo setOf(inChannel, inThread)
+        verify(client).queryScheduledMessages(eq(cid), any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `the actions follow the status of the message`() = runTest {
+        val pending = scheduled(status = ScheduledMessageStatus.PreparingToSchedule)
+        val sending = scheduled(status = ScheduledMessageStatus.Sending)
+        val uploading = scheduled(
+            status = ScheduledMessageStatus.PreparingToSchedule,
+            attachments = listOf(Attachment(upload = File(randomString()))),
+        )
+
+        pending.actions() shouldBeEqualTo listOf(Edit, Reschedule, SendNow, Delete)
+        sending.actions().shouldBeEmpty()
+        uploading.actions().shouldBeEmpty()
+    }
+
+    @Test
+    fun `a message the server failed to send can be edited and scheduled again, or deleted`() = runTest {
+        val failed = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.Banned))
+        val channelDeleted = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.ChannelDeleted))
+
+        failed.actions() shouldBeEqualTo listOf(EditAndReschedule, Delete)
+        channelDeleted.actions() shouldBeEqualTo listOf(CopyText, Delete)
+    }
+
+    @Test
+    fun `a message whose changes did not reach the server can be edited, rescheduled or deleted`() = runTest {
+        val rejected = failed(ServerRejectedScheduling(ServerRejectedScheduling.Reason.ScheduledLimitChannel, ""))
+        val uploadFailed = failed(LocalDeviceFailedScheduling(LocalDeviceFailedScheduling.Reason.AttachmentUploadFailed, null))
+        val sendingOnServer = failed(ServerRejectedScheduling(ServerRejectedScheduling.Reason.ScheduledMessageSending, ""))
+
+        rejected.actions() shouldBeEqualTo listOf(Edit, Reschedule, Delete)
+        uploadFailed.actions() shouldBeEqualTo listOf(Edit, Reschedule, Delete)
+        sendingOnServer.actions() shouldBeEqualTo listOf(Delete)
+    }
+
+    @Test
+    fun `a message that quotes a deleted message can only be edited or deleted`() = runTest {
+        val quoted = randomMessage(deletedAt = Date())
+        quotedMessages[quoted.id] = quoted
+        scheduledMessages.value = listOf(scheduled(replyMessageId = quoted.id))
+
+        val item = controller().state.value.items.single()
+
+        item.quotedMessage shouldBeEqualTo quoted
+        item.isQuoteDeleted shouldBeEqualTo true
+        item.actions shouldBeEqualTo listOf(Edit, Delete)
+    }
+
+    @Test
+    fun `a failed message that quotes a deleted message can't be rescheduled`() = runTest {
+        val rejected = failed(ServerRejectedScheduling(ServerRejectedScheduling.Reason.ScheduledLimitChannel, ""))
+
+        rejected.scheduledMessageActions(isQuoteDeleted = true) shouldBeEqualTo listOf(Edit, Delete)
+    }
+
+    @Test
+    fun `each message comes with its channel`() = runTest {
+        val channel = randomChannel()
+        scheduledMessages.value = listOf(scheduled(cid = channel.cid))
+        whenever(client.queryChannels(any())) doReturn listOf(channel).asCall()
+
+        controller().state.value.items.single().channel shouldBeEqualTo channel
+    }
+
+    @Test
+    fun `loads every page of the scheduled messages`() = runTest {
+        val next = randomString()
+        whenever(client.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).doReturn(
+            QueryScheduledMessagesResult(emptyList(), next = next).asCall(),
+            QueryScheduledMessagesResult(emptyList(), next = null).asCall(),
+        )
+
+        controller()
+
+        verify(client).queryScheduledMessages(isNull(), any(), any(), isNull())
+        verify(client).queryScheduledMessages(isNull(), any(), any(), eq(next))
+    }
+
+    @Test
+    fun `does not load the scheduled messages again once the client has them all`() = runTest {
+        hasLoadedAll.value = true
+
+        controller()
+
+        verify(client, never()).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `loads the scheduled messages again once connected after the connection was lost`() = runTest {
+        hasLoadedAll.value = true
+        controller()
+
+        connectionState.value = ConnectionState.Offline
+        hasLoadedAll.value = false
+        verify(client, never()).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
+        connectionState.value = ConnectionState.Connected
+
+        verify(client).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `is loading until the messages are loaded, then empty`() = runTest {
+        whenever(client.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())) doReturn
+            CoroutineCall<QueryScheduledMessagesResult>(backgroundScope) { awaitCancellation() }
+        val controller = controller()
+        controller.state.value.isLoading shouldBeEqualTo true
+
+        hasLoadedAll.value = true
+
+        controller.state.value.isLoading shouldBeEqualTo false
+        controller.state.value.isLoadFailed shouldBeEqualTo false
+        controller.state.value.items.shouldBeEmpty()
+    }
+
+    @Test
+    fun `once loaded, losing the connection keeps showing that there are none`() = runTest {
+        val controller = controller()
+
+        connectionState.value = ConnectionState.Offline
+
+        controller.state.value.isLoading shouldBeEqualTo false
+        controller.state.value.isLoadFailed shouldBeEqualTo false
+    }
+
+    @Test
+    fun `offline with nothing known, the messages can't load`() = runTest {
+        connectionState.value = ConnectionState.Offline
+
+        val state = controller().state.value
+
+        state.isLoading shouldBeEqualTo false
+        state.isLoadFailed shouldBeEqualTo true
+        verify(client, never()).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `a failed load can be tried again`() = runTest {
+        whenever(client.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())).doReturn(
+            Error.GenericError(randomString()).asCall(),
+            QueryScheduledMessagesResult(emptyList(), next = null).asCall(),
+        )
+        val controller = controller()
+        controller.state.value.isLoadFailed shouldBeEqualTo true
+
+        controller.load()
+
+        controller.state.value.isLoadFailed shouldBeEqualTo false
+        verify(client, times(2)).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `a reschedule the server answers as already sent or deleted tells the message is gone`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        val local = scheduledMessage.copy(status = ScheduledMessageStatus.PreparingToSchedule)
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.rescheduleMessage(eq(scheduledMessage.id), any())).thenAnswer {
+            scheduledMessages.value = listOf(local)
+            local.asCall()
+        }
+        val controller = controller()
+
+        controller.events.test {
+            controller.reschedule(scheduledMessage.id, randomDate())
+            expectNoEvents()
+
+            scheduledMessages.value = emptyList()
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.MessageGone
+        }
+    }
+
+    @Test
+    fun `a reschedule the server accepts tells nothing`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        val local = scheduledMessage.copy(status = ScheduledMessageStatus.PreparingToSchedule)
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.rescheduleMessage(eq(scheduledMessage.id), any())).thenAnswer {
+            scheduledMessages.value = listOf(local)
+            local.asCall()
+        }
+        val controller = controller()
+
+        controller.events.test {
+            controller.reschedule(scheduledMessage.id, randomDate())
+            scheduledMessages.value = listOf(scheduledMessage)
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `a message deleted while its reschedule is on the way does not tell it is gone`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        val local = scheduledMessage.copy(status = ScheduledMessageStatus.PreparingToSchedule)
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.rescheduleMessage(eq(scheduledMessage.id), any())).thenAnswer {
+            scheduledMessages.value = listOf(local)
+            local.asCall()
+        }
+        whenever(client.deleteScheduledMessage(scheduledMessage.id)).thenAnswer {
+            scheduledMessages.value = emptyList()
+            Unit.asCall()
+        }
+        val controller = controller()
+
+        controller.events.test {
+            controller.reschedule(scheduledMessage.id, randomDate())
+            controller.delete(scheduledMessage.id)
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `an action on a message that is no longer there tells it is gone`() = runTest {
+        hasLoadedAll.value = true
+        val id = randomString()
+        whenever(client.sendScheduledMessageNow(id)) doReturn Error.GenericError(randomString()).asCall()
+        val controller = controller()
+
+        controller.events.test {
+            controller.sendNow(id)
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.MessageGone
+        }
+    }
+
+    @Test
+    fun `a send now refused for a deleted quote shows the deleted quote`() = runTest {
+        hasLoadedAll.value = true
+        val quoted = randomMessage(deletedAt = null)
+        quotedMessages[quoted.id] = quoted
+        val scheduledMessage = scheduled(replyMessageId = quoted.id)
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.sendScheduledMessageNow(scheduledMessage.id)) doReturn
+            Error.GenericError(randomString()).asCall()
+        val controller = controller()
+        controller.state.value.items.single().isQuoteDeleted shouldBeEqualTo false
+
+        controller.events.test {
+            quotedMessages[quoted.id] = quoted.copy(deletedAt = Date())
+            controller.sendNow(scheduledMessage.id)
+
+            expectNoEvents()
+        }
+        controller.state.value.items.single().isQuoteDeleted shouldBeEqualTo true
+    }
+
+    @Test
+    fun `any other refused action tells it failed`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        val error = Error.GenericError(randomString())
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.rescheduleMessage(eq(scheduledMessage.id), any())) doReturn error.asCall()
+        val controller = controller()
+
+        controller.events.test {
+            controller.reschedule(scheduledMessage.id, randomDate())
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.ActionFailed(error)
+        }
+    }
+
+    private fun controller(cid: String? = null) = ScheduledMessageListController(
+        cid = cid,
+        chatClient = client,
+        getMessage = { id -> quotedMessages[id]?.asCall() ?: Error.GenericError(id).asCall() },
+    )
+
+    private fun ScheduledMessage.actions() = scheduledMessageActions(isQuoteDeleted = false)
+
+    private fun failed(failure: ScheduledMessageFailure) =
+        scheduled(status = ScheduledMessageStatus.Failed).copy(failure = failure)
+
+    @Suppress("LongParameterList")
+    private fun scheduled(
+        cid: String = randomString(),
+        scheduledAt: Date = randomDate(),
+        status: ScheduledMessageStatus = ScheduledMessageStatus.Scheduled,
+        text: String = randomString(),
+        parentId: String? = null,
+        replyMessageId: String? = null,
+        attachments: List<Attachment> = emptyList(),
+    ): ScheduledMessage {
+        val id = randomString()
+        return randomScheduledMessage(
+            id = id,
+            cid = cid,
+            message = randomMessage(
+                id = id,
+                cid = cid,
+                text = text,
+                parentId = parentId,
+                replyMessageId = replyMessageId,
+                attachments = attachments,
+            ),
+            scheduledAt = scheduledAt,
+            status = status,
+        )
+    }
+}

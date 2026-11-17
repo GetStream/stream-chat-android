@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.pages
 
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import java.util.regex.Pattern
 import io.getstream.chat.android.compose.R as ComposeR
@@ -24,7 +25,7 @@ import io.getstream.chat.android.compose.sample.R as SampleR
 
 /**
  * Scheduled messages: the SDK sheets that pick when a message is sent, the SDK banner above the
- * composer, and the sample's Scheduled messages screen.
+ * composer, and the SDK scheduled messages screen.
  */
 class ScheduledMessagesPage {
 
@@ -123,38 +124,68 @@ class ScheduledMessagesPage {
         }
     }
 
+    /** The SDK scheduled messages screen. */
     class Screen {
 
         companion object {
-            val title get() = By.text(appContext.getString(SampleR.string.scheduled_messages_title))
-            val empty get() = By.res("Stream_ScheduledMessagesEmpty")
+            val title get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_title))
+            val empty get() = By.res("Stream_ScheduledMessageListEmpty")
+            val loadFailed get() = By.res("Stream_ScheduledMessageListError")
+            val retryButton get() = By.res("Stream_ScheduledMessageListRetry")
             val items get() = By.res("Stream_ScheduledMessageItem")
-            val failedHeader get() = By.text(appContext.getString(SampleR.string.scheduled_messages_failed_header))
             val drawerItem get() = By.res("Stream_DrawerScheduledMessages")
 
-            /** The row whose second line is [text]: the message text, or why it failed. */
-            fun item(text: String) = items.hasDescendant(By.res("Stream_ScheduledMessageText").text(text))
+            /**
+             * The row whose preview ends with [text]: a prefix or an attachment icon can come before
+             * it, and the preview formatter can add a space after it.
+             */
+            fun item(text: String) = items.hasDescendant(
+                By.res("Stream_ScheduledMessageText").text(Pattern.compile(".*" + Pattern.quote(text) + "\\s*")),
+            )
 
-            /** The time, or the progress, at the end of the row. */
-            val status get() = By.res("Stream_ScheduledMessageStatus")
+            /** The date line of a row, sent at [time]. */
+            fun date(time: String) = By.res("Stream_ScheduledMessageDate").textEndsWith(time)
 
-            /** Shown in a row while its change is on the way to the server. */
-            val inProgress get() = By.res("Stream_ScheduledMessageInProgress")
-            val dialogConfirmButton get() = By.res("Stream_ScheduledMessageDialogConfirm")
+            /** The status line of a row that tells [text]: sending, uploading, or why it failed. */
+            fun status(text: String) = By.res("Stream_ScheduledMessageStatus").hasDescendant(By.text(text))
+
+            /** The row of a reply whose preview ends with [text], after the name of the quoted author. */
+            fun reply(text: String): BySelector {
+                val prefix = appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_reply_to, "\u0000")
+                    .split("\u0000")
+                val pattern = Pattern.quote(prefix.first()) + ".+" + Pattern.quote(prefix.last()) + " .*" +
+                    Pattern.quote(text) + "\\s*"
+                return items.hasDescendant(By.res("Stream_ScheduledMessageText").text(Pattern.compile(pattern)))
+            }
+
+            /** The prefix of the preview of a thread reply. */
+            val threadReplyPrefix
+                get() = appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_thread_reply)
         }
     }
 
-    /** The actions of a scheduled message, opened with a tap on its row. */
+    /** The SDK sheet with the actions of a scheduled message, opened with a tap on its row. */
     class Actions {
 
         companion object {
             val view get() = By.res("Stream_ScheduledMessageActions")
-            val edit get() = By.res("Stream_ScheduledMessageActionEdit")
-            val reschedule get() = By.res("Stream_ScheduledMessageActionReschedule")
-            val sendNow get() = By.res("Stream_ScheduledMessageActionSendNow")
-            val retry get() = By.res("Stream_ScheduledMessageActionRetry")
-            val scheduleAgain get() = By.res("Stream_ScheduledMessageActionScheduleAgain")
-            val delete get() = By.res("Stream_ScheduledMessageActionDelete")
+            val edit get() = action("Edit")
+            val reschedule get() = action("Reschedule")
+            val sendNow get() = action("SendNow")
+            val editAndReschedule get() = action("EditAndReschedule")
+            val copyText get() = action("CopyText")
+            val delete get() = action("Delete")
+
+            private fun action(name: String) = By.res("Stream_ScheduledMessageAction_$name")
+        }
+    }
+
+    /** The SDK dialog that asks to confirm the deletion. */
+    class DeleteDialog {
+
+        companion object {
+            val view get() = By.res("Stream_ScheduledMessageDeleteDialog")
+            val confirmButton get() = By.res("Stream_ScheduledMessageDeleteConfirm")
         }
     }
 
@@ -165,9 +196,17 @@ class ScheduledMessagesPage {
             val sent get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_messages_sent))
             val viewButton get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_messages_view))
 
-            /** Shown once the server has the scheduled message. */
+            /** Shown once the server has the change of an edited scheduled message. */
             val scheduled
                 get() = By.textStartsWith(appContext.getString(SampleR.string.scheduled_messages_scheduled_for, ""))
+
+            /** Shown when the message the user acts on was already sent, or deleted on another device. */
+            val gone
+                get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_gone))
+
+            /** Shown when the user taps a message that is sending. */
+            val stillSending
+                get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_still_sending))
         }
     }
 

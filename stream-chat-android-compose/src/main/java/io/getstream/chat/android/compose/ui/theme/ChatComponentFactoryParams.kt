@@ -103,6 +103,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageItemState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import java.util.Date
 
@@ -1391,6 +1393,76 @@ public data class ScheduledMessagesBannerParams(
     val state: ScheduledMessagesBannerState,
     val onClick: (() -> Unit)?,
     val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduledMessageListItem].
+ *
+ * @param item The scheduled message to show.
+ * @param currentUser The currently logged in user.
+ * @param onClick Called when the item is clicked.
+ */
+public data class ScheduledMessageListItemParams(
+    val item: ScheduledMessageItemState,
+    val currentUser: User?,
+    val onClick: (ScheduledMessageItemState) -> Unit,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduledMessageListEmptyContent].
+ *
+ * @param modifier Modifier for styling.
+ */
+public data class ScheduledMessageListEmptyContentParams(
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduledMessageListLoadingContent].
+ *
+ * @param modifier Modifier for styling.
+ */
+public data class ScheduledMessageListLoadingContentParams(
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduledMessageListErrorContent].
+ *
+ * @param onRetryClick Called when the user wants to load the scheduled messages again.
+ * @param modifier Modifier for styling.
+ */
+public data class ScheduledMessageListErrorContentParams(
+    val onRetryClick: () -> Unit,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduledMessageActionsSheet].
+ *
+ * @param item The scheduled message the actions apply to.
+ * @param actions The actions to show, in order.
+ * @param onActionClick Called with the action the user picked.
+ * @param onDismiss Called when the sheet is dismissed.
+ */
+public data class ScheduledMessageActionsSheetParams(
+    val item: ScheduledMessageItemState,
+    val actions: List<ScheduledMessageAction>,
+    val onActionClick: (ScheduledMessageAction) -> Unit,
+    val onDismiss: () -> Unit,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduledMessageDeleteDialog].
+ *
+ * @param channelName The name of the channel the message is sent to.
+ * @param onConfirm Called when the user confirms the deletion.
+ * @param onDismiss Called when the dialog is dismissed without deleting.
+ */
+public data class ScheduledMessageDeleteDialogParams(
+    val channelName: String,
+    val onConfirm: () -> Unit,
+    val onDismiss: () -> Unit,
 )
 
 /**
