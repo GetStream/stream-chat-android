@@ -31,20 +31,11 @@ internal sealed interface ScheduledMessagesEvent {
     /** The server scheduled the message at [scheduledAt]. */
     data class Scheduled(val scheduledAt: Date) : ScheduledMessagesEvent
 
-    /** The server is sending the message. */
-    data object Sent : ScheduledMessagesEvent
-
     /** The server sent the message right away, as its date had passed. */
     data object SentRightAway : ScheduledMessagesEvent
 
     /** The device is offline: the change is sent once it is online. */
     data object Queued : ScheduledMessagesEvent
-
-    /** The server is sending the message, so nothing can be done with it. */
-    data object StillSending : ScheduledMessagesEvent
-
-    /** The message was deleted. */
-    data object Deleted : ScheduledMessagesEvent
 
     /** The server, or the device, could not save the change. */
     data class Failed(val failure: ScheduledMessageFailure?) : ScheduledMessagesEvent
@@ -69,16 +60,12 @@ internal sealed interface ScheduledMessagesEvent {
 /**
  * The event that tells the user the answer of the server to the latest change of the scheduled message with [id]:
  * [ScheduledMessagesEvent.Queued] right away when the device is offline, else once the server answered.
- *
- * @param isSendNow Whether the change was a send now, which succeeded unless it failed.
  */
-internal suspend fun ChatClient.answerOf(id: String, isSendNow: Boolean = false): ScheduledMessagesEvent {
+internal suspend fun ChatClient.answerOf(id: String): ScheduledMessagesEvent {
     if (clientState.connectionState.value is ConnectionState.Offline) return ScheduledMessagesEvent.Queued
     return when (val answer = scheduledMessages.awaitAnswer(id)) {
         is ScheduledMessageAnswer.Failed -> ScheduledMessagesEvent.Failed(answer.failure)
-        is ScheduledMessageAnswer.Scheduled ->
-            if (isSendNow) ScheduledMessagesEvent.Sent else ScheduledMessagesEvent.Scheduled(answer.scheduledAt)
-        ScheduledMessageAnswer.Sent ->
-            if (isSendNow) ScheduledMessagesEvent.Sent else ScheduledMessagesEvent.SentRightAway
+        is ScheduledMessageAnswer.Scheduled -> ScheduledMessagesEvent.Scheduled(answer.scheduledAt)
+        ScheduledMessageAnswer.Sent -> ScheduledMessagesEvent.SentRightAway
     }
 }

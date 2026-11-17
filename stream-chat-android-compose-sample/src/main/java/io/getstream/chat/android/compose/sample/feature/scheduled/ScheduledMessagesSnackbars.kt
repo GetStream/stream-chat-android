@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.sample.feature.scheduled
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -27,6 +28,9 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.models.ScheduledMessageFailure
+import io.getstream.chat.android.models.ScheduledMessageFailure.LocalDeviceFailedScheduling
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPublishing
+import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -75,9 +79,6 @@ private fun Context.snackbarOf(event: ScheduledMessagesEvent, hasViewAction: Boo
                 hasViewAction
         ScheduledMessagesEvent.Queued -> getString(R.string.scheduled_messages_queued_until_online) to hasViewAction
         ScheduledMessagesEvent.SentRightAway -> getString(R.string.scheduled_messages_sent_right_away) to false
-        ScheduledMessagesEvent.Sent -> getString(R.string.scheduled_messages_sent) to false
-        ScheduledMessagesEvent.Deleted -> getString(R.string.scheduled_messages_deleted) to false
-        ScheduledMessagesEvent.StillSending -> getString(R.string.scheduled_messages_still_sending) to false
         is ScheduledMessagesEvent.Failed -> if (hasViewAction) {
             getString(R.string.scheduled_messages_failed) to true
         } else {
@@ -98,3 +99,39 @@ internal fun ScheduledMessageFailure?.text(context: Context): String =
     this?.description?.let(context::getString)
         ?: (this as? ScheduledMessageFailure.ServerRejectedScheduling)?.message
         ?: context.getString(R.string.scheduled_messages_failed_to_send)
+
+@get:StringRes
+private val ScheduledMessageFailure.description: Int?
+    get() = when (this) {
+        is ServerRejectedScheduling -> reason?.description
+        is ServerFailedPublishing -> reason?.description ?: R.string.scheduled_messages_failed_to_send
+        is LocalDeviceFailedScheduling -> when (reason) {
+            LocalDeviceFailedScheduling.Reason.AttachmentUploadFailed ->
+                R.string.scheduled_messages_failure_attachment_upload
+            else -> R.string.scheduled_messages_failure_request
+        }
+        else -> R.string.scheduled_messages_failed_to_send
+    }
+
+private val ServerRejectedScheduling.Reason.description: Int?
+    get() = when (this) {
+        ServerRejectedScheduling.Reason.ScheduledLimitChannel -> R.string.scheduled_messages_failure_limit_channel
+        ServerRejectedScheduling.Reason.ScheduledLimitUser -> R.string.scheduled_messages_failure_limit_user
+        ServerRejectedScheduling.Reason.ScheduledAtTooSoon -> R.string.scheduled_messages_failure_too_soon
+        ServerRejectedScheduling.Reason.ScheduledAtTooFar -> R.string.scheduled_messages_failure_too_far
+        ServerRejectedScheduling.Reason.ScheduledMessagesDisabled -> R.string.scheduled_messages_failure_disabled
+        ServerRejectedScheduling.Reason.ScheduledMessageSending -> R.string.scheduled_messages_failure_sending
+        ServerRejectedScheduling.Reason.ScheduledMessageConflict -> R.string.scheduled_messages_failure_conflict
+        else -> null
+    }
+
+private val ServerFailedPublishing.Reason.description: Int?
+    get() = when (this) {
+        ServerFailedPublishing.Reason.Banned -> R.string.scheduled_messages_failure_banned
+        ServerFailedPublishing.Reason.ChannelDeleted -> R.string.scheduled_messages_failure_channel_deleted
+        ServerFailedPublishing.Reason.ChannelFrozen -> R.string.scheduled_messages_failure_channel_frozen
+        ServerFailedPublishing.Reason.ModerationBlocked -> R.string.scheduled_messages_failure_moderation
+        ServerFailedPublishing.Reason.NoPermission -> R.string.scheduled_messages_failure_no_permission
+        ServerFailedPublishing.Reason.InvalidMessage -> R.string.scheduled_messages_failure_invalid_message
+        else -> null
+    }

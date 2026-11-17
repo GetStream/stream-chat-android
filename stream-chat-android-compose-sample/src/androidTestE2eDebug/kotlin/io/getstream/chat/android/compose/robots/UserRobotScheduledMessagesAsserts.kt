@@ -48,23 +48,27 @@ fun UserRobot.assertScheduledMessagesScreen(): UserRobot {
 }
 
 /**
- * Asserts the row whose second line is [text], once the server has it. When [time] is set, the row
- * also shows that time.
+ * Asserts the row whose preview ends with [text]. When [time] is set, the row is sent at that time.
  */
 fun UserRobot.assertScheduledMessage(text: String, time: String? = null): UserRobot {
-    val item = if (time == null) Screen.item(text) else Screen.item(text).hasDescendant(Screen.status.text(time))
+    val item = if (time == null) Screen.item(text) else Screen.item(text).hasDescendant(Screen.date(time))
     assertTrue(item.waitDisplayed())
-    assertFalse(Screen.item(text).hasDescendant(Screen.inProgress).waitToDisappear().isDisplayed())
+    return this
+}
+
+/** Asserts the row of the reply [text] says which message it quotes. */
+fun UserRobot.assertScheduledMessageReply(text: String): UserRobot {
+    assertTrue(Screen.reply(text).waitDisplayed())
     return this
 }
 
 /**
- * Asserts the server has the new scheduled message [text]: its row in the list opened from the
- * banner is no longer in progress. Then goes back to the channel.
+ * Asserts the list opened from the banner shows the row whose preview ends with [preview]. Then
+ * goes back to the channel.
  */
-fun UserRobot.assertScheduledMessageOnServer(text: String): UserRobot {
+fun UserRobot.assertScheduledMessageListedFromBanner(preview: String): UserRobot {
     openScheduledMessagesFromBanner()
-    assertScheduledMessage(text)
+    assertScheduledMessage(preview)
     pressBack()
     return this
 }
@@ -86,10 +90,32 @@ fun UserRobot.assertScheduledMessageIsNotShown(text: String): UserRobot {
     return this
 }
 
-/** Asserts a failed row that shows [reason] as its second line. */
-fun UserRobot.assertScheduledMessageFailed(reason: String): UserRobot {
-    assertTrue(Screen.failedHeader.waitDisplayed())
-    assertTrue(Screen.item(reason).waitDisplayed())
+/** Asserts the row of the message [text] shows why it failed: [reason]. */
+fun UserRobot.assertScheduledMessageFailed(text: String, reason: String): UserRobot {
+    assertTrue(Screen.item(text).hasDescendant(Screen.status(reason)).waitDisplayed())
+    return this
+}
+
+fun UserRobot.assertScheduledMessagesLoadFailed(): UserRobot {
+    assertTrue(Screen.loadFailed.waitDisplayed())
+    assertTrue(Screen.retryButton.isDisplayed())
+    return this
+}
+
+/** Asserts the notice that the message the user acted on was already sent or deleted elsewhere. */
+fun UserRobot.assertScheduledMessageGoneNotice(): UserRobot {
+    assertTrue(Snackbar.gone.waitDisplayed())
+    return this
+}
+
+/** Asserts the notice that a message sent now while offline is sent once back online. */
+fun UserRobot.assertScheduledMessageSendNowQueued(): UserRobot {
+    assertTrue(Snackbar.sendNowQueued.waitDisplayed())
+    return this
+}
+
+fun UserRobot.assertScheduledMessageActionsAreClosed(): UserRobot {
+    assertFalse(Actions.view.waitToDisappear().isDisplayed())
     return this
 }
 

@@ -259,6 +259,28 @@ public class BackendRobot(
         fail("WebSocket was not disconnected within $timeoutMillis ms")
     }
 
+    /**
+     * Waits until the server has a pending scheduled message whose text is [text]. An app saves a
+     * scheduled message locally first, and sends it to the server afterwards.
+     *
+     * @param text The text of the scheduled message.
+     * @param timeoutMillis How long to wait before failing the test.
+     */
+    public fun waitForScheduledMessage(text: String, timeoutMillis: Long = 10_000): BackendRobot {
+        val startTime = System.currentTimeMillis()
+        while (System.currentTimeMillis() - startTime < timeoutMillis) {
+            val body = mockServer.postRequest("scheduled_messages/query")?.string()
+            val scheduledMessages = body?.let { JSONObject(it).getJSONArray("scheduled_messages") }
+            val isScheduled = scheduledMessages != null && (0 until scheduledMessages.length())
+                .map(scheduledMessages::getJSONObject)
+                .any { it.optString("status") == "scheduled" && it.optJSONObject("message")?.optString("text") == text }
+            if (isScheduled) return this
+            Thread.sleep(500)
+        }
+        fail("The server had no scheduled message \"$text\" within $timeoutMillis ms")
+        return this
+    }
+
     private fun waitForMockServerToStart() {
         val startTime = System.currentTimeMillis()
         while (System.currentTimeMillis() - startTime < 5000) {
