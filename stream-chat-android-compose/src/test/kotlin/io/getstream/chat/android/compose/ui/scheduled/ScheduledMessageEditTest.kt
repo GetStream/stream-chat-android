@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.asCall
+import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.CoroutineCall
 import kotlinx.coroutines.CompletableDeferred
@@ -56,6 +57,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
@@ -171,6 +173,29 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
 
         composeTestRule.onNodeWithText("Edit scheduled message").assertExists()
         composeTestRule.onNodeWithTag("Stream_ComposerInputField").assertTextEquals("Heads up")
+    }
+
+    @Test
+    fun `a message being saved can't be saved again after it is reopened, until the save fails`() {
+        val message = scheduled(id = "a", text = "Heads up")
+        scheduledMessagesFlow.value = listOf(message)
+        val first = CompletableDeferred<Result<ScheduledMessage>>()
+        whenever(mockChatClient.updateScheduledMessage(any(), any(), anyOrNull()))
+            .doReturn(CoroutineCall(CoroutineScope(Dispatchers.Main)) { first.await() })
+            .doReturn(message.asCall())
+        setContent()
+        startEditing("Heads up")
+        save()
+        clickTag("Stream_ComposerCancelEditButton")
+        startEditing("Heads up")
+
+        save()
+        verify(mockChatClient, times(1)).updateScheduledMessage(any(), any(), anyOrNull())
+
+        first.complete(Result.Failure(Error.GenericError("Refused")))
+        composeTestRule.waitForIdle()
+        save()
+        verify(mockChatClient, times(2)).updateScheduledMessage(any(), any(), anyOrNull())
     }
 
     @Test

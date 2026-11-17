@@ -87,6 +87,13 @@ internal class ScheduledMessageEdit {
     var session by mutableStateOf<ScheduledMessageEditSession?>(null)
         private set
 
+    /**
+     * The IDs of the scheduled messages whose edit is being saved, so a message is not saved twice, also after its edit
+     * was cancelled and opened again.
+     */
+    var savingIds by mutableStateOf(emptySet<String>())
+        private set
+
     private var lastToken = 0
 
     /** Starts editing [scheduledMessage], in place of the message edited so far. */
@@ -113,8 +120,8 @@ internal class ScheduledMessageEdit {
         update(token) { it.copy(isFilled = true) }
     }
 
-    fun setSaving(token: Int, isSaving: Boolean) {
-        update(token) { it.copy(isSaving = isSaving) }
+    fun setSaving(id: String, isSaving: Boolean) {
+        savingIds = if (isSaving) savingIds + id else savingIds - id
     }
 
     private fun update(token: Int, transform: (ScheduledMessageEditSession) -> ScheduledMessageEditSession) {
@@ -128,7 +135,6 @@ internal class ScheduledMessageEdit {
  * @param token Tells this edit apart from a later edit of the same message.
  * @param isQuoteRemoved Whether the user removed the quote of the message.
  * @param isFilled Whether the composer was filled with the message, so it keeps the changes of the user.
- * @param isSaving Whether the edit is being saved, so it is not saved twice.
  */
 internal data class ScheduledMessageEditSession(
     val token: Int,
@@ -137,7 +143,6 @@ internal data class ScheduledMessageEditSession(
     val parentId: String?,
     val isQuoteRemoved: Boolean = false,
     val isFilled: Boolean = false,
-    val isSaving: Boolean = false,
 )
 
 /**
@@ -185,7 +190,7 @@ internal fun ScheduledMessageEditComposer(
     if (isFilled) {
         CompositionLocalProvider(
             LocalScheduledMessageEditMode provides ScheduledMessageEditMode(
-                canSave = editAction != null && !isQuoteDeleted && !hasCommand && !session.isSaving,
+                canSave = editAction != null && !isQuoteDeleted && !hasCommand && session.id !in edit.savingIds,
             ),
         ) {
             ScheduledMessageEditComposerContent(
@@ -261,16 +266,16 @@ private class ScheduledMessageEditActions(
      * Saves [message] and keeps the date, or returns true when the message needs a new date first.
      */
     fun save(message: Message): Boolean {
-        val session = edit.session?.takeUnless { it.isSaving } ?: return false
+        val session = edit.session?.takeUnless { it.id in edit.savingIds } ?: return false
         return when (editAction()) {
             ScheduledMessageAction.Edit -> {
-                edit.setSaving(session.token, isSaving = true)
+                edit.setSaving(session.id, isSaving = true)
                 viewModel.edit(
                     id = session.id,
                     message = message,
                     isQuoteRemoved = session.isQuoteRemoved,
                     resolveAttachments = composerViewModel::resolveAttachments,
-                    onResult = { result -> onResult(session.token, result) },
+                    onResult = { result -> onResult(session, result) },
                 )
                 false
             }
@@ -281,17 +286,17 @@ private class ScheduledMessageEditActions(
 
     /** Schedules the content of the composer at [date] as a new message, in place of the failed one. */
     fun reschedule(date: Date) {
-        val session = edit.session?.takeUnless { it.isSaving } ?: return
+        val session = edit.session?.takeUnless { it.id in edit.savingIds } ?: return
         if (editAction() != ScheduledMessageAction.EditAndReschedule) return
         val state = composerViewModel.messageComposerState.value
-        edit.setSaving(session.token, isSaving = true)
+        edit.setSaving(session.id, isSaving = true)
         viewModel.editAndReschedule(
             id = session.id,
             message = composerViewModel.buildNewMessage(state.inputValue, state.attachments),
             isQuoteRemoved = session.isQuoteRemoved,
             scheduledAt = date,
             resolveAttachments = composerViewModel::resolveAttachments,
-            onResult = { result -> onResult(session.token, result) },
+            onResult = { result -> onResult(session, result) },
         )
     }
 
@@ -299,11 +304,9 @@ private class ScheduledMessageEditActions(
         edit.session?.let { end(it.token) }
     }
 
-    private fun onResult(token: Int, result: Result<ScheduledMessage>) {
-        when (result) {
-            is Result.Success -> end(token)
-            is Result.Failure -> edit.setSaving(token, isSaving = false)
-        }
+    private fun onResult(session: ScheduledMessageEditSession, result: Result<ScheduledMessage>) {
+        edit.setSaving(session.id, isSaving = false)
+        if (result is Result.Success) end(session.token)
     }
 
     private fun end(token: Int) {

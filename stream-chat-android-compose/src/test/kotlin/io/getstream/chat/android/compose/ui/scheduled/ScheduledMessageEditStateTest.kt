@@ -32,11 +32,11 @@ internal class ScheduledMessageEditStateTest {
     fun `editing the message already edited keeps its edit`() {
         edit.start(message)
         val session = edit.session!!
-        edit.setSaving(session.token, isSaving = true)
+        edit.onFilled(session.token)
 
         edit.start(message)
 
-        assertEquals(session.copy(isSaving = true), edit.session)
+        assertEquals(session.copy(isFilled = true), edit.session)
     }
 
     @Test
@@ -47,21 +47,31 @@ internal class ScheduledMessageEditStateTest {
         edit.start(message)
         val second = edit.session!!
 
-        edit.setSaving(first, isSaving = true)
+        edit.onFilled(first)
         edit.end(first)
 
         assertEquals(second, edit.session)
-        assertFalse(edit.session!!.isSaving)
     }
 
     @Test
-    fun `the current edit is saved, filled and ended by its token`() {
+    fun `a message stays saving when its edit is ended and opened again`() {
+        edit.start(message)
+        edit.setSaving(message.id, isSaving = true)
+        edit.end(edit.session!!.token)
+        edit.start(message)
+
+        assertTrue(message.id in edit.savingIds)
+
+        edit.setSaving(message.id, isSaving = false)
+        assertFalse(message.id in edit.savingIds)
+    }
+
+    @Test
+    fun `the current edit is filled and ended by its token`() {
         edit.start(message)
         val token = edit.session!!.token
 
-        edit.setSaving(token, isSaving = true)
         edit.onFilled(token)
-        assertTrue(edit.session!!.isSaving)
         assertTrue(edit.session!!.isFilled)
 
         edit.end(token)
