@@ -567,18 +567,27 @@ internal class ScheduledMessageListControllerTest {
         val composed = failedMessage.message.copy(text = "Edited")
         val newMessage = scheduled()
         whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn newMessage.asCall()
-        whenever(client.deleteScheduledMessage(failedMessage.id)) doReturn Unit.asCall()
+        var deletes = 0
+        whenever(client.deleteScheduledMessage(failedMessage.id)).thenAnswer {
+            deletes++
+            Unit.asCall()
+        }
+        // The failed message is deleted before the caller learns the result.
+        val deletesAtResult = mutableListOf<Int>()
         val results = mutableListOf<Result<ScheduledMessage>>()
         val controller = controller()
 
         controller.events.test {
-            controller.editAndReschedule(failedMessage.id, composed, false, scheduledAt, onResult = { results += it })
+            controller.editAndReschedule(failedMessage.id, composed, false, scheduledAt) {
+                deletesAtResult += deletes
+                results += it
+            }
 
             expectNoEvents()
         }
         verify(client).scheduleMessage(channelType, channelId, composed.copy(id = ""), scheduledAt)
-        verify(client).deleteScheduledMessage(failedMessage.id)
         results shouldBeEqualTo listOf(Result.Success(newMessage))
+        deletesAtResult shouldBeEqualTo listOf(1)
     }
 
     @Test

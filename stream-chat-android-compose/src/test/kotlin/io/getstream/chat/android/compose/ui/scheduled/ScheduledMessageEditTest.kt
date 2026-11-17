@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.asCall
@@ -199,6 +200,36 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
     }
 
     @Test
+    fun `a failed message being scheduled again can't be scheduled twice, until scheduling fails`() {
+        val failed = scheduled(id = "a", text = "Heads up").copy(
+            status = ScheduledMessageStatus.Failed,
+            failure = ScheduledMessageFailure.ServerFailedPublishing(reason = null),
+        )
+        scheduledMessagesFlow.value = listOf(failed)
+        val first = CompletableDeferred<Result<ScheduledMessage>>()
+        whenever(mockChatClient.scheduleMessage(any(), any(), any(), any()))
+            .doReturn(CoroutineCall(CoroutineScope(Dispatchers.Main)) { first.await() })
+            .doReturn(failed.asCall())
+        whenever(mockChatClient.deleteScheduledMessage(any())) doReturn Unit.asCall()
+        setContent()
+        startEditing("Heads up", action = "Stream_ScheduledMessageAction_EditAndReschedule")
+        save()
+        clickTag("Stream_ScheduleMessageConfirm")
+        clickTag("Stream_ComposerCancelEditButton")
+        startEditing("Heads up", action = "Stream_ScheduledMessageAction_EditAndReschedule")
+
+        save()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageTimeSheet").assertDoesNotExist()
+        verify(mockChatClient, times(1)).scheduleMessage(any(), any(), any(), any())
+
+        first.complete(Result.Failure(Error.GenericError("Refused")))
+        composeTestRule.waitForIdle()
+        save()
+        clickTag("Stream_ScheduleMessageConfirm")
+        verify(mockChatClient, times(2)).scheduleMessage(any(), any(), any(), any())
+    }
+
+    @Test
     fun `cancel closes the composer`() {
         scheduledMessagesFlow.value = listOf(scheduled(id = "a", text = "Heads up"))
         setContent()
@@ -261,12 +292,12 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         composeTestRule.onNodeWithText("Edit scheduled message").assertExists()
     }
 
-    private fun startEditing(text: String) {
+    private fun startEditing(text: String, action: String = "Stream_ScheduledMessageAction_Edit") {
         // By semantics, as a row can be partly hidden below the composer of a small test screen.
         composeTestRule
             .onNode(hasTestTag("Stream_ScheduledMessageItem") and hasText(text, substring = true))
             .performSemanticsAction(SemanticsActions.OnClick)
-        clickTag("Stream_ScheduledMessageAction_Edit")
+        clickTag(action)
         composeTestRule.waitForIdle()
     }
 
