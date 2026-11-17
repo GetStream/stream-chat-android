@@ -891,15 +891,17 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamThreadParticipantDto without user is mapped to a user with only the id`() {
+    fun `DownstreamThreadParticipantDto without user is mapped to a transformed user with only the id`() {
         val participantDto = DownstreamThreadParticipantDto(
             channel_cid = "messaging:123",
             user = null,
             user_id = "user1",
         )
-        val sut = Fixture().get()
+        val sut = Fixture()
+            .withUserTransformer { it.copy(name = "transformed ${it.id}") }
+            .get()
         val participant = with(sut) { participantDto.toDomain() }
-        assertEquals(ThreadParticipant(user = User(id = "user1")), participant)
+        assertEquals(ThreadParticipant(user = User(id = "user1", name = "transformed user1")), participant)
     }
 
     @Test
