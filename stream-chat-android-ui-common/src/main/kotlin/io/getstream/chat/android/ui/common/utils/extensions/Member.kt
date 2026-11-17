@@ -25,14 +25,3 @@ import io.getstream.chat.android.ui.common.utils.ExpandableList
  */
 @InternalStreamChatApi
 public fun ExpandableList<Member>.onlineMemberCount(): Int = items.count { it.user.online }
-
-internal fun List<Member>.countOnline(
-    currentUserId: String?,
-    countCurrentUser: Boolean = true,
-    countOthers: Boolean = true,
-): Int = count { member ->
-    member.user.online && when (member.user.id) {
-        currentUserId -> countCurrentUser
-        else -> countOthers
-    }
-}

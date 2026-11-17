@@ -27,22 +27,6 @@ internal class MemberExtensionsTest {
     private val currentUserOnline = member(id = "me", online = true)
     private val otherOnline = member(id = "a", online = true)
     private val otherOffline = member(id = "b", online = false)
-    private val members = listOf(currentUserOnline, otherOnline, otherOffline)
-
-    @Test
-    fun `countOnline counts every online member by default`() {
-        assertEquals(2, members.countOnline(currentUserId = "me"))
-    }
-
-    @Test
-    fun `countOnline skips the current user when asked to`() {
-        assertEquals(1, members.countOnline(currentUserId = "me", countCurrentUser = false))
-    }
-
-    @Test
-    fun `countOnline skips other users when asked to`() {
-        assertEquals(1, members.countOnline(currentUserId = "me", countOthers = false))
-    }
 
     @Test
     fun `onlineMemberCount includes collapsed members`() {
