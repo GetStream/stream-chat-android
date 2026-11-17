@@ -118,6 +118,7 @@ import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.sync.internal.PendingMessagePins
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
@@ -170,6 +171,7 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.channel.isMultiMemberPlaceholderCid
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
@@ -6086,6 +6088,10 @@ internal constructor(
                     networkType = uploadAttachmentsNetworkType,
                     clientState = clientState,
                     scope = clientScope,
+                    isPlaceholderChannel = { cid ->
+                        (logicRegistry as? LogicRegistry)?.isPlaceholderChannel(cid)
+                            ?: isMultiMemberPlaceholderCid(cid)
+                    },
                 )
             }
         }

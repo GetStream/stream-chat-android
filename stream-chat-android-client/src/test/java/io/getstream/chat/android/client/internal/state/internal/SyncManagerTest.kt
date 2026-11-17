@@ -3533,6 +3533,28 @@ internal class SyncManagerTest {
         verify(repositoryFacade, never()).deleteChannelMessage(any())
     }
 
+    @Test
+    fun `messages awaiting attachments fail when their channel is rejected`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        givenChannelRetryFails(placeholder, statusCode = 400)
+        givenPlaceholders()
+        val message = localRandomMessage().copy(
+            cid = placeholder.cid,
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+            attachments = listOf(Attachment(uploadState = Attachment.UploadState.Idle)),
+        )
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+            listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(repositoryFacade).insertMessage(
+            argThat { id == message.id && syncStatus == SyncStatus.FAILED_PERMANENTLY },
+        )
+        verify(chatClient, never()).sendMessage(any(), any(), any(), any())
+    }
+
     private suspend fun givenChannelRetryFails(channel: Channel, statusCode: Int) {
         whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
         whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel

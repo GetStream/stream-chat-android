@@ -1223,6 +1223,10 @@ internal class SyncManager(
                     dropOutdatedSending(message, discardedCids)
                 } else if (message.waitsForChannel(uncreatedCids)) {
                     logger.v { "[retryMessagesWithPendingAttachments] waiting for channel(${message.cid})" }
+                } else if (logicRegistry.isPlaceholderChannel(message.cid)) {
+                    // The server rejected the channel, so the upload can't be sent: fail it where the user can retry
+                    logger.v { "[retryMessagesWithPendingAttachments] failing message($id) of a rejected channel" }
+                    markMessageAsFailed(message)
                 } else {
                     val (channelType, channelId) = message.cid.cidToTypeAndId()
                     chatClient.sendMessage(channelType, channelId, message, true).await()
