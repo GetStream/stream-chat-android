@@ -34,6 +34,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessageCommandNot
 import io.getstream.chat.android.compose.robots.assertScheduledMessageEditor
 import io.getstream.chat.android.compose.robots.assertScheduledMessageFailed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageGoneNotice
+import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotAReply
 import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotShown
 import io.getstream.chat.android.compose.robots.assertScheduledMessageListedFromBanner
 import io.getstream.chat.android.compose.robots.assertScheduledMessageQuoteDeletedBanner
@@ -753,7 +754,9 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
         step("THEN the server has the edit, without the quote") {
             backendRobot.waitForScheduledMessage(editedText)
-            userRobot.assertScheduledMessage(editedText)
+            userRobot
+                .assertScheduledMessage(editedText)
+                .assertScheduledMessageIsNotAReply(editedText)
         }
     }
 

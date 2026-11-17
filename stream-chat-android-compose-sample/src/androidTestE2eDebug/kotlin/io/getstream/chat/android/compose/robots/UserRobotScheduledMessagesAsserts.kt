@@ -112,6 +112,12 @@ fun UserRobot.assertScheduledMessageCommandNotAllowed(): UserRobot {
     return this
 }
 
+/** Asserts the row of the message [text] no longer shows it as a reply. */
+fun UserRobot.assertScheduledMessageIsNotAReply(text: String): UserRobot {
+    assertFalse(Screen.reply(text).waitToDisappear().isDisplayed())
+    return this
+}
+
 fun UserRobot.assertScheduledMessageIsNotShown(text: String): UserRobot {
     assertFalse(Screen.item(text).waitToDisappear().isDisplayed())
     return this
