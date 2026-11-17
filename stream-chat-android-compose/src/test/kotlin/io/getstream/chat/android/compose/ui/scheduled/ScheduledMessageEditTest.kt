@@ -24,12 +24,17 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModelFactory
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FileUploadConfig
@@ -57,6 +62,7 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
+import org.mockito.kotlin.mockingDetails
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -139,6 +145,28 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         verify(mockChatClient).updateScheduledMessage(eq("b"), argThat { text == "Second message" }, isNull())
         verify(mockChatClient, never()).updateScheduledMessage(eq("a"), any(), anyOrNull())
         composeTestRule.onNodeWithText("Edit scheduled message").assertDoesNotExist()
+    }
+
+    @Test
+    @Config(sdk = [33], qualifiers = "w411dp-h1600dp")
+    fun `an attachment picked for one message is not saved with the next message edited`() {
+        val second = scheduled(id = "b", text = "Second message")
+        scheduledMessagesFlow.value = listOf(scheduled(id = "a", text = "First message"), second)
+        whenever(mockChatClient.updateScheduledMessage(any(), any(), anyOrNull())) doReturn second.asCall()
+        setContent()
+        startEditing("First message")
+        // The composer of the channel, shared by the edits of its messages.
+        val composerViewModel = ViewModelProvider(viewModelStoreOwner)[
+            "Stream_ScheduledMessageEdit_${channel.cid}_null_composer",
+            MessageComposerViewModel::class.java,
+        ]
+        composeTestRule.runOnIdle { composerViewModel.addAttachments(listOf(Attachment(name = "picked.png"))) }
+        startEditing("Second message")
+
+        save()
+        composeTestRule.waitUntil { mockingDetails(mockChatClient).invocations.any { it.method.name == "updateScheduledMessage" } }
+
+        verify(mockChatClient).updateScheduledMessage(eq("b"), argThat { attachments.isEmpty() }, isNull())
     }
 
     @Test
@@ -311,8 +339,11 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         composeTestRule.waitForIdle()
     }
 
+    private lateinit var viewModelStoreOwner: ViewModelStoreOwner
+
     private fun setContent() {
         composeTestRule.setContent {
+            viewModelStoreOwner = requireNotNull(LocalViewModelStoreOwner.current)
             ChatTheme {
                 ScheduledMessagesScreen(
                     viewModelFactory = ScheduledMessageListViewModelFactory(chatClient = mockChatClient),
