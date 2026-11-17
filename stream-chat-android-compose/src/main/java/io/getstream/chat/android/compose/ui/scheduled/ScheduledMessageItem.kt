@@ -289,6 +289,10 @@ private val ServerRejectedScheduling.Reason.description: Int?
             R.string.stream_compose_scheduled_message_failure_disabled
         ServerRejectedScheduling.Reason.ScheduledMessageSending ->
             R.string.stream_compose_scheduled_message_failure_sending
+        ServerRejectedScheduling.Reason.ScheduledMessageConflict ->
+            R.string.stream_compose_scheduled_message_failure_conflict
+        ServerRejectedScheduling.Reason.ScheduledMessageNotEditable ->
+            R.string.stream_compose_scheduled_message_failure_not_editable
         else -> null
     }
 

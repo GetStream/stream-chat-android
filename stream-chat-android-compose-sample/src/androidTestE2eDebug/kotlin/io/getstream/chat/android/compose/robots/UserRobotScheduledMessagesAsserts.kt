@@ -108,6 +108,12 @@ fun UserRobot.assertScheduledMessageGoneNotice(): UserRobot {
     return this
 }
 
+/** Asserts the notice that a message sent now while offline is sent once back online. */
+fun UserRobot.assertScheduledMessageSendNowQueued(): UserRobot {
+    assertTrue(Snackbar.sendNowQueued.waitDisplayed())
+    return this
+}
+
 fun UserRobot.assertScheduledMessageActionsAreClosed(): UserRobot {
     assertFalse(Actions.view.waitToDisappear().isDisplayed())
     return this

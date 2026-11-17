@@ -421,4 +421,7 @@
   <string name="stream_compose_scheduled_message_failure_too_far">"शेड्यूल किया गया समय ऐप की अनुमति से ज़्यादा आगे है।"</string>
   <string name="stream_compose_scheduled_message_failure_disabled">"शेड्यूल किए गए मैसेज बंद हैं।"</string>
   <string name="stream_compose_scheduled_message_failure_sending">"मैसेज भेजा जा रहा है।"</string>
+  <string name="stream_compose_scheduled_message_list_send_now_queued">"ऑनलाइन वापस आने पर भेजा जाएगा"</string>
+  <string name="stream_compose_scheduled_message_failure_conflict">"मैसेज किसी दूसरे डिवाइस पर बदल दिया गया था।"</string>
+  <string name="stream_compose_scheduled_message_failure_not_editable">"इस मैसेज को अब बदला नहीं जा सकता।"</string>
 </resources>

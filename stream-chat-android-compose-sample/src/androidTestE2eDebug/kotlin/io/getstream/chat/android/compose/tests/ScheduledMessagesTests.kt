@@ -35,6 +35,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotShown
 import io.getstream.chat.android.compose.robots.assertScheduledMessageListedFromBanner
 import io.getstream.chat.android.compose.robots.assertScheduledMessageReply
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSaved
+import io.getstream.chat.android.compose.robots.assertScheduledMessageSendNowQueued
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSentSnackbar
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesAreEmpty
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBanner
@@ -548,6 +549,33 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
         step("AND the message left the list") {
             userRobot.assertScheduledMessagesAreEmpty()
+        }
+    }
+
+    @Test
+    fun test_scheduledMessageSentNowOfflineIsSentOnceOnline() {
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("AND user opens the scheduled messages and goes offline") {
+            userRobot.openScheduledMessagesFromBanner()
+            device.disableInternetConnection()
+        }
+        step("WHEN user sends it now") {
+            userRobot.sendScheduledMessageNow(sampleText)
+        }
+        step("THEN a notice says it is sent once back online") {
+            userRobot.assertScheduledMessageSendNowQueued()
+        }
+        step("WHEN user comes back online") {
+            device.enableInternetConnection()
+        }
+        step("THEN the message leaves the list, and is in the channel") {
+            userRobot
+                .assertScheduledMessagesAreEmpty()
+                .pressBack()
+                .assertMessage(sampleText)
         }
     }
 

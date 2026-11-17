@@ -406,4 +406,7 @@
   <string name="stream_compose_scheduled_message_failure_too_far">"予約時刻がアプリで許可されている期間を超えています。"</string>
   <string name="stream_compose_scheduled_message_failure_disabled">"予約メッセージはオフになっています。"</string>
   <string name="stream_compose_scheduled_message_failure_sending">"メッセージを送信中です。"</string>
+  <string name="stream_compose_scheduled_message_list_send_now_queued">"オンラインに戻ると送信されます"</string>
+  <string name="stream_compose_scheduled_message_failure_conflict">"メッセージは別のデバイスで変更されました。"</string>
+  <string name="stream_compose_scheduled_message_failure_not_editable">"このメッセージは変更できなくなりました。"</string>
 </resources>

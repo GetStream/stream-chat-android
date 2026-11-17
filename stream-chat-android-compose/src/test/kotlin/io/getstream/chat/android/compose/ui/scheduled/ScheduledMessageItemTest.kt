@@ -78,6 +78,10 @@ internal class ScheduledMessageItemTest {
             rejected(ServerRejectedScheduling.Reason.ScheduledMessagesDisabled) to
                 "Scheduled messages are turned off.",
             rejected(ServerRejectedScheduling.Reason.ScheduledMessageSending) to "The message is being sent.",
+            rejected(ServerRejectedScheduling.Reason.ScheduledMessageConflict) to
+                "The message was changed on another device.",
+            rejected(ServerRejectedScheduling.Reason.ScheduledMessageNotEditable) to
+                "This message can no longer be changed.",
         )
     }
 

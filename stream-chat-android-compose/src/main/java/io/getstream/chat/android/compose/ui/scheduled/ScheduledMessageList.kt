@@ -83,7 +83,8 @@ import kotlinx.coroutines.launch
  * message opens the actions its status allows: edit, reschedule, send now and delete, edit and schedule again a
  * message that failed, or copy the text of a message whose channel was deleted. A message that is sending, or whose
  * attachments are uploading, has no actions: a click tells the user to wait. Deleting asks for confirmation. A message
- * that is already sent or deleted on another device leaves the list with a short notice.
+ * that is already sent or deleted on another device leaves the list with a short notice. Send now while offline tells
+ * the user that the message is sent once the device is back online.
  *
  * @param viewModel The [ScheduledMessageListViewModel] holding the scheduled messages and their actions.
  * @param modifier Modifier for styling.
@@ -124,6 +125,8 @@ public fun ScheduledMessageList(
             when (event) {
                 is ScheduledMessageListEvent.MessageGone ->
                     showSnackbar(context.getString(R.string.stream_compose_scheduled_message_list_gone))
+                is ScheduledMessageListEvent.SendNowQueued ->
+                    showSnackbar(context.getString(R.string.stream_compose_scheduled_message_list_send_now_queued))
                 is ScheduledMessageListEvent.ActionFailed -> showSnackbar(
                     message = context.getString(R.string.stream_compose_scheduled_message_list_action_failed),
                     variant = StreamSnackbarVariant.Error,

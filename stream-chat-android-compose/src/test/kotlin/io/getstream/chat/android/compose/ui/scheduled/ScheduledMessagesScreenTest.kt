@@ -121,6 +121,21 @@ internal class ScheduledMessagesScreenTest {
     }
 
     @Test
+    fun `send now while offline tells it is queued until online`() {
+        val message = scheduled()
+        scheduledMessagesFlow.value = listOf(message)
+        whenever(client.sendScheduledMessageNow(message.id)) doReturn message.asCall()
+        setContent()
+        connection.value = ConnectionState.Offline
+
+        openActions()
+        clickTag("Stream_ScheduledMessageAction_SendNow")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Sends when you're back online").assertExists()
+    }
+
+    @Test
     fun `delete asks for confirmation, then deletes the message`() {
         val message = scheduled()
         scheduledMessagesFlow.value = listOf(message)

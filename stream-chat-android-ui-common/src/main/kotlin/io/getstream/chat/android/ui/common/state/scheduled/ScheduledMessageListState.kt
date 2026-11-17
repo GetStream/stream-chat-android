@@ -99,6 +99,11 @@ public abstract class ScheduledMessageListEvent internal constructor() {
     public data object MessageGone : ScheduledMessageListEvent()
 
     /**
+     * Send now was asked while offline: the message is sent once the device is back online.
+     */
+    public data object SendNowQueued : ScheduledMessageListEvent()
+
+    /**
      * An action on a scheduled message failed.
      *
      * @property error Why the action failed.

@@ -349,6 +349,37 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
+    fun `send now while offline tells it is queued until online`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.sendScheduledMessageNow(scheduledMessage.id)) doReturn scheduledMessage.asCall()
+        val controller = controller()
+        connectionState.value = ConnectionState.Offline
+
+        controller.events.test {
+            controller.sendNow(scheduledMessage.id)
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.SendNowQueued
+        }
+    }
+
+    @Test
+    fun `send now while online tells nothing`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.sendScheduledMessageNow(scheduledMessage.id)) doReturn scheduledMessage.asCall()
+        val controller = controller()
+
+        controller.events.test {
+            controller.sendNow(scheduledMessage.id)
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
     fun `an action on a message that is no longer there tells it is gone`() = runTest {
         hasLoadedAll.value = true
         val id = randomString()

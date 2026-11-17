@@ -406,4 +406,7 @@
   <string name="stream_compose_scheduled_message_failure_too_far">"예약 시간이 앱에서 허용하는 기간을 넘었습니다."</string>
   <string name="stream_compose_scheduled_message_failure_disabled">"예약 메시지가 꺼져 있습니다."</string>
   <string name="stream_compose_scheduled_message_failure_sending">"메시지를 전송하는 중입니다."</string>
+  <string name="stream_compose_scheduled_message_list_send_now_queued">"다시 온라인 상태가 되면 전송됩니다"</string>
+  <string name="stream_compose_scheduled_message_failure_conflict">"메시지가 다른 기기에서 변경되었습니다."</string>
+  <string name="stream_compose_scheduled_message_failure_not_editable">"이 메시지는 더 이상 변경할 수 없습니다."</string>
 </resources>

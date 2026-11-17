@@ -144,7 +144,7 @@ public class ScheduledMessageListController(
             scheduledMessages
                 .map { scheduledMessages -> scheduledMessages.mapNotNull { it.message.replyMessageId }.toSet() }
                 .distinctUntilChanged()
-                .collect { ids -> (ids - quotedMessages.value.keys).forEach { loadQuotedMessage(it) } }
+                .collect { ids -> (ids - quotedMessages.value.keys).forEach { id -> launch { loadQuotedMessage(id) } } }
         }
     }
 
@@ -186,14 +186,19 @@ public class ScheduledMessageListController(
     }
 
     /**
-     * Sends the scheduled message with [id] right away.
+     * Sends the scheduled message with [id] right away. While offline, it is sent once the device is back online, and
+     * [ScheduledMessageListEvent.SendNowQueued] is sent.
      *
      * @param id The ID of the scheduled message.
      */
     public fun sendNow(id: String) {
         ownScope.launch {
-            val result = chatClient.sendScheduledMessageNow(id).await()
-            if (result is Result.Failure) onRefused(id, result.value)
+            when (val result = chatClient.sendScheduledMessageNow(id).await()) {
+                is Result.Success -> if (chatClient.clientState.connectionState.value is ConnectionState.Offline) {
+                    _events.send(ScheduledMessageListEvent.SendNowQueued)
+                }
+                is Result.Failure -> onRefused(id, result.value)
+            }
         }
     }
 

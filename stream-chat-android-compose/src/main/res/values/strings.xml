@@ -532,4 +532,7 @@
     <string name="stream_compose_scheduled_message_failure_too_far">The scheduled time is further ahead than the app allows.</string>
     <string name="stream_compose_scheduled_message_failure_disabled">Scheduled messages are turned off.</string>
     <string name="stream_compose_scheduled_message_failure_sending">The message is being sent.</string>
+    <string name="stream_compose_scheduled_message_list_send_now_queued">Sends when you\'re back online</string>
+    <string name="stream_compose_scheduled_message_failure_conflict">The message was changed on another device.</string>
+    <string name="stream_compose_scheduled_message_failure_not_editable">This message can no longer be changed.</string>
 </resources>

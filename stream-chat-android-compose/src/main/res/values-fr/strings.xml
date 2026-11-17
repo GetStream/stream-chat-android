@@ -421,4 +421,7 @@
   <string name="stream_compose_scheduled_message_failure_too_far">"L\'heure programmée est plus éloignée que ce que l\'application permet."</string>
   <string name="stream_compose_scheduled_message_failure_disabled">"Les messages programmés sont désactivés."</string>
   <string name="stream_compose_scheduled_message_failure_sending">"Le message est en cours d\'envoi."</string>
+  <string name="stream_compose_scheduled_message_list_send_now_queued">"Sera envoyé dès que vous serez de nouveau en ligne"</string>
+  <string name="stream_compose_scheduled_message_failure_conflict">"Le message a été modifié sur un autre appareil."</string>
+  <string name="stream_compose_scheduled_message_failure_not_editable">"Ce message ne peut plus être modifié."</string>
 </resources>
