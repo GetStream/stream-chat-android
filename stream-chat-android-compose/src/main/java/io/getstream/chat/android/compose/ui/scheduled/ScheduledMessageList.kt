@@ -70,6 +70,7 @@ import io.getstream.chat.android.compose.ui.util.StreamSnackbarVariant
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarVisuals
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModel
 import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction
@@ -86,16 +87,18 @@ import kotlinx.coroutines.launch
  * that is already sent or deleted on another device leaves the list with a short notice. Send now while offline tells
  * the user that the message is sent once the device is back online.
  *
+ * Edit opens a composer below the list, with the content of the message. Its check button saves the message and keeps
+ * its date. For a message the server failed to send, it picks a date and schedules the message again as a new
+ * message. Saving is disabled while the message is no longer scheduled, while it quotes a deleted message until the
+ * quote is removed, and while it starts with a command. The channel of the message does not need to be open.
+ *
  * @param viewModel The [ScheduledMessageListViewModel] holding the scheduled messages and their actions.
  * @param modifier Modifier for styling.
- * @param onEditClick Called when the user wants to edit a scheduled message, or to edit and schedule again a message
- * that failed. The edit actions are not shown when it is null.
  */
 @Composable
 public fun ScheduledMessageList(
     viewModel: ScheduledMessageListViewModel,
     modifier: Modifier = Modifier,
-    onEditClick: ((ScheduledMessage) -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -103,6 +106,9 @@ public fun ScheduledMessageList(
     val snackbarHostState = remember(::SnackbarHostState)
     val snackbarScope = rememberCoroutineScope()
     val sheets = rememberSaveable(saver = ScheduledMessageSheets.Saver) { ScheduledMessageSheets() }
+    val edit = rememberSaveable(saver = ScheduledMessageEdit.Saver) { ScheduledMessageEdit() }
+    val editSession = edit.session
+    val editedItem = state.itemOf(editSession?.id)
 
     fun showSnackbar(message: String, variant: StreamSnackbarVariant = StreamSnackbarVariant.Default) {
         snackbarScope.launch {
@@ -111,56 +117,134 @@ public fun ScheduledMessageList(
         }
     }
 
-    // A message that leaves the list while the user acts on it was sent, or deleted on another device.
-    LaunchedEffect(state, sheets.openIds) {
-        // Nothing is known yet after a restart, until the scheduled messages load.
-        val isKnown = !state.isLoading && !state.isLoadFailed
-        if (isKnown && sheets.openIds.any { id -> state.itemOf(id) == null }) {
-            sheets.closeAll()
-            showSnackbar(context.getString(R.string.stream_compose_scheduled_message_list_gone))
-        }
-    }
-    LaunchedEffect(viewModel) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is ScheduledMessageListEvent.MessageGone ->
-                    showSnackbar(context.getString(R.string.stream_compose_scheduled_message_list_gone))
-                is ScheduledMessageListEvent.SendNowQueued ->
-                    showSnackbar(context.getString(R.string.stream_compose_scheduled_message_list_send_now_queued))
-                is ScheduledMessageListEvent.ActionFailed -> showSnackbar(
-                    message = context.getString(R.string.stream_compose_scheduled_message_list_action_failed),
-                    variant = StreamSnackbarVariant.Error,
-                )
-                else -> Unit
-            }
-        }
-    }
+    // Nothing is known yet after a restart, until the scheduled messages load.
+    val isKnown = !state.isLoading && !state.isLoadFailed
+    ScheduledMessageSheetsGoneNotice(state, sheets, isKnown, ::showSnackbar)
+    ScheduledMessageEditGoneNotice(editSession, editedItem, isKnown, ::showSnackbar)
+    val isEditedQuoteDeleted = editedItem?.isQuoteDeleted == true && editSession?.isQuoteRemoved == false
+    ScheduledMessageListEvents(viewModel = viewModel, showSnackbar = ::showSnackbar)
 
-    Box(modifier = modifier) {
-        ScheduledMessageListContent(
-            state = state,
-            currentUser = currentUser,
-            onItemClick = { item ->
-                if (item.actions.isEmpty()) {
-                    showSnackbar(
-                        message = context.getString(R.string.stream_compose_scheduled_message_list_still_sending),
-                        variant = StreamSnackbarVariant.Loading,
-                    )
-                } else {
-                    sheets.selectedId = item.scheduledMessage.id
-                }
-            },
-            onRetryClick = viewModel::load,
-        )
-        StreamSnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+    Column(modifier = modifier) {
+        if (isEditedQuoteDeleted) {
+            ScheduledMessageQuoteDeletedBanner(onRemoveQuoteClick = edit::removeQuote)
+        }
+        Box(modifier = Modifier.weight(1f)) {
+            ScheduledMessageListContent(
+                state = state,
+                currentUser = currentUser,
+                onItemClick = { item ->
+                    if (item.actions.isEmpty()) {
+                        showSnackbar(
+                            message = context.getString(R.string.stream_compose_scheduled_message_list_still_sending),
+                            variant = StreamSnackbarVariant.Loading,
+                        )
+                    } else {
+                        sheets.selectedId = item.scheduledMessage.id
+                    }
+                },
+                onRetryClick = viewModel::load,
+            )
+            StreamSnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+        }
+        if (editSession != null) {
+            ScheduledMessageEditComposer(
+                edit = edit,
+                item = editedItem,
+                isQuoteDeleted = isEditedQuoteDeleted,
+                currentUser = currentUser,
+                viewModel = viewModel,
+            )
+        }
     }
     ScheduledMessageListSheets(
         state = state,
         currentUser = currentUser,
         sheets = sheets,
         viewModel = viewModel,
-        onEditClick = onEditClick,
+        onEditClick = edit::start,
     )
+}
+
+/**
+ * Closes the [sheets] of a message that leaves the list while the user acts on it, as it was sent, or deleted on
+ * another device, and tells the user with [showSnackbar].
+ *
+ * @param isKnown Whether the scheduled messages are loaded, so a message missing from the list is gone.
+ */
+@Composable
+private fun ScheduledMessageSheetsGoneNotice(
+    state: ScheduledMessageListState,
+    sheets: ScheduledMessageSheets,
+    isKnown: Boolean,
+    showSnackbar: (message: String, variant: StreamSnackbarVariant) -> Unit,
+) {
+    val context = LocalContext.current
+    LaunchedEffect(state, sheets.openIds) {
+        if (isKnown && sheets.openIds.any { id -> state.itemOf(id) == null }) {
+            sheets.closeAll()
+            showSnackbar(
+                context.getString(R.string.stream_compose_scheduled_message_list_gone),
+                StreamSnackbarVariant.Default,
+            )
+        }
+    }
+}
+
+/**
+ * Tells the user, with [showSnackbar], when the message of [editSession] is sending, or was sent or deleted on another
+ * device. The composer keeps its content, and can't save it.
+ *
+ * @param editedItem The edited message in the list, or null when it is not there.
+ * @param isKnown Whether the scheduled messages are loaded, so a message missing from the list is gone.
+ */
+@Composable
+private fun ScheduledMessageEditGoneNotice(
+    editSession: ScheduledMessageEditSession?,
+    editedItem: ScheduledMessageItemState?,
+    isKnown: Boolean,
+    showSnackbar: (message: String, variant: StreamSnackbarVariant) -> Unit,
+) {
+    val context = LocalContext.current
+    val isEditedMessageGone = editSession != null && isKnown &&
+        (editedItem == null || editedItem.scheduledMessage.status == ScheduledMessageStatus.Sending)
+    LaunchedEffect(editSession?.id, isEditedMessageGone) {
+        if (isEditedMessageGone) {
+            showSnackbar(
+                context.getString(R.string.stream_compose_scheduled_message_list_gone),
+                StreamSnackbarVariant.Default,
+            )
+        }
+    }
+}
+
+/**
+ * Tells the user the results of the actions of [viewModel], with [showSnackbar].
+ */
+@Composable
+private fun ScheduledMessageListEvents(
+    viewModel: ScheduledMessageListViewModel,
+    showSnackbar: (message: String, variant: StreamSnackbarVariant) -> Unit,
+) {
+    val context = LocalContext.current
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is ScheduledMessageListEvent.MessageGone -> showSnackbar(
+                    context.getString(R.string.stream_compose_scheduled_message_list_gone),
+                    StreamSnackbarVariant.Default,
+                )
+                is ScheduledMessageListEvent.SendNowQueued -> showSnackbar(
+                    context.getString(R.string.stream_compose_scheduled_message_list_send_now_queued),
+                    StreamSnackbarVariant.Default,
+                )
+                is ScheduledMessageListEvent.ActionFailed -> showSnackbar(
+                    context.getString(R.string.stream_compose_scheduled_message_list_action_failed),
+                    StreamSnackbarVariant.Error,
+                )
+                else -> Unit
+            }
+        }
+    }
 }
 
 /**
@@ -172,22 +256,21 @@ private fun ScheduledMessageListSheets(
     currentUser: User?,
     sheets: ScheduledMessageSheets,
     viewModel: ScheduledMessageListViewModel,
-    onEditClick: ((ScheduledMessage) -> Unit)?,
+    onEditClick: (ScheduledMessage) -> Unit,
 ) {
     val context = LocalContext.current
     state.itemOf(sheets.selectedId)?.let { item ->
-        val actions = if (onEditClick == null) item.actions - EditActions else item.actions
         ChatTheme.componentFactory.ScheduledMessageActionsSheet(
             params = ScheduledMessageActionsSheetParams(
                 item = item,
-                actions = actions,
+                actions = item.actions,
                 onActionClick = { action ->
                     sheets.selectedId = null
                     val scheduledMessage = item.scheduledMessage
                     when (action) {
                         ScheduledMessageAction.Edit,
                         ScheduledMessageAction.EditAndReschedule,
-                        -> onEditClick?.invoke(scheduledMessage)
+                        -> onEditClick(scheduledMessage)
                         ScheduledMessageAction.Reschedule -> sheets.rescheduledId = scheduledMessage.id
                         ScheduledMessageAction.SendNow -> viewModel.sendNow(scheduledMessage.id)
                         ScheduledMessageAction.CopyText -> context.copyText(scheduledMessage.message.text)
@@ -396,8 +479,6 @@ private fun Context.copyText(text: String) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     clipboard.setPrimaryClip(ClipData.newPlainText(text, text))
 }
-
-private val EditActions = setOf(ScheduledMessageAction.Edit, ScheduledMessageAction.EditAndReschedule)
 
 private val ErrorIconSize = 32.dp
 

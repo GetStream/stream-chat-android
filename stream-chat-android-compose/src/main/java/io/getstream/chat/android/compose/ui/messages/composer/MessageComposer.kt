@@ -190,10 +190,16 @@ public fun MessageComposer(
     val messageComposerState by viewModel.messageComposerState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val isEditingScheduledMessage = LocalScheduledMessageEditMode.current != null
 
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(viewModel, isEditingScheduledMessage) {
         viewModel.events.collect { event ->
-            val message = event.messageResOrNull()?.let(context::getString) ?: return@collect
+            val messageRes = if (isEditingScheduledMessage && event is MessageComposerViewEvent.CommandUnavailable) {
+                R.string.stream_compose_schedule_message_error_command
+            } else {
+                event.messageResOrNull()
+            }
+            val message = messageRes?.let(context::getString) ?: return@collect
             snackbarHostState.showSnackbar(
                 visuals = StreamSnackbarVisuals(
                     message = message,
@@ -242,6 +248,21 @@ public fun MessageComposer(
  * which runs it on a long press. Null when the user can't schedule messages in the channel.
  */
 internal val LocalMessageComposerScheduleAction = compositionLocalOf<(() -> Unit)?> { null }
+
+/**
+ * Set while the composer edits a scheduled message, so the default components show it: the edit indicator names it,
+ * the save button is enabled only when [ScheduledMessageEditMode.canSave], and a command typed in the composer is
+ * refused as it can't be scheduled. Null for any other composer.
+ */
+internal val LocalScheduledMessageEditMode = compositionLocalOf<ScheduledMessageEditMode?> { null }
+
+/**
+ * How the composer edits a scheduled message.
+ *
+ * @param canSave Whether the content of the composer can be saved: the message is still scheduled, and its content can
+ * be scheduled.
+ */
+internal data class ScheduledMessageEditMode(val canSave: Boolean)
 
 /**
  * Hands the [SnackbarHostState] from the VM-bound [MessageComposer] down to the factory's default

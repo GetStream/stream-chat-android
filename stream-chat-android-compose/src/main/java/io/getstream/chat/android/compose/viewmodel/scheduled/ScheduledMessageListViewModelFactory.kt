@@ -44,6 +44,7 @@ public class ScheduledMessageListViewModelFactory(
             controller = ScheduledMessageListController(cid = cid, chatClient = chatClient),
             user = chatClient.clientState.user,
             connectionState = chatClient.clientState.connectionState,
+            chatClient = chatClient,
         ) as T
     }
 }

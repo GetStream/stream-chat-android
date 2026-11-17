@@ -38,7 +38,6 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModelFactory
-import io.getstream.chat.android.models.ScheduledMessage
 
 /**
  * The screen of the current user's scheduled messages: a header with a back button and the [ScheduledMessageList].
@@ -49,15 +48,12 @@ import io.getstream.chat.android.models.ScheduledMessage
  * @param title The title of the header. Also the screen's `paneTitle` semantic, announced by TalkBack when the
  * screen appears as a pane.
  * @param onBackPressed Called when the user taps the back button.
- * @param onEditClick Called when the user wants to edit a scheduled message, or to edit and schedule again a message
- * that failed. The edit actions are not shown when it is null.
  */
 @Composable
 public fun ScheduledMessagesScreen(
     viewModelFactory: ScheduledMessageListViewModelFactory = ScheduledMessageListViewModelFactory(),
     title: String = stringResource(R.string.stream_compose_scheduled_message_list_title),
     onBackPressed: () -> Unit = {},
-    onEditClick: ((ScheduledMessage) -> Unit)? = null,
 ) {
     val viewModel: ScheduledMessageListViewModel = viewModel(factory = viewModelFactory)
     val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
@@ -81,7 +77,6 @@ public fun ScheduledMessagesScreen(
         ScheduledMessageList(
             viewModel = viewModel,
             modifier = Modifier.fillMaxSize(),
-            onEditClick = onEditClick,
         )
     }
 }

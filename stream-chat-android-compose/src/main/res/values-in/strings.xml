@@ -410,4 +410,7 @@
   <string name="stream_compose_scheduled_message_list_send_now_queued">"Akan dikirim saat Anda kembali online"</string>
   <string name="stream_compose_scheduled_message_failure_conflict">"Pesan telah diubah di perangkat lain."</string>
   <string name="stream_compose_scheduled_message_failure_not_editable">"Pesan ini tidak dapat diubah lagi."</string>
+  <string name="stream_compose_scheduled_message_edit_title">"Edit pesan terjadwal"</string>
+  <string name="stream_compose_scheduled_message_edit_quote_deleted">"Pesan yang dikutip telah dihapus"</string>
+  <string name="stream_compose_scheduled_message_edit_remove_quote">"Hapus kutipan"</string>
 </resources>

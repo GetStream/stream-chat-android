@@ -16,45 +16,41 @@
 
 package io.getstream.chat.android.compose.sample.feature.scheduled
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
 import io.getstream.chat.android.compose.ui.scheduled.ScheduledMessagesScreen
-import io.getstream.chat.android.models.ScheduledMessage
-import io.getstream.chat.android.models.ScheduledMessageFailure
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 
 class ScheduledMessagesActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val settings = customSettings()
         setContent {
-            SampleChatTheme {
+            // The composer that edits a scheduled message looks like the one of the channel.
+            SampleChatTheme(
+                config = ChatUiConfig(
+                    composer = ComposerConfig(
+                        linkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
+                        floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
+                    ),
+                    attachmentPicker = AttachmentPickerConfig(
+                        useSystemPicker = settings.isSystemAttachmentPickerEnabled,
+                    ),
+                ),
+            ) {
                 Box(modifier = Modifier.systemBarsPadding()) {
-                    ScheduledMessagesScreen(
-                        onBackPressed = ::finish,
-                        onEditClick = ::openEditor,
-                    )
+                    ScheduledMessagesScreen(onBackPressed = ::finish)
                 }
             }
         }
-    }
-
-    private fun openEditor(scheduledMessage: ScheduledMessage) {
-        startActivity(
-            ChannelActivity.createIntent(
-                context = this,
-                channelId = scheduledMessage.cid,
-                parentMessageId = scheduledMessage.message.parentId,
-                scheduledMessageId = scheduledMessage.id,
-                // The server can't edit a message it failed to send: it is scheduled again as a new message.
-                isScheduledAgain = scheduledMessage.failure is ScheduledMessageFailure.ServerFailedPublishing,
-            ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), // Replaces the channel screen this one was opened from, if any.
-        )
     }
 }

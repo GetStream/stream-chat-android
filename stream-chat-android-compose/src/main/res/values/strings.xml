@@ -535,4 +535,7 @@
     <string name="stream_compose_scheduled_message_list_send_now_queued">Sends when you\'re back online</string>
     <string name="stream_compose_scheduled_message_failure_conflict">The message was changed on another device.</string>
     <string name="stream_compose_scheduled_message_failure_not_editable">This message can no longer be changed.</string>
+    <string name="stream_compose_scheduled_message_edit_title">Edit scheduled message</string>
+    <string name="stream_compose_scheduled_message_edit_quote_deleted">The quoted message was deleted</string>
+    <string name="stream_compose_scheduled_message_edit_remove_quote">Remove quote</string>
 </resources>

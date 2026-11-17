@@ -424,4 +424,7 @@
   <string name="stream_compose_scheduled_message_list_send_now_queued">"ऑनलाइन वापस आने पर भेजा जाएगा"</string>
   <string name="stream_compose_scheduled_message_failure_conflict">"मैसेज किसी दूसरे डिवाइस पर बदल दिया गया था।"</string>
   <string name="stream_compose_scheduled_message_failure_not_editable">"इस मैसेज को अब बदला नहीं जा सकता।"</string>
+  <string name="stream_compose_scheduled_message_edit_title">"शेड्यूल किया गया मैसेज एडिट करें"</string>
+  <string name="stream_compose_scheduled_message_edit_quote_deleted">"कोट किया गया मैसेज डिलीट कर दिया गया"</string>
+  <string name="stream_compose_scheduled_message_edit_remove_quote">"कोट हटाएं"</string>
 </resources>
