@@ -49,8 +49,10 @@ import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListE
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.CoroutineCall
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
@@ -588,6 +590,27 @@ internal class ScheduledMessageListControllerTest {
         verify(client).scheduleMessage(channelType, channelId, composed.copy(id = ""), scheduledAt)
         results shouldBeEqualTo listOf(Result.Success(newMessage))
         deletesAtResult shouldBeEqualTo listOf(1)
+    }
+
+    @Test
+    fun `edit and reschedule calls back only once the failed message is deleted`() = runTest {
+        hasLoadedAll.value = true
+        val failedMessage = failed(ServerFailedPublishing(reason = null))
+        scheduledMessages.value = listOf(failedMessage)
+        val newMessage = scheduled()
+        val deleted = CompletableDeferred<Result<Unit>>()
+        whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn newMessage.asCall()
+        whenever(client.deleteScheduledMessage(failedMessage.id)) doReturn
+            CoroutineCall(backgroundScope) { deleted.await() }
+        val results = mutableListOf<Result<ScheduledMessage>>()
+
+        controller().editAndReschedule(failedMessage.id, failedMessage.message, false, randomDate()) { results += it }
+        runCurrent()
+        results.shouldBeEmpty()
+
+        deleted.complete(Result.Success(Unit))
+        runCurrent()
+        results shouldBeEqualTo listOf(Result.Success(newMessage))
     }
 
     @Test
