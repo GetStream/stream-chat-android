@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.viewmodel.scheduled
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.ui.scheduled.ScheduledMessageEdit
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
@@ -93,10 +94,9 @@ public class ScheduledMessageListViewModel internal constructor(
     }
 
     /**
-     * The ID of the scheduled message whose edit filled the composer. Kept across configuration changes, so the
-     * composer keeps the changes of the user. After a process restart, the composer is filled again.
+     * The scheduled message edited in the composer of the list, kept across configuration changes.
      */
-    internal var startedEditId: String? = null
+    internal val edit: ScheduledMessageEdit = ScheduledMessageEdit()
 
     /**
      * The content of the scheduled message with [id] to edit in a composer, or null when it is no longer there.

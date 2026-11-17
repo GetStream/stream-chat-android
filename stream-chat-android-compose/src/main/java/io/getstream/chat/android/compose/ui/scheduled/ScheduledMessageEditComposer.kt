@@ -37,7 +37,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -80,65 +79,64 @@ import io.getstream.result.Result
 import java.util.Date
 
 /**
- * The scheduled message edited in the composer of the list, if any.
+ * The scheduled message edited in the composer of the list, if any. Kept by [ScheduledMessageListViewModel], so the
+ * edit and its save in flight survive a configuration change. After a process restart, no message is edited.
  */
-internal class ScheduledMessageEdit(session: ScheduledMessageEditSession? = null) {
+internal class ScheduledMessageEdit {
 
-    var session by mutableStateOf(session)
+    var session by mutableStateOf<ScheduledMessageEditSession?>(null)
         private set
+
+    private var lastToken = 0
 
     /** Starts editing [scheduledMessage], in place of the message edited so far. */
     fun start(scheduledMessage: ScheduledMessage) {
         if (session?.id == scheduledMessage.id) return
         session = ScheduledMessageEditSession(
+            token = ++lastToken,
             id = scheduledMessage.id,
             cid = scheduledMessage.cid,
             parentId = scheduledMessage.message.parentId,
         )
     }
 
-    fun end() {
-        session = null
+    /** Ends the edit with [token], unless another edit started since. */
+    fun end(token: Int) {
+        if (session?.token == token) session = null
     }
 
     fun removeQuote() {
         session = session?.copy(isQuoteRemoved = true)
     }
 
-    fun setSaving(id: String, isSaving: Boolean) {
-        session = session?.takeIf { it.id == id }?.copy(isSaving = isSaving) ?: session
+    fun onFilled(token: Int) {
+        update(token) { it.copy(isFilled = true) }
     }
 
-    companion object {
-        val Saver = listSaver<ScheduledMessageEdit, Any?>(
-            save = { edit -> edit.session?.run { listOf(id, cid, parentId, isQuoteRemoved) }.orEmpty() },
-            restore = { values ->
-                ScheduledMessageEdit(
-                    session = values.takeIf { it.isNotEmpty() }?.let {
-                        ScheduledMessageEditSession(
-                            id = it[0] as String,
-                            cid = it[1] as String,
-                            parentId = it[2] as String?,
-                            isQuoteRemoved = it[3] as Boolean,
-                        )
-                    },
-                )
-            },
-        )
+    fun setSaving(token: Int, isSaving: Boolean) {
+        update(token) { it.copy(isSaving = isSaving) }
+    }
+
+    private fun update(token: Int, transform: (ScheduledMessageEditSession) -> ScheduledMessageEditSession) {
+        session = session?.let { if (it.token == token) transform(it) else it }
     }
 }
 
 /**
  * The edit of the scheduled message with [id], in the channel [cid] and the thread [parentId].
  *
+ * @param token Tells this edit apart from a later edit of the same message.
  * @param isQuoteRemoved Whether the user removed the quote of the message.
+ * @param isFilled Whether the composer was filled with the message, so it keeps the changes of the user.
  * @param isSaving Whether the edit is being saved, so it is not saved twice.
  */
 internal data class ScheduledMessageEditSession(
+    val token: Int,
     val id: String,
     val cid: String,
     val parentId: String?,
     val isQuoteRemoved: Boolean = false,
+    val isFilled: Boolean = false,
     val isSaving: Boolean = false,
 )
 
@@ -167,7 +165,7 @@ internal fun ScheduledMessageEditComposer(
     val composerState by composerViewModel.messageComposerState.collectAsState()
     val scheduleState by composerViewModel.scheduleMessageState.collectAsState()
     val editAction = item?.actions?.firstOrNull { it in EditActions }
-    var isTimeSheetShown by rememberSaveable(session.id) { mutableStateOf(false) }
+    var isTimeSheetShown by rememberSaveable(session.token) { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     // The callbacks read the latest values, as the composer can keep the callbacks it got first.
     val latestEditAction by rememberUpdatedState(editAction)
@@ -175,7 +173,7 @@ internal fun ScheduledMessageEditComposer(
         ScheduledMessageEditActions(edit, viewModel, composerViewModel, pickerViewModel) { latestEditAction }
     }
 
-    FillComposerOnStart(edit, session.id, viewModel, composerViewModel, pickerViewModel)
+    FillComposerOnStart(edit, session, viewModel, composerViewModel, pickerViewModel)
 
     val preview = Message(
         text = composerState.inputValue.trim(),
@@ -219,35 +217,37 @@ internal fun ScheduledMessageEditComposer(
 }
 
 /**
- * Fills the composer with the scheduled message with [id] when its edit starts, in place of what it holds. A composer
- * kept across a configuration change keeps the changes of the user. Ends [edit] when the message is no longer there.
+ * Fills the composer with the scheduled message of [session] when its edit starts, in place of what it holds. A
+ * composer kept across a configuration change keeps the changes of the user. Ends [edit] when the message is no longer
+ * there.
  */
 @Composable
 private fun FillComposerOnStart(
     edit: ScheduledMessageEdit,
-    id: String,
+    session: ScheduledMessageEditSession,
     viewModel: ScheduledMessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     pickerViewModel: AttachmentsPickerViewModel,
 ) {
-    LaunchedEffect(id) {
-        if (viewModel.startedEditId == id) return@LaunchedEffect
+    LaunchedEffect(session.token) {
+        if (session.isFilled) return@LaunchedEffect
         // This composer may still hold a message edited before in the same channel.
         composerViewModel.clearData()
         pickerViewModel.clearSelection()
-        val message = viewModel.messageToEdit(id)
+        val message = viewModel.messageToEdit(session.id)
         if (message == null) {
-            edit.end()
+            edit.end(session.token)
         } else {
             composerViewModel.performMessageAction(Edit(message))
-            viewModel.startedEditId = id
+            edit.onFilled(session.token)
         }
     }
 }
 
 /**
  * Saves, reschedules or cancels the edit of [edit] with the latest session and edit action, and ends it once it is
- * saved. A result that arrives after the user moved to another message leaves that message alone.
+ * saved. A result that arrives after the user moved to another edit, of another message or of the same one, leaves
+ * that edit alone.
  */
 private class ScheduledMessageEditActions(
     private val edit: ScheduledMessageEdit,
@@ -264,13 +264,13 @@ private class ScheduledMessageEditActions(
         val session = edit.session?.takeUnless { it.isSaving } ?: return false
         return when (editAction()) {
             ScheduledMessageAction.Edit -> {
-                edit.setSaving(session.id, isSaving = true)
+                edit.setSaving(session.token, isSaving = true)
                 viewModel.edit(
                     id = session.id,
                     message = message,
                     isQuoteRemoved = session.isQuoteRemoved,
                     resolveAttachments = composerViewModel::resolveAttachments,
-                    onResult = { result -> onResult(session.id, result) },
+                    onResult = { result -> onResult(session.token, result) },
                 )
                 false
             }
@@ -284,35 +284,34 @@ private class ScheduledMessageEditActions(
         val session = edit.session?.takeUnless { it.isSaving } ?: return
         if (editAction() != ScheduledMessageAction.EditAndReschedule) return
         val state = composerViewModel.messageComposerState.value
-        edit.setSaving(session.id, isSaving = true)
+        edit.setSaving(session.token, isSaving = true)
         viewModel.editAndReschedule(
             id = session.id,
             message = composerViewModel.buildNewMessage(state.inputValue, state.attachments),
             isQuoteRemoved = session.isQuoteRemoved,
             scheduledAt = date,
             resolveAttachments = composerViewModel::resolveAttachments,
-            onResult = { result -> onResult(session.id, result) },
+            onResult = { result -> onResult(session.token, result) },
         )
     }
 
     fun cancel() {
-        edit.session?.let { end(it.id) }
+        edit.session?.let { end(it.token) }
     }
 
-    private fun onResult(id: String, result: Result<ScheduledMessage>) {
+    private fun onResult(token: Int, result: Result<ScheduledMessage>) {
         when (result) {
-            is Result.Success -> end(id)
-            is Result.Failure -> edit.setSaving(id, isSaving = false)
+            is Result.Success -> end(token)
+            is Result.Failure -> edit.setSaving(token, isSaving = false)
         }
     }
 
-    private fun end(id: String) {
-        if (edit.session?.id != id) return
+    private fun end(token: Int) {
+        if (edit.session?.token != token) return
         pickerViewModel.setPickerVisible(visible = false)
         pickerViewModel.clearSelection()
         composerViewModel.clearData()
-        viewModel.startedEditId = null
-        edit.end()
+        edit.end(token)
     }
 }
 

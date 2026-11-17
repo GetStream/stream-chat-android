@@ -39,6 +39,11 @@ import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.asCall
+import io.getstream.result.Result
+import io.getstream.result.call.CoroutineCall
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
@@ -146,6 +151,26 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         save()
 
         verify(mockChatClient).updateScheduledMessage(eq("a"), argThat { replyTo == null && replyMessageId == null }, isNull())
+    }
+
+    @Test
+    fun `a save that ends after the message was reopened leaves the new edit open`() {
+        val message = scheduled(id = "a", text = "Heads up")
+        scheduledMessagesFlow.value = listOf(message)
+        val pending = CompletableDeferred<Result<ScheduledMessage>>()
+        whenever(mockChatClient.updateScheduledMessage(any(), any(), anyOrNull())) doReturn
+            CoroutineCall(CoroutineScope(Dispatchers.Main)) { pending.await() }
+        setContent()
+        startEditing("Heads up")
+        save()
+        clickTag("Stream_ComposerCancelEditButton")
+        startEditing("Heads up")
+
+        pending.complete(Result.Success(message))
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Edit scheduled message").assertExists()
+        composeTestRule.onNodeWithTag("Stream_ComposerInputField").assertTextEquals("Heads up")
     }
 
     @Test

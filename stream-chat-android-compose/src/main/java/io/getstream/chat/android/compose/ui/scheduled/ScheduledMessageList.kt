@@ -106,7 +106,7 @@ public fun ScheduledMessageList(
     val snackbarHostState = remember(::SnackbarHostState)
     val snackbarScope = rememberCoroutineScope()
     val sheets = rememberSaveable(saver = ScheduledMessageSheets.Saver) { ScheduledMessageSheets() }
-    val edit = rememberSaveable(saver = ScheduledMessageEdit.Saver) { ScheduledMessageEdit() }
+    val edit = viewModel.edit
     val editSession = edit.session
     val editedItem = state.itemOf(editSession?.id)
 
