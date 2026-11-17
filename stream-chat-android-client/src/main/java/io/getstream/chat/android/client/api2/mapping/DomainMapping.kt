@@ -828,7 +828,7 @@ internal class DomainMapping(
      * Transforms [DownstreamThreadParticipantDto] into [ThreadParticipant]
      */
     internal fun DownstreamThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
-        user = user.toDomain(),
+        user = user?.toDomain() ?: User(id = user_id),
     )
 
     /**

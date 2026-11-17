@@ -108,6 +108,7 @@ import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
@@ -887,6 +888,18 @@ internal class DomainMappingTest {
             extraData = downstreamThreadDto.extraData,
         )
         assertEquals(expected, thread)
+    }
+
+    @Test
+    fun `DownstreamThreadParticipantDto without user is mapped to a user with only the id`() {
+        val participantDto = DownstreamThreadParticipantDto(
+            channel_cid = "messaging:123",
+            user = null,
+            user_id = "user1",
+        )
+        val sut = Fixture().get()
+        val participant = with(sut) { participantDto.toDomain() }
+        assertEquals(ThreadParticipant(user = User(id = "user1")), participant)
     }
 
     @Test

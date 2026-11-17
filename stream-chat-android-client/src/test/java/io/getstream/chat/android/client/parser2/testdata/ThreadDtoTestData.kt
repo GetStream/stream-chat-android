@@ -156,6 +156,44 @@ internal object ThreadDtoTestData {
     )
 
     @Language("JSON")
+    val downstreamThreadJsonWithParticipantWithoutUser =
+        """{
+          "active_participant_count": 2,
+          "channel": ${ChannelDtoTestData.downstreamJsonWithoutExtraData},
+          "channel_cid": "messaging:456",
+          "created_at": "2020-06-10T11:04:31.000Z",
+          "created_by": ${UserDtoTestData.downstreamJson},
+          "created_by_user_id": "user2",
+          "deleted_at": null,
+          "draft": null,
+          "last_message_at": "2020-06-10T11:04:31.588Z",
+          "latest_replies": [],
+          "parent_message": ${MessageDtoTestData.downstreamJsonWithoutExtraData},
+          "parent_message_id": "parent_msg_id_2",
+          "participant_count": 2,
+          "read": [],
+          "reply_count": 0,
+          "thread_participants": [
+            {
+              "channel_cid": "messaging:456",
+              "user_id": "user2"
+            }
+          ],
+          "title": "Simple Thread",
+          "updated_at": "2020-06-10T11:04:31.588Z"
+        }"""
+
+    val downstreamThreadWithParticipantWithoutUser = downstreamThreadWithoutExtraData.copy(
+        thread_participants = listOf(
+            DownstreamThreadParticipantDto(
+                channel_cid = "messaging:456",
+                user = null,
+                user_id = "user2",
+            ),
+        ),
+    )
+
+    @Language("JSON")
     val downstreamThreadInfoJson =
         """{
           "active_participant_count": 4,

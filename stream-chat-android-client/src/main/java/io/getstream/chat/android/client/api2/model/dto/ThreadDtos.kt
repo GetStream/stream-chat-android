@@ -114,6 +114,6 @@ internal data class DownstreamThreadInfoDto(
 @JsonClass(generateAdapter = true)
 internal data class DownstreamThreadParticipantDto(
     val channel_cid: String,
-    val user: DownstreamUserDto,
+    val user: DownstreamUserDto?,
     val user_id: String,
 )

@@ -41,4 +41,13 @@ internal class DownstreamThreadDtoAdapterTest {
         )
         Assertions.assertEquals(ThreadDtoTestData.downstreamThreadWithoutExtraData, thread)
     }
+
+    @Test
+    fun `Deserialize JSON thread with a participant without user`() {
+        val thread = parser.fromJson(
+            ThreadDtoTestData.downstreamThreadJsonWithParticipantWithoutUser,
+            DownstreamThreadDto::class.java,
+        )
+        Assertions.assertEquals(ThreadDtoTestData.downstreamThreadWithParticipantWithoutUser, thread)
+    }
 }
