@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.utils.channel
 
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
@@ -54,6 +56,13 @@ internal fun Channel.isLocalPlaceholder(): Boolean =
  */
 internal fun isMultiMemberPlaceholderCid(cid: String): Boolean =
     cid.substringAfter(':').let { id -> id.startsWith(PLACEHOLDER_ID_PREFIX) && PLACEHOLDER_ID_SEPARATOR in id }
+
+/**
+ * Whether [cid] is a local placeholder, using [LogicRegistry.isPlaceholderChannel] when this is the state plugin's
+ * registry, which also knows the single-member placeholders created this session.
+ */
+internal fun ChannelStateLogicProvider?.isPlaceholderChannel(cid: String): Boolean =
+    (this as? LogicRegistry)?.isPlaceholderChannel(cid) ?: isMultiMemberPlaceholderCid(cid)
 
 private const val PLACEHOLDER_ID_PREFIX = "!members-"
 private const val PLACEHOLDER_ID_SEPARATOR = ", "

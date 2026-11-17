@@ -3534,6 +3534,25 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `messages awaiting attachments in a created channel are sent`() = runTest(testDispatcher) {
+        givenPlaceholders()
+        val message = localRandomMessage().copy(
+            cid = "messaging:general",
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+            attachments = listOf(Attachment(uploadState = Attachment.UploadState.Idle)),
+        )
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+            listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+
+        buildSyncManager().retryMessages()
+
+        verify(chatClient).sendMessage("messaging", "general", message, true)
+        verify(repositoryFacade, never()).insertMessage(any())
+    }
+
+    @Test
     fun `messages awaiting attachments fail when their channel is rejected`() = runTest(testDispatcher) {
         val placeholder = placeholderChannel(id = "!members-a, b")
         givenChannelRetryFails(placeholder, statusCode = 400)
