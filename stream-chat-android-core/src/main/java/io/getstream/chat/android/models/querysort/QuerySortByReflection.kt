@@ -34,10 +34,6 @@ import kotlin.reflect.KProperty1
 @Deprecated(
     message = "Use QuerySortByField, which reads fields by name through ComparableFieldProvider instead of " +
         "reflection. Every model the SDK sorts implements it, custom data included.",
-    replaceWith = ReplaceWith(
-        "QuerySortByField",
-        "io.getstream.chat.android.models.querysort.QuerySortByField",
-    ),
 )
 @Suppress("TooManyFunctions", "DEPRECATION")
 public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
