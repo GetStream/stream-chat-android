@@ -81,6 +81,7 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
 import io.getstream.chat.android.models.MessageReminder
@@ -902,6 +903,23 @@ internal class DomainMappingTest {
             .get()
         val participant = with(sut) { participantDto.toDomain() }
         assertEquals(ThreadParticipant(user = User(id = "user1", name = "transformed user1")), participant)
+    }
+
+    @Test
+    fun `DownstreamThreadDto without latest replies is mapped to a Thread with no replies`() {
+        val downstreamThreadDto = randomDownstreamThreadDto().copy(latest_replies = null)
+        val sut = Fixture().get()
+        val thread = with(sut) { downstreamThreadDto.toDomain() }
+        assertEquals(emptyList<Message>(), thread.latestReplies)
+    }
+
+    @Test
+    fun `DownstreamThreadDto without channel maps its replies without channel info`() {
+        val downstreamThreadDto = randomDownstreamThreadDto().copy(channel = null)
+        val sut = Fixture().get()
+        val thread = with(sut) { downstreamThreadDto.toDomain() }
+        val expected = with(sut) { downstreamThreadDto.latest_replies.orEmpty().map { it.toDomain(null) } }
+        assertEquals(expected, thread.latestReplies)
     }
 
     @Test
