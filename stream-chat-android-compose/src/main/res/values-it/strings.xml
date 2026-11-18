@@ -380,6 +380,50 @@
   <string name="stream_compose_user_status_online">"Online"</string>
   <string name="stream_compose_video_preview">"Video"</string>
   <string name="stream_compose_waiting_for_network">"Attendo la rete"</string>
+  <string name="stream_compose_schedule_message_title">"Programma messaggio"</string>
+  <string name="stream_compose_schedule_message_reschedule_title">"Riprogramma messaggio"</string>
+  <string name="stream_compose_schedule_message_limit_reached">"Limite raggiunto (max %1$d)"</string>
+  <string name="stream_compose_schedule_message_tomorrow_at">"Domani alle %1$s"</string>
+  <string name="stream_compose_schedule_message_day_at">"%1$s alle %2$s"</string>
+  <string name="stream_compose_schedule_message_custom_time">"Orario personalizzato"</string>
+  <string name="stream_compose_schedule_message_to">"Messaggio per %1$s"</string>
+  <string name="stream_compose_schedule_message_reply_to">"Risposta a %1$s"</string>
+  <string name="stream_compose_schedule_message_scheduled_for">"Programmato per %1$s"</string>
+  <string name="stream_compose_schedule_message_date">"Data"</string>
+  <string name="stream_compose_schedule_message_time">"Ora"</string>
+  <string name="stream_compose_schedule_message_time_zone">"Inviato nel tuo fuso orario (%1$s)"</string>
+  <string name="stream_compose_schedule_message_channel_count">"%1$d di %2$d programmati in questo canale"</string>
+  <string name="stream_compose_schedule_message_cancel">"Annulla"</string>
+  <string name="stream_compose_schedule_message_schedule">"Programma"</string>
+  <string name="stream_compose_schedule_message_reschedule">"Riprogramma"</string>
+  <string name="stream_compose_schedule_message_ok">"OK"</string>
+  <string name="stream_compose_schedule_message_enter_time">"Inserisci l\'ora"</string>
+  <plurals name="stream_compose_schedule_message_error_too_soon">
+    <item quantity="one">"Scegli un orario ad almeno %d minuto da adesso"</item>
+    <item quantity="other">"Scegli un orario ad almeno %d minuti da adesso"</item>
+  </plurals>
+  <string name="stream_compose_schedule_message_error_too_soon_reschedule">"Scegli un orario successivo. Un messaggio modificato non può essere inviato subito."</string>
+  <string name="stream_compose_schedule_message_error_too_far">"È oltre il limite consentito dalla tua app"</string>
+  <string name="stream_compose_schedule_message_error_channel_limit">"Hai raggiunto il limite di %1$d messaggi programmati in questo canale."</string>
+  <string name="stream_compose_schedule_message_error_user_limit">"Hai raggiunto il tuo limite di %1$d messaggi programmati."</string>
+  <string name="stream_compose_schedule_message_error_command">"I comandi non possono essere programmati. Rimuovi il comando / per continuare."</string>
+  <string name="stream_compose_schedule_message_error_failed">"Impossibile programmare il messaggio. Riprova"</string>
+  <plurals name="stream_compose_scheduled_messages_count">
+    <item quantity="one">"%d messaggio programmato"</item>
+    <item quantity="other">"%d messaggi programmati"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_replies_count">
+    <item quantity="one">"%d risposta programmata"</item>
+    <item quantity="other">"%d risposte programmate"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_failed_count">
+    <item quantity="one">"%d invio non riuscito"</item>
+    <item quantity="other">"%d invii non riusciti"</item>
+  </plurals>
+  <string name="stream_compose_scheduled_messages_limit_reached">"%1$d di %2$d messaggi programmati"</string>
+  <string name="stream_compose_scheduled_messages_view">"Visualizza"</string>
+  <string name="stream_compose_scheduled_messages_view_all">"Visualizza tutti"</string>
+  <string name="stream_compose_scheduled_messages_sent">"Messaggio programmato inviato"</string>
   <string name="stream_compose_scheduled_message_list_title">"Messaggi programmati"</string>
   <string name="stream_compose_scheduled_message_list_send_at">"Invio %1$s"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"Nessun messaggio programmato"</string>
