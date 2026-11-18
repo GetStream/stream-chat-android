@@ -39,6 +39,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
@@ -102,6 +103,21 @@ internal class ScheduledMessageEditModeTest : MockedChatClientTest {
 
         composeTestRule.onNodeWithText("Commands can't be scheduled. Remove the / command to continue.")
             .assertExists()
+    }
+
+    @Test
+    fun `slow mode shows the save button of a scheduled message, not the cooldown`() {
+        whenever(viewModel.messageComposerState) doReturn MutableStateFlow(
+            MessageComposerState(
+                inputValue = "Heads up, edited",
+                action = Edit(edited),
+                ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE),
+                coolDownTime = 30,
+            ),
+        )
+        setContent(ScheduledMessageEditMode(canSave = true))
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSaveButton").assertIsEnabled()
     }
 
     private fun setContent(editMode: ScheduledMessageEditMode?) {

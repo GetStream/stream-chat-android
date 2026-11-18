@@ -614,6 +614,27 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
+    fun `edit and reschedule still deletes the failed message when the controller is closed while scheduling`() =
+        runTest {
+            hasLoadedAll.value = true
+            val failedMessage = failed(ServerFailedPublishing(reason = null))
+            scheduledMessages.value = listOf(failedMessage)
+            val scheduled = CompletableDeferred<Result<ScheduledMessage>>()
+            whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn
+                CoroutineCall(backgroundScope) { scheduled.await() }
+            whenever(client.deleteScheduledMessage(failedMessage.id)) doReturn Unit.asCall()
+            val controller = controller()
+            controller.editAndReschedule(failedMessage.id, failedMessage.message, false, randomDate())
+            runCurrent()
+
+            controller.close()
+            scheduled.complete(Result.Success(scheduled()))
+            runCurrent()
+
+            verify(client).deleteScheduledMessage(failedMessage.id)
+        }
+
+    @Test
     fun `edit and reschedule refused before it is saved keeps the failed message`() = runTest {
         hasLoadedAll.value = true
         val failedMessage = failed(ServerFailedPublishing(reason = null))

@@ -43,6 +43,7 @@ import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -59,6 +60,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 import kotlinx.coroutines.channels.Channel as EventChannel
 
@@ -273,8 +275,8 @@ public class ScheduledMessageListController(
     /**
      * Schedules the content of [message] at [scheduledAt] as a new message that replaces the scheduled message with
      * [id], which the server failed to send and can't change. Once the new message is saved locally, the failed one
-     * is deleted, then [onResult] is called. When it is refused before it is saved, the reason is also sent as an
-     * event.
+     * is deleted, then [onResult] is called. Scheduling and deleting finish also when the controller is closed
+     * meanwhile. When it is refused before it is saved, the reason is also sent as an event.
      *
      * @param id The ID of the scheduled message the server failed to send.
      * @param message The new content, built by a composer from [messageToEdit].
@@ -295,24 +297,27 @@ public class ScheduledMessageListController(
     ) {
         ownScope.launch {
             val content = editedContent(id, message, isQuoteRemoved, resolveAttachments)
-            val result = content?.let {
-                val (channelType, channelId) = it.cid.cidToTypeAndId()
-                // A new message, with a new ID.
-                chatClient.scheduleMessage(channelType, channelId, it.copy(id = ""), scheduledAt).await()
-            } ?: goneResult(id)
-            when (result) {
-                is Result.Success -> {
-                    // The failed message leaves the list before the caller learns the result, so it can't be scheduled
-                    // again meanwhile. A delete is local first.
+            // Scheduling and deleting finish together, also when the controller is closed meanwhile, so the failed
+            // message is never left next to the new one. The failed message leaves the list before the caller learns
+            // the result, so it can't be scheduled again meanwhile. A delete is local first.
+            val (result, deleted) = withContext(NonCancellable) {
+                val result = content?.let {
+                    val (channelType, channelId) = it.cid.cidToTypeAndId()
+                    // A new message, with a new ID.
+                    chatClient.scheduleMessage(channelType, channelId, it.copy(id = ""), scheduledAt).await()
+                } ?: goneResult(id)
+                val deleted = if (result is Result.Success) {
                     deletedIds += id
-                    val deleted = chatClient.deleteScheduledMessage(id).await()
-                    onResult(result)
-                    if (deleted is Result.Failure) onRefused(id, deleted.value)
+                    chatClient.deleteScheduledMessage(id).await()
+                } else {
+                    null
                 }
-                is Result.Failure -> {
-                    onResult(result)
-                    onRefused(id, result.value, content?.replyMessageId)
-                }
+                result to deleted
+            }
+            onResult(result)
+            when {
+                result is Result.Failure -> onRefused(id, result.value, content?.replyMessageId)
+                deleted is Result.Failure -> onRefused(id, deleted.value)
             }
         }
     }

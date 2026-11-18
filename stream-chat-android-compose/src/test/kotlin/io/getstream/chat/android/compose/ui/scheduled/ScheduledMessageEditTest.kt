@@ -258,6 +258,23 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
     }
 
     @Test
+    fun `a message that quotes a deleted message is not saved until the quote is removed, whatever the button`() {
+        val quoted = Message(id = "quoted", text = "Original", deletedAt = Date())
+        val message = scheduled(id = "a", text = "Heads up", replyTo = quoted)
+        scheduledMessagesFlow.value = listOf(message)
+        whenever(mockChatClient.updateScheduledMessage(any(), any(), anyOrNull())) doReturn message.asCall()
+        setContent()
+        startEditing("Heads up")
+
+        save()
+        verify(mockChatClient, never()).updateScheduledMessage(any(), any(), anyOrNull())
+
+        clickTag("Stream_ScheduledMessageRemoveQuote")
+        save()
+        verify(mockChatClient).updateScheduledMessage(eq("a"), any(), isNull())
+    }
+
+    @Test
     fun `cancel closes the composer`() {
         scheduledMessagesFlow.value = listOf(scheduled(id = "a", text = "Heads up"))
         setContent()

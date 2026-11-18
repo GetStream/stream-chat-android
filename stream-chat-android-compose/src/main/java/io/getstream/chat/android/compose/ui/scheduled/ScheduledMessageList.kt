@@ -192,7 +192,7 @@ private fun ScheduledMessageSheetsGoneNotice(
 
 /**
  * Tells the user, with [showSnackbar], when the message of [editSession] is sending, or was sent or deleted on another
- * device. The composer keeps its content, and can't save it.
+ * device, once the composer is filled with it. The composer keeps its content, and can't save it.
  *
  * @param editedItem The edited message in the list, or null when it is not there.
  * @param isKnown Whether the scheduled messages are loaded, so a message missing from the list is gone.
@@ -205,9 +205,10 @@ private fun ScheduledMessageEditGoneNotice(
     showSnackbar: (message: String, variant: StreamSnackbarVariant) -> Unit,
 ) {
     val context = LocalContext.current
-    val isEditedMessageGone = editSession != null && isKnown &&
+    // Before the composer is filled, a message that is gone ends the edit and is told by the view model.
+    val isEditedMessageGone = editSession?.isFilled == true && isKnown &&
         (editedItem == null || editedItem.scheduledMessage.status == ScheduledMessageStatus.Sending)
-    LaunchedEffect(editSession?.id, isEditedMessageGone) {
+    LaunchedEffect(editSession?.token, isEditedMessageGone) {
         if (isEditedMessageGone) {
             showSnackbar(
                 context.getString(R.string.stream_compose_scheduled_message_list_gone),

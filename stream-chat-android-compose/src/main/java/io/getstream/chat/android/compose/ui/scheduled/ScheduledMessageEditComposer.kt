@@ -172,26 +172,33 @@ internal fun ScheduledMessageEditComposer(
     val editAction = item?.actions?.firstOrNull { it in EditActions }
     var isTimeSheetShown by rememberSaveable(session.token) { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    // The callbacks read the latest values, as the composer can keep the callbacks it got first.
-    val latestEditAction by rememberUpdatedState(editAction)
-    val actions = remember(edit, viewModel, composerViewModel, pickerViewModel) {
-        ScheduledMessageEditActions(edit, viewModel, composerViewModel, pickerViewModel) { latestEditAction }
-    }
-
-    FillComposerOnStart(edit, session, viewModel, composerViewModel, pickerViewModel)
-
     val preview = Message(
         text = composerState.inputValue.trim(),
         attachments = composerState.attachments,
         replyTo = item?.quotedMessage?.takeUnless { session.isQuoteRemoved },
     )
     val hasCommand = scheduleState.messageError(preview) == ScheduleMessageError.CommandNotAllowed
+    val canSave = editAction != null && !isQuoteDeleted && !hasCommand && session.id !in edit.savingIds
+    // The callbacks read the latest values, as the composer can keep the callbacks it got first.
+    val latestEditAction by rememberUpdatedState(editAction)
+    val latestCanSave by rememberUpdatedState(canSave)
+    val actions = remember(edit, viewModel, composerViewModel, pickerViewModel) {
+        ScheduledMessageEditActions(
+            edit = edit,
+            viewModel = viewModel,
+            composerViewModel = composerViewModel,
+            pickerViewModel = pickerViewModel,
+            editAction = { latestEditAction },
+            canSave = { latestCanSave },
+        )
+    }
+
+    FillComposerOnStart(edit, session, viewModel, composerViewModel, pickerViewModel)
+
     val isFilled = (composerState.action as? Edit)?.message?.id == session.id
     if (isFilled) {
         CompositionLocalProvider(
-            LocalScheduledMessageEditMode provides ScheduledMessageEditMode(
-                canSave = editAction != null && !isQuoteDeleted && !hasCommand && session.id !in edit.savingIds,
-            ),
+            LocalScheduledMessageEditMode provides ScheduledMessageEditMode(canSave = canSave),
         ) {
             ScheduledMessageEditComposerContent(
                 composerViewModel = composerViewModel,
@@ -260,13 +267,16 @@ private class ScheduledMessageEditActions(
     private val composerViewModel: MessageComposerViewModel,
     private val pickerViewModel: AttachmentsPickerViewModel,
     private val editAction: () -> ScheduledMessageAction?,
+    private val canSave: () -> Boolean,
 ) {
 
     /**
      * Saves [message] and keeps the date, or returns true when the message needs a new date first.
      */
     fun save(message: Message): Boolean {
-        val session = edit.session?.takeUnless { it.id in edit.savingIds } ?: return false
+        // Checked here too, as an app can replace the save button that is disabled otherwise.
+        if (!canSave()) return false
+        val session = edit.session ?: return false
         return when (editAction()) {
             ScheduledMessageAction.Edit -> {
                 edit.setSaving(session.id, isSaving = true)
@@ -286,8 +296,8 @@ private class ScheduledMessageEditActions(
 
     /** Schedules the content of the composer at [date] as a new message, in place of the failed one. */
     fun reschedule(date: Date) {
-        val session = edit.session?.takeUnless { it.id in edit.savingIds } ?: return
-        if (editAction() != ScheduledMessageAction.EditAndReschedule) return
+        if (!canSave() || editAction() != ScheduledMessageAction.EditAndReschedule) return
+        val session = edit.session ?: return
         val state = composerViewModel.messageComposerState.value
         edit.setSaving(session.id, isSaving = true)
         viewModel.editAndReschedule(
