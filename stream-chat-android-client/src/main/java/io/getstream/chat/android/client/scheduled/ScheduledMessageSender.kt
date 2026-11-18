@@ -200,7 +200,7 @@ internal class ScheduledMessageSender(
                 val error = result.value
                 val isCancelled = store.messages.value[message.id]?.isPendingSendNow == false
                 // A reschedule cancelled the send now meanwhile: its failure must not hold back the new date.
-                if (isCancelled && !error.isGone(message)) true else onFailure(message, error)
+                (isCancelled && !error.isGone(message)) || onFailure(message, error)
             }
         }
 
