@@ -380,6 +380,50 @@
   <string name="stream_compose_user_status_online">"ऑनलाइन"</string>
   <string name="stream_compose_video_preview">"वीडियो"</string>
   <string name="stream_compose_waiting_for_network">"नेटवर्क की प्रतीक्षा में"</string>
+  <string name="stream_compose_schedule_message_title">"मैसेज शेड्यूल करें"</string>
+  <string name="stream_compose_schedule_message_reschedule_title">"मैसेज फिर से शेड्यूल करें"</string>
+  <string name="stream_compose_schedule_message_limit_reached">"सीमा पूरी हुई (अधिकतम %1$d)"</string>
+  <string name="stream_compose_schedule_message_tomorrow_at">"कल, %1$s"</string>
+  <string name="stream_compose_schedule_message_day_at">"%1$s को %2$s"</string>
+  <string name="stream_compose_schedule_message_custom_time">"कस्टम समय"</string>
+  <string name="stream_compose_schedule_message_to">"%1$s को मैसेज"</string>
+  <string name="stream_compose_schedule_message_reply_to">"%1$s को जवाब"</string>
+  <string name="stream_compose_schedule_message_scheduled_for">"%1$s के लिए शेड्यूल किया गया"</string>
+  <string name="stream_compose_schedule_message_date">"तारीख"</string>
+  <string name="stream_compose_schedule_message_time">"समय"</string>
+  <string name="stream_compose_schedule_message_time_zone">"आपके टाइम ज़ोन में भेजा जाएगा (%1$s)"</string>
+  <string name="stream_compose_schedule_message_channel_count">"इस चैनल में %2$d में से %1$d शेड्यूल किए गए"</string>
+  <string name="stream_compose_schedule_message_cancel">"रद्द करें"</string>
+  <string name="stream_compose_schedule_message_schedule">"शेड्यूल करें"</string>
+  <string name="stream_compose_schedule_message_reschedule">"फिर से शेड्यूल करें"</string>
+  <string name="stream_compose_schedule_message_ok">"ठीक"</string>
+  <string name="stream_compose_schedule_message_enter_time">"समय दर्ज करें"</string>
+  <plurals name="stream_compose_schedule_message_error_too_soon">
+    <item quantity="one">"अभी से कम से कम %d मिनट बाद का समय चुनें"</item>
+    <item quantity="other">"अभी से कम से कम %d मिनट बाद का समय चुनें"</item>
+  </plurals>
+  <string name="stream_compose_schedule_message_error_too_soon_reschedule">"बाद का समय चुनें। एडिट करने से मैसेज तुरंत नहीं भेजा जा सकता।"</string>
+  <string name="stream_compose_schedule_message_error_too_far">"यह आपके ऐप की अनुमति से ज़्यादा आगे है"</string>
+  <string name="stream_compose_schedule_message_error_channel_limit">"आप इस चैनल में %1$d शेड्यूल किए गए मैसेज की सीमा तक पहुंच गए हैं।"</string>
+  <string name="stream_compose_schedule_message_error_user_limit">"आप %1$d शेड्यूल किए गए मैसेज की अपनी सीमा तक पहुंच गए हैं।"</string>
+  <string name="stream_compose_schedule_message_error_command">"कमांड शेड्यूल नहीं किए जा सकते। जारी रखने के लिए / कमांड हटाएं।"</string>
+  <string name="stream_compose_schedule_message_error_failed">"मैसेज शेड्यूल नहीं किया जा सका। फिर से कोशिश करें"</string>
+  <plurals name="stream_compose_scheduled_messages_count">
+    <item quantity="one">"%d शेड्यूल किया गया मैसेज"</item>
+    <item quantity="other">"%d शेड्यूल किए गए मैसेज"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_replies_count">
+    <item quantity="one">"%d शेड्यूल किया गया जवाब"</item>
+    <item quantity="other">"%d शेड्यूल किए गए जवाब"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_failed_count">
+    <item quantity="one">"%d भेजा नहीं जा सका"</item>
+    <item quantity="other">"%d भेजे नहीं जा सके"</item>
+  </plurals>
+  <string name="stream_compose_scheduled_messages_limit_reached">"%2$d में से %1$d शेड्यूल किए गए मैसेज"</string>
+  <string name="stream_compose_scheduled_messages_view">"देखें"</string>
+  <string name="stream_compose_scheduled_messages_view_all">"सभी देखें"</string>
+  <string name="stream_compose_scheduled_messages_sent">"शेड्यूल किया गया मैसेज भेजा गया"</string>
   <string name="stream_compose_scheduled_message_list_title">"शेड्यूल किए गए मैसेज"</string>
   <string name="stream_compose_scheduled_message_list_send_at">"%1$s भेजें"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"कोई शेड्यूल किया गया मैसेज नहीं"</string>

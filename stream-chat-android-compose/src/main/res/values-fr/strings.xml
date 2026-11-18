@@ -380,6 +380,50 @@
     <item quantity="one">"%d Vidéo"</item>
     <item quantity="other">"%d Vidéos"</item>
   </plurals>
+  <string name="stream_compose_schedule_message_title">"Programmer le message"</string>
+  <string name="stream_compose_schedule_message_reschedule_title">"Reprogrammer le message"</string>
+  <string name="stream_compose_schedule_message_limit_reached">"Limite atteinte (%1$d max)"</string>
+  <string name="stream_compose_schedule_message_tomorrow_at">"Demain à %1$s"</string>
+  <string name="stream_compose_schedule_message_day_at">"%1$s à %2$s"</string>
+  <string name="stream_compose_schedule_message_custom_time">"Heure personnalisée"</string>
+  <string name="stream_compose_schedule_message_to">"Message pour %1$s"</string>
+  <string name="stream_compose_schedule_message_reply_to">"Réponse à %1$s"</string>
+  <string name="stream_compose_schedule_message_scheduled_for">"Programmé pour %1$s"</string>
+  <string name="stream_compose_schedule_message_date">"Date"</string>
+  <string name="stream_compose_schedule_message_time">"Heure"</string>
+  <string name="stream_compose_schedule_message_time_zone">"Envoyé dans votre fuseau horaire (%1$s)"</string>
+  <string name="stream_compose_schedule_message_channel_count">"%1$d sur %2$d programmés dans ce canal"</string>
+  <string name="stream_compose_schedule_message_cancel">"Annuler"</string>
+  <string name="stream_compose_schedule_message_schedule">"Programmer"</string>
+  <string name="stream_compose_schedule_message_reschedule">"Reprogrammer"</string>
+  <string name="stream_compose_schedule_message_ok">"OK"</string>
+  <string name="stream_compose_schedule_message_enter_time">"Saisir l\'heure"</string>
+  <plurals name="stream_compose_schedule_message_error_too_soon">
+    <item quantity="one">"Choisissez une heure dans au moins %d minute"</item>
+    <item quantity="other">"Choisissez une heure dans au moins %d minutes"</item>
+  </plurals>
+  <string name="stream_compose_schedule_message_error_too_soon_reschedule">"Choisissez une heure plus tardive. Un message modifié ne peut pas être envoyé immédiatement."</string>
+  <string name="stream_compose_schedule_message_error_too_far">"Cette date est plus éloignée que ce que votre application permet"</string>
+  <string name="stream_compose_schedule_message_error_channel_limit">"Vous avez atteint la limite de %1$d messages programmés dans ce canal."</string>
+  <string name="stream_compose_schedule_message_error_user_limit">"Vous avez atteint votre limite de %1$d messages programmés."</string>
+  <string name="stream_compose_schedule_message_error_command">"Les commandes ne peuvent pas être programmées. Supprimez la commande / pour continuer."</string>
+  <string name="stream_compose_schedule_message_error_failed">"Impossible de programmer le message. Réessayez"</string>
+  <plurals name="stream_compose_scheduled_messages_count">
+    <item quantity="one">"%d message programmé"</item>
+    <item quantity="other">"%d messages programmés"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_replies_count">
+    <item quantity="one">"%d réponse programmée"</item>
+    <item quantity="other">"%d réponses programmées"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_failed_count">
+    <item quantity="one">"%d échec d\'envoi"</item>
+    <item quantity="other">"%d échecs d\'envoi"</item>
+  </plurals>
+  <string name="stream_compose_scheduled_messages_limit_reached">"%1$d sur %2$d messages programmés"</string>
+  <string name="stream_compose_scheduled_messages_view">"Voir"</string>
+  <string name="stream_compose_scheduled_messages_view_all">"Tout voir"</string>
+  <string name="stream_compose_scheduled_messages_sent">"Message programmé envoyé"</string>
   <string name="stream_compose_scheduled_message_list_title">"Messages programmés"</string>
   <string name="stream_compose_scheduled_message_list_send_at">"Envoi %1$s"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"Aucun message programmé"</string>

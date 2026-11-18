@@ -366,6 +366,46 @@
   <plurals name="stream_compose_videos_preview">
     <item quantity="other">"%d Video"</item>
   </plurals>
+  <string name="stream_compose_schedule_message_title">"Jadwalkan pesan"</string>
+  <string name="stream_compose_schedule_message_reschedule_title">"Jadwalkan ulang pesan"</string>
+  <string name="stream_compose_schedule_message_limit_reached">"Batas tercapai (maks. %1$d)"</string>
+  <string name="stream_compose_schedule_message_tomorrow_at">"Besok pukul %1$s"</string>
+  <string name="stream_compose_schedule_message_day_at">"%1$s pukul %2$s"</string>
+  <string name="stream_compose_schedule_message_custom_time">"Waktu khusus"</string>
+  <string name="stream_compose_schedule_message_to">"Pesan untuk %1$s"</string>
+  <string name="stream_compose_schedule_message_reply_to">"Balasan untuk %1$s"</string>
+  <string name="stream_compose_schedule_message_scheduled_for">"Dijadwalkan untuk %1$s"</string>
+  <string name="stream_compose_schedule_message_date">"Tanggal"</string>
+  <string name="stream_compose_schedule_message_time">"Waktu"</string>
+  <string name="stream_compose_schedule_message_time_zone">"Dikirim di zona waktu Anda (%1$s)"</string>
+  <string name="stream_compose_schedule_message_channel_count">"%1$d dari %2$d terjadwal di saluran ini"</string>
+  <string name="stream_compose_schedule_message_cancel">"Batal"</string>
+  <string name="stream_compose_schedule_message_schedule">"Jadwalkan"</string>
+  <string name="stream_compose_schedule_message_reschedule">"Jadwalkan ulang"</string>
+  <string name="stream_compose_schedule_message_ok">"OK"</string>
+  <string name="stream_compose_schedule_message_enter_time">"Masukkan waktu"</string>
+  <plurals name="stream_compose_schedule_message_error_too_soon">
+    <item quantity="other">"Pilih waktu setidaknya %d menit dari sekarang"</item>
+  </plurals>
+  <string name="stream_compose_schedule_message_error_too_soon_reschedule">"Pilih waktu yang lebih akhir. Pesan yang diedit tidak dapat langsung dikirim."</string>
+  <string name="stream_compose_schedule_message_error_too_far">"Itu lebih jauh dari yang diizinkan aplikasi Anda"</string>
+  <string name="stream_compose_schedule_message_error_channel_limit">"Anda telah mencapai batas %1$d pesan terjadwal di saluran ini."</string>
+  <string name="stream_compose_schedule_message_error_user_limit">"Anda telah mencapai batas %1$d pesan terjadwal Anda."</string>
+  <string name="stream_compose_schedule_message_error_command">"Perintah tidak dapat dijadwalkan. Hapus perintah / untuk melanjutkan."</string>
+  <string name="stream_compose_schedule_message_error_failed">"Tidak dapat menjadwalkan pesan. Coba lagi"</string>
+  <plurals name="stream_compose_scheduled_messages_count">
+    <item quantity="other">"%d pesan terjadwal"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_replies_count">
+    <item quantity="other">"%d balasan terjadwal"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_failed_count">
+    <item quantity="other">"%d gagal dikirim"</item>
+  </plurals>
+  <string name="stream_compose_scheduled_messages_limit_reached">"%1$d dari %2$d pesan terjadwal"</string>
+  <string name="stream_compose_scheduled_messages_view">"Lihat"</string>
+  <string name="stream_compose_scheduled_messages_view_all">"Lihat semua"</string>
+  <string name="stream_compose_scheduled_messages_sent">"Pesan terjadwal terkirim"</string>
   <string name="stream_compose_scheduled_message_list_title">"Pesan terjadwal"</string>
   <string name="stream_compose_scheduled_message_list_send_at">"Kirim %1$s"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"Tidak ada pesan terjadwal"</string>

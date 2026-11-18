@@ -365,6 +365,46 @@
     <item quantity="other">"%d本の動画"</item>
   </plurals>
   <string name="stream_compose_waiting_for_network">"ネットワークを待っています"</string>
+  <string name="stream_compose_schedule_message_title">"メッセージを予約"</string>
+  <string name="stream_compose_schedule_message_reschedule_title">"メッセージの予約を変更"</string>
+  <string name="stream_compose_schedule_message_limit_reached">"上限に達しました（最大%1$d件）"</string>
+  <string name="stream_compose_schedule_message_tomorrow_at">"明日 %1$s"</string>
+  <string name="stream_compose_schedule_message_day_at">"%1$s %2$s"</string>
+  <string name="stream_compose_schedule_message_custom_time">"カスタム時刻"</string>
+  <string name="stream_compose_schedule_message_to">"%1$sへのメッセージ"</string>
+  <string name="stream_compose_schedule_message_reply_to">"%1$sへの返信"</string>
+  <string name="stream_compose_schedule_message_scheduled_for">"%1$sに予約済み"</string>
+  <string name="stream_compose_schedule_message_date">"日付"</string>
+  <string name="stream_compose_schedule_message_time">"時刻"</string>
+  <string name="stream_compose_schedule_message_time_zone">"あなたのタイムゾーンで送信されます（%1$s）"</string>
+  <string name="stream_compose_schedule_message_channel_count">"このチャンネルで%2$d件中%1$d件を予約済み"</string>
+  <string name="stream_compose_schedule_message_cancel">"キャンセル"</string>
+  <string name="stream_compose_schedule_message_schedule">"予約"</string>
+  <string name="stream_compose_schedule_message_reschedule">"予約を変更"</string>
+  <string name="stream_compose_schedule_message_ok">"OK"</string>
+  <string name="stream_compose_schedule_message_enter_time">"時刻を入力"</string>
+  <plurals name="stream_compose_schedule_message_error_too_soon">
+    <item quantity="other">"現在から%d分以上後の時刻を選択してください"</item>
+  </plurals>
+  <string name="stream_compose_schedule_message_error_too_soon_reschedule">"もっと後の時刻を選択してください。編集ではメッセージをすぐに送信できません。"</string>
+  <string name="stream_compose_schedule_message_error_too_far">"アプリで許可されている期間を超えています"</string>
+  <string name="stream_compose_schedule_message_error_channel_limit">"このチャンネルの予約メッセージの上限（%1$d件）に達しました。"</string>
+  <string name="stream_compose_schedule_message_error_user_limit">"予約メッセージの上限（%1$d件）に達しました。"</string>
+  <string name="stream_compose_schedule_message_error_command">"コマンドは予約できません。続けるには / コマンドを削除してください。"</string>
+  <string name="stream_compose_schedule_message_error_failed">"メッセージを予約できませんでした。もう一度お試しください"</string>
+  <plurals name="stream_compose_scheduled_messages_count">
+    <item quantity="other">"%d件の予約メッセージ"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_replies_count">
+    <item quantity="other">"%d件の予約返信"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_failed_count">
+    <item quantity="other">"%d件の送信に失敗"</item>
+  </plurals>
+  <string name="stream_compose_scheduled_messages_limit_reached">"予約メッセージ %2$d件中%1$d件"</string>
+  <string name="stream_compose_scheduled_messages_view">"表示"</string>
+  <string name="stream_compose_scheduled_messages_view_all">"すべて表示"</string>
+  <string name="stream_compose_scheduled_messages_sent">"予約メッセージを送信しました"</string>
   <string name="stream_compose_scheduled_message_list_title">"予約メッセージ"</string>
   <string name="stream_compose_scheduled_message_list_send_at">"%1$sに送信"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"予約メッセージはありません"</string>

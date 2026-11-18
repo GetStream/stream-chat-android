@@ -365,6 +365,46 @@
     <item quantity="other">"%d개의 동영상"</item>
   </plurals>
   <string name="stream_compose_waiting_for_network">"네트워크 연결 대기 중"</string>
+  <string name="stream_compose_schedule_message_title">"메시지 예약"</string>
+  <string name="stream_compose_schedule_message_reschedule_title">"메시지 예약 변경"</string>
+  <string name="stream_compose_schedule_message_limit_reached">"한도 도달 (최대 %1$d개)"</string>
+  <string name="stream_compose_schedule_message_tomorrow_at">"내일 %1$s"</string>
+  <string name="stream_compose_schedule_message_day_at">"%1$s %2$s"</string>
+  <string name="stream_compose_schedule_message_custom_time">"사용자 지정 시간"</string>
+  <string name="stream_compose_schedule_message_to">"%1$s에게 보낼 메시지"</string>
+  <string name="stream_compose_schedule_message_reply_to">"%1$s님에게 답장"</string>
+  <string name="stream_compose_schedule_message_scheduled_for">"%1$s에 예약됨"</string>
+  <string name="stream_compose_schedule_message_date">"날짜"</string>
+  <string name="stream_compose_schedule_message_time">"시간"</string>
+  <string name="stream_compose_schedule_message_time_zone">"내 시간대 기준으로 전송 (%1$s)"</string>
+  <string name="stream_compose_schedule_message_channel_count">"이 채널에서 %2$d개 중 %1$d개 예약됨"</string>
+  <string name="stream_compose_schedule_message_cancel">"취소"</string>
+  <string name="stream_compose_schedule_message_schedule">"예약"</string>
+  <string name="stream_compose_schedule_message_reschedule">"예약 변경"</string>
+  <string name="stream_compose_schedule_message_ok">"확인"</string>
+  <string name="stream_compose_schedule_message_enter_time">"시간 입력"</string>
+  <plurals name="stream_compose_schedule_message_error_too_soon">
+    <item quantity="other">"지금부터 최소 %d분 이후의 시간을 선택하세요"</item>
+  </plurals>
+  <string name="stream_compose_schedule_message_error_too_soon_reschedule">"더 늦은 시간을 선택하세요. 수정할 때는 메시지를 바로 보낼 수 없습니다."</string>
+  <string name="stream_compose_schedule_message_error_too_far">"앱에서 허용하는 기간을 넘었습니다"</string>
+  <string name="stream_compose_schedule_message_error_channel_limit">"이 채널의 예약 메시지 한도(%1$d개)에 도달했습니다."</string>
+  <string name="stream_compose_schedule_message_error_user_limit">"예약 메시지 한도(%1$d개)에 도달했습니다."</string>
+  <string name="stream_compose_schedule_message_error_command">"명령어는 예약할 수 없습니다. 계속하려면 / 명령어를 삭제하세요."</string>
+  <string name="stream_compose_schedule_message_error_failed">"메시지를 예약하지 못했습니다. 다시 시도하세요"</string>
+  <plurals name="stream_compose_scheduled_messages_count">
+    <item quantity="other">"예약 메시지 %d개"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_replies_count">
+    <item quantity="other">"예약 답장 %d개"</item>
+  </plurals>
+  <plurals name="stream_compose_scheduled_messages_failed_count">
+    <item quantity="other">"%d개 전송 실패"</item>
+  </plurals>
+  <string name="stream_compose_scheduled_messages_limit_reached">"예약 메시지 %2$d개 중 %1$d개"</string>
+  <string name="stream_compose_scheduled_messages_view">"보기"</string>
+  <string name="stream_compose_scheduled_messages_view_all">"모두 보기"</string>
+  <string name="stream_compose_scheduled_messages_sent">"예약 메시지를 전송했습니다"</string>
   <string name="stream_compose_scheduled_message_list_title">"예약 메시지"</string>
   <string name="stream_compose_scheduled_message_list_send_at">"%1$s 전송"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"예약 메시지가 없습니다"</string>
