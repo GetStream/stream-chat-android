@@ -84,6 +84,7 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,6 +96,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
@@ -112,6 +114,7 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
@@ -467,6 +470,48 @@ internal class SyncManagerTest {
         /* Then */
         assertEquals(previousSyncedAt, _syncState.value?.lastSyncedAt)
         verify(repositoryFacade, never()).insertSyncState(any())
+    }
+
+    @Test
+    fun `when the reconnect sync fails, nothing keeps waiting for it`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doThrow IllegalStateException("The database is closed")
+        val syncManager = buildSyncManager()
+
+        /* When */
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* Then */
+        withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+    }
+
+    @Test
+    fun `when the sync manager stops during the reconnect sync, nothing keeps waiting for it`() =
+        runTest(testDispatcher) {
+            /* Given */
+            whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            syncManager.stop()
+
+            /* Then */
+            withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+        }
+
+    @Test
+    fun `when a requested sync fails, nothing keeps waiting for it`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doThrow IllegalStateException("The database is closed")
+        val syncManager = buildSyncManager()
+
+        /* When */
+        val result = runCatching { syncManager.sync() }
+
+        /* Then */
+        assertEquals(true, result.isFailure)
+        withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
     }
 
     @Test
@@ -3631,5 +3676,7 @@ internal class SyncManagerTest {
         )
     }
 }
+
+private const val AWAIT_SYNCING_TIMEOUT_MS = 1_000L
 
 private fun Result<List<ChatEvent>>.synced(): Result<SyncedEvents> = map { SyncedEvents(it) }

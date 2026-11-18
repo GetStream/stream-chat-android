@@ -80,6 +80,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -199,6 +200,8 @@ internal class SyncManager(
         logger.d { "[stop] no args" }
         eventsDisposable?.dispose()
         syncScope.coroutineContext.job.cancelChildren()
+        // A sync cancelled here never finishes, and nothing else would release what waits for it.
+        state.value = State.Idle
         liveLocationEndJob?.cancel()
         endedLiveLocationsToNotify.clear()
     }
@@ -206,8 +209,11 @@ internal class SyncManager(
     override suspend fun sync() {
         logger.d { "[sync] no args" }
         state.value = State.Syncing
-        performSync(watch = false, groupedListsFirst = false)
-        state.value = State.Idle
+        try {
+            performSync(watch = false, groupedListsFirst = false)
+        } finally {
+            state.value = State.Idle
+        }
     }
 
     override suspend fun awaitSyncing() {
@@ -350,6 +356,9 @@ internal class SyncManager(
 
         logger.i { "[onConnectionEstablished] <<< completed" }
     } catch (e: Throwable) {
+        // Socket events wait for the idle state. A cancelled run leaves it to whoever cancelled it, since a newer
+        // run can already be syncing.
+        if (currentCoroutineContext().isActive) state.value = State.Idle
         logger.e { "[onConnectionEstablished] <<< failed: $e" }
     }
 
