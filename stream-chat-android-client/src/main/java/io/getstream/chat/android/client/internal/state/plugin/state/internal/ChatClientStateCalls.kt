@@ -35,11 +35,13 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.launch
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -57,12 +59,24 @@ internal class ChatClientStateCalls(
     private val logger by taggedLogger("Chat:ClientStateCalls")
 
     /**
-     * Deferred value of StateRegistry.
-     * It needs to be accessed after the user is connected to be sure needed plugins are initialized.
+     * Deferred value of StateRegistry, resolved once the client has finished initializing the connected user.
+     * A disconnect that starts before the registry is resolved cancels it, and with it the awaiting call.
      */
     private val deferredState: Deferred<StateRegistry> = scope.async(start = CoroutineStart.LAZY) {
-        chatClient.clientState.user.first { it != null }
-        chatClient.state
+        chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
+        resolveOrCancel { chatClient.state }
+    }
+
+    /**
+     * Resolves a plugin dependency, turning the failure of a disconnect that already started into a cancellation.
+     * A failure while the client is still initialized is a real error and is rethrown.
+     */
+    private inline fun <T> resolveOrCancel(resolve: () -> T): T = try {
+        resolve()
+    } catch (e: IllegalStateException) {
+        if (chatClient.clientState.initializationState.value == InitializationState.COMPLETE) throw e
+        logger.w { "[resolveOrCancel] the user disconnected before the dependency was resolved" }
+        throw CancellationException("The user disconnected before the dependency was resolved", e)
     }
 
     /**
@@ -101,7 +115,7 @@ internal class ChatClientStateCalls(
             .await()
             .queryChannels(identifier)
             .apply { this.chatEventHandlerFactory = chatEventHandlerFactory }
-        chatClient.logic.queryChannels(identifier).loadOfflineGroupedChannels()
+        resolveOrCancel { chatClient.logic }.queryChannels(identifier).loadOfflineGroupedChannels()
         return state
     }
 

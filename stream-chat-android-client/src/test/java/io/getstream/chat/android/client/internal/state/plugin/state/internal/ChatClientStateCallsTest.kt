@@ -39,17 +39,22 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
@@ -76,12 +81,14 @@ internal class ChatClientStateCallsTest {
     private lateinit var chatClientStateCalls: ChatClientStateCalls
 
     private val userFlow = MutableStateFlow<User?>(null)
+    private val initializationStateFlow = MutableStateFlow(InitializationState.COMPLETE)
     private val identifier = QueryChannelsIdentifier.Grouped("test-group")
 
     @BeforeEach
     fun setUp() {
         clientState = mock {
             on(it.user) doReturn userFlow
+            on(it.initializationState) doReturn initializationStateFlow
         }
         queryChannelsState = mock()
         stateRegistry = mock {
@@ -250,6 +257,65 @@ internal class ChatClientStateCallsTest {
 
         // Then
         verify(channelState, never()).endFirstPageLoad()
+    }
+
+    @Test
+    fun `awaitReplies is cancelled when the user disconnects before the state is resolved`() = runTest {
+        // Given - a disconnect marks the client uninitialized while the state is being resolved
+        userFlow.value = User(id = "test-user")
+        givenDisconnectOnResolution(number = 1)
+        whenever(chatClient.getReplies("parent-id", 30)) doReturn TestCall(Result.Success(emptyList()))
+
+        // When
+        val error = runCatching {
+            chatClientStateCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false)
+        }.exceptionOrNull()
+
+        // Then - the call ends as a cancellation and the shared scope survives
+        assertInstanceOf(CancellationException::class.java, error)
+        assertTrue(testCoroutines.scope.isActive)
+    }
+
+    @Test
+    fun `awaitReplies rethrows a state resolution failure while the client is initialized`() = runTest {
+        // Given - a misconfigured client without the state plugin
+        userFlow.value = User(id = "test-user")
+        whenever(chatClient.plugins) doReturn emptyList()
+        whenever(chatClient.getReplies("parent-id", 30)) doReturn TestCall(Result.Success(emptyList()))
+
+        // When
+        val error = runCatching {
+            chatClientStateCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false)
+        }.exceptionOrNull()
+
+        // Then
+        assertInstanceOf(IllegalStateException::class.java, error)
+    }
+
+    @Test
+    fun `initGroupedQueryChannelsState is cancelled when the user disconnects before the logic is resolved`() =
+        runTest {
+            // Given - the state resolves, then a disconnect starts before the logic lookup
+            userFlow.value = User(id = "test-user")
+            givenDisconnectOnResolution(number = 2)
+
+            // When
+            val error = runCatching {
+                chatClientStateCalls.initGroupedQueryChannelsState(identifier, ChatEventHandlerFactory(clientState))
+            }.exceptionOrNull()
+
+            // Then
+            assertInstanceOf(CancellationException::class.java, error)
+            verify(queryChannelsLogic, never()).loadOfflineGroupedChannels()
+        }
+
+    private fun givenDisconnectOnResolution(number: Int) {
+        var resolutions = 0
+        whenever(chatClient.awaitInitializationState(any())) doAnswer {
+            resolutions++
+            if (resolutions == number) initializationStateFlow.value = InitializationState.NOT_INITIALIZED
+            initializationStateFlow.value
+        }
     }
 
     @Test

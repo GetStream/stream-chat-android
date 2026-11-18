@@ -106,6 +106,7 @@ import org.mockito.Answers
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -117,6 +118,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.IOException
 import java.util.Date
+import kotlin.reflect.KClass
 
 @Suppress("LargeClass")
 internal class MessageListControllerTests {
@@ -158,6 +160,21 @@ internal class MessageListControllerTests {
         )
 
         controller.messageListState.value `should be equal to` expectedResult
+    }
+
+    @Test
+    fun `the message list is still observed when a disconnect cancels entering the initial thread`() = runTest {
+        val parentMessage = randomMessage(cid = CID, parentId = null)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = MutableStateFlow(randomMessageList()))
+            .givenGetReplies()
+            .givenUncachedMessage(parentMessage)
+            .givenDisconnectAndReconnectWhileResolvingThreadState()
+            .get(parentMessageId = parentMessage.id)
+
+        controller.messageListState.value.messageItems.isNotEmpty().shouldBeTrue()
     }
 
     @Test
@@ -2318,9 +2335,9 @@ internal class MessageListControllerTests {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
         private val channelState: ChannelState = mock()
+        private val statePlugin: StatePlugin = mock()
 
         init {
-            val statePlugin: StatePlugin = mock()
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(statePluginFactory.resolveDependency(eq(ChatClientConfig::class))) doReturn chatClientConfig
@@ -2334,6 +2351,31 @@ internal class MessageListControllerTests {
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
             whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
             whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
+        }
+
+        fun givenUncachedMessage(message: Message) = apply {
+            // The logic registry is internal to the client module: an empty mock makes both cache lookups miss.
+            whenever(statePlugin.resolveDependency(argThat<KClass<Any>> { simpleName == "LogicRegistry" })) doAnswer {
+                Mockito.mock(it.getArgument<KClass<*>>(0).java)
+            }
+            whenever(chatClient.inheritScope(any())) doReturn testCoroutines.scope
+            whenever(chatClient.getMessage(message.id)) doReturn message.asCall()
+        }
+
+        fun givenDisconnectAndReconnectWhileResolvingThreadState() = apply {
+            val initializationState = MutableStateFlow(InitializationState.COMPLETE)
+            whenever(clientState.initializationState) doReturn initializationState
+            var resolutions = 0
+            whenever(chatClient.awaitInitializationState(any())) doAnswer {
+                // The two cache lookups of the parent message resolve first; the thread state lookup then sees
+                // the disconnect, and every later lookup sees the reconnected client.
+                resolutions++
+                initializationState.value = when (resolutions) {
+                    3 -> InitializationState.NOT_INITIALIZED
+                    else -> InitializationState.COMPLETE
+                }
+                initializationState.value
+            }
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
@@ -2463,10 +2505,12 @@ internal class MessageListControllerTests {
             dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
             showSystemMessages: Boolean = true,
             threadLoadOrderOlderToNewer: Boolean = false,
+            parentMessageId: String? = null,
         ): MessageListController {
             return MessageListController(
                 cid = cid,
                 chatClient = chatClient,
+                parentMessageId = parentMessageId,
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,
                 showSystemMessages = showSystemMessages,
