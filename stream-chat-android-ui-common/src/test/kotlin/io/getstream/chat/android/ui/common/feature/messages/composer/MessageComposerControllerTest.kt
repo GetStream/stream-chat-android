@@ -561,6 +561,34 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given an edit with picked attachments When cleared and another message is edited Then only that message is built`() =
+        runTest {
+            // Given
+            val first = randomMessage(cid = CID, text = "First", attachments = listOf(randomAttachment()))
+            val second = randomMessage(cid = CID, text = "Second", attachments = emptyList())
+            val controller = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenGlobalState()
+                .givenChannelState()
+                .get()
+            controller.performMessageAction(Edit(first))
+            controller.addAttachments(listOf(randomAttachment(extraData = mapOf(EXTRA_SOURCE_URI to "uri:picked"))))
+
+            // When
+            controller.clearData()
+            controller.performMessageAction(Edit(second))
+            val state = controller.state.value
+            val message = controller.buildNewMessage(controller.messageInput.value.text, state.attachments)
+
+            // Then
+            assertEquals(second.id, message.id)
+            assertEquals("Second", message.text)
+            assertTrue(message.attachments.isEmpty())
+        }
+
+    @Test
     fun `Given edit mode with remote attachment When add picker attachment Then both are staged`() = runTest {
         // Given
         val remoteAttachment = randomAttachment()

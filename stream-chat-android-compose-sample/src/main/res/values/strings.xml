@@ -151,35 +151,4 @@
 
     <!--  Scheduled messages  -->
     <string name="scheduled_messages_title">Scheduled messages</string>
-    <string name="scheduled_messages_reschedule_title">Reschedule message</string>
-    <string name="scheduled_messages_today">Today</string>
-    <string name="scheduled_messages_tomorrow">Tomorrow</string>
-    <string name="scheduled_messages_date_at_time">%1$s at %2$s</string>
-    <string name="scheduled_messages_scheduled_for">Message scheduled for %1$s</string>
-    <string name="scheduled_messages_queued_until_online">Queued until you\'re online</string>
-    <string name="scheduled_messages_sent_right_away">Sent now: time had passed</string>
-    <string name="scheduled_messages_failed">Scheduled message failed</string>
-    <string name="scheduled_messages_view">View</string>
-    <string name="scheduled_messages_schedule_again">Edit &amp; reschedule</string>
-    <string name="scheduled_messages_save">Save scheduled message</string>
-    <string name="scheduled_messages_edit_header">Edit scheduled message</string>
-    <string name="scheduled_messages_cancel_edit">Cancel editing</string>
-    <string name="scheduled_messages_edited_sent">This message was already sent</string>
-    <string name="scheduled_messages_edited_deleted">This scheduled message no longer exists</string>
-    <string name="scheduled_messages_failed_to_send">Failed to send</string>
-    <string name="scheduled_messages_failure_attachment_upload">An attachment could not be uploaded</string>
-    <string name="scheduled_messages_failure_request">Could not schedule the message</string>
-    <string name="scheduled_messages_failure_limit_channel">You reached the limit of scheduled messages in this channel</string>
-    <string name="scheduled_messages_failure_limit_user">You reached the limit of scheduled messages</string>
-    <string name="scheduled_messages_failure_too_soon">The scheduled time has passed</string>
-    <string name="scheduled_messages_failure_too_far">The scheduled time is too far away</string>
-    <string name="scheduled_messages_failure_disabled">Scheduled messages are turned off</string>
-    <string name="scheduled_messages_failure_sending">The message is being sent</string>
-    <string name="scheduled_messages_failure_conflict">The message was changed on another device</string>
-    <string name="scheduled_messages_failure_banned">You are banned from this channel</string>
-    <string name="scheduled_messages_failure_channel_deleted">This channel was deleted</string>
-    <string name="scheduled_messages_failure_channel_frozen">This channel is frozen</string>
-    <string name="scheduled_messages_failure_moderation">Moderation blocked this message</string>
-    <string name="scheduled_messages_failure_no_permission">You can no longer send messages in this channel</string>
-    <string name="scheduled_messages_failure_invalid_message">The message is no longer valid</string>
 </resources>

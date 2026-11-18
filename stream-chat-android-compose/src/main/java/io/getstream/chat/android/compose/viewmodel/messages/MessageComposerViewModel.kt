@@ -234,6 +234,12 @@ public class MessageComposerViewModel(
     }
 
     /**
+     * Copies the attachments picked in the composer to local files, so they can be uploaded.
+     */
+    internal suspend fun resolveAttachments(attachments: List<Attachment>): List<Attachment> =
+        storageHelper.resolveAttachmentFiles(attachments)
+
+    /**
      * The state of the channel of the composer, to show its name.
      */
     internal val channelState: StateFlow<ChannelState?> = messageComposerController.channelState

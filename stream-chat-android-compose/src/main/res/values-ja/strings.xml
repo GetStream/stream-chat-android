@@ -409,4 +409,7 @@
   <string name="stream_compose_scheduled_message_list_send_now_queued">"オンラインに戻ると送信されます"</string>
   <string name="stream_compose_scheduled_message_failure_conflict">"メッセージは別のデバイスで変更されました。"</string>
   <string name="stream_compose_scheduled_message_failure_not_editable">"このメッセージは変更できなくなりました。"</string>
+  <string name="stream_compose_scheduled_message_edit_title">"予約メッセージを編集"</string>
+  <string name="stream_compose_scheduled_message_edit_quote_deleted">"引用したメッセージは削除されました"</string>
+  <string name="stream_compose_scheduled_message_edit_remove_quote">"引用を削除"</string>
 </resources>

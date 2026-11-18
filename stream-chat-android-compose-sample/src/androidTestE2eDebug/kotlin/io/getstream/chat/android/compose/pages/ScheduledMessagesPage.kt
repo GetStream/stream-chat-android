@@ -21,7 +21,6 @@ import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import java.util.regex.Pattern
 import io.getstream.chat.android.compose.R as ComposeR
-import io.getstream.chat.android.compose.sample.R as SampleR
 
 /**
  * Scheduled messages: the SDK sheets that pick when a message is sent, the SDK banner above the
@@ -196,10 +195,6 @@ class ScheduledMessagesPage {
             val sent get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_messages_sent))
             val viewButton get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_messages_view))
 
-            /** Shown once the server has the change of an edited scheduled message. */
-            val scheduled
-                get() = By.textStartsWith(appContext.getString(SampleR.string.scheduled_messages_scheduled_for, ""))
-
             /** Shown when the message the user acts on was already sent, or deleted on another device. */
             val gone
                 get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_gone))
@@ -214,11 +209,18 @@ class ScheduledMessagesPage {
         }
     }
 
-    /** The composer while a scheduled message is edited. */
+    /** The SDK composer of the list while a scheduled message is edited. */
     class Editor {
 
         companion object {
-            val saveButton get() = By.res("Stream_ScheduledMessageSaveButton")
+            val header
+                get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_message_edit_title))
+            val quoteDeletedBanner get() = By.res("Stream_ScheduledMessageQuoteDeletedBanner")
+            val removeQuoteButton get() = By.res("Stream_ScheduledMessageRemoveQuote")
+
+            /** Shown when the user types a command, which can't be scheduled. */
+            val commandNotAllowed
+                get() = By.text(appContext.getString(ComposeR.string.stream_compose_schedule_message_error_command))
         }
     }
 }

@@ -168,31 +168,6 @@ internal class ScheduledMessagesScreenTest {
     }
 
     @Test
-    fun `edit calls back with the message`() {
-        val message = scheduled()
-        scheduledMessagesFlow.value = listOf(message)
-        val edited = mutableListOf<ScheduledMessage>()
-        setContent(onEditClick = { edited += it })
-
-        openActions()
-        clickTag("Stream_ScheduledMessageAction_Edit")
-        composeTestRule.waitForIdle()
-
-        assertEquals(listOf(message), edited)
-    }
-
-    @Test
-    fun `without an edit callback the edit action is not shown`() {
-        scheduledMessagesFlow.value = listOf(scheduled())
-        setContent()
-
-        openActions()
-
-        composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Edit").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Reschedule").assertExists()
-    }
-
-    @Test
     fun `copy text copies the text of a message whose channel was deleted`() {
         scheduledMessagesFlow.value = listOf(
             scheduled(
@@ -275,16 +250,12 @@ internal class ScheduledMessagesScreenTest {
         composeTestRule.onNodeWithTag("Stream_ScheduledMessageActions").assertExists()
     }
 
-    private fun setContent(
-        onBackPressed: () -> Unit = {},
-        onEditClick: ((ScheduledMessage) -> Unit)? = null,
-    ) {
+    private fun setContent(onBackPressed: () -> Unit = {}) {
         composeTestRule.setContent {
             ChatTheme {
                 ScheduledMessagesScreen(
                     viewModelFactory = ScheduledMessageListViewModelFactory(chatClient = client),
                     onBackPressed = onBackPressed,
-                    onEditClick = onEditClick,
                 )
             }
         }

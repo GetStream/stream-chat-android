@@ -72,4 +72,14 @@ internal class ScheduledMessageListTest : PaparazziComposeTest {
             ScheduledMessageDeleteDialogContent(channelName = "Maya Ross", onConfirm = {}, onDismiss = {})
         }
     }
+
+    @Test
+    fun `scheduled message edit composer`() {
+        snapshotWithDarkMode { ScheduledMessageEditComposerContent() }
+    }
+
+    @Test
+    fun `scheduled message edit composer with a deleted quote`() {
+        snapshotWithDarkMode { ScheduledMessageEditComposerQuoteDeleted() }
+    }
 }

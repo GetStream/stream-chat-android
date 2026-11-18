@@ -48,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerScheduleAction
+import io.getstream.chat.android.compose.ui.messages.composer.LocalScheduledMessageEditMode
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingButtonParams
@@ -81,13 +82,16 @@ internal fun MessageComposerInputTrailingContent(
     val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
     val isRecording = state.recording !is RecordingState.Idle
     val hasValidContent = canSendMessage && isInputValid && !isRecording
+    val scheduledMessageEditMode = LocalScheduledMessageEditMode.current
+    val canSaveScheduledMessage = scheduledMessageEditMode?.canSave ?: true
 
     val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
     val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
 
     val actionButton = when {
-        coolDownTime > 0 -> ActionButton.CoolDown(coolDownTime)
-        isInEditMode || hasActiveCommand -> ActionButton.Save(enabled = hasValidContent)
+        // Saving a scheduled message posts nothing to the channel, so slow mode does not apply.
+        coolDownTime > 0 && scheduledMessageEditMode == null -> ActionButton.CoolDown(coolDownTime)
+        isInEditMode || hasActiveCommand -> ActionButton.Save(enabled = hasValidContent && canSaveScheduledMessage)
         hasValidContent -> ActionButton.Send
         isRecordingEnabled -> ActionButton.Record
         else -> null

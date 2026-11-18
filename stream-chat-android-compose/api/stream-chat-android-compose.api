@@ -2367,7 +2367,9 @@ public final class io/getstream/chat/android/compose/ui/scheduled/ComposableSing
 	public final fun getLambda$-1063655852$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1093000736$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1608972046$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1825189047$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1099775107$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$191992396$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$285394501$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$454038391$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
@@ -2375,15 +2377,15 @@ public final class io/getstream/chat/android/compose/ui/scheduled/ComposableSing
 public final class io/getstream/chat/android/compose/ui/scheduled/ComposableSingletons$ScheduledMessagesScreenKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/scheduled/ComposableSingletons$ScheduledMessagesScreenKt;
 	public fun <init> ()V
-	public final fun getLambda$-1002832941$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$1800786950$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/scheduled/ScheduledMessageListKt {
-	public static final fun ScheduledMessageList (Lio/getstream/chat/android/compose/viewmodel/scheduled/ScheduledMessageListViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ScheduledMessageList (Lio/getstream/chat/android/compose/viewmodel/scheduled/ScheduledMessageListViewModel;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/scheduled/ScheduledMessagesScreenKt {
-	public static final fun ScheduledMessagesScreen (Lio/getstream/chat/android/compose/viewmodel/scheduled/ScheduledMessageListViewModelFactory;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ScheduledMessagesScreen (Lio/getstream/chat/android/compose/viewmodel/scheduled/ScheduledMessageListViewModelFactory;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/AttachmentCameraPickerParams {

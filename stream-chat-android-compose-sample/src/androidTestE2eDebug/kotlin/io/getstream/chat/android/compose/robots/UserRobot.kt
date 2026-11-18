@@ -238,12 +238,40 @@ class UserRobot {
     }
 
     /** Edits the scheduled message [text] in the composer of its channel. */
-    fun editScheduledMessage(text: String, newText: String): UserRobot {
+    /** Opens the scheduled message [text] in the composer of the list. */
+    fun startEditingScheduledMessage(text: String): UserRobot {
         openScheduledMessageActions(text)
         ScheduledMessagesPage.Actions.edit.waitToAppearAndClick()
         Composer.inputField.waitForText(text)
+        return this
+    }
+
+    fun editScheduledMessage(text: String, newText: String): UserRobot {
+        startEditingScheduledMessage(text)
         typeText(newText)
-        ScheduledMessagesPage.Editor.saveButton.waitToAppearAndClick()
+        Composer.saveButton.waitToAppearAndClick()
+        return this
+    }
+
+    /** Edits the failed scheduled message [text] to [newText], and schedules it again at [hour] o'clock. */
+    fun editAndRescheduleScheduledMessage(text: String, newText: String, hour: Int): UserRobot {
+        openScheduledMessageActions(text)
+        ScheduledMessagesPage.Actions.editAndReschedule.waitToAppearAndClick()
+        Composer.inputField.waitForText(text)
+        typeText(newText)
+        Composer.saveButton.waitToAppearAndClick()
+        pickScheduleTime(hour)
+        ScheduledMessagesPage.ScheduleTimeSheet.confirmButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun removeScheduledMessageQuote(): UserRobot {
+        ScheduledMessagesPage.Editor.removeQuoteButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun saveScheduledMessage(): UserRobot {
+        Composer.saveButton.waitToAppearAndClick()
         return this
     }
 

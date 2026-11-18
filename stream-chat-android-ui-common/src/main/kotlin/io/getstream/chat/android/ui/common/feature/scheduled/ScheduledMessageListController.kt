@@ -18,7 +18,9 @@ package io.getstream.chat.android.ui.common.feature.scheduled
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.state.getMessageUsingCache
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
@@ -31,6 +33,7 @@ import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPublishing
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
 import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageItemState
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListEvent
@@ -40,6 +43,7 @@ import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +60,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 import kotlinx.coroutines.channels.Channel as EventChannel
 
@@ -216,6 +221,117 @@ public class ScheduledMessageListController(
     }
 
     /**
+     * The content of the scheduled message with [id] to edit in a composer, with the users it mentions, or null when
+     * the message is no longer there, which is then told with [ScheduledMessageListEvent.MessageGone]. A scheduled
+     * message has the IDs of the users it mentions only, and a composer keeps a user mention while the name of the
+     * user is in the text. The users saved on this device are used first, and the others are loaded. When users can't
+     * be loaded, the message does not have them, and [edit] keeps their mentions.
+     *
+     * @param id The ID of the scheduled message.
+     */
+    public suspend fun messageToEdit(id: String): Message? {
+        val message = chatClient.scheduledMessages.value.find { it.id == id }?.message
+        if (message == null) {
+            _events.send(ScheduledMessageListEvent.MessageGone)
+            return null
+        }
+        val ids = message.mentionedUsersIds
+        if (ids.isEmpty()) return message
+        // The users saved on this device come first, so the composer opens without a request when it has them all.
+        val localUsers = chatClient.repositoryFacade.selectUsers(ids)
+        val missingIds = ids - localUsers.map(User::id).toSet()
+        val remoteUsers = if (missingIds.isEmpty()) {
+            emptyList()
+        } else {
+            val filter = Filters.`in`("id", missingIds)
+            chatClient.queryUsers(QueryUsersRequest(filter = filter, offset = 0, limit = missingIds.size))
+                .await().getOrNull().orEmpty()
+        }
+        return message.copy(mentionedUsers = localUsers + remoteUsers)
+    }
+
+    /**
+     * Saves the text, the attachments and the mentions of [message] as the new content of the scheduled message with
+     * [id], and keeps its date. The change is saved locally first. When it is refused before it is saved, the reason
+     * is also sent as an event. When the server answers that the message was already sent or deleted,
+     * [ScheduledMessageListEvent.MessageGone] is sent.
+     *
+     * @param id The ID of the scheduled message.
+     * @param message The new content, built by a composer from [messageToEdit].
+     * @param isQuoteRemoved Whether the user removed the quote of the message.
+     * @param resolveAttachments Copies the attachments picked in the composer to local files, so they can be
+     * uploaded, or null when they already are.
+     * @param onResult Called with the scheduled message as saved locally, or with the reason it was refused.
+     */
+    public fun edit(
+        id: String,
+        message: Message,
+        isQuoteRemoved: Boolean,
+        resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)? = null,
+        onResult: (Result<ScheduledMessage>) -> Unit = {},
+    ) {
+        ownScope.launch {
+            val content = editedContent(id, message, isQuoteRemoved, resolveAttachments)
+            val result = content?.let { chatClient.updateScheduledMessage(id, it).await() } ?: goneResult(id)
+            onResult(result)
+            when (result) {
+                is Result.Success -> if (isGoneOnServer(id)) _events.send(ScheduledMessageListEvent.MessageGone)
+                is Result.Failure -> onRefused(id, result.value, content?.replyMessageId)
+            }
+        }
+    }
+
+    /**
+     * Schedules the content of [message] at [scheduledAt] as a new message that replaces the scheduled message with
+     * [id], which the server failed to send and can't change. Once the new message is saved locally, the failed one
+     * is deleted, then [onResult] is called. Scheduling and deleting finish also when the controller is closed
+     * meanwhile. When it is refused before it is saved, the reason is also sent as an event.
+     *
+     * @param id The ID of the scheduled message the server failed to send.
+     * @param message The new content, built by a composer from [messageToEdit].
+     * @param isQuoteRemoved Whether the user removed the quote of the message.
+     * @param scheduledAt The date when the new message is sent.
+     * @param resolveAttachments Copies the attachments picked in the composer to local files, so they can be
+     * uploaded, or null when they already are.
+     * @param onResult Called with the new scheduled message as saved locally, or with the reason it was refused.
+     */
+    @Suppress("LongParameterList")
+    public fun editAndReschedule(
+        id: String,
+        message: Message,
+        isQuoteRemoved: Boolean,
+        scheduledAt: Date,
+        resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)? = null,
+        onResult: (Result<ScheduledMessage>) -> Unit = {},
+    ) {
+        ownScope.launch {
+            val content = editedContent(id, message, isQuoteRemoved, resolveAttachments)
+            // Scheduling and deleting finish together, also when the controller is closed meanwhile, so the failed
+            // message is never left next to the new one. The failed message leaves the list before the caller learns
+            // the result, so it can't be scheduled again meanwhile. A delete is local first.
+            val (result, deleted) = withContext(NonCancellable) {
+                val result = content?.let {
+                    val (channelType, channelId) = it.cid.cidToTypeAndId()
+                    // A new message, with a new ID.
+                    chatClient.scheduleMessage(channelType, channelId, it.copy(id = ""), scheduledAt).await()
+                } ?: goneResult(id)
+                val deleted = if (result is Result.Success) {
+                    deletedIds += id
+                    chatClient.deleteScheduledMessage(id).await()
+                } else {
+                    null
+                }
+                result to deleted
+            }
+            onResult(result)
+            when {
+                result is Result.Failure -> onRefused(id, result.value, content?.replyMessageId)
+                deleted is Result.Failure -> onRefused(id, deleted.value)
+            }
+        }
+    }
+
+    /**
      * Cancels the work started by this controller, without cancelling the scope it was given.
      */
     override fun close() {
@@ -234,12 +350,18 @@ public class ScheduledMessageListController(
     }
 
     /**
-     * Tells why the action on the scheduled message with [id] was refused: the message is no longer there, it quotes
-     * a deleted message, or [error].
+     * Tells why the action on the scheduled message with [id] was refused: the message is no longer there, the
+     * message it sends quotes a deleted message, or [error].
+     *
+     * @param replyMessageId The ID of the message the refused content quotes: by default, the one the scheduled
+     * message quotes.
      */
-    private suspend fun onRefused(id: String, error: Error) {
+    private suspend fun onRefused(
+        id: String,
+        error: Error,
+        replyMessageId: String? = chatClient.scheduledMessages.value.find { it.id == id }?.message?.replyMessageId,
+    ) {
         val scheduledMessage = chatClient.scheduledMessages.value.find { it.id == id }
-        val replyMessageId = scheduledMessage?.message?.replyMessageId
         when {
             scheduledMessage == null -> _events.send(ScheduledMessageListEvent.MessageGone)
             // The device refuses a quote of a deleted message: once the quote is loaded again, the row says so.
@@ -247,6 +369,24 @@ public class ScheduledMessageListController(
             else -> _events.send(ScheduledMessageListEvent.ActionFailed(error))
         }
     }
+
+    /**
+     * The content to save for the scheduled message with [id], from the [composed] message, with its attachments
+     * resolved, or null when the message is no longer there.
+     */
+    private suspend fun editedContent(
+        id: String,
+        composed: Message,
+        isQuoteRemoved: Boolean,
+        resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)?,
+    ): Message? {
+        val scheduledMessage = chatClient.scheduledMessages.value.find { it.id == id } ?: return null
+        val content = scheduledMessage.editedContent(composed, isQuoteRemoved)
+        return resolveAttachments?.let { content.copy(attachments = it(content.attachments)) } ?: content
+    }
+
+    private fun <T : Any> goneResult(id: String): Result<T> =
+        Result.Failure(Error.GenericError("There is no scheduled message with id: $id."))
 
     /**
      * Loads the channels with [cids], for their names and images: a message scheduled on this device has no
@@ -304,6 +444,30 @@ internal fun ScheduledMessage.scheduledMessageActions(isQuoteDeleted: Boolean): 
     }
     // The device refuses to reschedule or send now a quote of a deleted message, until an edit removes the quote.
     return if (isQuoteDeleted) actions - QuoteDeletedRefusedActions else actions
+}
+
+/**
+ * The content of the scheduled message edited in a composer: its content with the text, the attachments and the
+ * mentions of the [composed] message, which the composer builds from
+ * [ScheduledMessageListController.messageToEdit], and without its quote when [isQuoteRemoved]. The composer keeps only
+ * the user mentions whose user it knows, so the mentions of the users that could not be loaded are kept.
+ */
+internal fun ScheduledMessage.editedContent(composed: Message, isQuoteRemoved: Boolean): Message {
+    val knownUserIds = composed.mentionedUsers.map(User::id).toSet()
+    val unknownUserIds = message.mentionedUsersIds.filterNot(knownUserIds::contains)
+    val content = message.copy(
+        text = composed.text,
+        attachments = composed.attachments,
+        mentionedUsersIds = (composed.mentionedUsersIds + unknownUserIds).distinct(),
+        mentionedUsers = emptyList(),
+        mentionedChannel = composed.mentionedChannel,
+        mentionedHere = composed.mentionedHere,
+        mentionedRoles = composed.mentionedRoles,
+        mentionedGroups = composed.mentionedGroups,
+        // A client can't send the mml of a message a backend scheduled.
+        extraData = message.extraData - "mml",
+    )
+    return if (isQuoteRemoved) content.copy(replyMessageId = null, replyTo = null) else content
 }
 
 /**

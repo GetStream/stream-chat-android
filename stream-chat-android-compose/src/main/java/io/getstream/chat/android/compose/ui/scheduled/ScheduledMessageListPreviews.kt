@@ -19,17 +19,24 @@ package io.getstream.chat.android.compose.ui.scheduled
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import io.getstream.chat.android.compose.ui.messages.composer.LocalScheduledMessageEditMode
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.composer.ScheduledMessageEditMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageItemState
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListState
 import java.io.File
@@ -213,3 +220,49 @@ private val PreviewScheduledMessageItems: List<List<ScheduledMessageItemState>>
 private const val PreviewDateMillis = 1_792_746_000_000
 
 private const val PreviewItemsPerSnapshot = 3
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduledMessageEditComposerPreview() {
+    ChatTheme {
+        ScheduledMessageEditComposerContent()
+    }
+}
+
+@Composable
+internal fun ScheduledMessageEditComposerContent() {
+    ScheduledMessageEditComposerContent(canSave = true, isQuoteDeleted = false)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduledMessageEditComposerQuoteDeletedPreview() {
+    ChatTheme {
+        ScheduledMessageEditComposerQuoteDeleted()
+    }
+}
+
+@Composable
+internal fun ScheduledMessageEditComposerQuoteDeleted() {
+    ScheduledMessageEditComposerContent(canSave = false, isQuoteDeleted = true)
+}
+
+@Composable
+private fun ScheduledMessageEditComposerContent(canSave: Boolean, isQuoteDeleted: Boolean) {
+    val edited = Message(id = "1", text = "Heads up: the launch moved to Monday.")
+    Column(modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
+        if (isQuoteDeleted) {
+            ScheduledMessageQuoteDeletedBanner(onRemoveQuoteClick = {})
+        }
+        CompositionLocalProvider(LocalScheduledMessageEditMode provides ScheduledMessageEditMode(canSave)) {
+            MessageComposer(
+                messageComposerState = MessageComposerState(
+                    inputValue = "Heads up: launch moved to Monday.",
+                    action = Edit(edited),
+                    ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE),
+                ),
+                onSendMessage = { _, _ -> },
+            )
+        }
+    }
+}

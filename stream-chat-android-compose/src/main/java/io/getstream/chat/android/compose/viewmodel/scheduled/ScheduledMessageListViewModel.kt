@@ -17,11 +17,17 @@
 package io.getstream.chat.android.compose.viewmodel.scheduled
 
 import androidx.lifecycle.ViewModel
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.ui.scheduled.ScheduledMessageEdit
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.scheduled.ScheduledMessageListController
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListEvent
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListState
+import io.getstream.result.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
@@ -33,11 +39,13 @@ import java.util.Date
  * @param controller The [ScheduledMessageListController] handling the business logic and the state of the list.
  * @param user The currently logged in user.
  * @param connectionState The state of the connection.
+ * @param chatClient The [ChatClient] holding the scheduled messages, for the composer that edits them.
  */
 public class ScheduledMessageListViewModel internal constructor(
     private val controller: ScheduledMessageListController,
     public val user: StateFlow<User?>,
     public val connectionState: StateFlow<ConnectionState>,
+    internal val chatClient: ChatClient,
 ) : ViewModel(controller) {
 
     /**
@@ -83,5 +91,46 @@ public class ScheduledMessageListViewModel internal constructor(
      */
     public fun delete(id: String) {
         controller.delete(id)
+    }
+
+    /**
+     * The scheduled message edited in the composer of the list, kept across configuration changes.
+     */
+    internal val edit: ScheduledMessageEdit = ScheduledMessageEdit()
+
+    /**
+     * The content of the scheduled message with [id] to edit in a composer, or null when it is no longer there.
+     */
+    internal suspend fun messageToEdit(id: String): Message? = controller.messageToEdit(id)
+
+    /**
+     * Saves [message], built by a composer, as the new content of the scheduled message with [id], and keeps its
+     * date. Calls [onResult] with the scheduled message as saved locally, or with the reason it was refused.
+     */
+    internal fun edit(
+        id: String,
+        message: Message,
+        isQuoteRemoved: Boolean,
+        resolveAttachments: suspend (List<Attachment>) -> List<Attachment>,
+        onResult: (Result<ScheduledMessage>) -> Unit,
+    ) {
+        controller.edit(id, message, isQuoteRemoved, resolveAttachments, onResult)
+    }
+
+    /**
+     * Schedules [message], built by a composer, at [scheduledAt] as a new message that replaces the scheduled message
+     * with [id], which the server failed to send. Calls [onResult] with the new scheduled message as saved locally,
+     * or with the reason it was refused.
+     */
+    @Suppress("LongParameterList")
+    internal fun editAndReschedule(
+        id: String,
+        message: Message,
+        isQuoteRemoved: Boolean,
+        scheduledAt: Date,
+        resolveAttachments: suspend (List<Attachment>) -> List<Attachment>,
+        onResult: (Result<ScheduledMessage>) -> Unit,
+    ) {
+        controller.editAndReschedule(id, message, isQuoteRemoved, scheduledAt, resolveAttachments, onResult)
     }
 }

@@ -17,9 +17,11 @@
 package io.getstream.chat.android.compose.robots
 
 import androidx.test.uiautomator.BySelector
+import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Actions
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Banner
+import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Editor
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.ScheduleSheet
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.ScheduleTimeSheet
 import io.getstream.chat.android.compose.pages.ScheduledMessagesPage.Screen
@@ -28,7 +30,9 @@ import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.isEnabled
 import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 
@@ -79,9 +83,38 @@ fun UserRobot.assertScheduledMessageSentSnackbar(): UserRobot {
     return this
 }
 
-/** Asserts the snackbar that tells the server has the change of an edited scheduled message. */
-fun UserRobot.assertScheduledMessageSaved(): UserRobot {
-    assertTrue(Snackbar.scheduled.waitDisplayed())
+/** Asserts the composer of the list edits the scheduled message [text]. */
+fun UserRobot.assertScheduledMessageEditor(text: String): UserRobot {
+    assertTrue(Editor.header.waitDisplayed())
+    assertEquals(text, Composer.inputField.waitToAppear().text)
+    return this
+}
+
+/** Asserts the edited scheduled message can be saved, or not. */
+fun UserRobot.assertScheduledMessageCanBeSaved(canBeSaved: Boolean): UserRobot {
+    assertTrue(Composer.saveButton.enabled(canBeSaved).waitDisplayed())
+    return this
+}
+
+/** Asserts the banner that tells the edited message quotes a deleted message, or that it is hidden. */
+fun UserRobot.assertScheduledMessageQuoteDeletedBanner(isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Editor.quoteDeletedBanner.waitDisplayed())
+    } else {
+        assertFalse(Editor.quoteDeletedBanner.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+/** Asserts the notice that commands can't be scheduled. */
+fun UserRobot.assertScheduledMessageCommandNotAllowed(): UserRobot {
+    assertTrue(Editor.commandNotAllowed.waitDisplayed())
+    return this
+}
+
+/** Asserts the row of the message [text] no longer shows it as a reply. */
+fun UserRobot.assertScheduledMessageIsNotAReply(text: String): UserRobot {
+    assertFalse(Screen.reply(text).waitToDisappear().isDisplayed())
     return this
 }
 

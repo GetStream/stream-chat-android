@@ -29,12 +29,16 @@ import io.getstream.chat.android.compose.robots.assertScheduleTimeSheetError
 import io.getstream.chat.android.compose.robots.assertScheduledMessage
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActions
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActionsAreClosed
+import io.getstream.chat.android.compose.robots.assertScheduledMessageCanBeSaved
+import io.getstream.chat.android.compose.robots.assertScheduledMessageCommandNotAllowed
+import io.getstream.chat.android.compose.robots.assertScheduledMessageEditor
 import io.getstream.chat.android.compose.robots.assertScheduledMessageFailed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageGoneNotice
+import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotAReply
 import io.getstream.chat.android.compose.robots.assertScheduledMessageIsNotShown
 import io.getstream.chat.android.compose.robots.assertScheduledMessageListedFromBanner
+import io.getstream.chat.android.compose.robots.assertScheduledMessageQuoteDeletedBanner
 import io.getstream.chat.android.compose.robots.assertScheduledMessageReply
-import io.getstream.chat.android.compose.robots.assertScheduledMessageSaved
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSendNowQueued
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSentSnackbar
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesAreEmpty
@@ -155,11 +159,10 @@ class ScheduledMessagesTests : StreamTestCase() {
                 .editScheduledMessage(sampleText, editedText)
         }
         step("THEN the server has the edit") {
-            userRobot.assertScheduledMessageSaved()
+            backendRobot.waitForScheduledMessage(editedText)
         }
-        step("AND the list shows the new text") {
+        step("AND the list shows the new text, at the same time") {
             userRobot
-                .openScheduledMessagesFromBanner()
                 .assertScheduledMessage(editedText, time = tomorrowAt(9))
                 .assertScheduledMessageIsNotShown(sampleText)
         }
@@ -171,6 +174,107 @@ class ScheduledMessagesTests : StreamTestCase() {
                 .pressBack()
                 .assertMessage(editedText)
                 .assertMessage(sampleText, isDisplayed = false)
+        }
+    }
+
+    @Test
+    fun test_editingAnotherScheduledMessageReplacesTheFirstInTheComposer() {
+        val otherText = "Other"
+        val editedText = "Edited"
+        step("GIVEN user schedules two messages") {
+            userRobot
+                .login()
+                .openChannel()
+                .scheduleMessage(sampleText)
+                .scheduleMessage(otherText)
+            backendRobot.waitForScheduledMessage(otherText)
+        }
+        step("AND user starts editing the first one") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .startEditingScheduledMessage(sampleText)
+        }
+        step("WHEN user edits the second one instead, and saves it") {
+            userRobot
+                .startEditingScheduledMessage(otherText)
+                .assertScheduledMessageEditor(otherText)
+                .typeText(editedText)
+                .saveScheduledMessage()
+        }
+        step("THEN the server has the edit of the second one only") {
+            backendRobot.waitForScheduledMessage(editedText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("AND the list shows the first one unchanged, and the second one edited") {
+            userRobot
+                .assertScheduledMessage(sampleText)
+                .assertScheduledMessage(editedText)
+                .assertScheduledMessageIsNotShown(otherText)
+        }
+    }
+
+    @Test
+    fun test_scheduledMessageSentWhileItIsEditedCantBeSaved() {
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("AND user starts editing it") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .startEditingScheduledMessage(sampleText)
+                .assertScheduledMessageCanBeSaved(true)
+        }
+        step("WHEN the server sends it") {
+            backendRobot.sendScheduledMessages()
+        }
+        step("THEN the user is told it is gone, and can't save it") {
+            userRobot
+                .assertScheduledMessageGoneNotice()
+                .assertScheduledMessageEditor(sampleText)
+                .assertScheduledMessageCanBeSaved(false)
+        }
+    }
+
+    @Test
+    fun test_commandCantBeSavedInAScheduledMessage() {
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("WHEN user edits it to start with a command") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .startEditingScheduledMessage(sampleText)
+                .typeText("/giphy")
+        }
+        step("THEN the user is told commands can't be scheduled, and can't save it") {
+            userRobot
+                .assertScheduledMessageCommandNotAllowed()
+                .assertScheduledMessageCanBeSaved(false)
+        }
+    }
+
+    @Test
+    fun test_scheduledMessageFailedByTheServerIsEditedAndScheduledAgain() {
+        val editedText = "Edited"
+        step("GIVEN user schedules a message that the server fails to send") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+            backendRobot.failScheduledMessage(failureReason = "internal_error")
+        }
+        step("WHEN user edits it and schedules it again tomorrow at 10:00") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .editAndRescheduleScheduledMessage(sampleText, editedText, hour = 10)
+        }
+        step("THEN the server has the new message") {
+            backendRobot.waitForScheduledMessage(editedText)
+        }
+        step("AND the list shows the new message instead of the failed one") {
+            userRobot
+                .assertScheduledMessage(editedText, time = tomorrowAt(10))
+                .assertScheduledMessageIsNotShown(sampleText)
         }
     }
 
@@ -614,6 +718,45 @@ class ScheduledMessagesTests : StreamTestCase() {
                     shown = listOf(Actions.edit, Actions.delete),
                     hidden = listOf(Actions.reschedule, Actions.sendNow),
                 )
+        }
+    }
+
+    @Test
+    fun test_scheduledReplyToADeletedMessageIsSavedOnceTheQuoteIsRemoved() {
+        val parentText = "Parent"
+        val editedText = "Edited"
+        step("GIVEN user schedules a reply to a message that is deleted afterwards") {
+            userRobot
+                .login()
+                .openChannel()
+                .sendMessage(parentText)
+                .selectReplyFromContextMenu()
+                .scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+            userRobot.deleteMessage(parentText)
+        }
+        step("WHEN user edits the reply") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .startEditingScheduledMessage(sampleText)
+                .typeText(editedText)
+        }
+        step("THEN a banner says the quote was deleted, and the reply can't be saved") {
+            userRobot
+                .assertScheduledMessageQuoteDeletedBanner()
+                .assertScheduledMessageCanBeSaved(false)
+        }
+        step("WHEN user removes the quote and saves the reply") {
+            userRobot
+                .removeScheduledMessageQuote()
+                .assertScheduledMessageQuoteDeletedBanner(isDisplayed = false)
+                .saveScheduledMessage()
+        }
+        step("THEN the server has the edit, without the quote") {
+            backendRobot.waitForScheduledMessage(editedText)
+            userRobot
+                .assertScheduledMessage(editedText)
+                .assertScheduledMessageIsNotAReply(editedText)
         }
     }
 

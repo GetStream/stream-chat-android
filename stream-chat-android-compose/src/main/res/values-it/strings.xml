@@ -424,4 +424,7 @@
   <string name="stream_compose_scheduled_message_list_send_now_queued">"Verrà inviato quando sarai di nuovo online"</string>
   <string name="stream_compose_scheduled_message_failure_conflict">"Il messaggio è stato modificato su un altro dispositivo."</string>
   <string name="stream_compose_scheduled_message_failure_not_editable">"Questo messaggio non può più essere modificato."</string>
+  <string name="stream_compose_scheduled_message_edit_title">"Modifica messaggio programmato"</string>
+  <string name="stream_compose_scheduled_message_edit_quote_deleted">"Il messaggio citato è stato eliminato"</string>
+  <string name="stream_compose_scheduled_message_edit_remove_quote">"Rimuovi citazione"</string>
 </resources>

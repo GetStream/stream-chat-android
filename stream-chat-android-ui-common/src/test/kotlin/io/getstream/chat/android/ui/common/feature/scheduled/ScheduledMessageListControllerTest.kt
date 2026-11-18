@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.feature.scheduled
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
@@ -30,11 +31,14 @@ import io.getstream.chat.android.models.ScheduledMessageFailure.LocalDeviceFaile
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPublishing
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
 import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction.CopyText
@@ -45,9 +49,12 @@ import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageActio
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction.SendNow
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListEvent
 import io.getstream.result.Error
+import io.getstream.result.Result
 import io.getstream.result.call.CoroutineCall
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
@@ -56,7 +63,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
@@ -75,6 +84,13 @@ internal class ScheduledMessageListControllerTest {
     private lateinit var connectionState: MutableStateFlow<ConnectionState>
     private lateinit var client: ChatClient
     private lateinit var quotedMessages: MutableMap<String, Message>
+    private val savedUsers = mutableListOf<User>()
+    private val repository: RepositoryFacade = mock {
+        onBlocking { selectUsers(any()) } doSuspendableAnswer { invocation ->
+            val ids = invocation.getArgument<List<String>>(0)
+            savedUsers.filter { it.id in ids }
+        }
+    }
 
     @BeforeEach
     fun setUp() {
@@ -92,6 +108,7 @@ internal class ScheduledMessageListControllerTest {
             on { queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()) } doReturn
                 QueryScheduledMessagesResult(emptyList(), next = null).asCall()
             on { queryChannels(any()) } doReturn emptyList<Channel>().asCall()
+            on { repositoryFacade } doReturn repository
         }
     }
 
@@ -430,6 +447,321 @@ internal class ScheduledMessageListControllerTest {
         }
     }
 
+    @Test
+    fun `the message to edit comes with the users it mentions`() = runTest {
+        val user = randomUser()
+        val scheduledMessage = scheduled(mentionedUsersIds = listOf(user.id))
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.queryUsers(any())) doReturn listOf(user).asCall()
+
+        controller().messageToEdit(scheduledMessage.id) shouldBeEqualTo
+            scheduledMessage.message.copy(mentionedUsers = listOf(user))
+    }
+
+    @Test
+    fun `the message to edit takes the users saved on the device, without a request`() = runTest {
+        val user = randomUser()
+        savedUsers += user
+        val scheduledMessage = scheduled(mentionedUsersIds = listOf(user.id))
+        scheduledMessages.value = listOf(scheduledMessage)
+
+        controller().messageToEdit(scheduledMessage.id) shouldBeEqualTo
+            scheduledMessage.message.copy(mentionedUsers = listOf(user))
+        verify(client, never()).queryUsers(any())
+    }
+
+    @Test
+    fun `the message to edit loads only the users not saved on the device`() = runTest {
+        val saved = randomUser()
+        val loaded = randomUser()
+        savedUsers += saved
+        val scheduledMessage = scheduled(mentionedUsersIds = listOf(saved.id, loaded.id))
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.queryUsers(any())) doReturn listOf(loaded).asCall()
+
+        controller().messageToEdit(scheduledMessage.id) shouldBeEqualTo
+            scheduledMessage.message.copy(mentionedUsers = listOf(saved, loaded))
+        verify(client).queryUsers(argThat { limit == 1 })
+    }
+
+    @Test
+    fun `the message to edit has no users when they can't be loaded`() = runTest {
+        val scheduledMessage = scheduled(mentionedUsersIds = listOf(randomString()))
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.queryUsers(any())) doReturn Error.GenericError(randomString()).asCall()
+
+        controller().messageToEdit(scheduledMessage.id) shouldBeEqualTo
+            scheduledMessage.message.copy(mentionedUsers = emptyList())
+    }
+
+    @Test
+    fun `there is no message to edit once it is gone, which is told`() = runTest {
+        val controller = controller()
+
+        controller.events.test {
+            controller.messageToEdit(randomString()) shouldBeEqualTo null
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.MessageGone
+        }
+    }
+
+    @Test
+    fun `an edit saves the content and keeps the date, then calls back`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        scheduledMessages.value = listOf(scheduledMessage)
+        val composed = scheduledMessage.message.copy(text = "Edited")
+        whenever(client.updateScheduledMessage(eq(scheduledMessage.id), any(), isNull())) doReturn
+            scheduledMessage.asCall()
+        val results = mutableListOf<Result<ScheduledMessage>>()
+
+        controller().edit(scheduledMessage.id, composed, isQuoteRemoved = false, onResult = { results += it })
+
+        verify(client).updateScheduledMessage(scheduledMessage.id, composed, null)
+        results shouldBeEqualTo listOf(Result.Success(scheduledMessage))
+    }
+
+    @Test
+    fun `an edit resolves the attachments picked in the composer`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        scheduledMessages.value = listOf(scheduledMessage)
+        val resolved = listOf(Attachment(name = "resolved"))
+        whenever(client.updateScheduledMessage(eq(scheduledMessage.id), any(), isNull())) doReturn
+            scheduledMessage.asCall()
+
+        controller().edit(
+            id = scheduledMessage.id,
+            message = scheduledMessage.message.copy(attachments = listOf(Attachment(name = "picked"))),
+            isQuoteRemoved = false,
+            resolveAttachments = { resolved },
+        )
+
+        verify(client).updateScheduledMessage(
+            scheduledMessage.id,
+            scheduledMessage.message.copy(attachments = resolved),
+            null,
+        )
+    }
+
+    @Test
+    fun `an edit refused before it is saved tells it failed`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        scheduledMessages.value = listOf(scheduledMessage)
+        val error = Error.GenericError(randomString())
+        whenever(client.updateScheduledMessage(eq(scheduledMessage.id), any(), isNull())) doReturn error.asCall()
+        val controller = controller()
+        val results = mutableListOf<Result<ScheduledMessage>>()
+
+        controller.events.test {
+            controller.edit(scheduledMessage.id, scheduledMessage.message, isQuoteRemoved = false) { results += it }
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.ActionFailed(error)
+        }
+        results shouldBeEqualTo listOf(Result.Failure(error))
+    }
+
+    @Test
+    fun `an edit of a message that is gone tells it is gone, without a request`() = runTest {
+        hasLoadedAll.value = true
+        val controller = controller()
+
+        controller.events.test {
+            controller.edit(randomString(), randomMessage(), isQuoteRemoved = false)
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.MessageGone
+        }
+        verify(client, never()).updateScheduledMessage(any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `an edit the server answers as already sent or deleted tells the message is gone`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        val local = scheduledMessage.copy(status = ScheduledMessageStatus.PreparingToSchedule)
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.updateScheduledMessage(eq(scheduledMessage.id), any(), isNull())).thenAnswer {
+            scheduledMessages.value = listOf(local)
+            local.asCall()
+        }
+        val controller = controller()
+
+        controller.events.test {
+            controller.edit(scheduledMessage.id, scheduledMessage.message, isQuoteRemoved = false)
+            expectNoEvents()
+
+            scheduledMessages.value = emptyList()
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.MessageGone
+        }
+    }
+
+    @Test
+    fun `edit and reschedule schedules a new message, then deletes the failed one`() = runTest {
+        hasLoadedAll.value = true
+        val failedMessage = failed(ServerFailedPublishing(reason = null))
+        scheduledMessages.value = listOf(failedMessage)
+        val (channelType, channelId) = failedMessage.cid.split(":")
+        val scheduledAt = randomDate()
+        val composed = failedMessage.message.copy(text = "Edited")
+        val newMessage = scheduled()
+        whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn newMessage.asCall()
+        var deletes = 0
+        whenever(client.deleteScheduledMessage(failedMessage.id)).thenAnswer {
+            deletes++
+            Unit.asCall()
+        }
+        // The failed message is deleted before the caller learns the result.
+        val deletesAtResult = mutableListOf<Int>()
+        val results = mutableListOf<Result<ScheduledMessage>>()
+        val controller = controller()
+
+        controller.events.test {
+            controller.editAndReschedule(failedMessage.id, composed, false, scheduledAt) {
+                deletesAtResult += deletes
+                results += it
+            }
+
+            expectNoEvents()
+        }
+        verify(client).scheduleMessage(channelType, channelId, composed.copy(id = ""), scheduledAt)
+        results shouldBeEqualTo listOf(Result.Success(newMessage))
+        deletesAtResult shouldBeEqualTo listOf(1)
+    }
+
+    @Test
+    fun `edit and reschedule calls back only once the failed message is deleted`() = runTest {
+        hasLoadedAll.value = true
+        val failedMessage = failed(ServerFailedPublishing(reason = null))
+        scheduledMessages.value = listOf(failedMessage)
+        val newMessage = scheduled()
+        val deleted = CompletableDeferred<Result<Unit>>()
+        whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn newMessage.asCall()
+        whenever(client.deleteScheduledMessage(failedMessage.id)) doReturn
+            CoroutineCall(backgroundScope) { deleted.await() }
+        val results = mutableListOf<Result<ScheduledMessage>>()
+
+        controller().editAndReschedule(failedMessage.id, failedMessage.message, false, randomDate()) { results += it }
+        runCurrent()
+        results.shouldBeEmpty()
+
+        deleted.complete(Result.Success(Unit))
+        runCurrent()
+        results shouldBeEqualTo listOf(Result.Success(newMessage))
+    }
+
+    @Test
+    fun `edit and reschedule still deletes the failed message when the controller is closed while scheduling`() =
+        runTest {
+            hasLoadedAll.value = true
+            val failedMessage = failed(ServerFailedPublishing(reason = null))
+            scheduledMessages.value = listOf(failedMessage)
+            val scheduled = CompletableDeferred<Result<ScheduledMessage>>()
+            whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn
+                CoroutineCall(backgroundScope) { scheduled.await() }
+            whenever(client.deleteScheduledMessage(failedMessage.id)) doReturn Unit.asCall()
+            val controller = controller()
+            controller.editAndReschedule(failedMessage.id, failedMessage.message, false, randomDate())
+            runCurrent()
+
+            controller.close()
+            scheduled.complete(Result.Success(scheduled()))
+            runCurrent()
+
+            verify(client).deleteScheduledMessage(failedMessage.id)
+        }
+
+    @Test
+    fun `edit and reschedule refused before it is saved keeps the failed message`() = runTest {
+        hasLoadedAll.value = true
+        val failedMessage = failed(ServerFailedPublishing(reason = null))
+        scheduledMessages.value = listOf(failedMessage)
+        val error = Error.GenericError(randomString())
+        whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn error.asCall()
+        val controller = controller()
+
+        controller.events.test {
+            controller.editAndReschedule(failedMessage.id, failedMessage.message, false, randomDate())
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.ActionFailed(error)
+        }
+        verify(client, never()).deleteScheduledMessage(any())
+    }
+
+    @Test
+    fun `edit and reschedule refused with the deleted quote removed tells it failed`() = runTest {
+        hasLoadedAll.value = true
+        val quoted = randomMessage(deletedAt = Date())
+        quotedMessages[quoted.id] = quoted
+        val failedMessage = failed(ServerFailedPublishing(reason = null)).let {
+            it.copy(message = it.message.copy(replyMessageId = quoted.id))
+        }
+        scheduledMessages.value = listOf(failedMessage)
+        val error = Error.GenericError(randomString())
+        whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn error.asCall()
+        val controller = controller()
+
+        controller.events.test {
+            controller.editAndReschedule(failedMessage.id, failedMessage.message, true, randomDate())
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.ActionFailed(error)
+        }
+    }
+
+    @Test
+    fun `the edited content keeps what the composer does not edit`() {
+        val scheduledMessage = scheduled(replyMessageId = randomString()).let {
+            it.copy(
+                message = it.message.copy(
+                    extraData = mapOf("custom" to "kept"),
+                    mentionedChannel = false,
+                    mentionedHere = false,
+                ),
+            )
+        }
+        // A composer restored after a process restart knows the text only.
+        val composed = Message(id = scheduledMessage.id, text = "Edited @channel", mentionedChannel = true)
+
+        val content = scheduledMessage.editedContent(composed, isQuoteRemoved = false)
+
+        content shouldBeEqualTo scheduledMessage.message.copy(text = "Edited @channel", mentionedChannel = true)
+    }
+
+    @Test
+    fun `the edited content keeps the mentions of the users the composer did not know`() {
+        val known = randomUser()
+        val scheduledMessage = scheduled(mentionedUsersIds = listOf(known.id, "unknown"))
+        // The composer kept no mention of the known user, whose name left the text.
+        val composed = scheduledMessage.message.copy(mentionedUsers = listOf(known), mentionedUsersIds = emptyList())
+
+        val content = scheduledMessage.editedContent(composed, isQuoteRemoved = false)
+
+        content.mentionedUsersIds shouldBeEqualTo listOf("unknown")
+        content.mentionedUsers.shouldBeEmpty()
+    }
+
+    @Test
+    fun `the edited content drops the quote once it is removed`() {
+        val scheduledMessage = scheduled(replyMessageId = randomString())
+
+        val content = scheduledMessage.editedContent(scheduledMessage.message, isQuoteRemoved = true)
+
+        content.replyMessageId shouldBeEqualTo null
+        content.replyTo shouldBeEqualTo null
+    }
+
+    @Test
+    fun `the edited content drops the mml a backend set`() {
+        val scheduledMessage = scheduled().let {
+            it.copy(message = it.message.copy(extraData = mapOf("mml" to "<mml/>", "custom" to "kept")))
+        }
+
+        val content = scheduledMessage.editedContent(scheduledMessage.message, isQuoteRemoved = false)
+
+        content.extraData shouldBeEqualTo mapOf("custom" to "kept")
+    }
+
     private fun controller(cid: String? = null) = ScheduledMessageListController(
         cid = cid,
         chatClient = client,
@@ -443,13 +775,14 @@ internal class ScheduledMessageListControllerTest {
 
     @Suppress("LongParameterList")
     private fun scheduled(
-        cid: String = randomString(),
+        cid: String = randomCID(),
         scheduledAt: Date = randomDate(),
         status: ScheduledMessageStatus = ScheduledMessageStatus.Scheduled,
         text: String = randomString(),
         parentId: String? = null,
         replyMessageId: String? = null,
         attachments: List<Attachment> = emptyList(),
+        mentionedUsersIds: List<String> = emptyList(),
     ): ScheduledMessage {
         val id = randomString()
         return randomScheduledMessage(
@@ -462,7 +795,9 @@ internal class ScheduledMessageListControllerTest {
                 parentId = parentId,
                 replyMessageId = replyMessageId,
                 attachments = attachments,
-            ),
+                mentionedUsers = emptyList(),
+                extraData = emptyMap(),
+            ).copy(mentionedUsersIds = mentionedUsersIds),
             scheduledAt = scheduledAt,
             status = status,
         )
