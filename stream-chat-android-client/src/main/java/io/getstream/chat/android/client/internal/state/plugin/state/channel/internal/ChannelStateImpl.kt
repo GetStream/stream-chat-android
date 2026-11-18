@@ -69,6 +69,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -881,8 +882,10 @@ internal class ChannelStateImpl(
      *
      * @param count The total count of members.
      */
-    fun setMemberCount(count: Int) {
-        _memberCount.value = count
+    fun setMemberCount(count: Int) = updateMemberCount { count }
+
+    private fun updateMemberCount(transform: (current: Int) -> Int) {
+        val count = _memberCount.updateAndGet(transform)
         _channelData.update { current -> current?.copy(memberCount = count) }
     }
 
@@ -919,8 +922,7 @@ internal class ChannelStateImpl(
         if (!isAlreadyMember) {
             _members.update { current -> current + member }
         }
-        val current = _memberCount.value
-        setMemberCount(memberCount ?: if (isAlreadyMember) current else current + 1)
+        updateMemberCount { current -> memberCount ?: if (isAlreadyMember) current else current + 1 }
     }
 
     /**
@@ -1849,7 +1851,7 @@ internal class ChannelStateImpl(
         _members.update { current ->
             current.filter { it.getUserId() != memberId }
         }
-        setMemberCount(memberCount ?: max(0, _memberCount.value - 1))
+        updateMemberCount { current -> memberCount ?: max(0, current - 1) }
     }
 
     /**
