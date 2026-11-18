@@ -72,7 +72,7 @@ internal class AttachmentsSenderTest {
         networkType = UploadAttachmentsNetworkType.CONNECTED,
         clientState = mock<ClientState> { on { this.isNetworkAvailable } doReturn isNetworkAvailable },
         scope = backgroundScope + UnconfinedTestDispatcher(testScheduler),
-        isPlaceholderChannel = { cid -> cid in placeholderCids },
+        isChannelBeingCreated = { cid -> cid in placeholderCids },
     )
 
     private fun message(uploadState: Attachment.UploadState, assetUrl: String? = null) = Message(

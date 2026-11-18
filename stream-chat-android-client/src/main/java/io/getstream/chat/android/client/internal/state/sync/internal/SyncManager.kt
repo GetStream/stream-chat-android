@@ -1226,11 +1226,6 @@ internal class SyncManager(
                     message.waitsForChannel(uncreatedCids) -> {
                         logger.v { "[retryMessagesWithPendingAttachments] waiting for channel(${message.cid})" }
                     }
-                    logicRegistry.isPlaceholderChannel(message.cid) -> {
-                        // The server rejected the channel: fail the message where the user can retry it
-                        logger.v { "[retryMessagesWithPendingAttachments] failing message($id) of a rejected channel" }
-                        markMessageAsFailed(message)
-                    }
                     else -> {
                         val (channelType, channelId) = message.cid.cidToTypeAndId()
                         chatClient.sendMessage(channelType, channelId, message, true).await()

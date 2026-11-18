@@ -170,7 +170,7 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.channel.isPlaceholderChannel
+import io.getstream.chat.android.client.utils.channel.isChannelBeingCreated
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
@@ -6087,7 +6087,7 @@ internal constructor(
                     networkType = uploadAttachmentsNetworkType,
                     clientState = clientState,
                     scope = clientScope,
-                    isPlaceholderChannel = { cid -> logicRegistry.isPlaceholderChannel(cid) },
+                    isChannelBeingCreated = { cid -> logicRegistry.isChannelBeingCreated(cid, repositoryFacade) },
                 )
             }
         }

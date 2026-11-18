@@ -18,10 +18,12 @@ package io.getstream.chat.android.client.utils.channel
 
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 /**
@@ -63,6 +65,15 @@ internal fun isMultiMemberPlaceholderCid(cid: String): Boolean =
  */
 internal fun ChannelStateLogicProvider?.isPlaceholderChannel(cid: String): Boolean =
     (this as? LogicRegistry)?.isPlaceholderChannel(cid) ?: isMultiMemberPlaceholderCid(cid)
+
+/**
+ * Whether [cid] is a local placeholder for a channel the server has neither created nor rejected yet.
+ */
+internal suspend fun ChannelStateLogicProvider?.isChannelBeingCreated(
+    cid: String,
+    channelRepository: ChannelRepository,
+): Boolean = isPlaceholderChannel(cid) &&
+    channelRepository.selectChannel(cid)?.syncStatus != SyncStatus.FAILED_PERMANENTLY
 
 private const val PLACEHOLDER_ID_PREFIX = "!members-"
 private const val PLACEHOLDER_ID_SEPARATOR = ", "
