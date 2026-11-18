@@ -384,7 +384,7 @@
   <string name="stream_compose_schedule_message_reschedule_title">"मैसेज फिर से शेड्यूल करें"</string>
   <string name="stream_compose_schedule_message_limit_reached">"सीमा पूरी हुई (अधिकतम %1$d)"</string>
   <string name="stream_compose_schedule_message_tomorrow_at">"कल, %1$s"</string>
-  <string name="stream_compose_schedule_message_day_at">"%1$s, %2$s"</string>
+  <string name="stream_compose_schedule_message_day_at">"%1$s को %2$s"</string>
   <string name="stream_compose_schedule_message_custom_time">"कस्टम समय"</string>
   <string name="stream_compose_schedule_message_to">"%1$s को मैसेज"</string>
   <string name="stream_compose_schedule_message_reply_to">"%1$s को जवाब"</string>
