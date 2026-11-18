@@ -80,7 +80,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -324,43 +323,45 @@ internal class SyncManager(
      * Handles connection recover in the SDK.
      * This method will sync the data, retry failed entities, update channels data, etc.
      */
-    private suspend fun onConnectionEstablished(userId: String) = try {
+    private suspend fun onConnectionEstablished(userId: String) {
         logger.i { "[onConnectionEstablished] >>> userId: $userId, isFirstConnect: $isFirstConnect" }
         state.value = State.Syncing
-        val online = clientState.isOnline
-        logger.v { "[onConnectionEstablished] online: $online" }
-        markStoredPlaceholders()
-        // Taken first, since the retries, the sync and the refreshes can fill the channel data
-        val failedFirstLoadCids = failedFirstLoadCids()
-        retryFailedEntities()
+        try {
+            val online = clientState.isOnline
+            logger.v { "[onConnectionEstablished] online: $online" }
+            markStoredPlaceholders()
+            // Taken first, since the retries, the sync and the refreshes can fill the channel data
+            val failedFirstLoadCids = failedFirstLoadCids()
+            retryFailedEntities()
 
-        if (syncState.value == null && syncState.value?.userId != userId) {
-            logger.v { "[onConnectionEstablished] syncState: ${syncState.value?.stringify()}" }
-            updateAllReadStateForDate(userId, currentDate = Date(now()))
+            if (syncState.value == null && syncState.value?.userId != userId) {
+                logger.v { "[onConnectionEstablished] syncState: ${syncState.value?.stringify()}" }
+                updateAllReadStateForDate(userId, currentDate = Date(now()))
+            }
+            if (isAutomaticSyncOnReconnectEnabled) {
+                logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
+                // The first connect does not refresh the grouped lists, so it has no kept pages to watch again.
+                val outcome = performSync(
+                    watch = !isFirstConnect.get() && groupedListsWatch(),
+                    groupedListsFirst = true,
+                )
+                restoreActiveChannels(
+                    syncedCids = outcome.syncedCids,
+                    alreadyRefreshedCids = outcome.refreshedCids,
+                    failedFirstLoadCids = failedFirstLoadCids,
+                )
+            } else {
+                logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
+            }
+            logger.i { "[onConnectionEstablished] <<< completed" }
+        } catch (e: Throwable) {
+            logger.e { "[onConnectionEstablished] <<< failed: $e" }
         }
-        if (isAutomaticSyncOnReconnectEnabled) {
-            logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
-            // The first connect does not refresh the grouped lists, so it has no kept pages to watch again.
-            val outcome = performSync(
-                watch = !isFirstConnect.get() && groupedListsWatch(),
-                groupedListsFirst = true,
-            )
-            restoreActiveChannels(
-                syncedCids = outcome.syncedCids,
-                alreadyRefreshedCids = outcome.refreshedCids,
-                failedFirstLoadCids = failedFirstLoadCids,
-            )
-        } else {
-            logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
-        }
+        // A cancelled run stops here, also when a step swallowed the cancellation: it starts no further work and
+        // leaves the state to whoever cancelled it, since a newer run can already be syncing.
+        currentCoroutineContext().ensureActive()
+        // Socket events wait for the idle state, so a failed run resets it too.
         state.value = State.Idle
-
-        logger.i { "[onConnectionEstablished] <<< completed" }
-    } catch (e: Throwable) {
-        // Socket events wait for the idle state. A cancelled run leaves it to whoever cancelled it, since a newer
-        // run can already be syncing.
-        if (currentCoroutineContext().isActive) state.value = State.Idle
-        logger.e { "[onConnectionEstablished] <<< failed: $e" }
     }
 
     /**

@@ -496,7 +496,15 @@ internal class SyncManagerTest {
         runTest(testDispatcher) {
             /* Given */
             whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+            val subscription = object : Disposable {
+                override var isDisposed = false
+                override fun dispose() {
+                    isDisposed = true
+                }
+            }
+            whenever(chatClient.subscribe(any())) doReturn subscription
             val syncManager = buildSyncManager()
+            syncManager.start()
             syncManager.onEvent(randomConnectedEvent())
             syncManager.stop()
 
@@ -542,6 +550,45 @@ internal class SyncManagerTest {
 
         /* Then */
         assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+    }
+
+    @Test
+    fun `when a cancelled reconnect sync ends without failing, the newer one is still awaited`() =
+        runTest(testDispatcher) {
+            /* Given */
+            _syncState.value = SyncState(userId = user.id)
+            val cancelledSyncGate = CompletableDeferred<Unit>()
+            var reactionReads = 0
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer {
+                if (reactionReads++ > 0) awaitCancellation()
+                withContext(NonCancellable) { cancelledSyncGate.await() }
+                emptyList()
+            }
+            val syncManager = buildSyncManager(isAutomaticSyncOnReconnectEnabled = false)
+            syncManager.onEvent(randomConnectedEvent())
+            syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            cancelledSyncGate.complete(Unit)
+
+            /* Then */
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `when the reconnect sync is cancelled, the work that follows it is not started`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+        val pendingMessagePins = mock<PendingMessagePins>()
+        val syncManager = buildSyncManager(pendingMessagePins = pendingMessagePins)
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* When */
+        syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+
+        /* Then */
+        verify(pendingMessagePins, never()).sendPending()
     }
 
     @Test
