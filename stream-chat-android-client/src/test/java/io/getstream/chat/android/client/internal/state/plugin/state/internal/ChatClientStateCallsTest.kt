@@ -289,8 +289,8 @@ internal class ChatClientStateCallsTest {
             chatClientStateCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false)
         }.exceptionOrNull()
 
-        // Then
-        assertInstanceOf(IllegalStateException::class.java, error)
+        // Then - the exact class, since a CancellationException is also an IllegalStateException
+        assertEquals(IllegalStateException::class.java, error?.javaClass)
     }
 
     @Test
