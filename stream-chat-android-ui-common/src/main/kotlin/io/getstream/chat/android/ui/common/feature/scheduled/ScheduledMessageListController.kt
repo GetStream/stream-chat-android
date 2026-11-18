@@ -151,6 +151,11 @@ public class ScheduledMessageListController(
                 .distinctUntilChanged()
                 .collect { ids -> (ids - quotedMessages.value.keys).forEach { id -> launch { loadQuotedMessage(id) } } }
         }
+        ownScope.launch {
+            chatClient.deletedScheduledMessagesAlreadySent
+                .filter { scheduledMessage -> scheduledMessage.id in deletedIds }
+                .collect { _events.send(ScheduledMessageListEvent.DeletedMessageAlreadySent) }
+        }
     }
 
     /**
@@ -208,7 +213,8 @@ public class ScheduledMessageListController(
     }
 
     /**
-     * Deletes the scheduled message with [id].
+     * Deletes the scheduled message with [id]. When the server answers that it had already sent the message, while
+     * this controller is open, [ScheduledMessageListEvent.DeletedMessageAlreadySent] is sent.
      *
      * @param id The ID of the scheduled message.
      */

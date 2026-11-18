@@ -52,6 +52,7 @@ import kotlinx.coroutines.flow.onEach
  * connection, the changes stay pending until the next one.
  *
  * @param onSentAsMessage Called with the message the server sent right away, because its date had passed.
+ * @param onDeletedAlreadySent Called with a deleted message, once the server answers that it had already sent it.
  */
 internal class ScheduledMessageSender(
     private val store: ScheduledMessageStore,
@@ -59,6 +60,7 @@ internal class ScheduledMessageSender(
     private val attachmentUploader: AttachmentUploader,
     private val clientState: ClientState,
     private val onSentAsMessage: suspend (Message) -> Unit,
+    private val onDeletedAlreadySent: suspend (ScheduledMessage) -> Unit,
 ) {
 
     private val logger by taggedLogger("Chat:ScheduledMessageSender")
@@ -104,20 +106,26 @@ internal class ScheduledMessageSender(
 
     /**
      * Deletes [message] on the server, unless it is not there yet, then removes it. When the server can't delete it,
-     * the message shows again with the failure, and a resend deletes it again.
+     * the message shows again with the failure, and a resend deletes it again. When the server answers that it had
+     * already sent the message, [onDeletedAlreadySent] is called once it is removed.
      */
     private suspend fun delete(message: LocalScheduledMessage): Boolean {
-        if (message.mayBeOnServer) {
+        val error = if (message.mayBeOnServer) {
             if (!clientState.isOnline) return false
-            val result = retryOnConflict { api.deleteScheduledMessage(message.id) }
-            if (result is Result.Failure && !result.value.isNotFound()) {
-                if (result.value.isWaitingForConnection()) return false
-                logger.e { "[delete] failed to delete ${message.id} on the server: ${result.value}" }
-                store.update(message.id) { it?.copy(localFailure = result.value.toScheduledMessageFailure()) }
-                return true
-            }
+            (retryOnConflict { api.deleteScheduledMessage(message.id) } as? Result.Failure)?.value
+        } else {
+            null
+        }
+        if (error != null && !error.isNotFound() && !error.isSentOrCanceled()) {
+            if (error.isWaitingForConnection()) return false
+            logger.e { "[delete] failed to delete ${message.id} on the server: $error" }
+            store.update(message.id) { it?.copy(localFailure = error.toScheduledMessageFailure()) }
+            return true
         }
         store.update(message.id) { null }
+        if (error?.scheduledMessageRejectionReason() == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent) {
+            onDeletedAlreadySent(message.toScheduledMessage())
+        }
         return true
     }
 
@@ -248,10 +256,7 @@ internal class ScheduledMessageSender(
      * @return False when it waits for the connection.
      */
     private suspend fun onFailure(sent: LocalScheduledMessage, error: Error): Boolean {
-        val reason = error.scheduledMessageRejectionReason()
-        val isGone = reason == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent ||
-            reason == ServerRejectedScheduling.Reason.ScheduledMessageCanceled ||
-            (!sent.isLocalOnly && error.isNotFound())
+        val isGone = error.isSentOrCanceled() || (!sent.isLocalOnly && error.isNotFound())
         when {
             isGone -> store.update(sent.id) { null }
             error.isWaitingForConnection() -> return false
@@ -265,6 +270,14 @@ internal class ScheduledMessageSender(
     }
 
     private fun Error.isNotFound(): Boolean = (this as? Error.NetworkError)?.isStatusNotFound() == true
+
+    /** Whether the server answered that it already sent the message, or that the message was deleted before. */
+    private fun Error.isSentOrCanceled(): Boolean = when (scheduledMessageRejectionReason()) {
+        ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent,
+        ServerRejectedScheduling.Reason.ScheduledMessageCanceled,
+        -> true
+        else -> false
+    }
 
     /**
      * Whether the server answered that it rejects the request. A 5xx, a rate limit, a timeout or no answer leave the

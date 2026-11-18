@@ -141,6 +141,12 @@ fun UserRobot.assertScheduledMessageGoneNotice(): UserRobot {
     return this
 }
 
+/** Asserts the notice that a message the user deleted had already been sent, so it is in the channel. */
+fun UserRobot.assertScheduledMessageDeletedAlreadySentNotice(): UserRobot {
+    assertTrue(Snackbar.deletedAlreadySent.waitDisplayed())
+    return this
+}
+
 /** Asserts the notice that a message sent now while offline is sent once back online. */
 fun UserRobot.assertScheduledMessageSendNowQueued(): UserRobot {
     assertTrue(Snackbar.sendNowQueued.waitDisplayed())

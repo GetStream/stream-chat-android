@@ -390,6 +390,7 @@
   <string name="stream_compose_scheduled_message_list_uploading">"Téléversement…"</string>
   <string name="stream_compose_scheduled_message_list_still_sending">"Envoi en cours. Réessayez dans un instant."</string>
   <string name="stream_compose_scheduled_message_list_gone">"Déjà envoyé ou supprimé sur un autre appareil"</string>
+  <string name="stream_compose_scheduled_message_list_deleted_already_sent">"Déjà envoyé. Il est maintenant dans le canal."</string>
   <string name="stream_compose_scheduled_message_list_action_failed">"Impossible de modifier le message programmé. Réessayez."</string>
   <string name="stream_compose_scheduled_message_list_thread_reply">"Réponse dans le fil :"</string>
   <string name="stream_compose_scheduled_message_list_reply_to">"Réponse à %1$s :"</string>

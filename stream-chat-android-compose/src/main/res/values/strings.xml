@@ -501,6 +501,7 @@
     <string name="stream_compose_scheduled_message_list_uploading">Uploading…</string>
     <string name="stream_compose_scheduled_message_list_still_sending">Still sending. Try again in a moment.</string>
     <string name="stream_compose_scheduled_message_list_gone">Already sent or deleted on another device</string>
+    <string name="stream_compose_scheduled_message_list_deleted_already_sent">Already sent. It\'s in the channel now.</string>
     <string name="stream_compose_scheduled_message_list_action_failed">Couldn\'t change the scheduled message. Try again.</string>
     <string name="stream_compose_scheduled_message_list_thread_reply">Thread reply:</string>
     <string name="stream_compose_scheduled_message_list_reply_to">Reply to %1$s:</string>

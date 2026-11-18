@@ -40,6 +40,7 @@ import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -66,12 +67,14 @@ internal class ScheduledMessagesScreenTest {
 
     private val channel = Channel(type = "messaging", id = "general", name = "General")
     private lateinit var scheduledMessagesFlow: MutableStateFlow<List<ScheduledMessage>>
+    private lateinit var deletedAlreadySent: MutableSharedFlow<ScheduledMessage>
     private lateinit var connection: MutableStateFlow<ConnectionState>
     private lateinit var client: ChatClient
 
     @Before
     fun setUp() {
         scheduledMessagesFlow = MutableStateFlow(emptyList())
+        deletedAlreadySent = MutableSharedFlow(extraBufferCapacity = 1)
         connection = MutableStateFlow(ConnectionState.Connected)
         val state: ClientState = mock {
             on { connectionState } doReturn connection
@@ -80,6 +83,7 @@ internal class ScheduledMessagesScreenTest {
         client = mock {
             on { scheduledMessages } doReturn scheduledMessagesFlow
             on { hasLoadedAllScheduledMessages } doReturn MutableStateFlow(true)
+            on { deletedScheduledMessagesAlreadySent } doReturn deletedAlreadySent
             on { clientState } doReturn state
             on { queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()) } doReturn
                 QueryScheduledMessagesResult(emptyList(), next = null).asCall()
@@ -149,6 +153,23 @@ internal class ScheduledMessagesScreenTest {
         composeTestRule.waitForIdle()
 
         verify(client).deleteScheduledMessage(message.id)
+    }
+
+    @Test
+    fun `deleting a message that was already sent tells it is in the channel`() {
+        val message = scheduled()
+        scheduledMessagesFlow.value = listOf(message)
+        whenever(client.deleteScheduledMessage(message.id)) doReturn Unit.asCall()
+        setContent()
+
+        openActions()
+        clickTag("Stream_ScheduledMessageAction_Delete")
+        clickTag("Stream_ScheduledMessageDeleteConfirm")
+        scheduledMessagesFlow.value = emptyList()
+        deletedAlreadySent.tryEmit(message)
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Already sent. It's in the channel now.").assertExists()
     }
 
     @Test

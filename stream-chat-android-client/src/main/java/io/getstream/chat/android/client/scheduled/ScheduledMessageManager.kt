@@ -37,7 +37,10 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -66,7 +69,20 @@ internal class ScheduledMessageManager(
 
     private val store = ScheduledMessageStore()
     private val validator = ScheduledMessageValidator(getRepositoryFacade, now)
-    private val sender = ScheduledMessageSender(store, api, attachmentUploader, clientState, onSentAsMessage)
+
+    // Never suspends the sender, whatever the collectors do.
+    private val _deletedAlreadySent = MutableSharedFlow<ScheduledMessage>(
+        extraBufferCapacity = DELETED_ALREADY_SENT_BUFFER,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+    private val sender = ScheduledMessageSender(
+        store = store,
+        api = api,
+        attachmentUploader = attachmentUploader,
+        clientState = clientState,
+        onSentAsMessage = onSentAsMessage,
+        onDeletedAlreadySent = _deletedAlreadySent::emit,
+    )
     private val lifecycleMutex = Mutex()
     private var senderJob: Job? = null
     private var connectionJob: Job? = null
@@ -83,6 +99,9 @@ internal class ScheduledMessageManager(
      * lost or [stop], as events can be missed while not connected.
      */
     val hasLoadedAll: StateFlow<Boolean> = _hasLoadedAll
+
+    /** The deleted scheduled messages the server had already sent, once it answers their delete. */
+    val deletedAlreadySent: SharedFlow<ScheduledMessage> = _deletedAlreadySent
 
     /**
      * Loads the scheduled messages saved for the connected user, and starts sending their pending changes in [scope].
@@ -347,6 +366,9 @@ internal class KnownScheduledMessages(val ids: Set<String>, val onServerIds: Set
 
 /** The largest page the server returns. */
 private const val MAX_QUERY_LIMIT = 100
+
+/** How many deleted messages already sent wait for slow collectors before the oldest is dropped. */
+private const val DELETED_ALREADY_SENT_BUFFER = 16
 
 /**
  * Merges [server] into the local message, unless it is older than the local message with no pending changes, for

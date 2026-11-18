@@ -53,6 +53,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -89,6 +90,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         whenever(mockClientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected)
         whenever(mockChatClient.scheduledMessages) doReturn scheduledMessagesFlow
         whenever(mockChatClient.hasLoadedAllScheduledMessages) doReturn MutableStateFlow(true)
+        whenever(mockChatClient.deletedScheduledMessagesAlreadySent) doReturn emptyFlow()
         whenever(mockChatClient.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())) doReturn
             QueryScheduledMessagesResult(emptyList(), next = null).asCall()
         whenever(mockChatClient.queryChannels(any())) doReturn listOf(channel).asCall()

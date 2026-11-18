@@ -31,6 +31,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessageActions
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActionsAreClosed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageCanBeSaved
 import io.getstream.chat.android.compose.robots.assertScheduledMessageCommandNotAllowed
+import io.getstream.chat.android.compose.robots.assertScheduledMessageDeletedAlreadySentNotice
 import io.getstream.chat.android.compose.robots.assertScheduledMessageEditor
 import io.getstream.chat.android.compose.robots.assertScheduledMessageFailed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageGoneNotice
@@ -653,6 +654,42 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
         step("AND the message left the list") {
             userRobot.assertScheduledMessagesAreEmpty()
+        }
+    }
+
+    @Test
+    fun test_scheduledMessageDeletedOfflineAfterItWasSentTellsItIsInTheChannel() {
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("AND user opens the scheduled messages and goes to the background") {
+            userRobot.openScheduledMessagesFromBanner()
+            device.goToBackground()
+            backendRobot.waitForWebSocketDisconnection()
+        }
+        step("AND the time of the message comes while the app does not know it") {
+            backendRobot.sendScheduledMessages()
+        }
+        step("AND user comes back to the app offline") {
+            device.disableInternetConnection()
+            device.goToForeground()
+        }
+        step("WHEN user deletes the message") {
+            userRobot.deleteScheduledMessage(sampleText)
+        }
+        step("AND user comes back online") {
+            device.enableInternetConnection()
+        }
+        step("THEN a notice says the message was already sent, and it is not in the list") {
+            userRobot
+                .assertScheduledMessageDeletedAlreadySentNotice()
+                .assertScheduledMessagesAreEmpty()
+        }
+        step("AND the message is in the channel") {
+            userRobot
+                .pressBack()
+                .assertMessage(sampleText)
         }
     }
 

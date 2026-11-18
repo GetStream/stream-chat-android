@@ -375,6 +375,7 @@
   <string name="stream_compose_scheduled_message_list_uploading">"업로드 중…"</string>
   <string name="stream_compose_scheduled_message_list_still_sending">"아직 전송 중입니다. 잠시 후 다시 시도하세요."</string>
   <string name="stream_compose_scheduled_message_list_gone">"이미 전송되었거나 다른 기기에서 삭제되었습니다"</string>
+  <string name="stream_compose_scheduled_message_list_deleted_already_sent">"이미 전송되었습니다. 채널에서 확인할 수 있습니다."</string>
   <string name="stream_compose_scheduled_message_list_action_failed">"예약 메시지를 변경할 수 없습니다. 다시 시도하세요."</string>
   <string name="stream_compose_scheduled_message_list_thread_reply">"스레드 답장:"</string>
   <string name="stream_compose_scheduled_message_list_reply_to">"%1$s님에게 답장:"</string>

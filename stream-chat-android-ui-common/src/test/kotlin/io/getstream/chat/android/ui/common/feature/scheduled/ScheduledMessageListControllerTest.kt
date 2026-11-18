@@ -53,6 +53,7 @@ import io.getstream.result.Result
 import io.getstream.result.call.CoroutineCall
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -76,11 +77,13 @@ import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.Date
 
+@Suppress("LargeClass")
 @ExtendWith(TestCoroutineExtension::class)
 internal class ScheduledMessageListControllerTest {
 
     private lateinit var scheduledMessages: MutableStateFlow<List<ScheduledMessage>>
     private lateinit var hasLoadedAll: MutableStateFlow<Boolean>
+    private lateinit var deletedAlreadySent: MutableSharedFlow<ScheduledMessage>
     private lateinit var connectionState: MutableStateFlow<ConnectionState>
     private lateinit var client: ChatClient
     private lateinit var quotedMessages: MutableMap<String, Message>
@@ -96,6 +99,7 @@ internal class ScheduledMessageListControllerTest {
     fun setUp() {
         scheduledMessages = MutableStateFlow(emptyList())
         hasLoadedAll = MutableStateFlow(false)
+        deletedAlreadySent = MutableSharedFlow()
         connectionState = MutableStateFlow(ConnectionState.Connected)
         quotedMessages = mutableMapOf()
         val state: ClientState = mock {
@@ -104,6 +108,7 @@ internal class ScheduledMessageListControllerTest {
         client = mock {
             on { scheduledMessages } doReturn scheduledMessages
             on { hasLoadedAllScheduledMessages } doReturn hasLoadedAll
+            on { deletedScheduledMessagesAlreadySent } doReturn deletedAlreadySent
             on { clientState } doReturn state
             on { queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()) } doReturn
                 QueryScheduledMessagesResult(emptyList(), next = null).asCall()
@@ -297,6 +302,26 @@ internal class ScheduledMessageListControllerTest {
 
         controller.state.value.isLoadFailed shouldBeEqualTo false
         verify(client, times(2)).queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `a message deleted from the list that the server had already sent tells it is in the channel`() = runTest {
+        val deleted = scheduled()
+        whenever(client.deleteScheduledMessage(deleted.id)) doReturn Unit.asCall()
+        val controller = controller()
+
+        controller.events.test {
+            deletedAlreadySent.emit(deleted)
+            expectNoEvents()
+
+            controller.delete(deleted.id)
+            deletedAlreadySent.emit(scheduled())
+            expectNoEvents()
+
+            deletedAlreadySent.emit(deleted)
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.DeletedMessageAlreadySent
+        }
     }
 
     @Test

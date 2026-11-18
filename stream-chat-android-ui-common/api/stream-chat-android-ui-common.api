@@ -3467,6 +3467,14 @@ public final class io/getstream/chat/android/ui/common/state/scheduled/Scheduled
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListEvent$DeletedMessageAlreadySent : io/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListEvent$DeletedMessageAlreadySent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListEvent$MessageGone : io/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListEvent {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListEvent$MessageGone;

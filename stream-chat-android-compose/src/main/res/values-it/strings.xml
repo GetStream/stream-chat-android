@@ -390,6 +390,7 @@
   <string name="stream_compose_scheduled_message_list_uploading">"Caricamento in corso…"</string>
   <string name="stream_compose_scheduled_message_list_still_sending">"Invio ancora in corso. Riprova tra un momento."</string>
   <string name="stream_compose_scheduled_message_list_gone">"Già inviato o eliminato su un altro dispositivo"</string>
+  <string name="stream_compose_scheduled_message_list_deleted_already_sent">"Già inviato. Ora è nel canale."</string>
   <string name="stream_compose_scheduled_message_list_action_failed">"Impossibile modificare il messaggio programmato. Riprova."</string>
   <string name="stream_compose_scheduled_message_list_thread_reply">"Risposta nel thread:"</string>
   <string name="stream_compose_scheduled_message_list_reply_to">"Risposta a %1$s:"</string>
