@@ -12,6 +12,11 @@ on:
         type: string
         required: true
         default: main
+      mock_check:
+        description: 'Run the E2E tests on API 36 only, without coverage (for mock server changes)'
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.mock_server_branch || 'main' }}
@@ -41,6 +46,7 @@ jobs:
       contents: read
       pull-requests: read
     name: Build
+    if: ${{ !inputs.mock_check }}
     uses: ./.github/workflows/e2e-build.yml
     with:
       app: compose
@@ -58,7 +64,7 @@ jobs:
       # One launch per API level of the test matrix, shared by its batches.
       - name: Launch Allure TestOps
         id: launch
-        run: bundle exec fastlane allure_launches api_levels:36,34,31,28
+        run: bundle exec fastlane allure_launches api_levels:${{ inputs.mock_check && '36' || '36,34,31,28' }}
         env:
           ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
   run-compose-tests-nightly:
@@ -71,15 +77,16 @@ jobs:
       - build-compose-apks
       - build-compose-apks-coverage
       - allure_testops_launch
+    # The coverage build is skipped on a mock check.
+    if: ${{ !cancelled() && needs.build-compose-apks.result == 'success' && needs.allure_testops_launch.result == 'success' && (inputs.mock_check || needs.build-compose-apks-coverage.result == 'success') }}
     strategy:
       matrix:
-        android_api_level: [36, 34, 31, 28]
+        android_api_level: ${{ fromJson(inputs.mock_check && '[36]' || '[36, 34, 31, 28]') }}
         # A full run on one emulator takes over 1.5 hours, and the runners of jobs that long kept getting shut
         # down before the end. Keep the batch count in sync with E2E_BATCH_COUNT.
         batch: [0, 1, 2, 3]
-        include:
-          - android_api_level: 36
-            coverage: true # builds the map that selects e2e tests on pull requests
+        # Coverage builds the map that selects e2e tests on pull requests.
+        include: ${{ fromJson(inputs.mock_check && '[]' || '[{"android_api_level":36,"coverage":true}]') }}
       fail-fast: false
     env:
       ANDROID_API_LEVEL: ${{ matrix.android_api_level }}
@@ -141,7 +148,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: run-compose-tests-nightly
     # Failed tests still collect coverage, and keep their previous one in the map.
-    if: ${{ !cancelled() && needs.run-compose-tests-nightly.result != 'skipped' }}
+    if: ${{ !cancelled() && !inputs.mock_check && needs.run-compose-tests-nightly.result != 'skipped' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/download-artifact@v8.0.2
