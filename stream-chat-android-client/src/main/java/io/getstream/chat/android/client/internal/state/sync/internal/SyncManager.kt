@@ -83,6 +83,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Collections
@@ -168,7 +169,9 @@ internal class SyncManager(
 
     private var eventsDisposable: Disposable? = null
 
-    private val state = MutableStateFlow(State.Idle)
+    // The sync that socket events wait for, null when there is none. A sync clears only its own claim, so one that
+    // ends late, or is cancelled, never ends the wait for a newer one.
+    private val activeSync = MutableStateFlow<Any?>(null)
 
     override val syncedEvents: Flow<List<ChatEvent>> = events
 
@@ -187,9 +190,6 @@ internal class SyncManager(
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
         if (!isDisposed) return
-        // A sync cancelled by stop() leaves the state as it was. It is not put back there, so the events that wait
-        // for it are cancelled with their handler instead of being handled during the stop.
-        state.value = State.Idle
         eventsDisposable = chatClient.subscribe(::onEvent)
         rescueScope.launch { rescueEntitiesStuckInProgress() }
         // Not tied to ConnectedEvent, so drafts also show when the app starts offline.
@@ -208,20 +208,22 @@ internal class SyncManager(
 
     override suspend fun sync() {
         logger.d { "[sync] no args" }
-        state.value = State.Syncing
+        val sync = Any()
+        // Not taken from a reconnect sync that is running, or its wait would end with this one.
+        activeSync.compareAndSet(null, sync)
         try {
             performSync(watch = false, groupedListsFirst = false)
         } finally {
-            state.value = State.Idle
+            activeSync.compareAndSet(sync, null)
         }
     }
 
     override suspend fun awaitSyncing() {
-        if (state.value == State.Idle) {
+        if (activeSync.value == null) {
             return
         }
         logger.i { "[awaitSyncing] no args" }
-        state.first { it == State.Idle }
+        activeSync.first { it == null }
         logger.v { "[awaitSyncing] completed" }
     }
 
@@ -288,15 +290,21 @@ internal class SyncManager(
             is ConnectedEvent -> syncScope.launch {
                 logger.i { "[onEvent] ConnectedEvent received" }
                 onConnectionEstablished(currentUserId)
-                syncScope.launch { syncOfflineDraftMessages() }
-                syncScope.launch { notifyEndedLiveLocations() }
-                pendingMessagePins?.let { syncScope.launch { it.sendPending() } }
+                // Children of this job, so a cancelled reconnect starts none of them.
+                supervisorScope {
+                    launch { syncOfflineDraftMessages() }
+                    launch { notifyEndedLiveLocations() }
+                    pendingMessagePins?.let { launch { it.sendPending() } }
+                }
             }
 
-            is DisconnectedEvent -> syncScope.launch {
+            is DisconnectedEvent -> {
                 logger.i { "[onEvent] DisconnectedEvent received" }
-                onConnectionLost()
+                // Done as the event arrives, so a reconnect sync that starts after it is neither cancelled nor has
+                // its wait ended.
                 syncScope.coroutineContext.job.cancelChildren()
+                activeSync.value = null
+                syncScope.launch { onConnectionLost() }
             }
 
             is MarkAllReadEvent -> syncScope.launch {
@@ -325,7 +333,8 @@ internal class SyncManager(
      */
     private suspend fun onConnectionEstablished(userId: String) {
         logger.i { "[onConnectionEstablished] >>> userId: $userId, isFirstConnect: $isFirstConnect" }
-        state.value = State.Syncing
+        val sync = Any()
+        activeSync.value = sync
         try {
             val online = clientState.isOnline
             logger.v { "[onConnectionEstablished] online: $online" }
@@ -356,12 +365,10 @@ internal class SyncManager(
             logger.i { "[onConnectionEstablished] <<< completed" }
         } catch (e: Throwable) {
             logger.e { "[onConnectionEstablished] <<< failed: $e" }
+        } finally {
+            // Socket events wait for this, so it is cleared however the sync ends.
+            activeSync.compareAndSet(sync, null)
         }
-        // A cancelled run stops here, also when a step swallowed the cancellation: it starts no further work and
-        // leaves the state to whoever cancelled it, since a newer run can already be syncing.
-        currentCoroutineContext().ensureActive()
-        // Socket events wait for the idle state, so a failed run resets it too.
-        state.value = State.Idle
     }
 
     /**
@@ -370,7 +377,6 @@ internal class SyncManager(
      */
     private suspend fun onConnectionLost() = try {
         logger.i { "[connectionLost] firstConnect: $isFirstConnect" }
-        state.value = State.Idle
         syncState.value?.let { syncState ->
             val activeCids = activeChannelCidsToSync()
             logger.d { "[connectionLost] activeCids.size: ${activeCids.size}" }
@@ -1426,10 +1432,6 @@ internal class SyncManager(
      */
     private fun Date?.exceedsSyncThresholdServerTime(): Boolean {
         return this == null || diff(serverClockOffset.estimatedServerTime()) > syncMaxThreshold
-    }
-
-    private enum class State {
-        Idle, Syncing
     }
 
     /**

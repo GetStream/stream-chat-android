@@ -492,39 +492,50 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `when the sync manager restarts after a stop during the reconnect sync, nothing keeps waiting for it`() =
+    fun `when the sync manager stops during the reconnect sync, nothing keeps waiting for it`() =
         runTest(testDispatcher) {
             /* Given */
             whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
-            val subscription = object : Disposable {
-                override var isDisposed = false
-                override fun dispose() {
-                    isDisposed = true
-                }
-            }
-            whenever(chatClient.subscribe(any())) doReturn subscription
             val syncManager = buildSyncManager()
-            syncManager.start()
             syncManager.onEvent(randomConnectedEvent())
-            syncManager.stop()
 
             /* When */
-            syncManager.start()
+            syncManager.stop()
 
             /* Then */
             withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
         }
 
     @Test
-    fun `when the sync manager stops during the reconnect sync, what waits for it is not released`() =
+    fun `when a disconnect ends after a newer reconnect sync started, that sync keeps running and is awaited`() =
         runTest(testDispatcher) {
             /* Given */
-            whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+            _syncState.value = SyncState(userId = user.id)
+            val disconnectGate = CompletableDeferred<Unit>()
+            whenever(repositoryFacade.insertSyncState(any())) doSuspendableAnswer { disconnectGate.await() }
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            disconnectGate.complete(Unit)
+
+            /* Then */
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `when a requested sync ends during the reconnect sync, the reconnect sync is still awaited`() =
+        runTest(testDispatcher) {
+            /* Given */
+            _syncState.value = SyncState(userId = user.id)
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer { awaitCancellation() }
             val syncManager = buildSyncManager()
             syncManager.onEvent(randomConnectedEvent())
 
             /* When */
-            syncManager.stop()
+            runCatching { syncManager.sync() }
 
             /* Then */
             assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
