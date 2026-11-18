@@ -83,6 +83,7 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
@@ -92,7 +93,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
@@ -108,6 +111,7 @@ import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -523,6 +527,34 @@ internal class SyncManagerTest {
 
             /* Then */
             assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `the reconnect sync is awaited from the moment the connected event arrives`() = runTest(testDispatcher) {
+        /* Given */
+        val syncManager = buildSyncManager(scope = backgroundScope + StandardTestDispatcher(testScheduler))
+
+        /* When */
+        syncManager.onEvent(randomConnectedEvent())
+        val waiting = launch { syncManager.awaitSyncing() }
+
+        /* Then */
+        assertTrue(waiting.isActive)
+        waiting.cancel()
+    }
+
+    @Test
+    fun `when the sync manager stops before the reconnect sync starts, nothing keeps waiting for it`() =
+        runTest(testDispatcher) {
+            /* Given */
+            val syncManager = buildSyncManager(scope = backgroundScope + StandardTestDispatcher(testScheduler))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            syncManager.stop()
+
+            /* Then */
+            withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
         }
 
     @Test
@@ -3756,11 +3788,12 @@ internal class SyncManagerTest {
         syncMaxThreshold: TimeDuration = TimeDuration.seconds(5),
         eventReplayMaxCount: Int = 250,
         pendingMessagePins: PendingMessagePins? = null,
+        scope: CoroutineScope = backgroundScope,
     ): SyncManager {
         return SyncManager(
             eventReplayMaxCount = eventReplayMaxCount,
             currentUserId = user.id,
-            scope = backgroundScope,
+            scope = scope,
             logicRegistry = logicRegistry,
             stateRegistry = stateRegistry,
             repos = repositoryFacade,

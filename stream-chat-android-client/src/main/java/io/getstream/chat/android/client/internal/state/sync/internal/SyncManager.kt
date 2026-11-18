@@ -202,6 +202,8 @@ internal class SyncManager(
         logger.d { "[stop] no args" }
         eventsDisposable?.dispose()
         syncScope.coroutineContext.job.cancelChildren()
+        // A sync cancelled before it started never clears its claim.
+        activeSync.value = null
         liveLocationEndJob?.cancel()
         endedLiveLocationsToNotify.clear()
     }
@@ -287,14 +289,20 @@ internal class SyncManager(
                 logger.i { "[onEvent] ConnectingEvent received" }
             }
 
-            is ConnectedEvent -> syncScope.launch {
+            is ConnectedEvent -> {
                 logger.i { "[onEvent] ConnectedEvent received" }
-                onConnectionEstablished(currentUserId)
-                // Children of this job, so a cancelled reconnect starts none of them.
-                supervisorScope {
-                    launch { syncOfflineDraftMessages() }
-                    launch { notifyEndedLiveLocations() }
-                    pendingMessagePins?.let { launch { it.sendPending() } }
+                // Claimed as the event arrives, in order with the disconnects, so socket events are held from now on
+                // and a sync cancelled by an earlier disconnect cannot take the claim back.
+                val sync = Any()
+                activeSync.value = sync
+                syncScope.launch {
+                    onConnectionEstablished(currentUserId, sync)
+                    // Children of this job, so a cancelled reconnect starts none of them.
+                    supervisorScope {
+                        launch { syncOfflineDraftMessages() }
+                        launch { notifyEndedLiveLocations() }
+                        pendingMessagePins?.let { launch { it.sendPending() } }
+                    }
                 }
             }
 
@@ -331,10 +339,8 @@ internal class SyncManager(
      * Handles connection recover in the SDK.
      * This method will sync the data, retry failed entities, update channels data, etc.
      */
-    private suspend fun onConnectionEstablished(userId: String) {
+    private suspend fun onConnectionEstablished(userId: String, sync: Any) {
         logger.i { "[onConnectionEstablished] >>> userId: $userId, isFirstConnect: $isFirstConnect" }
-        val sync = Any()
-        activeSync.value = sync
         try {
             val online = clientState.isOnline
             logger.v { "[onConnectionEstablished] online: $online" }
