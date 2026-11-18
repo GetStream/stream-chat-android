@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -62,6 +63,7 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.mockingDetails
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -91,6 +93,8 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
             QueryScheduledMessagesResult(emptyList(), next = null).asCall()
         whenever(mockChatClient.queryChannels(any())) doReturn listOf(channel).asCall()
         whenever(mockChatClient.queryUsers(any())) doReturn emptyList<User>().asCall()
+        val repository: RepositoryFacade = mock { onBlocking { selectUsers(any()) } doReturn emptyList() }
+        whenever(mockChatClient.repositoryFacade) doReturn repository
         val uploadConfig = FileUploadConfig(
             allowedFileExtensions = emptyList(),
             allowedMimeTypes = emptyList(),

@@ -224,7 +224,8 @@ public class ScheduledMessageListController(
      * The content of the scheduled message with [id] to edit in a composer, with the users it mentions, or null when
      * the message is no longer there, which is then told with [ScheduledMessageListEvent.MessageGone]. A scheduled
      * message has the IDs of the users it mentions only, and a composer keeps a user mention while the name of the
-     * user is in the text. When the users can't be loaded, the message has none, and [edit] keeps their mentions.
+     * user is in the text. The users saved on this device are used first, and the others are loaded. When users can't
+     * be loaded, the message does not have them, and [edit] keeps their mentions.
      *
      * @param id The ID of the scheduled message.
      */
@@ -236,9 +237,17 @@ public class ScheduledMessageListController(
         }
         val ids = message.mentionedUsersIds
         if (ids.isEmpty()) return message
-        val request = QueryUsersRequest(filter = Filters.`in`("id", ids), offset = 0, limit = ids.size)
-        val users = chatClient.queryUsers(request).await().getOrNull().orEmpty()
-        return message.copy(mentionedUsers = users)
+        // The users saved on this device come first, so the composer opens without a request when it has them all.
+        val localUsers = chatClient.repositoryFacade.selectUsers(ids)
+        val missingIds = ids - localUsers.map(User::id).toSet()
+        val remoteUsers = if (missingIds.isEmpty()) {
+            emptyList()
+        } else {
+            val filter = Filters.`in`("id", missingIds)
+            chatClient.queryUsers(QueryUsersRequest(filter = filter, offset = 0, limit = missingIds.size))
+                .await().getOrNull().orEmpty()
+        }
+        return message.copy(mentionedUsers = localUsers + remoteUsers)
     }
 
     /**

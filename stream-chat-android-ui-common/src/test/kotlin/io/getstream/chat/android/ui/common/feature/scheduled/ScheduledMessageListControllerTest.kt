@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.feature.scheduled
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
@@ -30,6 +31,7 @@ import io.getstream.chat.android.models.ScheduledMessageFailure.LocalDeviceFaile
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPublishing
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
 import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -61,7 +63,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
@@ -80,6 +84,13 @@ internal class ScheduledMessageListControllerTest {
     private lateinit var connectionState: MutableStateFlow<ConnectionState>
     private lateinit var client: ChatClient
     private lateinit var quotedMessages: MutableMap<String, Message>
+    private val savedUsers = mutableListOf<User>()
+    private val repository: RepositoryFacade = mock {
+        onBlocking { selectUsers(any()) } doSuspendableAnswer { invocation ->
+            val ids = invocation.getArgument<List<String>>(0)
+            savedUsers.filter { it.id in ids }
+        }
+    }
 
     @BeforeEach
     fun setUp() {
@@ -97,6 +108,7 @@ internal class ScheduledMessageListControllerTest {
             on { queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()) } doReturn
                 QueryScheduledMessagesResult(emptyList(), next = null).asCall()
             on { queryChannels(any()) } doReturn emptyList<Channel>().asCall()
+            on { repositoryFacade } doReturn repository
         }
     }
 
@@ -444,6 +456,32 @@ internal class ScheduledMessageListControllerTest {
 
         controller().messageToEdit(scheduledMessage.id) shouldBeEqualTo
             scheduledMessage.message.copy(mentionedUsers = listOf(user))
+    }
+
+    @Test
+    fun `the message to edit takes the users saved on the device, without a request`() = runTest {
+        val user = randomUser()
+        savedUsers += user
+        val scheduledMessage = scheduled(mentionedUsersIds = listOf(user.id))
+        scheduledMessages.value = listOf(scheduledMessage)
+
+        controller().messageToEdit(scheduledMessage.id) shouldBeEqualTo
+            scheduledMessage.message.copy(mentionedUsers = listOf(user))
+        verify(client, never()).queryUsers(any())
+    }
+
+    @Test
+    fun `the message to edit loads only the users not saved on the device`() = runTest {
+        val saved = randomUser()
+        val loaded = randomUser()
+        savedUsers += saved
+        val scheduledMessage = scheduled(mentionedUsersIds = listOf(saved.id, loaded.id))
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.queryUsers(any())) doReturn listOf(loaded).asCall()
+
+        controller().messageToEdit(scheduledMessage.id) shouldBeEqualTo
+            scheduledMessage.message.copy(mentionedUsers = listOf(saved, loaded))
+        verify(client).queryUsers(argThat { limit == 1 })
     }
 
     @Test
