@@ -62,5 +62,5 @@ docs                                    @GetStream/android-developers
 .idea                       @GetStream/android-developers
 
 # Detekt
-config/detekt       @jcminarro
+config/detekt       @GetStream/android-developers
 *baseline.xml       @GetStream/android-developers
