@@ -188,6 +188,9 @@ internal class SyncManager(
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
         if (!isDisposed) return
+        // A sync cancelled by stop() leaves the state as it was. It is not put back there, so the events that wait
+        // for it are cancelled with their handler instead of being handled during the stop.
+        state.value = State.Idle
         eventsDisposable = chatClient.subscribe(::onEvent)
         rescueScope.launch { rescueEntitiesStuckInProgress() }
         // Not tied to ConnectedEvent, so drafts also show when the app starts offline.
@@ -200,8 +203,6 @@ internal class SyncManager(
         logger.d { "[stop] no args" }
         eventsDisposable?.dispose()
         syncScope.coroutineContext.job.cancelChildren()
-        // A sync cancelled here never finishes, and nothing else would release what waits for it.
-        state.value = State.Idle
         liveLocationEndJob?.cancel()
         endedLiveLocationsToNotify.clear()
     }

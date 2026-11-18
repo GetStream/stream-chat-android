@@ -82,8 +82,10 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
@@ -96,12 +98,16 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -486,7 +492,23 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `when the sync manager stops during the reconnect sync, nothing keeps waiting for it`() =
+    fun `when the sync manager restarts after a stop during the reconnect sync, nothing keeps waiting for it`() =
+        runTest(testDispatcher) {
+            /* Given */
+            whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(randomConnectedEvent())
+            syncManager.stop()
+
+            /* When */
+            syncManager.start()
+
+            /* Then */
+            withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+        }
+
+    @Test
+    fun `when the sync manager stops during the reconnect sync, what waits for it is not released`() =
         runTest(testDispatcher) {
             /* Given */
             whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
@@ -497,8 +519,30 @@ internal class SyncManagerTest {
             syncManager.stop()
 
             /* Then */
-            withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
         }
+
+    @Test
+    fun `when a cancelled reconnect sync fails late, the newer one is still awaited`() = runTest(testDispatcher) {
+        /* Given */
+        val cancelledSyncGate = CompletableDeferred<Unit>()
+        var syncStateReads = 0
+        whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer {
+            if (syncStateReads++ > 0) awaitCancellation()
+            withContext(NonCancellable) { cancelledSyncGate.await() }
+            throw IllegalStateException("The database is closed")
+        }
+        val syncManager = buildSyncManager()
+        syncManager.onEvent(randomConnectedEvent())
+        syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* When */
+        cancelledSyncGate.complete(Unit)
+
+        /* Then */
+        assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+    }
 
     @Test
     fun `when a requested sync fails, nothing keeps waiting for it`() = runTest(testDispatcher) {
@@ -510,7 +554,7 @@ internal class SyncManagerTest {
         val result = runCatching { syncManager.sync() }
 
         /* Then */
-        assertEquals(true, result.isFailure)
+        assertInstanceOf(IllegalStateException::class.java, result.exceptionOrNull())
         withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
     }
 
