@@ -627,9 +627,9 @@ style:
   ForbiddenComment:
     active: true
     comments:
-      - 'FIXME:'
-      - 'STOPSHIP:'
-      - 'TODO:'
+      - '(?i)FIXME:'
+      - '(?i)STOPSHIP:'
+      - '(?i)TODO:'
     allowedPatterns: ''
   ForbiddenImport:
     active: false
