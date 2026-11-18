@@ -59,6 +59,10 @@ internal class AppSettingsParsingTest {
               "allowed_mime_types": [],
               "blocked_file_extensions": [],
               "blocked_mime_types": []
+            },
+            "defaults": {
+              "get_or_create_channel": { "members": { "limit": 100 }, "messages": { "limit": 25 } },
+              "query_channels": { "limit": 10, "max_limit": 30, "member_limit": 100, "message_limit": 25 }
             }
           }
         }"""

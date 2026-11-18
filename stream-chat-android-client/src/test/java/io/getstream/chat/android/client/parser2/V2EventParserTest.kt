@@ -82,6 +82,7 @@ internal class V2EventParserTest {
                 "cid" to CID,
                 "channel_type" to "messaging",
                 "channel_id" to "general",
+                "message_id" to "m1",
                 "message" to message(),
                 "user" to user(),
                 "watcher_count" to 1,
@@ -113,6 +114,8 @@ internal class V2EventParserTest {
                 "cid" to CID,
                 "channel_type" to "messaging",
                 "channel_id" to "general",
+                "channel" to channel(),
+                "message_id" to "m1",
                 "message" to message(),
                 "reaction" to obj(
                     "message_id" to "m1",
@@ -168,7 +171,13 @@ internal class V2EventParserTest {
     @Test
     fun `An added member parses to its domain event`() {
         v2 {
-            event("member.added", "cid" to CID, "member" to member(custom = mapOf("nickname" to "Chewie")), "user" to user())
+            event(
+                "member.added",
+                "cid" to CID,
+                "channel" to channel(),
+                "member" to member(custom = mapOf("nickname" to "Chewie")),
+                "user" to user(),
+            )
         } shouldBeEqualTo MemberAddedEvent(
             type = "member.added",
             createdAt = at(EVENT_AT),
@@ -419,63 +428,6 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `A reaction replayed without the channel and message_id parses as the full one`() {
-        val reaction: Frame.() -> Map<String, Any?> = {
-            event(
-                "reaction.new",
-                "cid" to CID,
-                "message" to message(),
-                "reaction" to obj(
-                    "message_id" to "m1",
-                    "user_id" to OTHER,
-                    "user" to user(OTHER),
-                    "type" to "like",
-                    "score" to 1,
-                    "created_at" to date(MESSAGE_AT),
-                    "updated_at" to date(MESSAGE_AT),
-                ),
-                "user" to user(OTHER),
-            )
-        }
-        val full = Frame().reaction() + mapOf("channel" to Frame().channel(), "message_id" to "m1")
-        synced(Frame().reaction()) shouldBeEqualTo synced(full)
-    }
-
-    @Test
-    fun `A message deletion replayed without message_id and hard_delete parses as a soft one`() {
-        val deleted: Frame.() -> Map<String, Any?> = {
-            event(
-                "message.deleted",
-                "cid" to CID,
-                "channel_type" to "messaging",
-                "channel_id" to "general",
-                "message" to message(),
-                "user" to user(),
-            )
-        }
-        val full = Frame().deleted() + mapOf("message_id" to "m1", "hard_delete" to false)
-
-        synced(Frame().deleted()) shouldBeEqualTo synced(full)
-    }
-
-    @Test
-    fun `A message update replayed without message_id parses as the full one`() {
-        val updated: Frame.() -> Map<String, Any?> = {
-            event(
-                "message.updated",
-                "cid" to CID,
-                "channel_type" to "messaging",
-                "channel_id" to "general",
-                "message" to message(),
-                "user" to user(),
-            )
-        }
-        val full = Frame().updated() + mapOf("message_id" to "m1")
-
-        synced(Frame().updated()) shouldBeEqualTo synced(full)
-    }
-
-    @Test
     fun `A synced event that fails to parse is skipped and the rest are replayed`() {
         val typing: Frame.() -> Map<String, Any?> = { event("typing.start", "cid" to CID, "user" to user()) }
         val unreadable = Frame().event("channel.hidden", "cid" to CID)
@@ -529,6 +481,7 @@ internal class V2EventParserTest {
             event(
                 "member.added",
                 "cid" to CID,
+                "channel" to channel(),
                 "member" to member(custom = mapOf("custom" to mapOf("nickname" to "Chewie"))),
                 "user" to user(),
             )

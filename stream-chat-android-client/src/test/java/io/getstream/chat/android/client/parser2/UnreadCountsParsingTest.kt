@@ -47,7 +47,12 @@ internal class UnreadCountsParsingTest {
           "total_unread_threads_count": 3,
           "total_unread_count_by_team": { "team-1": 4 },
           "channels": [
-            { "channel_id": "messaging:c1", "unread_count": 2, "last_read": "1970-01-01T00:00:01.000Z" }
+            {
+              "channel_id": "messaging:c1",
+              "unread_count": 2,
+              "last_read": "1970-01-01T00:00:01.000Z",
+              "has_unread": true
+            }
           ],
           "threads": [
             {

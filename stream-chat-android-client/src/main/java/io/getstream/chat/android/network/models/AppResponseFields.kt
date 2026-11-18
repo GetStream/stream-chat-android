@@ -45,11 +45,8 @@ internal data class AppResponseFields(
     @Json(name = "placement")
     internal val placement: String,
 
-    // Patched: the spec marks `defaults` required, but backends before v239.68.0 (CHA-5968, chat#18441) leave it out,
-    // and a parse failure fails the whole app settings response. On regen, make it required again only once every
-    // region runs v239.68.0 or later.
     @Json(name = "defaults")
-    internal val defaults: io.getstream.chat.android.network.models.AppDefaults? = null,
+    internal val defaults: io.getstream.chat.android.network.models.AppDefaults,
 
     @Json(name = "file_upload_config")
     internal val fileUploadConfig: io.getstream.chat.android.network.models.FileUploadConfig,

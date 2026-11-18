@@ -1086,7 +1086,7 @@ internal class DomainMapping(
 
     internal fun ChannelMemberResponse.toDomain(): Member =
         Member(
-            user = user?.toDomain() ?: User(id = userId.orEmpty()),
+            user = user?.toDomain() ?: User(id = userId),
             createdAt = createdAt,
             updatedAt = updatedAt,
             isInvited = invited,

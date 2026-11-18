@@ -45,18 +45,6 @@ internal fun createChannelHiddenEventStringJson() =
         """.trimIndent(),
     )
 
-internal fun createChannelHiddenSyncReplayEventStringJson() =
-    createChatEventStringJson(
-        "channel.hidden",
-        """
-            "user": ${createCommonFieldsUserJsonString()},
-            "channel_type": "channelType",
-            "channel_id": "channelId",
-            "cid": "channelType:channelId",
-            "channel": ${createGeneratedChannelJsonString()}
-        """.trimIndent(),
-    )
-
 internal fun createChannelTruncatedEventStringJson() =
     createChatEventStringJson(
         "channel.truncated",
@@ -123,17 +111,6 @@ internal fun createChannelVisibleEventStringJson() =
         """.trimIndent(),
     )
 
-internal fun createChannelVisibleSyncReplayEventStringJson() =
-    createChatEventStringJson(
-        "channel.visible",
-        """
-            "channel_type": "channelType",
-            "channel_id": "channelId",
-            "cid": "channelType:channelId",
-            "user": ${createCommonFieldsUserJsonString()}
-        """.trimIndent(),
-    )
-
 internal fun createMemberAddedEventStringJson() =
     createChatEventStringJson(
         "member.added",
@@ -185,6 +162,7 @@ internal fun createMessageDeletedEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
+            "hard_delete": false,
             "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "message": ${createGeneratedMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",

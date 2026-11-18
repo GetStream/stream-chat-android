@@ -88,7 +88,6 @@ import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Poll
@@ -190,7 +189,7 @@ internal class EventMapping(
             channelId = channelId,
             user = requireNotNull(user).toDomain(),
             channel = channel.toDomain(),
-            clearHistory = clearHistory ?: false,
+            clearHistory = clearHistory,
         )
     }
 
@@ -208,7 +207,7 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             user = requireNotNull(user).toDomain(),
-            channel = channel?.toDomain() ?: Channel(id = channelId, type = channelType),
+            channel = channel.toDomain(),
         )
     }
 
@@ -237,7 +236,7 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             message = message.toDomain(),
-            hardDelete = hardDelete ?: false,
+            hardDelete = hardDelete,
             channelMessageCount = channelMessageCount,
             deletedForMe = deletedForMe ?: false,
         )
@@ -320,7 +319,7 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             message = message.toDomain(channelInfo),
-            watcherCount = watcherCount ?: 0,
+            watcherCount = watcherCount,
             totalUnreadCount = totalUnreadCount ?: 0,
             unreadChannels = unreadChannels ?: 0,
             channelMessageCount = channelMessageCount,

@@ -52,6 +52,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.AppDefaults
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.Attachment
 import io.getstream.chat.android.network.models.AutomodMode
@@ -76,9 +77,11 @@ import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.GetOrCreateChannelDefaults
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.OwnUserResponse
+import io.getstream.chat.android.network.models.PagerDefaults
 import io.getstream.chat.android.network.models.PendingMessageResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
@@ -86,6 +89,7 @@ import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.PushProviderName
+import io.getstream.chat.android.network.models.QueryChannelsDefaults
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryRemindersResponse
@@ -497,7 +501,23 @@ internal object Mother {
         placement = randomString(),
         fileUploadConfig = fileUploadConfig,
         imageUploadConfig = imageUploadConfig,
+        defaults = randomAppDefaults(),
     )
+
+    fun randomAppDefaults(): AppDefaults = AppDefaults(
+        getOrCreateChannel = GetOrCreateChannelDefaults(
+            members = randomPagerDefaults(),
+            messages = randomPagerDefaults(),
+        ),
+        queryChannels = QueryChannelsDefaults(
+            limit = randomInt(),
+            maxLimit = randomInt(),
+            memberLimit = randomInt(),
+            messageLimit = randomInt(),
+        ),
+    )
+
+    private fun randomPagerDefaults(): PagerDefaults = PagerDefaults(limit = randomInt())
 
     fun randomFileUploadConfig(
         allowedFileExtensions: List<String> = listOf(randomString()),
@@ -1432,6 +1452,7 @@ internal object Mother {
         channelId = channelId,
         unreadCount = unreadCount,
         lastRead = lastRead,
+        hasUnread = randomBoolean(),
     )
 
     fun randomUnreadThreadDto(
