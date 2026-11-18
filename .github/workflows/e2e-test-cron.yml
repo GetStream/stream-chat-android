@@ -46,7 +46,8 @@ jobs:
       contents: read
       pull-requests: read
     name: Build
-    if: ${{ !inputs.mock_check }}
+    # Coverage is only collected against the main mock server.
+    if: ${{ !inputs.mock_check && (inputs.mock_server_branch || 'main') == 'main' }}
     uses: ./.github/workflows/e2e-build.yml
     with:
       app: compose
@@ -86,7 +87,7 @@ jobs:
         # down before the end. Keep the batch count in sync with E2E_BATCH_COUNT.
         batch: [0, 1, 2, 3]
         # Coverage builds the map that selects e2e tests on pull requests.
-        include: ${{ fromJson(inputs.mock_check && '[]' || '[{"android_api_level":36,"coverage":true}]') }}
+        include: ${{ fromJson((inputs.mock_check || (inputs.mock_server_branch || 'main') != 'main') && '[]' || '[{"android_api_level":36,"coverage":true}]') }}
       fail-fast: false
     env:
       ANDROID_API_LEVEL: ${{ matrix.android_api_level }}
@@ -148,7 +149,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: run-compose-tests-nightly
     # Failed tests still collect coverage, and keep their previous one in the map.
-    if: ${{ !cancelled() && !inputs.mock_check && needs.run-compose-tests-nightly.result != 'skipped' }}
+    if: ${{ !cancelled() && !inputs.mock_check && (inputs.mock_server_branch || 'main') == 'main' && needs.run-compose-tests-nightly.result != 'skipped' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/download-artifact@v8.0.2
