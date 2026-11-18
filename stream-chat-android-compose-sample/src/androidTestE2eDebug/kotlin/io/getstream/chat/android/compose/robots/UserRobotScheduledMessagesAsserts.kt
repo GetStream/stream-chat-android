@@ -60,6 +60,13 @@ fun UserRobot.assertScheduledMessage(text: String, time: String? = null): UserRo
     return this
 }
 
+/** Asserts the row of [text] with [time] is still in the list after waiting for it to leave. */
+fun UserRobot.assertScheduledMessageStays(text: String, time: String): UserRobot {
+    val item = Screen.item(text).hasDescendant(Screen.date(time))
+    assertTrue(item.waitToDisappear().isDisplayed())
+    return this
+}
+
 /** Asserts the row of the reply [text] says which message it quotes. */
 fun UserRobot.assertScheduledMessageReply(text: String): UserRobot {
     assertTrue(Screen.reply(text).waitDisplayed())

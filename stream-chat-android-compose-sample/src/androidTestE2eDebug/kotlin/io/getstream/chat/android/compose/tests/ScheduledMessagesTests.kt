@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessageQuoteDelet
 import io.getstream.chat.android.compose.robots.assertScheduledMessageReply
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSendNowQueued
 import io.getstream.chat.android.compose.robots.assertScheduledMessageSentSnackbar
+import io.getstream.chat.android.compose.robots.assertScheduledMessageStays
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesAreEmpty
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBanner
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBannerIsHidden
@@ -680,6 +681,32 @@ class ScheduledMessagesTests : StreamTestCase() {
                 .assertScheduledMessagesAreEmpty()
                 .pressBack()
                 .assertMessage(sampleText)
+        }
+    }
+
+    @Test
+    fun test_scheduledMessageRescheduledAfterAnOfflineSendNowIsNotSentNow() {
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("AND user opens the scheduled messages and goes offline") {
+            userRobot.openScheduledMessagesFromBanner()
+            device.disableInternetConnection()
+        }
+        step("AND user sends it now") {
+            userRobot
+                .sendScheduledMessageNow(sampleText)
+                .assertScheduledMessageSendNowQueued()
+        }
+        step("WHEN user reschedules it to 10:00") {
+            userRobot.rescheduleScheduledMessage(sampleText, hour = 10)
+        }
+        step("AND user comes back online") {
+            device.enableInternetConnection()
+        }
+        step("THEN the message stays in the list at the new time, and is not sent") {
+            userRobot.assertScheduledMessageStays(sampleText, time = tomorrowAt(10))
         }
     }
 

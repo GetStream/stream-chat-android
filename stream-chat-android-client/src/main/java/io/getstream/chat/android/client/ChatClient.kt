@@ -5502,6 +5502,9 @@ internal constructor(
      * locally first, and sent to the server like a new scheduled message (see [scheduleMessage]). An edit made
      * before the message reached the server goes out with it.
      *
+     * A pending [sendScheduledMessageNow] is kept when only the content changes: the edit is sent first, then the
+     * message is sent now. A new [scheduledAt] cancels it, so the message is sent at the new date.
+     *
      * The edit is refused before it is saved when the message starts with `/` in a channel that has commands, when it
      * quotes a message that was deleted, or when [scheduledAt] is further ahead than
      * [Config.scheduledMessagesMaxLeadTimeSeconds], as known from the channel config and messages saved on this
@@ -5530,7 +5533,8 @@ internal constructor(
 
     /**
      * Changes the date when a scheduled message is sent. The change is saved locally first, and sent to the server
-     * like a new scheduled message (see [scheduleMessage]).
+     * like a new scheduled message (see [scheduleMessage]). It cancels a pending [sendScheduledMessageNow], so the
+     * message is sent at the new date.
      *
      * It is refused before it is saved when the message quotes a message that was deleted, or when [scheduledAt] is
      * further ahead than [Config.scheduledMessagesMaxLeadTimeSeconds], as known from the channel config and messages
@@ -5570,6 +5574,9 @@ internal constructor(
      * once its pending changes and attachments are on the server, so it never goes out with older content.
      *
      * When the latest changes of the message failed to reach the server, they are sent again first.
+     *
+     * While it is pending, a [rescheduleMessage], or an [updateScheduledMessage] with a new date, cancels it. An edit
+     * of the content alone keeps it.
      *
      * It is refused when the message quotes a message that was deleted, as known from the messages saved on this
      * device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be sent

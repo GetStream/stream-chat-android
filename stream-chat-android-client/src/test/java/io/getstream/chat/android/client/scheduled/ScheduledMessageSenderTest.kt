@@ -776,6 +776,84 @@ internal class ScheduledMessageSenderTest {
         status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Sending
     }
 
+    @Test
+    fun `a reschedule cancels a pending send now, so only the new date is sent`() = runTest {
+        val onServer = givenScheduledOnServer()
+        api.givenUpdateAnswers()
+        fixture.connectionState.value = ConnectionState.Offline
+        start()
+        val scheduledAt = randomDate()
+
+        manager.sendNow(onServer.id)
+        manager.reschedule(onServer.id, scheduledAt)
+        fixture.connectionState.value = ConnectionState.Connected
+        runCurrent()
+
+        verify(api).updateScheduledMessage(onServer.id, onServer.message.copy(createdAt = scheduledAt), scheduledAt)
+        verify(api, never()).sendScheduledMessageNow(any())
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+    }
+
+    @Test
+    fun `an edit with a new date cancels a pending send now`() = runTest {
+        val onServer = givenScheduledOnServer()
+        api.givenUpdateAnswers()
+        fixture.connectionState.value = ConnectionState.Offline
+        start()
+        val scheduledAt = randomDate()
+        val edited = onServer.message.copy(text = randomString())
+
+        manager.sendNow(onServer.id)
+        manager.update(onServer.id, edited, scheduledAt)
+        fixture.connectionState.value = ConnectionState.Connected
+        runCurrent()
+
+        verify(api).updateScheduledMessage(eq(onServer.id), argThat { text == edited.text }, eq(scheduledAt))
+        verify(api, never()).sendScheduledMessageNow(any())
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+    }
+
+    @Test
+    fun `an edit of the content keeps a pending send now, which is sent after the edit`() = runTest {
+        val onServer = givenScheduledOnServer()
+        api.givenUpdateAnswers()
+        api.givenSendNowAnswers(onServer.id)
+        fixture.connectionState.value = ConnectionState.Offline
+        start()
+        val edited = onServer.message.copy(text = randomString())
+
+        manager.sendNow(onServer.id)
+        manager.update(onServer.id, edited, scheduledAt = null)
+        fixture.connectionState.value = ConnectionState.Connected
+        runCurrent()
+
+        inOrder(api) {
+            verify(api).updateScheduledMessage(eq(onServer.id), argThat { text == edited.text }, eq(null))
+            verify(api).sendScheduledMessageNow(onServer.id)
+        }
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Sending
+    }
+
+    @Test
+    fun `a reschedule after a failed send now sends the new date and not the send now`() = runTest {
+        val onServer = givenScheduledOnServer()
+        whenever(api.sendScheduledMessageNow(any())).thenReturn(TestCall(Result.Failure(serverError(code = 4))))
+        api.givenUpdateAnswers()
+        start()
+        manager.sendNow(onServer.id)
+        runCurrent()
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Failed
+        val scheduledAt = randomDate()
+
+        manager.reschedule(onServer.id, scheduledAt)
+        runCurrent()
+
+        verify(api).updateScheduledMessage(onServer.id, onServer.message.copy(createdAt = scheduledAt), scheduledAt)
+        verify(api, times(1)).sendScheduledMessageNow(onServer.id)
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+        scheduledMessage(onServer.id).failure.shouldBeNull()
+    }
+
     private suspend fun TestScope.start() {
         manager.start(backgroundScope)
     }
