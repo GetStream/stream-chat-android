@@ -78,7 +78,7 @@ jobs:
       - build-compose-apks
       - build-compose-apks-coverage
       - allure_testops_launch
-    # Runs when the coverage build is skipped, on a mock check.
+    # Also runs when the coverage build is skipped: on a mock check or against a mock branch other than main.
     if: ${{ !cancelled() && !failure() }}
     strategy:
       matrix:
