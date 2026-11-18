@@ -187,7 +187,7 @@ internal class ScheduledMessageManager(
                     createdAt = scheduled.message.createdAt,
                     updatedAt = now,
                 ),
-            ).reschedule(scheduledAt)
+            ).reschedule(scheduledAt?.takeIf { it != scheduled.scheduledAt })
         }
     }
 
@@ -329,6 +329,7 @@ internal class ScheduledMessageManager(
         }
     }
 
+    /** Moves the message to [scheduledAt], when set. A new date cancels a pending send now. */
     private fun LocalScheduledMessage.reschedule(scheduledAt: Date?): LocalScheduledMessage =
         if (scheduledAt == null) {
             this
@@ -337,6 +338,7 @@ internal class ScheduledMessageManager(
                 message = message.copy(createdAt = scheduledAt),
                 scheduledAt = scheduledAt,
                 hasPendingScheduledAt = hasPendingScheduledAt || mayBeOnServer,
+                isPendingSendNow = false,
             )
         }
 

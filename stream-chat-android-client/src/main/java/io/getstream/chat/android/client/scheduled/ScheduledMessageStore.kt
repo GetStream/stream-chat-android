@@ -128,7 +128,8 @@ internal class ScheduledMessageStore {
             )
         }
         return merged.copy(
-            isPendingSendNow = isPendingSendNow || saved.isPendingSendNow,
+            // A new date set before the load cancelled the saved send now.
+            isPendingSendNow = isPendingSendNow || (saved.isPendingSendNow && !hasPendingScheduledAt),
             isDeleted = isDeleted || saved.isDeleted,
             localFailure = localFailure ?: saved.localFailure,
         )
