@@ -383,8 +383,8 @@
   <string name="stream_compose_schedule_message_title">"Programar mensaje"</string>
   <string name="stream_compose_schedule_message_reschedule_title">"Reprogramar mensaje"</string>
   <string name="stream_compose_schedule_message_limit_reached">"Límite alcanzado (máx. %1$d)"</string>
-  <string name="stream_compose_schedule_message_tomorrow_at">"Mañana a las %1$s"</string>
-  <string name="stream_compose_schedule_message_day_at">"%1$s a las %2$s"</string>
+  <string name="stream_compose_schedule_message_tomorrow_at">"Mañana, %1$s"</string>
+  <string name="stream_compose_schedule_message_day_at">"%1$s, %2$s"</string>
   <string name="stream_compose_schedule_message_custom_time">"Hora personalizada"</string>
   <string name="stream_compose_schedule_message_to">"Mensaje para %1$s"</string>
   <string name="stream_compose_schedule_message_reply_to">"Respuesta a %1$s"</string>

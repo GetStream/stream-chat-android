@@ -387,7 +387,7 @@
   <plurals name="stream_compose_schedule_message_error_too_soon">
     <item quantity="other">"Pilih waktu setidaknya %d menit dari sekarang"</item>
   </plurals>
-  <string name="stream_compose_schedule_message_error_too_soon_reschedule">"Pilih waktu yang lebih lambat. Pesan yang diedit tidak dapat langsung dikirim."</string>
+  <string name="stream_compose_schedule_message_error_too_soon_reschedule">"Pilih waktu yang lebih akhir. Pesan yang diedit tidak dapat langsung dikirim."</string>
   <string name="stream_compose_schedule_message_error_too_far">"Itu lebih jauh dari yang diizinkan aplikasi Anda"</string>
   <string name="stream_compose_schedule_message_error_channel_limit">"Anda telah mencapai batas %1$d pesan terjadwal di saluran ini."</string>
   <string name="stream_compose_schedule_message_error_user_limit">"Anda telah mencapai batas %1$d pesan terjadwal Anda."</string>
