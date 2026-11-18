@@ -90,8 +90,8 @@ complexity:
     threshold: 10
     includeStaticDeclarations: false
     includePrivateDeclarations: false
-  ComplexMethod:
-    active: true
+  CyclomaticComplexMethod:
+    active: false
     threshold: 15
     ignoreSingleWhenExpression: false
     ignoreSimpleWhenEntries: false
@@ -318,7 +318,6 @@ formatting:
     active: true
     autoCorrect: true
     indentSize: 4
-    continuationIndentSize: 4
   MaximumLineLength:
     active: false
     maxLineLength: 120
@@ -431,7 +430,6 @@ naming:
     parameterPattern: '[a-z][A-Za-z0-9]*'
     privateParameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
     ignoreAnnotated: ['JsonClass']
   EnumNaming:
     active: true
@@ -454,13 +452,11 @@ naming:
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     functionPattern: '([a-z][a-zA-Z0-9]*)|(`.*`)'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   FunctionParameterNaming:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     parameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   InvalidPackageDeclaration:
     active: false
     rootPackage: ''
@@ -509,7 +505,6 @@ naming:
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
 
 performance:
   active: true
@@ -538,8 +533,6 @@ potential-bugs:
     active: false
   DoubleMutabilityForCollection:
     active: false
-  DuplicateCaseInWhenExpression:
-    active: true
   EqualsAlwaysReturnsTrueOrFalse:
     active: true
   EqualsWithHashCodeExist:
@@ -552,7 +545,7 @@ potential-bugs:
     active: false
   IgnoredReturnValue:
     active: false
-    restrictToAnnotatedMethods: true
+    restrictToConfig: true
     returnValueAnnotations:
       - '*.CheckResult'
       - '*.CheckReturnValue'
@@ -578,13 +571,8 @@ potential-bugs:
   MissingPackageDeclaration:
     active: false
     excludes: ['**/*.kts']
-  MissingWhenCase:
-    active: true
-    allowElseExpression: true
   NullableToStringCall:
     active: false
-  RedundantElseInWhen:
-    active: true
   UnconditionalJumpStatementInLoop:
     active: false
   UnnecessaryNotNullOperator:
@@ -609,13 +597,17 @@ potential-bugs:
 
 style:
   active: true
+  BracesOnIfStatements:
+    active: false
+  BracesOnWhenStatements:
+    active: false
   ClassOrdering:
     active: false
   CollapsibleIfStatements:
     active: false
   DataClassContainsFunctions:
     active: false
-    conversionFunctionPrefix: 'to'
+    conversionFunctionPrefix: ['to']
   DataClassShouldBeImmutable:
     active: false
   DestructuringDeclarationWithTooManyEntries:
@@ -634,12 +626,11 @@ style:
     includeLineWrapping: false
   ForbiddenComment:
     active: true
-    values:
+    comments:
       - 'FIXME:'
       - 'STOPSHIP:'
       - 'TODO:'
     allowedPatterns: ''
-    customMessage: ''
   ForbiddenImport:
     active: false
     imports: []
@@ -649,12 +640,6 @@ style:
     methods:
       - 'kotlin.io.print'
       - 'kotlin.io.println'
-  ForbiddenPublicDataClass:
-    active: true
-    excludes: ['**']
-    ignorePackages:
-      - '*.internal'
-      - '*.internal.*'
   ForbiddenVoid:
     active: false
     ignoreOverridden: false
@@ -663,13 +648,7 @@ style:
     active: true
     ignoreOverridableFunction: true
     ignoreActualFunction: true
-    excludedFunctions: ''
-  LibraryCodeMustSpecifyReturnType:
-    active: true
-    excludes: ['**']
-  LibraryEntitiesShouldNotBePublic:
-    active: true
-    excludes: ['**']
+    excludedFunctions: []
   LoopWithTooManyJumpStatements:
     active: true
     maxJumpCount: 1
@@ -692,8 +671,6 @@ style:
     ignoreEnums: false
     ignoreRanges: false
     ignoreExtensionFunctions: true
-  MandatoryBracesIfStatements:
-    active: false
   MandatoryBracesLoops:
     active: false
   MaxLineLength:
@@ -722,8 +699,6 @@ style:
   OptionalAbstractKeyword:
     active: true
   OptionalUnit:
-    active: false
-  OptionalWhenBraces:
     active: false
   PreferToOverPairSyntax:
     active: false
