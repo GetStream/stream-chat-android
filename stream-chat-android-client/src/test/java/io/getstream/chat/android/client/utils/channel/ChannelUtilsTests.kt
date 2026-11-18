@@ -16,14 +16,22 @@
 
 package io.getstream.chat.android.client.utils.channel
 
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.Date
 
 internal class ChannelUtilsTests {
@@ -79,6 +87,50 @@ internal class ChannelUtilsTests {
         isMultiMemberPlaceholderCid("messaging:!members-a, b") shouldBeEqualTo true
         isMultiMemberPlaceholderCid("messaging:!members-Zq3kP9xT2") shouldBeEqualTo false
         isMultiMemberPlaceholderCid("messaging:general") shouldBeEqualTo false
+    }
+
+    @Test
+    fun `the state plugin's registry decides which cids are placeholders`() {
+        val registry: ChannelStateLogicProvider =
+            mock<LogicRegistry> { on { isPlaceholderChannel("messaging:!members-bob") } doReturn true }
+
+        registry.isPlaceholderChannel("messaging:!members-bob") shouldBeEqualTo true
+        registry.isPlaceholderChannel("messaging:!members-a, b") shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a placeholder channel is being created until the server rejects it`() = runTest {
+        val cid = "messaging:!members-a, b"
+        val repository = mock<ChannelRepository>()
+
+        whenever(repository.selectChannel(cid)) doReturn randomChannel(syncStatus = SyncStatus.SYNC_NEEDED)
+        null.isChannelBeingCreated(cid, repository) shouldBeEqualTo true
+        whenever(repository.selectChannel(cid)) doReturn randomChannel(syncStatus = SyncStatus.IN_PROGRESS)
+        null.isChannelBeingCreated(cid, repository) shouldBeEqualTo true
+        whenever(repository.selectChannel(cid)) doReturn randomChannel(syncStatus = SyncStatus.FAILED_PERMANENTLY)
+        null.isChannelBeingCreated(cid, repository) shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a placeholder channel without a stored row is not being created`() = runTest {
+        val cid = "messaging:!members-a, b"
+        val repository = mock<ChannelRepository>()
+
+        whenever(repository.selectChannel(cid)) doReturn null
+        null.isChannelBeingCreated(cid, repository) shouldBeEqualTo false
+    }
+
+    @Test
+    fun `a server channel is not being created`() = runTest {
+        null.isChannelBeingCreated("messaging:general", mock()) shouldBeEqualTo false
+    }
+
+    @Test
+    fun `without the state plugin's registry only cids named after several members are placeholders`() {
+        listOf(null, mock<ChannelStateLogicProvider>()).forEach { provider ->
+            provider.isPlaceholderChannel("messaging:!members-a, b") shouldBeEqualTo true
+            provider.isPlaceholderChannel("messaging:!members-bob") shouldBeEqualTo false
+        }
     }
 
     private fun placeholder(id: String, vararg memberIds: String) =

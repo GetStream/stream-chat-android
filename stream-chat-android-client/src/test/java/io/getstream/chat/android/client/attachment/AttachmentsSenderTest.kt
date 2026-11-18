@@ -64,11 +64,15 @@ internal class AttachmentsSenderTest {
 
     private val channelId = randomString()
 
-    private fun TestScope.sender() = AttachmentsSender(
+    private fun TestScope.sender(
+        isNetworkAvailable: Boolean = true,
+        placeholderCids: Set<String> = emptySet(),
+    ) = AttachmentsSender(
         context = ApplicationProvider.getApplicationContext(),
         networkType = UploadAttachmentsNetworkType.CONNECTED,
-        clientState = mock<ClientState> { on { isNetworkAvailable } doReturn true },
+        clientState = mock<ClientState> { on { this.isNetworkAvailable } doReturn isNetworkAvailable },
         scope = backgroundScope + UnconfinedTestDispatcher(testScheduler),
+        isChannelBeingCreated = { cid -> cid in placeholderCids },
     )
 
     private fun message(uploadState: Attachment.UploadState, assetUrl: String? = null) = Message(
@@ -128,5 +132,36 @@ internal class AttachmentsSenderTest {
         AttachmentsUploadStates.updateMessageAttachments(message.copy(attachments = failed))
 
         result.await() shouldBeInstanceOf Result.Failure::class
+    }
+
+    @Test
+    fun `a pending attachment isn't uploaded to a placeholder channel while online`() =
+        `a pending attachment isn't uploaded to a placeholder channel`(isNetworkAvailable = true)
+
+    @Test
+    fun `a pending attachment isn't uploaded to a placeholder channel while offline`() =
+        `a pending attachment isn't uploaded to a placeholder channel`(isNetworkAvailable = false)
+
+    private fun `a pending attachment isn't uploaded to a placeholder channel`(isNetworkAvailable: Boolean) = runTest {
+        val message = message(Attachment.UploadState.Idle)
+        val sender = sender(isNetworkAvailable, placeholderCids = setOf("messaging:$channelId"))
+
+        val result = withTimeout(10_000) {
+            sender.sendAttachments(message, "messaging", channelId, isRetrying = false)
+        }
+
+        result shouldBeInstanceOf Result.Failure::class
+        uploadWork(message).shouldBeEmpty()
+    }
+
+    @Test
+    fun `a pending attachment is enqueued for upload while offline`() = runTest {
+        val message = message(Attachment.UploadState.Idle)
+
+        val result = sender(isNetworkAvailable = false)
+            .sendAttachments(message, "messaging", channelId, isRetrying = false)
+
+        result shouldBeInstanceOf Result.Failure::class
+        uploadWork(message).size shouldBeEqualTo 1
     }
 }

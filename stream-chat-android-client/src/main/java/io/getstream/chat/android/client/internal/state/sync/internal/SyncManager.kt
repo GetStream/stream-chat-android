@@ -1222,14 +1222,18 @@ internal class SyncManager(
                 markMessageAsFailed(message)
             } else {
                 logger.v { "[retryMessagesWithPendingAttachments] sending message($id)" }
-                if (message.createdLocallyAt.exceedsSyncThresholdServerTime()) {
-                    logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
-                    dropOutdatedSending(message, discardedCids)
-                } else if (message.waitsForChannel(uncreatedCids)) {
-                    logger.v { "[retryMessagesWithPendingAttachments] waiting for channel(${message.cid})" }
-                } else {
-                    val (channelType, channelId) = message.cid.cidToTypeAndId()
-                    chatClient.sendMessage(channelType, channelId, message, true).await()
+                when {
+                    message.createdLocallyAt.exceedsSyncThresholdServerTime() -> {
+                        logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
+                        dropOutdatedSending(message, discardedCids)
+                    }
+                    message.waitsForChannel(uncreatedCids) -> {
+                        logger.v { "[retryMessagesWithPendingAttachments] waiting for channel(${message.cid})" }
+                    }
+                    else -> {
+                        val (channelType, channelId) = message.cid.cidToTypeAndId()
+                        chatClient.sendMessage(channelType, channelId, message, true).await()
+                    }
                 }
             }
         }

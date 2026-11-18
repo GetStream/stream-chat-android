@@ -16,10 +16,14 @@
 
 package io.getstream.chat.android.client.utils.channel
 
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 /**
@@ -54,6 +58,23 @@ internal fun Channel.isLocalPlaceholder(): Boolean =
  */
 internal fun isMultiMemberPlaceholderCid(cid: String): Boolean =
     cid.substringAfter(':').let { id -> id.startsWith(PLACEHOLDER_ID_PREFIX) && PLACEHOLDER_ID_SEPARATOR in id }
+
+/**
+ * Whether [cid] is a local placeholder, using [LogicRegistry.isPlaceholderChannel] when this is the state plugin's
+ * registry, which also knows the single-member placeholders created this session.
+ */
+internal fun ChannelStateLogicProvider?.isPlaceholderChannel(cid: String): Boolean =
+    (this as? LogicRegistry)?.isPlaceholderChannel(cid) ?: isMultiMemberPlaceholderCid(cid)
+
+/**
+ * Whether [cid] is a stored local placeholder for a channel the server has neither created nor rejected yet. The
+ * placeholder is deleted once the server creates the channel, so a missing row means nothing will create it anymore.
+ */
+internal suspend fun ChannelStateLogicProvider?.isChannelBeingCreated(
+    cid: String,
+    channelRepository: ChannelRepository,
+): Boolean = isPlaceholderChannel(cid) &&
+    channelRepository.selectChannel(cid)?.let { it.syncStatus != SyncStatus.FAILED_PERMANENTLY } == true
 
 private const val PLACEHOLDER_ID_PREFIX = "!members-"
 private const val PLACEHOLDER_ID_SEPARATOR = ", "

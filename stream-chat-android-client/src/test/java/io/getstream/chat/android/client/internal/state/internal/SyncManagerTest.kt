@@ -3572,6 +3572,46 @@ internal class SyncManagerTest {
         verify(repositoryFacade, never()).deleteChannelMessage(any())
     }
 
+    @Test
+    fun `messages awaiting attachments in a created channel are sent`() = runTest(testDispatcher) {
+        givenPlaceholders()
+        val message = localRandomMessage().copy(
+            cid = "messaging:general",
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+            attachments = listOf(Attachment(uploadState = Attachment.UploadState.Idle)),
+        )
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+            listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+
+        buildSyncManager().retryMessages()
+
+        verify(chatClient).sendMessage("messaging", "general", message, true)
+        verify(repositoryFacade, never()).insertMessage(any())
+    }
+
+    @Test
+    fun `messages awaiting attachments of a rejected channel are sent, so their upload fails them`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            givenChannelRetryFails(placeholder, statusCode = 400)
+            val message = localRandomMessage().copy(
+                cid = placeholder.cid,
+                syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+                attachments = listOf(Attachment(uploadState = Attachment.UploadState.Idle)),
+            )
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+                listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(chatClient).createChannel(eq(placeholder.type), eq(""), any<CreateChannelParams>())
+            verify(chatClient).sendMessage(placeholder.type, placeholder.id, message, true)
+        }
+
     private suspend fun givenChannelRetryFails(channel: Channel, statusCode: Int) {
         whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
         whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
