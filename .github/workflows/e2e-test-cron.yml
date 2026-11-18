@@ -19,7 +19,7 @@ on:
         default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.mock_server_branch || 'main' }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.mock_server_branch || 'main' }}-${{ inputs.mock_check && 'mock-check' || 'full' }}
   cancel-in-progress: true
 
 env:
@@ -77,8 +77,8 @@ jobs:
       - build-compose-apks
       - build-compose-apks-coverage
       - allure_testops_launch
-    # The coverage build is skipped on a mock check.
-    if: ${{ !cancelled() && needs.build-compose-apks.result == 'success' && needs.allure_testops_launch.result == 'success' && (inputs.mock_check || needs.build-compose-apks-coverage.result == 'success') }}
+    # Runs when the coverage build is skipped, on a mock check.
+    if: ${{ !cancelled() && !failure() }}
     strategy:
       matrix:
         android_api_level: ${{ fromJson(inputs.mock_check && '[36]' || '[36, 34, 31, 28]') }}
