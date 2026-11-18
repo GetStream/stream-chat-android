@@ -165,16 +165,40 @@ internal class MessageListControllerTests {
     @Test
     fun `the message list is still observed when a disconnect cancels entering the initial thread`() = runTest {
         val parentMessage = randomMessage(cid = CID, parentId = null)
+        val messagesState = MutableStateFlow(randomMessageList())
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenChannelState(messagesState = MutableStateFlow(randomMessageList()))
+            .givenChannelState(messagesState = messagesState)
             .givenGetReplies()
             .givenUncachedMessage(parentMessage)
             .givenDisconnectAndReconnectWhileResolvingThreadState()
             .get(parentMessageId = parentMessage.id)
 
-        controller.messageListState.value.messageItems.isNotEmpty().shouldBeTrue()
+        messagesState.value = messagesState.value + randomMessage(id = "new-message-id")
+
+        controller.messageListState.value.messageItems
+            .any { (it as? MessageItemState)?.message?.id == "new-message-id" }
+            .shouldBeTrue()
+    }
+
+    @Test
+    fun `the initial message is not focused in the channel when a disconnect cancels entering its thread`() = runTest {
+        val parentMessage = randomMessage(cid = CID, parentId = null)
+        val reply = randomMessage(id = "reply-id")
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = MutableStateFlow(listOf(reply)))
+            .givenGetReplies()
+            .givenUncachedMessage(parentMessage)
+            .givenDisconnectAndReconnectWhileResolvingThreadState()
+            .get(parentMessageId = parentMessage.id, messageId = reply.id)
+
+        val replyItem = controller.messageListState.value.messageItems
+            .filterIsInstance<MessageItemState>()
+            .first { it.message.id == reply.id }
+        replyItem.focusState `should be equal to` null
     }
 
     @Test
@@ -2506,11 +2530,13 @@ internal class MessageListControllerTests {
             showSystemMessages: Boolean = true,
             threadLoadOrderOlderToNewer: Boolean = false,
             parentMessageId: String? = null,
+            messageId: String? = null,
         ): MessageListController {
             return MessageListController(
                 cid = cid,
                 chatClient = chatClient,
                 parentMessageId = parentMessageId,
+                messageId = messageId,
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,
                 showSystemMessages = showSystemMessages,

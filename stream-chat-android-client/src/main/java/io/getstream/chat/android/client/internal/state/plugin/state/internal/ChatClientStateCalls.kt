@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.state.plugin.state.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ClientNotInitializedException
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -58,23 +59,47 @@ internal class ChatClientStateCalls(
 ) {
     private val logger by taggedLogger("Chat:ClientStateCalls")
 
+    // The client state when these calls were made: the user stays set while a disconnect tears the session down.
+    private val userIdAtCreation: String? = chatClient.clientState.user.value?.id
+    private val initializationStateAtCreation = chatClient.clientState.initializationState.value
+
     /**
-     * Deferred value of StateRegistry, resolved once the client has finished initializing the connected user.
-     * A disconnect that starts before the registry is resolved cancels it, and with it the awaiting call.
+     * Deferred value of StateRegistry for the session these calls belong to.
+     * Calls made before a session, or while one connects, wait for it to be initialized. Calls made in a session,
+     * or while it disconnects, are cancelled once it has ended, so they never resolve the state of a later session.
      */
     private val deferredState: Deferred<StateRegistry> = scope.async(start = CoroutineStart.LAZY) {
-        chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
+        when {
+            initializationStateAtCreation == InitializationState.COMPLETE && userIdAtCreation != null ->
+                ensureSameSession(userIdAtCreation)
+
+            initializationStateAtCreation == InitializationState.NOT_INITIALIZED && userIdAtCreation != null -> {
+                logger.w { "[deferredState] these calls were made while the user was disconnecting" }
+                throw CancellationException("These calls were made while the user was disconnecting")
+            }
+
+            else -> chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
+        }
         resolveOrCancel { chatClient.state }
     }
 
+    private fun ensureSameSession(userId: String) {
+        val clientState = chatClient.clientState
+        if (clientState.initializationState.value != InitializationState.COMPLETE ||
+            clientState.user.value?.id != userId
+        ) {
+            logger.w { "[ensureSameSession] the session these calls were made in has ended" }
+            throw CancellationException("The session these calls were made in has ended")
+        }
+    }
+
     /**
-     * Resolves a plugin dependency, turning the failure of a disconnect that already started into a cancellation.
-     * A failure while the client is still initialized is a real error and is rethrown.
+     * Resolves a plugin dependency, turning the failure of a session that ended meanwhile into a cancellation.
+     * Any other failure, such as a missing plugin, is rethrown.
      */
     private inline fun <T> resolveOrCancel(resolve: () -> T): T = try {
         resolve()
-    } catch (e: IllegalStateException) {
-        if (chatClient.clientState.initializationState.value == InitializationState.COMPLETE) throw e
+    } catch (e: ClientNotInitializedException) {
         logger.w { "[resolveOrCancel] the user disconnected before the dependency was resolved" }
         throw CancellationException("The user disconnected before the dependency was resolved", e)
     }
