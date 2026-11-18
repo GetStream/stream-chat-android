@@ -5503,8 +5503,8 @@ internal constructor(
      * before the message reached the server goes out with it.
      *
      * A pending [sendScheduledMessageNow] is kept when only the content changes: the edit is sent first, then the
-     * message is sent now. Setting [scheduledAt] cancels it, unless its request was already sent, so the message is
-     * sent at that date.
+     * message is sent now. A [scheduledAt] other than the current date cancels it, unless its request was already
+     * sent, so the message is sent at that date.
      *
      * The edit is refused before it is saved when the message starts with `/` in a channel that has commands, when it
      * quotes a message that was deleted, or when [scheduledAt] is further ahead than
@@ -5576,8 +5576,8 @@ internal constructor(
      *
      * When the latest changes of the message failed to reach the server, they are sent again first.
      *
-     * Until its request is sent, a [rescheduleMessage], or an [updateScheduledMessage] that sets a date, cancels it. An
-     * edit of the content alone keeps it.
+     * Until its request is sent, a [rescheduleMessage], or an [updateScheduledMessage] that changes the date, cancels
+     * it. An edit of the content alone keeps it.
      *
      * It is refused when the message quotes a message that was deleted, as known from the messages saved on this
      * device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be sent

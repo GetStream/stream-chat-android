@@ -168,7 +168,7 @@ internal class ScheduledMessageManager(
                     createdAt = scheduled.message.createdAt,
                     updatedAt = now,
                 ),
-            ).reschedule(scheduledAt)
+            ).reschedule(scheduledAt?.takeIf { it != scheduled.scheduledAt })
         }
     }
 
