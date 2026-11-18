@@ -309,10 +309,10 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
                 channelState.setMemberCount(10)
                 val removed = randomMember(user = randomUser(id = "non_existing_id"))
                 // when
-                channelState.removeMember(randomMemberRemovedEvent(member = removed, channelMemberCount = 9))
+                channelState.removeMember(randomMemberRemovedEvent(member = removed, channelMemberCount = 8))
                 // then
                 assertEquals(3, channelState.members.value.size)
-                assertEquals(9, channelState.membersCount.value)
+                assertEquals(8, channelState.membersCount.value)
             }
 
         @Test
