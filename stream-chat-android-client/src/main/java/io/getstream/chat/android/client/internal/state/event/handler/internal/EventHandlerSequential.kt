@@ -795,6 +795,7 @@ internal class EventHandlerSequential(
                         val enrichedChannel = channel
                             .addMember(event.member)
                             .addMembership(currentUserId, event.member)
+                            .withMemberCount(event.channelMemberCount)
                         batch.addChannel(enrichedChannel)
                     }
                 }
@@ -814,7 +815,8 @@ internal class EventHandlerSequential(
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
                             channel.removeMember(event.user.id)
-                                .removeMembership(currentUserId),
+                                .removeMembership(currentUserId)
+                                .withMemberCount(event.channelMemberCount),
                         )
                     }
                 }
@@ -1151,6 +1153,9 @@ internal class EventHandlerSequential(
             this.addMessage(message.copy(reminder = null))
         }
     }
+
+    private fun Channel.withMemberCount(count: Int?): Channel =
+        if (count != null) copy(memberCount = count) else this
 
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {

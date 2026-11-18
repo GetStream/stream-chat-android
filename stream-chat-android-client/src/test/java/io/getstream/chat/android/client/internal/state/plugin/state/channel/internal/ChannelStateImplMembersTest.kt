@@ -16,11 +16,16 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
+import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -70,6 +75,21 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
             channelState.setMemberCount(100)
             // then
             assertEquals(100, channelState.membersCount.value)
+        }
+
+        @Test
+        fun `toChannel should report the member count after member events`() = runTest {
+            // given
+            val members = createMembers(3)
+            channelState.updateChannelData { ChannelData(type = "messaging", id = "123", memberCount = 10) }
+            channelState.setMembers(members)
+            channelState.setMemberCount(10)
+            // when
+            channelState.removeMember(randomMemberRemovedEvent(member = members[0]))
+            channelState.addMember(randomMemberAddedEvent(member = createMember(4), channelMemberCount = 12))
+            // then
+            assertEquals(12, channelState.membersCount.value)
+            assertEquals(12, channelState.toChannel().memberCount)
         }
     }
 
@@ -122,6 +142,18 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
             channelState.addMember(randomMemberAddedEvent(member = member)) // Add same member again
             // then - count should not change since member was already present
             assertEquals(initialCount, channelState.membersCount.value)
+        }
+
+        @Test
+        fun `addMember should set the member count carried by the event`() = runTest {
+            // given
+            channelState.setMemberCount(5)
+            val event = randomMemberAddedEvent(member = createMember(1), channelMemberCount = 9)
+            // when - the same event is applied twice
+            channelState.addMember(event)
+            channelState.addMember(event)
+            // then
+            assertEquals(9, channelState.membersCount.value)
         }
     }
 
@@ -245,16 +277,84 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
         }
 
         @Test
-        fun `removeMember should do nothing for non-existing member in list but still decrement count`() = runTest {
-            // given - members list may be partial (not all members loaded); removed member might not be in our list
+        fun `removeMember should decrement count for a member that is not in the list`() = runTest {
+            // given - the member list is partial
+            channelState.setMembers(createMembers(3))
+            channelState.setMemberCount(10)
+            // when
+            channelState.removeMember(randomMemberRemovedEvent(member = randomMember(user = randomUser(id = "non_existing_id"))))
+            // then
+            assertEquals(3, channelState.members.value.size)
+            assertEquals(9, channelState.membersCount.value)
+        }
+
+        @Test
+        fun `removeMember applied twice without a count should decrement count twice`() = runTest {
+            // given
             val members = createMembers(3)
             channelState.setMembers(members)
             channelState.setMemberCount(3)
-            // when - removing member not in our list
-            channelState.removeMember(randomMemberRemovedEvent(member = randomMember(user = randomUser(id = "non_existing_id"))))
-            // then - list unchanged, count decremented (we trust the event)
-            assertEquals(3, channelState.members.value.size)
+            val event = randomMemberRemovedEvent(member = members[0])
+            // when
+            channelState.removeMember(event)
+            channelState.removeMember(event)
+            // then
+            assertEquals(1, channelState.membersCount.value)
+        }
+
+        @Test
+        fun `removeMember applied twice should keep the member count carried by the event`() = runTest {
+            // given
+            val members = createMembers(3)
+            channelState.setMembers(members)
+            channelState.setMemberCount(10)
+            val event = randomMemberRemovedEvent(member = members[0], channelMemberCount = 9)
+            // when
+            channelState.removeMember(event)
+            channelState.removeMember(event)
+            // then
+            assertEquals(9, channelState.membersCount.value)
+        }
+
+        @Test
+        fun `removeMember should set the member count carried by the event for a member that is not in the list`() =
+            runTest {
+                // given - the member list is partial
+                channelState.setMembers(createMembers(3))
+                channelState.setMemberCount(10)
+                val removed = randomMember(user = randomUser(id = "non_existing_id"))
+                // when
+                channelState.removeMember(randomMemberRemovedEvent(member = removed, channelMemberCount = 8))
+                // then
+                assertEquals(3, channelState.members.value.size)
+                assertEquals(8, channelState.membersCount.value)
+            }
+
+        @Test
+        fun `removeMember for a rejected invite without a count should decrement count`() = runTest {
+            // given
+            val members = createMembers(3)
+            channelState.setMembers(members)
+            channelState.setMemberCount(3)
+            // when
+            channelState.removeMember(randomNotificationInviteRejectedEvent(member = members[0]))
+            // then
+            assertEquals(2, channelState.members.value.size)
             assertEquals(2, channelState.membersCount.value)
+        }
+
+        @Test
+        fun `removeMember for a rejected invite should set the member count carried by the event`() = runTest {
+            // given
+            val members = createMembers(3)
+            channelState.setMembers(members)
+            channelState.setMemberCount(10)
+            val event = randomNotificationInviteRejectedEvent(member = members[0], channelMemberCount = 9)
+            // when
+            channelState.removeMember(event)
+            channelState.removeMember(event)
+            // then
+            assertEquals(9, channelState.membersCount.value)
         }
     }
 
@@ -467,6 +567,22 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
             assertEquals("channel_moderator", channelState.pinnedMessages.value.first().member?.channelRole)
         }
     }
+
+    private fun randomNotificationInviteRejectedEvent(
+        member: Member,
+        channelMemberCount: Int? = null,
+    ) = NotificationInviteRejectedEvent(
+        type = EventType.NOTIFICATION_INVITE_REJECTED,
+        createdAt = Date(),
+        rawCreatedAt = "",
+        cid = randomCID(),
+        channelType = randomString(),
+        channelId = randomString(),
+        user = member.user,
+        member = member,
+        channel = randomChannel(),
+        channelMemberCount = channelMemberCount,
+    )
 
     private fun createMember(index: Int): Member {
         val user = randomUser(id = "user_$index", name = "User $index")
