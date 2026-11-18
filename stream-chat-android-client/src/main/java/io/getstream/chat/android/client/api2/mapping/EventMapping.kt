@@ -632,6 +632,7 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             member = member.toDomain(),
+            channelMemberCount = channelMemberCount ?: channel?.memberCount,
         )
     }
 
@@ -650,6 +651,7 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             member = member.toDomain(),
+            channelMemberCount = channelMemberCount ?: channel?.memberCount,
         )
     }
 
@@ -821,6 +823,7 @@ internal class EventMapping(
                 user = requireNotNull(user).toDomain(),
                 member = member.toDomain(),
                 channel = channel.toDomain(),
+                channelMemberCount = channelMemberCount ?: channel.memberCount,
             )
         }
 

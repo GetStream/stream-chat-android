@@ -897,48 +897,52 @@ internal class ChannelStateImpl(
     /**
      * Adds a [Member] to the channel from the given [MemberAddedEvent].
      *
-     * **Important:** Increments [membersCount] if the member wasn't already a member.
+     * **Important:** Sets [membersCount] from the event when it carries the count. Otherwise increments it if the
+     * member wasn't already a member.
      *
      * @param event The [MemberAddedEvent] informing the channel of the new member.
      */
-    fun addMember(event: MemberAddedEvent) = addMember(event.member)
+    fun addMember(event: MemberAddedEvent) = addMember(event.member, event.channelMemberCount)
 
     /**
      * Adds the [member] to the channel.
      *
-     * **Important:** Increments [membersCount] if the member wasn't already a member.
+     * **Important:** Sets [membersCount] to [memberCount] when given. Otherwise increments it if the member wasn't
+     * already a member.
      *
      * @param member The member added to the channel.
+     * @param memberCount The number of members in the channel after the addition, if known.
      */
-    fun addMember(member: Member) {
+    fun addMember(member: Member, memberCount: Int? = null) {
         val isAlreadyMember = _members.value.any { it.getUserId() == member.getUserId() }
         if (!isAlreadyMember) {
             _members.update { current -> current + member }
-            _memberCount.update { current -> current + 1 }
         }
+        _memberCount.update { current -> memberCount ?: if (isAlreadyMember) current else current + 1 }
     }
 
     /**
      * Removes a [Member] from the channel according the given [MemberRemovedEvent].
      * Removes the member from the list if present (list may be partial - not all members loaded).
      *
-     * **Important:** Always decrements [membersCount] because the event is authoritative: someone left the channel.
+     * **Important:** Sets [membersCount] from the event when it carries the count. Otherwise always decrements it,
+     * because the member may not be in the partial list.
      *
      * @param event The [MemberRemovedEvent] informing the channel about the member removal.
      */
     fun removeMember(event: MemberRemovedEvent) =
-        deleteMemberAndDecrementMemberCount(event.member.getUserId())
+        deleteMember(event.member.getUserId(), event.channelMemberCount)
 
     /**
      * Removes a [Member] from the channel according the given [NotificationInviteRejectedEvent]. Happens when the user
      * has a pending invite (considered a member), but the invite is rejected.
      * Removes the member from the list if present (list may be partial - not all members loaded).
-     * Always decrements [membersCount] because the event is authoritative: someone left the channel.
+     * Updates [membersCount] the same way as for a [MemberRemovedEvent].
      *
      * @param event The [NotificationInviteRejectedEvent] informing the channel about the rejected invite.
      */
     fun removeMember(event: NotificationInviteRejectedEvent) =
-        deleteMemberAndDecrementMemberCount(event.member.getUserId())
+        deleteMember(event.member.getUserId(), event.channelMemberCount)
 
     /**
      * Upserts a single member into the current state.
@@ -1839,11 +1843,11 @@ internal class ChannelStateImpl(
         )
     }
 
-    private fun deleteMemberAndDecrementMemberCount(memberId: String) {
+    private fun deleteMember(memberId: String, memberCount: Int?) {
         _members.update { current ->
             current.filter { it.getUserId() != memberId }
         }
-        _memberCount.update { max(0, it - 1) }
+        _memberCount.update { current -> memberCount ?: max(0, current - 1) }
     }
 
     /**

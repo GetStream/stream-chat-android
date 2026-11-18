@@ -434,6 +434,7 @@ public fun randomMemberAddedEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     member: Member = randomMember(),
+    channelMemberCount: Int? = null,
 ): MemberAddedEvent {
     return MemberAddedEvent(
         type = EventType.MEMBER_ADDED,
@@ -444,6 +445,7 @@ public fun randomMemberAddedEvent(
         channelType = channelType,
         channelId = channelId,
         member = member,
+        channelMemberCount = channelMemberCount,
     )
 }
 
@@ -807,6 +809,7 @@ public fun randomMemberRemovedEvent(
     user: User = randomUser(),
     channelType: String = randomString(),
     channelId: String = randomString(),
+    channelMemberCount: Int? = null,
 ): MemberRemovedEvent = MemberRemovedEvent(
     type = EventType.MEMBER_REMOVED,
     createdAt = createdAt,
@@ -816,6 +819,7 @@ public fun randomMemberRemovedEvent(
     channelType = channelType,
     channelId = channelId,
     member = member,
+    channelMemberCount = channelMemberCount,
 )
 
 public fun randomChannelUserBannedEvent(

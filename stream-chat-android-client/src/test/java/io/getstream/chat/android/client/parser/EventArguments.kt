@@ -511,6 +511,7 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         member = member,
+        channelMemberCount = wireChannel.memberCount,
     )
     private val memberRemovedEvent = MemberRemovedEvent(
         type = EventType.MEMBER_REMOVED,
@@ -521,6 +522,7 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         member = member,
+        channelMemberCount = wireChannel.memberCount,
     )
     private val memberUpdatedEvent = MemberUpdatedEvent(
         type = EventType.MEMBER_UPDATED,
@@ -660,6 +662,7 @@ internal object EventArguments {
         user = commonFieldsUser,
         member = member,
         channel = wireChannel,
+        channelMemberCount = wireChannel.memberCount,
     )
     private val notificationInvitedEvent = NotificationInvitedEvent(
         type = EventType.NOTIFICATION_INVITED,

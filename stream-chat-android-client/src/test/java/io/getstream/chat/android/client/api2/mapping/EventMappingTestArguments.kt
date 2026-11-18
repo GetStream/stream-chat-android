@@ -381,6 +381,7 @@ internal object EventMappingTestArguments {
         cid = CID,
         user = COMMON_USER,
         member = MEMBER,
+        channelMemberCount = CHANNEL_MEMBER_COUNT,
     )
 
     private val memberUpdatedEvent = GeneratedMemberUpdatedEvent(
@@ -1027,6 +1028,7 @@ internal object EventMappingTestArguments {
         channelId = CHANNEL_ID,
         user = with(domainMapping) { COMMON_USER.toDomain() },
         member = with(domainMapping) { MEMBER.toDomain() },
+        channelMemberCount = GENERATED_CHANNEL.memberCount,
     )
 
     private val memberRemoved = MemberRemovedEvent(
@@ -1038,6 +1040,7 @@ internal object EventMappingTestArguments {
         channelId = CHANNEL_ID,
         user = with(domainMapping) { COMMON_USER.toDomain() },
         member = with(domainMapping) { MEMBER.toDomain() },
+        channelMemberCount = CHANNEL_MEMBER_COUNT,
     )
 
     private val memberUpdated = MemberUpdatedEvent(
@@ -1193,6 +1196,7 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { COMMON_USER.toDomain() },
         member = with(domainMapping) { MEMBER.toDomain() },
         channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
+        channelMemberCount = GENERATED_CHANNEL.memberCount,
     )
 
     private val notificationInvited = NotificationInvitedEvent(
