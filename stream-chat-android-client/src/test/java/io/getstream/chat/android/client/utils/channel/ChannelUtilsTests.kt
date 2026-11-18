@@ -112,6 +112,15 @@ internal class ChannelUtilsTests {
     }
 
     @Test
+    fun `a placeholder channel without a stored row is not being created`() = runTest {
+        val cid = "messaging:!members-a, b"
+        val repository = mock<ChannelRepository>()
+
+        whenever(repository.selectChannel(cid)) doReturn null
+        null.isChannelBeingCreated(cid, repository) shouldBeEqualTo false
+    }
+
+    @Test
     fun `a server channel is not being created`() = runTest {
         null.isChannelBeingCreated("messaging:general", mock()) shouldBeEqualTo false
     }

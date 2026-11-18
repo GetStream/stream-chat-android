@@ -40,8 +40,8 @@ import java.util.UUID
  * @param networkType [UploadAttachmentsNetworkType]
  * @param clientState [ClientState]
  * @param scope [CoroutineScope]
- * @param isChannelBeingCreated Whether a cid is a local placeholder for a channel the server has neither created nor
- * rejected yet.
+ * @param isChannelBeingCreated Whether a cid is a stored local placeholder for a channel the server has neither
+ * created nor rejected yet.
  */
 internal class AttachmentsSender(
     private val context: Context,

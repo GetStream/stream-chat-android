@@ -67,13 +67,14 @@ internal fun ChannelStateLogicProvider?.isPlaceholderChannel(cid: String): Boole
     (this as? LogicRegistry)?.isPlaceholderChannel(cid) ?: isMultiMemberPlaceholderCid(cid)
 
 /**
- * Whether [cid] is a local placeholder for a channel the server has neither created nor rejected yet.
+ * Whether [cid] is a stored local placeholder for a channel the server has neither created nor rejected yet. The
+ * placeholder is deleted once the server creates the channel, so a missing row means nothing will create it anymore.
  */
 internal suspend fun ChannelStateLogicProvider?.isChannelBeingCreated(
     cid: String,
     channelRepository: ChannelRepository,
 ): Boolean = isPlaceholderChannel(cid) &&
-    channelRepository.selectChannel(cid)?.syncStatus != SyncStatus.FAILED_PERMANENTLY
+    channelRepository.selectChannel(cid)?.let { it.syncStatus != SyncStatus.FAILED_PERMANENTLY } == true
 
 private const val PLACEHOLDER_ID_PREFIX = "!members-"
 private const val PLACEHOLDER_ID_SEPARATOR = ", "
