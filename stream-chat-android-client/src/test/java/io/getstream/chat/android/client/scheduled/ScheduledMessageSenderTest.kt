@@ -856,6 +856,26 @@ internal class ScheduledMessageSenderTest {
     }
 
     @Test
+    fun `a send now failing after a reschedule cancelled it does not hold back the new date`() = runTest {
+        val onServer = givenScheduledOnServer()
+        val sendNow = PendingCall<ScheduledMessage>()
+        whenever(api.sendScheduledMessageNow(any())).thenReturn(sendNow)
+        api.givenUpdateAnswers()
+        start()
+        val scheduledAt = randomDate()
+
+        manager.sendNow(onServer.id)
+        runCurrent()
+        manager.reschedule(onServer.id, scheduledAt)
+        sendNow.result.complete(Result.Failure(serverError(code = -1, statusCode = 500)))
+        runCurrent()
+
+        verify(api).updateScheduledMessage(onServer.id, onServer.message.copy(createdAt = scheduledAt), scheduledAt)
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+        scheduledMessage(onServer.id).failure.shouldBeNull()
+    }
+
+    @Test
     fun `a reschedule after a failed send now sends the new date and not the send now`() = runTest {
         val onServer = givenScheduledOnServer()
         whenever(api.sendScheduledMessageNow(any())).thenReturn(TestCall(Result.Failure(serverError(code = 4))))

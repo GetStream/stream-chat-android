@@ -5576,8 +5576,8 @@ internal constructor(
      *
      * When the latest changes of the message failed to reach the server, they are sent again first.
      *
-     * Until its request is sent, a [rescheduleMessage], or an [updateScheduledMessage] that changes the date, cancels
-     * it. An edit of the content alone keeps it.
+     * A [rescheduleMessage], or an [updateScheduledMessage] that changes the date, cancels it. An edit of the content
+     * alone keeps it. A send now already sent to the server is not cancelled.
      *
      * It is refused when the message quotes a message that was deleted, as known from the messages saved on this
      * device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be sent

@@ -596,6 +596,39 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `a reschedule made before the load cancels the saved send now`() = runTest {
+        val sentNow = randomLocalScheduledMessage(cid = cid, isPendingSendNow = true)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(sentNow))
+        restarted.connectionState.value = ConnectionState.Offline
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(randomScheduledMessage(id = sentNow.id, cid = cid)))
+        val scheduledAt = randomDate()
+
+        restarted.manager.reschedule(sentNow.id, scheduledAt)
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
+        loaded.scheduledAt shouldBeEqualTo scheduledAt
+        loaded.isPendingSendNow shouldBeEqualTo false
+    }
+
+    @Test
+    fun `an edit of the content made before the load keeps the saved send now`() = runTest {
+        val sentNow = randomLocalScheduledMessage(cid = cid, isPendingSendNow = true)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(sentNow))
+        restarted.connectionState.value = ConnectionState.Offline
+        val onServer = randomScheduledMessage(id = sentNow.id, cid = cid)
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(onServer))
+        val edited = onServer.message.copy(text = randomString())
+
+        restarted.manager.update(sentNow.id, edited, scheduledAt = null)
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
+        loaded.message.text shouldBeEqualTo edited.text
+        loaded.isPendingSendNow shouldBeEqualTo true
+    }
+
+    @Test
     fun `start loads the saved messages, and stop clears them from memory only`() = runTest {
         val saved = randomLocalScheduledMessage(localFailure = null)
         val repository = InMemoryScheduledMessageRepository(saved)
