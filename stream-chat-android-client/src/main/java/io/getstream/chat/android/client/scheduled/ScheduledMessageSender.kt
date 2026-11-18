@@ -196,7 +196,12 @@ internal class ScheduledMessageSender(
                 store.update(message.id) { it?.mergeServer(result.value)?.copy(isPendingSendNow = false) }
                 true
             }
-            is Result.Failure -> onFailure(message, result.value)
+            is Result.Failure -> {
+                val error = result.value
+                val isCancelled = store.messages.value[message.id]?.isPendingSendNow == false
+                // A reschedule cancelled the send now meanwhile: its failure must not hold back the new date.
+                (isCancelled && !error.isGone(message)) || onFailure(message, error)
+            }
         }
 
     /**
@@ -248,12 +253,8 @@ internal class ScheduledMessageSender(
      * @return False when it waits for the connection.
      */
     private suspend fun onFailure(sent: LocalScheduledMessage, error: Error): Boolean {
-        val reason = error.scheduledMessageRejectionReason()
-        val isGone = reason == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent ||
-            reason == ServerRejectedScheduling.Reason.ScheduledMessageCanceled ||
-            (!sent.isLocalOnly && error.isNotFound())
         when {
-            isGone -> store.update(sent.id) { null }
+            error.isGone(sent) -> store.update(sent.id) { null }
             error.isWaitingForConnection() -> return false
             else -> store.update(sent.id) {
                 // A rejection means the server did not store a create.
@@ -262,6 +263,14 @@ internal class ScheduledMessageSender(
             }
         }
         return true
+    }
+
+    /** Whether the server no longer has the message [sent] the request for: it was sent or deleted. */
+    private fun Error.isGone(sent: LocalScheduledMessage): Boolean {
+        val reason = scheduledMessageRejectionReason()
+        return reason == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent ||
+            reason == ServerRejectedScheduling.Reason.ScheduledMessageCanceled ||
+            (!sent.isLocalOnly && isNotFound())
     }
 
     private fun Error.isNotFound(): Boolean = (this as? Error.NetworkError)?.isStatusNotFound() == true
