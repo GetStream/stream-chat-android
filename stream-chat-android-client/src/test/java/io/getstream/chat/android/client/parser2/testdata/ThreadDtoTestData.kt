@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.parser2.testdata
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
+import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -153,6 +154,76 @@ internal object ThreadDtoTestData {
         title = "Simple Thread",
         updated_at = Date(1591787071588),
         extraData = emptyMap(),
+    )
+
+    /**
+     * The body of a partial thread update: the thread comes without latest replies, read states and draft, and a
+     * participant can come without its user.
+     */
+    @Language("JSON")
+    val partialUpdateThreadResponseJson =
+        """{
+          "thread": {
+            "channel_cid": "messaging:456",
+            "channel": ${ChannelDtoTestData.downstreamJsonWithoutExtraData},
+            "parent_message_id": "parent_msg_id_2",
+            "parent_message": ${MessageDtoTestData.downstreamJsonWithoutExtraData},
+            "created_by_user_id": "user2",
+            "created_by": ${UserDtoTestData.downstreamJson},
+            "reply_count": 0,
+            "participant_count": 2,
+            "active_participant_count": 2,
+            "thread_participants": [
+              {
+                "channel_cid": "messaging:456",
+                "last_thread_message_at": null,
+                "thread_id": "t1",
+                "user_id": "user1",
+                "user": ${UserDtoTestData.downstreamJson},
+                "created_at": "2020-06-10T11:04:31.000Z",
+                "last_read_at": "2020-06-10T11:04:31.000Z",
+                "custom": {}
+              },
+              {
+                "channel_cid": "messaging:456",
+                "last_thread_message_at": null,
+                "thread_id": "t1",
+                "user_id": "user2",
+                "created_at": "2020-06-10T11:04:31.000Z",
+                "last_read_at": "2020-06-10T11:04:31.000Z",
+                "custom": {}
+              }
+            ],
+            "last_message_at": "2020-06-10T11:04:31.588Z",
+            "created_at": "2020-06-10T11:04:31.000Z",
+            "updated_at": "2020-06-10T11:04:31.588Z",
+            "title": "Simple Thread",
+            "custom": {}
+          },
+          "duration": "1.23ms"
+        }"""
+
+    val partialUpdateThreadResponse = ThreadResponse(
+        thread = downstreamThreadWithoutExtraData.copy(
+            deleted_at = null,
+            draft = null,
+            latest_replies = null,
+            read = null,
+            thread_participants = listOf(
+                DownstreamThreadParticipantDto(
+                    channel_cid = "messaging:456",
+                    user = UserDtoTestData.downstreamUser,
+                    user_id = "user1",
+                ),
+                DownstreamThreadParticipantDto(
+                    channel_cid = "messaging:456",
+                    user = null,
+                    user_id = "user2",
+                ),
+            ),
+            extraData = mapOf("custom" to emptyMap<String, Any>()),
+        ),
+        duration = "1.23ms",
     )
 
     @Language("JSON")

@@ -81,6 +81,7 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
 import io.getstream.chat.android.models.MessageReminder
@@ -108,6 +109,7 @@ import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
@@ -876,7 +878,7 @@ internal class DomainMappingTest {
             deletedAt = downstreamThreadDto.deleted_at,
             title = downstreamThreadDto.title,
             latestReplies = with(sut) {
-                downstreamThreadDto.latest_replies.map { it.toDomain(fallbackChannelInfo) }
+                downstreamThreadDto.latest_replies.orEmpty().map { it.toDomain(fallbackChannelInfo) }
             },
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
@@ -887,6 +889,37 @@ internal class DomainMappingTest {
             extraData = downstreamThreadDto.extraData,
         )
         assertEquals(expected, thread)
+    }
+
+    @Test
+    fun `DownstreamThreadParticipantDto without user is mapped to a transformed user with only the id`() {
+        val participantDto = DownstreamThreadParticipantDto(
+            channel_cid = "messaging:123",
+            user = null,
+            user_id = "user1",
+        )
+        val sut = Fixture()
+            .withUserTransformer { it.copy(name = "transformed ${it.id}") }
+            .get()
+        val participant = with(sut) { participantDto.toDomain() }
+        assertEquals(ThreadParticipant(user = User(id = "user1", name = "transformed user1")), participant)
+    }
+
+    @Test
+    fun `DownstreamThreadDto without latest replies is mapped to a Thread with no replies`() {
+        val downstreamThreadDto = randomDownstreamThreadDto().copy(latest_replies = null)
+        val sut = Fixture().get()
+        val thread = with(sut) { downstreamThreadDto.toDomain() }
+        assertEquals(emptyList<Message>(), thread.latestReplies)
+    }
+
+    @Test
+    fun `DownstreamThreadDto without channel maps its replies without channel info`() {
+        val downstreamThreadDto = randomDownstreamThreadDto().copy(channel = null)
+        val sut = Fixture().get()
+        val thread = with(sut) { downstreamThreadDto.toDomain() }
+        val expected = with(sut) { downstreamThreadDto.latest_replies.orEmpty().map { it.toDomain(null) } }
+        assertEquals(expected, thread.latestReplies)
     }
 
     @Test
