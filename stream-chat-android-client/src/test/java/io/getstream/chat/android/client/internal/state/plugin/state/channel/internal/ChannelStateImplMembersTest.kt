@@ -76,6 +76,21 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
             // then
             assertEquals(100, channelState.membersCount.value)
         }
+
+        @Test
+        fun `toChannel should report the member count after member events`() = runTest {
+            // given
+            val members = createMembers(3)
+            channelState.updateChannelData { ChannelData(type = "messaging", id = "123", memberCount = 10) }
+            channelState.setMembers(members)
+            channelState.setMemberCount(10)
+            // when
+            channelState.removeMember(randomMemberRemovedEvent(member = members[0]))
+            channelState.addMember(randomMemberAddedEvent(member = createMember(4), channelMemberCount = 12))
+            // then
+            assertEquals(12, channelState.membersCount.value)
+            assertEquals(12, channelState.toChannel().memberCount)
+        }
     }
 
     @Nested

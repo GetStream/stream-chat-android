@@ -877,12 +877,13 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Sets the member count.
+     * Sets the member count, also on the channel data so that [toChannel] reports the same value.
      *
      * @param count The total count of members.
      */
     fun setMemberCount(count: Int) {
         _memberCount.value = count
+        _channelData.update { current -> current?.copy(memberCount = count) }
     }
 
     /**
@@ -918,7 +919,8 @@ internal class ChannelStateImpl(
         if (!isAlreadyMember) {
             _members.update { current -> current + member }
         }
-        _memberCount.update { current -> memberCount ?: if (isAlreadyMember) current else current + 1 }
+        val current = _memberCount.value
+        setMemberCount(memberCount ?: if (isAlreadyMember) current else current + 1)
     }
 
     /**
@@ -1847,7 +1849,7 @@ internal class ChannelStateImpl(
         _members.update { current ->
             current.filter { it.getUserId() != memberId }
         }
-        _memberCount.update { current -> memberCount ?: max(0, current - 1) }
+        setMemberCount(memberCount ?: max(0, _memberCount.value - 1))
     }
 
     /**
