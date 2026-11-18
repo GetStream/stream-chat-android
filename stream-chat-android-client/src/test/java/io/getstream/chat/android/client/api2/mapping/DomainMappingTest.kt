@@ -877,7 +877,7 @@ internal class DomainMappingTest {
             deletedAt = downstreamThreadDto.deleted_at,
             title = downstreamThreadDto.title,
             latestReplies = with(sut) {
-                downstreamThreadDto.latest_replies.map { it.toDomain(fallbackChannelInfo) }
+                downstreamThreadDto.latest_replies.orEmpty().map { it.toDomain(fallbackChannelInfo) }
             },
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }

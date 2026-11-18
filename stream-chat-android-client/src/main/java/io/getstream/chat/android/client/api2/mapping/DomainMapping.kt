@@ -793,7 +793,7 @@ internal class DomainMapping(
             updatedAt = updated_at,
             deletedAt = deleted_at,
             title = title,
-            latestReplies = latest_replies.map { it.toDomain(channel?.toChannelInfo()) },
+            latestReplies = latest_replies.orEmpty().map { it.toDomain(channel?.toChannelInfo()) },
             read = read.orEmpty().map {
                 it.toDomain(
                     lastReceivedEventDate = last_message_at,

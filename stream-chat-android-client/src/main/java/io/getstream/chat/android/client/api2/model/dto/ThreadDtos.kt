@@ -54,7 +54,7 @@ internal data class DownstreamThreadDto(
     val deleted_at: Date?,
     val draft: DownstreamDraftDto?,
     val last_message_at: Date,
-    val latest_replies: List<DownstreamMessageDto>,
+    val latest_replies: List<DownstreamMessageDto>?,
     val parent_message: DownstreamMessageDto,
     val parent_message_id: String,
     val participant_count: Int,

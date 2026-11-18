@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
+import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.parser2.testdata.ThreadDtoTestData
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -43,11 +44,11 @@ internal class DownstreamThreadDtoAdapterTest {
     }
 
     @Test
-    fun `Deserialize JSON thread with a participant without user`() {
-        val thread = parser.fromJson(
-            ThreadDtoTestData.downstreamThreadJsonWithParticipantWithoutUser,
-            DownstreamThreadDto::class.java,
+    fun `Deserialize the partial thread update response`() {
+        val response = parser.fromJson(
+            ThreadDtoTestData.partialUpdateThreadResponseJson,
+            ThreadResponse::class.java,
         )
-        Assertions.assertEquals(ThreadDtoTestData.downstreamThreadWithParticipantWithoutUser, thread)
+        Assertions.assertEquals(ThreadDtoTestData.partialUpdateThreadResponse, response)
     }
 }
