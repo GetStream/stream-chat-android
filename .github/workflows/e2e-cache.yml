@@ -1,4 +1,4 @@
-name: E2E Gradle Cache
+name: E2E Cache
 
 on:
   # Pull requests restore the newest develop snapshot, so it should come from the latest merge.
@@ -27,3 +27,67 @@ jobs:
     with:
       app: compose
       cache_only: true
+  # Saves the AVD with a quick-boot snapshot for the e2e-test.yml batches. Here, because a cache
+  # saved by a pull request is visible to that pull request alone, and one saved on develop to all.
+  android-avd:
+    permissions:
+      contents: read
+    name: Emulator snapshot
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      # Must match e2e-test.yml, or the pull request batches miss the snapshot and cold boot.
+      ANDROID_API_LEVEL: '36'
+      ANDROID_TARGET: default
+      ANDROID_PROFILE: pixel
+      ANDROID_CORES: '4'
+      ANDROID_EMULATOR_OPTIONS: -no-window -no-audio -no-boot-anim -no-metrics -gpu swiftshader_indirect -camera-back none -camera-front none
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: GetStream/android-ci-actions/actions/enable-kvm@main
+      - uses: ./.github/actions/android-sdk-packages
+        id: sdk
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: ${{ env.ANDROID_TARGET }}
+          profile: ${{ env.ANDROID_PROFILE }}
+          cores: ${{ env.ANDROID_CORES }}
+          emulator-options: ${{ env.ANDROID_EMULATOR_OPTIONS }}
+      - name: Look up the AVD
+        id: avd
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ steps.sdk.outputs.avd-key }}
+          lookup-only: true
+      - name: Create the AVD and its snapshot
+        if: steps.avd.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: ${{ env.ANDROID_TARGET }}
+          arch: x86_64
+          profile: ${{ env.ANDROID_PROFILE }}
+          cores: ${{ env.ANDROID_CORES }}
+          force-avd-creation: false
+          emulator-options: ${{ env.ANDROID_EMULATOR_OPTIONS }}
+          disable-animations: true
+          # Lets dexopt finish, so the snapshot holds a settled system.
+          script: |
+            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell cmd package bg-dexopt-job > /dev/null 2>&1 || true
+            sleep 30
+      # adb emu kill returns before the snapshot is written. On timeout, nothing is saved.
+      - name: Wait for the emulator to save the snapshot
+        if: steps.avd.outputs.cache-hit != 'true'
+        timeout-minutes: 3
+        run: while pgrep -f qemu-system > /dev/null; do sleep 1; done
+      - name: Save the AVD
+        if: steps.avd.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ steps.sdk.outputs.avd-key }}

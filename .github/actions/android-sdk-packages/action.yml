@@ -28,8 +28,8 @@ inputs:
 outputs:
   avd-key:
     description: >-
-      Cache key of an AVD with a quick-boot snapshot. A snapshot only loads into the emulator
-      build, system image and hardware config that saved it, so all of them are in the key.
+      Cache key of an AVD with a quick-boot snapshot: a snapshot only loads into the emulator, image
+      and hardware config that saved it.
     value: ${{ steps.key.outputs.key }}
 runs:
   using: composite
