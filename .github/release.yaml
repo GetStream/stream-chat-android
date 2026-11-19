@@ -6,6 +6,7 @@ changelog:
       - "github-actions[bot]"
       - "stream-public-bot"
       - "stream-android-release-bot[bot]"
+      - "stream-android-release-bot"
   categories:
     - title: Breaking Changes 🛠
       labels:
