@@ -26,6 +26,16 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  # The emulator, shared by the snapshot job and the test batches. aosp_atd is the Automated Test
+  # Device image (API 30+): no apps or services a test doesn't need, so less post-boot CPU churn.
+  ANDROID_API_LEVEL: ${{ inputs.api_level || '36' }}
+  ANDROID_TARGET: ${{ (inputs.api_level || '36') >= 30 && 'aosp_atd' || 'default' }}
+  ANDROID_PROFILE: pixel
+  ANDROID_CORES: '4'
+  # -no-metrics answers the metrics prompt a future emulator release will block on. The test
+  # batches add -no-snapshot-save, so every batch boots from the same clean snapshot; the snapshot
+  # job leaves it out, so the emulator saves one on exit.
+  ANDROID_EMULATOR_OPTIONS: -no-window -no-audio -no-boot-anim -no-metrics -gpu swiftshader_indirect -camera-back none -camera-front none
   BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
   BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
   BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
@@ -62,6 +72,59 @@ jobs:
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         with:
           allure-token: ${{ secrets.ALLURE_TOKEN }}
+  # Boots the emulator once, lets it settle and caches the AVD with its quick-boot snapshot, while
+  # the APKs build. The test batches restore it and boot from the snapshot instead of cold booting.
+  android-avd:
+    permissions:
+      contents: read
+    name: Emulator snapshot
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: GetStream/android-ci-actions/actions/enable-kvm@main
+      - uses: ./.github/actions/android-sdk-packages
+        id: sdk
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: ${{ env.ANDROID_TARGET }}
+          profile: ${{ env.ANDROID_PROFILE }}
+          cores: ${{ env.ANDROID_CORES }}
+          emulator-options: ${{ env.ANDROID_EMULATOR_OPTIONS }}
+      - name: Look up the AVD
+        id: avd
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ steps.sdk.outputs.avd-key }}
+          lookup-only: true
+      - name: Create the AVD and its snapshot
+        if: steps.avd.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: ${{ env.ANDROID_TARGET }}
+          arch: x86_64
+          profile: ${{ env.ANDROID_PROFILE }}
+          cores: ${{ env.ANDROID_CORES }}
+          force-avd-creation: false
+          emulator-options: ${{ env.ANDROID_EMULATOR_OPTIONS }}
+          disable-animations: true
+          # Lets the post-boot work (dexopt) finish, so the snapshot holds a settled system. Each line
+          # runs on its own.
+          script: |
+            "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell cmd package bg-dexopt-job > /dev/null 2>&1 || true
+            sleep 30
+      - name: Save the AVD
+        if: steps.avd.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ steps.sdk.outputs.avd-key }}
   run-compose-tests:
     permissions:
       actions: write
@@ -72,14 +135,15 @@ jobs:
     needs:
       - build-compose-apks
       - allure_testops_launch
-    if: ${{ needs.build-compose-apks.outputs.e2e_batches != '[]' }}
+      - android-avd
+    # Doesn't depend on android-avd succeeding: without a snapshot, a batch cold boots as before.
+    if: ${{ !cancelled() && needs.build-compose-apks.result == 'success' && needs.allure_testops_launch.result == 'success' && needs.build-compose-apks.outputs.e2e_batches != '[]' }}
     strategy:
       matrix:
         # Only the batches the tests this pull request can affect need, see the select_e2e_tests lane.
         batch: ${{ fromJson(needs.build-compose-apks.outputs.e2e_batches) }}
       fail-fast: false
     env:
-      ANDROID_API_LEVEL: ${{ inputs.api_level || '36' }}
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -94,15 +158,37 @@ jobs:
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
+      # The key comes from this runner's own installs: if the emulator was updated since android-avd
+      # ran, the lookup misses and the batch cold boots instead of loading a stale snapshot.
+      - uses: ./.github/actions/android-sdk-packages
+        id: sdk
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: ${{ env.ANDROID_TARGET }}
+          profile: ${{ env.ANDROID_PROFILE }}
+          cores: ${{ env.ANDROID_CORES }}
+          emulator-options: ${{ env.ANDROID_EMULATOR_OPTIONS }}
+      - name: Restore the AVD
+        id: avd
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ steps.sdk.outputs.avd-key }}
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         timeout-minutes: 45
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: ${{ env.ANDROID_TARGET }}
           disable-animations: true
-          profile: pixel
+          profile: ${{ env.ANDROID_PROFILE }}
+          cores: ${{ env.ANDROID_CORES }}
           arch : x86_64
-          emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
+          # Reuses a restored AVD and its snapshot; creates one when there is none.
+          force-avd-creation: ${{ steps.avd.outputs.cache-hit != 'true' }}
+          emulator-options: -no-snapshot-save ${{ env.ANDROID_EMULATOR_OPTIONS }}
           script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }} mock_server_branch:${{ inputs.mock_server_branch }} ${{ inputs.test_class && format('test_class:{0}', inputs.test_class) || '' }}
       - name: Allure TestOps Upload
         if: ${{ env.LAUNCH_ID != '' && (success() || failure()) }}
