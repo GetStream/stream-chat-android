@@ -18,18 +18,23 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.sche
 
 import io.getstream.chat.android.client.persistance.repository.ScheduledMessageRepository
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
 /**
- * [ScheduledMessageRepository] that keeps the scheduled messages in the database.
+ * [ScheduledMessageRepository] that keeps the scheduled messages in the database. The message a scheduled message
+ * quotes is not kept with it: it is read from the messages saved on this device.
+ *
+ * @param getMessage Function returning the saved [Message] with a given ID, if any.
  */
 internal class DatabaseScheduledMessageRepository(
     private val scheduledMessageDao: ScheduledMessageDao,
     private val getUser: suspend (userId: String) -> User,
+    private val getMessage: suspend (messageId: String) -> Message?,
 ) : ScheduledMessageRepository {
 
     override suspend fun selectScheduledMessages(): List<LocalScheduledMessage> =
-        scheduledMessageDao.selectAll().map { it.toModel(getUser) }
+        scheduledMessageDao.selectAll().map { it.toModel(getUser, getMessage) }
 
     override suspend fun insertScheduledMessage(message: LocalScheduledMessage) {
         scheduledMessageDao.insert(message.toEntity())

@@ -31,9 +31,11 @@ import java.util.Date
  * null.
  * @property message The content that will be sent. It is not in the messages of the channel until it is sent, and has
  * no reactions, replies or read state. Its [Message.createdAt] is [scheduledAt], so it can be shown like any other
- * message, and its [Message.updatedAt] is the one of the scheduled message. The mentioned users and groups, the
- * quoted message and the poll come as IDs only: in [Message.mentionedUsersIds], [Message.mentionedGroups] (without
- * names), [Message.replyMessageId] and the `poll_id` of [Message.extraData].
+ * message, and its [Message.updatedAt] is the one of the scheduled message. The mentioned users and groups and the
+ * poll come as IDs only: in [Message.mentionedUsersIds], [Message.mentionedGroups] (without names) and the `poll_id`
+ * of [Message.extraData]. The quoted message has its ID in [Message.replyMessageId], and is in [Message.replyTo] as
+ * last known on this device. It is null when the server did not send it (for example, it is gone or the user can't
+ * see it) and this device does not know it.
  * @property scheduledAt The date when the server sends the message.
  * @property status Where the scheduled message is, from scheduling until it is sent.
  * @property failure Why the message could not be scheduled or sent, or null when nothing failed.

@@ -87,6 +87,7 @@ internal class ScheduledMessageListControllerTest {
     private lateinit var connectionState: MutableStateFlow<ConnectionState>
     private lateinit var client: ChatClient
     private lateinit var quotedMessages: MutableMap<String, Message>
+    private lateinit var loadedMessageIds: MutableList<String>
     private val savedUsers = mutableListOf<User>()
     private val repository: RepositoryFacade = mock {
         onBlocking { selectUsers(any()) } doSuspendableAnswer { invocation ->
@@ -102,6 +103,7 @@ internal class ScheduledMessageListControllerTest {
         deletedAlreadySent = MutableSharedFlow()
         connectionState = MutableStateFlow(ConnectionState.Connected)
         quotedMessages = mutableMapOf()
+        loadedMessageIds = mutableListOf()
         val state: ClientState = mock {
             on { connectionState } doReturn connectionState
         }
@@ -178,16 +180,41 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
+    fun `a message shows the quote it comes with, without loading it`() = runTest {
+        val quoted = randomMessage(deletedAt = null)
+        quotedMessages[quoted.id] = quoted.copy(text = randomString())
+        scheduledMessages.value = listOf(scheduled(replyTo = quoted))
+
+        val item = controller().state.value.items.single()
+
+        item.quotedMessage shouldBeEqualTo quoted
+        item.isQuoteDeleted shouldBeEqualTo false
+        loadedMessageIds shouldBeEqualTo emptyList()
+    }
+
+    @Test
     fun `a message that quotes a deleted message can only be edited or deleted`() = runTest {
         val quoted = randomMessage(deletedAt = Date())
-        quotedMessages[quoted.id] = quoted
-        scheduledMessages.value = listOf(scheduled(replyMessageId = quoted.id))
+        scheduledMessages.value = listOf(scheduled(replyTo = quoted))
 
         val item = controller().state.value.items.single()
 
         item.quotedMessage shouldBeEqualTo quoted
         item.isQuoteDeleted shouldBeEqualTo true
         item.actions shouldBeEqualTo listOf(Edit, Delete)
+    }
+
+    @Test
+    fun `a message whose quote did not come with it shows no quote`() = runTest {
+        val quoted = randomMessage(deletedAt = Date())
+        quotedMessages[quoted.id] = quoted
+        scheduledMessages.value = listOf(scheduled(replyMessageId = quoted.id))
+
+        val item = controller().state.value.items.single()
+
+        item.quotedMessage shouldBeEqualTo null
+        item.actions shouldBeEqualTo listOf(Edit, Reschedule, SendNow, Delete)
+        loadedMessageIds shouldBeEqualTo emptyList()
     }
 
     @Test
@@ -439,8 +466,7 @@ internal class ScheduledMessageListControllerTest {
     fun `a send now refused for a deleted quote shows the deleted quote`() = runTest {
         hasLoadedAll.value = true
         val quoted = randomMessage(deletedAt = null)
-        quotedMessages[quoted.id] = quoted
-        val scheduledMessage = scheduled(replyMessageId = quoted.id)
+        val scheduledMessage = scheduled(replyTo = quoted)
         scheduledMessages.value = listOf(scheduledMessage)
         whenever(client.sendScheduledMessageNow(scheduledMessage.id)) doReturn
             Error.GenericError(randomString()).asCall()
@@ -454,6 +480,25 @@ internal class ScheduledMessageListControllerTest {
             expectNoEvents()
         }
         controller.state.value.items.single().isQuoteDeleted shouldBeEqualTo true
+    }
+
+    @Test
+    fun `an action refused while the quote is not deleted keeps the quote of the message`() = runTest {
+        hasLoadedAll.value = true
+        val quoted = randomMessage(deletedAt = null)
+        quotedMessages[quoted.id] = quoted.copy(text = randomString())
+        val scheduledMessage = scheduled(replyTo = quoted)
+        val error = Error.GenericError(randomString())
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.sendScheduledMessageNow(scheduledMessage.id)) doReturn error.asCall()
+        val controller = controller()
+
+        controller.events.test {
+            controller.sendNow(scheduledMessage.id)
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.ActionFailed(error)
+        }
+        controller.state.value.items.single().quotedMessage shouldBeEqualTo quoted
     }
 
     @Test
@@ -790,7 +835,10 @@ internal class ScheduledMessageListControllerTest {
     private fun controller(cid: String? = null) = ScheduledMessageListController(
         cid = cid,
         chatClient = client,
-        getMessage = { id -> quotedMessages[id]?.asCall() ?: Error.GenericError(id).asCall() },
+        getMessage = { id ->
+            loadedMessageIds += id
+            quotedMessages[id]?.asCall() ?: Error.GenericError(id).asCall()
+        },
     )
 
     private fun ScheduledMessage.actions() = scheduledMessageActions(isQuoteDeleted = false)
@@ -805,7 +853,8 @@ internal class ScheduledMessageListControllerTest {
         status: ScheduledMessageStatus = ScheduledMessageStatus.Scheduled,
         text: String = randomString(),
         parentId: String? = null,
-        replyMessageId: String? = null,
+        replyTo: Message? = null,
+        replyMessageId: String? = replyTo?.id,
         attachments: List<Attachment> = emptyList(),
         mentionedUsersIds: List<String> = emptyList(),
     ): ScheduledMessage {
@@ -818,6 +867,7 @@ internal class ScheduledMessageListControllerTest {
                 cid = cid,
                 text = text,
                 parentId = parentId,
+                replyTo = replyTo,
                 replyMessageId = replyMessageId,
                 attachments = attachments,
                 mentionedUsers = emptyList(),

@@ -226,13 +226,15 @@ internal class ScheduledMessageSender(
 
     /**
      * Saves the answer of the server to the changes in [sent]. When the message changed while they were sent, the
-     * changes stay pending, now as an update.
+     * changes stay pending, now as an update. A change of its quote only is not a change of the message: the server
+     * answers with its own quote.
      */
     private suspend fun saveSent(sent: LocalScheduledMessage, server: ScheduledMessage) {
         store.update(sent.id) { current ->
             when {
                 current == null -> null
-                current.message == sent.message && current.scheduledAt == sent.scheduledAt ->
+                current.message.copy(replyTo = null) == sent.message.copy(replyTo = null) &&
+                    current.scheduledAt == sent.scheduledAt ->
                     current.copy(pendingChange = null, hasPendingScheduledAt = false).mergeServer(server)
                 else -> current.copy(
                     pendingChange = PendingChange.Update,

@@ -72,8 +72,8 @@ import kotlinx.coroutines.channels.Channel as EventChannel
  * @param chatClient The [ChatClient] holding the scheduled messages.
  * @param scope The [CoroutineScope] the controller's work runs under, in a child scope that [close] cancels. The given
  * scope itself is never cancelled.
- * @param getMessage Loads a message by its ID, from the local cache first, for the messages the scheduled messages
- * quote.
+ * @param getMessage Loads a message by its ID, from the local cache first, to tell whether the message a scheduled
+ * message quotes was deleted, once an action on it is refused.
  */
 @InternalStreamChatApi
 public class ScheduledMessageListController(
@@ -90,7 +90,10 @@ public class ScheduledMessageListController(
     // none, also once the connection is lost.
     private val hasLoaded = MutableStateFlow(cid == null && chatClient.hasLoadedAllScheduledMessages.value)
     private val channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
-    private val quotedMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
+
+    // The quoted messages found deleted after an action was refused because of them. The scheduled messages may not
+    // say so yet.
+    private val deletedQuotes = MutableStateFlow<Map<String, Message>>(emptyMap())
 
     // The messages deleted from this list, which leave it as asked, not as gone.
     private val deletedIds = mutableSetOf<String>()
@@ -115,13 +118,13 @@ public class ScheduledMessageListController(
             isLoadFailed || connectionState is ConnectionState.Offline
         },
         channels,
-        quotedMessages,
-    ) { scheduledMessages, isKnown, cannotLoad, channels, quotedMessages ->
+        deletedQuotes,
+    ) { scheduledMessages, isKnown, cannotLoad, channels, deletedQuotes ->
         val isUnknown = scheduledMessages.isEmpty() && !isKnown
         ScheduledMessageListState(
             items = scheduledMessages
                 .sortedWith(compareBy(ScheduledMessage::scheduledAt).thenBy { it.message.text })
-                .map { scheduledMessage -> scheduledMessage.toItemState(channels, quotedMessages) },
+                .map { scheduledMessage -> scheduledMessage.toItemState(channels, deletedQuotes) },
             isLoading = isUnknown && !cannotLoad,
             isLoadFailed = isUnknown && cannotLoad,
         )
@@ -144,12 +147,6 @@ public class ScheduledMessageListController(
                 .map { scheduledMessages -> scheduledMessages.map(ScheduledMessage::cid).toSet() }
                 .distinctUntilChanged()
                 .collect { cids -> loadChannels(cids - channels.value.keys) }
-        }
-        ownScope.launch {
-            scheduledMessages
-                .map { scheduledMessages -> scheduledMessages.mapNotNull { it.message.replyMessageId }.toSet() }
-                .distinctUntilChanged()
-                .collect { ids -> (ids - quotedMessages.value.keys).forEach { id -> launch { loadQuotedMessage(id) } } }
         }
         ownScope.launch {
             chatClient.deletedScheduledMessagesAlreadySent
@@ -370,8 +367,8 @@ public class ScheduledMessageListController(
         val scheduledMessage = chatClient.scheduledMessages.value.find { it.id == id }
         when {
             scheduledMessage == null -> _events.send(ScheduledMessageListEvent.MessageGone)
-            // The device refuses a quote of a deleted message: once the quote is loaded again, the row says so.
-            replyMessageId != null && loadQuotedMessage(replyMessageId)?.deletedAt != null -> Unit
+            // The device refuses a quote of a deleted message: once the deleted quote is loaded, the row says so.
+            replyMessageId != null && loadDeletedQuote(replyMessageId) -> Unit
             else -> _events.send(ScheduledMessageListEvent.ActionFailed(error))
         }
     }
@@ -411,20 +408,21 @@ public class ScheduledMessageListController(
     }
 
     /**
-     * Loads the message with [id] that a scheduled message quotes, for its author and to tell whether it was deleted:
-     * a scheduled message from the server has the ID of the quoted message only.
+     * Loads the message with [id] that a scheduled message quotes, and keeps it when it was deleted, which is final.
+     *
+     * @return Whether the quoted message was deleted.
      */
-    private suspend fun loadQuotedMessage(id: String): Message? {
-        val message = getMessage(id).await().getOrNull() ?: return null
-        quotedMessages.update { it + (id to message) }
-        return message
+    private suspend fun loadDeletedQuote(id: String): Boolean {
+        val message = getMessage(id).await().getOrNull()?.takeIf { it.deletedAt != null } ?: return false
+        deletedQuotes.update { it + (id to message) }
+        return true
     }
 
     private fun ScheduledMessage.toItemState(
         channels: Map<String, Channel>,
-        quotedMessages: Map<String, Message>,
+        deletedQuotes: Map<String, Message>,
     ): ScheduledMessageItemState {
-        val quotedMessage = message.replyMessageId?.let(quotedMessages::get) ?: message.replyTo
+        val quotedMessage = message.replyMessageId?.let(deletedQuotes::get) ?: message.replyTo
         return ScheduledMessageItemState(
             scheduledMessage = this,
             channel = channels[cid],

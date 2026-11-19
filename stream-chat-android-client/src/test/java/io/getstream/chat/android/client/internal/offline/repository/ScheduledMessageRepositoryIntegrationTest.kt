@@ -136,6 +136,37 @@ internal class ScheduledMessageRepositoryIntegrationTest : BaseDomainTest2() {
     }
 
     @Test
+    fun `the quote reads back from the messages saved on this device`() = runTest {
+        val quoted = data.message1.copy(deletedAt = Date())
+        repos.insertMessage(quoted)
+        val scheduledMessage = fullScheduledMessage().let {
+            it.copy(message = it.message.copy(replyMessageId = quoted.id, replyTo = quoted))
+        }
+
+        repository.insertScheduledMessage(scheduledMessage)
+
+        val message = repository.selectScheduledMessages().single().message
+        message.replyMessageId shouldBeEqualTo quoted.id
+        message.replyTo?.id shouldBeEqualTo quoted.id
+        message.replyTo?.text shouldBeEqualTo quoted.text
+        message.replyTo?.deletedAt shouldBeEqualTo quoted.deletedAt
+    }
+
+    @Test
+    fun `a quote not saved on this device reads back as its id only`() = runTest {
+        val quoted = data.message1
+        val scheduledMessage = fullScheduledMessage().let {
+            it.copy(message = it.message.copy(replyMessageId = quoted.id, replyTo = quoted))
+        }
+
+        repository.insertScheduledMessage(scheduledMessage)
+
+        val message = repository.selectScheduledMessages().single().message
+        message.replyMessageId shouldBeEqualTo quoted.id
+        message.replyTo.shouldBeNull()
+    }
+
+    @Test
     fun `a scheduled message never reaches the messages of the channels`() = runTest {
         val scheduledMessage = fullScheduledMessage(pendingChange = PendingChange.Create)
 
