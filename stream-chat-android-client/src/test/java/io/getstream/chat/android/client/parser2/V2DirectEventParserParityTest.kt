@@ -67,6 +67,15 @@ internal class V2DirectEventParserParityTest {
     }
 
     @Test
+    fun `Both paths read the restricted visibility`() {
+        val frame = event(message = richMessage).toJson()
+
+        listOf(direct.parse(frame), generated.parse(frame)).forEach { event ->
+            (event as NewMessageEvent).message.restrictedVisibility shouldBeEqualTo listOf(ME)
+        }
+    }
+
+    @Test
     fun `With the fast path set, the v2 parser reads message_new through it`() {
         val tagging = DirectEventParser({ it.copy(text = "fast path") }, NoOpUserTransformer, mapping)
 
