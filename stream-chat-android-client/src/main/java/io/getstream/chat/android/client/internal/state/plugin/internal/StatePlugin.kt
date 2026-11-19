@@ -139,7 +139,7 @@ public class StatePlugin internal constructor(
     DeleteMessageForMeListener by DeleteMessageForMeListenerState(logic, clientState),
     SendGiphyListener by SendGiphyListenerState(logic),
     ShuffleGiphyListener by ShuffleGiphyListenerState(logic),
-    SendMessageListener by SendMessageListenerState(logic),
+    SendMessageListener by SendMessageListenerState(logic, clientState),
     TypingEventListener by TypingEventListenerState(logic),
     SendAttachmentListener by SendAttachmentListenerState(logic),
     FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, mutableGlobalState),

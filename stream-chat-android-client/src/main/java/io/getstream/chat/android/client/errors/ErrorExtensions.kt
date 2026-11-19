@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.errors
 
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
@@ -53,6 +54,18 @@ internal fun Error.isMessageGoneError(): Boolean =
  */
 internal fun Error.deleteFailureSyncStatus(): SyncStatus =
     if (isMessageGoneError()) SyncStatus.COMPLETED else SyncStatus.SYNC_NEEDED
+
+/**
+ * The [SyncStatus] of a send that failed with this error. A temporary error stays [SyncStatus.SYNC_NEEDED] while the
+ * socket is disconnected or the network is lost, since the sync retries it when the socket connects again. Otherwise
+ * nothing retries it, so it is [SyncStatus.FAILED_PERMANENTLY] and can be resent.
+ */
+internal fun Error.sendFailureSyncStatus(clientState: ClientState): SyncStatus =
+    if (isPermanent() || (clientState.isOnline && clientState.isNetworkAvailable)) {
+        SyncStatus.FAILED_PERMANENTLY
+    } else {
+        SyncStatus.SYNC_NEEDED
+    }
 
 /** The scheduled message rejections by their backend error code. */
 @Suppress("MagicNumber") // The numbers are the backend codes, listed once here.

@@ -17,10 +17,11 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.isDuplicateMessageError
-import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.errors.sendFailureSyncStatus
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.log.StreamLog
@@ -33,7 +34,10 @@ private const val TAG = "Chat:SendMessageHandler"
 /**
  * Implementation of [SendMessageListener] that deals with updates of state of the SDK.
  */
-internal class SendMessageListenerState(private val logic: LogicRegistry) : SendMessageListener {
+internal class SendMessageListenerState(
+    private val logic: LogicRegistry,
+    private val clientState: ClientState,
+) : SendMessageListener {
 
     /**
      * Side effect to be invoked when the original request is completed with a response. This method updates the state
@@ -92,14 +96,10 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
         message: Message,
         error: Error,
     ) {
-        val isPermanentError = error.isPermanent()
-        StreamLog.w(TAG) { "[handleSendMessageFailure] isPermanentError: $isPermanentError" }
+        val syncStatus = error.sendFailureSyncStatus(clientState)
+        StreamLog.w(TAG) { "[handleSendMessageFailure] syncStatus: $syncStatus" }
         message.copy(
-            syncStatus = if (isPermanentError) {
-                SyncStatus.FAILED_PERMANENTLY
-            } else {
-                SyncStatus.SYNC_NEEDED
-            },
+            syncStatus = syncStatus,
             updatedLocallyAt = Date(),
         ).also(::updateState)
     }

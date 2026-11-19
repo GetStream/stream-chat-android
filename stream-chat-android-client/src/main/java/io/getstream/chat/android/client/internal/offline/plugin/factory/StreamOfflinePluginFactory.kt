@@ -162,8 +162,9 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
         )
 
         val sendMessageListener: SendMessageListener = SendMessageListenerDatabase(
-            repositoryFacade,
-            repositoryFacade,
+            userRepository = repositoryFacade,
+            messageRepository = repositoryFacade,
+            clientState = clientState,
         )
 
         val sendAttachmentListener: SendAttachmentListener = SendAttachmentsListenerDatabase(

@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsLogic
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -36,6 +37,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.net.SocketTimeoutException
 import java.util.Date
 
 internal class SendMessageListenerStateTest {
@@ -51,7 +53,13 @@ internal class SendMessageListenerStateTest {
         on(it.getMessageById(any())) doReturn null
     }
 
-    private val sendMessageListener = SendMessageListenerState(logicRegistry)
+    private val clientState: ClientState = mock {
+        on(it.isOnline) doReturn false
+        on(it.isNetworkAvailable) doReturn true
+    }
+    private val transportError = Error.NetworkError("timeout", -1, -1, SocketTimeoutException())
+
+    private val sendMessageListener = SendMessageListenerState(logicRegistry, clientState)
 
     @Test
     fun `when message is already in state, it should not be upserted again`() = runTest {
@@ -280,4 +288,40 @@ internal class SendMessageListenerStateTest {
             },
         )
     }
+
+    @Test
+    fun `when send fails with a transport error while offline, the message should stay pending`() = runTest {
+        val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.Failure(transportError),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(channelLogic).upsertMessage(
+            argThat { message -> message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED },
+        )
+    }
+
+    @Test
+    fun `when send fails with a transport error while online, the message should fail so it can be resent`() =
+        runTest {
+            whenever(clientState.isOnline) doReturn true
+            val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
+
+            sendMessageListener.onMessageSendResult(
+                result = Result.Failure(transportError),
+                channelType = randomString(),
+                channelId = randomString(),
+                message = testMessage,
+            )
+
+            verify(channelLogic).upsertMessage(
+                argThat { message ->
+                    message.id == testMessage.id && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
+                },
+            )
+        }
 }
