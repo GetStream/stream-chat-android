@@ -104,18 +104,23 @@ internal class ScheduledMessageSender(
 
     /**
      * Deletes [message] on the server, unless it is not there yet, then removes it. When the server can't delete it,
-     * the message shows again with the failure, and a resend deletes it again.
+     * the message shows again with the failure, and a resend deletes it again. When the server answers that it had
+     * already sent the message, or that it was deleted, it is only removed.
      */
     private suspend fun delete(message: LocalScheduledMessage): Boolean {
-        if (message.mayBeOnServer) {
+        val error = if (message.mayBeOnServer) {
             if (!clientState.isOnline) return false
-            val result = retryOnConflict { api.deleteScheduledMessage(message.id) }
-            if (result is Result.Failure && !result.value.isNotFound()) {
-                if (result.value.isWaitingForConnection()) return false
-                logger.e { "[delete] failed to delete ${message.id} on the server: ${result.value}" }
-                store.update(message.id) { it?.copy(localFailure = result.value.toScheduledMessageFailure()) }
-                return true
-            }
+            (retryOnConflict { api.deleteScheduledMessage(message.id) } as? Result.Failure)?.value
+        } else {
+            null
+        }
+        val reason = error?.scheduledMessageRejectionReason()
+        // A not found is gone too when the create of the message is in flight, as the server may not have it.
+        if (error != null && !error.isNotFound() && reason !in GONE_REASONS) {
+            if (error.isWaitingForConnection()) return false
+            logger.e { "[delete] failed to delete ${message.id} on the server: $error" }
+            store.update(message.id) { it?.copy(localFailure = error.toScheduledMessageFailure()) }
+            return true
         }
         store.update(message.id) { null }
         return true
@@ -248,12 +253,8 @@ internal class ScheduledMessageSender(
      * @return False when it waits for the connection.
      */
     private suspend fun onFailure(sent: LocalScheduledMessage, error: Error): Boolean {
-        val reason = error.scheduledMessageRejectionReason()
-        val isGone = reason == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent ||
-            reason == ServerRejectedScheduling.Reason.ScheduledMessageCanceled ||
-            (!sent.isLocalOnly && error.isNotFound())
         when {
-            isGone -> store.update(sent.id) { null }
+            error.isGone(sent) -> store.update(sent.id) { null }
             error.isWaitingForConnection() -> return false
             else -> store.update(sent.id) {
                 // A rejection means the server did not store a create.
@@ -263,6 +264,10 @@ internal class ScheduledMessageSender(
         }
         return true
     }
+
+    /** Whether the server no longer has the message [sent] the request for: it was sent or deleted. */
+    private fun Error.isGone(sent: LocalScheduledMessage): Boolean =
+        scheduledMessageRejectionReason() in GONE_REASONS || (!sent.isLocalOnly && isNotFound())
 
     private fun Error.isNotFound(): Boolean = (this as? Error.NetworkError)?.isStatusNotFound() == true
 
@@ -289,6 +294,12 @@ internal class ScheduledMessageSender(
     private fun LocalScheduledMessage.replaceAttachment(old: Attachment, new: Attachment): LocalScheduledMessage =
         copy(message = message.copy(attachments = message.attachments.map { if (it == old) new else it }))
 }
+
+/** The reasons the server rejects a request with when the scheduled message was already sent or deleted. */
+private val GONE_REASONS = setOf(
+    ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent,
+    ServerRejectedScheduling.Reason.ScheduledMessageCanceled,
+)
 
 /** The HTTP client error statuses. */
 @Suppress("MagicNumber") // The HTTP statuses, listed once here.

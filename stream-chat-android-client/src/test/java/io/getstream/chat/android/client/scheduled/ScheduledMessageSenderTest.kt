@@ -457,6 +457,21 @@ internal class ScheduledMessageSenderTest {
         fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = [123, 124])
+    fun `a delete answered as already sent or already deleted removes the message`(code: Int) = runTest {
+        val onServer = givenScheduledOnServer()
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Failure(serverError(code))))
+        start()
+
+        manager.delete(onServer.id)
+        runCurrent()
+
+        verify(api).deleteScheduledMessage(onServer.id)
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
     @Test
     fun `a delete answered with not found removes the message`() = runTest {
         val onServer = givenScheduledOnServer()
@@ -712,6 +727,21 @@ internal class ScheduledMessageSenderTest {
         fixture.manager.scheduledMessages.value.shouldBeEmpty()
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = [123, 124])
+    fun `an edit rejected as already sent or canceled drops the message`(code: Int) = runTest {
+        val onServer = givenScheduledOnServer()
+        whenever(api.updateScheduledMessage(any(), anyOrNull(), anyOrNull()))
+            .thenReturn(TestCall(Result.Failure(serverError(code))))
+        start()
+
+        manager.update(onServer.id, onServer.message.copy(text = randomString()), scheduledAt = null)
+        runCurrent()
+
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
     @Test
     fun `a reschedule sends the new date, and an edit alone sends no date`() = runTest {
         val onServer = givenScheduledOnServer()
@@ -756,6 +786,21 @@ internal class ScheduledMessageSenderTest {
         }
         status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Sending
         fixture.manager.scheduledMessages.value.single().failure.shouldBeNull()
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [123, 124])
+    fun `a send now rejected as already sent or canceled drops the message`(code: Int) = runTest {
+        val onServer = givenScheduledOnServer()
+        whenever(api.sendScheduledMessageNow(any())).thenReturn(TestCall(Result.Failure(serverError(code))))
+        start()
+
+        manager.sendNow(onServer.id)
+        runCurrent()
+
+        verify(api).sendScheduledMessageNow(onServer.id)
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
     }
 
     @Test
