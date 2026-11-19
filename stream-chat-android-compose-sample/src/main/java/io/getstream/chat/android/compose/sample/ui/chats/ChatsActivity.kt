@@ -693,6 +693,8 @@ private fun ThreePaneNavigator.navigateToScheduledMessages(channelId: String) {
             pane = ThreePaneRole.Info,
             arguments = InfoContentMode.ScheduledMessages(channelId),
         ),
+        // The banner stays visible next to the info pane, so another tap replaces the pane instead of stacking it.
+        popUpTo = ThreePaneRole.Detail,
     )
 }
 
