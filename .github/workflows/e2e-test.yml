@@ -26,10 +26,11 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # The emulator, shared by the snapshot job and the test batches. aosp_atd is the Automated Test
-  # Device image (API 30+): no apps or services a test doesn't need, so less post-boot CPU churn.
+  # The emulator, shared by the snapshot job and the test batches. Not the ATD image (aosp_atd), as
+  # in the React Native and Flutter SDKs: it ships without the system file picker, and the attachment,
+  # push notification and app-in-background tests fail on it (21 tests on API 36).
   ANDROID_API_LEVEL: ${{ inputs.api_level || '36' }}
-  ANDROID_TARGET: ${{ (inputs.api_level || '36') >= 30 && 'aosp_atd' || 'default' }}
+  ANDROID_TARGET: default
   ANDROID_PROFILE: pixel
   ANDROID_CORES: '4'
   # -no-metrics answers the metrics prompt a future emulator release will block on. The test
