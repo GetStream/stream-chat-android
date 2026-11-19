@@ -63,5 +63,5 @@ runs:
         revision() { sed -n 's/^Pkg\.Revision=//p' "$1" | tr -d '\r'; }
         emulator=$(revision "$ANDROID_HOME/emulator/source.properties")
         image=$(revision "$ANDROID_HOME/system-images/android-$API_LEVEL/$TARGET/x86_64/source.properties")
-        config=$(printf '%s|%s|%s' "$PROFILE" "$CORES" "$OPTIONS" | sha1sum | cut -c1-8)
+        config=$(printf '%s|%s|%s' "$PROFILE" "$CORES" "$OPTIONS" | sha256sum | cut -c1-8)
         echo "key=avd-$API_LEVEL-$TARGET-x86_64-emu$emulator-img$image-$config" >> "$GITHUB_OUTPUT"

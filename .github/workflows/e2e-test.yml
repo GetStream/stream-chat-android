@@ -103,7 +103,7 @@ jobs:
           lookup-only: true
       - name: Create the AVD and its snapshot
         if: steps.avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
           target: ${{ env.ANDROID_TARGET }}
@@ -184,7 +184,7 @@ jobs:
             ~/.android/adb*
           key: ${{ steps.sdk.outputs.avd-key }}
       - name: Run tests
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         timeout-minutes: 45
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
