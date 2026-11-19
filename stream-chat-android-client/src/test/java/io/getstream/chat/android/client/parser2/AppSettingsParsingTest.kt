@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.client.parser2
 
+import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.parser2.testdata.withoutKey
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -26,6 +28,7 @@ import io.getstream.chat.android.network.models.GetApplicationResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class AppSettingsParsingTest {
 
@@ -86,5 +89,10 @@ internal class AppSettingsParsingTest {
             AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
             appSettings.app.imageUploadConfig.sizeLimitInBytes,
         )
+    }
+
+    @Test
+    fun `app settings without defaults are rejected`() {
+        assertThrows<JsonDataException> { parse<GetApplicationResponse>(json.withoutKey("defaults")) }
     }
 }

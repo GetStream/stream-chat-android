@@ -222,6 +222,7 @@
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg"
           }
         },
+        "user_id": "count_dooku",
         "created_at": "2022-03-28T18:09:34.877085Z",
         "updated_at": "2022-03-28T18:09:34.877085Z",
         "banned": false,

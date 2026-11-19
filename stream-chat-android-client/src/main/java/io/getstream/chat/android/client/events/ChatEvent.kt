@@ -219,8 +219,8 @@ public data class ChannelUpdatedByUserEvent(
 /**
  * Triggered when a channel is made visible
  *
- * @property channel The channel. When the event is replayed by older backends after a reconnection, it carries only the
- * channel's type and id.
+ * @property channel The channel. When the event is replayed after a reconnection for a channel the user can't read,
+ * it carries only the channel's cid, type and id.
  */
 public data class ChannelVisibleEvent(
     override val type: String,

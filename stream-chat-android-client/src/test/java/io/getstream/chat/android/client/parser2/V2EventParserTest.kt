@@ -72,8 +72,6 @@ internal class V2EventParserTest {
 
     private fun sync(body: String): List<ChatEvent> = v2Parser.parseSyncEvents(Buffer().writeUtf8(body)).events
 
-    private fun synced(event: Map<String, Any?>): List<ChatEvent> = sync(mapOf("events" to listOf(event)).toJson())
-
     @Test
     fun `A new message parses to its domain event`() {
         v2 {
