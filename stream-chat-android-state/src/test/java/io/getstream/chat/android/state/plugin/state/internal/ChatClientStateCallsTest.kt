@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
@@ -28,20 +29,26 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
@@ -65,12 +72,14 @@ internal class ChatClientStateCallsTest {
     private lateinit var chatClientStateCalls: ChatClientStateCalls
 
     private val userFlow = MutableStateFlow<User?>(null)
+    private val initializationStateFlow = MutableStateFlow(InitializationState.COMPLETE)
     private val identifier = QueryChannelsIdentifier.Grouped("test-group")
 
     @BeforeEach
     fun setUp() {
         clientState = mock {
             on(it.user) doReturn userFlow
+            on(it.initializationState) doReturn initializationStateFlow
         }
         queryChannelsState = mock()
         stateRegistry = mock {
@@ -164,6 +173,150 @@ internal class ChatClientStateCallsTest {
         inOrder(channelState, chatClient) {
             verify(channelState).setLoadingIfEmpty()
             verify(chatClient).queryChannel(eq("messaging"), eq("123"), any(), any())
+        }
+    }
+
+    @Test
+    fun `awaitReplies is cancelled when the user disconnects before the state is resolved`() = runTest {
+        // Given - a disconnect marks the client uninitialized while the state is being resolved
+        userFlow.value = User(id = "test-user")
+        givenDisconnectOnResolution(number = 1)
+        whenever(chatClient.getReplies("parent-id", 30)) doReturn emptyList<Message>().asCall()
+
+        // When
+        val error = runCatching {
+            chatClientStateCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false)
+        }.exceptionOrNull()
+
+        // Then - the call ends as a cancellation and the shared scope survives
+        assertInstanceOf(CancellationException::class.java, error)
+        assertTrue(testCoroutines.scope.isActive)
+    }
+
+    @Test
+    fun `awaitReplies rethrows a state resolution failure while the client is initialized`() = runTest {
+        // Given - a misconfigured client without the state plugin
+        userFlow.value = User(id = "test-user")
+        whenever(chatClient.plugins) doReturn emptyList()
+        whenever(chatClient.getReplies("parent-id", 30)) doReturn emptyList<Message>().asCall()
+
+        // When
+        val error = runCatching {
+            chatClientStateCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false)
+        }.exceptionOrNull()
+
+        // Then - the exact class, since a CancellationException is also an IllegalStateException
+        assertEquals(IllegalStateException::class.java, error?.javaClass)
+    }
+
+    @Test
+    fun `initGroupedQueryChannelsState is cancelled when the user disconnects before the logic is resolved`() =
+        runTest {
+            // Given - the state resolves, then a disconnect starts before the logic lookup
+            userFlow.value = User(id = "test-user")
+            givenDisconnectOnResolution(number = 2)
+
+            // When
+            val error = runCatching {
+                chatClientStateCalls.initGroupedQueryChannelsState(identifier, ChatEventHandlerFactory(clientState))
+            }.exceptionOrNull()
+
+            // Then
+            assertInstanceOf(CancellationException::class.java, error)
+            verify(queryChannelsLogic, never()).loadOfflineGroupedChannels()
+        }
+
+    @Test
+    fun `awaitReplies made in a session is cancelled when the session ends before the state lookup`() = runTest {
+        // Given - calls made while connected, and a logout that completes while the replies load
+        userFlow.value = User(id = "test-user")
+        val sessionCalls = ChatClientStateCalls(chatClient, testCoroutines.scope)
+        whenever(chatClient.getReplies("parent-id", 30)) doAnswer {
+            initializationStateFlow.value = InitializationState.NOT_INITIALIZED
+            userFlow.value = null
+            emptyList<Message>().asCall()
+        }
+
+        // When
+        val error = runCatching {
+            sessionCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false)
+        }.exceptionOrNull()
+
+        // Then - the call ends instead of waiting for a later session, and no lookup runs
+        assertInstanceOf(CancellationException::class.java, error)
+        verify(chatClient, never()).awaitInitializationState(any())
+    }
+
+    @Test
+    fun `awaitReplies made in a session is cancelled when another user connects before the state lookup`() =
+        runTest {
+            // Given - calls made while connected, and a switch to another user while the replies load
+            userFlow.value = User(id = "test-user")
+            val sessionCalls = ChatClientStateCalls(chatClient, testCoroutines.scope)
+            whenever(chatClient.getReplies("parent-id", 30)) doAnswer {
+                userFlow.value = User(id = "other-user")
+                emptyList<Message>().asCall()
+            }
+
+            // When
+            val error = runCatching {
+                sessionCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false)
+            }.exceptionOrNull()
+
+            // Then - the other user's state is never returned
+            assertInstanceOf(CancellationException::class.java, error)
+            verify(stateRegistry, never()).thread(any())
+        }
+
+    @Test
+    fun `awaitReplies made while the user disconnects is cancelled`() = runTest {
+        // Given - a disconnect has marked the client uninitialized but not cleared the user yet
+        userFlow.value = User(id = "test-user")
+        initializationStateFlow.value = InitializationState.NOT_INITIALIZED
+        val teardownCalls = ChatClientStateCalls(chatClient, testCoroutines.scope)
+        whenever(chatClient.getReplies("parent-id", 30)) doReturn emptyList<Message>().asCall()
+
+        // When - another user connects before the state is needed
+        userFlow.value = User(id = "other-user")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val error = runCatching {
+            teardownCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false)
+        }.exceptionOrNull()
+
+        // Then
+        assertInstanceOf(CancellationException::class.java, error)
+        verify(stateRegistry, never()).thread(any())
+    }
+
+    @Test
+    fun `awaitReplies made before a session waits for it and resolves its state`() = runTest {
+        // Given - calls made before connectUser
+        initializationStateFlow.value = InitializationState.NOT_INITIALIZED
+        val preSessionCalls = ChatClientStateCalls(chatClient, testCoroutines.scope)
+        val threadState: ThreadState = mock()
+        whenever(stateRegistry.thread("parent-id")) doReturn threadState
+        whenever(chatClient.getReplies("parent-id", 30)) doReturn emptyList<Message>().asCall()
+        var result: ThreadState? = null
+
+        // When
+        val job = launch { result = preSessionCalls.awaitReplies("parent-id", messageLimit = 30, olderToNewer = false) }
+        advanceUntilIdle()
+
+        // Then - it waits until the user connects
+        assertEquals(null, result)
+        userFlow.value = User(id = "test-user")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        advanceUntilIdle()
+        assertEquals(threadState, result)
+        job.cancel()
+    }
+
+    private fun givenDisconnectOnResolution(number: Int) {
+        var resolutions = 0
+        whenever(chatClient.awaitInitializationState(any())) doAnswer {
+            resolutions++
+            if (resolutions == number) initializationStateFlow.value = InitializationState.NOT_INITIALIZED
+            initializationStateFlow.value
         }
     }
 }
