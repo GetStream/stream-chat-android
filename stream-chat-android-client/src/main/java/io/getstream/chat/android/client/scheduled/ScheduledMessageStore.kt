@@ -122,6 +122,11 @@ internal class ScheduledMessageStore {
         } else {
             saved.copy(
                 channel = channel ?: saved.channel,
+                // The saved quote is read from the messages saved on this device, which may not have it.
+                message = saved.message.copy(
+                    replyTo = saved.message.replyTo
+                        ?: message.replyTo?.takeIf { it.id == saved.message.replyMessageId },
+                ),
                 serverStatus = serverStatus,
                 publishingFailure = publishingFailure,
                 createdAt = createdAt,

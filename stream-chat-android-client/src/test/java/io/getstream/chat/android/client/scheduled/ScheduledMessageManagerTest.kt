@@ -617,6 +617,26 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `an event before the load keeps its quote when the saved message has none`() = runTest {
+        val quoted = randomMessage(cid = cid, deletedAt = null)
+        val saved = randomLocalScheduledMessage(cid = cid, pendingChange = LocalScheduledMessage.PendingChange.Update)
+        // The saved quote is read from the messages saved on the device, which may not have it.
+        val pendingEdit = saved.copy(message = saved.message.copy(replyMessageId = quoted.id, replyTo = null))
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(pendingEdit))
+        restarted.connectionState.value = ConnectionState.Offline
+        val fromEvent = randomScheduledMessage(id = pendingEdit.id, cid = cid).let {
+            it.copy(message = it.message.copy(replyMessageId = quoted.id, replyTo = quoted))
+        }
+
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(fromEvent))
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.manager.scheduledMessages.value.single().message
+        loaded.text shouldBeEqualTo pendingEdit.message.text
+        loaded.replyTo shouldBeEqualTo quoted
+    }
+
+    @Test
     fun `a message removed before the load stays removed`() = runTest {
         val saved = randomLocalScheduledMessage(cid = cid)
         val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(saved))
