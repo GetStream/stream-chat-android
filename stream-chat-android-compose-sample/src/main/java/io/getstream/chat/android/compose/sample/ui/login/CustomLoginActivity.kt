@@ -260,16 +260,10 @@ class CustomLoginActivity : AppCompatActivity() {
                                 settings.isMarkdownEnabled = it
                             },
                         ),
-                        // The adaptive layout has no scheduled messages yet.
                         FeatureFlag(
                             label = stringResource(R.string.custom_login_flag_scheduled_messages_label),
-                            description = if (isAdaptiveLayoutEnabled) {
-                                stringResource(R.string.custom_login_flag_scheduled_messages_adaptive_description)
-                            } else {
-                                stringResource(R.string.custom_login_flag_scheduled_messages_description)
-                            },
-                            value = isScheduledMessagesEnabled && !isAdaptiveLayoutEnabled,
-                            enabled = !isAdaptiveLayoutEnabled,
+                            description = stringResource(R.string.custom_login_flag_scheduled_messages_description),
+                            value = isScheduledMessagesEnabled,
                             onValueChange = {
                                 isScheduledMessagesEnabled = it
                                 settings.isScheduledMessagesEnabled = it
@@ -309,7 +303,6 @@ class CustomLoginActivity : AppCompatActivity() {
                             label = flag.label,
                             description = flag.description,
                             onValueChange = flag.onValueChange,
-                            enabled = flag.enabled,
                         )
                     }
 
@@ -423,7 +416,6 @@ class CustomLoginActivity : AppCompatActivity() {
         label: String,
         description: String,
         onValueChange: (Boolean) -> Unit,
-        enabled: Boolean = true,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -433,7 +425,6 @@ class CustomLoginActivity : AppCompatActivity() {
             Switch(
                 checked = value,
                 onCheckedChange = onValueChange,
-                enabled = enabled,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = ChatTheme.colors.accentPrimary,
                     checkedTrackColor = ChatTheme.colors.accentPrimary.copy(alpha = 0.5f),
@@ -485,7 +476,6 @@ class CustomLoginActivity : AppCompatActivity() {
         val description: String,
         val value: Boolean,
         val onValueChange: (Boolean) -> Unit,
-        val enabled: Boolean = true,
     )
 
     companion object {

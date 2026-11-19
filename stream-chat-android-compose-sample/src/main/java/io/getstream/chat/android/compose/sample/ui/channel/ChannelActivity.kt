@@ -86,7 +86,7 @@ class ChannelActivity : ComponentActivity() {
                 composer = ComposerConfig(
                     linkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
                     floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
-                    scheduledMessagesEnabled = settings.isScheduledMessagesShown,
+                    scheduledMessagesEnabled = settings.isScheduledMessagesEnabled,
                 ),
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
             ),
