@@ -319,6 +319,7 @@ internal class MessageMapperTest {
                 threadParticipantsIds = message.threadParticipants.map(User::id),
                 showInChannel = message.showInChannel,
                 silent = message.silent,
+                extraData = message.extraData,
                 pinned = message.pinned,
                 pinnedAt = message.pinnedAt,
                 pinExpires = message.pinExpires,

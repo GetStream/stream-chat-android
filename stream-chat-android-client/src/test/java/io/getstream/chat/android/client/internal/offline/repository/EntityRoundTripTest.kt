@@ -322,10 +322,7 @@ internal class EntityRoundTripTest {
                 model = MessageReceipt(messageId = "message", cid = "messaging:general", createdAt = date(1)),
             ) { it.toEntity().toModel() },
             RoundTrip(name = "query channels", model = queryChannels) { restoredQueryChannels(it) },
-            RoundTrip(
-                name = "sync state",
-                model = SyncState("alice", listOf("messaging:general"), date(1), "raw", date(2)),
-            ) { it.toEntity().toModel() },
+            RoundTrip(name = "sync state", model = syncState) { it.toEntity().toModel() },
         )
 
         @JvmStatic
@@ -356,6 +353,11 @@ internal class EntityRoundTripTest {
             Fixture(poll, blankPoll),
             Fixture(thread, blankThread),
             Fixture(queryChannels, QueryChannelsSpec(Filters.neutral(), QuerySortByField())),
+            Fixture(privacySettings, PrivacySettings()),
+            Fixture(TypingIndicators(enabled = false), TypingIndicators()),
+            Fixture(DeliveryReceipts(enabled = false), DeliveryReceipts()),
+            Fixture(ReadReceipts(enabled = false), ReadReceipts()),
+            Fixture(syncState, SyncState(userId = "")),
         )
 
         private val CHANNEL_FIELDS_NOT_STORED = setOf(
@@ -370,9 +372,8 @@ internal class EntityRoundTripTest {
         )
 
         private val QUOTED_MESSAGE_FIELDS_NOT_STORED = setOf(
-            "reactionCounts", "reactionScores", "reactionGroups", "latestReactions", "ownReactions", "extraData",
-            "replyTo", "replyMessageId", "skipPushNotification", "skipEnrichUrl", "moderation", "sharedLocation",
-            "deletedForMe",
+            "reactionCounts", "reactionScores", "reactionGroups", "latestReactions", "ownReactions", "replyTo",
+            "replyMessageId", "skipPushNotification", "skipEnrichUrl", "moderation", "sharedLocation", "deletedForMe",
         )
 
         // Only the content that can be scheduled is stored.
@@ -431,6 +432,8 @@ private val privacySettings = PrivacySettings(
     deliveryReceipts = DeliveryReceipts(enabled = false),
     readReceipts = ReadReceipts(enabled = false),
 )
+
+private val syncState = SyncState("alice", listOf("messaging:general"), date(1), "raw", date(2))
 
 private val pushPreference = PushPreference(
     level = PushPreferenceLevel.all,
