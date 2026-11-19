@@ -162,8 +162,9 @@ public class StatePlugin internal constructor(
     override fun onUserDisconnected() {
         stateRegistry.clear()
         logic.clear()
-        syncManager.stop()
+        // The handler first: stopping the sync ends the wait of its socket events, which must not be handled now.
         eventHandler.stopListening()
+        syncManager.stop()
     }
 
     @Suppress("UNCHECKED_CAST")

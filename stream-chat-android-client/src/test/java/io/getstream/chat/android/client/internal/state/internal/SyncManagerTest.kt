@@ -82,24 +82,36 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -112,6 +124,7 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
@@ -467,6 +480,172 @@ internal class SyncManagerTest {
         /* Then */
         assertEquals(previousSyncedAt, _syncState.value?.lastSyncedAt)
         verify(repositoryFacade, never()).insertSyncState(any())
+    }
+
+    @Test
+    fun `when the reconnect sync fails, nothing keeps waiting for it`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doThrow IllegalStateException("The database is closed")
+        val syncManager = buildSyncManager()
+
+        /* When */
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* Then */
+        withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+    }
+
+    @Test
+    fun `when the sync manager stops during the reconnect sync, nothing keeps waiting for it`() =
+        runTest(testDispatcher) {
+            /* Given */
+            whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            syncManager.stop()
+
+            /* Then */
+            withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+        }
+
+    @Test
+    fun `when a disconnect ends after a newer reconnect sync started, that sync keeps running and is awaited`() =
+        runTest(testDispatcher) {
+            /* Given */
+            _syncState.value = SyncState(userId = user.id)
+            val disconnectGate = CompletableDeferred<Unit>()
+            whenever(repositoryFacade.insertSyncState(any())) doSuspendableAnswer { disconnectGate.await() }
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            disconnectGate.complete(Unit)
+
+            /* Then */
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `the reconnect sync is awaited from the moment the connected event arrives`() = runTest(testDispatcher) {
+        /* Given */
+        val syncManager = buildSyncManager(scope = backgroundScope + StandardTestDispatcher(testScheduler))
+
+        /* When */
+        syncManager.onEvent(randomConnectedEvent())
+        val waiting = launch { syncManager.awaitSyncing() }
+
+        /* Then */
+        assertTrue(waiting.isActive)
+        waiting.cancel()
+    }
+
+    @Test
+    fun `when the sync manager stops before the reconnect sync starts, nothing keeps waiting for it`() =
+        runTest(testDispatcher) {
+            /* Given */
+            val syncManager = buildSyncManager(scope = backgroundScope + StandardTestDispatcher(testScheduler))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            syncManager.stop()
+
+            /* Then */
+            withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+        }
+
+    @Test
+    fun `when a requested sync ends during the reconnect sync, the reconnect sync is still awaited`() =
+        runTest(testDispatcher) {
+            /* Given */
+            _syncState.value = SyncState(userId = user.id)
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            runCatching { syncManager.sync() }
+
+            /* Then */
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `when a cancelled reconnect sync fails late, the newer one is still awaited`() = runTest(testDispatcher) {
+        /* Given */
+        val cancelledSyncGate = CompletableDeferred<Unit>()
+        var syncStateReads = 0
+        whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer {
+            if (syncStateReads++ > 0) awaitCancellation()
+            withContext(NonCancellable) { cancelledSyncGate.await() }
+            throw IllegalStateException("The database is closed")
+        }
+        val syncManager = buildSyncManager()
+        syncManager.onEvent(randomConnectedEvent())
+        syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* When */
+        cancelledSyncGate.complete(Unit)
+
+        /* Then */
+        assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+    }
+
+    @Test
+    fun `when a cancelled reconnect sync ends without failing, the newer one is still awaited`() =
+        runTest(testDispatcher) {
+            /* Given */
+            _syncState.value = SyncState(userId = user.id)
+            val cancelledSyncGate = CompletableDeferred<Unit>()
+            var reactionReads = 0
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer {
+                if (reactionReads++ > 0) awaitCancellation()
+                withContext(NonCancellable) { cancelledSyncGate.await() }
+                emptyList()
+            }
+            val syncManager = buildSyncManager(isAutomaticSyncOnReconnectEnabled = false)
+            syncManager.onEvent(randomConnectedEvent())
+            syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            cancelledSyncGate.complete(Unit)
+
+            /* Then */
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `when the reconnect sync is cancelled, the work that follows it is not started`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+        val pendingMessagePins = mock<PendingMessagePins>()
+        val syncManager = buildSyncManager(pendingMessagePins = pendingMessagePins)
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* When */
+        syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+
+        /* Then */
+        verify(pendingMessagePins, never()).sendPending()
+    }
+
+    @Test
+    fun `when a requested sync fails, nothing keeps waiting for it`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doThrow IllegalStateException("The database is closed")
+        val syncManager = buildSyncManager()
+
+        /* When */
+        val result = runCatching { syncManager.sync() }
+
+        /* Then */
+        assertInstanceOf(IllegalStateException::class.java, result.exceptionOrNull())
+        withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
     }
 
     @Test
@@ -3649,11 +3828,12 @@ internal class SyncManagerTest {
         syncMaxThreshold: TimeDuration = TimeDuration.seconds(5),
         eventReplayMaxCount: Int = 250,
         pendingMessagePins: PendingMessagePins? = null,
+        scope: CoroutineScope = backgroundScope,
     ): SyncManager {
         return SyncManager(
             eventReplayMaxCount = eventReplayMaxCount,
             currentUserId = user.id,
-            scope = backgroundScope,
+            scope = scope,
             logicRegistry = logicRegistry,
             stateRegistry = stateRegistry,
             repos = repositoryFacade,
@@ -3671,5 +3851,7 @@ internal class SyncManagerTest {
         )
     }
 }
+
+private const val AWAIT_SYNCING_TIMEOUT_MS = 1_000L
 
 private fun Result<List<ChatEvent>>.synced(): Result<SyncedEvents> = map { SyncedEvents(it) }
