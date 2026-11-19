@@ -33,11 +33,8 @@ internal data class MessageUpdatedEvent(
     @Json(name = "created_at")
     internal val createdAt: io.getstream.chat.android.network.infrastructure.ExactDate,
 
-    // Patched: the spec marks `message_id` required, but backends before v239.47.0 (CHA-3482, chat#17545) replay
-    // message.updated on /sync without it, and a parse failure fails the whole /sync response.
-    // On regen, make it required again only once every region runs v239.47.0 or later.
     @Json(name = "message_id")
-    internal val messageId: String? = null,
+    internal val messageId: String,
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),

@@ -82,7 +82,7 @@ internal class V2PayloadParsingTest {
         private val MESSAGE_NEW = """
             {
               "type": "message.new", "cid": "messaging:v2cap", "channel_id": "v2cap", "channel_type": "messaging",
-              "created_at": 1791538230621340904, "custom": {},
+              "created_at": 1791538230621340904, "custom": {}, "message_id": "v2cap-m1", "watcher_count": 1,
               "user": $USER,
               "message": {
                 "id": "v2cap-m1", "text": "v2 capture", "html": "<p>v2 capture</p>\n", "type": "regular",

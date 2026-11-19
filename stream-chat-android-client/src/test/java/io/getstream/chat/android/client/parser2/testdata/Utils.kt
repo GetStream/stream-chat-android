@@ -17,3 +17,6 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 internal fun String.withoutWhitespace() = filterNot(Char::isWhitespace)
+
+/** Renames [key] to an unknown one, so the generated adapter reads the field as absent. */
+internal fun String.withoutKey(key: String) = replace("\"$key\":", "\"_$key\":")

@@ -24,8 +24,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeInstanceOf
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -47,26 +45,6 @@ internal class GeneratedMessageEventParsingTest {
         event.createdAt.time shouldBeEqualTo CREATED_AT_MILLIS
     }
 
-    @Test
-    fun `A message deletion replayed without message_id and hard_delete maps to a soft delete`() {
-        val replayed = createMessageDeletedServerSideEventStringJson().without("message_id").without("hard_delete")
-
-        val event = parsed(replayed).shouldBeInstanceOf<MessageDeletedEvent>()
-
-        event.hardDelete shouldBeEqualTo false
-        event.user shouldBeEqualTo null
-        event shouldBeEqualTo parsed(createMessageDeletedServerSideEventStringJson()).let {
-            (it as MessageDeletedEvent).copy(hardDelete = false)
-        }
-    }
-
-    @Test
-    fun `A message update replayed without message_id maps like the full event`() {
-        val replayed = createMessageUpdatedEventStringJson().without("message_id")
-
-        parsed(replayed) shouldBeEqualTo parsed(createMessageUpdatedEventStringJson())
-    }
-
     @ParameterizedTest
     @MethodSource("missingRequiredFields")
     fun `A message event without a field the domain event requires is rejected`(json: String, field: String) {
@@ -74,8 +52,6 @@ internal class GeneratedMessageEventParsingTest {
             parser.fromJson(json.without(field), ChatEvent::class.java)
         }
     }
-
-    private fun parsed(json: String): ChatEvent = parser.fromJson(json, ChatEvent::class.java)
 
     private fun String.withNanosecondCreatedAt() =
         replaceFirst(""""created_at": "2020-06-29T06:14:28.000Z"""", """"created_at": "$NANOSECOND_CREATED_AT"""")
@@ -98,9 +74,9 @@ internal class GeneratedMessageEventParsingTest {
 
         @JvmStatic
         fun missingRequiredFields(): List<Arguments> =
-            listOf("cid", "user", "message", "created_at")
+            listOf("cid", "user", "message", "created_at", "message_id")
                 .map { Arguments.of(createMessageUpdatedEventStringJson(), it) } +
-                listOf("cid", "message", "created_at")
+                listOf("cid", "message", "created_at", "message_id", "hard_delete")
                     .map { Arguments.of(createMessageDeletedEventStringJson(), it) }
     }
 }

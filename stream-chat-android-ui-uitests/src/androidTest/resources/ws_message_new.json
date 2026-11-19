@@ -55,5 +55,6 @@
     "mentioned_here": false
   },
   "type": "message.new",
+  "message_id": ":messageId",
   "cid": "messaging:general"
 }

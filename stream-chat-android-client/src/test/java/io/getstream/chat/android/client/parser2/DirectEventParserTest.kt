@@ -160,6 +160,7 @@ internal class DirectEventParserTest {
         /** A v2 `message.new` frame, as the socket delivers it. */
         private const val MESSAGE_NEW = """{"type":"message.new","created_at":1791976405614650759,
             "cid":"messaging:general","channel_type":"messaging","channel_id":"general","custom":{},"user":$USER,
+            "message_id":"m1","watcher_count":1,
             "message":{"id":"m1","text":"hi","html":"<p>hi</p>","type":"regular","cid":"messaging:general",
             "user":$USER,"created_at":1791976405614650759,"updated_at":1791976405614650759,"reply_count":0,
             "deleted_reply_count":0,"mentioned_channel":false,"mentioned_here":false,"pinned":false,"shadowed":false,

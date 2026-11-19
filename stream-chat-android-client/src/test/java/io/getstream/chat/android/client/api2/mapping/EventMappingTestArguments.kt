@@ -232,10 +232,8 @@ internal object EventMappingTestArguments {
         groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    // As /sync replays it: no message id, watcher count, unread counts or channel custom data.
+    // As /sync replays it: no unread counts or channel custom data.
     private val newMessageReplayDto = newMessageEvent.copy(
-        messageId = null,
-        watcherCount = null,
         totalUnreadCount = null,
         unreadChannels = null,
         channelCustom = null,
@@ -272,9 +270,6 @@ internal object EventMappingTestArguments {
         channel = GENERATED_CHANNEL,
         clearHistory = CLEAR_HISTORY,
     )
-
-    // As /sync replays it on backends before v239.47.0: no clear_history.
-    private val channelHiddenWithoutClearHistoryDto = channelHiddenEvent.copy(clearHistory = null)
 
     private val channelTruncatedEvent = GeneratedChannelTruncatedEvent(
         type = EventType.CHANNEL_TRUNCATED,
@@ -327,8 +322,6 @@ internal object EventMappingTestArguments {
         channel = GENERATED_CHANNEL,
         user = COMMON_USER,
     )
-
-    private val channelVisibleWithoutChannelDto = channelVisibleEvent.copy(channel = null)
 
     private val connectedEvent = GeneratedConnectedEvent(
         connectionId = CONNECTION_ID,
@@ -407,9 +400,8 @@ internal object EventMappingTestArguments {
         channelMessageCount = CHANNEL_MESSAGE_COUNT,
     )
 
-    // As /sync replays a server-side delete: no user, message id or hard delete flag.
-    private val messageDeletedReplayDto =
-        messageDeletedEvent.copy(user = null, messageId = null, hardDelete = null, deletedForMe = null)
+    // As /sync replays a server-side delete: no user or deleted_for_me flag.
+    private val messageDeletedReplayDto = messageDeletedEvent.copy(user = null, deletedForMe = null)
 
     private val messageDeliveredEvent = GeneratedMessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
@@ -863,7 +855,6 @@ internal object EventMappingTestArguments {
         message = with(domainMapping) {
             GENERATED_MESSAGE.toDomain(newMessageChannelInfo.copy(name = null, image = null))
         },
-        watcherCount = 0,
         totalUnreadCount = 0,
         unreadChannels = 0,
         groupedUnreadChannels = null,
@@ -905,8 +896,6 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
         clearHistory = CLEAR_HISTORY,
     )
-
-    private val channelHiddenWithoutClearHistory = channelHidden.copy(clearHistory = false)
 
     private val channelTruncated = ChannelTruncatedEvent(
         type = channelTruncatedEvent.type,
@@ -974,10 +963,6 @@ internal object EventMappingTestArguments {
         channelType = CHANNEL_TYPE,
         channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
         channelId = CHANNEL_ID,
-    )
-
-    private val channelVisibleWithoutChannel = channelVisible.copy(
-        channel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE),
     )
 
     private val connected = ConnectedEvent(
@@ -1068,7 +1053,7 @@ internal object EventMappingTestArguments {
         deletedForMe = DELETED_FOR_ME,
     )
 
-    private val messageDeletedReplay = messageDeleted.copy(user = null, hardDelete = false, deletedForMe = false)
+    private val messageDeletedReplay = messageDeleted.copy(user = null, deletedForMe = false)
 
     private val messageDelivered = MessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
@@ -1592,14 +1577,12 @@ internal object EventMappingTestArguments {
         Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
         Arguments.of(channelDeletedEvent, channelDeleted),
         Arguments.of(channelHiddenEvent, channelHidden),
-        Arguments.of(channelHiddenWithoutClearHistoryDto, channelHiddenWithoutClearHistory),
         Arguments.of(channelTruncatedEvent, channelTruncated),
         Arguments.of(channelUpdatedByUserEvent, channelUpdatedByUser),
         Arguments.of(channelUpdatedEvent, channelUpdated),
         Arguments.of(channelUserBannedEvent, channelUserBanned),
         Arguments.of(channelUserUnbannedEvent, channelUserUnbanned),
         Arguments.of(channelVisibleEvent, channelVisible),
-        Arguments.of(channelVisibleWithoutChannelDto, channelVisibleWithoutChannel),
         Arguments.of(connectedEvent, connected),
         Arguments.of(globalUserBannedEvent, globalUserBanned),
         Arguments.of(globalUserUnbannedEvent, globalUserUnbanned),
