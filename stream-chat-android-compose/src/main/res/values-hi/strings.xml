@@ -434,6 +434,7 @@
   <string name="stream_compose_scheduled_message_list_uploading">"अपलोड हो रहा है…"</string>
   <string name="stream_compose_scheduled_message_list_still_sending">"अभी भेजा जा रहा है। थोड़ी देर में फिर से कोशिश करें।"</string>
   <string name="stream_compose_scheduled_message_list_gone">"पहले ही भेजा जा चुका है या किसी दूसरे डिवाइस पर हटा दिया गया है"</string>
+  <string name="stream_compose_scheduled_message_list_deleted_already_sent">"पहले ही भेजा जा चुका है। अब यह चैनल में है।"</string>
   <string name="stream_compose_scheduled_message_list_action_failed">"शेड्यूल किया गया मैसेज बदला नहीं जा सका। फिर से कोशिश करें।"</string>
   <string name="stream_compose_scheduled_message_list_thread_reply">"थ्रेड जवाब:"</string>
   <string name="stream_compose_scheduled_message_list_reply_to">"%1$s को जवाब:"</string>

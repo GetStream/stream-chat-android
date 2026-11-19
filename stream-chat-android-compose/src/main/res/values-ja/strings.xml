@@ -415,6 +415,7 @@
   <string name="stream_compose_scheduled_message_list_uploading">"アップロード中…"</string>
   <string name="stream_compose_scheduled_message_list_still_sending">"送信中です。しばらくしてからもう一度お試しください。"</string>
   <string name="stream_compose_scheduled_message_list_gone">"送信済み、または別のデバイスで削除されています"</string>
+  <string name="stream_compose_scheduled_message_list_deleted_already_sent">"送信済みです。チャンネルに表示されています。"</string>
   <string name="stream_compose_scheduled_message_list_action_failed">"予約メッセージを変更できませんでした。もう一度お試しください。"</string>
   <string name="stream_compose_scheduled_message_list_thread_reply">"スレッドへの返信:"</string>
   <string name="stream_compose_scheduled_message_list_reply_to">"%1$sへの返信:"</string>

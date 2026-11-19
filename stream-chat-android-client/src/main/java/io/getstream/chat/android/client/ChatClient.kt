@@ -5413,6 +5413,17 @@ internal constructor(
         get() = scheduledMessageManager.hasLoadedAll
 
     /**
+     * Emits a scheduled message deleted with [deleteScheduledMessage] that the server had already sent, so it is in
+     * its channel. It is emitted once the server answers the delete, after the message is removed from
+     * [scheduledMessages], and only to the collectors at that time. A server that does not tell an already sent
+     * message apart from one deleted on another device emits nothing. A delete of a message this device does not know
+     * emits nothing either: its call fails with the answer of the server.
+     */
+    @InternalStreamChatApi
+    public val deletedScheduledMessagesAlreadySent: Flow<ScheduledMessage>
+        get() = scheduledMessageManager.deletedAlreadySent
+
+    /**
      * The current user's scheduled messages in a channel or a thread, from [scheduledMessages].
      *
      * @param cid The channel of the scheduled messages in the format `type:id`.
@@ -5558,7 +5569,8 @@ internal constructor(
      * leaves [scheduledMessages] right away, and is deleted on the server once the device is online. A message that is
      * not on the server yet is only deleted locally, and deleted on the server too if its scheduling is in flight. If
      * the server can't delete it, the message comes back in [scheduledMessages] with a [ScheduledMessage.failure], and
-     * [resendScheduledMessage] or another delete deletes it again.
+     * [resendScheduledMessage] or another delete deletes it again. When the server had already sent it, or it was
+     * deleted on another device, it is only removed.
      *
      * @param id The ID of the scheduled message.
      *

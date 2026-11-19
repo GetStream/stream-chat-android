@@ -234,6 +234,10 @@ private fun ScheduledMessageListEvents(
                     context.getString(R.string.stream_compose_scheduled_message_list_gone),
                     StreamSnackbarVariant.Default,
                 )
+                is ScheduledMessageListEvent.DeletedMessageAlreadySent -> showSnackbar(
+                    context.getString(R.string.stream_compose_scheduled_message_list_deleted_already_sent),
+                    StreamSnackbarVariant.Default,
+                )
                 is ScheduledMessageListEvent.SendNowQueued -> showSnackbar(
                     context.getString(R.string.stream_compose_scheduled_message_list_send_now_queued),
                     StreamSnackbarVariant.Default,

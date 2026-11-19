@@ -199,6 +199,12 @@ class ScheduledMessagesPage {
             val gone
                 get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_gone))
 
+            /** Shown when a message the user deleted had already been sent. */
+            val deletedAlreadySent
+                get() = By.text(
+                    appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_deleted_already_sent),
+                )
+
             /** Shown when the user sends a message now while offline. */
             val sendNowQueued
                 get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_send_now_queued))

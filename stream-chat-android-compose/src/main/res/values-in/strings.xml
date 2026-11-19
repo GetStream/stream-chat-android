@@ -416,6 +416,7 @@
   <string name="stream_compose_scheduled_message_list_uploading">"Mengunggah…"</string>
   <string name="stream_compose_scheduled_message_list_still_sending">"Masih mengirim. Coba lagi sebentar lagi."</string>
   <string name="stream_compose_scheduled_message_list_gone">"Sudah dikirim atau dihapus di perangkat lain"</string>
+  <string name="stream_compose_scheduled_message_list_deleted_already_sent">"Sudah dikirim. Pesan sudah ada di saluran."</string>
   <string name="stream_compose_scheduled_message_list_action_failed">"Tidak dapat mengubah pesan terjadwal. Coba lagi."</string>
   <string name="stream_compose_scheduled_message_list_thread_reply">"Balasan utas:"</string>
   <string name="stream_compose_scheduled_message_list_reply_to">"Balasan untuk %1$s:"</string>

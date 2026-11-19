@@ -471,6 +471,41 @@ internal class ScheduledMessageSenderTest {
     }
 
     @Test
+    fun `a delete answered as already sent removes the message and tells it was sent`() = runTest {
+        val onServer = givenScheduledOnServer()
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Failure(serverError(code = 123))))
+        val deletedAlreadySent = collectDeletedAlreadySent()
+        start()
+
+        manager.delete(onServer.id)
+        runCurrent()
+
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+        deletedAlreadySent.map(ScheduledMessage::id) shouldBeEqualTo listOf(onServer.id)
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [124, 16])
+    fun `a delete answered as deleted on another device or not found removes the message and tells nothing`(
+        code: Int,
+    ) = runTest {
+        val onServer = givenScheduledOnServer()
+        val statusCode = if (code == 16) 404 else 400
+        whenever(api.deleteScheduledMessage(any()))
+            .thenReturn(TestCall(Result.Failure(serverError(code = code, statusCode = statusCode))))
+        val deletedAlreadySent = collectDeletedAlreadySent()
+        start()
+
+        manager.delete(onServer.id)
+        runCurrent()
+
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+        deletedAlreadySent.shouldBeEmpty()
+    }
+
+    @Test
     fun `a delete rejected by the server shows the message again, and it can be deleted again`() = runTest {
         val onServer = givenScheduledOnServer()
         val error = serverError(code = 4)
@@ -897,6 +932,13 @@ internal class ScheduledMessageSenderTest {
 
     private suspend fun TestScope.start() {
         manager.start(backgroundScope)
+    }
+
+    private fun TestScope.collectDeletedAlreadySent(): List<ScheduledMessage> {
+        val emitted = mutableListOf<ScheduledMessage>()
+        backgroundScope.launch { manager.deletedAlreadySent.collect(emitted::add) }
+        runCurrent()
+        return emitted
     }
 
     private suspend fun schedule(

@@ -99,6 +99,11 @@ public abstract class ScheduledMessageListEvent internal constructor() {
     public data object MessageGone : ScheduledMessageListEvent()
 
     /**
+     * A message deleted from the list had already been sent, so it is in its channel.
+     */
+    public data object DeletedMessageAlreadySent : ScheduledMessageListEvent()
+
+    /**
      * Send now was asked while offline: the message is sent once the device is back online.
      */
     public data object SendNowQueued : ScheduledMessageListEvent()
