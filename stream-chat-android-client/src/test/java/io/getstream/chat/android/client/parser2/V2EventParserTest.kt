@@ -195,6 +195,7 @@ internal class V2EventParserTest {
                 notificationsMuted = false,
                 extraData = mapOf("nickname" to "Chewie", "role" to "member", "user_id" to OTHER),
             ),
+            channelMemberCount = 2,
         )
     }
 
