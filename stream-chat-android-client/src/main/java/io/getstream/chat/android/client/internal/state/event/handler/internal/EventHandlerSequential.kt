@@ -34,6 +34,8 @@ import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
@@ -273,7 +275,9 @@ internal class EventHandlerSequential(
             val collectSocketEvent: suspend (ChatEvent) -> Unit = { event ->
                 collectedCount.incrementAndGet()
                 initJob.join()
-                sideEffect()
+                // Connection events are not held: a sync changes nothing they carry, and one that waited would also
+                // hold the connected event behind it, which has the unread counts of the current user.
+                if (event !is ConnectingEvent && event !is ConnectedEvent && event !is DisconnectedEvent) sideEffect()
                 socketEventCollector.collect(event)
             }
             scope.launch { socketEvents.collect(collectSocketEvent) }

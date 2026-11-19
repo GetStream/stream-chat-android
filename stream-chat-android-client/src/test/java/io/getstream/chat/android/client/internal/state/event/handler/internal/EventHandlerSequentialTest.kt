@@ -23,6 +23,8 @@ import io.getstream.chat.android.client.api.MessageBufferOverflow
 import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -53,6 +55,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
@@ -990,6 +993,36 @@ internal class EventHandlerSequentialTest {
 
     private fun queryChannelsLogicHandlingNoEvents(): QueryChannelsLogic = mock {
         onBlocking { parseChatEventResults(any()) } doReturn emptyList()
+    }
+
+    @Test
+    fun `While a sync is running, connection events are handled and the events after them wait`() = runTest {
+        val fixture = Fixture()
+            .withReadEventsCapabilityForAny()
+            .pauseSideEffect()
+        val handler = fixture.get(this)
+        val disconnected = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
+        val connecting = ConnectingEvent(EventType.CONNECTION_CONNECTING, Date(), null)
+        val connected = randomConnectedEvent()
+        val newMessage = randomNewMessageEvent()
+
+        handler.startListening()
+        advanceUntilIdle()
+        val listener = fixture.listener()
+
+        listener.onEvent(disconnected)
+        listener.onEvent(connecting)
+        listener.onEvent(connected)
+        listener.onEvent(newMessage)
+        advanceUntilIdle()
+
+        val connectionEvents = listOf(disconnected, connecting, connected)
+        assertEquals(connectionEvents, capturedBatchEvents(fixture).flatMap { it.sortedEvents })
+
+        fixture.releaseSideEffect()
+        advanceUntilIdle()
+
+        assertEquals(connectionEvents + newMessage, capturedBatchEvents(fixture).flatMap { it.sortedEvents })
     }
 
     private fun capturedBatchEvents(fixture: Fixture): List<BatchEvent> {
