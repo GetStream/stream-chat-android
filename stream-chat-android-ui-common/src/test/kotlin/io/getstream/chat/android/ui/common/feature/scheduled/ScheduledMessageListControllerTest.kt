@@ -498,6 +498,7 @@ internal class ScheduledMessageListControllerTest {
 
             awaitItem() shouldBeEqualTo ScheduledMessageListEvent.ActionFailed(error)
         }
+        loadedMessageIds shouldBeEqualTo listOf(quoted.id)
         controller.state.value.items.single().quotedMessage shouldBeEqualTo quoted
     }
 

@@ -206,7 +206,7 @@ internal class ScheduledMessageSenderTest {
     }
 
     @Test
-    fun `a change of the quote while the create is in flight sends no update`() = runTest {
+    fun `a change of the quote while the create is in flight sends no update, and is kept`() = runTest {
         val create = PendingCall<ScheduleMessageResult>()
         whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(create)
         api.givenUpdateAnswers()
@@ -215,12 +215,15 @@ internal class ScheduledMessageSenderTest {
         val scheduled = schedule(Message(text = randomString(), replyMessageId = quoted.id, replyTo = quoted))
         runCurrent()
 
-        manager.onEvent(quoteDeletedEvent(quoted.copy(deletedAt = Date())))
+        val deleted = quoted.copy(deletedAt = Date())
+        manager.onEvent(quoteDeletedEvent(deleted))
+        // The answer was built before the delete, with the quote not deleted.
         create.result.complete(Result.Success(scheduleAnswer(scheduled)))
         runCurrent()
 
         verify(api, never()).updateScheduledMessage(any(), anyOrNull(), anyOrNull())
         status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+        scheduledMessage(scheduled.id).message.replyTo shouldBeEqualTo deleted
     }
 
     @Test

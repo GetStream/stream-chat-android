@@ -84,7 +84,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     /** a mock for the channel client */
     lateinit var channelClientMock: ChannelClient
 
-    private lateinit var db: ChatDatabase
+    protected lateinit var db: ChatDatabase
 
     protected lateinit var repos: RepositoryFacade
 

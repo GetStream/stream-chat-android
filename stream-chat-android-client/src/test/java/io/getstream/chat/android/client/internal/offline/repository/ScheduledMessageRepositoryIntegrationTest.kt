@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.internal.offline.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.internal.offline.integration.BaseDomainTest2
+import io.getstream.chat.android.client.internal.offline.repository.factory.internal.DatabaseRepositoryFactory
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage.PendingChange
 import io.getstream.chat.android.client.scheduled.randomLocalScheduledMessage
@@ -33,6 +35,9 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
@@ -136,16 +141,21 @@ internal class ScheduledMessageRepositoryIntegrationTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `the quote reads back from the messages saved on this device`() = runTest {
+    fun `the quote reads back from the messages saved on this device, after a restart`() = runTest {
+        // Repositories whose writes reach the database, then new ones with empty caches, as after a restart.
+        val writeScope = CoroutineScope(Dispatchers.IO)
+        val beforeRestart = repositoriesOnDatabase(writeScope)
         val quoted = data.message1.copy(deletedAt = Date())
-        repos.insertMessage(quoted)
+        beforeRestart.insertMessage(quoted)
         val scheduledMessage = fullScheduledMessage().let {
             it.copy(message = it.message.copy(replyMessageId = quoted.id, replyTo = quoted))
         }
+        beforeRestart.scheduledMessageRepository.insertScheduledMessage(scheduledMessage)
+        writeScope.coroutineContext[Job]!!.children.forEach { it.join() }
+        val afterRestart = repositoriesOnDatabase(writeScope)
 
-        repository.insertScheduledMessage(scheduledMessage)
+        val message = afterRestart.scheduledMessageRepository.selectScheduledMessages().single().message
 
-        val message = repository.selectScheduledMessages().single().message
         message.replyMessageId shouldBeEqualTo quoted.id
         message.replyTo?.id shouldBeEqualTo quoted.id
         message.replyTo?.text shouldBeEqualTo quoted.text
@@ -178,6 +188,9 @@ internal class ScheduledMessageRepositoryIntegrationTest : BaseDomainTest2() {
         repos.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS).shouldBeEmpty()
         repos.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS).shouldBeEmpty()
     }
+
+    private fun repositoriesOnDatabase(scope: CoroutineScope): RepositoryFacade =
+        RepositoryFacade.create(DatabaseRepositoryFactory(db, data.user1, scope, emptySet()), scope)
 
     private fun fullScheduledMessage(
         serverStatus: ScheduledMessageStatus = ScheduledMessageStatus.Scheduled,
