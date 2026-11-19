@@ -534,6 +534,25 @@ internal class ScheduledMessageSenderTest {
     }
 
     @ParameterizedTest
+    @ValueSource(ints = [123, 124])
+    fun `a delete after a create with no answer, answered as already sent or already deleted, removes it`(
+        code: Int,
+    ) = runTest {
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(TestCall(Result.Failure(connectionError())))
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Failure(serverError(code))))
+        start()
+        val scheduled = schedule()
+        runCurrent()
+
+        manager.delete(scheduled.id)
+        runCurrent()
+
+        verify(api).deleteScheduledMessage(scheduled.id)
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @ParameterizedTest
     @ValueSource(ints = [408, 429, 500, 502, 503, 504])
     fun `a create failing with an unknown outcome is a request failure, and a delete reaches the server`(
         statusCode: Int,

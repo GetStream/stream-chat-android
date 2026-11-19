@@ -5559,7 +5559,7 @@ internal constructor(
      * not on the server yet is only deleted locally, and deleted on the server too if its scheduling is in flight. If
      * the server can't delete it, the message comes back in [scheduledMessages] with a [ScheduledMessage.failure], and
      * [resendScheduledMessage] or another delete deletes it again. When the server had already sent it, or it was
-     * deleted on another device, it is only removed.
+     * already deleted, it is only removed.
      *
      * @param id The ID of the scheduled message.
      *
