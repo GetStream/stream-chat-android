@@ -118,6 +118,12 @@ jobs:
           script: |
             "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell cmd package bg-dexopt-job > /dev/null 2>&1 || true
             sleep 30
+      # adb emu kill returns before the emulator has written the snapshot. If it hasn't exited in
+      # 3 minutes, the step fails and the AVD isn't saved, so no batch restores a partial snapshot.
+      - name: Wait for the emulator to save the snapshot
+        if: steps.avd.outputs.cache-hit != 'true'
+        timeout-minutes: 3
+        run: while pgrep -f qemu-system > /dev/null; do sleep 1; done
       - name: Save the AVD
         if: steps.avd.outputs.cache-hit != 'true'
         uses: actions/cache/save@v5
