@@ -18,9 +18,7 @@ package io.getstream.chat.android.client.internal.state.event.handler.internal.b
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.isConnectionEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.realType
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -83,7 +81,7 @@ internal class SocketEventCollector @VisibleForTesting constructor(
     }
 
     private suspend fun add(event: ChatEvent): Boolean {
-        if (event !is ConnectingEvent && event !is ConnectedEvent && event !is DisconnectedEvent) {
+        if (!event.isConnectionEvent()) {
             logger.d { "[add] event.type: ${event.realType}(${event.hashCode()})" }
             mutex.withLock {
                 timeoutJob.cancel()

@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.internal.state.event.handler.internal.u
 
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
@@ -31,6 +33,10 @@ internal val ChatEvent.realType
         is ConnectedEvent -> "connection.connected"
         else -> type
     }
+
+/** Whether the event is about the state of the connection, so it carries no channel data. */
+internal fun ChatEvent.isConnectionEvent(): Boolean =
+    this is ConnectingEvent || this is ConnectedEvent || this is DisconnectedEvent
 
 internal fun MessageReadEvent.toChannelUserRead() = ChannelUserRead(
     user = user,
