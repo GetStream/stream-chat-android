@@ -58,7 +58,7 @@ internal fun Error.deleteFailureSyncStatus(): SyncStatus =
 /**
  * The [SyncStatus] of a send that failed with this error. A temporary error stays [SyncStatus.SYNC_NEEDED] while the
  * socket is disconnected or the network is lost, since the sync retries it when the socket connects again. Otherwise
- * nothing retries it, so it is [SyncStatus.FAILED_PERMANENTLY] and can be resent.
+ * it is [SyncStatus.FAILED_PERMANENTLY] so the user can resend it.
  */
 internal fun Error.sendFailureSyncStatus(clientState: ClientState): SyncStatus =
     if (isPermanent() || (clientState.isOnline && clientState.isNetworkAvailable)) {
