@@ -116,14 +116,16 @@ internal class ScheduledMessageSender(
         } else {
             null
         }
-        if (error != null && !error.isGone(message) && !error.isNotFound()) {
+        val reason = error?.scheduledMessageRejectionReason()
+        // A not found is gone too when the create of the message is in flight, as the server may not have it.
+        if (error != null && !error.isNotFound() && reason !in GONE_REASONS) {
             if (error.isWaitingForConnection()) return false
             logger.e { "[delete] failed to delete ${message.id} on the server: $error" }
             store.update(message.id) { it?.copy(localFailure = error.toScheduledMessageFailure()) }
             return true
         }
         store.update(message.id) { null }
-        if (error?.scheduledMessageRejectionReason() == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent) {
+        if (reason == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent) {
             onDeletedAlreadySent(message.toScheduledMessage())
         }
         return true
@@ -274,12 +276,8 @@ internal class ScheduledMessageSender(
     }
 
     /** Whether the server no longer has the message [sent] the request for: it was sent or deleted. */
-    private fun Error.isGone(sent: LocalScheduledMessage): Boolean {
-        val reason = scheduledMessageRejectionReason()
-        return reason == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent ||
-            reason == ServerRejectedScheduling.Reason.ScheduledMessageCanceled ||
-            (!sent.isLocalOnly && isNotFound())
-    }
+    private fun Error.isGone(sent: LocalScheduledMessage): Boolean =
+        scheduledMessageRejectionReason() in GONE_REASONS || (!sent.isLocalOnly && isNotFound())
 
     private fun Error.isNotFound(): Boolean = (this as? Error.NetworkError)?.isStatusNotFound() == true
 
@@ -306,6 +304,12 @@ internal class ScheduledMessageSender(
     private fun LocalScheduledMessage.replaceAttachment(old: Attachment, new: Attachment): LocalScheduledMessage =
         copy(message = message.copy(attachments = message.attachments.map { if (it == old) new else it }))
 }
+
+/** The reasons the server rejects a request with when the scheduled message was already sent or deleted. */
+private val GONE_REASONS = setOf(
+    ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent,
+    ServerRejectedScheduling.Reason.ScheduledMessageCanceled,
+)
 
 /** The HTTP client error statuses. */
 @Suppress("MagicNumber") // The HTTP statuses, listed once here.
