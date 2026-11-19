@@ -119,7 +119,10 @@ internal fun LocalScheduledMessage.toEntity(): ScheduledMessageEntity = Schedule
     updatedAt = updatedAt,
 )
 
-internal suspend fun ScheduledMessageEntity.toModel(getUser: suspend (userId: String) -> User): LocalScheduledMessage =
+internal suspend fun ScheduledMessageEntity.toModel(
+    getUser: suspend (userId: String) -> User,
+    getMessage: suspend (messageId: String) -> Message?,
+): LocalScheduledMessage =
     LocalScheduledMessage(
         id = id,
         cid = cid,
@@ -134,6 +137,7 @@ internal suspend fun ScheduledMessageEntity.toModel(getUser: suspend (userId: St
             parentId = parentId,
             showInChannel = showInChannel,
             replyMessageId = replyMessageId,
+            replyTo = replyMessageId?.let { getMessage(it) },
             // The ID only keys the attachment rows of the messages table: it is not part of the content.
             attachments = attachments.map { entity ->
                 entity.toModel().let { it.copy(extraData = it.extraData - AttachmentEntity.EXTRA_DATA_ID_KEY) }

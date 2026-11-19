@@ -87,6 +87,9 @@ internal data class ScheduledMessageContentResponse(
     @Json(name = "restricted_visibility")
     internal val restrictedVisibility: List<String>? = null,
 
+    @Json(name = "quoted_message")
+    internal val quotedMessage: io.getstream.chat.android.network.models.MessageResponse? = null,
+
     @Json(name = "shared_location")
     internal val sharedLocation: io.getstream.chat.android.network.models.ScheduledMessageLocation? = null,
 )

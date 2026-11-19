@@ -86,6 +86,20 @@ internal class ScheduledMessageEventParsingTest {
     }
 
     @Test
+    fun `The scheduled message of an event carries the message it quotes`() {
+        val event = parser.parse(eventJson("scheduled_message.updated", status = "scheduled", withQuote = true))
+            .shouldBeInstanceOf<ScheduledMessageUpdatedEvent>()
+
+        val message = event.scheduledMessage.message
+        message.replyMessageId shouldBeEqualTo "quoted-1"
+        val quoted = requireNotNull(message.replyTo)
+        quoted.id shouldBeEqualTo "quoted-1"
+        quoted.text shouldBeEqualTo "Hi"
+        quoted.user.id shouldBeEqualTo "alice"
+        quoted.deletedAt.shouldBeNull()
+    }
+
+    @Test
     fun `A sent event carries the id of the sent message`() {
         val event = parser.parse(eventJson("scheduled_message.sent", status = "sent", messageId = "message-1"))
             .shouldBeInstanceOf<ScheduledMessageSentEvent>()
@@ -135,13 +149,14 @@ internal class ScheduledMessageEventParsingTest {
         messageId: String? = null,
         failureReason: String? = null,
         without: String? = null,
+        withQuote: Boolean = false,
     ): String {
         val fields = linkedMapOf(
             "type" to "\"$type\"",
             "created_at" to "$CREATED_AT_NANOS",
             "cid" to "\"messaging:general\"",
             "user" to USER_JSON,
-            "scheduled_message" to scheduledMessageJson(status, failureReason),
+            "scheduled_message" to scheduledMessageJson(status, failureReason, withQuote),
             "message_id" to messageId?.let { "\"$it\"" },
         )
         return fields
@@ -150,8 +165,13 @@ internal class ScheduledMessageEventParsingTest {
             .joinToString(prefix = "{", postfix = "}") { (name, value) -> "\"$name\": $value" }
     }
 
-    private fun scheduledMessageJson(status: String, failureReason: String?): String {
+    private fun scheduledMessageJson(status: String, failureReason: String?, withQuote: Boolean): String {
         val failure = failureReason?.let { """"failure_reason": "$it",""" }.orEmpty()
+        val quote = if (withQuote) {
+            """"quoted_message_id": "quoted-1", "quoted_message": $QUOTED_MESSAGE_JSON,"""
+        } else {
+            ""
+        }
         return """
             {
               "id": "scheduled-1",
@@ -160,6 +180,7 @@ internal class ScheduledMessageEventParsingTest {
               "message": {
                 "text": "Good morning team",
                 "parent_id": "parent-1",
+                $quote
                 "custom": { "mood": "happy" }
               },
               "scheduled_at": $SCHEDULED_AT_NANOS,
@@ -180,6 +201,13 @@ internal class ScheduledMessageEventParsingTest {
             { "id": "alice", "banned": false, "online": false, "role": "user", "language": "en",
               "created_at": 1767225600000000000, "updated_at": 1767225600000000000,
               "blocked_user_ids": [], "teams": [], "custom": {} }
+        """
+
+        private const val QUOTED_MESSAGE_JSON = """
+            { "id": "quoted-1", "cid": "messaging:general", "text": "Hi", "html": "<p>Hi</p>", "type": "regular",
+              "user": $USER_JSON, "created_at": 1767225600000000000, "updated_at": 1767225600000000000,
+              "deleted_reply_count": 0, "reply_count": 0, "mentioned_channel": false, "mentioned_here": false,
+              "pinned": false, "shadowed": false, "silent": false, "custom": {} }
         """
 
         @JvmStatic

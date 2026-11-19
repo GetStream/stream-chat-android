@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.scheduled
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageCreatedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageDeletedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageFailedEvent
@@ -307,6 +309,9 @@ internal class ScheduledMessageManager(
             is ScheduledMessageFailedEvent -> save(event.scheduledMessage)
             is ScheduledMessageDeletedEvent -> store.remove(event.scheduledMessage.id)
             is ScheduledMessageSentEvent -> store.remove(event.scheduledMessage.id)
+            is MessageUpdatedEvent -> store.saveQuote(event.message.id, event.message)
+            // The server no longer sends a hard deleted message as a quote.
+            is MessageDeletedEvent -> store.saveQuote(event.message.id, event.message.takeUnless { event.hardDelete })
             else -> Unit
         }
     }
@@ -371,6 +376,24 @@ private const val MAX_QUERY_LIMIT = 100
 
 /** How many deleted messages already sent wait for slow collectors before the oldest is dropped. */
 private const val DELETED_ALREADY_SENT_BUFFER = 16
+
+/**
+ * Saves [quoted] as the quote of the scheduled messages that quote the message with [quotedId]. The server sends no
+ * scheduled message event when a quoted message changes.
+ */
+private suspend fun ScheduledMessageStore.saveQuote(quotedId: String, quoted: Message?) {
+    messages.value.values
+        .filter { it.message.replyMessageId == quotedId }
+        .forEach { scheduled ->
+            update(scheduled.id) { current ->
+                if (current?.message?.replyMessageId == quotedId) {
+                    current.copy(message = current.message.copy(replyTo = quoted))
+                } else {
+                    current
+                }
+            }
+        }
+}
 
 /**
  * Merges [server] into the local message, unless it is older than the local message with no pending changes, for

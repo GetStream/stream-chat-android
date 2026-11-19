@@ -16,9 +16,11 @@
 
 package io.getstream.chat.android.client.scheduled
 
+import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage.PendingChange
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure.LocalDeviceFailedScheduling
@@ -26,6 +28,7 @@ import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedSc
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCall
@@ -200,6 +203,27 @@ internal class ScheduledMessageSenderTest {
 
         verify(api).updateScheduledMessage(eq(scheduled.id), argThat { text == edited.text }, eq(null))
         status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+    }
+
+    @Test
+    fun `a change of the quote while the create is in flight sends no update, and is kept`() = runTest {
+        val create = PendingCall<ScheduleMessageResult>()
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(create)
+        api.givenUpdateAnswers()
+        start()
+        val quoted = randomMessage(cid = cid, deletedAt = null)
+        val scheduled = schedule(Message(text = randomString(), replyMessageId = quoted.id, replyTo = quoted))
+        runCurrent()
+
+        val deleted = quoted.copy(deletedAt = Date())
+        manager.onEvent(quoteDeletedEvent(deleted))
+        // The answer was built before the delete, with the quote not deleted.
+        create.result.complete(Result.Success(scheduleAnswer(scheduled)))
+        runCurrent()
+
+        verify(api, never()).updateScheduledMessage(any(), anyOrNull(), anyOrNull())
+        status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+        scheduledMessage(scheduled.id).message.replyTo shouldBeEqualTo deleted
     }
 
     @Test
@@ -959,6 +983,20 @@ internal class ScheduledMessageSenderTest {
         fixture.manager.scheduledMessages.value.single { it.id == id }
 
     private fun status(id: String): ScheduledMessageStatus = scheduledMessage(id).status
+
+    private fun quoteDeletedEvent(message: Message) = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = Date(),
+        rawCreatedAt = "",
+        cid = message.cid,
+        channelType = "",
+        channelId = "",
+        message = message,
+        user = null,
+        hardDelete = false,
+        channelMessageCount = null,
+        deletedForMe = false,
+    )
 
     private fun scheduleAnswer(scheduled: ScheduledMessage) = ScheduleMessageResult(
         message = scheduled.message,
