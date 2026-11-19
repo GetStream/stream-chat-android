@@ -323,9 +323,12 @@ internal class MessageMapperTest {
                 pinnedAt = message.pinnedAt,
                 pinExpires = message.pinExpires,
                 pinnedByUserId = message.pinnedBy?.id,
+                channelInfo = message.channelInfo?.toEntity(),
                 moderationDetails = message.moderationDetails?.toEntity(),
+                messageTextUpdatedAt = message.messageTextUpdatedAt,
                 pollId = message.poll?.id,
                 reminder = message.reminder?.toEntity(),
+                restrictedVisibility = message.restrictedVisibility,
                 member = message.member?.toEntity(),
             ),
             attachments = message.attachments.mapIndexed { index, attachment ->
