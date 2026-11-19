@@ -77,8 +77,18 @@ public class BackendRobot(
         return this
     }
 
-    public fun freezeNewMessages(): BackendRobot {
+    /** Answers each new message send with a request timeout (HTTP 408), a temporary error. */
+    public fun timeOutNewMessages(): BackendRobot {
         mockServer.postRequest("freeze_messages")
+        return this
+    }
+
+    /**
+     * Holds each new message send for [seconds] before answering, keeping it in flight. Stays under the client's 30s
+     * read timeout, after which the send would fail instead.
+     */
+    public fun delayNewMessages(seconds: Int = 25): BackendRobot {
+        mockServer.postRequest("delay_messages?delay=$seconds")
         return this
     }
 
