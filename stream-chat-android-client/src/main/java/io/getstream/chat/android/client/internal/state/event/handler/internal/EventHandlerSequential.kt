@@ -111,6 +111,7 @@ import io.getstream.chat.android.client.extensions.internal.withReadsAfterTrunca
 import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.SocketEventCollector
+import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.isConnectionEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.realType
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
@@ -273,7 +274,9 @@ internal class EventHandlerSequential(
             val collectSocketEvent: suspend (ChatEvent) -> Unit = { event ->
                 collectedCount.incrementAndGet()
                 initJob.join()
-                sideEffect()
+                // Connection events are not held: a sync changes nothing they carry, and one that waited would also
+                // hold the connected event behind it, which has the unread counts of the current user.
+                if (!event.isConnectionEvent()) sideEffect()
                 socketEventCollector.collect(event)
             }
             scope.launch { socketEvents.collect(collectSocketEvent) }
