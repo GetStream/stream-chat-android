@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.state.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ClientNotInitializedException
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
@@ -24,6 +25,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.identifier
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.internal.logic
@@ -36,6 +38,7 @@ import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsSta
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.Call
 import io.getstream.result.call.launch
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -51,13 +54,49 @@ internal class ChatClientStateCalls(
 ) {
     private val logger by taggedLogger("Chat:ClientStateCalls")
 
+    // The client state when these calls were made: the user stays set while a disconnect tears the session down.
+    private val userIdAtCreation: String? = chatClient.clientState.user.value?.id
+    private val initializationStateAtCreation = chatClient.clientState.initializationState.value
+
     /**
-     * Deferred value of StateRegistry.
-     * It needs to be accessed after the user is connected to be sure needed plugins are initialized.
+     * Deferred value of StateRegistry for the session these calls belong to.
+     * Calls made before a session, or while one connects, wait for it to be initialized. Calls made in a session,
+     * or while it disconnects, are cancelled once it has ended, so they never resolve the state of a later session.
      */
     private val deferredState: Deferred<StateRegistry> = scope.async(start = CoroutineStart.LAZY) {
-        chatClient.clientState.user.first { it != null }
-        chatClient.state
+        when {
+            initializationStateAtCreation == InitializationState.COMPLETE && userIdAtCreation != null ->
+                ensureSameSession(userIdAtCreation)
+
+            initializationStateAtCreation == InitializationState.NOT_INITIALIZED && userIdAtCreation != null -> {
+                logger.w { "[deferredState] these calls were made while the user was disconnecting" }
+                throw CancellationException("These calls were made while the user was disconnecting")
+            }
+
+            else -> chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
+        }
+        resolveOrCancel { chatClient.state }
+    }
+
+    private fun ensureSameSession(userId: String) {
+        val clientState = chatClient.clientState
+        if (clientState.initializationState.value != InitializationState.COMPLETE ||
+            clientState.user.value?.id != userId
+        ) {
+            logger.w { "[ensureSameSession] the session these calls were made in has ended" }
+            throw CancellationException("The session these calls were made in has ended")
+        }
+    }
+
+    /**
+     * Resolves a plugin dependency, turning the failure of a session that ended meanwhile into a cancellation.
+     * Any other failure, such as a missing plugin, is rethrown.
+     */
+    private inline fun <T> resolveOrCancel(resolve: () -> T): T = try {
+        resolve()
+    } catch (e: ClientNotInitializedException) {
+        logger.w { "[resolveOrCancel] the user disconnected before the dependency was resolved" }
+        throw CancellationException("The user disconnected before the dependency was resolved", e)
     }
 
     /** Reference request of the channels query. */
@@ -88,7 +127,7 @@ internal class ChatClientStateCalls(
             .await()
             .queryChannels(identifier)
             .apply { this.chatEventHandlerFactory = chatEventHandlerFactory }
-        chatClient.logic.queryChannels(identifier).loadOfflineGroupedChannels()
+        resolveOrCancel { chatClient.logic }.queryChannels(identifier).loadOfflineGroupedChannels()
         return state
     }
 
