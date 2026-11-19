@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -155,6 +156,16 @@ internal class QueryThreadsLogic(
      */
     internal fun deleteMessage(message: Message) =
         stateLogic.deleteMessage(message)
+
+    /**
+     * Replaces the loaded thread with the [thread] returned by the server, see [QueryThreadsStateLogic.replaceThread].
+     */
+    internal fun replaceThread(thread: Thread) = stateLogic.replaceThread(thread)
+
+    /**
+     * Applies the [threadInfo] returned by a partial thread update, see [QueryThreadsStateLogic.applyThreadInfo].
+     */
+    internal fun applyThreadInfo(threadInfo: ThreadInfo) = stateLogic.applyThreadInfo(threadInfo)
 
     private fun handleEvent(event: ChatEvent) {
         when (event) {

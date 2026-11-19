@@ -118,6 +118,7 @@ import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
+import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.ThreadResponseHandler
 import io.getstream.chat.android.client.internal.state.sync.internal.PendingMessagePins
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
@@ -491,6 +492,11 @@ internal constructor(
      * Stores the responses of the channel changes the current user makes. Set by the state plugin.
      */
     internal var channelUpdateResponseHandler: ChannelUpdateResponseHandler? = null
+
+    /**
+     * Stores the threads returned by [getThread] and [partialUpdateThread]. Set by the state plugin.
+     */
+    internal var threadResponseHandler: ThreadResponseHandler? = null
 
     /**
      * Keeps the pins and unpins that failed offline, to send them again on the next connection. Set by the state
@@ -5311,7 +5317,9 @@ internal constructor(
         messageId: String,
         options: GetThreadOptions = GetThreadOptions(),
     ): Call<Thread> {
-        return api.getThread(messageId, options)
+        return api.getThread(messageId, options).doOnResult(userScope) { result ->
+            result.onSuccessSuspend { threadResponseHandler?.onThreadFetched(it) }
+        }
     }
 
     /**
@@ -5333,7 +5341,9 @@ internal constructor(
             messageId = messageId,
             set = set,
             unset = unset,
-        )
+        ).doOnResult(userScope) { result ->
+            result.onSuccessSuspend { threadResponseHandler?.onThreadPartiallyUpdated(it) }
+        }
     }
 
     /**
