@@ -29,6 +29,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
@@ -59,7 +60,9 @@ internal class SendMessageListenerStateTest {
     }
     private val transportError = Error.NetworkError("timeout", -1, -1, SocketTimeoutException())
 
-    private val sendMessageListener = SendMessageListenerState(logicRegistry, clientState)
+    private val resentOnReconnect = mutableListOf<String>()
+
+    private val sendMessageListener = SendMessageListenerState(logicRegistry, clientState, resentOnReconnect::add)
 
     @Test
     fun `when message is already in state, it should not be upserted again`() = runTest {
@@ -250,6 +253,7 @@ internal class SendMessageListenerStateTest {
                 message.id == testMessage.id && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
             },
         )
+        assertEquals(emptyList<String>(), resentOnReconnect)
     }
 
     @Test
@@ -303,10 +307,11 @@ internal class SendMessageListenerStateTest {
         verify(channelLogic).upsertMessage(
             argThat { message -> message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED },
         )
+        assertEquals(emptyList<String>(), resentOnReconnect)
     }
 
     @Test
-    fun `when send fails with a transport error while online, the message should fail so it can be resent`() =
+    fun `when send fails with a transport error while online, the message should fail and be resent on reconnect`() =
         runTest {
             whenever(clientState.isOnline) doReturn true
             val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
@@ -323,5 +328,6 @@ internal class SendMessageListenerStateTest {
                     message.id == testMessage.id && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
                 },
             )
+            assertEquals(listOf(testMessage.id), resentOnReconnect)
         }
 }

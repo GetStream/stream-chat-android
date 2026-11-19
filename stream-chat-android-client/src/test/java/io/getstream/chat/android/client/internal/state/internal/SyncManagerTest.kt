@@ -1687,6 +1687,53 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `retryMessages should resend once a message marked to resend on reconnect`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.FAILED_PERMANENTLY)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val channelClient: ChannelClient = mock {
+            on(it.sendMessage(message)) doReturn message.asCall()
+        }
+        whenever(chatClient.channel(message.cid)) doReturn channelClient
+
+        val sut = buildSyncManager()
+        sut.resendOnReconnect(message.id)
+        sut.retryMessages()
+        sut.retryMessages()
+
+        verify(channelClient, times(1)).sendMessage(message)
+    }
+
+    @Test
+    fun `retryMessages should leave an outdated message marked to resend failed`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+            createdLocallyAt = null,
+        )
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        val sut = buildSyncManager()
+        sut.resendOnReconnect(message.id)
+        sut.retryMessages()
+
+        verify(chatClient, never()).channel(any<String>())
+        verify(repositoryFacade, never()).insertMessage(any())
+        verify(repositoryFacade, never()).deleteChannelMessage(any())
+    }
+
+    @Test
+    fun `retryMessages should not resend a message that is no longer failed`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        val sut = buildSyncManager()
+        sut.resendOnReconnect(message.id)
+        sut.retryMessages()
+
+        verify(chatClient, never()).channel(any<String>())
+    }
+
+    @Test
     fun `when isAutomaticSyncOnReconnectEnabled is true, getSyncHistory should be called on connected event`() =
         runTest(testDispatcher) {
             /* Given */

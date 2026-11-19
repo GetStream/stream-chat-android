@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.isDuplicateMessageError
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.errors.sendFailureSyncStatus
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
@@ -37,6 +38,7 @@ private const val TAG = "Chat:SendMessageHandler"
 internal class SendMessageListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
+    private val resendOnReconnect: (messageId: String) -> Unit,
 ) : SendMessageListener {
 
     /**
@@ -98,6 +100,8 @@ internal class SendMessageListenerState(
     ) {
         val syncStatus = error.sendFailureSyncStatus(clientState)
         StreamLog.w(TAG) { "[handleSendMessageFailure] syncStatus: $syncStatus" }
+        // Shown as failed so it can be resent, and also sent again on reconnect in case the connection was dropping.
+        if (syncStatus == SyncStatus.FAILED_PERMANENTLY && !error.isPermanent()) resendOnReconnect(message.id)
         message.copy(
             syncStatus = syncStatus,
             updatedLocallyAt = Date(),

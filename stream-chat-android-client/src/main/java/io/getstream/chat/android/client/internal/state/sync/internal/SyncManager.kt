@@ -183,6 +183,13 @@ internal class SyncManager(
     private val endedLiveLocationsToNotify: MutableSet<String> =
         Collections.newSetFromMap(ConcurrentHashMap<String, Boolean>())
 
+    /**
+     * Messages whose send failed with a temporary error while connected, sent again on the next connection.
+     * Kept in memory only, so they stay failed for the user to resend if the process ends first.
+     */
+    private val messagesToResend: MutableSet<String> =
+        Collections.newSetFromMap(ConcurrentHashMap<String, Boolean>())
+
     override fun start() {
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
@@ -201,6 +208,7 @@ internal class SyncManager(
         syncScope.coroutineContext.job.cancelChildren()
         liveLocationEndJob?.cancel()
         endedLiveLocationsToNotify.clear()
+        messagesToResend.clear()
     }
 
     override suspend fun sync() {
@@ -1139,7 +1147,31 @@ internal class SyncManager(
         logger.d { "[retryMessages] uncreatedCids.size: ${uncreatedCids.size}" }
         retryMessagesWithSyncedAttachments(uncreatedCids, discardedCids)
         retryMessagesWithPendingAttachments(uncreatedCids, discardedCids)
+        resendFailedMessages(uncreatedCids)
         logger.v { "[retryMessages] completed" }
+    }
+
+    /** Sends [messageId] again on the next connection, unless it is no longer failed by then. */
+    internal fun resendOnReconnect(messageId: String) {
+        messagesToResend += messageId
+    }
+
+    private suspend fun resendFailedMessages(uncreatedCids: Set<String>) {
+        logger.d { "[resendFailedMessages] ids.size: ${messagesToResend.size}" }
+        messagesToResend.toList().forEach { id ->
+            val message = repos.selectMessage(id)
+            if (message?.waitsForChannel(uncreatedCids) == true) return@forEach
+            messagesToResend -= id
+            // An outdated one stays failed for the user to resend or delete.
+            if (message?.syncStatus != SyncStatus.FAILED_PERMANENTLY ||
+                message.isDeleted() ||
+                message.createdLocallyAt.exceedsSyncThresholdServerTime()
+            ) {
+                return@forEach
+            }
+            val result = chatClient.channel(message.cid).sendMessage(message).await()
+            logger.v { "[resendFailedMessages] result($id).isSuccess: ${result is Result.Success}" }
+        }
     }
 
     private fun Message.waitsForChannel(uncreatedCids: Set<String>): Boolean =
