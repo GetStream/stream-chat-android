@@ -1,10 +1,11 @@
 name: Android SDK packages
 description: >-
   Defines the E2E emulator, installs the SDK packages reactivecircus/android-emulator-runner would
-  download, with retries, and returns the emulator config and the cache key of an AVD made from it. The action downloads the emulator and the
-  system image on every run and doesn't retry: a corrupted download ("Error reading Zip content
-  from a SeekableByteChannel") fails the job before the emulator boots. sdkmanager skips packages
-  that are installed and current, so the action's own install becomes a no-op.
+  download, with retries, and returns the emulator config and the cache key of an AVD made from it.
+  The action downloads the emulator and the system image on every run and doesn't retry: a corrupted
+  download ("Error reading Zip content from a SeekableByteChannel") fails the job before the
+  emulator boots. sdkmanager skips packages that are installed and current, so the action's own
+  install becomes a no-op.
 inputs:
   api-level:
     description: Overrides the default system image API level
