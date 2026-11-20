@@ -24,6 +24,8 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomThread
+import io.getstream.chat.android.randomThreadInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
@@ -692,5 +694,68 @@ internal class QueryThreadsStateLogicTest {
         )
         val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
         verify(mutableState, times(1)).upsertThreads(expectedUpdatedThreadList)
+    }
+
+    @Test
+    fun `replaceThread replaces a loaded thread with the response`() {
+        val loaded = threadList[0].copy(updatedAt = Date(1_000))
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf(loaded.parentMessageId to loaded)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+        val response = randomThread(parentMessageId = loaded.parentMessageId, updatedAt = Date(2_000))
+
+        logic.replaceThread(response)
+
+        verify(mutableState).upsertThreads(listOf(response))
+    }
+
+    @Test
+    fun `replaceThread keeps a loaded thread newer than the response`() {
+        val loaded = threadList[0].copy(updatedAt = Date(2_000))
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf(loaded.parentMessageId to loaded)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+
+        logic.replaceThread(randomThread(parentMessageId = loaded.parentMessageId, updatedAt = Date(1_000)))
+
+        verify(mutableState, never()).upsertThreads(any())
+    }
+
+    @Test
+    fun `replaceThread does not add a thread that is not loaded`() {
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+
+        logic.replaceThread(randomThread(parentMessageId = "mId999"))
+
+        verify(mutableState, never()).upsertThreads(any())
+    }
+
+    @Test
+    fun `applyThreadInfo applies the response to a loaded thread`() {
+        val loaded = threadList[0].copy(updatedAt = Date(1_000))
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf(loaded.parentMessageId to loaded)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+        val threadInfo = randomThreadInfo(parentMessageId = loaded.parentMessageId, title = "new", updatedAt = Date(2_000))
+            .copy(extraData = mapOf("color" to "red"))
+
+        logic.applyThreadInfo(threadInfo)
+
+        val expected = loaded.copy(title = "new", updatedAt = Date(2_000), extraData = mapOf("color" to "red"))
+        verify(mutableState).upsertThreads(listOf(expected))
+    }
+
+    @Test
+    fun `applyThreadInfo keeps a loaded thread newer than the response`() {
+        val loaded = threadList[0].copy(updatedAt = Date(2_000))
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf(loaded.parentMessageId to loaded)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+
+        logic.applyThreadInfo(randomThreadInfo(parentMessageId = loaded.parentMessageId, updatedAt = Date(1_000)))
+
+        verify(mutableState, never()).upsertThreads(any())
     }
 }

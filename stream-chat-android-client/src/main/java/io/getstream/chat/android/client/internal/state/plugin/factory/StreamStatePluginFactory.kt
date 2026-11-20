@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlug
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.refreshChannelsOnScheduledMessages
+import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.ThreadResponseHandler
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.internal.state.sync.internal.PendingMessagePins
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
@@ -140,6 +141,7 @@ public class StreamStatePluginFactory(
             mutableGlobalState = mutableGlobalState,
             getCurrentUserId = { clientState.user.value?.id },
         )
+        chatClient.threadResponseHandler = ThreadResponseHandler(logic = logic, repos = repositoryFacade)
         val pendingMessagePins = PendingMessagePins(
             logic = logic,
             sendPin = { messageId, set -> chatClient.partialUpdateMessage(messageId, set).await() },
