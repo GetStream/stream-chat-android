@@ -26,14 +26,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # The emulator. Keep in sync with the android-avd job in e2e-cache.yml, which saves the snapshot
-  # the batches boot from. Not the ATD image (aosp_atd): it has no system file picker, and the
-  # attachment, push notification and app-in-background tests fail on it.
-  ANDROID_API_LEVEL: ${{ inputs.api_level || '36' }}
-  ANDROID_TARGET: default
-  ANDROID_PROFILE: pixel
-  ANDROID_CORES: '4'
-  ANDROID_EMULATOR_OPTIONS: -no-window -no-audio -no-boot-anim -no-metrics -gpu swiftshader_indirect -camera-back none -camera-front none
   BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
   BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
   BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
@@ -105,11 +97,7 @@ jobs:
       - uses: ./.github/actions/android-sdk-packages
         id: sdk
         with:
-          api-level: ${{ env.ANDROID_API_LEVEL }}
-          target: ${{ env.ANDROID_TARGET }}
-          profile: ${{ env.ANDROID_PROFILE }}
-          cores: ${{ env.ANDROID_CORES }}
-          emulator-options: ${{ env.ANDROID_EMULATOR_OPTIONS }}
+          api-level: ${{ inputs.api_level }}
       - name: Restore the AVD
         id: avd
         uses: actions/cache/restore@v5
@@ -122,14 +110,14 @@ jobs:
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         timeout-minutes: 45
         with:
-          api-level: ${{ env.ANDROID_API_LEVEL }}
-          target: ${{ env.ANDROID_TARGET }}
+          api-level: ${{ steps.sdk.outputs.api-level }}
+          target: ${{ steps.sdk.outputs.target }}
           disable-animations: true
-          profile: ${{ env.ANDROID_PROFILE }}
-          cores: ${{ env.ANDROID_CORES }}
+          profile: ${{ steps.sdk.outputs.profile }}
+          cores: ${{ steps.sdk.outputs.cores }}
           arch : x86_64
           force-avd-creation: ${{ steps.avd.outputs.cache-hit != 'true' }}
-          emulator-options: -no-snapshot-save ${{ env.ANDROID_EMULATOR_OPTIONS }}
+          emulator-options: -no-snapshot-save ${{ steps.sdk.outputs.emulator-options }}
           script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }} mock_server_branch:${{ inputs.mock_server_branch }} ${{ inputs.test_class && format('test_class:{0}', inputs.test_class) || '' }}
       - name: Allure TestOps Upload
         if: ${{ env.LAUNCH_ID != '' && (success() || failure()) }}

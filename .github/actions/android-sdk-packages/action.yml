@@ -1,31 +1,31 @@
 name: Android SDK packages
 description: >-
-  Installs the SDK packages reactivecircus/android-emulator-runner would download, with retries,
-  and returns the cache key of an AVD made from them. The action downloads the emulator and the
+  Defines the E2E emulator, installs the SDK packages reactivecircus/android-emulator-runner would
+  download, with retries, and returns the emulator config and the cache key of an AVD made from it. The action downloads the emulator and the
   system image on every run and doesn't retry: a corrupted download ("Error reading Zip content
   from a SeekableByteChannel") fails the job before the emulator boots. sdkmanager skips packages
   that are installed and current, so the action's own install becomes a no-op.
 inputs:
   api-level:
-    description: The system image API level, as passed to android-emulator-runner
-    required: true
-  target:
-    description: The system image target, as passed to android-emulator-runner
-    required: false
-    default: default
-  profile:
-    description: The hardware profile, as passed to android-emulator-runner (part of the AVD key)
-    required: false
-    default: ""
-  cores:
-    description: The emulator's cores, as passed to android-emulator-runner (part of the AVD key)
-    required: false
-    default: "2"
-  emulator-options:
-    description: The emulator options a snapshot is saved and loaded with (part of the AVD key)
+    description: Overrides the default system image API level
     required: false
     default: ""
 outputs:
+  api-level:
+    description: The system image API level, for android-emulator-runner
+    value: ${{ steps.config.outputs.api-level }}
+  target:
+    description: The system image target, for android-emulator-runner
+    value: ${{ steps.config.outputs.target }}
+  profile:
+    description: The hardware profile, for android-emulator-runner
+    value: ${{ steps.config.outputs.profile }}
+  cores:
+    description: The emulator's cores, for android-emulator-runner
+    value: ${{ steps.config.outputs.cores }}
+  emulator-options:
+    description: The options the snapshot is saved and loaded with, for android-emulator-runner
+    value: ${{ steps.config.outputs.emulator-options }}
   avd-key:
     description: >-
       Cache key of an AVD with a quick-boot snapshot: a snapshot only loads into the emulator, image
@@ -34,11 +34,28 @@ outputs:
 runs:
   using: composite
   steps:
+    # The emulator the E2E batches run on and the snapshot is saved for. One place, so the batches and
+    # the job that saves the snapshot can't drift apart and silently miss it. Not the ATD image
+    # (aosp_atd): it has no system file picker, and the attachment, push notification and
+    # app-in-background tests fail on it.
+    - name: Emulator config
+      id: config
+      shell: bash
+      env:
+        API_LEVEL: ${{ inputs.api-level || '36' }}
+      run: |
+        {
+          echo "api-level=$API_LEVEL"
+          echo "target=default"
+          echo "profile=pixel"
+          echo "cores=4"
+          echo "emulator-options=-no-window -no-audio -no-boot-anim -no-metrics -gpu swiftshader_indirect -camera-back none -camera-front none"
+        } >> "$GITHUB_OUTPUT"
     - name: Install the emulator and the system image
       shell: bash
       env:
-        API_LEVEL: ${{ inputs.api-level }}
-        TARGET: ${{ inputs.target }}
+        API_LEVEL: ${{ steps.config.outputs.api-level }}
+        TARGET: ${{ steps.config.outputs.target }}
       run: |
         sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
         packages=(emulator platform-tools "platforms;android-$API_LEVEL" "system-images;android-$API_LEVEL;$TARGET;x86_64")
@@ -54,11 +71,11 @@ runs:
       id: key
       shell: bash
       env:
-        API_LEVEL: ${{ inputs.api-level }}
-        TARGET: ${{ inputs.target }}
-        PROFILE: ${{ inputs.profile }}
-        CORES: ${{ inputs.cores }}
-        OPTIONS: ${{ inputs.emulator-options }}
+        API_LEVEL: ${{ steps.config.outputs.api-level }}
+        TARGET: ${{ steps.config.outputs.target }}
+        PROFILE: ${{ steps.config.outputs.profile }}
+        CORES: ${{ steps.config.outputs.cores }}
+        OPTIONS: ${{ steps.config.outputs.emulator-options }}
       run: |
         revision() { sed -n 's/^Pkg\.Revision=//p' "$1" | tr -d '\r'; }
         emulator=$(revision "$ANDROID_HOME/emulator/source.properties")

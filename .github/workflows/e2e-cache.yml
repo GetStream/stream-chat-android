@@ -35,24 +35,11 @@ jobs:
     name: Emulator snapshot
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    env:
-      # Must match e2e-test.yml, or the pull request batches miss the snapshot and cold boot.
-      ANDROID_API_LEVEL: '36'
-      ANDROID_TARGET: default
-      ANDROID_PROFILE: pixel
-      ANDROID_CORES: '4'
-      ANDROID_EMULATOR_OPTIONS: -no-window -no-audio -no-boot-anim -no-metrics -gpu swiftshader_indirect -camera-back none -camera-front none
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: ./.github/actions/android-sdk-packages
         id: sdk
-        with:
-          api-level: ${{ env.ANDROID_API_LEVEL }}
-          target: ${{ env.ANDROID_TARGET }}
-          profile: ${{ env.ANDROID_PROFILE }}
-          cores: ${{ env.ANDROID_CORES }}
-          emulator-options: ${{ env.ANDROID_EMULATOR_OPTIONS }}
       - name: Look up the AVD
         id: avd
         uses: actions/cache/restore@v5
@@ -66,13 +53,13 @@ jobs:
         if: steps.avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         with:
-          api-level: ${{ env.ANDROID_API_LEVEL }}
-          target: ${{ env.ANDROID_TARGET }}
+          api-level: ${{ steps.sdk.outputs.api-level }}
+          target: ${{ steps.sdk.outputs.target }}
           arch: x86_64
-          profile: ${{ env.ANDROID_PROFILE }}
-          cores: ${{ env.ANDROID_CORES }}
+          profile: ${{ steps.sdk.outputs.profile }}
+          cores: ${{ steps.sdk.outputs.cores }}
           force-avd-creation: false
-          emulator-options: ${{ env.ANDROID_EMULATOR_OPTIONS }}
+          emulator-options: ${{ steps.sdk.outputs.emulator-options }}
           disable-animations: true
           # Lets dexopt finish, so the snapshot holds a settled system.
           script: |
