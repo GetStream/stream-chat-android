@@ -436,8 +436,8 @@ internal class DtoMappingTest {
 
     @Test
     fun `Message sends the declared fields it carries in extraData as typed fields`() {
-        // Responses keep these in extraData, and sendPoll passes the poll id there. A message stored before responses
-        // mapped the typed restricted visibility has it empty, and the backend rejects an edit that changes it.
+        // Responses keep these in extraData, and sendPoll passes the poll id there. An empty typed restricted
+        // visibility falls back to the copy, since the backend rejects an edit that changes it.
         val message = randomMessage(
             type = MessageType.REGULAR,
             extraData = mutableMapOf(

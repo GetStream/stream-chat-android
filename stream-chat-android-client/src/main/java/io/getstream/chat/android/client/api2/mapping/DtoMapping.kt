@@ -335,8 +335,8 @@ internal class DtoMapping(
                 val upstreamType = if (type in supportedUpstreamMessageTypes) type else ""
                 // Responses also copy these declared fields into extraData (see DomainMapping.withDeclared), so a
                 // message sent back carries them. They go back to their typed fields, taking precedence as they did
-                // when v1 flattened extraData over the root, except over a set restricted visibility, which responses
-                // now also map to its typed field. The response-only ones are dropped, since the backend
+                // when v1 flattened extraData over the root, except when the typed restricted visibility is set, since
+                // responses map it there too. The response-only ones are dropped, since the backend
                 // would store them as custom data on either version. So are the group ids: mentionedGroups holds the
                 // current ones, and the copy would undo an edit of the mentions.
                 val custom = extraData.toMutableMap()
