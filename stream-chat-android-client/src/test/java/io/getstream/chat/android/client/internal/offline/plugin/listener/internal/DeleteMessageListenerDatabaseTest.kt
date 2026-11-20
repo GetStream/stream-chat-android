@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -66,13 +67,14 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteRequest(randomCID())
+        deleteMessageListenerState.onMessageDeleteRequest(randomCID(), hard = false)
 
-        verify(messageRepository).insertMessage(
+        verify(messageRepository).insertDeletedMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
             },
+            eq(false),
         )
     }
 
@@ -86,13 +88,14 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteRequest(randomCID())
+        deleteMessageListenerState.onMessageDeleteRequest(randomCID(), hard = true)
 
-        verify(messageRepository).insertMessage(
+        verify(messageRepository).insertDeletedMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
+            eq(true),
         )
     }
 

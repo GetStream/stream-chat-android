@@ -85,6 +85,20 @@ internal class MessageDaoSyncStatusTest {
         )
     }
 
+    @Test
+    fun `selectHardDelete reads the hard delete stored with the message`() = runTest {
+        val hard = message(SyncStatus.SYNC_NEEDED, deletedAt = before)
+        val soft = message(SyncStatus.SYNC_NEEDED, deletedAt = before)
+        listOf(hard to true, soft to false).forEach { (message, hardDelete) ->
+            val entity = message.toEntity()
+            messageDao.insert(entity.copy(messageInnerEntity = entity.messageInnerEntity.copy(hardDelete = hardDelete)))
+        }
+
+        messageDao.selectHardDelete(hard.id) shouldBeEqualTo true
+        messageDao.selectHardDelete(soft.id) shouldBeEqualTo false
+        messageDao.selectHardDelete("missing") shouldBeEqualTo null
+    }
+
     private fun message(
         syncStatus: SyncStatus,
         deletedAt: Date? = null,

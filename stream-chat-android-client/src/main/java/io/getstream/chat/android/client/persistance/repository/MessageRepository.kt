@@ -148,6 +148,16 @@ public interface MessageRepository {
     public suspend fun deleteMessages(messages: List<Message>)
 
     /**
+     * Inserts [message], deleted by the current user, and stores whether the request deleting it is a [hard] delete.
+     */
+    public suspend fun insertDeletedMessage(message: Message, hard: Boolean)
+
+    /**
+     * Whether the stored deletion of the message with [messageId] was requested as a hard delete.
+     */
+    public suspend fun selectIsHardDelete(messageId: String): Boolean
+
+    /**
      * Selects all message ids of a [SyncStatus]
      *
      * @param syncStatus [SyncStatus]

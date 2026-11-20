@@ -77,7 +77,7 @@ internal class DeleteMessageListenerStateTest {
         whenever(channelLogic.getMessage(any())) doReturn testMessage
         whenever(threadsLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id)
+        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id, hard = false)
 
         verify(channelLogic).upsertMessage(
             argThat { message ->
@@ -104,7 +104,7 @@ internal class DeleteMessageListenerStateTest {
         whenever(channelLogic.getMessage(any())) doReturn testMessage
         whenever(threadsLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id)
+        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id, hard = false)
 
         verify(channelLogic).upsertMessage(
             argThat { message ->
@@ -370,7 +370,7 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id)
+        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id, hard = false)
 
         verify(queryChannelsLogic).refreshChannelState(testMessage.cid)
     }

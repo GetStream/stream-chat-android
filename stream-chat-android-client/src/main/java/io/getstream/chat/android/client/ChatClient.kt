@@ -2948,7 +2948,7 @@ internal constructor(
             .doOnStart(userScope) {
                 plugins.forEach { listener ->
                     logger.v { "[deleteMessage] #doOnStart; plugin: ${listener::class.qualifiedName}" }
-                    listener.onMessageDeleteRequest(messageId)
+                    listener.onMessageDeleteRequest(messageId, hard)
                 }
             }
             .doOnResult(userScope) { result ->
