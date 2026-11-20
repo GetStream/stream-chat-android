@@ -705,6 +705,9 @@ internal constructor(
 
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
+                // Before this user is set: a scheduled message change made in between would go to the other user.
+                val isReplacingUser = initializedUserId.get().let { it != null && it != user.id }
+                if (isReplacingUser) scheduledMessageManager.stop()
                 mutableClientState.setUser(user)
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user, isAnonymous)
@@ -773,8 +776,7 @@ internal constructor(
         val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: -1
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
-        val previousUserId = initializedUserId.get()
-        if (previousUserId != user.id) {
+        if (initializedUserId.get() != user.id) {
             // Plugins set for another user without a connection, as a push notification does, are still listening.
             plugins.forEach { it.onUserDisconnected() }
             _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
@@ -798,11 +800,7 @@ internal constructor(
             logger.e(throwable) { "[initializeClientWithUser] scheduled messages failed: $throwable" }
         }
         inheritScope { SupervisorJob(it) + scheduledMessagesExceptionHandler }
-            .launch {
-                // It holds the scheduled messages of a user set without a connection.
-                if (previousUserId != null && previousUserId != user.id) scheduledMessageManager.stop()
-                scheduledMessageManager.start(this)
-            }
+            .launch { scheduledMessageManager.start(this) }
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 

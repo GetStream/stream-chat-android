@@ -53,6 +53,7 @@ import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomString
@@ -610,6 +611,18 @@ internal class ChatClientConnectionTests {
             val connectedUserMessage = randomLocalScheduledMessage()
             repositoryFactories[storedUserId] = repositoryFactoryWith(storedUserMessage)
             repositoryFactories[user.id] = repositoryFactoryWith(connectedUserMessage)
+            var scheduledMessagesWhenUserIsSet: List<ScheduledMessage>? = null
+            pluginFactories += mock<PluginFactory> {
+                on { get(any()) } doAnswer { invocation ->
+                    mock<Plugin> {
+                        on { onUserSet(any()) } doAnswer {
+                            if (invocation.getArgument<User>(0).id == user.id) {
+                                scheduledMessagesWhenUserIsSet = client.scheduledMessages.value
+                            }
+                        }
+                    }
+                }
+            }
             whenever(config.notificationConfig) doReturn NotificationConfig()
             whenever(userCredentialStorage.get())
                 .thenReturn(CredentialConfig(storedUserId, randomString(), randomString(), isAnonymous = false))
@@ -625,6 +638,7 @@ internal class ChatClientConnectionTests {
             deferred.await()
             testScheduler.runCurrent()
 
+            scheduledMessagesWhenUserIsSet `should be equal to` emptyList()
             client.scheduledMessages.value.map { it.id } `should be equal to` listOf(connectedUserMessage.id)
         }
 
