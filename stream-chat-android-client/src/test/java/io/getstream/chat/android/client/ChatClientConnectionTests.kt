@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.persistance.repository.ScheduledMessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scheduled.InMemoryScheduledMessageRepository
@@ -122,6 +123,7 @@ internal class ChatClientConnectionTests {
     private val pluginFactories = mutableListOf<PluginFactory>()
     private val repositoryFactories = mutableMapOf<String, RepositoryFactory>()
     private val audioPlayer = mock<AudioPlayer>()
+    private val repository = mock<ChatClientRepository>()
     private lateinit var networkStateProvider: NetworkStateProvider
 
     @BeforeEach
@@ -167,7 +169,7 @@ internal class ChatClientConnectionTests {
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = audioPlayer,
-            repository = mock(),
+            repository = repository,
             messageReceiptReporter = mock(),
             messageReceiptManager = mock(),
         ).apply {
@@ -611,6 +613,46 @@ internal class ChatClientConnectionTests {
             verify(connectedUserPlugin).onUserSet(any())
             verify(connectedUserPlugin, never()).onUserDisconnected()
         }
+
+    @Test
+    fun `Given a user set without connecting, connecting another user clears the queued receipts`() =
+        runCancellableTest {
+            connectAfterStoredUserIsSet(storedUserId = randomString())
+
+            verify(repository).clear()
+        }
+
+    @Test
+    fun `Given a user set without connecting, connecting the same user keeps the queued receipts`() =
+        runCancellableTest {
+            connectAfterStoredUserIsSet(storedUserId = user.id)
+
+            verify(repository, never()).clear()
+        }
+
+    @Test
+    fun `Given no user set, connecting a user keeps the queued receipts`() =
+        runCancellableTest {
+            connectAfterStoredUserIsSet(storedUserId = null)
+
+            verify(repository, never()).clear()
+        }
+
+    private suspend fun connectAfterStoredUserIsSet(storedUserId: String?) {
+        if (storedUserId != null) {
+            whenever(config.notificationConfig) doReturn NotificationConfig()
+            whenever(userCredentialStorage.get())
+                .thenReturn(CredentialConfig(storedUserId, randomString(), randomString(), isAnonymous = false))
+            client.setUserWithoutConnectingIfNeeded()
+        }
+
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, randomString())
+        val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
+        fakeChatSocket.mockEventReceived(event)
+        deferred.await()
+    }
 
     @Test
     fun `Given a user set without connecting, connecting another user replaces the scheduled messages of the first`() =

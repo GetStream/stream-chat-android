@@ -706,6 +706,9 @@ internal constructor(
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
                 val isReplacingUser = initializedUserId.get().let { it != null && it != user.id }
+                // The receipts are stored for the whole app, so the ones the other user queued would be reported
+                // as this user.
+                if (isReplacingUser) repository.clear()
                 mutableClientState.setUser(user)
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
                 // After the repositories are the ones of this user, so a start of the other user still to run loads
