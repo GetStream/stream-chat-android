@@ -370,6 +370,57 @@ internal class UnreadLabelCalculatorTest {
         result shouldBe null
     }
 
+    @Test
+    fun `should return null when messages from others follow the last read message but none is unread`() {
+        // Given: The read state lags behind a message from another user, with nothing left unread
+        val messages = listOf(
+            createMessage(id = "msg-1", user = currentUser, createdAt = Date(100)),
+            createMessage(id = "msg-2", user = otherUser, createdAt = Date(200)),
+        )
+        val channelUserRead = createChannelUserRead(
+            lastReadMessageId = "msg-1",
+            unreadMessages = 0,
+            lastRead = Date(150),
+        )
+
+        // When: Calculate unread label
+        val result = calculator.calculateUnreadLabel(
+            channelUserRead = channelUserRead,
+            messages = messages,
+            currentUserId = currentUser.id,
+            shouldShowButton = true,
+        )
+
+        // Then: Should return null instead of a label with a count of zero
+        result shouldBe null
+    }
+
+    @Test
+    fun `should return null when an own message only looks marked as unread and none is unread`() {
+        // Given: An own message follows the last read message, which was read at its creation time
+        val lastReadMessage = createMessage(id = "msg-1", user = otherUser, createdAt = Date(1000))
+        val messages = listOf(
+            lastReadMessage,
+            createMessage(id = "msg-2", user = currentUser, createdAt = Date(2000)),
+        )
+        val channelUserRead = createChannelUserRead(
+            lastReadMessageId = "msg-1",
+            unreadMessages = 0,
+            lastRead = Date(1000),
+        )
+
+        // When: Calculate unread label
+        val result = calculator.calculateUnreadLabel(
+            channelUserRead = channelUserRead,
+            messages = messages,
+            currentUserId = currentUser.id,
+            shouldShowButton = true,
+        )
+
+        // Then: Should return null instead of a label with a count of zero
+        result shouldBe null
+    }
+
     /**
      * Test Case 10: All Unread Messages Are From Current User (No Other Users)
      * Should return null when unread messages are only from the current user and not marked as unread.
