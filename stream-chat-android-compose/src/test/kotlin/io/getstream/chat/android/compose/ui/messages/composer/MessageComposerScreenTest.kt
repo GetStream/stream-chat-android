@@ -274,7 +274,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
     @Test
     @UiThread
-    fun `the default trailing content keeps scheduling when a custom input leaves the action out`() {
+    fun `the default trailing content keeps scheduling when its params leave the action out`() {
         givenComposerWithText(canSchedule = true)
         val customInput = object : ChatComponentFactory {
             @Composable
