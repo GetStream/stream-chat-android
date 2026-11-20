@@ -69,6 +69,7 @@ import io.getstream.chat.android.compose.ui.chats.ChatListContentMode
 import io.getstream.chat.android.compose.ui.chats.ChatMessageSelection
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionsVisibility
+import io.getstream.chat.android.compose.ui.scheduled.ScheduledMessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -91,6 +92,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.messages.ComposerOptions
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
@@ -158,7 +160,7 @@ class ChatsActivity : ComponentActivity() {
                             isPinChannelVisible = settings.isChannelPinningEnabled,
                         ),
                     ),
-                    composer = ComposerConfig(scheduledMessagesEnabled = settings.isScheduledMessagesShown),
+                    composer = ComposerConfig(scheduledMessagesEnabled = settings.isScheduledMessagesEnabled),
                 ),
             ) {
                 ScreenContent()
@@ -200,6 +202,7 @@ class ChatsActivity : ComponentActivity() {
             onListTopBarActionClick = ::openAddChannel,
             onDetailTopBarAvatarClick = navigator::navigateToChannelInfo,
             onViewChannelInfoClick = navigator::navigateToChannelInfo,
+            onScheduledMessagesBannerClick = navigator::navigateToScheduledMessages,
             listBottomBarContent = {
                 ListFooterContent(
                     listContentMode = listContentMode,
@@ -298,6 +301,13 @@ class ChatsActivity : ComponentActivity() {
             is InfoContentMode.FilesAttachments -> ChannelFilesAttachmentsContent(
                 cid = mode.channelId,
                 onNavigationIconClick = { navigator.navigateBack() },
+            )
+
+            is InfoContentMode.ScheduledMessages -> ScheduledMessagesScreen(
+                viewModelFactory = remember(mode.channelId) {
+                    ScheduledMessageListViewModelFactory(cid = mode.channelId)
+                },
+                onBackPressed = { navigator.navigateBack() },
             )
 
             is InfoContentMode.Hidden -> Unit
@@ -676,6 +686,17 @@ private fun ThreePaneNavigator.navigateToFilesAttachments(channelId: String) {
             pane = ThreePaneRole.Info,
             arguments = InfoContentMode.FilesAttachments(channelId),
         ),
+    )
+}
+
+private fun ThreePaneNavigator.navigateToScheduledMessages(channelId: String) {
+    navigateTo(
+        destination = ThreePaneDestination(
+            pane = ThreePaneRole.Info,
+            arguments = InfoContentMode.ScheduledMessages(channelId),
+        ),
+        // The banner stays visible next to the info pane, so another tap replaces the pane instead of stacking it.
+        popUpTo = ThreePaneRole.Detail,
     )
 }
 

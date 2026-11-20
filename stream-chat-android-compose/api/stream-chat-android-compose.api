@@ -1064,15 +1064,15 @@ public final class io/getstream/chat/android/compose/ui/chats/ChatMessageSelecti
 }
 
 public final class io/getstream/chat/android/compose/ui/chats/ChatsScreenKt {
-	public static final fun ChatsScreen (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelListViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/mentions/MentionListViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/channels/SearchMode;Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChatsScreen (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelListViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/mentions/MentionListViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/channels/SearchMode;Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;IIII)V
 }
 
 public final class io/getstream/chat/android/compose/ui/chats/ComposableSingletons$ChatsScreenKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/chats/ComposableSingletons$ChatsScreenKt;
 	public fun <init> ()V
-	public final fun getLambda$-515840440$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$1397080398$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$726980148$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-1920922411$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1636500929$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$1825331291$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/BackButtonKt {

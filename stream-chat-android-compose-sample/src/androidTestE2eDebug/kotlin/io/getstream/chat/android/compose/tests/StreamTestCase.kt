@@ -51,6 +51,9 @@ abstract class StreamTestCase {
 
     /** Turns on the sample's scheduled messages: a long press on send schedules a message. */
     open var useScheduledMessages = false
+
+    /** Turns on the sample's adaptive layout: the user lands in the chats screen after logging in. */
+    open var useAdaptiveLayout = false
     val userRobot = UserRobot()
     lateinit var backendRobot: BackendRobot
     lateinit var participantRobot: ParticipantRobot
@@ -105,6 +108,7 @@ abstract class StreamTestCase {
             it.putExtra("CHANNEL_SEARCH", useChannelSearch)
             it.putExtra("MEMBER_NAME_SEARCH", useMemberNameSearch)
             it.putExtra("SCHEDULED_MESSAGES", useScheduledMessages)
+            it.putExtra("ADAPTIVE_LAYOUT", useAdaptiveLayout)
             if (useMockServer) {
                 it.putExtra("BASE_URL", mockServer.url)
             }
