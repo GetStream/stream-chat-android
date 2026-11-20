@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.common.feature.scheduled
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.state.getMessageUsingCache
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -25,6 +24,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
@@ -89,7 +89,6 @@ public class ScheduledMessageListController(
     // Whether they were all loaded once, by this controller or before it, so the list shows them, or that there are
     // none, also once the connection is lost.
     private val hasLoaded = MutableStateFlow(cid == null && chatClient.hasLoadedAllScheduledMessages.value)
-    private val channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
 
     // The quoted messages found deleted after an action was refused because of them. The scheduled messages may not
     // say so yet.
@@ -117,14 +116,13 @@ public class ScheduledMessageListController(
             // Nothing loads while offline.
             isLoadFailed || connectionState is ConnectionState.Offline
         },
-        channels,
         deletedQuotes,
-    ) { scheduledMessages, isKnown, cannotLoad, channels, deletedQuotes ->
+    ) { scheduledMessages, isKnown, cannotLoad, deletedQuotes ->
         val isUnknown = scheduledMessages.isEmpty() && !isKnown
         ScheduledMessageListState(
             items = scheduledMessages
                 .sortedWith(compareBy(ScheduledMessage::scheduledAt).thenBy { it.message.text })
-                .map { scheduledMessage -> scheduledMessage.toItemState(channels, deletedQuotes) },
+                .map { scheduledMessage -> scheduledMessage.toItemState(deletedQuotes) },
             isLoading = isUnknown && !cannotLoad,
             isLoadFailed = isUnknown && cannotLoad,
         )
@@ -141,12 +139,6 @@ public class ScheduledMessageListController(
             combine(hasLoadedAll, chatClient.clientState.connectionState) { hasLoadedAll, connectionState ->
                 !hasLoadedAll && connectionState == ConnectionState.Connected
             }.distinctUntilChanged().filter { it }.collect { load() }
-        }
-        ownScope.launch {
-            scheduledMessages
-                .map { scheduledMessages -> scheduledMessages.map(ScheduledMessage::cid).toSet() }
-                .distinctUntilChanged()
-                .collect { cids -> loadChannels(cids - channels.value.keys) }
         }
         ownScope.launch {
             chatClient.deletedScheduledMessagesAlreadySent
@@ -335,6 +327,15 @@ public class ScheduledMessageListController(
     }
 
     /**
+     * The config of the channel with [cid], as saved on this device when this is called, for example for the lead
+     * times of a reschedule. Null when this device does not know it.
+     *
+     * @param cid The channel, in the format `type:id`.
+     */
+    public fun channelConfig(cid: String): Config? =
+        chatClient.repositoryFacade.selectChannelConfig(cid.cidToTypeAndId().first)?.config
+
+    /**
      * Cancels the work started by this controller, without cancelling the scope it was given.
      */
     override fun close() {
@@ -392,22 +393,6 @@ public class ScheduledMessageListController(
         Result.Failure(Error.GenericError("There is no scheduled message with id: $id."))
 
     /**
-     * Loads the channels with [cids], for their names and images: a message scheduled on this device has no
-     * [ScheduledMessage.channel], and a direct message channel has no name of its own.
-     */
-    private suspend fun loadChannels(cids: Set<String>) {
-        cids.chunked(MAX_CHANNELS_PER_QUERY).forEach { chunk ->
-            val request = QueryChannelsRequest(
-                filter = Filters.`in`("cid", chunk),
-                limit = chunk.size,
-                messageLimit = 0,
-            ).apply { watch = false }
-            val result = chatClient.queryChannels(request).await()
-            if (result is Result.Success) channels.update { it + result.value.associateBy(Channel::cid) }
-        }
-    }
-
-    /**
      * Loads the message with [id] that a scheduled message quotes, and keeps it when it was deleted, which is final.
      *
      * @return Whether the quoted message was deleted.
@@ -418,16 +403,28 @@ public class ScheduledMessageListController(
         return true
     }
 
-    private fun ScheduledMessage.toItemState(
-        channels: Map<String, Channel>,
-        deletedQuotes: Map<String, Message>,
-    ): ScheduledMessageItemState {
+    private fun ScheduledMessage.toItemState(deletedQuotes: Map<String, Message>): ScheduledMessageItemState {
         val quotedMessage = message.replyMessageId?.let(deletedQuotes::get) ?: message.replyTo
         return ScheduledMessageItemState(
             scheduledMessage = this,
-            channel = channels[cid],
+            channel = channelFromSummary(),
             quotedMessage = quotedMessage,
             actions = scheduledMessageActions(isQuoteDeleted = quotedMessage?.deletedAt != null),
+        )
+    }
+
+    /**
+     * The channel of the scheduled message, built from its summary, or null when there is no summary.
+     */
+    private fun ScheduledMessage.channelFromSummary(): Channel? = channel?.let { summary ->
+        val (type, id) = cid.cidToTypeAndId()
+        Channel(
+            id = id,
+            type = type,
+            name = summary.name.orEmpty(),
+            image = summary.image.orEmpty(),
+            memberCount = summary.memberCount,
+            members = summary.members,
         )
     }
 }
@@ -522,6 +519,3 @@ private val NotEditableReasons = setOf(
     ServerRejectedScheduling.Reason.ScheduledMessageSending,
     ServerRejectedScheduling.Reason.ScheduledMessageNotEditable,
 )
-
-/** The largest number of channels to load with one query. */
-private const val MAX_CHANNELS_PER_QUERY = 30

@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.scheduled.ScheduledMessageEdit
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessage
@@ -92,6 +93,11 @@ public class ScheduledMessageListViewModel internal constructor(
     public fun delete(id: String) {
         controller.delete(id)
     }
+
+    /**
+     * The config of the channel with [cid], as saved on this device when this is called.
+     */
+    internal fun channelConfig(cid: String): Config? = controller.channelConfig(cid)
 
     /**
      * The scheduled message edited in the composer of the list, kept across configuration changes.

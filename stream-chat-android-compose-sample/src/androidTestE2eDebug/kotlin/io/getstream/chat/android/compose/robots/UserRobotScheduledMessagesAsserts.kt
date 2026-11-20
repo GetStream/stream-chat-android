@@ -60,6 +60,13 @@ fun UserRobot.assertScheduledMessage(text: String, time: String? = null): UserRo
     return this
 }
 
+/** Asserts the row whose preview ends with [text] shows the avatar and the name of the channel [channelName]. */
+fun UserRobot.assertScheduledMessageChannel(text: String, channelName: String): UserRobot {
+    val item = Screen.item(text).hasDescendant(Screen.channelName(channelName)).hasDescendant(Screen.channelAvatar)
+    assertTrue(item.waitDisplayed())
+    return this
+}
+
 /** Asserts the row of [text] with [time] is still in the list after waiting for it to leave. */
 fun UserRobot.assertScheduledMessageStays(text: String, time: String): UserRobot {
     val item = Screen.item(text).hasDescendant(Screen.date(time))

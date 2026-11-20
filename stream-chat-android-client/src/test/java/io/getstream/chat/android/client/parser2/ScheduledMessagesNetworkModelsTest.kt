@@ -74,6 +74,8 @@ internal class ScheduledMessagesNetworkModelsTest {
         response.message.custom shouldBeEqualTo mapOf("mood" to "happy")
         response.channel?.name shouldBeEqualTo "General"
         response.channel?.image shouldBeEqualTo "https://example.com/general.png"
+        response.channel?.memberCount shouldBeEqualTo 6
+        response.channel?.members?.single()?.user?.id shouldBeEqualTo "alice"
     }
 
     @Test
@@ -102,6 +104,16 @@ internal class ScheduledMessagesNetworkModelsTest {
 
         message.replyMessageId shouldBeEqualTo "quoted-1"
         message.replyTo.shouldBeNull()
+    }
+
+    @Test
+    fun `A channel summary without member count and members, as older backends send it, is parsed`() {
+        val response = fromJson<ScheduledMessageResponse>(
+            scheduledMessageJson(status = "scheduled", failureReason = null, withChannel = true, withMembers = false),
+        )
+
+        response.channel?.memberCount.shouldBeNull()
+        response.channel?.members shouldBeEqualTo emptyList()
     }
 
     @Test
@@ -256,12 +268,19 @@ internal class ScheduledMessagesNetworkModelsTest {
         failureReason: String?,
         withChannel: Boolean,
         withQuote: Boolean = false,
+        withMembers: Boolean = true,
     ): String {
         val quote = if (withQuote) """"quoted_message": $QUOTED_MESSAGE_JSON,""" else ""
         val failure = failureReason?.let { """"failure_reason": $it,""" }.orEmpty()
-        val channel = if (withChannel) {
+        val channel = if (withChannel && !withMembers) {
+            """"channel": { "cid": "messaging:general", "id": "general", "type": "messaging" },"""
+        } else if (withChannel) {
             """"channel": { "cid": "messaging:general", "id": "general", "type": "messaging", "name": "General",
-              "image": "https://example.com/general.png" },"""
+              "image": "https://example.com/general.png", "member_count": 6, "members": [
+                { "user_id": "alice", "user": $USER_JSON, "channel_role": "channel_member", "banned": false,
+                  "shadow_banned": false, "notifications_muted": false, "created_at": "2026-01-01T00:00:00.000Z",
+                  "updated_at": "2026-01-01T00:00:00.000Z" }
+              ] },"""
         } else {
             ""
         }

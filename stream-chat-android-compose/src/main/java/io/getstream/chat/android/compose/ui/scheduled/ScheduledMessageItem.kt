@@ -103,7 +103,7 @@ internal fun ScheduledMessageItem(
             Row(horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm)) {
                 ChatTheme.componentFactory.ChannelAvatar(
                     params = ChannelAvatarParams(
-                        channel = item.channel ?: item.channelFromSummary(),
+                        channel = item.channel ?: item.placeholderChannel(),
                         modifier = Modifier.size(AvatarSize.ExtraLarge),
                         currentUser = currentUser,
                     ),
@@ -215,17 +215,12 @@ private fun ScheduledMessageItemState.preview(currentUser: User?): AnnotatedStri
 }
 
 /**
- * A channel built from the summary the server sends with the scheduled message, for the avatar until the channel
- * is loaded.
+ * A channel with only the ID of the channel of the scheduled message, for the placeholder avatar when there is no
+ * summary.
  */
-private fun ScheduledMessageItemState.channelFromSummary(): Channel {
+private fun ScheduledMessageItemState.placeholderChannel(): Channel {
     val (type, id) = scheduledMessage.cid.split(':', limit = 2).let { it.first() to it.getOrElse(1) { "" } }
-    return Channel(
-        type = type,
-        id = id,
-        name = scheduledMessage.channel?.name.orEmpty(),
-        image = scheduledMessage.channel?.image.orEmpty(),
-    )
+    return Channel(type = type, id = id)
 }
 
 /**

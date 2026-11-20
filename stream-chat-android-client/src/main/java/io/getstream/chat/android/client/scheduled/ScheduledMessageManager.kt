@@ -29,7 +29,10 @@ import io.getstream.chat.android.client.events.ScheduledMessageUpdatedEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage.PendingChange
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
@@ -141,6 +144,8 @@ internal class ScheduledMessageManager(
             ?: validator.validateScheduledAt(cid, scheduledAt)
             ?: validator.validateLimits(cid, others)
         error?.let { return Result.Failure(it) }
+        // The server sends the summary of the channel once it has the message.
+        val channel = getRepositoryFacade().selectChannel(cid)?.toChannelInfo()
         val now = now()
         val content = message.copy(
             cid = cid,
@@ -154,7 +159,7 @@ internal class ScheduledMessageManager(
             current ?: LocalScheduledMessage(
                 id = message.id,
                 cid = cid,
-                channel = null,
+                channel = channel,
                 message = content,
                 scheduledAt = scheduledAt,
                 serverStatus = ScheduledMessageStatus.Scheduled,
@@ -376,6 +381,23 @@ private const val MAX_QUERY_LIMIT = 100
 
 /** How many deleted messages already sent wait for slow collectors before the oldest is dropped. */
 private const val DELETED_ALREADY_SENT_BUFFER = 16
+
+/**
+ * The summary of the channel as the server sends it with a scheduled message: its oldest members first, as many as
+ * the server sends.
+ */
+private fun Channel.toChannelInfo(): ChannelInfo = ChannelInfo(
+    cid = cid,
+    id = id,
+    type = type,
+    memberCount = memberCount,
+    name = name.takeIf(String::isNotEmpty),
+    image = image.takeIf(String::isNotEmpty),
+    members = members.sortedBy(Member::createdAt).take(SUMMARY_MEMBER_LIMIT),
+)
+
+/** How many members the server sends in the summary of the channel of a scheduled message. */
+private const val SUMMARY_MEMBER_LIMIT = 4
 
 /**
  * Saves [quoted] as the quote of the scheduled messages that quote the message with [quotedId]. The server sends no

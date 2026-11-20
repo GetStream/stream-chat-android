@@ -26,10 +26,12 @@ import io.getstream.chat.android.client.scheduled.randomLocalScheduledMessage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
@@ -71,9 +73,8 @@ internal class ScheduledMessageRepositoryIntegrationTest : BaseDomainTest2() {
     @Test
     fun `the channel summary and the skip flags read back equal`() = runTest {
         val scheduledMessage = fullScheduledMessage().let {
-            val (type, id) = it.cid.split(":")
             it.copy(
-                channel = ChannelInfo(cid = it.cid, id = id, type = type, name = randomString(), image = randomString()),
+                channel = summary(it.cid, name = randomString(), image = randomString()),
                 message = it.message.copy(skipPushNotification = true, skipEnrichUrl = true),
             )
         }
@@ -81,6 +82,40 @@ internal class ScheduledMessageRepositoryIntegrationTest : BaseDomainTest2() {
         repository.insertScheduledMessage(scheduledMessage)
 
         repository.selectScheduledMessages() shouldBeEqualTo listOf(scheduledMessage)
+    }
+
+    @Test
+    fun `the channel summary of a direct message, with no name or image, reads back after a restart`() = runTest {
+        val scheduledMessage = fullScheduledMessage().let { it.copy(channel = summary(it.cid, name = null, image = null)) }
+
+        repository.insertScheduledMessage(scheduledMessage)
+
+        repository.selectScheduledMessages().single().channel shouldBeEqualTo scheduledMessage.channel
+    }
+
+    @Test
+    fun `a scheduled message with no channel summary reads back without one`() = runTest {
+        val scheduledMessage = fullScheduledMessage().copy(channel = null)
+
+        repository.insertScheduledMessage(scheduledMessage)
+
+        repository.selectScheduledMessages().single().channel shouldBeEqualTo null
+    }
+
+    /** A summary whose members have what is saved of their users: their ID, name and image. */
+    private fun summary(cid: String, name: String?, image: String?): ChannelInfo {
+        val (type, id) = cid.split(":")
+        return ChannelInfo(
+            cid = cid,
+            id = id,
+            type = type,
+            memberCount = 2,
+            name = name,
+            image = image,
+            members = List(2) {
+                Member(user = User(id = randomString(), name = randomString(), image = randomString()))
+            },
+        )
     }
 
     @Test

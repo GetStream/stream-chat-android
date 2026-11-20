@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessage
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActions
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActionsAreClosed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageCanBeSaved
+import io.getstream.chat.android.compose.robots.assertScheduledMessageChannel
 import io.getstream.chat.android.compose.robots.assertScheduledMessageCommandNotAllowed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageDeletedAlreadySentNotice
 import io.getstream.chat.android.compose.robots.assertScheduledMessageEditor
@@ -51,6 +52,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessagesScreen
 import io.getstream.chat.android.compose.robots.assertThreadMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.disableInternetConnection
@@ -582,6 +584,24 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot
                 .openScheduledMessagesFromBanner()
                 .assertScheduledMessage(sampleText)
+        }
+    }
+
+    @Test
+    fun test_messageScheduledOnAnotherDeviceShowsItsChannel() {
+        step("GIVEN a direct message channel without a name exists") {
+            backendRobot.generateChannels(channelsCount = 1, withDirectMessageChannel = true)
+        }
+        step("AND user is logged in") {
+            userRobot.login().waitForChannelListToLoad()
+        }
+        step("WHEN user schedules a message in the direct message channel on another device") {
+            backendRobot.createScheduledMessage(sampleText, inDirectMessageChannel = true)
+        }
+        step("THEN the list shows it with the name of the other member, from the channel members") {
+            userRobot
+                .openScheduledMessages()
+                .assertScheduledMessageChannel(sampleText, ParticipantRobot.name)
         }
     }
 
