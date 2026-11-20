@@ -4050,12 +4050,12 @@ internal class MessageComposerControllerTest {
 
         controller.scheduledMessagesBannerState.test {
             assertEquals(
-                ScheduledMessagesBannerState.Scheduled(count = 2, nextScheduledAt = later, isInThread = false),
+                ScheduledMessagesBannerState.Scheduled(count = 2, nextScheduledAt = later),
                 expectMostRecentItem(),
             )
             controller.setMessageMode(MessageMode.MessageThread(parentMessage))
             assertEquals(
-                ScheduledMessagesBannerState.Scheduled(count = 1, nextScheduledAt = later, isInThread = true),
+                ScheduledMessagesBannerState.Scheduled(count = 1, nextScheduledAt = later, parentMessageId = parentMessage.id),
                 expectMostRecentItem(),
             )
         }

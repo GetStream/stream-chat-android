@@ -30,6 +30,7 @@ internal class ScheduledMessagesBannerStateTest {
     private val now = Date(1_799_999_940_000L)
     private val earlier = Date(1_800_000_000_000L)
     private val later = Date(1_800_000_060_000L)
+    private val threadId = "thread-id"
 
     @Test
     fun `failed messages come first, then the limit reached, then the scheduled messages`() {
@@ -38,15 +39,15 @@ internal class ScheduledMessagesBannerStateTest {
 
         assertEquals(
             ScheduledMessagesBannerState.Failed(1),
-            scheduledMessagesBannerState(listOf(scheduled, failed), limitReached, isInThread = false, now = now),
+            scheduledMessagesBannerState(listOf(scheduled, failed), limitReached, parentMessageId = null, now = now),
         )
         assertEquals(
             ScheduledMessagesBannerState.LimitReached(count = 10, limit = 10),
-            scheduledMessagesBannerState(listOf(scheduled), limitReached, isInThread = false, now = now),
+            scheduledMessagesBannerState(listOf(scheduled), limitReached, parentMessageId = null, now = now),
         )
         assertEquals(
-            ScheduledMessagesBannerState.Scheduled(count = 1, nextScheduledAt = later, isInThread = false),
-            scheduledMessagesBannerState(listOf(scheduled), canSchedule, isInThread = false, now = now),
+            ScheduledMessagesBannerState.Scheduled(count = 1, nextScheduledAt = later),
+            scheduledMessagesBannerState(listOf(scheduled), canSchedule, parentMessageId = null, now = now),
         )
     }
 
@@ -59,8 +60,8 @@ internal class ScheduledMessagesBannerStateTest {
         )
 
         assertEquals(
-            ScheduledMessagesBannerState.Scheduled(count = 3, nextScheduledAt = earlier, isInThread = true),
-            scheduledMessagesBannerState(scheduledMessages, canSchedule, isInThread = true, now = now),
+            ScheduledMessagesBannerState.Scheduled(count = 3, nextScheduledAt = earlier, parentMessageId = threadId),
+            scheduledMessagesBannerState(scheduledMessages, canSchedule, parentMessageId = threadId, now = now),
         )
     }
 
@@ -70,28 +71,48 @@ internal class ScheduledMessagesBannerStateTest {
         val upcoming = randomScheduledMessage(scheduledAt = later)
 
         assertEquals(
-            ScheduledMessagesBannerState.Scheduled(count = 1, nextScheduledAt = later, isInThread = false),
-            scheduledMessagesBannerState(listOf(pastDue, upcoming), canSchedule, isInThread = false, now = earlier),
+            ScheduledMessagesBannerState.Scheduled(count = 1, nextScheduledAt = later),
+            scheduledMessagesBannerState(listOf(pastDue, upcoming), canSchedule, parentMessageId = null, now = earlier),
         )
-        assertNull(scheduledMessagesBannerState(listOf(pastDue), canSchedule, isInThread = false, now = earlier))
+        assertNull(scheduledMessagesBannerState(listOf(pastDue), canSchedule, parentMessageId = null, now = earlier))
     }
 
     @Test
     fun `the limit reached shows even without scheduled messages, as it is for the whole channel`() {
         assertEquals(
             ScheduledMessagesBannerState.LimitReached(count = 10, limit = 10),
-            scheduledMessagesBannerState(emptyList(), limitReached, isInThread = true, now = now),
+            scheduledMessagesBannerState(emptyList(), limitReached, parentMessageId = threadId, now = now),
         )
     }
 
     @Test
+    fun `the banner of a thread is about the thread, except the limit reached, which is about the whole channel`() {
+        val failed = randomScheduledMessage(status = ScheduledMessageStatus.Failed)
+        val scheduled = randomScheduledMessage(scheduledAt = later)
+
+        assertEquals(
+            threadId,
+            scheduledMessagesBannerState(listOf(failed), canSchedule, parentMessageId = threadId, now = now)
+                ?.parentMessageId,
+        )
+        assertEquals(
+            threadId,
+            scheduledMessagesBannerState(listOf(scheduled), canSchedule, parentMessageId = threadId, now = now)
+                ?.parentMessageId,
+        )
+        val limit = scheduledMessagesBannerState(listOf(scheduled), limitReached, parentMessageId = threadId, now = now)
+        assertEquals(ScheduledMessagesBannerState.LimitReached(count = 10, limit = 10), limit)
+        assertNull(limit?.parentMessageId)
+    }
+
+    @Test
     fun `nothing shows without scheduled messages, or without the capability`() {
-        assertNull(scheduledMessagesBannerState(emptyList(), canSchedule, isInThread = false, now = now))
+        assertNull(scheduledMessagesBannerState(emptyList(), canSchedule, parentMessageId = null, now = now))
         assertNull(
             scheduledMessagesBannerState(
                 listOf(randomScheduledMessage(status = ScheduledMessageStatus.Failed)),
                 limitReached.copy(canSchedule = false),
-                isInThread = false,
+                parentMessageId = null,
                 now = now,
             ),
         )
