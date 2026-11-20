@@ -52,6 +52,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessagesScreen
 import io.getstream.chat.android.compose.robots.assertThreadMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.disableInternetConnection
@@ -588,20 +589,19 @@ class ScheduledMessagesTests : StreamTestCase() {
 
     @Test
     fun test_messageScheduledOnAnotherDeviceShowsItsChannel() {
-        val channelName = "Blue Team"
-        step("GIVEN a channel with a name exists") {
-            backendRobot.generateChannels(channelsCount = 1, channelNames = listOf(channelName))
+        step("GIVEN a direct message channel without a name exists") {
+            backendRobot.generateChannels(channelsCount = 1, withDirectMessageChannel = true)
         }
-        step("AND user opens the channel") {
-            userRobot.login().openChannel()
+        step("AND user is logged in") {
+            userRobot.login().waitForChannelListToLoad()
         }
-        step("WHEN user schedules a message on another device") {
-            backendRobot.createScheduledMessage(sampleText)
+        step("WHEN user schedules a message in the direct message channel on another device") {
+            backendRobot.createScheduledMessage(sampleText, inDirectMessageChannel = true)
         }
-        step("THEN the list shows it with the avatar and the name of its channel") {
+        step("THEN the list shows it with the name of the other member, from the channel members") {
             userRobot
-                .openScheduledMessagesFromBanner()
-                .assertScheduledMessageChannel(sampleText, channelName)
+                .openScheduledMessages()
+                .assertScheduledMessageChannel(sampleText, ParticipantRobot.name)
         }
     }
 
