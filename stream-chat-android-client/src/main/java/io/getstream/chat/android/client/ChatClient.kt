@@ -705,11 +705,13 @@ internal constructor(
 
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
-                // Before this user is set: a scheduled message change made in between would go to the other user.
                 val isReplacingUser = initializedUserId.get().let { it != null && it != user.id }
-                if (isReplacingUser) scheduledMessageManager.stop()
                 mutableClientState.setUser(user)
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
+                // After the repositories are the ones of this user, so a start of the other user still to run loads
+                // them, and before this user is set, so no scheduled message change goes to the other user.
+                if (isReplacingUser) scheduledMessageManager.stop()
+                startScheduledMessages()
                 userStateService.onSetUser(user, isAnonymous)
                 connectingUser.set(user)
                 chatSocket.connectUser(user, isAnonymous)
@@ -795,13 +797,16 @@ internal constructor(
         appSettingsManager.loadAppSettings()
         warmUp()
         messageReceiptReporter.start()
-        // A failure stops sending until the next connection, and is logged instead of crashing the app.
-        val scheduledMessagesExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            logger.e(throwable) { "[initializeClientWithUser] scheduled messages failed: $throwable" }
-        }
-        inheritScope { SupervisorJob(it) + scheduledMessagesExceptionHandler }
-            .launch { scheduledMessageManager.start(this) }
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
+    }
+
+    private fun startScheduledMessages() {
+        // A failure stops sending until the next connection, and is logged instead of crashing the app.
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            logger.e(throwable) { "[startScheduledMessages] scheduled messages failed: $throwable" }
+        }
+        inheritScope { SupervisorJob(it) + exceptionHandler }
+            .launch { scheduledMessageManager.start(this) }
     }
 
     private fun createRepositoryFactory(user: User): RepositoryFactory =
@@ -984,6 +989,7 @@ internal constructor(
                 ),
                 isAnonymous = credentialConfig.isAnonymous,
             )
+            startScheduledMessages()
         }
     }
 
