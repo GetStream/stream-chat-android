@@ -123,5 +123,6 @@ internal class ChartComponentsTest {
         )
 
         compose.onNodeWithContentDescription(summary).assertExists()
+        compose.onNodeWithContentDescription("Rent 750, Food 250").assertExists()
     }
 }

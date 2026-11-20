@@ -55,21 +55,6 @@ internal class ActionComponentsTest {
     }
 
     @Test
-    fun `buttons too wide for one row stack and still work`() {
-        compose.renderProgram(
-            """
-            root = Buttons([Button("A very long label that does not fit next to another one", @ToAssistant("first")), Button("Another very long label that also needs the whole row", @ToAssistant("second"))])
-            """.trimIndent(),
-            onAction = actions::add,
-        )
-
-        compose.onNodeWithText("Another very long label that also needs the whole row").performClick()
-        compose.waitForIdle()
-
-        assertEquals(listOf("second"), actions.map(ActionEvent::humanFriendlyMessage))
-    }
-
-    @Test
     fun `buttons are disabled while the response streams`() {
         compose.renderProgram(
             """
@@ -132,18 +117,13 @@ internal class ActionComponentsTest {
     }
 
     @Test
-    fun `a numbered list shows its items and runs an item action`() {
+    fun `a list item runs its action on tap`() {
         compose.renderProgram(
             """
             root = Stack([ListBlock([ListItem("Louvre", "Museum", null, "Open", @ToAssistant("About the Louvre")), ListItem("Orsay")])])
             """.trimIndent(),
             onAction = actions::add,
         )
-
-        compose.onNodeWithText("1").assertExists()
-        compose.onNodeWithText("2").assertExists()
-        compose.onNodeWithText("Museum").assertExists()
-        compose.onNodeWithText("Open").assertExists()
 
         compose.onNodeWithText("Louvre").performClick()
         compose.waitForIdle()

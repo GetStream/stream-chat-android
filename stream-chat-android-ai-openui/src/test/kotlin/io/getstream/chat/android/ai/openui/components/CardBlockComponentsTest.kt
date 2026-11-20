@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ai.openui.components
 
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -119,12 +121,8 @@ internal class CardBlockComponentsTest {
             """
             root = Stack([SnippetCardBlock([SnippetCardItem(null, IconText(Icon("wifi"), null, null, "Wifi"))])])
             """.trimIndent(),
-            onAction = actions::add,
         )
 
-        compose.onNodeWithText("Wifi").performClick()
-        compose.waitForIdle()
-
-        assertEquals(emptyList<ActionEvent>(), actions)
+        compose.onAllNodes(hasClickAction()).assertCountEquals(0)
     }
 }

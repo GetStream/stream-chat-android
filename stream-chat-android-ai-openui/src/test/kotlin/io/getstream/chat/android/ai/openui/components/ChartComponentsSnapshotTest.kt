@@ -27,7 +27,7 @@ internal class ChartComponentsSnapshotTest : PaparazziTest {
     @get:Rule
     override val paparazzi = Paparazzi(
         deviceConfig = DeviceConfig.PIXEL_5,
-        renderingMode = RenderingMode.V_SCROLL,
+        renderingMode = RenderingMode.SHRINK,
     )
 
     @Test

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("TooManyFunctions")
+@file:Suppress("TooManyFunctions") // Every action component, with its samples and previews.
 
 package io.getstream.chat.android.ai.openui.components
 
@@ -611,8 +611,9 @@ internal fun actionNeedsValidation(action: OpenUIValue?): Boolean {
 internal fun ButtonsSample() {
     Renderer(
         response = """
-            root = Stack([row, column, icons])
+            root = Stack([row, wide, column, icons])
             row = Buttons([Button("Book", @ToAssistant("Book a table")), cancel])
+            wide = Buttons([Button("Book the table by the window for two"), Button("Ask about the vegetarian menu", null, "secondary")])
             cancel = Button("Cancel", @ToAssistant("Cancel"), "secondary", "destructive")
             column = Buttons([small, large, more], "column")
             small = Button("Small", null, "secondary", "normal", "small")

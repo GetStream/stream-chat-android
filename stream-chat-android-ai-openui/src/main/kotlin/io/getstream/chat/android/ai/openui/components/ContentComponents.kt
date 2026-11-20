@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("TooManyFunctions")
+@file:Suppress("TooManyFunctions") // Every content component, with its samples and previews.
 
 package io.getstream.chat.android.ai.openui.components
 

@@ -948,7 +948,7 @@ internal fun ContextCardsSample() {
         response = """
             root = ContextCardBlock([season, tip], "grid")
             season = ContextCardItem("a", "Best time", "**Spring** is mild", "gray")
-            tip = ContextCardItem(null, Tag("Tip", null, "sm", "info"), "Book early", null, "", "Beach")
+            tip = ContextCardItem(null, Tag("Tip", null, "sm", "info"), "Book early", null, "beach.jpg", "Beach")
         """.trimIndent(),
         library = openuiLibrary,
     )

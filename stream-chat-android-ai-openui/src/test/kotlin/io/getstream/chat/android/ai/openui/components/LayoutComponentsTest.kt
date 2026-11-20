@@ -16,13 +16,18 @@
 
 package io.getstream.chat.android.ai.openui.components
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.ai.openui.rendering.Renderer
 import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,14 +57,16 @@ internal class LayoutComponentsTest {
 
     @Test
     fun `streaming tabs follow the tab whose content grows`() {
-        compose.renderProgram(
-            """
-            root = Tabs([TabItem("a", "First", [TextContent("Alpha")]), TabItem("b", "Second", [TextContent("Beta")])])
-            """.trimIndent(),
-            isStreaming = true,
-        )
-
+        var response by mutableStateOf(tabs(first = "Alpha", second = "Beta"))
+        compose.setContent { Renderer(response = response, library = openuiLibrary, isStreaming = true) }
+        compose.waitForIdle()
         compose.onNodeWithText("Beta").assertExists()
+
+        response = tabs(first = "Alpha grows", second = "Beta")
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Alpha grows").assertExists()
+        compose.onNodeWithText("Beta").assertDoesNotExist()
     }
 
     @Test
@@ -161,4 +168,8 @@ internal class LayoutComponentsTest {
         compose.onNodeWithText("Overview").performClick()
         compose.onNodeWithText("First body").assertDoesNotExist()
     }
+
+    private fun tabs(first: String, second: String) =
+        "root = Tabs([TabItem(\"a\", \"First\", [TextContent(\"$first\")]), " +
+            "TabItem(\"b\", \"Second\", [TextContent(\"$second\")])])"
 }

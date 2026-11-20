@@ -29,7 +29,8 @@ import app.cash.paparazzi.Paparazzi
 /**
  * Base for Paparazzi snapshot tests of the OpenUI components: [snapshot] records a component once
  * in light and once in dark [MaterialTheme], which the OpenUI theme derives from, with
- * [LocalInspectionMode] enabled as in a preview.
+ * [LocalInspectionMode] enabled as in a preview. Light and dark are separate images because the
+ * tallest samples don't fit twice on one screen.
  */
 internal interface PaparazziTest {
 
