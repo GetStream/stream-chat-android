@@ -196,8 +196,9 @@ public class MessageComposerViewModel(
     /**
      * What the scheduled messages banner of the channel, or of the thread the composer writes in, shows, or null when
      * the user can't schedule messages in the channel or there is nothing to show. Kept up to date while it is
-     * collected. Pass it to `ChatComponentFactory.ScheduledMessagesBanner` to show the banner on a screen other than
-     * the channel screen.
+     * collected. To show the banner on a screen other than the channel screen, collect it and pass its value to
+     * `ChatComponentFactory.ScheduledMessagesBanner`. It does not read `ComposerConfig.scheduledMessagesEnabled`, so
+     * check that flag before showing the banner.
      */
     public val scheduledMessagesBannerState: StateFlow<ScheduledMessagesBannerState?> =
         messageComposerController.scheduledMessagesBannerState
