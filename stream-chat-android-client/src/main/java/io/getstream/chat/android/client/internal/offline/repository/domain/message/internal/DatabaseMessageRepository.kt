@@ -149,15 +149,23 @@ internal class DatabaseMessageRepository(
      * @param messages list of [Message]
      */
     override suspend fun insertMessages(messages: List<Message>) {
+        insertMessages(messages, skipDeleted = true, toEntity = Message::toEntity)
+    }
+
+    private suspend fun insertMessages(
+        messages: List<Message>,
+        skipDeleted: Boolean,
+        toEntity: (Message) -> MessageEntity,
+    ) {
         if (messages.isEmpty()) return
         val validMessages = messages
             .filter { message -> message.cid.isNotEmpty() }
             .filterNot { message -> message.cid.substringBefore(":") in ignoredChannelTypes }
-            .filterNot { message -> (message.id in deletedMessageIds) }
+            .filterNot { message -> skipDeleted && message.id in deletedMessageIds }
 
         val messagesToInsert = validMessages
             .filter { messageCache.get(it.id) != it }
-            .map(Message::toEntity)
+            .map(toEntity)
         val replyMessages = validMessages
             .mapNotNull { message -> message.replyTo }
 
@@ -189,6 +197,17 @@ internal class DatabaseMessageRepository(
     override suspend fun insertMessage(message: Message) {
         insertMessages(listOf(message))
     }
+
+    override suspend fun insertDeletedMessage(message: Message, hard: Boolean) {
+        // Other inserts skip a message already deleted locally, but a new delete of it must still be stored.
+        insertMessages(listOf(message), skipDeleted = false) { deleted ->
+            val entity = deleted.toEntity()
+            entity.copy(messageInnerEntity = entity.messageInnerEntity.copy(hardDelete = hard))
+        }
+    }
+
+    override suspend fun selectIsHardDelete(messageId: String): Boolean =
+        messageDao.selectHardDelete(messageId) == true
 
     override suspend fun insertDraftMessage(message: DraftMessage) {
         message.replyMessage?.let { insertMessage(it) }

@@ -1356,7 +1356,7 @@ internal class SyncManager(
             logger.w { "[retryDeletionOfMessageWithSyncedAttachments] outdated deleting($id)" }
             removeMessage(message).await()
         } else {
-            channelClient.deleteMessage(message.id).await()
+            channelClient.deleteMessage(message.id, hard = repos.selectIsHardDelete(id)).await()
         }
     }
 
