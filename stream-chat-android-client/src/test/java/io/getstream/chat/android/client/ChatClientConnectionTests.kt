@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.internal.offline.repository.factory.inte
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.client.persistance.repository.ScheduledMessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
@@ -51,6 +52,7 @@ import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.ScheduledMessage
@@ -62,6 +64,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
@@ -611,18 +614,21 @@ internal class ChatClientConnectionTests {
 
     @Test
     fun `Given a user set without connecting, connecting another user replaces the scheduled messages of the first`() =
-        runCancellableTest { connectAnotherUserThanTheStoredOne(startsStoredUserFirst = true) }
+        runCancellableTest { connectAnotherUserThanTheStoredOne(isStoredUserLoadedFirst = true) }
 
     @Test
-    fun `Given the scheduled messages of a stored user still to load, another user connecting gets only its own`() =
-        runCancellableTest { connectAnotherUserThanTheStoredOne(startsStoredUserFirst = false) }
+    fun `Given the scheduled messages of a stored user still loading, another user connecting gets only its own`() =
+        runCancellableTest { connectAnotherUserThanTheStoredOne(isStoredUserLoadedFirst = false) }
 
-    private suspend fun TestScope.connectAnotherUserThanTheStoredOne(startsStoredUserFirst: Boolean) {
+    private suspend fun TestScope.connectAnotherUserThanTheStoredOne(isStoredUserLoadedFirst: Boolean) {
         val storedUserId = randomString()
         val storedUserMessage = randomLocalScheduledMessage()
         val connectedUserMessage = randomLocalScheduledMessage()
-        repositoryFactories[storedUserId] = repositoryFactoryWith(storedUserMessage)
-        repositoryFactories[user.id] = repositoryFactoryWith(connectedUserMessage)
+        val storedUserLoad = CompletableDeferred<Unit>()
+        val storedUserRepository = HeldScheduledMessageRepository(storedUserLoad, storedUserMessage)
+        val connectedUserRepository = InMemoryScheduledMessageRepository(connectedUserMessage)
+        repositoryFactories[storedUserId] = repositoryFactoryWith(storedUserRepository)
+        repositoryFactories[user.id] = repositoryFactoryWith(connectedUserRepository)
         // What a scheduled message change made as soon as the client is ready would find.
         var scheduledMessagesWhenReady: List<ScheduledMessage>? = null
         client.clientState.initializationState
@@ -633,8 +639,8 @@ internal class ChatClientConnectionTests {
         whenever(userCredentialStorage.get())
             .thenReturn(CredentialConfig(storedUserId, randomString(), randomString(), isAnonymous = false))
         client.setUserWithoutConnectingIfNeeded()
-        if (startsStoredUserFirst) {
-            testScheduler.runCurrent()
+        if (isStoredUserLoadedFirst) {
+            storedUserLoad.complete(Unit)
             client.scheduledMessages.value.map { it.id } `should be equal to` listOf(storedUserMessage.id)
         }
 
@@ -642,18 +648,42 @@ internal class ChatClientConnectionTests {
         val rawCreatedAt = streamDateFormatter.format(createdAt)
         val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, randomString())
         val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
+        // The start of the stored user ends only now, while the other user is connecting.
+        storedUserLoad.complete(Unit)
         fakeChatSocket.mockEventReceived(event)
         deferred.await()
-        testScheduler.runCurrent()
 
         scheduledMessagesWhenReady.shouldNotBeNull().map { it.id } `should not contain` storedUserMessage.id
         client.scheduledMessages.value.map { it.id } `should be equal to` listOf(connectedUserMessage.id)
+
+        val scheduled = Message(id = randomString(), text = randomString())
+        client.scheduleMessage("messaging", randomString(), scheduled, scheduledAt = Date()).await()
+            .shouldBeInstanceOf<Result.Success<ScheduledMessage>>()
+        storedUserRepository.messages.keys `should be equal to` setOf(storedUserMessage.id)
+        connectedUserRepository.messages.keys `should be equal to` setOf(connectedUserMessage.id, scheduled.id)
     }
 
-    private fun repositoryFactoryWith(message: LocalScheduledMessage): RepositoryFactory =
+    private fun repositoryFactoryWith(repository: ScheduledMessageRepository): RepositoryFactory =
         mock<DatabaseRepositoryFactory>(defaultAnswer = RETURNS_MOCKS) {
-            on { createScheduledMessageRepository(any()) } doReturn InMemoryScheduledMessageRepository(message)
+            on { createScheduledMessageRepository(any()) } doReturn repository
+            // No channel config, so none of its limits applies to scheduling.
+            on { createChannelConfigRepository() } doReturn mock()
         }
+
+    /** An [InMemoryScheduledMessageRepository] that returns its scheduled messages once [load] completes. */
+    private class HeldScheduledMessageRepository(
+        private val load: CompletableDeferred<Unit>,
+        message: LocalScheduledMessage,
+        private val repository: InMemoryScheduledMessageRepository = InMemoryScheduledMessageRepository(message),
+    ) : ScheduledMessageRepository by repository {
+
+        val messages get() = repository.messages
+
+        override suspend fun selectScheduledMessages(): List<LocalScheduledMessage> {
+            load.await()
+            return repository.selectScheduledMessages()
+        }
+    }
 
     private suspend fun prepareAliveConnection(user: User, connectionId: String) {
         userStateService.onSetUser(user, false)
