@@ -304,7 +304,9 @@ class ChatsActivity : ComponentActivity() {
             )
 
             is InfoContentMode.ScheduledMessages -> ScheduledMessagesScreen(
-                viewModelFactory = ScheduledMessageListViewModelFactory(cid = mode.channelId),
+                viewModelFactory = remember(mode.channelId) {
+                    ScheduledMessageListViewModelFactory(cid = mode.channelId)
+                },
                 onBackPressed = { navigator.navigateBack() },
             )
 
