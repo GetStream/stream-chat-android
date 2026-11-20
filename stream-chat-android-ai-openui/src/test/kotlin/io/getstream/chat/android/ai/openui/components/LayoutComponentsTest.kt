@@ -70,6 +70,20 @@ internal class LayoutComponentsTest {
     }
 
     @Test
+    fun `streaming tabs stop following growth once the user picks a tab`() {
+        var response by mutableStateOf(tabs(first = "Alpha", second = "Beta"))
+        compose.setContent { Renderer(response = response, library = openuiLibrary, isStreaming = true) }
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Second").performClick()
+        response = tabs(first = "Alpha grows", second = "Beta")
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Beta").assertExists()
+        compose.onNodeWithText("Alpha grows").assertDoesNotExist()
+    }
+
+    @Test
     fun `an accordion opens and closes a section on tap`() {
         compose.renderProgram(
             """
