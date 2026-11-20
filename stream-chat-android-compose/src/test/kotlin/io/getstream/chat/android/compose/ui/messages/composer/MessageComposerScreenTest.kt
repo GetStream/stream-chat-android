@@ -52,6 +52,7 @@ import io.getstream.chat.android.randomFloat
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
+import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode.MessageThread
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -312,6 +313,36 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
     @Test
     @UiThread
+    fun `a custom trailing content gets no schedule action while a message is edited`() {
+        givenComposerWithText(canSchedule = true)
+        whenever(mockViewModel.messageComposerState) doReturn MutableStateFlow(
+            MessageComposerState(
+                inputValue = "Heads up",
+                action = Edit(randomMessage()),
+                ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE),
+            ),
+        )
+
+        assertEquals(null, capturedSendLongClick())
+    }
+
+    @Test
+    @UiThread
+    fun `a custom trailing content gets no schedule action while a command is active`() {
+        givenComposerWithText(canSchedule = true)
+        whenever(mockViewModel.messageComposerState) doReturn MutableStateFlow(
+            MessageComposerState(
+                inputValue = "Heads up",
+                activeCommand = randomCommand(),
+                ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE),
+            ),
+        )
+
+        assertEquals(null, capturedSendLongClick())
+    }
+
+    @Test
+    @UiThread
     fun `a screen reader can open the schedule sheet with a named action`() {
         givenComposerWithText(canSchedule = true)
 
@@ -475,6 +506,17 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
         composeTestRule.mainClock.advanceTimeBy(1_000)
         composeTestRule.waitForIdle()
         composeTestRule.mainClock.advanceTimeBy(1_000)
+    }
+
+    private fun capturedSendLongClick(): (() -> Unit)? {
+        var onSendLongClick: (() -> Unit)? = {}
+        composeTestRule.setContent {
+            ChatTheme(componentFactory = trailingContentCapture { onSendLongClick = it }) {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+        composeTestRule.waitForIdle()
+        return onSendLongClick
     }
 
     private fun trailingContentCapture(onParams: (onSendLongClick: (() -> Unit)?) -> Unit) =

@@ -248,7 +248,7 @@ public fun MessageComposer(
  * Hands the action that opens the schedule sheet from the VM-bound [MessageComposer] down to the composer input, which
  * passes it to the trailing content as [MessageComposerInputTrailingContentParams.onSendLongClick]. The default
  * trailing content also reads it when the params carry none. Null when the user can't schedule messages in the
- * channel.
+ * channel, while a message is edited, and while a command is active.
  */
 internal val LocalMessageComposerScheduleAction = compositionLocalOf<(() -> Unit)?> { null }
 
