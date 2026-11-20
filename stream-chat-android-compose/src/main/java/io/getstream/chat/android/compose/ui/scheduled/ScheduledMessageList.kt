@@ -455,13 +455,11 @@ internal fun DefaultScheduledMessageListErrorContent(onRetryClick: () -> Unit, m
 }
 
 /**
- * The name of the channel of the scheduled message, from the loaded channel, or the summary the server sent, or its
- * ID.
+ * The name of the channel of the scheduled message, from its summary, or its ID when there is no summary.
  */
 @Composable
 internal fun ScheduledMessageItemState.channelName(currentUser: User?): String =
     channel?.let { ChatTheme.channelNameFormatter.formatChannelName(it, currentUser) }
-        ?: scheduledMessage.channel?.name?.takeIf(String::isNotBlank)
         ?: scheduledMessage.cid.substringAfter(':')
 
 /**

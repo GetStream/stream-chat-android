@@ -60,6 +60,9 @@ import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
  * The default avatar for a channel.
  *
  * This component displays the channel image, the user avatar for direct messages, or a placeholder.
+ * Other channels show the avatars of up to 4 of their [Channel.members]. When the channel has more than 4 members,
+ * counted from [Channel.memberCount] when it is larger than the members loaded, and at least 2 members are loaded, it
+ * shows 2 avatars and the number of the other members.
  *
  * @param channel The channel whose avatar will be displayed.
  * @param currentUser The user currently logged in.
@@ -226,7 +229,10 @@ private fun StackedGroupAvatar(
         val dimensions = resolveStackedAvatarDimensions()
         val baseModifier = StackedGroupAvatarSpecs.baseModifier(dimensions.avatarSize)
         val membersCount = channel.members.size
-        val alignments = StackedGroupAvatarSpecs.alignmentsFor(membersCount)
+        // The badge counts every member of the channel, also the ones not loaded, once two can be shown.
+        val totalCount = maxOf(membersCount, channel.memberCount)
+        val hasOverflow = membersCount >= 2 && totalCount > 4
+        val alignments = StackedGroupAvatarSpecs.alignmentsFor(if (hasOverflow) totalCount else membersCount)
 
         when (membersCount) {
             0 -> ChannelAvatarPlaceholder(
@@ -259,12 +265,9 @@ private fun StackedGroupAvatar(
             }
 
             else -> {
-                val displayMembers = remember(channel.members, currentUser?.id) {
-                    if (membersCount > 4) {
-                        channel.members.filter { it.user.id != currentUser?.id }
-                    } else {
-                        channel.members
-                    }
+                val displayMembers = remember(channel.members, currentUser?.id, hasOverflow) {
+                    val others = channel.members.filter { it.user.id != currentUser?.id }
+                    if (hasOverflow && others.size >= alignments.size) others else channel.members
                 }
                 for (i in alignments.indices) {
                     ChatTheme.componentFactory.UserAvatar(
@@ -275,8 +278,8 @@ private fun StackedGroupAvatar(
                         ),
                     )
                 }
-                if (membersCount > 4) {
-                    val count = (membersCount - alignments.size).coerceAtMost(99)
+                if (hasOverflow) {
+                    val count = (totalCount - alignments.size).coerceAtMost(99)
                     CountBadge(
                         text = stringResource(R.string.stream_compose_avatar_overflow_count, count),
                         size = dimensions.badgeSize,

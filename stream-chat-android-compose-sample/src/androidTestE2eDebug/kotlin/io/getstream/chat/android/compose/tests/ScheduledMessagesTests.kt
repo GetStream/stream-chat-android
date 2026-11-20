@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessage
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActions
 import io.getstream.chat.android.compose.robots.assertScheduledMessageActionsAreClosed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageCanBeSaved
+import io.getstream.chat.android.compose.robots.assertScheduledMessageChannel
 import io.getstream.chat.android.compose.robots.assertScheduledMessageCommandNotAllowed
 import io.getstream.chat.android.compose.robots.assertScheduledMessageDeletedAlreadySentNotice
 import io.getstream.chat.android.compose.robots.assertScheduledMessageEditor
@@ -582,6 +583,25 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot
                 .openScheduledMessagesFromBanner()
                 .assertScheduledMessage(sampleText)
+        }
+    }
+
+    @Test
+    fun test_messageScheduledOnAnotherDeviceShowsItsChannel() {
+        val channelName = "Blue Team"
+        step("GIVEN a channel with a name exists") {
+            backendRobot.generateChannels(channelsCount = 1, channelNames = listOf(channelName))
+        }
+        step("AND user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("WHEN user schedules a message on another device") {
+            backendRobot.createScheduledMessage(sampleText)
+        }
+        step("THEN the list shows it with the avatar and the name of its channel") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessageChannel(sampleText, channelName)
         }
     }
 

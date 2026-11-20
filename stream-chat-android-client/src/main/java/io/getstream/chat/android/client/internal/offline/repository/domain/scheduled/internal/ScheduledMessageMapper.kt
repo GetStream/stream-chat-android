@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.messa
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.toModel
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage
 import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageFailure.LocalDeviceFailedScheduling
@@ -69,6 +70,10 @@ internal fun LocalScheduledMessage.toEntity(): ScheduledMessageEntity = Schedule
     cid = cid,
     channelName = channel?.name,
     channelImage = channel?.image,
+    channelMemberCount = channel?.memberCount,
+    channelMembers = channel?.members.orEmpty().map { member ->
+        ScheduledMessageChannelMemberEntity(userId = member.user.id, name = member.user.name, image = member.user.image)
+    },
     userId = message.user.id,
     text = message.text,
     html = message.html,
@@ -172,13 +177,18 @@ internal suspend fun ScheduledMessageEntity.toModel(
         updatedAt = updatedAt,
     )
 
-private fun ScheduledMessageEntity.toChannelInfo(): ChannelInfo? =
-    if (channelName != null || channelImage != null) {
-        val (type, channelId) = cid.cidToTypeAndId()
-        ChannelInfo(cid = cid, id = channelId, type = type, name = channelName, image = channelImage)
-    } else {
-        null
-    }
+private fun ScheduledMessageEntity.toChannelInfo(): ChannelInfo? = channelMemberCount?.let { memberCount ->
+    val (type, channelId) = cid.cidToTypeAndId()
+    ChannelInfo(
+        cid = cid,
+        id = channelId,
+        type = type,
+        memberCount = memberCount,
+        name = channelName,
+        image = channelImage,
+        members = channelMembers.map { Member(user = User(id = it.userId, name = it.name, image = it.image)) },
+    )
+}
 
 private fun ScheduledMessageEntity.toPublishingFailure(): ServerFailedPublishing? =
     if (hasPublishingFailure) {

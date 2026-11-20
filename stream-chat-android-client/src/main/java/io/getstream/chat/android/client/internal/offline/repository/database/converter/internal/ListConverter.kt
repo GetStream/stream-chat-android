@@ -20,6 +20,7 @@ import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.scheduled.internal.ScheduledMessageChannelMemberEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.ThreadParticipantEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.UserMuteEntity
 
@@ -31,6 +32,7 @@ internal class ListConverter {
     private val threadParticipantListAdapter = moshi.adapter<List<ThreadParticipantEntity>>()
     private val userMuteListAdapter = moshi.adapter<List<UserMuteEntity>>()
     private val attachmentListAdapter = moshi.adapter<List<AttachmentEntity>>()
+    private val scheduledMessageChannelMemberListAdapter = moshi.adapter<List<ScheduledMessageChannelMemberEntity>>()
 
     @TypeConverter
     fun toStringList(data: String?): List<String>? {
@@ -91,4 +93,16 @@ internal class ListConverter {
     @TypeConverter
     fun fromAttachmentList(entities: List<AttachmentEntity>?): String? =
         attachmentListAdapter.toJson(entities)
+
+    @TypeConverter
+    fun toScheduledMessageChannelMemberList(data: String?): List<ScheduledMessageChannelMemberEntity>? {
+        if (data.isNullOrEmpty() || data == "null") {
+            return emptyList()
+        }
+        return scheduledMessageChannelMemberListAdapter.fromJson(data)
+    }
+
+    @TypeConverter
+    fun fromScheduledMessageChannelMemberList(entities: List<ScheduledMessageChannelMemberEntity>?): String? =
+        scheduledMessageChannelMemberListAdapter.toJson(entities)
 }

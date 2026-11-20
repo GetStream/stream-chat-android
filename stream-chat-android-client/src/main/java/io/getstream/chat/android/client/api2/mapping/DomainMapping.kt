@@ -1769,7 +1769,15 @@ internal class DomainMapping(
         id = id,
         cid = cid,
         channel = channel?.let {
-            ChannelInfo(cid = it.cid, id = it.id, type = it.type, name = it.name, image = it.image)
+            ChannelInfo(
+                cid = it.cid,
+                id = it.id,
+                type = it.type,
+                memberCount = it.memberCount ?: 0,
+                name = it.name,
+                image = it.image,
+                members = it.members.map { member -> member.toDomain() },
+            )
         },
         message = message.toDomain(
             id = id,

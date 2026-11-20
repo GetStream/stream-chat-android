@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import io.getstream.chat.android.client.Mother.randomChannelMemberResponse
 import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomScheduledMessageResponse
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -58,6 +59,7 @@ internal class ScheduledMessageMappingTest {
 
     @Test
     fun `A scheduled message maps every field`() {
+        val member = randomChannelMemberResponse()
         val response = randomScheduledMessageResponse(
             id = "scheduled-1",
             cid = "messaging:general",
@@ -68,6 +70,8 @@ internal class ScheduledMessageMappingTest {
                 type = "messaging",
                 name = "General",
                 image = "https://example.com/general.png",
+                memberCount = 6,
+                members = listOf(member),
             ),
         )
 
@@ -79,8 +83,10 @@ internal class ScheduledMessageMappingTest {
             cid = "messaging:general",
             id = "general",
             type = "messaging",
+            memberCount = 6,
             name = "General",
             image = "https://example.com/general.png",
+            members = listOf(with(domainMapping) { member.toDomain() }),
         )
         scheduledMessage.scheduledAt shouldBeEqualTo response.scheduledAt
         scheduledMessage.createdAt shouldBeEqualTo response.createdAt

@@ -39,7 +39,8 @@ public data class ScheduledMessageListState(
  * A scheduled message of the list.
  *
  * @param scheduledMessage The scheduled message.
- * @param channel The channel of the message, for its name and its image, or null while it is not loaded.
+ * @param channel The channel of the message, for its name and its avatar, built from [ScheduledMessage.channel], or
+ * null when there is no summary.
  * @param quotedMessage The message it quotes, or null when it quotes none, or when the server did not send the quoted
  * message (for example, it is gone or hidden from the user) and this device does not know it.
  * @param actions The actions the status of the message allows, in the order to show them. Empty while the message

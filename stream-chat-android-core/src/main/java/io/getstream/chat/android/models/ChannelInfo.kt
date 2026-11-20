@@ -28,6 +28,9 @@ import androidx.compose.runtime.Immutable
  * @param memberCount Number of members in the channel.
  * @param name Channel's name.
  * @param image Channel's image.
+ * @param members Some members of the channel. Only the summary of a scheduled message has them: up to 4 members, the
+ * oldest first. A summary read from the device after a restart keeps only the ID, the name and the image of their
+ * users.
  */
 @Immutable
 public data class ChannelInfo(
@@ -37,4 +40,5 @@ public data class ChannelInfo(
     val memberCount: Int = 0,
     val name: String? = null,
     val image: String? = null,
+    val members: List<Member> = emptyList(),
 )
