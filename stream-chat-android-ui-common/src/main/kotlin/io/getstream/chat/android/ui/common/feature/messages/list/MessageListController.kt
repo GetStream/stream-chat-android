@@ -678,19 +678,22 @@ public class MessageListController(
                     shouldShowButton = shouldShowButton,
                 )
 
-                if (unreadLabel != null) {
-                    // Marking the read state as processed only on a produced label keeps the
-                    // recalculation open while the reason for a null result is transient, for
-                    // example a message list that has not loaded yet.
+                // A read state with unread messages but no label stays unprocessed, because the
+                // reason can be transient, for example a message list that has not loaded yet.
+                // One with nothing unread is processed, so messages that arrive while the channel
+                // is open only raise the count on this boundary and never produce a label.
+                if (unreadLabel != null || read.unreadMessages == 0) {
                     lastProcessedReadMessageId = read.lastReadMessageId
                     lastProcessedReadAt = read.lastRead
+                }
+                if (unreadLabel != null) {
                     unreadLabelState.value = unreadLabel
                 }
             }
     }
 
     /**
-     * Whether this read state moves the unread boundary since the last produced label.
+     * Whether this read state moves the unread boundary since the last processed read state.
      *
      * Marking a message unread moves [ChannelUserRead.lastRead] back to the previous message, and
      * can keep [ChannelUserRead.lastReadMessageId] when that message was already the last read one,

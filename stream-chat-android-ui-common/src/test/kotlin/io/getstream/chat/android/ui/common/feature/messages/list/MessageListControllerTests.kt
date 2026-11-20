@@ -1030,7 +1030,7 @@ internal class MessageListControllerTests {
                 randomChannelUserRead(
                     user = user,
                     lastReadMessageId = firstMessage.id,
-                    unreadMessages = 0,
+                    unreadMessages = 1,
                 ),
             )
             val messagesState = MutableStateFlow(messages)
@@ -1276,6 +1276,54 @@ internal class MessageListControllerTests {
             controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 3
         }
 
+    @Test
+    fun `Show no unread label, when messages arrive while the channel is open`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val lastReadMessage = completedMessage(id = "last_read_message_id", user = user2, createdAt = Date(1_000))
+            val messagesState = MutableStateFlow(listOf(lastReadMessage))
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = lastReadMessage.id,
+                    lastRead = Date(1_500),
+                    unreadMessages = 0,
+                ),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser(user1)
+                .givenChannelQuery()
+                .givenChannelState(messagesState = messagesState, read = channelRead)
+                .get()
+            // Marking read moves the read state to the newest message, as the server does.
+            whenever(chatClient.markRead(any(), any())) doAnswer {
+                val newestMessage = messagesState.value.last()
+                channelRead.value = channelRead.value.copy(
+                    lastReadMessageId = newestMessage.id,
+                    lastRead = Date(newestMessage.createdAt!!.time + 500),
+                    unreadMessages = 0,
+                )
+                Unit.asCall()
+            }
+            delay(1000)
+
+            repeat(2) { index ->
+                // A message from another user arrives and raises the count, then the list reads it.
+                messagesState.value += completedMessage(
+                    id = "new_message_id_$index",
+                    user = user2,
+                    createdAt = Date(2_000L + index * 1_000),
+                )
+                channelRead.value = channelRead.value.copy(unreadMessages = 1)
+                delay(1000)
+                controller.markLastMessageRead()
+                delay(1000)
+
+                controller.unreadLabelState.value.shouldBeNull()
+            }
+            verify(chatClient, times(2)).markRead(any(), any())
+        }
+
     private fun completedMessage(id: String, user: User, createdAt: Date) = randomMessage(
         id = id,
         user = user,
@@ -1311,7 +1359,7 @@ internal class MessageListControllerTests {
                 randomChannelUserRead(
                     user = user,
                     lastReadMessageId = lastReadMessage.id,
-                    unreadMessages = 0,
+                    unreadMessages = 1,
                 ),
             )
 
