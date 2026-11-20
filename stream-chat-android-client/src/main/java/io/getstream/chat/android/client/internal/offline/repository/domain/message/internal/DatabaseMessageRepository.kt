@@ -149,23 +149,14 @@ internal class DatabaseMessageRepository(
      * @param messages list of [Message]
      */
     override suspend fun insertMessages(messages: List<Message>) {
-        insertMessages(messages, skipDeleted = true, toEntity = Message::toEntity)
-    }
-
-    private suspend fun insertMessages(
-        messages: List<Message>,
-        skipDeleted: Boolean,
-        toEntity: (Message) -> MessageEntity,
-    ) {
         if (messages.isEmpty()) return
         val validMessages = messages
-            .filter { message -> message.cid.isNotEmpty() }
-            .filterNot { message -> message.cid.substringBefore(":") in ignoredChannelTypes }
-            .filterNot { message -> skipDeleted && message.id in deletedMessageIds }
+            .filter { message -> message.isStorable() }
+            .filterNot { message -> (message.id in deletedMessageIds) }
 
         val messagesToInsert = validMessages
             .filter { messageCache.get(it.id) != it }
-            .map(toEntity)
+            .map(Message::toEntity)
         val replyMessages = validMessages
             .mapNotNull { message -> message.replyTo }
 
@@ -198,13 +189,19 @@ internal class DatabaseMessageRepository(
         insertMessages(listOf(message))
     }
 
+    // Unlike insertMessages, this stores a message already deleted or cached unchanged, and returns once it is
+    // written, so the retry that reads the hard flag cannot run before it.
     override suspend fun insertDeletedMessage(message: Message, hard: Boolean) {
-        // Other inserts skip a message already deleted locally, but a new delete of it must still be stored.
-        insertMessages(listOf(message), skipDeleted = false) { deleted ->
-            val entity = deleted.toEntity()
-            entity.copy(messageInnerEntity = entity.messageInnerEntity.copy(hardDelete = hard))
-        }
+        if (!message.isStorable()) return
+        val entity = message.toEntity()
+            .let { it.copy(messageInnerEntity = it.messageInnerEntity.copy(hardDelete = hard)) }
+        deletedMessageIds.add(message.id)
+        messageCache.put(message.id, message)
+        dbMutex.withLock { messageDao.insert(listOf(entity)) }
     }
+
+    private fun Message.isStorable(): Boolean =
+        cid.isNotEmpty() && cid.substringBefore(":") !in ignoredChannelTypes
 
     override suspend fun selectIsHardDelete(messageId: String): Boolean =
         messageDao.selectHardDelete(messageId) == true

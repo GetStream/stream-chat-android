@@ -41,11 +41,10 @@ internal class DatabaseMessageRepositoryHardDeleteTest {
 
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun `insertDeletedMessage stores whether the delete is hard`(hard: Boolean) = runTest {
+    fun `insertDeletedMessage stores whether the delete is hard before it returns`(hard: Boolean) = runTest {
         val message = deletedMessage()
 
         repository().insertDeletedMessage(message, hard)
-        advanceUntilIdle()
 
         verify(messageDao).insert(
             argThat<List<MessageEntity>> {
@@ -59,7 +58,6 @@ internal class DatabaseMessageRepositoryHardDeleteTest {
         val message = deletedMessage()
         val sut = repository()
         sut.insertDeletedMessage(message, hard = true)
-        advanceUntilIdle()
 
         sut.insertMessage(message.copy(text = "edited elsewhere"))
         advanceUntilIdle()
@@ -72,10 +70,21 @@ internal class DatabaseMessageRepositoryHardDeleteTest {
         val message = deletedMessage()
         val sut = repository()
         sut.insertDeletedMessage(message, hard = false)
-        advanceUntilIdle()
 
         sut.insertDeletedMessage(message.copy(deletedAt = Date(2_000)), hard = true)
-        advanceUntilIdle()
+
+        verify(messageDao).insert(
+            argThat<List<MessageEntity>> { single().messageInnerEntity.hardDelete },
+        )
+    }
+
+    @Test
+    fun `a hard delete identical to a pending soft delete stores the hard delete`() = runTest {
+        val message = deletedMessage()
+        val sut = repository()
+        sut.insertDeletedMessage(message, hard = false)
+
+        sut.insertDeletedMessage(message, hard = true)
 
         verify(messageDao).insert(
             argThat<List<MessageEntity>> { single().messageInnerEntity.hardDelete },
