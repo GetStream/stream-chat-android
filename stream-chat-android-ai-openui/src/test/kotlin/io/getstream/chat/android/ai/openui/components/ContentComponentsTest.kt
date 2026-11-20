@@ -35,62 +35,17 @@ internal class ContentComponentsTest {
     val compose = createComposeRule()
 
     @Test
-    fun `a standard card shows its headers, text and labels`() {
-        compose.renderProgram(
-            """
-            root = Card([CardHeader("Paris", "France"), InlineHeader("Facts", "At a glance"), TextContent("Big city", "large-heavy"), TextContent("Small print", "small"), Label("Population"), Separator(), Separator("vertical")], "sunk", "row", "s", "center", "between", true)
-            """.trimIndent(),
-        )
-
-        compose.onNodeWithText("Paris").assertExists()
-        compose.onNodeWithText("France").assertExists()
-        compose.onNodeWithText("Facts").assertExists()
-        compose.onNodeWithText("At a glance").assertExists()
-        compose.onNodeWithText("Big city").assertExists()
-        compose.onNodeWithText("Small print").assertExists()
-        compose.onNodeWithText("Population").assertExists()
-    }
-
-    @Test
-    fun `a stack lays out its children in a row`() {
-        compose.renderProgram(
-            """
-            root = Stack([Card([TextContent("Left")], "clear"), Card([TextContent("Right")])], "row", "l", "start", "between", true)
-            """.trimIndent(),
-        )
-
-        compose.onNodeWithText("Left").assertExists()
-        compose.onNodeWithText("Right").assertExists()
-    }
-
-    @Test
-    fun `markdown text renders in each container variant`() {
-        compose.renderProgram(
-            """
-            root = Stack([MarkDownRenderer("**Bold** words", "card"), MarkDownRenderer("Sunk words", "sunk"), MarkDownRenderer("Clear words")])
-            """.trimIndent(),
-        )
-
-        compose.onNodeWithText("Bold words", substring = true).assertExists()
-        compose.onNodeWithText("Sunk words").assertExists()
-        compose.onNodeWithText("Clear words").assertExists()
-    }
-
-    @Test
-    fun `callouts show their title, description and a meaningful icon`() {
+    fun `callout icons describe their variant`() {
         compose.renderProgram(
             """
             root = Stack([Callout("info", "Note", "Read this"), Callout("success", "Saved", "All good"), Callout("warning", "Careful", "Check it"), Callout("error", "Failed", "Try again"), Callout("neutral", "Plain", "Nothing special")])
             """.trimIndent(),
         )
 
-        compose.onNodeWithText("Note").assertExists()
-        compose.onNodeWithText("Try again").assertExists()
         compose.onNodeWithContentDescription("Information").assertExists()
         compose.onNodeWithContentDescription("Success").assertExists()
         compose.onNodeWithContentDescription("Warning").assertExists()
         compose.onNodeWithContentDescription("Error").assertExists()
-        compose.onNodeWithText("Plain").assertExists()
     }
 
     @Test
@@ -108,30 +63,6 @@ internal class ContentComponentsTest {
         compose.mainClock.advanceTimeBy(CalloutDismissWaitMillis)
 
         compose.onNodeWithText("Saved").assertDoesNotExist()
-    }
-
-    @Test
-    fun `text callouts show their title and description`() {
-        compose.renderProgram(
-            """
-            root = Stack([TextCallout("warning", "Heads up", "Prices change"), TextCallout()])
-            """.trimIndent(),
-        )
-
-        compose.onNodeWithText("Heads up").assertExists()
-        compose.onNodeWithText("Prices change").assertExists()
-    }
-
-    @Test
-    fun `images that cannot load show their alt text`() {
-        compose.renderProgram(
-            """
-            root = Stack([Image("A bridge", "not a link"), ImageBlock("not a link", "A tower")])
-            """.trimIndent(),
-        )
-
-        compose.onNodeWithText("A bridge").assertExists()
-        compose.onNodeWithText("A tower").assertExists()
     }
 
     @Test
@@ -154,16 +85,12 @@ internal class ContentComponentsTest {
     }
 
     @Test
-    fun `a code block shows its language, code and copy action`() {
+    fun `a code block confirms that it copied its code`() {
         compose.renderProgram(
             """
             root = Stack([CodeBlock("kotlin", "val answer = 42"), CodeBlock("", "plain")])
             """.trimIndent(),
         )
-
-        compose.onNodeWithText("kotlin").assertExists()
-        compose.onNodeWithText("val answer = 42").assertExists()
-        compose.onNodeWithText("code").assertExists()
 
         compose.onAllNodesWithText("Copy")[0].performClick()
         compose.waitForIdle()
@@ -172,7 +99,7 @@ internal class ContentComponentsTest {
     }
 
     @Test
-    fun `a chat card lists its sources and opens one on tap`() {
+    fun `a chat card opens a source on tap`() {
         val opened = mutableListOf<String>()
         compose.renderProgram(
             """
@@ -181,9 +108,6 @@ internal class ContentComponentsTest {
             library = openuiChatLibrary,
             onOpenUrl = { opened += it },
         )
-
-        compose.onNodeWithText("Sources").assertExists()
-        compose.onNodeWithText("Example").assertExists()
 
         compose.onNodeWithText("Paris guide").performClick()
         compose.waitForIdle()

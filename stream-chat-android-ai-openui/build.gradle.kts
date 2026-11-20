@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.android.junit5)
+    alias(libs.plugins.paparazzi)
 }
 
 apply(from = "$rootDir/scripts/detekt-compose.gradle")
@@ -37,6 +38,12 @@ android {
     }
 }
 
+// Robolectric and Paparazzi can't share a JVM: a Robolectric class that runs first breaks
+// Paparazzi's setup for every class after it.
+tasks.withType<Test>().configureEach {
+    forkEvery = 1
+}
+
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         freeCompilerArgs.addAll(
@@ -60,6 +67,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     // Material icons stand in for the lucide icons OpenUI names; the ones missing from core are
     // vendored in the icons package.
     implementation(libs.androidx.compose.material.icons.core)
@@ -83,5 +91,6 @@ dependencies {
     testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testRuntimeOnly(libs.junit.vintage.engine)
+    debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

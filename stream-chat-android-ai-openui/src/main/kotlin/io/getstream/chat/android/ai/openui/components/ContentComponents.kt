@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.ai.openui.components
 
 import androidx.compose.animation.AnimatedVisibility
@@ -71,6 +73,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -89,7 +92,10 @@ import io.getstream.chat.android.ai.openui.rendering.LocalOpenUICanOpenUrl
 import io.getstream.chat.android.ai.openui.rendering.OpenUICodeBlock
 import io.getstream.chat.android.ai.openui.rendering.OpenUIMarkdown
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
+import io.getstream.chat.android.ai.openui.rendering.Renderer
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdownText
+import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 import kotlinx.coroutines.delay
 
 private fun contentRenderer(block: ComponentRenderer): ComponentRenderer = block
@@ -628,3 +634,100 @@ private const val CalloutDismissMillis = 3_000L
 
 // The width-to-height ratio of an image block.
 private const val ImageAspectRatio = 16f / 9f
+
+@Composable
+internal fun CardSample() {
+    Renderer(
+        response = """
+            root = Stack([card, Card([TextContent("A sunk card")], "sunk"), Card([TextContent("A clear card")], "clear")])
+            card = Card([header, facts, big, small, label, Separator(), body])
+            header = CardHeader("Paris", "France")
+            facts = InlineHeader("Facts", "At a glance")
+            big = TextContent("2.1 million people", "large-heavy")
+            small = TextContent("City proper, 2024", "small")
+            label = Label("Population")
+            body = MarkDownRenderer("Known for **art**, food and fashion.", "sunk")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CardPreview() {
+    CardSample()
+}
+
+@Composable
+internal fun CalloutsSample() {
+    Renderer(
+        response = """
+            root = Stack([info, success, warning, error, neutral, note])
+            info = Callout("info", "Note", "Museums close on Mondays.")
+            success = Callout("success", "Saved", "Your trip is saved.")
+            warning = Callout("warning", "Busy", "Expect queues at noon.")
+            error = Callout("error", "Failed", "The booking did not go through.")
+            neutral = Callout("neutral", "Tip", "Buy a museum pass.")
+            note = TextCallout("warning", "Heads up", "Prices change in summer.")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CalloutsPreview() {
+    CalloutsSample()
+}
+
+@Composable
+internal fun ImagesSample() {
+    Renderer(
+        response = """
+            root = Stack([Image("Eiffel Tower at night"), ImageBlock("", "Louvre pyramid"), gallery])
+            gallery = ImageGallery([{src: "", alt: "Seine"}, {src: "", alt: "Montmartre"}, {src: "", alt: "Notre-Dame"}])
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ImagesPreview() {
+    ImagesSample()
+}
+
+@Composable
+internal fun CodeBlockSample() {
+    Renderer(
+        response = """
+            root = CodeBlock("kotlin", "val answer = 42")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CodeBlockPreview() {
+    CodeBlockSample()
+}
+
+@Composable
+internal fun ChatCardSample() {
+    Renderer(
+        response = """
+            root = Card([answer, followUps], [source])
+            answer = TextContent("Paris has over 130 museums [1].")
+            followUps = FollowUpBlock([FollowUpItem("Which ones are free?"), FollowUpItem("Plan a museum day")])
+            source = {title: "Paris museums guide", url: "https://example.com/paris", sourceName: "Example"}
+        """.trimIndent(),
+        library = openuiChatLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChatCardPreview() {
+    ChatCardSample()
+}

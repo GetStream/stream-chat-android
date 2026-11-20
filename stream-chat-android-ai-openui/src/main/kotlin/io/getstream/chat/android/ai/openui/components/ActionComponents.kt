@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.ai.openui.components
 
 import androidx.compose.foundation.background
@@ -59,6 +61,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -79,7 +82,9 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.LocalOpenUIFormName
 import io.getstream.chat.android.ai.openui.rendering.OpenUIIcon
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
+import io.getstream.chat.android.ai.openui.rendering.Renderer
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 
 internal val actionRenderers: Map<String, ComponentRenderer> = mapOf(
     "Button" to { ButtonComponent(it) },
@@ -600,4 +605,92 @@ internal fun actionNeedsValidation(action: OpenUIValue?): Boolean {
         step["type"] == OpenUIValue.Str(ActionStepType.CONTINUE_CONVERSATION) ||
             (step["type"] == OpenUIValue.Str(ActionStepType.RUN) && step["refType"] == OpenUIValue.Str("mutation"))
     }
+}
+
+@Composable
+internal fun ButtonsSample() {
+    Renderer(
+        response = """
+            root = Stack([row, column, icons])
+            row = Buttons([Button("Book", @ToAssistant("Book a table")), cancel])
+            cancel = Button("Cancel", @ToAssistant("Cancel"), "secondary", "destructive")
+            column = Buttons([small, large, more], "column")
+            small = Button("Small", null, "secondary", "normal", "small")
+            large = Button("Large", null, "primary", "normal", "large")
+            more = Button("More", null, "tertiary")
+            icons = Stack([like, share, save], "row")
+            like = IconButton("Like", Icon("heart"), null, "primary", "large", "circle")
+            share = IconButton("Share", Icon("share"), null, "secondary")
+            save = IconButton("Save", Icon("bookmark"), null, "tertiary", "small")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ButtonsPreview() {
+    ButtonsSample()
+}
+
+@Composable
+internal fun ListBlockSample() {
+    Renderer(
+        response = """
+            root = Stack([numbered, images])
+            numbered = ListBlock([louvre, ListItem("Orsay", "Impressionist art")])
+            louvre = ListItem("Louvre", "Art museum", null, "Open", @ToAssistant("About the Louvre"))
+            images = ListBlock([pyramid, station], "image", "small")
+            pyramid = ListItem("Louvre", "Art museum", {src: "", alt: "Glass pyramid"})
+            station = ListItem("Orsay", null, {src: "", alt: "Old station"})
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ListBlockPreview() {
+    ListBlockSample()
+}
+
+@Composable
+internal fun TagsSample() {
+    Renderer(
+        response = """
+            root = Stack([TagBlock(["Vegan", "Spicy", "Local"], "lg"), Stack([open, closed, busy, fresh], "row", "s")])
+            open = Tag("Open", Icon("clock"), "sm", "success")
+            closed = Tag("Closed", null, "md", "danger")
+            busy = Tag("Busy", null, null, "warning")
+            fresh = Tag("New", null, null, "info")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TagsPreview() {
+    TagsSample()
+}
+
+@Composable
+internal fun EntityListSample() {
+    Renderer(
+        response = """
+            root = Stack([costs, times])
+            costs = EntityList([rent, food], "default", {left: "Item", right: "Cost"}, total)
+            rent = {left: "Rent", right: "1,200", rightVariant: "number"}
+            food = {left: "Food", right: "300", rightVariant: "number"}
+            total = {left: "Total", right: "1,500", rightVariant: "number"}
+            times = EntityList([{left: "Check-in", right: "14:00"}, {left: "Check-out", right: "11:00"}], "small")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun EntityListPreview() {
+    EntityListSample()
 }

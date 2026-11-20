@@ -20,7 +20,6 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -37,7 +36,7 @@ internal class ChartComponentsTest {
     private val summary = "Sales: Jan 10, Feb 20, Mar 15. Costs: Jan 5, Feb 8, Mar 12"
 
     @Test
-    fun `grouped and stacked bar charts describe their series and show a legend`() {
+    fun `grouped and stacked bar charts describe their series`() {
         compose.renderProgram(
             """
             root = Stack([BarChart($months, $series, "grouped", "Month", "Amount", 200), BarChart($months, $series, "stacked")])
@@ -45,8 +44,6 @@ internal class ChartComponentsTest {
         )
 
         compose.onAllNodesWithContentDescription(summary).assertCountEquals(2)
-        compose.onNodeWithText("Month").assertExists()
-        compose.onNodeWithText("Amount").assertExists()
     }
 
     @Test
@@ -58,7 +55,6 @@ internal class ChartComponentsTest {
         )
 
         compose.onAllNodesWithContentDescription(summary).assertCountEquals(5)
-        compose.onNodeWithText("Month").assertExists()
     }
 
     @Test
@@ -73,31 +69,19 @@ internal class ChartComponentsTest {
     }
 
     @Test
-    fun `a single series chart shows no legend`() {
-        compose.renderProgram(
-            """
-            root = BarChart(["Jan", "Feb"], [Series("Sales", [1, -2])])
-            """.trimIndent(),
-        )
-
-        compose.onNodeWithContentDescription("Sales: Jan 1, Feb -2").assertExists()
-        compose.onNodeWithText("Sales").assertDoesNotExist()
-    }
-
-    @Test
-    fun `a radar chart draws one shape per series`() {
+    fun `a radar chart describes its series`() {
         compose.renderProgram(
             """
             root = RadarChart(["Speed", "Power", "Range"], [Series("Car A", [3, 4, 5]), Series("Car B", [5, 2, 4])])
             """.trimIndent(),
         )
 
-        compose.onNodeWithText("Car A").assertExists()
-        compose.onNodeWithText("Car B").assertExists()
+        compose.onNodeWithContentDescription("Car A: Speed 3, Power 4, Range 5. Car B: Speed 5, Power 2, Range 4")
+            .assertExists()
     }
 
     @Test
-    fun `pie and donut charts list each slice with its share`() {
+    fun `pie and donut charts describe their slices`() {
         compose.renderProgram(
             """
             root = Stack([PieChart(["Rent", "Food"], [750, 250]), PieChart(["Rent", "Food"], [750, 250], "donut", "semiCircular")])
@@ -105,12 +89,10 @@ internal class ChartComponentsTest {
         )
 
         compose.onAllNodesWithContentDescription("Rent 750, Food 250").assertCountEquals(2)
-        compose.onNodeWithText("Total").assertExists()
-        compose.onNodeWithText("1,000").assertExists()
     }
 
     @Test
-    fun `radial and single stacked bar charts list their slices`() {
+    fun `radial and single stacked bar charts describe their slices`() {
         compose.renderProgram(
             """
             root = Stack([RadialChart(["Done", "Open"], [70, 30]), SingleStackedBarChart(["Done", "Open"], [70, 30])])
@@ -129,8 +111,6 @@ internal class ChartComponentsTest {
         )
 
         compose.onNodeWithContentDescription("Group A: (1, 2), (3, 4). Group B: (2, 1)").assertExists()
-        compose.onNodeWithText("Height").assertExists()
-        compose.onNodeWithText("Weight").assertExists()
     }
 
     @Test

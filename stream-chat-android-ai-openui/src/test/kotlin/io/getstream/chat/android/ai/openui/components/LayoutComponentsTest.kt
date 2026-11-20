@@ -93,20 +93,6 @@ internal class LayoutComponentsTest {
     }
 
     @Test
-    fun `steps show their numbers, titles and details`() {
-        compose.renderProgram(
-            """
-            root = Steps([StepsItem("Install", "Add the dependency"), StepsItem("Configure", "Set the key")])
-            """.trimIndent(),
-        )
-
-        compose.onNodeWithText("1").assertExists()
-        compose.onNodeWithText("2").assertExists()
-        compose.onNodeWithText("Install").assertExists()
-        compose.onNodeWithText("Set the key").assertExists()
-    }
-
-    @Test
     fun `a carousel moves between slides with its arrows`() {
         compose.renderProgram(
             """
@@ -174,18 +160,5 @@ internal class LayoutComponentsTest {
 
         compose.onNodeWithText("Overview").performClick()
         compose.onNodeWithText("First body").assertDoesNotExist()
-    }
-
-    @Test
-    fun `sections that do not fold show every section`() {
-        compose.renderProgram(
-            """
-            root = Card([SectionBlock([SectionItem("a", "Overview", [TextContent("First body")]), SectionItem("b", "Details", [TextContent("Second body")])], false)])
-            """.trimIndent(),
-            library = openuiChatLibrary,
-        )
-
-        compose.onNodeWithText("First body").assertExists()
-        compose.onNodeWithText("Second body").assertExists()
     }
 }

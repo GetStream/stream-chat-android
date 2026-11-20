@@ -103,17 +103,6 @@ internal class FormComponentsTest {
     }
 
     @Test
-    fun `a select without a placeholder uses the default one`() {
-        compose.renderProgram(
-            """
-            root = Select("city", [SelectItem("lis", "Lisbon")])
-            """.trimIndent(),
-        )
-
-        compose.onNodeWithText("Select…").assertExists()
-    }
-
-    @Test
     fun `a date field stores the day picked in the dialog`() {
         compose.renderProgram(
             """
