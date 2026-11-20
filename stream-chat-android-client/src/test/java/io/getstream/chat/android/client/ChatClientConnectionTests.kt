@@ -649,7 +649,7 @@ internal class ChatClientConnectionTests {
         val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, randomString())
         val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
         // The start of the stored user ends only now, while the other user is connecting.
-        storedUserLoad.complete(Unit)
+        if (!isStoredUserLoadedFirst) storedUserLoad.complete(Unit)
         fakeChatSocket.mockEventReceived(event)
         deferred.await()
 
