@@ -327,6 +327,15 @@ public class ScheduledMessageListController(
     }
 
     /**
+     * The config of the channel with [cid], as saved on this device when this is called, for example for the lead
+     * times of a reschedule. Null when this device does not know it.
+     *
+     * @param cid The channel, in the format `type:id`.
+     */
+    public fun channelConfig(cid: String): Config? =
+        chatClient.repositoryFacade.selectChannelConfig(cid.cidToTypeAndId().first)?.config
+
+    /**
      * Cancels the work started by this controller, without cancelling the scope it was given.
      */
     override fun close() {
@@ -405,8 +414,7 @@ public class ScheduledMessageListController(
     }
 
     /**
-     * The channel of the scheduled message, built from its summary, with the config of its type saved on this device
-     * for the lead times. Null when there is no summary.
+     * The channel of the scheduled message, built from its summary, or null when there is no summary.
      */
     private fun ScheduledMessage.channelFromSummary(): Channel? = channel?.let { summary ->
         val (type, id) = cid.cidToTypeAndId()
@@ -417,7 +425,6 @@ public class ScheduledMessageListController(
             image = summary.image.orEmpty(),
             memberCount = summary.memberCount,
             members = summary.members,
-            config = chatClient.repositoryFacade.selectChannelConfig(type)?.config ?: Config(),
         )
     }
 }

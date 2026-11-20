@@ -227,34 +227,42 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
-    fun `each message gets its channel from its summary and the saved config, without loading the channel`() =
-        runTest {
-            val config = Config(scheduledMessagesMinLeadTimeSeconds = 120, scheduledMessagesMaxLeadTimeSeconds = 3600)
-            val summary = ChannelInfo(
-                cid = "messaging:general",
-                id = "general",
-                type = "messaging",
-                memberCount = 6,
-                name = "General",
-                image = "https://example.com/general.png",
-                members = listOf(randomMember(), randomMember()),
-            )
-            whenever(repository.selectChannelConfig("messaging")) doReturn ChannelConfig("messaging", config)
-            scheduledMessages.value = listOf(scheduled(cid = "messaging:general").copy(channel = summary))
+    fun `each message gets its channel from its summary, without loading the channel`() = runTest {
+        val summary = ChannelInfo(
+            cid = "messaging:general",
+            id = "general",
+            type = "messaging",
+            memberCount = 6,
+            name = "General",
+            image = "https://example.com/general.png",
+            members = listOf(randomMember(), randomMember()),
+        )
+        scheduledMessages.value = listOf(scheduled(cid = "messaging:general").copy(channel = summary))
 
-            val channel = controller().state.value.items.single().channel
+        val channel = controller().state.value.items.single().channel
 
-            channel shouldBeEqualTo Channel(
-                id = "general",
-                type = "messaging",
-                name = "General",
-                image = "https://example.com/general.png",
-                memberCount = 6,
-                members = summary.members,
-                config = config,
-            )
-            verify(client, never()).queryChannels(any())
-        }
+        channel shouldBeEqualTo Channel(
+            id = "general",
+            type = "messaging",
+            name = "General",
+            image = "https://example.com/general.png",
+            memberCount = 6,
+            members = summary.members,
+        )
+        verify(client, never()).queryChannels(any())
+    }
+
+    @Test
+    fun `the channel config is the one saved when it is asked for, also when saved after the list loaded`() = runTest {
+        val config = Config(scheduledMessagesMaxLeadTimeSeconds = 3600)
+        scheduledMessages.value = listOf(scheduled(cid = "messaging:general"))
+        val controller = controller()
+        controller.channelConfig("messaging:general") shouldBeEqualTo null
+
+        whenever(repository.selectChannelConfig("messaging")) doReturn ChannelConfig("messaging", config)
+
+        controller.channelConfig("messaging:general") shouldBeEqualTo config
+    }
 
     @Test
     fun `a message with no summary has no channel`() = runTest {
