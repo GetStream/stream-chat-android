@@ -773,7 +773,8 @@ internal constructor(
         val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: -1
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
-        if (initializedUserId.get() != user.id) {
+        val previousUserId = initializedUserId.get()
+        if (previousUserId != user.id) {
             // Plugins set for another user without a connection, as a push notification does, are still listening.
             plugins.forEach { it.onUserDisconnected() }
             _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
@@ -797,7 +798,11 @@ internal constructor(
             logger.e(throwable) { "[initializeClientWithUser] scheduled messages failed: $throwable" }
         }
         inheritScope { SupervisorJob(it) + scheduledMessagesExceptionHandler }
-            .launch { scheduledMessageManager.start(this) }
+            .launch {
+                // It holds the scheduled messages of a user set without a connection.
+                if (previousUserId != null && previousUserId != user.id) scheduledMessageManager.stop()
+                scheduledMessageManager.start(this)
+            }
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
