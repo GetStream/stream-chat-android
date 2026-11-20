@@ -78,6 +78,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -96,6 +97,8 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
+import io.getstream.chat.android.ai.openui.rendering.Renderer
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
 import java.util.Locale
 import kotlin.math.ceil
@@ -625,3 +628,24 @@ private fun EditableCell(column: EditableColumn, text: String, enabled: Boolean,
 private const val SkeletonMinColumns = 3
 private const val SkeletonRows = 5
 private const val SkeletonPulseMillis = 800
+
+@Composable
+internal fun TablesSample() {
+    Renderer(
+        response = """
+            root = Stack([Table([Col("City", ["Lisbon", "Porto"]), Col("Visitors", [5200000, 2100000], "number")]), roster])
+            roster = EditableTable("roster", [name, role], [{id: "1", values: ["Ann", "dev"]}])
+            name = {type: "text", key: "name", header: "Name"}
+            role = {type: "select", key: "role", header: "Role", options: [dev, pm]}
+            dev = {value: "dev", label: "Developer"}
+            pm = {value: "pm", label: "Manager"}
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TablesPreview() {
+    TablesSample()
+}
