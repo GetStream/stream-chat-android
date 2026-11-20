@@ -47,7 +47,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerScheduleAction
 import io.getstream.chat.android.compose.ui.messages.composer.LocalScheduledMessageEditMode
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -70,6 +69,7 @@ internal fun MessageComposerInputTrailingContent(
     onSendClick: (String, List<Attachment>) -> Unit,
     sendActionLabel: String? = null,
     saveActionLabel: String? = null,
+    onSendLongClick: (() -> Unit)? = null,
 ) {
     val inputText = state.inputValue
     val coolDownTime = state.coolDownTime
@@ -97,8 +97,6 @@ internal fun MessageComposerInputTrailingContent(
         else -> null
     }
 
-    val scheduleAction = LocalMessageComposerScheduleAction.current
-
     Crossfade(targetState = actionButton) { button ->
         when (button) {
             is ActionButton.CoolDown -> ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
@@ -119,8 +117,8 @@ internal fun MessageComposerInputTrailingContent(
                 params = MessageComposerSendButtonParams(
                     onClick = { onSendClick(inputText, attachments) },
                     onClickLabel = sendActionLabel,
-                    onLongClick = scheduleAction,
-                    onLongClickLabel = scheduleAction?.let {
+                    onLongClick = onSendLongClick,
+                    onLongClickLabel = onSendLongClick?.let {
                         stringResource(R.string.stream_compose_schedule_message_title)
                     },
                 ),

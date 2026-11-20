@@ -103,7 +103,7 @@ class ChannelActivity : ComponentActivity() {
             onBackPressed = { finish() },
             onChannelAvatarClick = ::openChannelInfo,
             onChannelAvatarClickLabel = stringResource(R.string.channel_open_info),
-            onScheduledMessagesBannerClick = ::openScheduledMessages,
+            onScheduledMessagesBannerClick = { openScheduledMessages() },
         )
     }
 

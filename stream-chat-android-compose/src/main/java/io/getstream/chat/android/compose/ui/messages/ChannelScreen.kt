@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -104,6 +105,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
 import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageFailedModerationState
@@ -145,7 +147,9 @@ import kotlin.math.roundToInt
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
  * @param onScheduledMessagesBannerClick Called when the user taps the scheduled messages banner above the composer, to
- * show the scheduled messages. The banner can't be tapped when it is null.
+ * show the scheduled messages. It is called with the ID of the thread the composer writes in, to show its scheduled
+ * replies, or with null to show the scheduled messages of the channel: in the channel, and when the banner shows that
+ * the channel reached its limit, which counts the whole channel. The banner can't be tapped when it is null.
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
  * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
  */
@@ -162,7 +166,7 @@ public fun ChannelScreen(
     skipEnrichUrl: Boolean = false,
     verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
-    onScheduledMessagesBannerClick: (() -> Unit)? = null,
+    onScheduledMessagesBannerClick: ((parentMessageId: String?) -> Unit)? = null,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(
             viewModelFactory = viewModelFactory,
@@ -427,14 +431,16 @@ private fun EventHandler(viewModel: MessageListViewModel, snackbarHostState: Sna
 /**
  * Places the scheduled messages banner above the composer, unless the composer shows suggestions.
  *
- * @param composerViewModel The [MessageComposerViewModel] of the composer, for the banner state and the suggestions.
- * @param onClick Called when the banner is tapped, or null when it can't be tapped.
+ * @param composerViewModel The [MessageComposerViewModel] of the composer, for the banner state, the suggestions and
+ * the thread.
+ * @param onClick Called with the thread whose scheduled replies the banner opens, or null for the channel, when the
+ * banner is tapped. Null when it can't be tapped.
  * @param onTopChange Called with the top of the banner in the window, in pixels, or null when no banner is shown.
  */
 @Composable
 private fun ChannelScreenScheduledMessagesBanner(
     composerViewModel: MessageComposerViewModel,
-    onClick: (() -> Unit)?,
+    onClick: ((parentMessageId: String?) -> Unit)?,
     onTopChange: (Int?) -> Unit,
 ) {
     if (!ChatTheme.config.composer.scheduledMessagesEnabled) return
@@ -442,6 +448,9 @@ private fun ChannelScreenScheduledMessagesBanner(
     val hasSuggestions by remember(composerViewModel) {
         composerViewModel.messageComposerState.map { it.hasSuggestions }.distinctUntilChanged()
     }.collectAsState(initial = false)
+    val threadParentId by remember(composerViewModel) {
+        composerViewModel.messageComposerState.map { it.threadParentId }.distinctUntilChanged()
+    }.collectAsState(initial = null)
     val bannerState = state
     if (bannerState == null || hasSuggestions) return
     DisposableEffect(Unit) { onDispose { onTopChange(null) } }
@@ -453,7 +462,7 @@ private fun ChannelScreenScheduledMessagesBanner(
         ChatTheme.componentFactory.ScheduledMessagesBanner(
             params = ScheduledMessagesBannerParams(
                 state = bannerState,
-                onClick = onClick,
+                onClick = onClick?.let { click -> { click(bannerState.listParentMessageId(threadParentId)) } },
                 modifier = Modifier.padding(
                     start = StreamTokens.spacingMd,
                     end = StreamTokens.spacingMd,
@@ -466,6 +475,19 @@ private fun ChannelScreenScheduledMessagesBanner(
 
 private val MessageComposerState.hasSuggestions: Boolean
     get() = suggestedMentions.isNotEmpty() || commandSuggestions.isNotEmpty()
+
+private val MessageComposerState.threadParentId: String?
+    get() = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
+
+/**
+ * The thread whose scheduled replies the banner opens: the thread of the composer, or null for the whole channel when
+ * the banner shows the channel limit, as the limit counts the whole channel.
+ *
+ * @param threadParentId The ID of the thread the composer writes in, or null in the channel.
+ */
+@VisibleForTesting
+internal fun ScheduledMessagesBannerState.listParentMessageId(threadParentId: String?): String? =
+    if (this is ScheduledMessagesBannerState.LimitReached) null else threadParentId
 
 /**
  * Shows a "Scheduled message sent" snackbar when the server sends right away a message scheduled while offline. Its

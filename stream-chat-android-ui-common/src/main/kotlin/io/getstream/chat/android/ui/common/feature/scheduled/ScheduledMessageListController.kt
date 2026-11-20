@@ -65,10 +65,12 @@ import java.util.Date
 import kotlinx.coroutines.channels.Channel as EventChannel
 
 /**
- * Controller of a list of the current user's scheduled messages: all of them, or the ones of a channel. It loads them
- * when connected, follows their changes, and reschedules, sends now and deletes them.
+ * Controller of a list of the current user's scheduled messages: all of them, the ones of a channel, or the replies of
+ * a thread. It loads them when connected, follows their changes, and reschedules, sends now and deletes them.
  *
  * @param cid The channel of the scheduled messages, in the format `type:id`, or null for every channel.
+ * @param parentMessageId The ID of the thread whose scheduled replies are listed, or null for the messages of [cid],
+ * thread replies included.
  * @param chatClient The [ChatClient] holding the scheduled messages.
  * @param scope The [CoroutineScope] the controller's work runs under, in a child scope that [close] cancels. The given
  * scope itself is never cancelled.
@@ -78,6 +80,7 @@ import kotlinx.coroutines.channels.Channel as EventChannel
 @InternalStreamChatApi
 public class ScheduledMessageListController(
     private val cid: String?,
+    private val parentMessageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     scope: CoroutineScope = CoroutineScope(DispatcherProvider.Main),
     private val getMessage: (id: String) -> Call<Message> = chatClient::getMessageUsingCache,
@@ -100,7 +103,7 @@ public class ScheduledMessageListController(
     private val _events = EventChannel<ScheduledMessageListEvent>(EventChannel.BUFFERED)
 
     private val scheduledMessages: Flow<List<ScheduledMessage>> = chatClient.scheduledMessages
-        .map { scheduledMessages -> scheduledMessages.filter { cid == null || it.cid == cid } }
+        .map { scheduledMessages -> scheduledMessages.filter(::isInScope) }
         .distinctUntilChanged()
 
     // Only a query of every channel can tell that the client knows them all.
@@ -340,6 +343,10 @@ public class ScheduledMessageListController(
     override fun close() {
         ownScope.cancel()
     }
+
+    private fun isInScope(scheduledMessage: ScheduledMessage): Boolean =
+        (cid == null || scheduledMessage.cid == cid) &&
+            (parentMessageId == null || scheduledMessage.message.parentId == parentMessageId)
 
     /**
      * Waits for the answer of the server to the change of the scheduled message with [id], which is saved locally
