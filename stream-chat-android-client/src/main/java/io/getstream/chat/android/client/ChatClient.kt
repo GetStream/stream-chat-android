@@ -774,6 +774,8 @@ internal constructor(
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
         if (initializedUserId.get() != user.id) {
+            // Plugins set for another user without a connection, as a push notification does, are still listening.
+            plugins.forEach { it.onUserDisconnected() }
             _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
             plugins = pluginFactories.map { it.get(user) }
             initializedUserId.set(user.id)

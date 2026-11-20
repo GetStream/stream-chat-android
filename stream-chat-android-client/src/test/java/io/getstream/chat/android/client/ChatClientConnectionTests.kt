@@ -28,8 +28,11 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
@@ -65,6 +68,8 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -98,6 +103,7 @@ internal class ChatClientConnectionTests {
     private val streamDateFormatter = StreamDateFormatter()
     private val config = mock<ChatApiConfig>()
     private val userCredentialStorage = mock<UserCredentialStorage>()
+    private val pluginFactories = mutableListOf<PluginFactory>()
     private val audioPlayer = mock<AudioPlayer>()
     private lateinit var networkStateProvider: NetworkStateProvider
 
@@ -136,7 +142,7 @@ internal class ChatClientConnectionTests {
             appSettingsManager = mock(),
             chatSocket = fakeChatSocket,
             serverClockOffset = ServerClockOffset(),
-            pluginFactories = emptyList(),
+            pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
@@ -556,6 +562,35 @@ internal class ChatClientConnectionTests {
 
         client.getCurrentOrStoredUserId() `should be equal to` user.id
     }
+
+    @Test
+    fun `Given a user set without connecting, connecting another user stops the plugins of the first`() =
+        runCancellableTest {
+            val storedUserPlugin = mock<Plugin>()
+            val connectedUserPlugin = mock<Plugin>()
+            val storedUserId = randomString()
+            pluginFactories += mock<PluginFactory> {
+                on { get(any()) } doAnswer { invocation ->
+                    if (invocation.getArgument<User>(0).id == storedUserId) storedUserPlugin else connectedUserPlugin
+                }
+            }
+            whenever(config.notificationConfig) doReturn NotificationConfig()
+            whenever(userCredentialStorage.get())
+                .thenReturn(CredentialConfig(storedUserId, randomString(), randomString(), isAnonymous = false))
+            client.setUserWithoutConnectingIfNeeded()
+            verify(storedUserPlugin).onUserSet(any())
+
+            val createdAt = Date()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, randomString())
+            val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
+            fakeChatSocket.mockEventReceived(event)
+            deferred.await()
+
+            verify(storedUserPlugin).onUserDisconnected()
+            verify(connectedUserPlugin).onUserSet(any())
+            verify(connectedUserPlugin, never()).onUserDisconnected()
+        }
 
     private suspend fun prepareAliveConnection(user: User, connectionId: String) {
         userStateService.onSetUser(user, false)
