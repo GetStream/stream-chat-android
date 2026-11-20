@@ -1293,7 +1293,9 @@ public data class MessageComposerInputBottomContentParams(
  * @param saveActionLabel Semantic / accessibility label for the save action (shown when editing a message).
  * @param onSendLongClick Action invoked when the send button is long clicked, which opens the sheet to schedule the
  * message, or null when the message can't be scheduled. Pass it to the send button as
- * [MessageComposerSendButtonParams.onLongClick] to keep scheduling in a custom trailing content.
+ * [MessageComposerSendButtonParams.onLongClick] to keep scheduling in a custom trailing content. When it is null, the
+ * default trailing content still uses the composer's own action, so a custom composer input that builds these
+ * params without it keeps scheduling.
  */
 public data class MessageComposerInputTrailingContentParams(
     val state: MessageComposerState,

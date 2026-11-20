@@ -274,6 +274,28 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
     @Test
     @UiThread
+    fun `the default trailing content keeps scheduling when a custom input leaves the action out`() {
+        givenComposerWithText(canSchedule = true)
+        val customInput = object : ChatComponentFactory {
+            @Composable
+            override fun MessageComposerInputTrailingContent(params: MessageComposerInputTrailingContentParams) {
+                super.MessageComposerInputTrailingContent(params.copy(onSendLongClick = null))
+            }
+        }
+
+        composeTestRule.setContent {
+            ChatTheme(componentFactory = customInput) {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithText("Custom time").assertExists()
+    }
+
+    @Test
+    @UiThread
     fun `a custom trailing content gets no schedule action when the user can't schedule`() {
         givenComposerWithText(canSchedule = false)
         var onSendLongClick: (() -> Unit)? = {}

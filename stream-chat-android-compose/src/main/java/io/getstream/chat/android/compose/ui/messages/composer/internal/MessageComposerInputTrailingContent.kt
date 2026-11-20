@@ -47,6 +47,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerScheduleAction
 import io.getstream.chat.android.compose.ui.messages.composer.LocalScheduledMessageEditMode
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -84,6 +85,8 @@ internal fun MessageComposerInputTrailingContent(
     val hasValidContent = canSendMessage && isInputValid && !isRecording
     val scheduledMessageEditMode = LocalScheduledMessageEditMode.current
     val canSaveScheduledMessage = scheduledMessageEditMode?.canSave ?: true
+    // A custom composer input may build the params without the action, so it falls back to the composer's.
+    val scheduleAction = onSendLongClick ?: LocalMessageComposerScheduleAction.current
 
     val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
     val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
@@ -117,8 +120,8 @@ internal fun MessageComposerInputTrailingContent(
                 params = MessageComposerSendButtonParams(
                     onClick = { onSendClick(inputText, attachments) },
                     onClickLabel = sendActionLabel,
-                    onLongClick = onSendLongClick,
-                    onLongClickLabel = onSendLongClick?.let {
+                    onLongClick = scheduleAction,
+                    onLongClickLabel = scheduleAction?.let {
                         stringResource(R.string.stream_compose_schedule_message_title)
                     },
                 ),
