@@ -26,12 +26,15 @@ import io.getstream.chat.android.ui.common.feature.scheduled.ScheduledMessageLis
  *
  * @param cid The channel of the scheduled messages, in the format `type:id`, or null for the scheduled messages of
  * every channel.
+ * @param parentMessageId The ID of the thread whose scheduled replies are shown, or null for the scheduled messages
+ * of [cid], thread replies included.
  * @param chatClient The [ChatClient] holding the scheduled messages.
  *
  * @see ScheduledMessageListViewModel
  */
 public class ScheduledMessageListViewModelFactory(
     private val cid: String? = null,
+    private val parentMessageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModelProvider.Factory {
 
@@ -41,7 +44,11 @@ public class ScheduledMessageListViewModelFactory(
         }
         @Suppress("UNCHECKED_CAST")
         return ScheduledMessageListViewModel(
-            controller = ScheduledMessageListController(cid = cid, chatClient = chatClient),
+            controller = ScheduledMessageListController(
+                cid = cid,
+                parentMessageId = parentMessageId,
+                chatClient = chatClient,
+            ),
             user = chatClient.clientState.user,
             connectionState = chatClient.clientState.connectionState,
             chatClient = chatClient,

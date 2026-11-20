@@ -72,7 +72,6 @@ internal class ScheduledMessagesBannerScreenTest {
                         state = ScheduledMessagesBannerState.Scheduled(
                             count = 3,
                             nextScheduledAt = Date(),
-                            isInThread = false,
                         ),
                         onClick = { clicks++ },
                     ),

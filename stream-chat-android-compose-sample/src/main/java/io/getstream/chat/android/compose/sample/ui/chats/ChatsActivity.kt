@@ -304,8 +304,8 @@ class ChatsActivity : ComponentActivity() {
             )
 
             is InfoContentMode.ScheduledMessages -> ScheduledMessagesScreen(
-                viewModelFactory = remember(mode.channelId) {
-                    ScheduledMessageListViewModelFactory(cid = mode.channelId)
+                viewModelFactory = remember(mode.channelId, mode.parentMessageId) {
+                    ScheduledMessageListViewModelFactory(cid = mode.channelId, parentMessageId = mode.parentMessageId)
                 },
                 onBackPressed = { navigator.navigateBack() },
             )
@@ -689,11 +689,11 @@ private fun ThreePaneNavigator.navigateToFilesAttachments(channelId: String) {
     )
 }
 
-private fun ThreePaneNavigator.navigateToScheduledMessages(channelId: String) {
+private fun ThreePaneNavigator.navigateToScheduledMessages(channelId: String, parentMessageId: String?) {
     navigateTo(
         destination = ThreePaneDestination(
             pane = ThreePaneRole.Info,
-            arguments = InfoContentMode.ScheduledMessages(channelId),
+            arguments = InfoContentMode.ScheduledMessages(channelId, parentMessageId),
         ),
         // The banner stays visible next to the info pane, so another tap replaces the pane instead of stacking it.
         popUpTo = ThreePaneRole.Detail,

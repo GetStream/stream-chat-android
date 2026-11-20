@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.composer
 import androidx.annotation.UiThread
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.semantics.SemanticsActions
@@ -36,9 +37,11 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingContentParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -49,6 +52,7 @@ import io.getstream.chat.android.randomFloat
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
+import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode.MessageThread
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -254,6 +258,91 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
     @Test
     @UiThread
+    fun `a custom trailing content gets the action that opens the schedule sheet`() {
+        givenComposerWithText(canSchedule = true)
+        var onSendLongClick: (() -> Unit)? = null
+
+        composeTestRule.setContent {
+            ChatTheme(componentFactory = trailingContentCapture { onSendLongClick = it }) {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.runOnUiThread { requireNotNull(onSendLongClick).invoke() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithText("Custom time").assertExists()
+    }
+
+    @Test
+    @UiThread
+    fun `the default trailing content keeps scheduling when its params leave the action out`() {
+        givenComposerWithText(canSchedule = true)
+        val customInput = object : ChatComponentFactory {
+            @Composable
+            override fun MessageComposerInputTrailingContent(params: MessageComposerInputTrailingContentParams) {
+                super.MessageComposerInputTrailingContent(params.copy(onSendLongClick = null))
+            }
+        }
+
+        composeTestRule.setContent {
+            ChatTheme(componentFactory = customInput) {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithText("Custom time").assertExists()
+    }
+
+    @Test
+    @UiThread
+    fun `a custom trailing content gets no schedule action when the user can't schedule`() {
+        givenComposerWithText(canSchedule = false)
+        var onSendLongClick: (() -> Unit)? = {}
+
+        composeTestRule.setContent {
+            ChatTheme(componentFactory = trailingContentCapture { onSendLongClick = it }) {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertEquals(null, onSendLongClick)
+    }
+
+    @Test
+    @UiThread
+    fun `a custom trailing content gets no schedule action while a message is edited`() {
+        givenComposerWithText(canSchedule = true)
+        whenever(mockViewModel.messageComposerState) doReturn MutableStateFlow(
+            MessageComposerState(
+                inputValue = "Heads up",
+                action = Edit(randomMessage()),
+                ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE),
+            ),
+        )
+
+        assertEquals(null, capturedSendLongClick())
+    }
+
+    @Test
+    @UiThread
+    fun `a custom trailing content gets no schedule action while a command is active`() {
+        givenComposerWithText(canSchedule = true)
+        whenever(mockViewModel.messageComposerState) doReturn MutableStateFlow(
+            MessageComposerState(
+                inputValue = "Heads up",
+                activeCommand = randomCommand(),
+                ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE),
+            ),
+        )
+
+        assertEquals(null, capturedSendLongClick())
+    }
+
+    @Test
+    @UiThread
     fun `a screen reader can open the schedule sheet with a named action`() {
         givenComposerWithText(canSchedule = true)
 
@@ -418,6 +507,25 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
         composeTestRule.waitForIdle()
         composeTestRule.mainClock.advanceTimeBy(1_000)
     }
+
+    private fun capturedSendLongClick(): (() -> Unit)? {
+        var onSendLongClick: (() -> Unit)? = {}
+        composeTestRule.setContent {
+            ChatTheme(componentFactory = trailingContentCapture { onSendLongClick = it }) {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+        composeTestRule.waitForIdle()
+        return onSendLongClick
+    }
+
+    private fun trailingContentCapture(onParams: (onSendLongClick: (() -> Unit)?) -> Unit) =
+        object : ChatComponentFactory {
+            @Composable
+            override fun MessageComposerInputTrailingContent(params: MessageComposerInputTrailingContentParams) {
+                onParams(params.onSendLongClick)
+            }
+        }
 
     private fun givenComposerWithText(canSchedule: Boolean): Message {
         val message = Message(text = "Heads up")

@@ -59,7 +59,10 @@ sealed class InfoContentMode(open val channelId: String) : Serializable {
     data class FilesAttachments(override val channelId: String) : InfoContentMode(channelId)
 
     /**
-     * Display the scheduled messages for a channel.
+     * Display the scheduled messages for a channel, or for a thread of the channel when [parentMessageId] is set.
      */
-    data class ScheduledMessages(override val channelId: String) : InfoContentMode(channelId)
+    data class ScheduledMessages(
+        override val channelId: String,
+        val parentMessageId: String? = null,
+    ) : InfoContentMode(channelId)
 }

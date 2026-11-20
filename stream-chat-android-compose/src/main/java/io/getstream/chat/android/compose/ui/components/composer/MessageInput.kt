@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerScheduleAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
@@ -179,6 +180,7 @@ public fun MessageInput(
                     onSendClick = onSendClick,
                     sendActionLabel = sendActionLabel,
                     saveActionLabel = saveActionLabel,
+                    onSendLongClick = LocalMessageComposerScheduleAction.current,
                 ),
             )
         }

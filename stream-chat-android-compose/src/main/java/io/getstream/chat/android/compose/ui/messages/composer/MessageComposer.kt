@@ -61,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingHintParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingPermissionRationaleParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerSnackbarParams
@@ -244,8 +245,10 @@ public fun MessageComposer(
 }
 
 /**
- * Hands the action that opens the schedule sheet from the VM-bound [MessageComposer] down to the default send button,
- * which runs it on a long press. Null when the user can't schedule messages in the channel.
+ * Hands the action that opens the schedule sheet from the VM-bound [MessageComposer] down to the composer input, which
+ * passes it to the trailing content as [MessageComposerInputTrailingContentParams.onSendLongClick]. The default
+ * trailing content also reads it when the params carry none. Null when the user can't schedule messages in the
+ * channel, while a message is edited, and while a command is active.
  */
 internal val LocalMessageComposerScheduleAction = compositionLocalOf<(() -> Unit)?> { null }
 

@@ -44,7 +44,7 @@ import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageLis
  * Apps decide how users reach it, for example from the scheduled messages banner of the channel screen.
  *
  * @param viewModelFactory The factory of the [ScheduledMessageListViewModel]. Pass the `cid` of a channel to it to
- * show the scheduled messages of that channel only.
+ * show the scheduled messages of that channel only, and the ID of a thread too to show its scheduled replies only.
  * @param title The title of the header. Also the screen's `paneTitle` semantic, announced by TalkBack when the
  * screen appears as a pane.
  * @param onBackPressed Called when the user taps the back button.

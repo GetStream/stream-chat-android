@@ -70,6 +70,7 @@ internal fun MessageComposerInputTrailingContent(
     onSendClick: (String, List<Attachment>) -> Unit,
     sendActionLabel: String? = null,
     saveActionLabel: String? = null,
+    onSendLongClick: (() -> Unit)? = null,
 ) {
     val inputText = state.inputValue
     val coolDownTime = state.coolDownTime
@@ -84,6 +85,8 @@ internal fun MessageComposerInputTrailingContent(
     val hasValidContent = canSendMessage && isInputValid && !isRecording
     val scheduledMessageEditMode = LocalScheduledMessageEditMode.current
     val canSaveScheduledMessage = scheduledMessageEditMode?.canSave ?: true
+    // A custom composer input may build the params without the action, so it falls back to the composer's.
+    val scheduleAction = onSendLongClick ?: LocalMessageComposerScheduleAction.current
 
     val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
     val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
@@ -96,8 +99,6 @@ internal fun MessageComposerInputTrailingContent(
         isRecordingEnabled -> ActionButton.Record
         else -> null
     }
-
-    val scheduleAction = LocalMessageComposerScheduleAction.current
 
     Crossfade(targetState = actionButton) { button ->
         when (button) {

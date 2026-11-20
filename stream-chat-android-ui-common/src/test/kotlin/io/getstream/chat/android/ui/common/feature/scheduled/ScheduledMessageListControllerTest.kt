@@ -146,6 +146,20 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
+    fun `the scope of a thread lists its replies only`() = runTest {
+        val cid = randomString()
+        val parentId = randomString()
+        val inThread = scheduled(cid = cid, parentId = parentId)
+        val inOtherThread = scheduled(cid = cid, parentId = randomString())
+        scheduledMessages.value = listOf(scheduled(cid = cid), inThread, inOtherThread, scheduled(parentId = parentId))
+
+        val items = controller(cid = cid, parentMessageId = parentId).state.value.items
+
+        items.map { it.scheduledMessage } shouldBeEqualTo listOf(inThread)
+        verify(client).queryScheduledMessages(eq(cid), any(), any(), anyOrNull())
+    }
+
+    @Test
     fun `the actions follow the status of the message`() = runTest {
         val pending = scheduled(status = ScheduledMessageStatus.PreparingToSchedule)
         val sending = scheduled(status = ScheduledMessageStatus.Sending)
@@ -833,8 +847,9 @@ internal class ScheduledMessageListControllerTest {
         content.extraData shouldBeEqualTo mapOf("custom" to "kept")
     }
 
-    private fun controller(cid: String? = null) = ScheduledMessageListController(
+    private fun controller(cid: String? = null, parentMessageId: String? = null) = ScheduledMessageListController(
         cid = cid,
+        parentMessageId = parentMessageId,
         chatClient = client,
         getMessage = { id ->
             loadedMessageIds += id

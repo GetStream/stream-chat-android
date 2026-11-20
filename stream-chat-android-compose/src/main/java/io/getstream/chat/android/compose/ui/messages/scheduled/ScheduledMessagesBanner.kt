@@ -158,11 +158,11 @@ internal fun ScheduledMessagesBannerContent() {
         modifier = Modifier.padding(StreamTokens.spacingMd),
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
     ) {
-        PreviewBanner(ScheduledMessagesBannerState.Scheduled(1, PreviewDate, isInThread = false))
+        PreviewBanner(ScheduledMessagesBannerState.Scheduled(1, PreviewDate))
         PreviewBanner(
-            ScheduledMessagesBannerState.Scheduled(count = 3, nextScheduledAt = PreviewDate, isInThread = false),
+            ScheduledMessagesBannerState.Scheduled(count = 3, nextScheduledAt = PreviewDate),
         )
-        PreviewBanner(ScheduledMessagesBannerState.Scheduled(2, PreviewDate, isInThread = true))
+        PreviewBanner(ScheduledMessagesBannerState.Scheduled(2, PreviewDate, parentMessageId = "thread"))
         PreviewBanner(ScheduledMessagesBannerState.Failed(1))
         PreviewBanner(ScheduledMessagesBannerState.Failed(2))
         PreviewBanner(ScheduledMessagesBannerState.LimitReached(count = 10, limit = 10))
@@ -180,7 +180,7 @@ private fun ScheduledMessagesBannerWithoutLinkPreview() {
 @Composable
 internal fun ScheduledMessagesBannerWithoutLinkContent() {
     Column(modifier = Modifier.padding(StreamTokens.spacingMd)) {
-        PreviewBanner(ScheduledMessagesBannerState.Scheduled(1, PreviewDate, isInThread = false), onClick = null)
+        PreviewBanner(ScheduledMessagesBannerState.Scheduled(1, PreviewDate), onClick = null)
     }
 }
 
