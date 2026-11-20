@@ -79,7 +79,6 @@ jobs:
         batch: ${{ fromJson(needs.build-compose-apks.outputs.e2e_batches) }}
       fail-fast: false
     env:
-      ANDROID_API_LEVEL: ${{ inputs.api_level || '36' }}
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -94,15 +93,31 @@ jobs:
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
+      # Saved by e2e-cache.yml on develop. A miss (e.g. after an emulator update) cold boots as before.
+      - uses: ./.github/actions/android-sdk-packages
+        id: sdk
+        with:
+          api-level: ${{ inputs.api_level }}
+      - name: Restore the AVD
+        id: avd
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ steps.sdk.outputs.avd-key }}
       - name: Run tests
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         timeout-minutes: 45
         with:
-          api-level: ${{ env.ANDROID_API_LEVEL }}
+          api-level: ${{ steps.sdk.outputs.api-level }}
+          target: ${{ steps.sdk.outputs.target }}
           disable-animations: true
-          profile: pixel
+          profile: ${{ steps.sdk.outputs.profile }}
+          cores: ${{ steps.sdk.outputs.cores }}
           arch : x86_64
-          emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
+          force-avd-creation: ${{ steps.avd.outputs.cache-hit != 'true' }}
+          emulator-options: -no-snapshot-save ${{ steps.sdk.outputs.emulator-options }}
           script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }} mock_server_branch:${{ inputs.mock_server_branch }} ${{ inputs.test_class && format('test_class:{0}', inputs.test_class) || '' }}
       - name: Allure TestOps Upload
         if: ${{ env.LAUNCH_ID != '' && (success() || failure()) }}
