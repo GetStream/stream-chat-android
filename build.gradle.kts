@@ -48,6 +48,9 @@ streamProject {
         sonarExclusions = listOf(
             // Generated OpenAPI models and endpoints
             "**/io/getstream/chat/android/network/**",
+            // Material icons copied from androidx material-icons-extended
+            "**/io/getstream/chat/android/ai/openui/icons/RoundedIcons.kt",
+            "**/io/getstream/chat/android/ai/openui/icons/AutoMirroredRoundedIcons.kt",
         )
     }
 
