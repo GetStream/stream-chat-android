@@ -22,6 +22,9 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
@@ -33,8 +36,8 @@ import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedSc
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
-import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
@@ -114,7 +117,6 @@ internal class ScheduledMessageListControllerTest {
             on { clientState } doReturn state
             on { queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()) } doReturn
                 QueryScheduledMessagesResult(emptyList(), next = null).asCall()
-            on { queryChannels(any()) } doReturn emptyList<Channel>().asCall()
             on { repositoryFacade } doReturn repository
         }
     }
@@ -239,12 +241,49 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
-    fun `each message comes with its channel`() = runTest {
-        val channel = randomChannel()
-        scheduledMessages.value = listOf(scheduled(cid = channel.cid))
-        whenever(client.queryChannels(any())) doReturn listOf(channel).asCall()
+    fun `each message gets its channel from its summary, without loading the channel`() = runTest {
+        val summary = ChannelInfo(
+            cid = "messaging:general",
+            id = "general",
+            type = "messaging",
+            memberCount = 6,
+            name = "General",
+            image = "https://example.com/general.png",
+            members = listOf(randomMember(), randomMember()),
+        )
+        scheduledMessages.value = listOf(scheduled(cid = "messaging:general").copy(channel = summary))
 
-        controller().state.value.items.single().channel shouldBeEqualTo channel
+        val channel = controller().state.value.items.single().channel
+
+        channel shouldBeEqualTo Channel(
+            id = "general",
+            type = "messaging",
+            name = "General",
+            image = "https://example.com/general.png",
+            memberCount = 6,
+            members = summary.members,
+        )
+        verify(client, never()).queryChannels(any())
+    }
+
+    @Test
+    fun `the channel config is the one saved when it is asked for, also when saved after the list loaded`() = runTest {
+        val config = Config(scheduledMessagesMaxLeadTimeSeconds = 3600)
+        scheduledMessages.value = listOf(scheduled(cid = "messaging:general"))
+        val controller = controller()
+        controller.channelConfig("messaging:general") shouldBeEqualTo null
+
+        whenever(repository.selectChannelConfig("messaging")) doReturn ChannelConfig("messaging", config)
+
+        controller.channelConfig("messaging:general") shouldBeEqualTo config
+    }
+
+    @Test
+    fun `a message with no summary has no channel`() = runTest {
+        scheduledMessages.value = listOf(scheduled())
+
+        controller().state.value.items.single().channel shouldBeEqualTo null
+        verify(client, never()).queryChannels(any())
     }
 
     @Test

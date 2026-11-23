@@ -36,8 +36,17 @@ internal data class ScheduledMessageChannelResponse(
     @Json(name = "id")
     internal val id: String,
 
+    // Patched: the spec marks `member_count` required, but backends before v241.16.1 (CHA-6892, chat#21026) leave it
+    // out, and a parse failure fails the whole scheduled messages query, response or event. On regen, make it required
+    // again only once every region runs v241.16.1 or later.
+    @Json(name = "member_count")
+    internal val memberCount: Int? = null,
+
     @Json(name = "type")
     internal val type: String,
+
+    @Json(name = "members")
+    internal val members: List<io.getstream.chat.android.network.models.ChannelMemberResponse> = emptyList(),
 
     @Json(name = "image")
     internal val image: String? = null,

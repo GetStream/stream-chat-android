@@ -69,6 +69,7 @@ import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarVariant
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarVisuals
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModel
+import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
@@ -294,7 +295,7 @@ private fun ScheduledMessageListSheets(
                 message = scheduledMessage.message,
                 channelName = item.channelName(currentUser),
                 initialDate = scheduledMessage.scheduledAt,
-                state = item.scheduleMessageState(),
+                state = scheduleMessageState(viewModel.channelConfig(scheduledMessage.cid)),
                 error = null,
                 onConfirm = { date ->
                     sheets.rescheduledId = null
@@ -455,22 +456,19 @@ internal fun DefaultScheduledMessageListErrorContent(onRetryClick: () -> Unit, m
 }
 
 /**
- * The name of the channel of the scheduled message, from the loaded channel, or the summary the server sent, or its
- * ID.
+ * The name of the channel of the scheduled message, from its summary, or its ID when there is no summary.
  */
 @Composable
 internal fun ScheduledMessageItemState.channelName(currentUser: User?): String =
     channel?.let { ChatTheme.channelNameFormatter.formatChannelName(it, currentUser) }
-        ?: scheduledMessage.channel?.name?.takeIf(String::isNotBlank)
         ?: scheduledMessage.cid.substringAfter(':')
 
 /**
- * The lead times of the channel of the scheduled message, for the reschedule sheet. The message already counts toward
- * the limits.
+ * The lead times of the channel [config], for the reschedule sheet, or the defaults when it is not known. The message
+ * already counts toward the limits.
  */
-private fun ScheduledMessageItemState.scheduleMessageState(): ScheduleMessageState {
+private fun scheduleMessageState(config: Config?): ScheduleMessageState {
     val defaults = ScheduleMessageState()
-    val config = channel?.config
     return defaults.copy(
         minLeadTimeSeconds = config?.scheduledMessagesMinLeadTimeSeconds ?: defaults.minLeadTimeSeconds,
         maxLeadTimeSeconds = config?.scheduledMessagesMaxLeadTimeSeconds ?: defaults.maxLeadTimeSeconds,

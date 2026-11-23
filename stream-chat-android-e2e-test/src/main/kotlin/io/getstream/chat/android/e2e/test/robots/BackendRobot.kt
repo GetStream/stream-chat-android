@@ -209,9 +209,12 @@ public class BackendRobot(
      * on another device. The app under test receives `scheduled_message.created`.
      *
      * @param text The text of the message.
+     * @param inDirectMessageChannel Whether to schedule it in the direct message channel of
+     * [generateChannels] with `withDirectMessageChannel`, instead of the current channel.
      */
-    public fun createScheduledMessage(text: String): BackendRobot {
-        mockServer.postRequest("create_scheduled_message?text=${URLEncoder.encode(text, "UTF-8")}")
+    public fun createScheduledMessage(text: String, inDirectMessageChannel: Boolean = false): BackendRobot {
+        val dm = if (inDirectMessageChannel) "&dm=true" else ""
+        mockServer.postRequest("create_scheduled_message?text=${URLEncoder.encode(text, "UTF-8")}$dm")
         return this
     }
 

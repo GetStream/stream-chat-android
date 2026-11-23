@@ -26,7 +26,7 @@ import java.util.Date
 /**
  * A scheduled message of the current user, with its content and the changes the server does not have yet. It has a
  * table of its own, so it never shows with the messages of a channel. The attachments are stored with their upload
- * state, as JSON.
+ * state, as JSON. The channel summary is stored when [channelMemberCount] is not null.
  */
 @Entity(tableName = SCHEDULED_MESSAGE_ENTITY_TABLE_NAME)
 internal data class ScheduledMessageEntity(
@@ -35,6 +35,8 @@ internal data class ScheduledMessageEntity(
     val cid: String,
     val channelName: String?,
     val channelImage: String?,
+    val channelMemberCount: Int?,
+    val channelMembers: List<ScheduledMessageChannelMemberEntity>,
     val userId: String,
     val text: String,
     val html: String,

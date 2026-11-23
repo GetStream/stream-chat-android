@@ -142,6 +142,12 @@ class ScheduledMessagesPage {
                 By.res("Stream_ScheduledMessageText").text(Pattern.compile(".*" + Pattern.quote(text) + "\\s*")),
             )
 
+            /** The channel name of a row. */
+            fun channelName(name: String) = By.res("Stream_ScheduledMessageChannelName").text(name)
+
+            /** The avatar of the channel of a row. */
+            val channelAvatar get() = By.res("Stream_ChannelAvatar")
+
             /** The date line of a row, sent at [time]. */
             fun date(time: String) = By.res("Stream_ScheduledMessageDate").textEndsWith(time)
 

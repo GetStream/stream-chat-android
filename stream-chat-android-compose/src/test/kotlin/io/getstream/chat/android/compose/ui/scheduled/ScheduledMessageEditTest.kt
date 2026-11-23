@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Message
@@ -93,7 +94,6 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         whenever(mockChatClient.deletedScheduledMessagesAlreadySent) doReturn emptyFlow()
         whenever(mockChatClient.queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull())) doReturn
             QueryScheduledMessagesResult(emptyList(), next = null).asCall()
-        whenever(mockChatClient.queryChannels(any())) doReturn listOf(channel).asCall()
         whenever(mockChatClient.queryUsers(any())) doReturn emptyList<User>().asCall()
         val repository: RepositoryFacade = mock { onBlocking { selectUsers(any()) } doReturn emptyList() }
         whenever(mockChatClient.repositoryFacade) doReturn repository
@@ -386,7 +386,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         return ScheduledMessage(
             id = id,
             cid = channel.cid,
-            channel = null,
+            channel = ChannelInfo(cid = channel.cid, id = channel.id, type = channel.type, name = channel.name),
             message = Message(
                 id = id,
                 cid = channel.cid,

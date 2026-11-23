@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
@@ -87,7 +88,7 @@ internal class ScheduledMessagesScreenTest {
             on { clientState } doReturn state
             on { queryScheduledMessages(anyOrNull(), any(), any(), anyOrNull()) } doReturn
                 QueryScheduledMessagesResult(emptyList(), next = null).asCall()
-            on { queryChannels(any()) } doReturn listOf(channel).asCall()
+            on { repositoryFacade } doReturn mock()
         }
     }
 
@@ -293,7 +294,7 @@ internal class ScheduledMessagesScreenTest {
         return ScheduledMessage(
             id = "scheduled-1",
             cid = channel.cid,
-            channel = null,
+            channel = ChannelInfo(cid = channel.cid, id = channel.id, type = channel.type, name = channel.name),
             message = Message(id = "scheduled-1", cid = channel.cid, text = text),
             scheduledAt = scheduledAt,
             status = status,
