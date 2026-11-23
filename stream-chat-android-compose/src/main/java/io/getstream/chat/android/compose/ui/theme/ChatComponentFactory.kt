@@ -1677,6 +1677,7 @@ public interface ChatComponentFactory {
             onSendClick = params.onSendClick,
             sendActionLabel = params.sendActionLabel,
             saveActionLabel = params.saveActionLabel,
+            onSendLongClick = params.onSendLongClick,
         )
     }
 

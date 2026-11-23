@@ -29,33 +29,50 @@ import java.util.Date
 public abstract class ScheduledMessagesBannerState internal constructor() {
 
     /**
+     * The ID of the thread whose scheduled replies the banner is about, and whose scheduled messages it opens, or null
+     * for the scheduled messages of the channel.
+     */
+    public abstract val parentMessageId: String?
+
+    /**
      * Some scheduled messages of the channel or the thread failed to send.
      *
      * @property count The number of failed scheduled messages.
+     * @property parentMessageId The ID of the thread of the failed replies, or null for the channel.
      */
-    public data class Failed(val count: Int) : ScheduledMessagesBannerState()
+    public data class Failed(
+        val count: Int,
+        override val parentMessageId: String? = null,
+    ) : ScheduledMessagesBannerState()
 
     /**
-     * The channel has as many pending scheduled messages as it allows, so no new message can be scheduled in it.
+     * The channel has as many pending scheduled messages as it allows, so no new message can be scheduled in it. It is
+     * about the whole channel, also when shown in a thread, so [parentMessageId] is always null.
      *
      * @property count The number of pending scheduled messages of the current user in the channel, including its
      * threads.
      * @property limit The maximum number of pending scheduled messages per channel.
      */
-    public data class LimitReached(val count: Int, val limit: Int) : ScheduledMessagesBannerState()
+    public data class LimitReached(val count: Int, val limit: Int) : ScheduledMessagesBannerState() {
+        override val parentMessageId: String? get() = null
+    }
 
     /**
      * The channel or the thread has scheduled messages that are not sent yet.
      *
      * @property count The number of scheduled messages that did not fail and whose date has not passed.
      * @property nextScheduledAt The date of the next one to be sent.
-     * @property isInThread Whether they are replies of a thread.
+     * @property parentMessageId The ID of the thread of the scheduled replies, or null for the channel.
      */
     public data class Scheduled(
         val count: Int,
         val nextScheduledAt: Date,
-        val isInThread: Boolean,
-    ) : ScheduledMessagesBannerState()
+        override val parentMessageId: String? = null,
+    ) : ScheduledMessagesBannerState() {
+
+        /** Whether they are replies of a thread. */
+        val isInThread: Boolean get() = parentMessageId != null
+    }
 }
 
 /**
@@ -64,13 +81,13 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
  *
  * @param scheduledMessages The scheduled messages of the channel or the thread.
  * @param scheduleMessageState The scheduling state of the channel, for the capability and the channel limit.
- * @param isInThread Whether [scheduledMessages] are the replies of a thread.
+ * @param parentMessageId The ID of the thread when [scheduledMessages] are its replies, or null for the channel.
  * @param now The current date. Messages whose date has passed are not shown as scheduled.
  */
 internal fun scheduledMessagesBannerState(
     scheduledMessages: List<ScheduledMessage>,
     scheduleMessageState: ScheduleMessageState,
-    isInThread: Boolean,
+    parentMessageId: String?,
     now: Date,
 ): ScheduledMessagesBannerState? {
     if (!scheduleMessageState.canSchedule) return null
@@ -78,13 +95,13 @@ internal fun scheduledMessagesBannerState(
     val scheduled = scheduledMessages.filter { it.isPending(now) }
     val maxPerChannel = scheduleMessageState.maxPerChannel
     return when {
-        failed.isNotEmpty() -> ScheduledMessagesBannerState.Failed(failed.size)
+        failed.isNotEmpty() -> ScheduledMessagesBannerState.Failed(failed.size, parentMessageId)
         maxPerChannel != null && scheduleMessageState.isChannelLimitReached ->
             ScheduledMessagesBannerState.LimitReached(scheduleMessageState.pendingInChannel, maxPerChannel)
         scheduled.isNotEmpty() -> ScheduledMessagesBannerState.Scheduled(
             count = scheduled.size,
             nextScheduledAt = scheduled.minOf(ScheduledMessage::scheduledAt),
-            isInThread = isInThread,
+            parentMessageId = parentMessageId,
         )
         else -> null
     }

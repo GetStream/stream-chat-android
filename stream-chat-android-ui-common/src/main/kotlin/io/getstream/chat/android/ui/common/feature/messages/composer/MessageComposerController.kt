@@ -347,7 +347,7 @@ public class MessageComposerController(
                 scheduledMessagesBannerState(
                     scheduledMessages = scheduledMessages,
                     scheduleMessageState = scheduleState,
-                    isInThread = parentId != null,
+                    parentMessageId = parentId,
                     now = Date(),
                 )
             }

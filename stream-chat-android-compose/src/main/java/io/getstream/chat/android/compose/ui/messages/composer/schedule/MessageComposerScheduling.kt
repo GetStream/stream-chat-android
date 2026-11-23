@@ -39,11 +39,15 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
+import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageError
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.result.Result
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Date
 
@@ -67,10 +71,13 @@ internal fun MessageComposerScheduling(
         return
     }
     val scheduleState by viewModel.scheduleMessageState.collectAsState()
+    val isNewMessage by remember(viewModel) {
+        viewModel.messageComposerState.map { it.isNewMessage }.distinctUntilChanged()
+    }.collectAsState(initial = false)
     val host = remember(viewModel) { ScheduleMessageSheetHostState() }
     val scheduleAction = remember(host) { host::requestQuickSheet }
     CompositionLocalProvider(
-        LocalMessageComposerScheduleAction provides scheduleAction.takeIf { scheduleState.canSchedule },
+        LocalMessageComposerScheduleAction provides scheduleAction.takeIf { scheduleState.canSchedule && isNewMessage },
         content = content,
     )
     if (scheduleState.canSchedule) {
@@ -82,6 +89,13 @@ internal fun MessageComposerScheduling(
         )
     }
 }
+
+/**
+ * Whether the composer writes a new message, the only content that can be scheduled: not an edit of a sent message,
+ * and no command.
+ */
+private val MessageComposerState.isNewMessage: Boolean
+    get() = action !is Edit && activeCommand == null
 
 /**
  * The sheet that is open, if any.
