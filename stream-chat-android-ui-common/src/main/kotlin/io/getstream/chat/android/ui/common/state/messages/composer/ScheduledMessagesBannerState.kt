@@ -30,7 +30,7 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
 
     /**
      * The ID of the thread whose scheduled replies the banner is about, and whose scheduled messages it opens, or null
-     * for the scheduled messages of the channel.
+     * for the scheduled messages of the channel, thread replies included.
      */
     public abstract val parentMessageId: String?
 
@@ -38,7 +38,8 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
      * Some scheduled messages of the channel or the thread failed to send.
      *
      * @property count The number of failed scheduled messages.
-     * @property parentMessageId The ID of the thread of the failed replies, or null for the channel.
+     * @property parentMessageId The ID of the thread of the failed replies, or null for the channel, thread replies
+     * included.
      */
     public data class Failed(
         val count: Int,
@@ -62,7 +63,8 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
      *
      * @property count The number of scheduled messages that did not fail and whose date has not passed.
      * @property nextScheduledAt The date of the next one to be sent.
-     * @property parentMessageId The ID of the thread of the scheduled replies, or null for the channel.
+     * @property parentMessageId The ID of the thread of the scheduled replies, or null for the channel, thread
+     * replies included.
      */
     public data class Scheduled(
         val count: Int,
@@ -81,7 +83,8 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
  *
  * @param scheduledMessages The scheduled messages of the channel or the thread.
  * @param scheduleMessageState The scheduling state of the channel, for the capability and the channel limit.
- * @param parentMessageId The ID of the thread when [scheduledMessages] are its replies, or null for the channel.
+ * @param parentMessageId The ID of the thread when [scheduledMessages] are its replies, or null for the channel,
+ * thread replies included.
  * @param now The current date. Messages whose date has passed are not shown as scheduled.
  */
 internal fun scheduledMessagesBannerState(

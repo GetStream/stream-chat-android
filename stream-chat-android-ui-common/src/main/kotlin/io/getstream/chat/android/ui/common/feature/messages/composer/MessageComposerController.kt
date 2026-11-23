@@ -334,15 +334,20 @@ public class MessageComposerController(
         .distinctUntilChanged()
 
     /**
-     * What the scheduled messages banner of the channel, or of the thread the composer writes in, shows, or null when
-     * the user can't schedule messages in the channel or there is nothing to show. Computed while it is collected.
+     * What the scheduled messages banner shows, or null when the user can't schedule messages in the channel or there
+     * is nothing to show. In the channel, it is about the scheduled messages of the channel, thread replies included.
+     * In a thread, it is about the scheduled replies of that thread. Computed while it is collected.
      */
     @InternalStreamChatApi
     public val scheduledMessagesBannerState: StateFlow<ScheduledMessagesBannerState?> = threadParentId
         .flatMapLatest { parentId ->
             combine(
                 scheduleMessageState,
-                chatClient.scheduledMessages(channelCid, parentId),
+                chatClient.scheduledMessages.map { scheduledMessages ->
+                    scheduledMessages.filter {
+                        it.cid == channelCid && (parentId == null || it.message.parentId == parentId)
+                    }
+                },
             ) { scheduleState, scheduledMessages ->
                 scheduledMessagesBannerState(
                     scheduledMessages = scheduledMessages,
