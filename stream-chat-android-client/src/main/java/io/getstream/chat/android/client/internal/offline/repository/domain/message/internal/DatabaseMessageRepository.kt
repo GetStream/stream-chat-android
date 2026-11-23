@@ -151,8 +151,7 @@ internal class DatabaseMessageRepository(
     override suspend fun insertMessages(messages: List<Message>) {
         if (messages.isEmpty()) return
         val validMessages = messages
-            .filter { message -> message.cid.isNotEmpty() }
-            .filterNot { message -> message.cid.substringBefore(":") in ignoredChannelTypes }
+            .filter { message -> message.isStorable() }
             .filterNot { message -> (message.id in deletedMessageIds) }
 
         val messagesToInsert = validMessages
@@ -189,6 +188,23 @@ internal class DatabaseMessageRepository(
     override suspend fun insertMessage(message: Message) {
         insertMessages(listOf(message))
     }
+
+    // Unlike insertMessages, this stores a message already deleted or cached unchanged, and returns once it is
+    // written, so the retry that reads the hard flag cannot run before it.
+    override suspend fun insertDeletedMessage(message: Message, hard: Boolean) {
+        if (!message.isStorable()) return
+        val entity = message.toEntity()
+            .let { it.copy(messageInnerEntity = it.messageInnerEntity.copy(hardDelete = hard)) }
+        deletedMessageIds.add(message.id)
+        messageCache.put(message.id, message)
+        dbMutex.withLock { messageDao.insert(listOf(entity)) }
+    }
+
+    private fun Message.isStorable(): Boolean =
+        cid.isNotEmpty() && cid.substringBefore(":") !in ignoredChannelTypes
+
+    override suspend fun selectIsHardDelete(messageId: String): Boolean =
+        messageDao.selectHardDelete(messageId) == true
 
     override suspend fun insertDraftMessage(message: DraftMessage) {
         message.replyMessage?.let { insertMessage(it) }

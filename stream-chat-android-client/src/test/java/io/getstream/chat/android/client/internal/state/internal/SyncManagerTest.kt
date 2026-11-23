@@ -1815,6 +1815,32 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `retryMessages should retry a hard delete as a hard delete`() = runTest(testDispatcher) {
+        verifyDeleteRetriedAs(hard = true)
+    }
+
+    @Test
+    fun `retryMessages should retry a soft delete as a soft delete`() = runTest(testDispatcher) {
+        verifyDeleteRetriedAs(hard = false)
+    }
+
+    private suspend fun TestScope.verifyDeleteRetriedAs(hard: Boolean) {
+        val message = randomMessage(deletedAt = localDate(), deletedForMe = false, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(repositoryFacade.selectIsHardDelete(message.id)) doReturn hard
+        val channelClient: ChannelClient = mock {
+            on(it.deleteMessage(message.id, hard)) doReturn message.asCall()
+        }
+        whenever(chatClient.channel(message.cid)) doReturn channelClient
+
+        val sut = buildSyncManager()
+        sut.retryMessages()
+
+        verify(channelClient).deleteMessage(message.id, hard)
+    }
+
+    @Test
     fun `retryMessages should retry deleting messages for me`() = runTest(testDispatcher) {
         val message = randomMessage(deletedAt = null, deletedForMe = true, syncStatus = SyncStatus.SYNC_NEEDED)
         whenever(repositoryFacade.selectMessageIdsBySyncState(syncStatus = SyncStatus.SYNC_NEEDED)) doReturn

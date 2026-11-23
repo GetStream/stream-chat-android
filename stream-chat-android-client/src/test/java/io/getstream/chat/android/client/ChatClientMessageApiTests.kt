@@ -146,12 +146,12 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
             .givenDeleteMessageResult(message.asCall())
             .get()
         // when
-        val result = sut.deleteMessage(messageId).await()
+        val result = sut.deleteMessage(messageId, hard = true).await()
         // then
         verifySuccess(result, message)
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onMessageDeletePrecondition(messageId)
-        inOrder.verify(plugin).onMessageDeleteRequest(messageId)
+        inOrder.verify(plugin).onMessageDeleteRequest(messageId, true)
         inOrder.verify(plugin).onMessageDeleteResult(messageId, result)
     }
 
@@ -171,7 +171,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         verifyNetworkError(result, errorCode)
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onMessageDeletePrecondition(messageId)
-        inOrder.verify(plugin).onMessageDeleteRequest(messageId)
+        inOrder.verify(plugin).onMessageDeleteRequest(messageId, false)
         inOrder.verify(plugin).onMessageDeleteResult(messageId, result)
     }
 

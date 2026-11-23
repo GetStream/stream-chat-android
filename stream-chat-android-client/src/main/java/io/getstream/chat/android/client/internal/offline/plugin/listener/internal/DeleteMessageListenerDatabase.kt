@@ -62,9 +62,10 @@ internal class DeleteMessageListenerDatabase(
     /**
      * Method called when a request to delete a message in the API happens
      *
-     * @param messageId
+     * @param messageId The message id to be deleted.
+     * @param hard True if the message is hard deleted.
      */
-    override suspend fun onMessageDeleteRequest(messageId: String) {
+    override suspend fun onMessageDeleteRequest(messageId: String, hard: Boolean) {
         messageRepository.selectMessage(messageId)?.let { message ->
             val networkAvailable = clientState.isNetworkAvailable
             val messageToBeDeleted = message.copy(
@@ -73,7 +74,7 @@ internal class DeleteMessageListenerDatabase(
             )
 
             userRepository.insertUsers(messageToBeDeleted.users())
-            messageRepository.insertMessage(messageToBeDeleted)
+            messageRepository.insertDeletedMessage(messageToBeDeleted, hard)
         }
     }
 

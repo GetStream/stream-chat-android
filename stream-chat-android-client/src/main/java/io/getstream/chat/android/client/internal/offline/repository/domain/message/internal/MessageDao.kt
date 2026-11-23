@@ -309,6 +309,9 @@ internal interface MessageDao {
     @Query("UPDATE $MESSAGE_ENTITY_TABLE_NAME SET member = :member WHERE cid = :cid AND userId = :userId")
     suspend fun updateMemberByCidAndUserId(cid: String, userId: String, member: MemberInfoEntity?)
 
+    @Query("SELECT hardDelete FROM $MESSAGE_ENTITY_TABLE_NAME WHERE id = :id")
+    suspend fun selectHardDelete(id: String): Boolean?
+
     @Query("UPDATE $MESSAGE_ENTITY_TABLE_NAME SET syncStatus = :syncStatus WHERE id = :id")
     suspend fun updateSyncStatus(id: String, syncStatus: SyncStatus)
 
