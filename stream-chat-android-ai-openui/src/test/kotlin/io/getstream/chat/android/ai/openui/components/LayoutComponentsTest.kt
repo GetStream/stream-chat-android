@@ -75,12 +75,12 @@ internal class LayoutComponentsTest {
         compose.setContent { Renderer(response = response, library = openuiLibrary, isStreaming = true) }
         compose.waitForIdle()
 
-        compose.onNodeWithText("Second").performClick()
-        response = tabs(first = "Alpha grows", second = "Beta")
+        compose.onNodeWithText("First").performClick()
+        response = tabs(first = "Alpha", second = "Beta grows")
         compose.waitForIdle()
 
-        compose.onNodeWithText("Beta").assertExists()
-        compose.onNodeWithText("Alpha grows").assertDoesNotExist()
+        compose.onNodeWithText("Alpha").assertExists()
+        compose.onNodeWithText("Beta grows").assertDoesNotExist()
     }
 
     @Test

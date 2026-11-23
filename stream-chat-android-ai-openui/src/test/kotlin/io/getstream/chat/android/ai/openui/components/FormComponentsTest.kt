@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.openui.components
 
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
@@ -69,16 +70,29 @@ internal class FormComponentsTest {
             """
             ${'$'}name = ""
             ${'$'}bio = ""
-            root = Stack([Input("name", "Your name", "text", null, ${'$'}name), TextArea("bio", "About you", 3, null, ${'$'}bio), Input("secret", "Password", "password"), Input("site", "Website", "url"), Input("age", "Age", "number"), TextContent("Hello " + ${'$'}name + ", " + ${'$'}bio)])
+            root = Stack([Input("name", "Your name", "text", null, ${'$'}name), TextArea("bio", "About you", 3, null, ${'$'}bio), TextContent("Hello " + ${'$'}name + ", " + ${'$'}bio)])
             """.trimIndent(),
         )
 
         compose.onNodeWithText("Your name").performTextInput("Ann")
         compose.onNodeWithText("About you").performTextInput("Likes maps")
-        compose.onNodeWithText("Password").performTextInput("hunter2")
         compose.waitForIdle()
 
         compose.onNodeWithText("Hello Ann, Likes maps").assertExists()
+    }
+
+    @Test
+    fun `a password input hides what the user types`() {
+        compose.renderProgram(
+            """
+            root = Input("secret", "Password", "password")
+            """.trimIndent(),
+        )
+
+        compose.onNodeWithText("Password").performTextInput("hunter2")
+        compose.waitForIdle()
+
+        compose.onNodeWithText("\u2022".repeat("hunter2".length)).assertExists()
     }
 
     @Test
@@ -226,6 +240,10 @@ internal class FormComponentsTest {
         )
 
         compose.onNodeWithText("Standard").performClick()
+        compose.onNodeWithText("Standard").assertIsSelected()
+
+        compose.onNodeWithText("Loft").performClick()
+        compose.onNodeWithText("Loft").assertIsNotSelected()
         compose.onNodeWithText("Standard").assertIsSelected()
     }
 }
