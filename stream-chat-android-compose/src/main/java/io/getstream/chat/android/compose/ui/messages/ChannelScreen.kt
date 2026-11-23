@@ -148,7 +148,7 @@ import kotlin.math.roundToInt
  * @param onScheduledMessagesBannerClick Called when the user taps the scheduled messages banner above the composer, to
  * show the scheduled messages. It is called with the banner's `ScheduledMessagesBannerState.parentMessageId`: the ID
  * of the thread the banner is about, to show its scheduled replies, or null to show the scheduled messages of the
- * channel. The banner can't be tapped when it is null.
+ * channel, thread replies included. The banner can't be tapped when it is null.
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
  * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
  */

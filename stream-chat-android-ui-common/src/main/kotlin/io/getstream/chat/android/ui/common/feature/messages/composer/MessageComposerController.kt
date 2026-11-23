@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.i
 import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.sentNow
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
+import io.getstream.chat.android.ui.common.feature.scheduled.isInScope
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -344,9 +345,7 @@ public class MessageComposerController(
             combine(
                 scheduleMessageState,
                 chatClient.scheduledMessages.map { scheduledMessages ->
-                    scheduledMessages.filter {
-                        it.cid == channelCid && (parentId == null || it.message.parentId == parentId)
-                    }
+                    scheduledMessages.filter { it.isInScope(channelCid, parentId) }
                 },
             ) { scheduleState, scheduledMessages ->
                 scheduledMessagesBannerState(
