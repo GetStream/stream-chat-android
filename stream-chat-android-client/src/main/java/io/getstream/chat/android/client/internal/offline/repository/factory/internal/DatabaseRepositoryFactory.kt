@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.factory.internal
 
+import androidx.room.withTransaction
 import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal.DatabaseChannelRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.DatabaseMessageRepository
@@ -52,13 +54,16 @@ internal class DatabaseRepositoryFactory(
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : RepositoryFactory {
 
+    /** Runs the writes of every repository of this factory, so the ones made inside a write share its transaction. */
+    val store = ChatStore { block -> database.withTransaction { block() } }
+
     private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()
 
     override fun createUserRepository(): UserRepository {
         val databaseUserRepository = repositoriesCache[UserRepository::class.java] as? DatabaseUserRepository?
 
         return databaseUserRepository ?: run {
-            DatabaseUserRepository(scope, database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
+            DatabaseUserRepository(scope, store, database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
                 repositoriesCache[UserRepository::class.java] = repository
             }
         }
@@ -84,7 +89,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseChannelRepository ?: run {
             DatabaseChannelRepository(
-                scope,
+                store,
                 database.channelStateDao(),
                 getUser,
                 getMessage,
@@ -139,7 +144,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseMessageRepository ?: run {
             DatabaseMessageRepository(
-                scope,
+                store,
                 database.messageDao(),
                 database.replyMessageDao(),
                 database.pollDao(),

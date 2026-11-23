@@ -19,12 +19,14 @@ package io.getstream.chat.android.client.persistance.repository
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
 import io.getstream.chat.android.client.internal.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpScheduledMessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.Config
@@ -35,9 +37,9 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.util.Date
 
 @InternalStreamChatApi
@@ -53,8 +55,9 @@ public class RepositoryFacade private constructor(
     private val syncStateRepository: SyncStateRepository,
     /** Keeps the scheduled messages in the database of the offline support. Without it, they live in memory only. */
     internal val scheduledMessageRepository: ScheduledMessageRepository,
-    private val scope: CoroutineScope,
     private val defaultConfig: Config,
+    /** Runs the writes of the database repositories. Without a database there is none. */
+    internal val store: ChatStore?,
 ) : UserRepository by userRepository,
     ChannelRepository by channelsRepository,
     ReactionRepository by reactionsRepository,
@@ -81,9 +84,14 @@ public class RepositoryFacade private constructor(
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
-            channelIds.map { cid ->
-                scope.async { cid to selectMessagesForChannel(cid, pagination) }
-            }.awaitAll().toMap()
+            // Children of the caller: inside a store write they read in its transaction, where a read from a coroutine
+            // outside of it could wait for the write that is waiting for it.
+            coroutineScope {
+                channelIds
+                    .map { cid -> async(DispatcherProvider.IO) { cid to selectMessagesForChannel(cid, pagination) } }
+                    .awaitAll()
+                    .toMap()
+            }
         } else {
             emptyMap()
         }
@@ -265,13 +273,11 @@ public class RepositoryFacade private constructor(
          * used mainly for tests or internally by other constructor methods.
          *
          * @param factory [RepositoryFacade]
-         * @param scope [CoroutineScope]
          * @param defaultConfig [Config]
          */
         @InternalStreamChatApi
         public fun create(
             factory: RepositoryFactory,
-            scope: CoroutineScope,
             defaultConfig: Config = Config(),
         ): RepositoryFacade {
             val userRepository = factory.createUserRepository()
@@ -298,9 +304,17 @@ public class RepositoryFacade private constructor(
                 scheduledMessageRepository = (factory as? DatabaseRepositoryFactory)
                     ?.createScheduledMessageRepository(getUser)
                     ?: NoOpScheduledMessageRepository,
-                scope = scope,
                 defaultConfig = defaultConfig,
+                store = (factory as? DatabaseRepositoryFactory)?.store,
             )
         }
     }
+}
+
+/**
+ * Runs [block] as one write of the store, or directly when the repositories have no database.
+ */
+internal suspend fun <T> RepositoryFacade.write(block: suspend () -> T): T {
+    val store = store
+    return if (store != null) store.write(block) else block()
 }

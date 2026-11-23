@@ -24,6 +24,7 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.internal.offline.randomPrivacySettingsEntity
 import io.getstream.chat.android.client.internal.offline.randomUserEntity
 import io.getstream.chat.android.client.internal.offline.randomUserMuteEntity
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.internal.offline.repository.domain.push.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.DatabaseUserRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.DeliveryReceiptsEntity
@@ -72,7 +73,7 @@ internal class UserRepositoryTests {
     @BeforeEach
     fun setup() {
         userDao = mock()
-        sut = DatabaseUserRepository(testCoroutines.scope, userDao)
+        sut = DatabaseUserRepository(testCoroutines.scope, testChatStore(), userDao)
     }
 
     @Test
