@@ -864,6 +864,31 @@ class ScheduledMessagesTests : StreamTestCase() {
     }
 
     @Test
+    fun test_channelBannerCountsAThreadReply() {
+        val threadReplyPreview = "${Screen.threadReplyPrefix} $sampleText"
+        step("GIVEN user schedules a message in the channel, and sends another one") {
+            userRobot
+                .login()
+                .openChannel()
+                .scheduleMessage("First")
+                .sendMessage("Parent")
+        }
+        step("WHEN user schedules a reply in a thread and goes back to the channel") {
+            userRobot
+                .openThread()
+                .scheduleMessage(sampleText)
+                .tapOnBackButton()
+        }
+        step("THEN the channel banner counts the reply, and its link opens both messages") {
+            userRobot
+                .assertScheduledMessagesBanner(Banner.messages(2).hasDescendant(Banner.viewAll))
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessage("First", time = tomorrowAt(9))
+                .assertScheduledMessage(threadReplyPreview, time = tomorrowAt(9))
+        }
+    }
+
+    @Test
     fun test_bannerShowsTheChannelLimitReached() {
         step("GIVEN user can schedule one message in the channel, as its config tells") {
             backendRobot.setScheduledMessagesLimit(1, inConfig = true)

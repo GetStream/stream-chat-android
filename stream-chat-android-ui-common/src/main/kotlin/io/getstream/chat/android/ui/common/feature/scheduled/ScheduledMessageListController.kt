@@ -102,7 +102,7 @@ public class ScheduledMessageListController(
     private val _events = EventChannel<ScheduledMessageListEvent>(EventChannel.BUFFERED)
 
     private val scheduledMessages: Flow<List<ScheduledMessage>> = chatClient.scheduledMessages
-        .map { scheduledMessages -> scheduledMessages.filter(::isInScope) }
+        .map { scheduledMessages -> scheduledMessages.filter { it.isInScope(cid, parentMessageId) } }
         .distinctUntilChanged()
 
     // Only a query of every channel can tell that the client knows them all.
@@ -345,10 +345,6 @@ public class ScheduledMessageListController(
         ownScope.cancel()
     }
 
-    private fun isInScope(scheduledMessage: ScheduledMessage): Boolean =
-        (cid == null || scheduledMessage.cid == cid) &&
-            (parentMessageId == null || scheduledMessage.message.parentId == parentMessageId)
-
     /**
      * Waits for the answer of the server to the change of the scheduled message with [id], which is saved locally
      * first, and tells whether the message left the list without being deleted from it.
@@ -435,6 +431,14 @@ public class ScheduledMessageListController(
         )
     }
 }
+
+/**
+ * Whether the scheduled message is in the list of the channel [cid] and the thread [parentMessageId]. A null [cid]
+ * means every channel, and a null [parentMessageId] means the whole channel, thread replies included. The scheduled
+ * messages banner of a channel or a thread uses the same scope, so it counts the messages its list shows.
+ */
+internal fun ScheduledMessage.isInScope(cid: String?, parentMessageId: String?): Boolean =
+    (cid == null || this.cid == cid) && (parentMessageId == null || message.parentId == parentMessageId)
 
 /**
  * The actions the status of the scheduled message allows.

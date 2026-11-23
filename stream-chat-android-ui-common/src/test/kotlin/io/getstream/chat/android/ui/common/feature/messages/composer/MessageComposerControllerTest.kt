@@ -4017,16 +4017,26 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
-    fun `scheduledMessagesBannerState shows the scheduled messages of the channel, then of the thread`() = runTest {
+    fun `scheduledMessagesBannerState shows the channel's messages with its thread replies, then the thread's`() = runTest {
         val later = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
         val parentMessage = randomMessage(cid = CID, parentId = null)
+        val otherCid = "messaging:other"
         val scheduledMessages = MutableStateFlow(
             listOf(
-                randomScheduledMessage(cid = CID, message = randomMessage(cid = CID, parentId = null), scheduledAt = later),
                 randomScheduledMessage(cid = CID, message = randomMessage(cid = CID, parentId = null), scheduledAt = later),
                 randomScheduledMessage(
                     cid = CID,
                     message = randomMessage(cid = CID, parentId = parentMessage.id),
+                    scheduledAt = later,
+                ),
+                randomScheduledMessage(
+                    cid = CID,
+                    message = randomMessage(cid = CID, parentId = randomString()),
+                    scheduledAt = later,
+                ),
+                randomScheduledMessage(
+                    cid = otherCid,
+                    message = randomMessage(cid = otherCid, parentId = null),
                     scheduledAt = later,
                 ),
             ),
@@ -4050,7 +4060,7 @@ internal class MessageComposerControllerTest {
 
         controller.scheduledMessagesBannerState.test {
             assertEquals(
-                ScheduledMessagesBannerState.Scheduled(count = 2, nextScheduledAt = later),
+                ScheduledMessagesBannerState.Scheduled(count = 3, nextScheduledAt = later),
                 expectMostRecentItem(),
             )
             controller.setMessageMode(MessageMode.MessageThread(parentMessage))
@@ -4058,6 +4068,42 @@ internal class MessageComposerControllerTest {
                 ScheduledMessagesBannerState.Scheduled(count = 1, nextScheduledAt = later, parentMessageId = parentMessage.id),
                 expectMostRecentItem(),
             )
+        }
+    }
+
+    @Test
+    fun `scheduledMessagesBannerState shows a failed thread reply in the channel banner`() = runTest {
+        val later = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+        val scheduledMessages = MutableStateFlow(
+            listOf(
+                randomScheduledMessage(cid = CID, message = randomMessage(cid = CID, parentId = null), scheduledAt = later),
+                randomScheduledMessage(
+                    cid = CID,
+                    message = randomMessage(cid = CID, parentId = randomString()),
+                    scheduledAt = later,
+                    status = ScheduledMessageStatus.Failed,
+                ),
+            ),
+        )
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState(
+                channelDataState = MutableStateFlow(
+                    ChannelData(
+                        CHANNEL_ID,
+                        CHANNEL_TYPE,
+                        ownCapabilities = setOf(ChannelCapabilities.SCHEDULE_MESSAGE),
+                    ),
+                ),
+            )
+            .givenScheduledMessages(scheduledMessages)
+        val controller = fixture.get()
+
+        controller.scheduledMessagesBannerState.test {
+            assertEquals(ScheduledMessagesBannerState.Failed(count = 1), expectMostRecentItem())
         }
     }
 
