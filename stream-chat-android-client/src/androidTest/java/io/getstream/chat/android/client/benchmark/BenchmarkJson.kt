@@ -21,11 +21,25 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+/** A plain text message of the mock server. */
+internal data class MockMessage(
+    val channelId: String,
+    val id: String,
+    val text: String,
+    val userId: String = BenchmarkJson.SENDER_ID,
+)
+
 /** The payloads of the mock server, with the fields the backend always sends. */
 internal object BenchmarkJson {
 
     const val CONNECTION_ID = "6cfffec7-40df-40ac-901a-6ea6c5b7fb83"
-    const val CURRENT_USER_ID = "benchmark-user"
+
+    /**
+     * The user the client connects as. Each scenario sets its own: the database of a user stays open for the life
+     * of the process, so a scenario with the user of an earlier one would start with that one's database.
+     */
+    @Volatile
+    var currentUserId = "benchmark-user"
     const val SENDER_ID = "benchmark-sender"
     const val CHANNEL_TYPE = "messaging"
 
@@ -42,7 +56,7 @@ internal object BenchmarkJson {
           "created_at": "${date(now)}",
           "connection_id": "$CONNECTION_ID",
           "me": {
-            ${userFields(CURRENT_USER_ID, now)},
+            ${userFields(currentUserId, now)},
             "invisible": false,
             "devices": [],
             "mutes": [],
@@ -65,27 +79,63 @@ internal object BenchmarkJson {
           "channel": ${channel(channelId, now)},
           "messages": [],
           "pinned_messages": [],
-          "members": [${member(CURRENT_USER_ID, now)}, ${member(SENDER_ID, now)}],
+          "members": [${member(currentUserId, now)}, ${member(SENDER_ID, now)}],
           "watcher_count": 1
         }
         """.trimIndent()
 
-    fun newMessage(channelId: String, messageId: String, text: String, now: Long): String =
-        """
+    /** The event of a new [message]. */
+    fun newMessage(message: MockMessage, now: Long): String {
+        // A message of the current user is not unread for them.
+        val unread = if (message.userId == currentUserId) 0 else 1
+        return """
         {
           "type": "message.new",
           "created_at": "${date(now)}",
-          "user": ${user(SENDER_ID, now)},
+          "user": ${user(message.userId, now)},
           "channel_type": "$CHANNEL_TYPE",
-          "channel_id": "$channelId",
-          "cid": "$CHANNEL_TYPE:$channelId",
+          "channel_id": "${message.channelId}",
+          "cid": "$CHANNEL_TYPE:${message.channelId}",
           "watcher_count": 1,
-          "total_unread_count": 1,
-          "unread_channels": 1,
-          "message_id": "$messageId",
-          "message": ${message(channelId, messageId, text, now)},
+          "total_unread_count": $unread,
+          "unread_channels": $unread,
+          "message_id": "${message.id}",
+          "message": ${message(message, now)},
           "channel_last_message_at": "${date(now)}",
           "channel_message_count": 1
+        }
+        """.trimIndent()
+    }
+
+    /** The event of the current user's reaction of [type] to [message]. */
+    fun newReaction(message: MockMessage, type: String, now: Long): String =
+        """
+        {
+          "type": "reaction.new",
+          "created_at": "${date(now)}",
+          "user": ${user(currentUserId, now)},
+          "channel_type": "$CHANNEL_TYPE",
+          "channel_id": "${message.channelId}",
+          "cid": "$CHANNEL_TYPE:${message.channelId}",
+          "channel": ${channel(message.channelId, now)},
+          "message_id": "${message.id}",
+          "message": ${message(message, now, reactionType = type)},
+          "reaction": ${reaction(message.id, type, now)},
+          "channel_last_message_at": "${date(now)}"
+        }
+        """.trimIndent()
+
+    /** The answer to the request that sent [message]. */
+    fun sentMessage(message: MockMessage, now: Long): String =
+        """{"duration": "1.00ms", "message": ${message(message, now)}}"""
+
+    /** The answer to the request that sent the current user's reaction of [type] to [message]. */
+    fun sentReaction(message: MockMessage, type: String, now: Long): String =
+        """
+        {
+          "duration": "1.00ms",
+          "message": ${message(message, now, reactionType = type)},
+          "reaction": ${reaction(message.id, type, now)}
         }
         """.trimIndent()
 
@@ -95,20 +145,22 @@ internal object BenchmarkJson {
     fun error(): String =
         """{"code": 16, "message": "not mocked", "StatusCode": 404, "duration": "0.00ms", "more_info": "", "details": []}"""
 
-    private fun message(channelId: String, messageId: String, text: String, now: Long): String =
-        """
+    private fun message(message: MockMessage, now: Long, reactionType: String? = null): String {
+        val reactions = reactionType?.let { reaction(message.id, it, now) }.orEmpty()
+        val counts = reactionType?.let { """"$it": 1""" }.orEmpty()
+        return """
         {
-          "id": "$messageId",
-          "text": "$text",
-          "html": "<p>$text</p>",
+          "id": "${message.id}",
+          "text": "${message.text}",
+          "html": "<p>${message.text}</p>",
           "type": "regular",
-          "cid": "$CHANNEL_TYPE:$channelId",
-          "user": ${user(SENDER_ID, now)},
+          "cid": "$CHANNEL_TYPE:${message.channelId}",
+          "user": ${user(message.userId, now)},
           "attachments": [],
-          "latest_reactions": [],
-          "own_reactions": [],
-          "reaction_counts": {},
-          "reaction_scores": {},
+          "latest_reactions": [$reactions],
+          "own_reactions": [$reactions],
+          "reaction_counts": {$counts},
+          "reaction_scores": {$counts},
           "reply_count": 0,
           "deleted_reply_count": 0,
           "created_at": "${date(now)}",
@@ -122,6 +174,20 @@ internal object BenchmarkJson {
           "silent": false
         }
         """.trimIndent()
+    }
+
+    private fun reaction(messageId: String, type: String, now: Long): String =
+        """
+        {
+          "message_id": "$messageId",
+          "type": "$type",
+          "score": 1,
+          "user": ${user(currentUserId, now)},
+          "user_id": "$currentUserId",
+          "created_at": "${date(now)}",
+          "updated_at": "${date(now)}"
+        }
+        """.trimIndent()
 
     private fun channel(channelId: String, now: Long): String =
         """
@@ -133,7 +199,7 @@ internal object BenchmarkJson {
           "frozen": false,
           "created_at": "${date(now)}",
           "updated_at": "${date(now)}",
-          "created_by": ${user(CURRENT_USER_ID, now)},
+          "created_by": ${user(currentUserId, now)},
           "member_count": 2,
           "config": $CONFIG
         }
