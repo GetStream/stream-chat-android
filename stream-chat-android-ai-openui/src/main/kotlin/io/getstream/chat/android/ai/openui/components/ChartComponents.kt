@@ -68,6 +68,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -83,6 +84,8 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.OpenUIDimens
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
+import io.getstream.chat.android.ai.openui.rendering.Renderer
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
 import java.math.BigDecimal
 import java.math.MathContext
@@ -1211,3 +1214,94 @@ private const val RadarGridLevels = 4
 
 // How long a chart takes to grow in.
 private const val EntranceMillis = 600
+
+@Composable
+internal fun BarChartsSample() {
+    Renderer(
+        response = """
+            root = Stack([BarChart(months, series, "grouped", "Month", "Amount"), BarChart(months, series, "stacked"), bars])
+            bars = HorizontalBarChart(months, series, "grouped", "Amount", "Month")
+            months = ["Jan", "Feb", "Mar"]
+            series = [Series("Sales", [10, 20, 15]), Series("Costs", [5, 8, 12])]
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BarChartsPreview() {
+    BarChartsSample()
+}
+
+@Composable
+internal fun LineChartsSample() {
+    Renderer(
+        response = """
+            root = Stack([LineChart(months, series, "natural", "Month"), LineChart(months, series, "step"), area])
+            area = AreaChart(months, series, "linear")
+            months = ["Jan", "Feb", "Mar"]
+            series = [Series("Sales", [10, 20, 15]), Series("Costs", [5, 8, 12])]
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LineChartsPreview() {
+    LineChartsSample()
+}
+
+@Composable
+internal fun SliceChartsSample() {
+    Renderer(
+        response = """
+            root = Stack([PieChart(labels, values), PieChart(labels, values, "donut", "semiCircular"), rings, bar])
+            rings = RadialChart(labels, values)
+            bar = SingleStackedBarChart(labels, values)
+            labels = ["Rent", "Food", "Travel"]
+            values = [750, 250, 120]
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SliceChartsPreview() {
+    SliceChartsSample()
+}
+
+@Composable
+internal fun ScatterChartSample() {
+    Renderer(
+        response = """
+            root = ScatterChart([ScatterSeries("Group A", [Point(1, 2), Point(3, 4, 5)]), b], "Height", "Weight")
+            b = ScatterSeries("Group B", [Point(2, 1), Point(4, 3)])
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScatterChartPreview() {
+    ScatterChartSample()
+}
+
+@Composable
+internal fun RadarChartSample() {
+    Renderer(
+        response = """
+            root = RadarChart(["Speed", "Power", "Range"], [Series("Car A", [3, 4, 5]), Series("Car B", [5, 2, 4])])
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun RadarChartPreview() {
+    RadarChartSample()
+}

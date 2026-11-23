@@ -79,6 +79,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.openui.R
 import io.getstream.chat.android.ai.openui.lang.ElementNode
@@ -90,7 +91,10 @@ import io.getstream.chat.android.ai.openui.rendering.ComponentRenderProps
 import io.getstream.chat.android.ai.openui.rendering.ComponentRenderer
 import io.getstream.chat.android.ai.openui.rendering.OpenUIMarkdown
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
+import io.getstream.chat.android.ai.openui.rendering.Renderer
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdownText
+import io.getstream.chat.android.ai.openui.rendering.openuiChatLibrary
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
 import kotlinx.coroutines.launch
 
@@ -547,3 +551,92 @@ private fun ModalComponent(context: ComponentRenderProps) {
 
 // How far a disclosure's chevron turns when it expands.
 private const val ExpandedChevronDegrees = 180f
+
+@Composable
+internal fun TabsSample() {
+    Renderer(
+        response = """
+            root = Tabs([overview, history])
+            overview = TabItem("overview", "Overview", [TextContent("Paris is the capital of France.")])
+            history = TabItem("history", "History", [TextContent("Founded in the 3rd century BC.")])
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TabsPreview() {
+    TabsSample()
+}
+
+@Composable
+internal fun AccordionSample() {
+    Renderer(
+        response = """
+            root = Accordion([shipping, returns])
+            shipping = AccordionItem("shipping", "Shipping", [TextContent("Two business days.")])
+            returns = AccordionItem("returns", "Returns", [TextContent("Thirty days, free of charge.")])
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AccordionPreview() {
+    AccordionSample()
+}
+
+@Composable
+internal fun StepsSample() {
+    Renderer(
+        response = """
+            root = Steps([install, configure, ship])
+            install = StepsItem("Install", "Add the dependency to your build file.")
+            configure = StepsItem("Configure", "Set your API key.")
+            ship = StepsItem("Ship", "Release the app.")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StepsPreview() {
+    StepsSample()
+}
+
+@Composable
+internal fun CarouselSample() {
+    Renderer(
+        response = """
+            root = Carousel([[TextContent("Slide one")], [TextContent("Slide two")], [TextContent("Slide three")]])
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CarouselPreview() {
+    CarouselSample()
+}
+
+@Composable
+internal fun SectionsSample() {
+    Renderer(
+        response = """
+            root = Card([SectionBlock([overview, details], false)])
+            overview = SectionItem("overview", "Overview", [TextContent("A short summary.")])
+            details = SectionItem("details", "Details", [TextContent("The full explanation.")])
+        """.trimIndent(),
+        library = openuiChatLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SectionsPreview() {
+    SectionsSample()
+}
