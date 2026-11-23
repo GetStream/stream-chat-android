@@ -1126,7 +1126,7 @@ internal class SyncManager(
                 logger.v { "[retryChannels] sending channel($cid)" }
                 val params = CreateChannelParams(
                     members = channel.members.map { member ->
-                        MemberData(member.getUserId(), extraData = member.extraData)
+                        MemberData(member.getUserId(), extraData = member.extraData, channelRole = member.channelRole)
                     },
                     extraData = channel.extraData,
                 )

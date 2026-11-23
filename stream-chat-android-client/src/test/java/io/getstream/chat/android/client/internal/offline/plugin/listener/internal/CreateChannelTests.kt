@@ -116,6 +116,40 @@ internal class CreateChannelTests {
         }
 
     @Test
+    fun `Given member data with a channel role When creating channel Should store the members with that role`(): Unit =
+        runTest {
+            val cached = randomUser()
+            val repos = mock<RepositoryFacade> {
+                on(it.selectUsers(listOf(cached.id, "missing"))) doReturn listOf(cached)
+            }
+            val sut = Fixture()
+                .givenMockedRepos(repos)
+                .givenOfflineState()
+                .get()
+            val params = CreateChannelParams(
+                members = listOf(
+                    MemberData(cached.id, channelRole = "channel_moderator"),
+                    MemberData("missing", channelRole = "channel_member"),
+                ),
+                extraData = emptyMap(),
+            )
+
+            sut.onCreateChannelRequest(
+                channelType = "channelType",
+                channelId = "channelId",
+                params = params,
+                currentUser = randomUser(),
+            )
+
+            verify(repos).insertChannel(
+                argThat {
+                    members.associate { it.getUserId() to it.channelRole } ==
+                        mapOf(cached.id to "channel_moderator", "missing" to "channel_member")
+                },
+            )
+        }
+
+    @Test
     fun `Given successful result When creating channel Should mark it as completed and store in database`(): Unit =
         runTest {
             val repos = mock<RepositoryFacade>()

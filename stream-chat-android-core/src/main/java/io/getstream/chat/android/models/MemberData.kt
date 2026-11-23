@@ -21,8 +21,11 @@ package io.getstream.chat.android.models
  *
  * @param userId The user id of the member.
  * @param extraData Custom extra data for the member.
+ * @param channelRole The member's role in the channel, such as `channel_moderator`. When null, a string
+ * `channel_role` in [extraData] is used as the role.
  */
 public data class MemberData(
     public val userId: String,
     override val extraData: Map<String, Any> = emptyMap(),
+    public val channelRole: String? = null,
 ) : CustomObject

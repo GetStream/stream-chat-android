@@ -63,6 +63,7 @@ import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.InFilterObject
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
@@ -3691,6 +3692,31 @@ internal class SyncManagerTest {
         order.verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
         // The renamed placeholder stays listed until the server creates the channel
         verify(stateRegistry, never()).removeChannel(any(), any())
+    }
+
+    @Test
+    fun `a retried channel keeps its members' roles`() = runTest(testDispatcher) {
+        val member = randomMember(channelRole = "channel_moderator")
+        val channel = randomChannel(
+            type = "messaging",
+            createdAt = localDate(),
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            members = listOf(member),
+        )
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+        whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+        whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(channel))
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(chatClient).createChannel(
+            eq("messaging"),
+            eq(channel.id),
+            argThat<CreateChannelParams> {
+                members == listOf(MemberData(member.getUserId(), member.extraData, channelRole = "channel_moderator"))
+            },
+        )
     }
 
     @Test
