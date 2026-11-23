@@ -674,8 +674,7 @@ internal class DomainMapping(
             moderation = moderation?.toDomain(),
             messageTextUpdatedAt = messageTextUpdatedAt,
             poll = poll?.toDomain(),
-            // Not read downstream yet, as on every other message path; it stays in extraData.
-            restrictedVisibility = emptyList(),
+            restrictedVisibility = restrictedVisibility,
             reminder = reminder?.toReminderInfoDomain(),
             sharedLocation = sharedLocation?.toDomain(),
             channelRole = member?.channelRole,

@@ -420,8 +420,24 @@ internal class DtoMappingTest {
     }
 
     @Test
+    fun `Message sends its restricted visibility over the copy a response left in extraData`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            extraData = mutableMapOf("restricted_visibility" to listOf("amit")),
+            restrictedVisibility = listOf("jaewoong"),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { message.toMessageRequest() }
+
+        request.restrictedVisibility shouldBeEqualTo listOf("jaewoong")
+        request.custom shouldBeEqualTo emptyMap()
+    }
+
+    @Test
     fun `Message sends the declared fields it carries in extraData as typed fields`() {
-        // Responses keep these in extraData, and sendPoll passes the poll id there.
+        // Responses keep these in extraData, and sendPoll passes the poll id there. An empty typed restricted
+        // visibility falls back to the copy, since the backend rejects an edit that changes it.
         val message = randomMessage(
             type = MessageType.REGULAR,
             extraData = mutableMapOf(

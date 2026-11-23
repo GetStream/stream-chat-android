@@ -738,7 +738,8 @@ internal class SyncManager(
         if (hasStandardQueries) {
             when (val result = updateActiveQueryChannels(recoverAll)) {
                 is Result.Success -> {
-                    val updatedCids = result.value
+                    // A list refresh does not watch with presence, so open channels are queried again
+                    val updatedCids = if (userPresence) result.value - openCids else result.value
                     logger.v { "[restoreActiveChannels] standardCids.size: ${result.value.size}" }
                     updateActiveChannels(
                         recoverAll,
