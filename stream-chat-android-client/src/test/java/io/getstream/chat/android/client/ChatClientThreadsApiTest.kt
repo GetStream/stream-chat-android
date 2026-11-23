@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
+import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.ThreadResponseHandler
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -37,6 +38,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
 /**
@@ -142,6 +145,64 @@ internal class ChatClientThreadsApiTest : BaseChatClientTest() {
         val actual = sut.partialUpdateThread(messageId, set, unset).await()
         // then
         verifyNetworkError(actual, errorCode)
+    }
+
+    @Test
+    fun getThreadSuccessStoresTheThread() = runTest {
+        // given
+        val handler = mock<ThreadResponseHandler>()
+        val thread = randomThread()
+        val sut = Fixture()
+            .givenGetThreadResult(RetroSuccess(thread).toRetrofitCall())
+            .get()
+            .apply { threadResponseHandler = handler }
+        // when
+        sut.getThread(thread.parentMessageId).await()
+        // then
+        verify(handler).onThreadFetched(thread)
+    }
+
+    @Test
+    fun getThreadErrorStoresNothing() = runTest {
+        // given
+        val handler = mock<ThreadResponseHandler>()
+        val sut = Fixture()
+            .givenGetThreadResult(RetroError<Thread>(positiveRandomInt()).toRetrofitCall())
+            .get()
+            .apply { threadResponseHandler = handler }
+        // when
+        sut.getThread(randomString()).await()
+        // then
+        verifyNoInteractions(handler)
+    }
+
+    @Test
+    fun partialUpdateThreadSuccessStoresTheThread() = runTest {
+        // given
+        val handler = mock<ThreadResponseHandler>()
+        val threadInfo = randomThreadInfo()
+        val sut = Fixture()
+            .givenUpdateThreadResult(RetroSuccess(threadInfo).toRetrofitCall())
+            .get()
+            .apply { threadResponseHandler = handler }
+        // when
+        sut.partialUpdateThread(threadInfo.parentMessageId, mapOf("title" to "new")).await()
+        // then
+        verify(handler).onThreadPartiallyUpdated(threadInfo)
+    }
+
+    @Test
+    fun partialUpdateThreadErrorStoresNothing() = runTest {
+        // given
+        val handler = mock<ThreadResponseHandler>()
+        val sut = Fixture()
+            .givenUpdateThreadResult(RetroError<ThreadInfo>(positiveRandomInt()).toRetrofitCall())
+            .get()
+            .apply { threadResponseHandler = handler }
+        // when
+        sut.partialUpdateThread(randomString(), mapOf("title" to "new")).await()
+        // then
+        verifyNoInteractions(handler)
     }
 
     internal inner class Fixture {

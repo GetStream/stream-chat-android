@@ -235,4 +235,24 @@ internal class QueryThreadsStateLogic(
         val updatedThread = thread.applyThreadUpdatedEventChanges(threadInfo)
         mutableState.upsertThreads(listOf(updatedThread))
     }
+
+    /**
+     * Replaces the loaded thread with [thread] returned by the server. A thread that is not in the list is not added,
+     * as it may not match the query, and a loaded thread newer than [thread] is kept.
+     */
+    internal fun replaceThread(thread: Thread) {
+        val loaded = mutableState.threadMap[thread.parentMessageId] ?: return
+        if (loaded.updatedAt.after(thread.updatedAt)) return
+        upsertThreads(listOf(thread))
+    }
+
+    /**
+     * Applies the [threadInfo] returned by a partial thread update to the loaded thread, unless the loaded thread is
+     * newer.
+     */
+    internal fun applyThreadInfo(threadInfo: ThreadInfo) {
+        val loaded = mutableState.threadMap[threadInfo.parentMessageId] ?: return
+        if (loaded.updatedAt.after(threadInfo.updatedAt)) return
+        mutableState.upsertThreads(listOf(loaded.applyThreadUpdatedEventChanges(threadInfo)))
+    }
 }

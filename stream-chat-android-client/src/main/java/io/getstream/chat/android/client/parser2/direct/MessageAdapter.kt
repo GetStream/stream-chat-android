@@ -289,7 +289,7 @@ internal class MessageAdapter(
                 moderation = moderation?.toDomain(),
                 messageTextUpdatedAt = messageTextUpdatedAt,
                 poll = poll?.toDomain(),
-                restrictedVisibility = emptyList(),
+                restrictedVisibility = restrictedVisibility.orEmpty(),
                 reminder = reminder?.toReminderInfoDomain(),
                 sharedLocation = sharedLocation?.toDomain(),
                 channelRole = member?.channelRole,

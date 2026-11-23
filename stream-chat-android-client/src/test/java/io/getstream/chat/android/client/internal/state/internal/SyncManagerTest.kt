@@ -2823,6 +2823,61 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `on reconnect, an open channel a list refreshed is queried again with presence`() =
+        runTest(testDispatcher) {
+            reconnectWithOpenChannelInList()
+
+            argumentCaptor<QueryChannelsRequest> {
+                verify(chatClient).queryChannelsInternal(capture())
+                assertEquals(setOf(OPEN_CID), (firstValue.filter as InFilterObject).values)
+                assertEquals(true, firstValue.presence)
+            }
+        }
+
+    @Test
+    fun `on reconnect without user presence, an open channel a list refreshed is not queried again`() =
+        runTest(testDispatcher) {
+            reconnectWithOpenChannelInList(userPresence = false)
+
+            verify(chatClient, never()).queryChannelsInternal(any())
+        }
+
+    private suspend fun TestScope.reconnectWithOpenChannelInList(userPresence: Boolean = true) {
+        val createdAt = localDate()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val openChannel = randomChannel(type = "messaging", id = OPEN_CID.substringAfter(':'))
+        val listedChannel = randomChannel(type = "messaging", id = "listed")
+        val standardQuery: QueryChannelsLogic = mock {
+            on(it.groupKey()) doReturn null
+            on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+            onBlocking { it.queryFirstPage() } doReturn Result.Success(listOf(openChannel, listedChannel))
+        }
+        whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(standardQuery)
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+        val activeStates = listOf(openChannel, listedChannel).associate { channel ->
+            ChannelId.fromCid(channel.cid)!! to mock<ChannelState> {
+                on(it.cid) doReturn channel.cid
+                on(it.recoveryNeeded) doReturn false
+            }
+        }
+        val channelLogic: ChannelLogic = mock()
+        whenever(stateRegistry.getActiveChannelStates()) doReturn activeStates
+        whenever(stateRegistry.getTrackedWatchedChannels()) doReturn setOf(OPEN_CID)
+        whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+            Result.Success(QueryChannelsResult(channels = listOf(openChannel), predefinedFilter = null)),
+        )
+        whenever(logicRegistry.channel(any<ChannelId>())) doReturn channelLogic
+        whenever(clientState.isOnline) doReturn true
+        whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+        val syncManager = buildSyncManager(userPresence = userPresence)
+        syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+        delay(100)
+        syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+        delay(100)
+    }
+
+    @Test
     @Suppress("LongMethod")
     fun `dual-mode reconnect should exclude tracked watched cids from updateActiveChannels`() =
         runTest(testDispatcher) {
@@ -3876,6 +3931,7 @@ internal class SyncManagerTest {
         eventReplayMaxCount: Int = 250,
         pendingMessagePins: PendingMessagePins? = null,
         scope: CoroutineScope = backgroundScope,
+        userPresence: Boolean = true,
     ): SyncManager {
         return SyncManager(
             eventReplayMaxCount = eventReplayMaxCount,
@@ -3887,7 +3943,7 @@ internal class SyncManagerTest {
             chatClient = chatClient,
             clientState = clientState,
             mutableGlobalState = mutableGlobalState,
-            userPresence = true,
+            userPresence = userPresence,
             events = _syncEvents,
             syncState = _syncState,
             isAutomaticSyncOnReconnectEnabled = isAutomaticSyncOnReconnectEnabled,
@@ -3902,3 +3958,5 @@ internal class SyncManagerTest {
 private const val AWAIT_SYNCING_TIMEOUT_MS = 1_000L
 
 private fun Result<List<ChatEvent>>.synced(): Result<SyncedEvents> = map { SyncedEvents(it) }
+
+private const val OPEN_CID = "messaging:open"
