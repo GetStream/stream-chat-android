@@ -40,6 +40,9 @@ internal class BatchTimeRecorder(private val eventType: String) : StreamLogger, 
 
     val batches = CopyOnWriteArrayList<Batch>()
 
+    /** Whether a batch has started and not ended yet. */
+    val hasBatchInFlight: Boolean get() = started.isNotEmpty()
+
     /** Errors the SDK logged, which make a run invalid: a payload it could not parse is not handled at all. */
     val errors = CopyOnWriteArrayList<String>()
 

@@ -24,6 +24,9 @@ import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.MessageBufferConfig
+import io.getstream.chat.android.client.api.MessageLimitConfig
 import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -75,6 +78,9 @@ internal class EventBurstBenchmark {
     private val streamWarmupSeconds = argument("streamWarmupSeconds", default = 3)
     private val eventsPerSecond = argument("eventsPerSecond", default = 5)
     private val channels = argument("channels", default = 50)
+    private val boundedBurstSize = argument("boundedBurstSize", default = 1000)
+    private val bufferCapacity = argument("bufferCapacity", default = 50)
+    private val boundedBurstMillis = argument("boundedBurstMillis", default = 2000)
 
     private val server = MockChatServer()
     private val recorder = BatchTimeRecorder(eventType = "message.new")
@@ -99,6 +105,7 @@ internal class EventBurstBenchmark {
             client = ChatClient.Builder("benchmark-api-key", context)
                 .forceHttpUrl(server.httpUrl)
                 .forceWsUrl(server.wsUrl)
+                .apply { if (testName.methodName == BOUNDED_BUFFER_SCENARIO) config(boundedBufferConfig()) }
                 .build()
         }
         runBlocking {
@@ -146,6 +153,69 @@ internal class EventBurstBenchmark {
         val measured = runStream()
         report("streamOfNewMessagesAcrossChannels", listOf(measured)) {
             put("channels", channels).put("eventsPerSecond", eventsPerSecond).put("streamSeconds", streamSeconds)
+        }
+    }
+
+    /**
+     * The only scenario where the SDK drops events: by default it queues every socket event without a limit, so a
+     * slower SDK only shows as events that take longer. Here the new messages of the channel type go through a
+     * buffer of [bufferCapacity], and the burst is much bigger than it. The events are spread over
+     * [boundedBurstMillis]: sent all at once, all but the first batch and the last [bufferCapacity] are dropped
+     * however fast the SDK is.
+     *
+     * The drop count is a weak signal of speed: it changes little when the batches get slower.
+     */
+    @Test
+    fun burstIntoBoundedBuffer() = runBlocking {
+        check(testName.methodName == BOUNDED_BUFFER_SCENARIO) { "The client was built without the bounded buffer" }
+        val measured = (0 until warmups + iterations).map { runBoundedBurst(channelId = "bounded-$it") }.drop(warmups)
+        report(BOUNDED_BUFFER_SCENARIO, measured, allowDrops = true) {
+            put("burstSize", boundedBurstSize).put("bufferCapacity", bufferCapacity)
+                .put("burstMillis", boundedBurstMillis)
+        }
+    }
+
+    private fun boundedBufferConfig() = ChatClientConfig(
+        messageLimitConfig = MessageLimitConfig(
+            messageBufferConfig = MessageBufferConfig(
+                channelTypes = setOf(BenchmarkJson.CHANNEL_TYPE),
+                capacity = bufferCapacity,
+            ),
+        ),
+    )
+
+    private suspend fun runBoundedBurst(channelId: String): Measurement {
+        watch(channelId)
+        recorder.reset()
+        val events = List(boundedBurstSize) { MockMessage(channelId, "$channelId-message-$it", "Message $it") }
+        val eventSentAt = HashMap<String, Long>()
+        val startedAt = SystemClock.elapsedRealtimeNanos()
+        events.chunked(BOUNDED_CHUNK_SIZE).forEachIndexed { index, chunk ->
+            val chunkAt = startedAt + index.toLong() * BOUNDED_CHUNK_SIZE * boundedBurstMillis *
+                NANOS_PER_MILLI.toLong() / boundedBurstSize
+            val waitNanos = chunkAt - SystemClock.elapsedRealtimeNanos()
+            if (waitNanos > 0) delay(waitNanos / NANOS_PER_MILLI.toLong())
+            server.sendNewMessages(chunk) { eventSentAt[it.id] = SystemClock.elapsedRealtimeNanos() }
+        }
+        awaitQuiet(eventSentAt.keys)
+        delay(SETTLE_MILLIS)
+        return measurement(eventSentAt.values.min(), eventSentAt, emptyMap(), emptyMap())
+    }
+
+    /**
+     * Waits until no more of the events reach the state: the dropped ones never do. A batch still being handled
+     * is not quiet, however long it takes.
+     */
+    private suspend fun awaitQuiet(eventIds: Set<String>) = withTimeoutOrNull(BURST_TIMEOUT_MILLIS) {
+        var seen = -1
+        var quietSince = SystemClock.elapsedRealtime()
+        while (seen < eventIds.size && SystemClock.elapsedRealtime() - quietSince < QUIET_MILLIS) {
+            delay(QUIET_POLL_MILLIS)
+            val nowSeen = eventIds.count { it in messageSeenAt }
+            if (nowSeen != seen || recorder.hasBatchInFlight) {
+                seen = nowSeen
+                quietSince = SystemClock.elapsedRealtime()
+            }
         }
     }
 
@@ -307,7 +377,12 @@ internal class EventBurstBenchmark {
             reactionCalledAt.keys.count { it !in reactionSeenAt || it !in server.reactionRequestAt },
     )
 
-    private fun report(scenario: String, measured: List<Measurement>, parameters: JSONObject.() -> Unit) {
+    private fun report(
+        scenario: String,
+        measured: List<Measurement>,
+        allowDrops: Boolean = false,
+        parameters: JSONObject.() -> Unit,
+    ) {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val result = JSONObject()
             .put("scenario", scenario)
@@ -323,6 +398,7 @@ internal class EventBurstBenchmark {
             .put("batchTotalMillis", median(measured.map { it.batchMillis.sum() }))
             .put("batches", median(measured.map { it.batchMillis.size.toDouble() }))
             .put("dropped", measured.sumOf { it.dropped })
+            .put("droppedPerIteration", JSONArray(measured.map { it.dropped }))
             .put("sendToStateP95Millis", percentile(measured.flatMap { it.sendToStateMillis }, P95))
             .put("sendToRequestP95Millis", percentile(measured.flatMap { it.sendToRequestMillis }, P95))
             .put("reactionToStateP95Millis", percentile(measured.flatMap { it.reactionToStateMillis }, P95))
@@ -335,7 +411,7 @@ internal class EventBurstBenchmark {
 
         assertTrue("The SDK logged errors: ${recorder.errors}", recorder.errors.isEmpty())
         assertTrue("Sends or reactions failed: $failedActions", failedActions.isEmpty())
-        assertTrue("Events did not reach the state: $measured", measured.all { it.dropped == 0 })
+        assertTrue("Events did not reach the state: $measured", allowDrops || measured.all { it.dropped == 0 })
         assertTrue("Sends or reactions did not finish: $measured", measured.all { it.unfinishedActions == 0 })
     }
 
@@ -358,6 +434,10 @@ internal class EventBurstBenchmark {
         private const val RESULT_TAG = "BURST_BENCH"
         private const val APP_SETTINGS_REQUEST = "GET /api/v2/app"
         private const val REACTION_TYPE = "like"
+        private const val BOUNDED_BUFFER_SCENARIO = "burstIntoBoundedBuffer"
+        private const val BOUNDED_CHUNK_SIZE = 10
+        private const val QUIET_MILLIS = 2_000L
+        private const val QUIET_POLL_MILLIS = 50L
         private const val CONNECT_TIMEOUT_MILLIS = 15_000L
         private const val BURST_TIMEOUT_MILLIS = 60_000L
         private const val STREAM_TIMEOUT_MILLIS = 30_000L
