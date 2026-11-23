@@ -82,7 +82,6 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
 
     testImplementation(libs.json)
-    testImplementation(libs.threetenbp)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.androidx.test.junit)
     testImplementation(libs.test.parameter.injector)

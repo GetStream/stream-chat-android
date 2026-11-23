@@ -22,9 +22,9 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
+import java.util.Calendar
 import java.util.Date
+import java.util.GregorianCalendar
 
 /**
  * Provides sample users for UI tests.
@@ -166,13 +166,13 @@ object TestData {
         unreadCount = 0,
     )
 
-    fun date1() = LocalDateTime.of(2020, 12, 7, 9, 0).toDate()
+    fun date1() = december2020At9(day = 7)
 
-    fun date2() = LocalDateTime.of(2020, 12, 8, 9, 0).toDate()
+    fun date2() = december2020At9(day = 8)
 
-    fun date3() = LocalDateTime.of(2020, 12, 9, 9, 0).toDate()
+    fun date3() = december2020At9(day = 9)
 
-    fun date4() = LocalDateTime.of(2020, 12, 10, 9, 0).toDate()
+    fun date4() = december2020At9(day = 10)
 
     fun reaction1(): Reaction = Reaction(
         type = "like",
@@ -194,11 +194,6 @@ object TestData {
         user = user4(),
     )
 
-    private fun LocalDateTime.toDate(): Date {
-        return Date(
-            atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli(),
-        )
-    }
+    private fun december2020At9(day: Int): Date =
+        GregorianCalendar(2020, Calendar.DECEMBER, day, 9, 0).time
 }

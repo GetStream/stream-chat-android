@@ -97,7 +97,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(libs.test.parameter.injector)
     androidTestImplementation(libs.okhttp.mockwebserver)
-    androidTestImplementation(libs.threetenbp)
 
     detektPlugins(libs.detekt.formatting)
 }
