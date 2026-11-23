@@ -711,8 +711,16 @@ internal constructor(
 
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
+                val isReplacingUser = initializedUserId.get().let { it != null && it != user.id }
+                // The receipts are stored for the whole app, so the ones the other user queued would be reported
+                // as this user.
+                if (isReplacingUser) repository.clear()
                 mutableClientState.setUser(user)
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
+                // After the repositories are the ones of this user, so a start of the other user still to run loads
+                // them, and before this user is set, so no scheduled message change goes to the other user.
+                if (isReplacingUser) scheduledMessageManager.stop()
+                startScheduledMessages()
                 userStateService.onSetUser(user, isAnonymous)
                 connectingUser.set(user)
                 chatSocket.connectUser(user, isAnonymous)
@@ -780,6 +788,8 @@ internal constructor(
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
         if (initializedUserId.get() != user.id) {
+            // Plugins set for another user without a connection, as a push notification does, are still listening.
+            plugins.forEach { it.onUserDisconnected() }
             _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
             plugins = pluginFactories.map { it.get(user) }
             initializedUserId.set(user.id)
@@ -796,13 +806,16 @@ internal constructor(
         appSettingsManager.loadAppSettings()
         warmUp()
         messageReceiptReporter.start()
-        // A failure stops sending until the next connection, and is logged instead of crashing the app.
-        val scheduledMessagesExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            logger.e(throwable) { "[initializeClientWithUser] scheduled messages failed: $throwable" }
-        }
-        inheritScope { SupervisorJob(it) + scheduledMessagesExceptionHandler }
-            .launch { scheduledMessageManager.start(this) }
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
+    }
+
+    private fun startScheduledMessages() {
+        // A failure stops sending until the next connection, and is logged instead of crashing the app.
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            logger.e(throwable) { "[startScheduledMessages] scheduled messages failed: $throwable" }
+        }
+        inheritScope { SupervisorJob(it) + exceptionHandler }
+            .launch { scheduledMessageManager.start(this) }
     }
 
     private fun createRepositoryFactory(user: User): RepositoryFactory =
@@ -985,6 +998,7 @@ internal constructor(
                 ),
                 isAnonymous = credentialConfig.isAnonymous,
             )
+            startScheduledMessages()
         }
     }
 
