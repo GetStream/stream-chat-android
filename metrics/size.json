@@ -6,7 +6,7 @@
     "stream-chat-android-ai-compose": 3080,
     "stream-chat-android-ai-ondevice": 2116,
     "stream-chat-android-ai-a2ui": 368,
-    "stream-chat-android-ai-openui": 1160
+    "stream-chat-android-ai-openui": 1176
   },
   "release": {
     "stream-chat-android-client": 6600,
@@ -15,6 +15,6 @@
     "stream-chat-android-ai-compose": 2320,
     "stream-chat-android-ai-ondevice": 1708,
     "stream-chat-android-ai-a2ui": 284,
-    "stream-chat-android-ai-openui": 820
+    "stream-chat-android-ai-openui": 836
   }
 }
