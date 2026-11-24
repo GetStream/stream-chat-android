@@ -56,6 +56,7 @@ internal class NewMessageEventAdapter(
         var channelCustomName: String? = null
         var channelCustomImage: String? = null
         var message: Message? = null
+        var messageId: String? = null
         var watcherCount: Int? = null
         var totalUnreadCount: Int? = null
         var unreadChannels: Int? = null
@@ -94,6 +95,8 @@ internal class NewMessageEventAdapter(
                 12 -> if (JsonParsingUtils.expectToken(reader, JsonReader.Token.BEGIN_OBJECT, nullable = false)) {
                     reader.skipValue()
                 }
+                // Not mapped either, but the generated model requires it.
+                13 -> messageId = JsonParsingUtils.readNullableString(reader)
                 else -> {
                     reader.skipName()
                     reader.skipValue()
@@ -107,6 +110,8 @@ internal class NewMessageEventAdapter(
         JsonParsingUtils.requireField(type, "type", reader)
         JsonParsingUtils.requireField(cid, "cid", reader)
         JsonParsingUtils.requireField(user, "user", reader)
+        JsonParsingUtils.requireField(messageId, "messageId", reader)
+        JsonParsingUtils.requireField(watcherCount, "watcherCount", reader)
         // The message carries no channel, so it and its quoted messages took the event's channel info as they were
         // read. A channel field after the message would change it once the message transformer has run, so such a
         // frame, which the backend doesn't send, is left to the generated path.
@@ -126,7 +131,7 @@ internal class NewMessageEventAdapter(
             channelType = channelType,
             channelId = channelId,
             message = message,
-            watcherCount = watcherCount ?: 0,
+            watcherCount = watcherCount,
             totalUnreadCount = totalUnreadCount ?: 0,
             unreadChannels = unreadChannels ?: 0,
             channelMessageCount = channelMessageCount,
@@ -162,6 +167,7 @@ internal class NewMessageEventAdapter(
             "channel_message_count",
             "grouped_unread_channels",
             "custom",
+            "message_id",
         )
     }
 

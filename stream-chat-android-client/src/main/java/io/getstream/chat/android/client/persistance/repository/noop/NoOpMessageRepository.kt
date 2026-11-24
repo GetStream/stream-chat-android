@@ -38,6 +38,8 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun deleteChannelMessages(cid: String) { /* No-Op */ }
     override suspend fun deleteChannelMessage(message: Message) { /* No-Op */ }
     override suspend fun deleteMessages(messages: List<Message>) { /* No-Op */ }
+    override suspend fun insertDeletedMessage(message: Message, hard: Boolean) { /* No-Op */ }
+    override suspend fun selectIsHardDelete(messageId: String): Boolean = false
     override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> = emptyList()
     override suspend fun updateMessageSyncStatus(messageId: String, syncStatus: SyncStatus) { /* No-Op */ }
     override suspend fun markDeletesInProgressAsCompleted(deletedBefore: Date) { /* No-Op */ }

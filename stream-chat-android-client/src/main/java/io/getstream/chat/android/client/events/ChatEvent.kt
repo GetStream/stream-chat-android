@@ -219,8 +219,8 @@ public data class ChannelUpdatedByUserEvent(
 /**
  * Triggered when a channel is made visible
  *
- * @property channel The channel. When the event is replayed by older backends after a reconnection, it carries only the
- * channel's type and id.
+ * @property channel The channel. When the event is replayed after a reconnection for a channel the user can't read,
+ * it carries only the channel's cid, type and id.
  */
 public data class ChannelVisibleEvent(
     override val type: String,
@@ -245,6 +245,9 @@ public data class HealthEvent(
 
 /**
  * Triggered when a member is added to a channel
+ *
+ * @property channelMemberCount The number of members in the channel after the change, or null when the event does
+ * not carry it.
  */
 public data class MemberAddedEvent(
     override val type: String,
@@ -255,10 +258,14 @@ public data class MemberAddedEvent(
     override val channelType: String,
     override val channelId: String,
     override val member: Member,
+    val channelMemberCount: Int? = null,
 ) : CidEvent(), UserEvent, HasMember
 
 /**
  * Triggered when a member is removed from a channel
+ *
+ * @property channelMemberCount The number of members in the channel after the change, or null when the event does
+ * not carry it.
  */
 public data class MemberRemovedEvent(
     override val type: String,
@@ -269,6 +276,7 @@ public data class MemberRemovedEvent(
     override val channelType: String,
     override val channelId: String,
     override val member: Member,
+    val channelMemberCount: Int? = null,
 ) : CidEvent(), UserEvent, HasMember
 
 /**
@@ -474,6 +482,9 @@ public data class NotificationInviteAcceptedEvent(
 
 /**
  * Triggered when the user rejects an invite
+ *
+ * @property channelMemberCount The number of members in the channel after the change, or null when the event does
+ * not carry it.
  */
 public data class NotificationInviteRejectedEvent(
     override val type: String,
@@ -485,6 +496,7 @@ public data class NotificationInviteRejectedEvent(
     override val user: User,
     override val member: Member,
     override val channel: Channel,
+    val channelMemberCount: Int? = null,
 ) : CidEvent(), UserEvent, HasMember, HasChannel
 
 /**

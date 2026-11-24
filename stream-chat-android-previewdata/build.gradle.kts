@@ -6,10 +6,6 @@ plugins {
 android {
     namespace = "io.getstream.chat.android.previewdata"
     resourcePrefix = "stream_compose_previewdata"
-
-    defaultConfig {
-        consumerProguardFiles("consumer-rules.pro")
-    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {

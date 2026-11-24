@@ -231,7 +231,7 @@ public interface Plugin :
 
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> = Result.Success(Unit)
 
-    override suspend fun onMessageDeleteRequest(messageId: String) {
+    override suspend fun onMessageDeleteRequest(messageId: String, hard: Boolean) {
         /* No-Op */
     }
 

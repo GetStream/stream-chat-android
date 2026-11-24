@@ -17,8 +17,10 @@
 package io.getstream.chat.android.client.internal.state.plugin.internal
 
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.internal.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.randomString
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +29,7 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
@@ -56,5 +59,31 @@ internal class StatePluginTest {
 
         result shouldBeInstanceOf Result.Success::class
         verify(threadLogic).isLoadingMessages()
+    }
+
+    @Test
+    fun `when the user disconnects, the event handler stops before the sync manager`() {
+        val syncManager: SyncManager = mock()
+        val eventHandler: EventHandler = mock()
+        val statePlugin = StatePlugin(
+            errorHandlerFactory = mock(),
+            logic = mock(),
+            repositoryFacade = mock(),
+            clientState = mock(),
+            stateRegistry = mock(),
+            syncManager = syncManager,
+            eventHandler = eventHandler,
+            mutableGlobalState = mock(),
+            groupedUnreadChannelsUpdater = mock(),
+            queryingChannelsFree = MutableStateFlow(true),
+            chatClientConfig = ChatClientConfig(),
+        )
+
+        statePlugin.onUserDisconnected()
+
+        inOrder(eventHandler, syncManager) {
+            verify(eventHandler).stopListening()
+            verify(syncManager).stop()
+        }
     }
 }

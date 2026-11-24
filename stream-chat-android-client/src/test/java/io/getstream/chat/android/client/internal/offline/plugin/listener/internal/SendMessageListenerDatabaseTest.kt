@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -34,6 +35,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.net.SocketTimeoutException
 import java.util.Date
 
 internal class SendMessageListenerDatabaseTest {
@@ -41,7 +43,14 @@ internal class SendMessageListenerDatabaseTest {
     private val userRepository: UserRepository = mock()
     private val messageRepository: MessageRepository = mock()
 
-    private val sendMessageListenerDatabase = SendMessageListenerDatabase(userRepository, messageRepository)
+    private val clientState: ClientState = mock {
+        on(it.isOnline) doReturn false
+        on(it.isNetworkAvailable) doReturn true
+    }
+    private val transportError = Error.NetworkError("timeout", -1, -1, SocketTimeoutException())
+
+    private val sendMessageListenerDatabase =
+        SendMessageListenerDatabase(userRepository, messageRepository, clientState)
 
     @Test
     fun `when request to send messages is successful, the message should be upserted with correct status`() = runTest {
@@ -160,4 +169,42 @@ internal class SendMessageListenerDatabaseTest {
             argThat { message -> message.id == testMessage.id },
         )
     }
+
+    @Test
+    fun `when send fails with a transport error while offline, the message should stay pending`() = runTest {
+        whenever(messageRepository.selectMessage(any())) doReturn null
+        val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
+
+        sendMessageListenerDatabase.onMessageSendResult(
+            result = Result.Failure(transportError),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(messageRepository).insertMessage(
+            argThat { message -> message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED },
+        )
+    }
+
+    @Test
+    fun `when send fails with a transport error while online, the message should fail so it can be resent`() =
+        runTest {
+            whenever(messageRepository.selectMessage(any())) doReturn null
+            whenever(clientState.isOnline) doReturn true
+            val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
+
+            sendMessageListenerDatabase.onMessageSendResult(
+                result = Result.Failure(transportError),
+                channelType = randomString(),
+                channelId = randomString(),
+                message = testMessage,
+            )
+
+            verify(messageRepository).insertMessage(
+                argThat { message ->
+                    message.id == testMessage.id && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
+                },
+            )
+        }
 }

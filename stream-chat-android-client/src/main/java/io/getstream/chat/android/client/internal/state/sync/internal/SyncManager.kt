@@ -73,7 +73,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -81,6 +83,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Collections
@@ -166,7 +169,9 @@ internal class SyncManager(
 
     private var eventsDisposable: Disposable? = null
 
-    private val state = MutableStateFlow(State.Idle)
+    // The sync that socket events wait for, null when there is none. A sync clears only its own claim, so one that
+    // ends late, or is cancelled, never ends the wait for a newer one.
+    private val activeSync = MutableStateFlow<Any?>(null)
 
     override val syncedEvents: Flow<List<ChatEvent>> = events
 
@@ -179,6 +184,13 @@ internal class SyncManager(
      * Kept in memory only, so they are not sent if the process ends first.
      */
     private val endedLiveLocationsToNotify: MutableSet<String> =
+        Collections.newSetFromMap(ConcurrentHashMap<String, Boolean>())
+
+    /**
+     * Messages whose send failed with a temporary error while connected, sent again on the next connection.
+     * Kept in memory only, so they stay failed for the user to resend if the process ends first.
+     */
+    private val messagesToResend: MutableSet<String> =
         Collections.newSetFromMap(ConcurrentHashMap<String, Boolean>())
 
     override fun start() {
@@ -197,23 +209,31 @@ internal class SyncManager(
         logger.d { "[stop] no args" }
         eventsDisposable?.dispose()
         syncScope.coroutineContext.job.cancelChildren()
+        // A sync cancelled before it started never clears its claim.
+        activeSync.value = null
         liveLocationEndJob?.cancel()
         endedLiveLocationsToNotify.clear()
+        messagesToResend.clear()
     }
 
     override suspend fun sync() {
         logger.d { "[sync] no args" }
-        state.value = State.Syncing
-        performSync(watch = false, groupedListsFirst = false)
-        state.value = State.Idle
+        val sync = Any()
+        // Not taken from a reconnect sync that is running, or its wait would end with this one.
+        activeSync.compareAndSet(null, sync)
+        try {
+            performSync(watch = false, groupedListsFirst = false)
+        } finally {
+            activeSync.compareAndSet(sync, null)
+        }
     }
 
     override suspend fun awaitSyncing() {
-        if (state.value == State.Idle) {
+        if (activeSync.value == null) {
             return
         }
         logger.i { "[awaitSyncing] no args" }
-        state.first { it == State.Idle }
+        activeSync.first { it == null }
         logger.v { "[awaitSyncing] completed" }
     }
 
@@ -277,18 +297,30 @@ internal class SyncManager(
                 logger.i { "[onEvent] ConnectingEvent received" }
             }
 
-            is ConnectedEvent -> syncScope.launch {
+            is ConnectedEvent -> {
                 logger.i { "[onEvent] ConnectedEvent received" }
-                onConnectionEstablished(currentUserId)
-                syncScope.launch { syncOfflineDraftMessages() }
-                syncScope.launch { notifyEndedLiveLocations() }
-                pendingMessagePins?.let { syncScope.launch { it.sendPending() } }
+                // Claimed as the event arrives, in order with the disconnects, so socket events are held from now on
+                // and a sync cancelled by an earlier disconnect cannot take the claim back.
+                val sync = Any()
+                activeSync.value = sync
+                syncScope.launch {
+                    onConnectionEstablished(currentUserId, sync)
+                    // Children of this job, so a cancelled reconnect starts none of them.
+                    supervisorScope {
+                        launch { syncOfflineDraftMessages() }
+                        launch { notifyEndedLiveLocations() }
+                        pendingMessagePins?.let { launch { it.sendPending() } }
+                    }
+                }
             }
 
-            is DisconnectedEvent -> syncScope.launch {
+            is DisconnectedEvent -> {
                 logger.i { "[onEvent] DisconnectedEvent received" }
-                onConnectionLost()
+                // Done as the event arrives, so a reconnect sync that starts after it is neither cancelled nor has
+                // its wait ended.
                 syncScope.coroutineContext.job.cancelChildren()
+                activeSync.value = null
+                syncScope.launch { onConnectionLost() }
             }
 
             is MarkAllReadEvent -> syncScope.launch {
@@ -315,40 +347,42 @@ internal class SyncManager(
      * Handles connection recover in the SDK.
      * This method will sync the data, retry failed entities, update channels data, etc.
      */
-    private suspend fun onConnectionEstablished(userId: String) = try {
+    private suspend fun onConnectionEstablished(userId: String, sync: Any) {
         logger.i { "[onConnectionEstablished] >>> userId: $userId, isFirstConnect: $isFirstConnect" }
-        state.value = State.Syncing
-        val online = clientState.isOnline
-        logger.v { "[onConnectionEstablished] online: $online" }
-        markStoredPlaceholders()
-        // Taken first, since the retries, the sync and the refreshes can fill the channel data
-        val failedFirstLoadCids = failedFirstLoadCids()
-        retryFailedEntities()
+        try {
+            val online = clientState.isOnline
+            logger.v { "[onConnectionEstablished] online: $online" }
+            markStoredPlaceholders()
+            // Taken first, since the retries, the sync and the refreshes can fill the channel data
+            val failedFirstLoadCids = failedFirstLoadCids()
+            retryFailedEntities()
 
-        if (syncState.value == null && syncState.value?.userId != userId) {
-            logger.v { "[onConnectionEstablished] syncState: ${syncState.value?.stringify()}" }
-            updateAllReadStateForDate(userId, currentDate = Date(now()))
+            if (syncState.value == null && syncState.value?.userId != userId) {
+                logger.v { "[onConnectionEstablished] syncState: ${syncState.value?.stringify()}" }
+                updateAllReadStateForDate(userId, currentDate = Date(now()))
+            }
+            if (isAutomaticSyncOnReconnectEnabled) {
+                logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
+                // The first connect does not refresh the grouped lists, so it has no kept pages to watch again.
+                val outcome = performSync(
+                    watch = !isFirstConnect.get() && groupedListsWatch(),
+                    groupedListsFirst = true,
+                )
+                restoreActiveChannels(
+                    syncedCids = outcome.syncedCids,
+                    alreadyRefreshedCids = outcome.refreshedCids,
+                    failedFirstLoadCids = failedFirstLoadCids,
+                )
+            } else {
+                logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
+            }
+            logger.i { "[onConnectionEstablished] <<< completed" }
+        } catch (e: Throwable) {
+            logger.e { "[onConnectionEstablished] <<< failed: $e" }
+        } finally {
+            // Socket events wait for this, so it is cleared however the sync ends.
+            activeSync.compareAndSet(sync, null)
         }
-        if (isAutomaticSyncOnReconnectEnabled) {
-            logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
-            // The first connect does not refresh the grouped lists, so it has no kept pages to watch again.
-            val outcome = performSync(
-                watch = !isFirstConnect.get() && groupedListsWatch(),
-                groupedListsFirst = true,
-            )
-            restoreActiveChannels(
-                syncedCids = outcome.syncedCids,
-                alreadyRefreshedCids = outcome.refreshedCids,
-                failedFirstLoadCids = failedFirstLoadCids,
-            )
-        } else {
-            logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
-        }
-        state.value = State.Idle
-
-        logger.i { "[onConnectionEstablished] <<< completed" }
-    } catch (e: Throwable) {
-        logger.e { "[onConnectionEstablished] <<< failed: $e" }
     }
 
     /**
@@ -357,7 +391,6 @@ internal class SyncManager(
      */
     private suspend fun onConnectionLost() = try {
         logger.i { "[connectionLost] firstConnect: $isFirstConnect" }
-        state.value = State.Idle
         syncState.value?.let { syncState ->
             val activeCids = activeChannelCidsToSync()
             logger.d { "[connectionLost] activeCids.size: ${activeCids.size}" }
@@ -479,23 +512,25 @@ internal class SyncManager(
         val latestEvent = sortedEvents.lastOrNull()
         val latestEventDate = latestEvent?.createdAt ?: Date(now())
         val rawLatestEventDate = latestEvent?.rawCreatedAt
-        updateLastSyncedDate(latestEventDate, rawLatestEventDate)
         sortedEvents.forEach {
             if (it is MarkAllReadEvent) {
                 logger.v { "[performSync] found MarkAllReadEvent (in ${sortedEvents.size} events)" }
                 updateAllReadStateForDate(it.user.id, it.createdAt)
             }
         }
-        if (sortedEvents.isEmpty()) {
-            logger.w { "[performSync] rejected (no events to emit)" }
-            return SyncOutcome(syncedCids = syncedCids)
+        when {
+            sortedEvents.isEmpty() -> logger.w { "[performSync] rejected (no events to emit)" }
+            sameInstant(rawLastSyncAt, rawLatestEventDate) ->
+                logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
+            else -> {
+                events.emit(sortedEvents)
+                // The emission swallows a cancellation, and a replay that was cut short must be requested again.
+                currentCoroutineContext().ensureActive()
+                logger.v { "[performSync] events emission completed" }
+            }
         }
-        if (sameInstant(rawLastSyncAt, rawLatestEventDate)) {
-            logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
-            return SyncOutcome(syncedCids = syncedCids)
-        }
-        events.emit(sortedEvents)
-        logger.v { "[performSync] events emission completed" }
+        // Stored after the replay, so events that were not applied are requested again by the next sync.
+        updateLastSyncedDate(latestEventDate, rawLatestEventDate)
         return SyncOutcome(syncedCids = syncedCids)
     }
 
@@ -703,7 +738,8 @@ internal class SyncManager(
         if (hasStandardQueries) {
             when (val result = updateActiveQueryChannels(recoverAll)) {
                 is Result.Success -> {
-                    val updatedCids = result.value
+                    // A list refresh does not watch with presence, so open channels are queried again
+                    val updatedCids = if (userPresence) result.value - openCids else result.value
                     logger.v { "[restoreActiveChannels] standardCids.size: ${result.value.size}" }
                     updateActiveChannels(
                         recoverAll,
@@ -1135,7 +1171,31 @@ internal class SyncManager(
         logger.d { "[retryMessages] uncreatedCids.size: ${uncreatedCids.size}" }
         retryMessagesWithSyncedAttachments(uncreatedCids, discardedCids)
         retryMessagesWithPendingAttachments(uncreatedCids, discardedCids)
+        resendFailedMessages(uncreatedCids)
         logger.v { "[retryMessages] completed" }
+    }
+
+    /** Sends [messageId] again on the next connection, unless it is no longer failed by then. */
+    internal fun resendOnReconnect(messageId: String) {
+        messagesToResend += messageId
+    }
+
+    private suspend fun resendFailedMessages(uncreatedCids: Set<String>) {
+        logger.d { "[resendFailedMessages] ids.size: ${messagesToResend.size}" }
+        messagesToResend.toList().forEach { id ->
+            val message = repos.selectMessage(id)
+            if (message?.waitsForChannel(uncreatedCids) == true) return@forEach
+            messagesToResend -= id
+            // An outdated one stays failed for the user to resend or delete.
+            if (message?.syncStatus != SyncStatus.FAILED_PERMANENTLY ||
+                message.isDeleted() ||
+                message.createdLocallyAt.exceedsSyncThresholdServerTime()
+            ) {
+                return@forEach
+            }
+            val result = chatClient.channel(message.cid).sendMessage(message).await()
+            logger.v { "[resendFailedMessages] result($id).isSuccess: ${result is Result.Success}" }
+        }
     }
 
     private fun Message.waitsForChannel(uncreatedCids: Set<String>): Boolean =
@@ -1218,14 +1278,18 @@ internal class SyncManager(
                 markMessageAsFailed(message)
             } else {
                 logger.v { "[retryMessagesWithPendingAttachments] sending message($id)" }
-                if (message.createdLocallyAt.exceedsSyncThresholdServerTime()) {
-                    logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
-                    dropOutdatedSending(message, discardedCids)
-                } else if (message.waitsForChannel(uncreatedCids)) {
-                    logger.v { "[retryMessagesWithPendingAttachments] waiting for channel(${message.cid})" }
-                } else {
-                    val (channelType, channelId) = message.cid.cidToTypeAndId()
-                    chatClient.sendMessage(channelType, channelId, message, true).await()
+                when {
+                    message.createdLocallyAt.exceedsSyncThresholdServerTime() -> {
+                        logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
+                        dropOutdatedSending(message, discardedCids)
+                    }
+                    message.waitsForChannel(uncreatedCids) -> {
+                        logger.v { "[retryMessagesWithPendingAttachments] waiting for channel(${message.cid})" }
+                    }
+                    else -> {
+                        val (channelType, channelId) = message.cid.cidToTypeAndId()
+                        chatClient.sendMessage(channelType, channelId, message, true).await()
+                    }
                 }
             }
         }
@@ -1293,7 +1357,7 @@ internal class SyncManager(
             logger.w { "[retryDeletionOfMessageWithSyncedAttachments] outdated deleting($id)" }
             removeMessage(message).await()
         } else {
-            channelClient.deleteMessage(message.id).await()
+            channelClient.deleteMessage(message.id, hard = repos.selectIsHardDelete(id)).await()
         }
     }
 
@@ -1333,19 +1397,32 @@ internal class SyncManager(
         return CoroutineCall(syncScope) {
             try {
                 logger.d { "[removeReaction] reaction.id: ${reaction.id}" }
+                // A dropped deletion leaves its message alone: the reaction is still on the server.
+                if (reaction.deletedAt == null) {
+                    removeReactionFromState(reaction)
+                    repos.selectMessage(reaction.messageId)?.let { repos.insertMessage(it.removeMyReaction(reaction)) }
+                }
+                // Deleted last, so a failure above leaves the row for the next sync to drop again.
                 repos.deleteReaction(reaction)
-                logicRegistry.channelFromMessageId(reaction.messageId)
-                    ?.getMessage(reaction.messageId)
-                    ?.removeMyReaction(reaction)
-                logicRegistry.threadFromMessageId(reaction.messageId)
-                    ?.getMessage(reaction.messageId)
-                    ?.removeMyReaction(reaction)
                 logger.v { "[removeReaction] completed: ${reaction.id}" }
                 Result.Success(Unit)
             } catch (e: Throwable) {
                 logger.e { "[removeReaction] failed(${reaction.id}): $e" }
                 Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
             }
+        }
+    }
+
+    private fun removeReactionFromState(reaction: Reaction) {
+        val messageId = reaction.messageId
+        logicRegistry.channelFromMessageId(messageId)?.let { logic ->
+            logic.getMessage(messageId)?.let { logic.upsertMessage(it.removeMyReaction(reaction)) }
+        }
+        logicRegistry.getActiveQueryThreadsLogic().forEach { logic ->
+            logic.getMessage(messageId)?.let { logic.upsertMessage(it.removeMyReaction(reaction)) }
+        }
+        logicRegistry.threadFromMessageId(messageId)?.let { logic ->
+            logic.getMessage(messageId)?.let { logic.upsertMessage(it.removeMyReaction(reaction)) }
         }
     }
 
@@ -1398,10 +1475,6 @@ internal class SyncManager(
      */
     private fun Date?.exceedsSyncThresholdServerTime(): Boolean {
         return this == null || diff(serverClockOffset.estimatedServerTime()) > syncMaxThreshold
-    }
-
-    private enum class State {
-        Idle, Syncing
     }
 
     /**

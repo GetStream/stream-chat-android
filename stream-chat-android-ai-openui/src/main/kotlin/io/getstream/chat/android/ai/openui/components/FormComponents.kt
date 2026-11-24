@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions") // Every form field, with its samples and previews.
+
 package io.getstream.chat.android.ai.openui.components
 
 import androidx.compose.foundation.background
@@ -86,6 +88,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.ai.openui.R
@@ -109,7 +112,9 @@ import io.getstream.chat.android.ai.openui.rendering.LocalOpenUIStoreSnapshot
 import io.getstream.chat.android.ai.openui.rendering.OpenUIDimens
 import io.getstream.chat.android.ai.openui.rendering.OpenUIIcon
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
+import io.getstream.chat.android.ai.openui.rendering.Renderer
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -1008,3 +1013,49 @@ private const val DisabledItemAlpha = 0.5f
 
 // The alpha of the accent behind a soft icon badge.
 private const val SoftTintAlpha = 0.12f
+
+@Composable
+internal fun FormSample() {
+    Renderer(
+        response = """
+            root = Form("booking", Buttons([Button("Book", @ToAssistant("Book"))]), [name, notes, city, dates, guests, budget])
+            name = FormControl("Name", Input("name", "Your name", "text", {required: true}), "As on your ID")
+            notes = FormControl("Notes", TextArea("notes", "Anything we should know?", 3))
+            city = FormControl("City", Select("city", [SelectItem("lis", "Lisbon"), SelectItem("por", "Porto")], "Pick a city"))
+            dates = FormControl("Dates", DatePicker("dates", "range"))
+            guests = FormControl("Guests", Slider("guests", "discrete", 1, 10, 1, [2], "Guests"))
+            budget = FormControl("Budget", Slider("budget", "continuous", 0, 500, null, [100, 300], "Budget"))
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FormPreview() {
+    FormSample()
+}
+
+@Composable
+internal fun ChoicesSample() {
+    Renderer(
+        response = """
+            root = Stack([extras, alerts, plan, diet, room])
+            extras = CheckBoxGroup("extras", [CheckBoxItem("Wifi", "Fast internet", "wifi", true), parking])
+            parking = CheckBoxItem("Parking", "On site", "parking")
+            alerts = SwitchGroup("alerts", [SwitchItem("Email", "Weekly digest", "email"), SwitchItem("Push", null, "push", true)], "card")
+            plan = RadioGroup("plan", [RadioItem("Basic", "Free", "basic"), RadioItem("Pro", "Paid", "pro")], "basic")
+            diet = Chips("diet", "multiple", [ChipItem("veg", "Vegan", Icon("leaf")), ChipItem("raw", "Raw", null, true)], null, ["veg"])
+            room = OptionCards("room", "single", [standard, suite], null, "std")
+            standard = OptionCard("std", "Standard", "One bed", Icon("bed"))
+            suite = OptionCard("suite", "Suite", "Sea view", Image("Suite photo", ""))
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChoicesPreview() {
+    ChoicesSample()
+}

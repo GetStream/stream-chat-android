@@ -66,6 +66,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.openui.R
@@ -87,7 +88,9 @@ import io.getstream.chat.android.ai.openui.rendering.OpenUIDimens
 import io.getstream.chat.android.ai.openui.rendering.OpenUIElement
 import io.getstream.chat.android.ai.openui.rendering.OpenUIIcon
 import io.getstream.chat.android.ai.openui.rendering.OpenUITheme
+import io.getstream.chat.android.ai.openui.rendering.Renderer
 import io.getstream.chat.android.ai.openui.rendering.inlineMarkdown
+import io.getstream.chat.android.ai.openui.rendering.openuiLibrary
 import io.getstream.chat.android.ai.openui.utils.NumberFormatting
 import kotlin.math.abs
 
@@ -898,3 +901,104 @@ private const val PressedAlpha = 0.85f
 
 // Where the scrim over a background image starts, as a share of its height.
 private const val ScrimStart = 0.5f
+
+@Composable
+internal fun SnippetCardsSample() {
+    Renderer(
+        response = """
+            root = SnippetCardBlock([wifi, pool], "grid", true, @ToAssistant("Tell me about it"), 12)
+            wifi = SnippetCardItem("wifi", IconText(Icon("wifi"), "info", "m", "Wifi", "In every room"), speed)
+            speed = BoldText("number", "100", "+5", "metric", "lg")
+            pool = SnippetCardItem(null, ImageText("", "Pool photo", "Pool", "Heated", true, "vertical", 48), hours)
+            hours = Text("text", "Open", "until 10", "text", "sm")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SnippetCardsPreview() {
+    SnippetCardsSample()
+}
+
+@Composable
+internal fun OverviewCardsSample() {
+    Renderer(
+        response = """
+            root = OverviewCardBlock([revenue, users], "grid")
+            revenue = OverviewCardItem("rev", IconText(Icon("dollar-sign"), "success", "s", "Revenue"), growth)
+            growth = MetricIndicatorInline("12.4k", "this month", {direction: "up", value: 12})
+            users = OverviewCardItem(null, Text(null, "Users"), MetricIndicatorInline("830", null, drop))
+            drop = {direction: "down", value: 3}
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun OverviewCardsPreview() {
+    OverviewCardsSample()
+}
+
+@Composable
+internal fun ContextCardsSample() {
+    Renderer(
+        response = """
+            root = ContextCardBlock([season, tip], "grid")
+            season = ContextCardItem("a", "Best time", "**Spring** is mild", "gray")
+            tip = ContextCardItem(null, Tag("Tip", null, "sm", "info"), "Book early", null, "beach.jpg", "Beach")
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ContextCardsPreview() {
+    ContextCardsSample()
+}
+
+@Composable
+internal fun CompositeCardsSample() {
+    Renderer(
+        response = """
+            root = CompositeCardBlock([hotel, hostel], "grid")
+            hotel = CompositeCardItem("hotel", banner, [view, breakfast, rating, perks], {price: price, button: reserve})
+            banner = ImageTextLarge("", "Hotel front", "Grand Hotel", "City center", true)
+            view = Text(null, "Sea view")
+            breakfast = BoldText(null, "Free breakfast")
+            rating = MetricIndicatorInline("4.8", "rating")
+            perks = TagBlock(["Pool", "Spa"])
+            price = MetricIndicatorWithStrikethrough("120 USD", "per night", "150 USD", {direction: "down", value: 20})
+            reserve = Button("Reserve", @ToAssistant("Reserve the Grand Hotel"))
+            hostel = CompositeCardItem(null, Text(null, "Hostel"), [Text(null, "Shared rooms")], {price: BoldText(null, "30 USD")})
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CompositeCardsPreview() {
+    CompositeCardsSample()
+}
+
+@Composable
+internal fun VisualCardsSample() {
+    Renderer(
+        response = """
+            root = VisualCardBlock([lisbon, porto], "grid")
+            lisbon = VisualCardItem(BoldText(null, "Lisbon", "Portugal"), "lis", "", Tag("Trending"), "Tram on a hill")
+            porto = VisualCardItem(BoldText(null, "Porto"))
+        """.trimIndent(),
+        library = openuiLibrary,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun VisualCardsPreview() {
+    VisualCardsSample()
+}

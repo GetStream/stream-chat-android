@@ -50,8 +50,8 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         step("GIVEN user opens the channel") {
             userRobot.login().openChannel()
         }
-        step("WHEN user sends a new message that is gonna freeze") {
-            backendRobot.freezeNewMessages()
+        step("WHEN user sends a new message that stays in flight") {
+            backendRobot.delayNewMessages()
             userRobot.sendMessage("pending message")
         }
         step("THEN message delivery status shows clocks") {
@@ -68,6 +68,20 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         step("WHEN user sends a new message that is gonna fail") {
             backendRobot.failNewMessages()
             userRobot.sendMessage("failed message")
+        }
+        step("THEN error indicator is shown for the message") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.FAILED)
+        }
+    }
+
+    @Test
+    fun test_errorIndicatorShown_whenMessageTimesOutWhileConnected() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("WHEN user sends a new message that times out") {
+            backendRobot.timeOutNewMessages()
+            userRobot.sendMessage("timed out message")
         }
         step("THEN error indicator is shown for the message") {
             userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.FAILED)
@@ -293,8 +307,8 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         step("GIVEN user opens the channel") {
             userRobot.login().openChannel()
         }
-        step("WHEN user sends a new message that is gonna freeze") {
-            backendRobot.freezeNewMessages()
+        step("WHEN user sends a new message that stays in flight") {
+            backendRobot.delayNewMessages()
             userRobot.sendMessage(sampleText)
         }
         step("AND user returns to the channel list") {
@@ -410,9 +424,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         step("AND user sends a new message") {
             userRobot.sendMessage("1")
         }
-        step("AND user sends a new message in thread that is gonna freeze") {
+        step("AND user sends a new message in thread that stays in flight") {
             userRobot.openThread()
-            backendRobot.freezeNewMessages()
+            backendRobot.delayNewMessages()
             userRobot.sendMessage("2")
         }
         step("WHEN user returns to the channel list") {
@@ -537,8 +551,8 @@ class MessageDeliveryStatusTests : StreamTestCase() {
             backendRobot.setReadEvents(enabled = false)
             userRobot.login().openChannel()
         }
-        step("WHEN user sends a new message that is gonna freeze") {
-            backendRobot.freezeNewMessages()
+        step("WHEN user sends a new message that stays in flight") {
+            backendRobot.delayNewMessages()
             userRobot.sendMessage("pending message")
         }
         step("THEN message delivery status shows clocks") {

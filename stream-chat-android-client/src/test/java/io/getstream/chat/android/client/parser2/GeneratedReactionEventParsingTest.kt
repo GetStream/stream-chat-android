@@ -50,22 +50,6 @@ internal class GeneratedReactionEventParsingTest {
     }
 
     @ParameterizedTest
-    @MethodSource("events")
-    fun `A reaction event replayed without channel and message_id maps to the same domain event`(
-        json: String,
-        expected: KClass<out ChatEvent>,
-    ) {
-        val full = parsed(json)
-
-        val event = parsed(json.without("channel").without("message_id"))
-
-        event::class shouldBeEqualTo expected
-        event shouldBeEqualTo full
-    }
-
-    private fun parsed(json: String): ChatEvent = parser.fromJson(json, ChatEvent::class.java)
-
-    @ParameterizedTest
     @MethodSource("missingRequiredFields")
     fun `A reaction event without a field the domain event requires is rejected`(json: String, field: String) {
         assertThrows<JsonDataException> {
@@ -99,7 +83,7 @@ internal class GeneratedReactionEventParsingTest {
                 createReactionUpdateEventStringJson(),
                 createReactionDeletedEventStringJson(),
             ).flatMap { json ->
-                listOf("cid", "user", "message", "reaction").map { field -> Arguments.of(json, field) }
-            }
+                listOf("cid", "user", "message", "reaction", "channel").map { field -> Arguments.of(json, field) }
+            } + Arguments.of(createReactionUpdateEventStringJson(), "message_id")
     }
 }

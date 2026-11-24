@@ -18,13 +18,13 @@
 
 <div align="center">
 
-![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-6.42%20MB-lightgreen)
-![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-11.78%20MB-lightgreen)
-![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-13.46%20MB-lightgreen)
+![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-6.44%20MB-lightgreen)
+![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-11.80%20MB-lightgreen)
+![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-13.48%20MB-lightgreen)
 ![stream-chat-android-ai-compose](https://img.shields.io/badge/stream--chat--android--ai--compose-2.26%20MB-lightgreen)
 ![stream-chat-android-ai-ondevice](https://img.shields.io/badge/stream--chat--android--ai--ondevice-1.66%20MB-lightgreen)
 ![stream-chat-android-ai-a2ui](https://img.shields.io/badge/stream--chat--android--ai--a2ui-.27%20MB-lightgreen)
-![stream-chat-android-ai-openui](https://img.shields.io/badge/stream--chat--android--ai--openui-.80%20MB-lightgreen)
+![stream-chat-android-ai-openui](https://img.shields.io/badge/stream--chat--android--ai--openui-.81%20MB-lightgreen)
 
 </div>
 
@@ -169,9 +169,9 @@ For more, see the [SDK's website](https://getstream.io/chat/sdk/android/).
 
 When utilizing **R8**, the rules for shrinking and obfuscation are applied automatically.
 
-If you are using **ProGuard**, you will need to add the following rules from [client](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/consumer-proguard-rules.pro), [ui-common](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/consumer-proguard-rules.pro), and [previewdata](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-previewdata/consumer-proguard-rules.pro) modules to your application.
+If you are using **ProGuard**, you will need to add the following rules from [client](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/consumer-proguard-rules.pro) and [ui-common](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/consumer-proguard-rules.pro) modules to your application.
 
-You might also need apply rules for [Coroutines](https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/resources/META-INF/proguard/coroutines.pro), [Retrofit](https://github.com/square/retrofit/blob/master/retrofit/src/main/resources/META-INF/proguard/retrofit2.pro) and [OkHttp](https://github.com/square/okhttp/blob/master/okhttp/src/jvmMain/resources/META-INF/proguard/okhttp3.pro) which are dependencies of the SDK.
+You might also need apply rules for [Coroutines](https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/resources/META-INF/proguard/coroutines.pro), [Retrofit](https://github.com/square/retrofit/blob/master/retrofit/src/main/resources/META-INF/proguard/retrofit2.pro), [kotlin-reflect](https://github.com/JetBrains/kotlin/blob/master/core/reflection.jvm/resources/META-INF/proguard/kotlin-reflect.pro) and [OkHttp](https://github.com/square/okhttp/blob/master/okhttp/src/jvmMain/resources/META-INF/proguard/okhttp3.pro) which are dependencies of the SDK.
 
 ## 💼 We are hiring!
 

@@ -16,25 +16,15 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.models.NoOpChannelTransformer
-import io.getstream.chat.android.models.NoOpMessageTransformer
-import io.getstream.chat.android.models.NoOpUserTransformer
+import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.network.models.ChannelMemberResponse
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class MembershipParsingTest {
-    private val domainMapping = DomainMapping(
-        currentUserIdProvider = { "" },
-        channelTransformer = NoOpChannelTransformer,
-        messageTransformer = NoOpMessageTransformer,
-        userTransformer = NoOpUserTransformer,
-    )
 
     @Test
-    fun `A membership without user_id takes the id from its user`() {
-        // Backends before v239.68.0 leave user_id out of `membership`.
+    fun `a membership without user_id is rejected`() {
         val json = """
             {
               "banned": false,
@@ -55,8 +45,6 @@ internal class MembershipParsingTest {
             }
         """.trimIndent()
 
-        val member = with(domainMapping) { parse<ChannelMemberResponse>(json).toDomain() }
-
-        assertEquals("luke", member.user.id)
+        assertThrows<JsonDataException> { parse<ChannelMemberResponse>(json) }
     }
 }

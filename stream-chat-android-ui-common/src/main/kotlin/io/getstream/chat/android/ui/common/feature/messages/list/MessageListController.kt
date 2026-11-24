@@ -128,11 +128,14 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.enqueue
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -491,12 +494,24 @@ public class MessageListController(
     init {
         logger.i { "<init> cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
         scope.launch {
-            if (parentMessageId != null) {
-                enterThreadSequential(parentMessageId)
-            }
+            val threadEntered = parentMessageId == null || enterInitialThread(parentMessageId)
             observeMessagesListState()
-            initialFocusMessage()
+            // After a cancelled thread entry the initial message is a reply, which can't be focused in the channel.
+            if (threadEntered) initialFocusMessage()
         }
+    }
+
+    /**
+     * Enters the thread the controller was started for, returning false when a disconnect cancelled it.
+     * The cancellation ends only the thread load, not the controller's startup.
+     */
+    private suspend fun enterInitialThread(parentMessageId: String): Boolean = try {
+        enterThreadSequential(parentMessageId)
+        true
+    } catch (e: CancellationException) {
+        currentCoroutineContext().ensureActive()
+        logger.w { "[enterInitialThread] entering the thread was cancelled: ${e.message}" }
+        false
     }
 
     /**

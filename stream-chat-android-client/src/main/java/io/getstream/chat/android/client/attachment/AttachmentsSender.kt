@@ -40,12 +40,15 @@ import java.util.UUID
  * @param networkType [UploadAttachmentsNetworkType]
  * @param clientState [ClientState]
  * @param scope [CoroutineScope]
+ * @param isChannelBeingCreated Whether a cid is a stored local placeholder for a channel the server has neither
+ * created nor rejected yet.
  */
 internal class AttachmentsSender(
     private val context: Context,
     private val networkType: UploadAttachmentsNetworkType,
     private val clientState: ClientState,
     private val scope: CoroutineScope,
+    private val isChannelBeingCreated: suspend (cid: String) -> Boolean,
     private val verifier: AttachmentsVerifier = AttachmentsVerifier,
 ) {
 
@@ -85,7 +88,12 @@ internal class AttachmentsSender(
         channelType: String,
         channelId: String,
     ): Result<Message> {
-        return if (clientState.isNetworkAvailable) {
+        return if (isChannelBeingCreated("$channelType:$channelId")) {
+            // Uploads are scoped to the channel and the server refuses a placeholder id. The message stays pending
+            // and the sync sends it to the server channel once that is created.
+            logger.d { "[uploadAttachments] Channel isn't created yet, not sending message with id ${message.id}" }
+            Result.Failure(Error.GenericError("Channel isn't created yet, not sending message with id ${message.id}"))
+        } else if (clientState.isNetworkAvailable) {
             waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)

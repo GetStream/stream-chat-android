@@ -82,22 +82,36 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -110,6 +124,7 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
@@ -428,6 +443,209 @@ internal class SyncManagerTest {
             assertEquals(events, awaitItem())
         }
         verify(chatClient, never()).queryChannelsInternal(any<QueryChannelsRequest>())
+    }
+
+    @Test
+    fun `performSync stores the cursor only after the events are replayed`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = localDate()
+        givenOversizedSyncPayload(eventCount = 2, createdAt, streamDateFormatter.format(createdAt))
+        val previousSyncedAt = _syncState.value?.lastSyncedAt
+        var cursorDuringReplay: Date? = null
+        val replay = launch { _syncEvents.collect { cursorDuringReplay = _syncState.value?.lastSyncedAt } }
+
+        /* When */
+        buildSyncManager(eventReplayMaxCount = 2).performSync(cids = listOf("1", "2"))
+        replay.cancel()
+
+        /* Then */
+        assertEquals(previousSyncedAt, cursorDuringReplay)
+        assertEquals(createdAt, _syncState.value?.lastSyncedAt)
+    }
+
+    @Test
+    fun `performSync keeps the cursor when the replay is cancelled`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = localDate()
+        givenOversizedSyncPayload(eventCount = 2, createdAt, streamDateFormatter.format(createdAt))
+        val previousSyncedAt = _syncState.value?.lastSyncedAt
+        val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+        val sync = launch(start = CoroutineStart.LAZY) { syncManager.performSync(cids = listOf("1", "2")) }
+        val replay = launch { _syncEvents.collect { sync.cancel() } }
+
+        /* When */
+        sync.join()
+        replay.cancel()
+
+        /* Then */
+        assertEquals(previousSyncedAt, _syncState.value?.lastSyncedAt)
+        verify(repositoryFacade, never()).insertSyncState(any())
+    }
+
+    @Test
+    fun `when the reconnect sync fails, nothing keeps waiting for it`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doThrow IllegalStateException("The database is closed")
+        val syncManager = buildSyncManager()
+
+        /* When */
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* Then */
+        withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+    }
+
+    @Test
+    fun `when the sync manager stops during the reconnect sync, nothing keeps waiting for it`() =
+        runTest(testDispatcher) {
+            /* Given */
+            whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            syncManager.stop()
+
+            /* Then */
+            withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+        }
+
+    @Test
+    fun `when a disconnect ends after a newer reconnect sync started, that sync keeps running and is awaited`() =
+        runTest(testDispatcher) {
+            /* Given */
+            _syncState.value = SyncState(userId = user.id)
+            val disconnectGate = CompletableDeferred<Unit>()
+            whenever(repositoryFacade.insertSyncState(any())) doSuspendableAnswer { disconnectGate.await() }
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            disconnectGate.complete(Unit)
+
+            /* Then */
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `the reconnect sync is awaited from the moment the connected event arrives`() = runTest(testDispatcher) {
+        /* Given */
+        val syncManager = buildSyncManager(scope = backgroundScope + StandardTestDispatcher(testScheduler))
+
+        /* When */
+        syncManager.onEvent(randomConnectedEvent())
+        val waiting = launch { syncManager.awaitSyncing() }
+
+        /* Then */
+        assertTrue(waiting.isActive)
+        waiting.cancel()
+    }
+
+    @Test
+    fun `when the sync manager stops before the reconnect sync starts, nothing keeps waiting for it`() =
+        runTest(testDispatcher) {
+            /* Given */
+            val syncManager = buildSyncManager(scope = backgroundScope + StandardTestDispatcher(testScheduler))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            syncManager.stop()
+
+            /* Then */
+            withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
+        }
+
+    @Test
+    fun `when a requested sync ends during the reconnect sync, the reconnect sync is still awaited`() =
+        runTest(testDispatcher) {
+            /* Given */
+            _syncState.value = SyncState(userId = user.id)
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer { awaitCancellation() }
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            runCatching { syncManager.sync() }
+
+            /* Then */
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `when a cancelled reconnect sync fails late, the newer one is still awaited`() = runTest(testDispatcher) {
+        /* Given */
+        val cancelledSyncGate = CompletableDeferred<Unit>()
+        var syncStateReads = 0
+        whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer {
+            if (syncStateReads++ > 0) awaitCancellation()
+            withContext(NonCancellable) { cancelledSyncGate.await() }
+            throw IllegalStateException("The database is closed")
+        }
+        val syncManager = buildSyncManager()
+        syncManager.onEvent(randomConnectedEvent())
+        syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* When */
+        cancelledSyncGate.complete(Unit)
+
+        /* Then */
+        assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+    }
+
+    @Test
+    fun `when a cancelled reconnect sync ends without failing, the newer one is still awaited`() =
+        runTest(testDispatcher) {
+            /* Given */
+            _syncState.value = SyncState(userId = user.id)
+            val cancelledSyncGate = CompletableDeferred<Unit>()
+            var reactionReads = 0
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(any())) doSuspendableAnswer {
+                if (reactionReads++ > 0) awaitCancellation()
+                withContext(NonCancellable) { cancelledSyncGate.await() }
+                emptyList()
+            }
+            val syncManager = buildSyncManager(isAutomaticSyncOnReconnectEnabled = false)
+            syncManager.onEvent(randomConnectedEvent())
+            syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+            syncManager.onEvent(randomConnectedEvent())
+
+            /* When */
+            cancelledSyncGate.complete(Unit)
+
+            /* Then */
+            assertNull(withTimeoutOrNull(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() })
+        }
+
+    @Test
+    fun `when the reconnect sync is cancelled, the work that follows it is not started`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doSuspendableAnswer { awaitCancellation() }
+        val pendingMessagePins = mock<PendingMessagePins>()
+        val syncManager = buildSyncManager(pendingMessagePins = pendingMessagePins)
+        syncManager.onEvent(randomConnectedEvent())
+
+        /* When */
+        syncManager.onEvent(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(currentTime), null))
+
+        /* Then */
+        verify(pendingMessagePins, never()).sendPending()
+    }
+
+    @Test
+    fun `when a requested sync fails, nothing keeps waiting for it`() = runTest(testDispatcher) {
+        /* Given */
+        whenever(repositoryFacade.selectSyncState(any())) doThrow IllegalStateException("The database is closed")
+        val syncManager = buildSyncManager()
+
+        /* When */
+        val result = runCatching { syncManager.sync() }
+
+        /* Then */
+        assertInstanceOf(IllegalStateException::class.java, result.exceptionOrNull())
+        withTimeout(AWAIT_SYNCING_TIMEOUT_MS) { syncManager.awaitSyncing() }
     }
 
     @Test
@@ -1025,6 +1243,81 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `an outdated unsent reaction is removed from its message in the database, channel and threads`() =
+        runTest(testDispatcher) {
+            val reaction = randomReaction(score = 1, deletedAt = null, syncStatus = SyncStatus.SYNC_NEEDED)
+            val message = randomMessage(
+                id = reaction.messageId,
+                reactionCounts = mapOf(reaction.type to 1),
+                reactionScores = mapOf(reaction.type to 1),
+                latestReactions = listOf(reaction),
+                ownReactions = listOf(reaction),
+            )
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(1)
+            whenever(repositoryFacade.selectReactionById(1)) doReturn reaction
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            val channelLogic: ChannelLogic = mock { on(it.getMessage(message.id)) doReturn message }
+            val threadLogic: ThreadLogic = mock { on(it.getMessage(message.id)) doReturn message }
+            val queryThreadsLogic: QueryThreadsLogic = mock { on(it.getMessage(message.id)) doReturn message }
+            whenever(logicRegistry.channelFromMessageId(message.id)) doReturn channelLogic
+            whenever(logicRegistry.threadFromMessageId(message.id)) doReturn threadLogic
+            whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn listOf(queryThreadsLogic)
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            val hasNoReaction: Message.() -> Boolean = {
+                id == message.id && ownReactions.isEmpty() && latestReactions.isEmpty() &&
+                    reactionCounts.isEmpty() && reactionScores.isEmpty()
+            }
+            // The row goes last: a message read after it is deleted no longer lists the reaction, and a failed
+            // message write must leave the row for the next sync.
+            inOrder(repositoryFacade) {
+                verify(repositoryFacade).selectMessage(message.id)
+                verify(repositoryFacade).insertMessage(argThat(hasNoReaction))
+                verify(repositoryFacade).deleteReaction(reaction)
+            }
+            verify(channelLogic).upsertMessage(argThat(hasNoReaction))
+            verify(threadLogic).upsertMessage(argThat(hasNoReaction))
+            verify(queryThreadsLogic).upsertMessage(argThat(hasNoReaction))
+            verify(chatClient, never()).sendReaction(any(), any(), any(), any())
+        }
+
+    @Test
+    fun `an outdated unsent reaction stays pending when its message cannot be stored`() = runTest(testDispatcher) {
+        val reaction = randomReaction(deletedAt = null, syncStatus = SyncStatus.SYNC_NEEDED)
+        val message = randomMessage(id = reaction.messageId, ownReactions = listOf(reaction))
+        whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(1)
+        whenever(repositoryFacade.selectReactionById(1)) doReturn reaction
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(repositoryFacade.insertMessage(any())).thenThrow(IllegalStateException("database closed"))
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(repositoryFacade, never()).deleteReaction(any())
+    }
+
+    @Test
+    fun `an outdated reaction deletion is dropped without changing its message again`() = runTest(testDispatcher) {
+        val reaction = randomReaction(deletedAt = Date(0), syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(1)
+        whenever(repositoryFacade.selectReactionById(1)) doReturn reaction
+        // The server copy of the message still has the reaction.
+        val message = randomMessage(id = reaction.messageId, ownReactions = listOf(reaction.copy(deletedAt = null)))
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val channelLogic: ChannelLogic = mock { on(it.getMessage(message.id)) doReturn message }
+        whenever(logicRegistry.channelFromMessageId(reaction.messageId)) doReturn channelLogic
+
+        val sut = buildSyncManager()
+        delay(7_000)
+        sut.onEvent(randomConnectedEvent())
+
+        verify(repositoryFacade).deleteReaction(reaction)
+        verify(repositoryFacade, never()).insertMessage(any())
+        verify(channelLogic, never()).upsertMessage(any())
+        verify(chatClient, never()).deleteReaction(any(), any(), any())
+    }
+
+    @Test
     fun `test too many events to sync error`() = runTest(testDispatcher) {
         /* Given */
         val createdAt = localDate()
@@ -1522,6 +1815,32 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `retryMessages should retry a hard delete as a hard delete`() = runTest(testDispatcher) {
+        verifyDeleteRetriedAs(hard = true)
+    }
+
+    @Test
+    fun `retryMessages should retry a soft delete as a soft delete`() = runTest(testDispatcher) {
+        verifyDeleteRetriedAs(hard = false)
+    }
+
+    private suspend fun TestScope.verifyDeleteRetriedAs(hard: Boolean) {
+        val message = randomMessage(deletedAt = localDate(), deletedForMe = false, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(repositoryFacade.selectIsHardDelete(message.id)) doReturn hard
+        val channelClient: ChannelClient = mock {
+            on(it.deleteMessage(message.id, hard)) doReturn message.asCall()
+        }
+        whenever(chatClient.channel(message.cid)) doReturn channelClient
+
+        val sut = buildSyncManager()
+        sut.retryMessages()
+
+        verify(channelClient).deleteMessage(message.id, hard)
+    }
+
+    @Test
     fun `retryMessages should retry deleting messages for me`() = runTest(testDispatcher) {
         val message = randomMessage(deletedAt = null, deletedForMe = true, syncStatus = SyncStatus.SYNC_NEEDED)
         whenever(repositoryFacade.selectMessageIdsBySyncState(syncStatus = SyncStatus.SYNC_NEEDED)) doReturn
@@ -1570,6 +1889,53 @@ internal class SyncManagerTest {
 
         verify(channelClient).sendMessage(message)
         verify(repositoryFacade, never()).insertMessage(any())
+    }
+
+    @Test
+    fun `retryMessages should resend once a message marked to resend on reconnect`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.FAILED_PERMANENTLY)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val channelClient: ChannelClient = mock {
+            on(it.sendMessage(message)) doReturn message.asCall()
+        }
+        whenever(chatClient.channel(message.cid)) doReturn channelClient
+
+        val sut = buildSyncManager()
+        sut.resendOnReconnect(message.id)
+        sut.retryMessages()
+        sut.retryMessages()
+
+        verify(channelClient, times(1)).sendMessage(message)
+    }
+
+    @Test
+    fun `retryMessages should leave an outdated message marked to resend failed`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+            createdLocallyAt = null,
+        )
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        val sut = buildSyncManager()
+        sut.resendOnReconnect(message.id)
+        sut.retryMessages()
+
+        verify(chatClient, never()).channel(any<String>())
+        verify(repositoryFacade, never()).insertMessage(any())
+        verify(repositoryFacade, never()).deleteChannelMessage(any())
+    }
+
+    @Test
+    fun `retryMessages should not resend a message that is no longer failed`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+
+        val sut = buildSyncManager()
+        sut.resendOnReconnect(message.id)
+        sut.retryMessages()
+
+        verify(chatClient, never()).channel(any<String>())
     }
 
     @Test
@@ -2481,6 +2847,61 @@ internal class SyncManagerTest {
             assertEquals("cid", filter.fieldName)
             assertEquals(setOf(activeOnlyCid), filter.values)
         }
+
+    @Test
+    fun `on reconnect, an open channel a list refreshed is queried again with presence`() =
+        runTest(testDispatcher) {
+            reconnectWithOpenChannelInList()
+
+            argumentCaptor<QueryChannelsRequest> {
+                verify(chatClient).queryChannelsInternal(capture())
+                assertEquals(setOf(OPEN_CID), (firstValue.filter as InFilterObject).values)
+                assertEquals(true, firstValue.presence)
+            }
+        }
+
+    @Test
+    fun `on reconnect without user presence, an open channel a list refreshed is not queried again`() =
+        runTest(testDispatcher) {
+            reconnectWithOpenChannelInList(userPresence = false)
+
+            verify(chatClient, never()).queryChannelsInternal(any())
+        }
+
+    private suspend fun TestScope.reconnectWithOpenChannelInList(userPresence: Boolean = true) {
+        val createdAt = localDate()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val openChannel = randomChannel(type = "messaging", id = OPEN_CID.substringAfter(':'))
+        val listedChannel = randomChannel(type = "messaging", id = "listed")
+        val standardQuery: QueryChannelsLogic = mock {
+            on(it.groupKey()) doReturn null
+            on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+            onBlocking { it.queryFirstPage() } doReturn Result.Success(listOf(openChannel, listedChannel))
+        }
+        whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(standardQuery)
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+        val activeStates = listOf(openChannel, listedChannel).associate { channel ->
+            ChannelId.fromCid(channel.cid)!! to mock<ChannelState> {
+                on(it.cid) doReturn channel.cid
+                on(it.recoveryNeeded) doReturn false
+            }
+        }
+        val channelLogic: ChannelLogic = mock()
+        whenever(stateRegistry.getActiveChannelStates()) doReturn activeStates
+        whenever(stateRegistry.getTrackedWatchedChannels()) doReturn setOf(OPEN_CID)
+        whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+            Result.Success(QueryChannelsResult(channels = listOf(openChannel), predefinedFilter = null)),
+        )
+        whenever(logicRegistry.channel(any<ChannelId>())) doReturn channelLogic
+        whenever(clientState.isOnline) doReturn true
+        whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+        val syncManager = buildSyncManager(userPresence = userPresence)
+        syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+        delay(100)
+        syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+        delay(100)
+    }
 
     @Test
     @Suppress("LongMethod")
@@ -3458,6 +3879,46 @@ internal class SyncManagerTest {
         verify(repositoryFacade, never()).deleteChannelMessage(any())
     }
 
+    @Test
+    fun `messages awaiting attachments in a created channel are sent`() = runTest(testDispatcher) {
+        givenPlaceholders()
+        val message = localRandomMessage().copy(
+            cid = "messaging:general",
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+            attachments = listOf(Attachment(uploadState = Attachment.UploadState.Idle)),
+        )
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+            listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+
+        buildSyncManager().retryMessages()
+
+        verify(chatClient).sendMessage("messaging", "general", message, true)
+        verify(repositoryFacade, never()).insertMessage(any())
+    }
+
+    @Test
+    fun `messages awaiting attachments of a rejected channel are sent, so their upload fails them`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-a, b")
+            givenChannelRetryFails(placeholder, statusCode = 400)
+            val message = localRandomMessage().copy(
+                cid = placeholder.cid,
+                syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+                attachments = listOf(Attachment(uploadState = Attachment.UploadState.Idle)),
+            )
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+                listOf(message.id)
+            whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+            whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            verify(chatClient).createChannel(eq(placeholder.type), eq(""), any<CreateChannelParams>())
+            verify(chatClient).sendMessage(placeholder.type, placeholder.id, message, true)
+        }
+
     private suspend fun givenChannelRetryFails(channel: Channel, statusCode: Int) {
         whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
         whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
@@ -3495,18 +3956,20 @@ internal class SyncManagerTest {
         syncMaxThreshold: TimeDuration = TimeDuration.seconds(5),
         eventReplayMaxCount: Int = 250,
         pendingMessagePins: PendingMessagePins? = null,
+        scope: CoroutineScope = backgroundScope,
+        userPresence: Boolean = true,
     ): SyncManager {
         return SyncManager(
             eventReplayMaxCount = eventReplayMaxCount,
             currentUserId = user.id,
-            scope = backgroundScope,
+            scope = scope,
             logicRegistry = logicRegistry,
             stateRegistry = stateRegistry,
             repos = repositoryFacade,
             chatClient = chatClient,
             clientState = clientState,
             mutableGlobalState = mutableGlobalState,
-            userPresence = true,
+            userPresence = userPresence,
             events = _syncEvents,
             syncState = _syncState,
             isAutomaticSyncOnReconnectEnabled = isAutomaticSyncOnReconnectEnabled,
@@ -3518,4 +3981,8 @@ internal class SyncManagerTest {
     }
 }
 
+private const val AWAIT_SYNCING_TIMEOUT_MS = 1_000L
+
 private fun Result<List<ChatEvent>>.synced(): Result<SyncedEvents> = map { SyncedEvents(it) }
+
+private const val OPEN_CID = "messaging:open"

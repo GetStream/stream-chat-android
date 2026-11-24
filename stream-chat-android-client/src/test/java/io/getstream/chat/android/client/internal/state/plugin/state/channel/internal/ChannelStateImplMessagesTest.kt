@@ -19,8 +19,12 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Result
@@ -396,6 +400,67 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
                 assertEquals(listOf("message_99"), channelState.messages.value.map { it.id })
                 assertTrue(channelState.pinnedMessages.value.isEmpty())
                 assertTrue(channelState.toChannel().cachedLatestMessages.none { it.id == "message_1" })
+            }
+
+        @Test
+        fun `removeTruncatedMessages should recalculate the reads for the remaining messages`() = runTest {
+            // given
+            val other = randomUser(id = "other")
+            channelState.setMessages(listOf(serverMessage(1, timestamp = 1000), serverMessage(2, timestamp = 3000)))
+            channelState.updateReads(
+                listOf(
+                    read(currentUser, unreadMessages = 2, lastRead = Date(500), lastReadMessageId = "message_0"),
+                    read(other, unreadMessages = 0, lastRead = Date(3500), lastReadMessageId = "message_2"),
+                ),
+            )
+            // when
+            channelState.removeTruncatedMessages(Date(2000), systemMessage = null)
+            // then
+            val reads = channelState.reads.value.associateBy { it.user.id }
+            assertEquals(1, reads.getValue(currentUser.id).unreadMessages)
+            assertNull(reads.getValue(currentUser.id).lastReadMessageId)
+            assertEquals(0, reads.getValue("other").unreadMessages)
+            assertEquals("message_2", reads.getValue("other").lastReadMessageId)
+        }
+
+        @Test
+        fun `removeTruncatedMessages should count another user's system message once`() = runTest {
+            // given
+            channelState.setMessages(listOf(serverMessage(1, timestamp = 1000)))
+            channelState.updateRead(read(currentUser, unreadMessages = 1, lastRead = Date(500)))
+            val systemMessage = createMessage(99, timestamp = 2001, user = randomUser(id = "other"))
+            // when
+            channelState.removeTruncatedMessages(Date(2000), systemMessage = systemMessage)
+            channelState.updateCurrentUserRead(Date(2002), systemMessage)
+            // then
+            assertEquals(1, channelState.read.value?.unreadMessages)
+        }
+
+        @Test
+        fun `removeTruncatedMessages should not count the current user's system message`() = runTest {
+            // given
+            channelState.setMessages(listOf(serverMessage(1, timestamp = 1000)))
+            channelState.updateRead(read(currentUser, unreadMessages = 1, lastRead = Date(500)))
+            val systemMessage = createMessage(99, timestamp = 2001)
+            // when
+            channelState.removeTruncatedMessages(Date(2000), systemMessage = systemMessage)
+            // then
+            assertEquals(0, channelState.read.value?.unreadMessages)
+        }
+
+        @Test
+        fun `removeTruncatedMessages should keep the unread count when the loaded messages start after the truncation`() =
+            runTest {
+                // given
+                channelState.setMessages(listOf(serverMessage(1, timestamp = 3000)))
+                channelState.updateRead(
+                    read(currentUser, unreadMessages = 5, lastRead = Date(500), lastReadMessageId = "message_0"),
+                )
+                // when
+                channelState.removeTruncatedMessages(Date(2000), systemMessage = null)
+                // then
+                assertEquals(5, channelState.read.value?.unreadMessages)
+                assertNull(channelState.read.value?.lastReadMessageId)
             }
 
         @Test
@@ -1046,4 +1111,22 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
             assertEquals("message_3", channelState.getOldestMessage()?.id)
         }
     }
+
+    private fun serverMessage(index: Int, timestamp: Long) =
+        createMessage(index, timestamp = timestamp).copy(
+            syncStatus = SyncStatus.COMPLETED,
+            type = MessageType.REGULAR,
+            deletedAt = null,
+            silent = false,
+            shadowed = false,
+        )
+
+    private fun read(user: User, unreadMessages: Int, lastRead: Date, lastReadMessageId: String? = null) =
+        ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = lastRead,
+            unreadMessages = unreadMessages,
+            lastRead = lastRead,
+            lastReadMessageId = lastReadMessageId,
+        )
 }

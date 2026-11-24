@@ -33,14 +33,11 @@ internal data class ReactionUpdatedEvent(
     @Json(name = "created_at")
     internal val createdAt: io.getstream.chat.android.network.infrastructure.ExactDate,
 
-    // Patched: the spec marks `message_id` and `channel` required, but backends before v239.47.0 (CHA-3482,
-    // chat#17545) replay reaction events on /sync without them, and a parse failure fails the whole /sync response.
-    // On regen, make them required again only once every region runs v239.47.0 or later.
     @Json(name = "message_id")
-    internal val messageId: String? = null,
+    internal val messageId: String,
 
     @Json(name = "channel")
-    internal val channel: io.getstream.chat.android.network.models.ChannelResponse? = null,
+    internal val channel: io.getstream.chat.android.network.models.ChannelResponse,
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),

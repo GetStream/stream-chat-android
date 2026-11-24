@@ -139,7 +139,7 @@ public class StatePlugin internal constructor(
     DeleteMessageForMeListener by DeleteMessageForMeListenerState(logic, clientState),
     SendGiphyListener by SendGiphyListenerState(logic),
     ShuffleGiphyListener by ShuffleGiphyListenerState(logic),
-    SendMessageListener by SendMessageListenerState(logic),
+    SendMessageListener by SendMessageListenerState(logic, clientState, syncManager::resendOnReconnect),
     TypingEventListener by TypingEventListenerState(logic),
     SendAttachmentListener by SendAttachmentListenerState(logic),
     FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, mutableGlobalState),
@@ -162,8 +162,9 @@ public class StatePlugin internal constructor(
     override fun onUserDisconnected() {
         stateRegistry.clear()
         logic.clear()
-        syncManager.stop()
+        // The handler first: stopping the sync ends the wait of its socket events, which must not be handled now.
         eventHandler.stopListening()
+        syncManager.stop()
     }
 
     @Suppress("UNCHECKED_CAST")

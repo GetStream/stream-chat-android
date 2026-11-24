@@ -23,6 +23,8 @@ import io.getstream.chat.android.client.api.MessageBufferOverflow
 import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -53,15 +55,19 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
@@ -419,6 +425,55 @@ internal class EventHandlerSequentialTest {
             handler.handleEvents(event)
             // then
             verify(repos).deleteChannelMessagesBefore(event.cid, truncatedAt)
+        }
+
+    @Test
+    fun `When handling ChannelTruncatedEvent, the stored reads are recalculated for the remaining messages`() =
+        runTest {
+            val truncatedAt = Date(2_000)
+            val storedChannel = randomChannel(
+                messages = listOf(
+                    randomMessage(
+                        id = "removed",
+                        createdAt = Date(1_000),
+                        syncStatus = SyncStatus.COMPLETED,
+                        type = MessageType.REGULAR,
+                    ),
+                ),
+                read = listOf(randomChannelUserRead(unreadMessages = 3, lastRead = Date(500))),
+            )
+            val event = randomChannelTruncatedEvent(
+                cid = storedChannel.cid,
+                createdAt = Date(2_020),
+                channel = storedChannel.copy(truncatedAt = truncatedAt, read = emptyList()),
+            )
+
+            val read = storedChannelAfter(storedChannel, event).read.single()
+
+            read.unreadMessages `should be equal to` 0
+            read.lastReadMessageId `should be equal to` null
+        }
+
+    @Test
+    fun `When handling NotificationChannelTruncatedEvent, a stored last message after the truncation keeps the unread count`() =
+        runTest {
+            val truncatedAt = Date(2_000)
+            val storedChannel = randomChannel(
+                messages = listOf(
+                    randomMessage(id = "kept", createdAt = Date(3_000), syncStatus = SyncStatus.COMPLETED),
+                ),
+                read = listOf(randomChannelUserRead(unreadMessages = 3, lastRead = Date(500))),
+            )
+            val event = randomNotificationChannelTruncatedEvent(
+                cid = storedChannel.cid,
+                createdAt = Date(2_020),
+                channel = storedChannel.copy(truncatedAt = truncatedAt, read = emptyList()),
+            )
+
+            val read = storedChannelAfter(storedChannel, event).read.single()
+
+            read.unreadMessages `should be equal to` 3
+            read.lastReadMessageId `should be equal to` null
         }
 
     @Test
@@ -938,6 +993,36 @@ internal class EventHandlerSequentialTest {
 
     private fun queryChannelsLogicHandlingNoEvents(): QueryChannelsLogic = mock {
         onBlocking { parseChatEventResults(any()) } doReturn emptyList()
+    }
+
+    @Test
+    fun `While a sync is running, connection events are handled and the events after them wait`() = runTest {
+        val fixture = Fixture()
+            .withReadEventsCapabilityForAny()
+            .pauseSideEffect()
+        val handler = fixture.get(this)
+        val disconnected = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
+        val connecting = ConnectingEvent(EventType.CONNECTION_CONNECTING, Date(), null)
+        val connected = randomConnectedEvent()
+        val newMessage = randomNewMessageEvent()
+
+        handler.startListening()
+        advanceUntilIdle()
+        val listener = fixture.listener()
+
+        listener.onEvent(disconnected)
+        listener.onEvent(connecting)
+        listener.onEvent(connected)
+        listener.onEvent(newMessage)
+        advanceUntilIdle()
+
+        val connectionEvents = listOf(disconnected, connecting, connected)
+        assertEquals(connectionEvents, capturedBatchEvents(fixture).flatMap { it.sortedEvents })
+
+        fixture.releaseSideEffect()
+        advanceUntilIdle()
+
+        assertEquals(connectionEvents + newMessage, capturedBatchEvents(fixture).flatMap { it.sortedEvents })
     }
 
     private fun capturedBatchEvents(fixture: Fixture): List<BatchEvent> {

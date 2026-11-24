@@ -67,6 +67,15 @@ internal class V2DirectEventParserParityTest {
     }
 
     @Test
+    fun `Both paths read the restricted visibility`() {
+        val frame = event(message = richMessage).toJson()
+
+        listOf(direct.parse(frame), generated.parse(frame)).forEach { event ->
+            (event as NewMessageEvent).message.restrictedVisibility shouldBeEqualTo listOf(ME)
+        }
+    }
+
+    @Test
     fun `With the fast path set, the v2 parser reads message_new through it`() {
         val tagging = DirectEventParser({ it.copy(text = "fast path") }, NoOpUserTransformer, mapping)
 
@@ -153,6 +162,7 @@ internal class V2DirectEventParserParityTest {
         ) = mapOf(
             "type" to "message.new", "created_at" to EVENT_AT, "custom" to emptyMap<String, Any>(), "cid" to CID,
             "channel_type" to "messaging", "channel_id" to "general",
+            "message_id" to message["id"], "watcher_count" to 1,
         ) + channel + mapOf("message" to message, "user" to user) + extra
 
         private val imageData = mapOf(
@@ -379,6 +389,9 @@ internal class V2DirectEventParserParityTest {
                 event(message = message() + mapOf("user" to user("luke") - "language")).toJson(),
             ),
             arrayOf("event user without created_at", event(user = user(ME) - "created_at").toJson()),
+            arrayOf("without message_id", (event() - "message_id").toJson()),
+            arrayOf("without watcher_count", (event() - "watcher_count").toJson()),
+            arrayOf("watcher_count null", (event() + ("watcher_count" to null)).toJsonWithNulls()),
             arrayOf(
                 "message reaction counts as a list",
                 event(message = message() + ("reaction_counts" to listOf(1))).toJson(),

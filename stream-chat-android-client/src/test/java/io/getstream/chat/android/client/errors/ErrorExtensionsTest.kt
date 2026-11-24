@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.errors
 
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling.Reason
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
@@ -23,6 +24,9 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import java.net.SocketTimeoutException
 
 internal class ErrorExtensionsTest {
 
@@ -42,6 +46,21 @@ internal class ErrorExtensionsTest {
     }
 
     @ParameterizedTest
+    @MethodSource("sendFailureArguments")
+    fun `sendFailureSyncStatus should keep a temporary error pending only while a reconnect will retry it`(
+        error: Error,
+        isOnline: Boolean,
+        isNetworkAvailable: Boolean,
+        expected: SyncStatus,
+    ) {
+        val clientState = mock<ClientState> {
+            on(it.isOnline) doReturn isOnline
+            on(it.isNetworkAvailable) doReturn isNetworkAvailable
+        }
+        error.sendFailureSyncStatus(clientState) shouldBeEqualTo expected
+    }
+
+    @ParameterizedTest
     @MethodSource("scheduledMessageRejectionArguments")
     fun `scheduledMessageRejectionReason should map the scheduled message error codes`(
         error: Error,
@@ -51,6 +70,20 @@ internal class ErrorExtensionsTest {
     }
 
     companion object {
+        private val timeout = Error.NetworkError("timeout", -1, -1, SocketTimeoutException())
+        private val rejected = Error.NetworkError("message text is too long", 4, 400)
+
+        @JvmStatic
+        fun sendFailureArguments() = listOf(
+            Arguments.of(timeout, false, true, SyncStatus.SYNC_NEEDED),
+            Arguments.of(timeout, true, false, SyncStatus.SYNC_NEEDED),
+            Arguments.of(timeout, true, true, SyncStatus.FAILED_PERMANENTLY),
+            Arguments.of(Error.GenericError("no answer"), false, true, SyncStatus.SYNC_NEEDED),
+            Arguments.of(Error.GenericError("no answer"), true, true, SyncStatus.FAILED_PERMANENTLY),
+            Arguments.of(rejected, false, false, SyncStatus.FAILED_PERMANENTLY),
+            Arguments.of(rejected, true, true, SyncStatus.FAILED_PERMANENTLY),
+        )
+
         @JvmStatic
         fun scheduledMessageRejectionArguments() = listOf(
             Arguments.of(Error.NetworkError("disabled", 114, 400), Reason.ScheduledMessagesDisabled),

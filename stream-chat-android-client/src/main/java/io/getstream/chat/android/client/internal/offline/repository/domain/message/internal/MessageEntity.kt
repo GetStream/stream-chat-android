@@ -153,6 +153,8 @@ internal data class MessageInnerEntity(
     val mentionedChannelMembers: Map<String, MemberInfoEntity>? = null,
     /** Whether the message was deleted for the current user */
     val deletedForMe: Boolean = false,
+    /** Whether the current user's request deleting the message is a hard delete */
+    val hardDelete: Boolean = false,
 )
 
 internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"

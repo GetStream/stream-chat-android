@@ -33,14 +33,11 @@ internal data class MessageDeletedEvent(
     @Json(name = "created_at")
     internal val createdAt: io.getstream.chat.android.network.infrastructure.ExactDate,
 
-    // Patched: the spec marks `hard_delete` and `message_id` required, but backends before v239.47.0 (CHA-3482,
-    // chat#17545) replay message.deleted on /sync without them, and a parse failure fails the whole /sync response.
-    // On regen, make them required again only once every region runs v239.47.0 or later.
     @Json(name = "hard_delete")
-    internal val hardDelete: Boolean? = null,
+    internal val hardDelete: Boolean,
 
     @Json(name = "message_id")
-    internal val messageId: String? = null,
+    internal val messageId: String,
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),

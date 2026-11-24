@@ -57,42 +57,11 @@ jobs:
           path: ./**/build/reports/tests/**
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Sonar
-        run: bundle exec fastlane run_sonar_analysis
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "::warning title=Sonar skipped::SONAR_TOKEN is not set, so the Sonar analysis did not run."
+            exit 0
+          fi
+          bundle exec fastlane run_sonar_analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  size_check_xml:
-    permissions:
-      actions: write
-      contents: read
-    name: Size Check XML
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
-      - name: build demo debug
-        run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
-      - name: Upload artifact to Emerge
-        uses: EmergeTools/emerge-upload-action@v1.2.2
-        with:
-          artifact_path: ./stream-chat-android-ui-components-sample/build/outputs/apk/demo/debug/stream-chat-android-ui-components-sample-demo-debug.apk
-          emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
-          build_type: debug
-  size_check_compose:
-    permissions:
-      actions: write
-      contents: read
-    name: Size Check Compose
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
-      - name: build debug
-        run: ./gradlew stream-chat-android-compose-sample:assembleDebug
-      - name: Upload artifact to Emerge
-        uses: EmergeTools/emerge-upload-action@v1.2.2
-        with:
-          artifact_path: ./stream-chat-android-compose-sample/build/outputs/apk/demo/debug/stream-chat-android-compose-sample-demo-debug.apk
-          emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
-          build_type: debug

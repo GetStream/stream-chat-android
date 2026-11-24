@@ -118,6 +118,7 @@ import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelUpdateResponseHandler
+import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.ThreadResponseHandler
 import io.getstream.chat.android.client.internal.state.sync.internal.PendingMessagePins
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
@@ -170,6 +171,7 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.channel.isChannelBeingCreated
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
@@ -232,6 +234,7 @@ import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.UnreadCounts
@@ -445,7 +448,7 @@ internal constructor(
         val initState = awaitInitializationState(RESOLVE_DEPENDENCY_TIMEOUT)
         if (initState != InitializationState.COMPLETE) {
             StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState " }
-            throw IllegalStateException("ChatClient::connectUser() must be called before resolving any dependency")
+            throw ClientNotInitializedException()
         }
         val resolver = currentPlugins.find { plugin ->
             plugin is P
@@ -489,6 +492,11 @@ internal constructor(
      * Stores the responses of the channel changes the current user makes. Set by the state plugin.
      */
     internal var channelUpdateResponseHandler: ChannelUpdateResponseHandler? = null
+
+    /**
+     * Stores the threads returned by [getThread] and [partialUpdateThread]. Set by the state plugin.
+     */
+    internal var threadResponseHandler: ThreadResponseHandler? = null
 
     /**
      * Keeps the pins and unpins that failed offline, to send them again on the next connection. Set by the state
@@ -703,8 +711,16 @@ internal constructor(
 
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
+                val isReplacingUser = initializedUserId.get().let { it != null && it != user.id }
+                // The receipts are stored for the whole app, so the ones the other user queued would be reported
+                // as this user.
+                if (isReplacingUser) repository.clear()
                 mutableClientState.setUser(user)
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
+                // After the repositories are the ones of this user, so a start of the other user still to run loads
+                // them, and before this user is set, so no scheduled message change goes to the other user.
+                if (isReplacingUser) scheduledMessageManager.stop()
+                startScheduledMessages()
                 userStateService.onSetUser(user, isAnonymous)
                 connectingUser.set(user)
                 chatSocket.connectUser(user, isAnonymous)
@@ -772,6 +788,8 @@ internal constructor(
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
         if (initializedUserId.get() != user.id) {
+            // Plugins set for another user without a connection, as a push notification does, are still listening.
+            plugins.forEach { it.onUserDisconnected() }
             _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
             plugins = pluginFactories.map { it.get(user) }
             initializedUserId.set(user.id)
@@ -788,13 +806,16 @@ internal constructor(
         appSettingsManager.loadAppSettings()
         warmUp()
         messageReceiptReporter.start()
-        // A failure stops sending until the next connection, and is logged instead of crashing the app.
-        val scheduledMessagesExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            logger.e(throwable) { "[initializeClientWithUser] scheduled messages failed: $throwable" }
-        }
-        inheritScope { SupervisorJob(it) + scheduledMessagesExceptionHandler }
-            .launch { scheduledMessageManager.start(this) }
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
+    }
+
+    private fun startScheduledMessages() {
+        // A failure stops sending until the next connection, and is logged instead of crashing the app.
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            logger.e(throwable) { "[startScheduledMessages] scheduled messages failed: $throwable" }
+        }
+        inheritScope { SupervisorJob(it) + exceptionHandler }
+            .launch { scheduledMessageManager.start(this) }
     }
 
     private fun createRepositoryFactory(user: User): RepositoryFactory =
@@ -977,6 +998,7 @@ internal constructor(
                 ),
                 isAnonymous = credentialConfig.isAnonymous,
             )
+            startScheduledMessages()
         }
     }
 
@@ -2940,7 +2962,7 @@ internal constructor(
             .doOnStart(userScope) {
                 plugins.forEach { listener ->
                     logger.v { "[deleteMessage] #doOnStart; plugin: ${listener::class.qualifiedName}" }
-                    listener.onMessageDeleteRequest(messageId)
+                    listener.onMessageDeleteRequest(messageId, hard)
                 }
             }
             .doOnResult(userScope) { result ->
@@ -3056,12 +3078,15 @@ internal constructor(
     }
 
     /**
-     * Ensure the message has a [Message.createdLocallyAt] timestamp.
-     * If not, set it to the max of the channel's [Channel.lastMessageAt] + 1 millisecond and the
+     * Ensure the message has a [Message.createdLocallyAt] timestamp, renewing it when a failed message that was
+     * never sent is resent. A new one is the max of the channel's [Channel.lastMessageAt] + 1 millisecond and the
      * estimated server time. Using estimated server time (instead of raw local clock) prevents
      * cross-user ordering issues when the device clock is skewed.
      */
     private suspend fun Message.ensureCreatedLocallyAt(cid: String): Message {
+        // A resend of a message that was never sent is sent now, and the server dates it on arrival
+        val currentCreatedLocallyAt = createdLocallyAt
+            .takeUnless { syncStatus == SyncStatus.FAILED_PERMANENTLY && createdAt == null }
         val parentId = this.parentId
         if (parentId != null) {
             // Thread reply
@@ -3071,7 +3096,7 @@ internal constructor(
                 Date(it.time + 1)
             }
             val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
-            return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
+            return copy(createdLocallyAt = currentCreatedLocallyAt ?: createdLocallyAt)
         } else {
             // Regular message
             val (type, id) = cid.cidToTypeAndId()
@@ -3083,7 +3108,7 @@ internal constructor(
                 Date(it.time + 1)
             }
             val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, serverClockOffset.estimatedServerTime())
-            return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
+            return copy(createdLocallyAt = currentCreatedLocallyAt ?: createdLocallyAt)
         }
     }
 
@@ -5306,7 +5331,9 @@ internal constructor(
         messageId: String,
         options: GetThreadOptions = GetThreadOptions(),
     ): Call<Thread> {
-        return api.getThread(messageId, options)
+        return api.getThread(messageId, options).doOnResult(userScope) { result ->
+            result.onSuccessSuspend { threadResponseHandler?.onThreadFetched(it) }
+        }
     }
 
     /**
@@ -5328,7 +5355,9 @@ internal constructor(
             messageId = messageId,
             set = set,
             unset = unset,
-        )
+        ).doOnResult(userScope) { result ->
+            result.onSuccessSuspend { threadResponseHandler?.onThreadPartiallyUpdated(it) }
+        }
     }
 
     /**
@@ -5570,7 +5599,7 @@ internal constructor(
      * not on the server yet is only deleted locally, and deleted on the server too if its scheduling is in flight. If
      * the server can't delete it, the message comes back in [scheduledMessages] with a [ScheduledMessage.failure], and
      * [resendScheduledMessage] or another delete deletes it again. When the server had already sent it, or it was
-     * deleted on another device, it is only removed.
+     * already deleted, it is only removed.
      *
      * @param id The ID of the scheduled message.
      *
@@ -5993,6 +6022,7 @@ internal constructor(
                 notificationConfig = notificationConfig,
                 fastEventParsing = chatClientConfig.fastEventParsing,
                 isEventProtocolV3Enabled = chatClientConfig.isEventProtocolV3Enabled,
+                offlineEnabled = chatClientConfig.offlineEnabled,
             )
             setupStreamLog()
 
@@ -6101,6 +6131,7 @@ internal constructor(
                     networkType = uploadAttachmentsNetworkType,
                     clientState = clientState,
                     scope = clientScope,
+                    isChannelBeingCreated = { cid -> logicRegistry.isChannelBeingCreated(cid, repositoryFacade) },
                 )
             }
         }
@@ -6185,8 +6216,9 @@ internal constructor(
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.Default
 
         /**
-         * Flag used to track whether offline support is enabled.
+         * Flag used to track whether offline support is enabled. No longer read or written by the SDK.
          */
+        @Deprecated("Use ChatClientConfig.offlineEnabled instead. This flag will be removed in v8.")
         @InternalStreamChatApi
         @JvmStatic
         public var OFFLINE_SUPPORT_ENABLED: Boolean = false

@@ -19,13 +19,11 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.createChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createChannelHiddenEventStringJson
-import io.getstream.chat.android.client.createChannelHiddenSyncReplayEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedServerSideEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedByUserEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedEventStringJson
 import io.getstream.chat.android.client.createChannelVisibleEventStringJson
-import io.getstream.chat.android.client.createChannelVisibleSyncReplayEventStringJson
 import io.getstream.chat.android.client.createNotificationRemovedFromChannelEventStringJson
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -111,9 +109,7 @@ internal class GeneratedChannelEventParsingTest {
                 NotificationRemovedFromChannelEvent::class,
             ),
             Arguments.of(createChannelHiddenEventStringJson(), ChannelHiddenEvent::class),
-            Arguments.of(createChannelHiddenSyncReplayEventStringJson(), ChannelHiddenEvent::class),
             Arguments.of(createChannelVisibleEventStringJson(), ChannelVisibleEvent::class),
-            Arguments.of(createChannelVisibleSyncReplayEventStringJson(), ChannelVisibleEvent::class),
         )
 
         @JvmStatic
@@ -127,6 +123,8 @@ internal class GeneratedChannelEventParsingTest {
             Arguments.of(createNotificationRemovedFromChannelEventStringJson(), "member") +
             listOf(createChannelHiddenEventStringJson(), createChannelVisibleEventStringJson())
                 .flatMap { json -> listOf("cid", "user").map { Arguments.of(json, it) } } +
-            Arguments.of(createChannelHiddenEventStringJson(), "channel")
+            Arguments.of(createChannelHiddenEventStringJson(), "channel") +
+            Arguments.of(createChannelHiddenEventStringJson(), "clear_history") +
+            Arguments.of(createChannelVisibleEventStringJson(), "channel")
     }
 }

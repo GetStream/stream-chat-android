@@ -674,8 +674,7 @@ internal class DomainMapping(
             moderation = moderation?.toDomain(),
             messageTextUpdatedAt = messageTextUpdatedAt,
             poll = poll?.toDomain(),
-            // Not read downstream yet, as on every other message path; it stays in extraData.
-            restrictedVisibility = emptyList(),
+            restrictedVisibility = restrictedVisibility,
             reminder = reminder?.toReminderInfoDomain(),
             sharedLocation = sharedLocation?.toDomain(),
             channelRole = member?.channelRole,
@@ -1086,7 +1085,7 @@ internal class DomainMapping(
 
     internal fun ChannelMemberResponse.toDomain(): Member =
         Member(
-            user = user?.toDomain() ?: User(id = userId.orEmpty()),
+            user = user?.toDomain() ?: User(id = userId),
             createdAt = createdAt,
             updatedAt = updatedAt,
             isInvited = invited,

@@ -38,15 +38,10 @@ import io.getstream.chat.android.client.api.internal.DistinctChatApi
 import io.getstream.chat.android.client.api.internal.DistinctChatApiEnabler
 import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.MoshiChatApi
-import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
-import io.getstream.chat.android.client.api2.endpoint.GeneralApi
-import io.getstream.chat.android.client.api2.endpoint.MessageApi
-import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.SyncApi
-import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.cdn.CDN
@@ -66,7 +61,6 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.DirectEventParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.parser2.V2EventParser
-import io.getstream.chat.android.client.parser2.withErrorLogging
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -88,7 +82,6 @@ import io.getstream.log.StreamLog
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
 import java.util.concurrent.TimeUnit
 
@@ -141,7 +134,7 @@ constructor(
     private val serverClockOffset: ServerClockOffset,
 ) {
 
-    private val headersUtil = HeadersUtil(appContext, appName, appVersion)
+    private val headersUtil = HeadersUtil(appContext, appName, appVersion, config.offlineEnabled)
 
     private val domainMapping by lazy {
         DomainMapping(
@@ -352,13 +345,9 @@ constructor(
             dtoMapping = dtoMapping,
             fileUploader = fileUploader ?: defaultFileUploader,
             fileTransformer = fileTransformer,
-            userApi = buildV2RetrofitApi<UserApi>(),
-            messageApi = buildV2RetrofitApi<MessageApi>(),
             channelApi = buildV2RetrofitApi<ChannelApi>(),
             v2EventParser = v2EventParser,
-            moderationApi = buildV2RetrofitApi<ModerationApi>(),
             moderationV1Api = buildRetrofitApi<ModerationV1Api>(),
-            generalApi = buildV2RetrofitApi<GeneralApi>(),
             syncApi = buildV2RetrofitApi<SyncApi>(),
             fileDownloadApi = buildFileDownloadApi(),
             // Generated, so it carries neither @AuthenticatedApi nor @AnonymousApi.
@@ -406,11 +395,7 @@ constructor(
             config,
             moshiParser,
             isAnonymousApi,
-        ) { builder ->
-            builder
-                .addConverterFactory(MoshiUrlQueryPayloadFactory(Serializer.moshi))
-                .addConverterFactory(MoshiConverterFactory.create(Serializer.moshi).withErrorLogging())
-        }.create(apiClass)
+        ) { builder -> builder.addV2Converters() }.create(apiClass)
     }
 
     /**

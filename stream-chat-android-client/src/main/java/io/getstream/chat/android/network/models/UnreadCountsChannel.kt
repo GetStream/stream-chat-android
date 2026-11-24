@@ -33,11 +33,8 @@ internal data class UnreadCountsChannel(
     @Json(name = "channel_id")
     internal val channelId: String,
 
-    // Patched: the spec marks `has_unread` required, but backends before v239.87.2 (CHA-2943, chat#18844) leave it
-    // out, and a parse failure fails the whole /unread response. On regen, make it required again only once every
-    // region runs v239.87.2 or later.
     @Json(name = "has_unread")
-    internal val hasUnread: Boolean? = null,
+    internal val hasUnread: Boolean,
 
     @Json(name = "last_read")
     internal val lastRead: java.util.Date,

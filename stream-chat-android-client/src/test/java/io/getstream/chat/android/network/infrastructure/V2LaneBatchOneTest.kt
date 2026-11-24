@@ -152,7 +152,9 @@ internal class V2LaneBatchOneTest {
             "file_upload_config":{"allowed_file_extensions":[],"blocked_file_extensions":[".json"],
             "allowed_mime_types":[],"blocked_mime_types":[],"size_limit":0},
             "image_upload_config":{"allowed_file_extensions":[],"blocked_file_extensions":[],"allowed_mime_types":[],
-            "blocked_mime_types":[],"size_limit":0},"video_provider":""},"duration":"1.03ms"}"""
+            "blocked_mime_types":[],"size_limit":0},"video_provider":"",
+            "defaults":{"get_or_create_channel":{"members":{"limit":100},"messages":{"limit":25}},
+            "query_channels":{"limit":10,"max_limit":30,"member_limit":100,"message_limit":25}}},"duration":"1.03ms"}"""
 
         private const val ROLES = """{"duration":"2.31ms","roles":[{"name":"admin","custom":false,
             "scopes":[".app","messaging"],"created_at":1624960800000000000,"updated_at":1624960800000000000}]}"""

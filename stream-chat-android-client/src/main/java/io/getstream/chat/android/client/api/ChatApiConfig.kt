@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
  * path cannot read, go through the generated-model parser. Currently supported event types: `message.new`. Disabled by
  * default.
  * @param isEventProtocolV3Enabled Connects with WebSocket event protocol v3. Disabled by default.
+ * @param offlineEnabled Whether offline support is enabled, reported in the SDK tracking header.
  */
 @Suppress("LongParameterList")
 internal class ChatApiConfig @JvmOverloads constructor(
@@ -53,6 +54,7 @@ internal class ChatApiConfig @JvmOverloads constructor(
     val notificationConfig: NotificationConfig,
     val fastEventParsing: Boolean = false,
     val isEventProtocolV3Enabled: Boolean = false,
+    val offlineEnabled: Boolean = true,
 ) {
     var isAnonymous: Boolean = false
 }

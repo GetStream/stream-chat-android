@@ -107,9 +107,11 @@ import io.getstream.chat.android.client.extensions.internal.updateMembership
 import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.client.extensions.internal.updateParentOrReply
 import io.getstream.chat.android.client.extensions.internal.updateReads
+import io.getstream.chat.android.client.extensions.internal.withReadsAfterTruncationAt
 import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.SocketEventCollector
+import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.isConnectionEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.realType
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
@@ -272,7 +274,9 @@ internal class EventHandlerSequential(
             val collectSocketEvent: suspend (ChatEvent) -> Unit = { event ->
                 collectedCount.incrementAndGet()
                 initJob.join()
-                sideEffect()
+                // Connection events are not held: a sync changes nothing they carry, and one that waited would also
+                // hold the connected event behind it, which has the unread counts of the current user.
+                if (!event.isConnectionEvent()) sideEffect()
                 socketEventCollector.collect(event)
             }
             scope.launch { socketEvents.collect(collectSocketEvent) }
@@ -794,6 +798,7 @@ internal class EventHandlerSequential(
                         val enrichedChannel = channel
                             .addMember(event.member)
                             .addMembership(currentUserId, event.member)
+                            .withMemberCount(event.channelMemberCount)
                         batch.addChannel(enrichedChannel)
                     }
                 }
@@ -813,7 +818,8 @@ internal class EventHandlerSequential(
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
                             channel.removeMember(event.user.id)
-                                .removeMembership(currentUserId),
+                                .removeMembership(currentUserId)
+                                .withMemberCount(event.channelMemberCount),
                         )
                     }
                 }
@@ -853,7 +859,7 @@ internal class EventHandlerSequential(
                 is ChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
                         ?.mergeSharedEventChannel(event.channel) ?: event.channel
-                    batch.addChannel(channel)
+                    batch.addChannel(channel.withReadsAfterTruncationAt(event.truncatedBefore))
                 }
                 is NotificationChannelDeletedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
@@ -863,7 +869,7 @@ internal class EventHandlerSequential(
                 is NotificationChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
                         ?.mergeSharedEventChannel(event.channel) ?: event.channel
-                    batch.addChannel(channel)
+                    batch.addChannel(channel.withReadsAfterTruncationAt(event.truncatedBefore))
                 }
 
                 // get the channel, update reads, write the channel
@@ -1150,6 +1156,9 @@ internal class EventHandlerSequential(
             this.addMessage(message.copy(reminder = null))
         }
     }
+
+    private fun Channel.withMemberCount(count: Int?): Channel =
+        if (count != null) copy(memberCount = count) else this
 
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {

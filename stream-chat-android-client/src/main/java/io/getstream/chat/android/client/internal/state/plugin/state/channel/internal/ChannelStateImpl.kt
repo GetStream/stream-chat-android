@@ -27,7 +27,9 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.afterTruncationAt
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
+import io.getstream.chat.android.client.extensions.internal.remainingMessageIdsAfterTruncationAt
 import io.getstream.chat.android.client.extensions.internal.survivesTruncationAt
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
@@ -67,6 +69,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -547,27 +550,43 @@ internal class ChannelStateImpl(
      * @param date The cutoff date; messages created before this date will be removed.
      */
     fun removeMessagesBefore(date: Date) {
-        retainMessages(systemMessage = null) { it.wasCreatedAfter(date) }
+        retainMessages { it.wasCreatedAfter(date) }
     }
 
     /**
-     * Removes the messages a truncation at [truncatedAt] removed on the server.
+     * Removes the messages a truncation at [truncatedAt] removed on the server and recalculates the reads as the
+     * server does.
      *
      * @param truncatedAt The channel's truncation date.
      * @param systemMessage The truncation's system message, upserted after removal.
      */
     fun removeTruncatedMessages(truncatedAt: Date, systemMessage: Message?) {
-        retainMessages(systemMessage) { it.survivesTruncationAt(truncatedAt) }
+        val showsLatest = !_insideSearch.value && endOfNewerMessages.value
+        val remainingMessageIds = remainingMessageIdsAfterTruncationAt(
+            truncatedAt = truncatedAt,
+            latestPage = if (showsLatest) _messages.value else _cachedLatestMessages.value,
+            startsAtOldest = showsLatest && endOfOlderMessages.value,
+        )
+        retainMessages { it.survivesTruncationAt(truncatedAt) }
+        _reads.update { current ->
+            current.mapValues { (_, read) -> read.afterTruncationAt(truncatedAt, remainingMessageIds) }
+        }
+        logger.d { "[removeTruncatedMessages] cid: $cid; unreadMessages: ${read.value?.unreadMessages}" }
+        systemMessage?.let { message ->
+            // The server counts the system message after recalculating the reads, and its message.new is skipped
+            // once the message is in the state, so it is counted here
+            updateCurrentUserRead(message.createdAt ?: truncatedAt, message)
+            upsertMessage(message)
+        }
     }
 
-    private fun retainMessages(systemMessage: Message?, keep: (Message) -> Boolean) {
+    private fun retainMessages(keep: (Message) -> Boolean) {
         _messages.update { current ->
             if (current.all(keep)) current else current.filter(keep)
         }
         moveOldestFetchedMessageIf { !keep(it) }
         _cachedLatestMessages.update { current -> current.filter(keep) }
         _pinnedMessages.update { current -> current.filter(keep) }
-        systemMessage?.let(::upsertMessage)
     }
 
     /**
@@ -859,12 +878,15 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Sets the member count.
+     * Sets the member count, also on the channel data so that [toChannel] reports the same value.
      *
      * @param count The total count of members.
      */
-    fun setMemberCount(count: Int) {
-        _memberCount.value = count
+    fun setMemberCount(count: Int) = updateMemberCount { count }
+
+    private fun updateMemberCount(transform: (current: Int) -> Int) {
+        val count = _memberCount.updateAndGet(transform)
+        _channelData.update { current -> current?.copy(memberCount = count) }
     }
 
     /**
@@ -879,48 +901,52 @@ internal class ChannelStateImpl(
     /**
      * Adds a [Member] to the channel from the given [MemberAddedEvent].
      *
-     * **Important:** Increments [membersCount] if the member wasn't already a member.
+     * **Important:** Sets [membersCount] from the event when it carries the count. Otherwise increments it if the
+     * member wasn't already a member.
      *
      * @param event The [MemberAddedEvent] informing the channel of the new member.
      */
-    fun addMember(event: MemberAddedEvent) = addMember(event.member)
+    fun addMember(event: MemberAddedEvent) = addMember(event.member, event.channelMemberCount)
 
     /**
      * Adds the [member] to the channel.
      *
-     * **Important:** Increments [membersCount] if the member wasn't already a member.
+     * **Important:** Sets [membersCount] to [memberCount] when given. Otherwise increments it if the member wasn't
+     * already a member.
      *
      * @param member The member added to the channel.
+     * @param memberCount The number of members in the channel after the addition, if known.
      */
-    fun addMember(member: Member) {
+    fun addMember(member: Member, memberCount: Int? = null) {
         val isAlreadyMember = _members.value.any { it.getUserId() == member.getUserId() }
         if (!isAlreadyMember) {
             _members.update { current -> current + member }
-            _memberCount.update { current -> current + 1 }
         }
+        updateMemberCount { current -> memberCount ?: if (isAlreadyMember) current else current + 1 }
     }
 
     /**
      * Removes a [Member] from the channel according the given [MemberRemovedEvent].
      * Removes the member from the list if present (list may be partial - not all members loaded).
      *
-     * **Important:** Always decrements [membersCount] because the event is authoritative: someone left the channel.
+     * **Important:** Sets [membersCount] from the event when it carries the count. Otherwise always decrements it,
+     * because the member may not be in the partial list.
      *
      * @param event The [MemberRemovedEvent] informing the channel about the member removal.
      */
     fun removeMember(event: MemberRemovedEvent) =
-        deleteMemberAndDecrementMemberCount(event.member.getUserId())
+        deleteMember(event.member.getUserId(), event.channelMemberCount)
 
     /**
      * Removes a [Member] from the channel according the given [NotificationInviteRejectedEvent]. Happens when the user
      * has a pending invite (considered a member), but the invite is rejected.
      * Removes the member from the list if present (list may be partial - not all members loaded).
-     * Always decrements [membersCount] because the event is authoritative: someone left the channel.
+     * Updates [membersCount] the same way as for a [MemberRemovedEvent].
      *
      * @param event The [NotificationInviteRejectedEvent] informing the channel about the rejected invite.
      */
     fun removeMember(event: NotificationInviteRejectedEvent) =
-        deleteMemberAndDecrementMemberCount(event.member.getUserId())
+        deleteMember(event.member.getUserId(), event.channelMemberCount)
 
     /**
      * Upserts a single member into the current state.
@@ -1821,11 +1847,11 @@ internal class ChannelStateImpl(
         )
     }
 
-    private fun deleteMemberAndDecrementMemberCount(memberId: String) {
+    private fun deleteMember(memberId: String, memberCount: Int?) {
         _members.update { current ->
             current.filter { it.getUserId() != memberId }
         }
-        _memberCount.update { max(0, it - 1) }
+        updateMemberCount { current -> memberCount ?: max(0, current - 1) }
     }
 
     /**

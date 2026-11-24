@@ -40,9 +40,10 @@ public interface DeleteMessageListener {
     /**
      * Method called when a request to delete a message in the API happens
      *
-     * @param messageId
+     * @param messageId The message id to be deleted.
+     * @param hard True if the message is hard deleted.
      */
-    public suspend fun onMessageDeleteRequest(messageId: String)
+    public suspend fun onMessageDeleteRequest(messageId: String, hard: Boolean)
 
     /**
      * Method called when a request for message deletion return. Use it to update database, update messages or to

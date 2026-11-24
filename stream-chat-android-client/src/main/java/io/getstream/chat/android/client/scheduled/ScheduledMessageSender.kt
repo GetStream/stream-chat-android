@@ -107,7 +107,8 @@ internal class ScheduledMessageSender(
     /**
      * Deletes [message] on the server, unless it is not there yet, then removes it. When the server can't delete it,
      * the message shows again with the failure, and a resend deletes it again. When the server answers that it had
-     * already sent the message, [onDeletedAlreadySent] is called once it is removed.
+     * already sent the message, or that it was deleted, it is only removed, and [onDeletedAlreadySent] is called for an
+     * already sent message.
      */
     private suspend fun delete(message: LocalScheduledMessage): Boolean {
         val error = if (message.mayBeOnServer) {

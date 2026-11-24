@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.client.parser2
 
+import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.parser2.testdata.withoutKey
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -28,6 +30,7 @@ import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.Date
 
 internal class UnreadCountsParsingTest {
@@ -47,7 +50,12 @@ internal class UnreadCountsParsingTest {
           "total_unread_threads_count": 3,
           "total_unread_count_by_team": { "team-1": 4 },
           "channels": [
-            { "channel_id": "messaging:c1", "unread_count": 2, "last_read": "1970-01-01T00:00:01.000Z" }
+            {
+              "channel_id": "messaging:c1",
+              "unread_count": 2,
+              "last_read": "1970-01-01T00:00:01.000Z",
+              "has_unread": true
+            }
           ],
           "threads": [
             {
@@ -90,5 +98,10 @@ internal class UnreadCountsParsingTest {
             listOf(UnreadChannelByType(channelType = "messaging", channelsCount = 5, messagesCount = 6)),
             unreadCounts.channelsByType,
         )
+    }
+
+    @Test
+    fun `an unread channel without has_unread is rejected`() {
+        assertThrows<JsonDataException> { parse<WrappedUnreadCountsResponse>(json.withoutKey("has_unread")) }
     }
 }
