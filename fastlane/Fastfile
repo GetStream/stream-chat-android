@@ -80,8 +80,36 @@ lane :build_and_run_e2e_test do |options|
   )
 end
 
+desc 'Decides whether the e2e tests run and fetches the coverage map, on a runner the org IP allow list admits'
+lane :e2e_scope do
+  required = is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
+  map = if required
+          Helper::TestCoverageMapHelper.download_map(
+            github_repository: github_repo,
+            coverage_map_artifact: e2e_coverage_map_artifact,
+            coverage_map_branch: 'develop'
+          )
+        end
+  if map
+    FileUtils.mkdir_p(File.dirname(e2e_coverage_map_path))
+    FileUtils.cp(map, e2e_coverage_map_path)
+  end
+  File.write(ENV['GITHUB_OUTPUT'], "required=#{required}\ncoverage_map=#{!map.nil?}\n", mode: 'a') if ENV['GITHUB_OUTPUT']
+end
+
+# The e2e_scope job's decision, so the jobs on runners that can't reach the GitHub API don't ask it again.
+private_lane :e2e_scope_decided do
+  !ENV['E2E_REQUIRED'].to_s.empty?
+end
+
+private_lane :e2e_required do
+  next ENV['E2E_REQUIRED'] == 'true' if e2e_scope_decided
+
+  is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
+end
+
 lane :build_e2e_test do |options|
-  next unless is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
+  next unless e2e_required
 
   gradle(
     tasks: [":#{test_flavor}:assembleE2eDebugAndroidTest", ":#{test_flavor}:assembleE2eDebug"],
@@ -102,7 +130,7 @@ lane :select_e2e_tests do |options|
     run_all_reason = 'not a pull request'
   end
   # build_e2e_test skips the build under the same condition, so there is no test apk to read then.
-  required = run_all_reason || is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
+  required = run_all_reason || e2e_required
   all_tests = required ? all_e2e_tests(test_apk_path: "../#{test_flavor}/build/outputs/apk/androidTest/e2e/debug/#{test_flavor}-e2e-debug-androidTest.apk") : []
   # The coverage map names tests Class/test, the instrumentation runs package.Class#test.
   tests_by_id = all_tests.to_h { |test| [test.split('.').last.sub('#', '/'), test] }
@@ -116,8 +144,9 @@ lane :select_e2e_tests do |options|
     modules = e2e_modules
     selection = select_impacted_tests(
       all_tests: tests_by_id.keys,
-      coverage_map: options[:coverage_map],
-      coverage_map_artifact: e2e_coverage_map_artifact,
+      coverage_map: options[:coverage_map] || e2e_coverage_map_path,
+      # The e2e_scope job already fetched the map, and this runner can't reach the GitHub API.
+      coverage_map_artifact: e2e_scope_decided ? nil : e2e_coverage_map_artifact,
       diff_base: diff_base,
       changed_files: options[:changed_files]&.split(','),
       source_paths: modules.map { |name| "#{name}/src/main" } + ["#{test_flavor}/src/e2e"],
@@ -151,7 +180,7 @@ lane :select_e2e_tests do |options|
 end
 
 lane :run_e2e_test do |options|
-  next unless is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
+  next unless e2e_required
 
   allure_results_path = 'allure-results'
   adb_test_results_path = '/sdcard/googletest/test_outputfiles'

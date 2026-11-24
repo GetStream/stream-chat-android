@@ -13,7 +13,9 @@ jobs:
       contents: read
       issues: write
       pull-requests: read
-    runs-on: ubuntu-22.04
+    # Calls the GitHub API, and the org IP allow list only admits static-IP runners.
+    runs-on:
+      group: github-public-ubuntu-static
     steps:
       - uses: lee-dohm/no-response@v0.5.0
         with:

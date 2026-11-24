@@ -19,8 +19,7 @@ jobs:
   run_snapshot_tests:
     permissions:
       actions: write
-      contents: write
-      pull-requests: write
+      contents: read
     name: Run
     runs-on: ubuntu-24.04
     steps:
@@ -48,6 +47,39 @@ jobs:
           name: report
           path: ./**/build/reports/*
 
+      - name: Save the recorded snapshots
+        if: ${{ github.event.inputs.record == 'true' }}
+        run: |
+          git add --intent-to-add --all
+          git diff --binary > snapshots.patch
+      - uses: actions/upload-artifact@v7.0.2
+        if: ${{ github.event.inputs.record == 'true' }}
+        with:
+          name: snapshots-patch
+          path: snapshots.patch
+          retention-days: 1
+
+  # Calls the GitHub API, and the org IP allow list only admits static-IP runners.
+  # A job of its own so the emulator run stays off that runner.
+  open_pull_request:
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Open the snapshots pull request
+    needs: run_snapshot_tests
+    if: ${{ github.event.inputs.record == 'true' }}
+    runs-on:
+      group: github-public-ubuntu-static
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          name: snapshots-patch
+          path: ${{ runner.temp }}
+      - name: Apply the recorded snapshots
+        run: |
+          if [ -s "$RUNNER_TEMP/snapshots.patch" ]; then git apply "$RUNNER_TEMP/snapshots.patch"; fi
       - name: Create Pull Request
         if: ${{ github.event.inputs.record == 'true' }}
         uses: peter-evans/create-pull-request@v8

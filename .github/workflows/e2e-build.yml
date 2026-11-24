@@ -16,6 +16,16 @@ on:
         required: false
         type: boolean
         default: false
+      e2e_required:
+        description: "The e2e-scope job's decision, 'true' or 'false'. Empty makes the lanes ask the GitHub API, which only works on a run without a pull request"
+        required: false
+        type: string
+        default: ''
+      coverage_map:
+        description: 'Whether the e2e-scope job uploaded the coverage map that selects the tests'
+        required: false
+        type: boolean
+        default: false
     outputs:
       e2e_batches:
         description: 'JSON array of the batch indices the selected e2e tests need, empty when none'
@@ -26,6 +36,7 @@ env:
   GRADLE_LOCAL_BUILD_CACHE: 'true'
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+  E2E_REQUIRED: ${{ inputs.e2e_required }}
 
 jobs:
   build:
@@ -67,6 +78,12 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
+      - name: Download the coverage map
+        if: ${{ inputs.coverage_map && !inputs.coverage && !inputs.cache_only }}
+        uses: actions/download-artifact@v8.0.2
+        with:
+          name: e2e-coverage-map-input
+          path: fastlane/test_output
       - name: Select E2E Tests
         id: select_e2e_tests
         if: ${{ !inputs.coverage && !inputs.cache_only }}
