@@ -3,22 +3,24 @@ name: Pull request CI checks
 on:
   pull_request:
   merge_group:
+  # Pushes to develop save the Gradle caches that pull requests and the merge queue restore.
+  push:
+    branches:
+      - develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Develop runs finish so they save the Gradle caches; a newer push only replaces a queued one.
+  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 jobs:
   base-android-ci:
     permissions:
       contents: read
       pull-requests: read
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@75cf8105224a5fb02ad06fb4cc52b1a45a71d440 # v1.3.1
-    secrets:
-      BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
-      BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
-      BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
-      BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
+    with:
+      save-gradle-cache: true
   detekt:
     permissions:
       contents: read
@@ -27,14 +29,23 @@ jobs:
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@75cf8105224a5fb02ad06fb4cc52b1a45a71d440 # v1.3.1
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
+        with:
+          cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/develop' }}
       - name: Detekt
         run: ./gradlew detekt
+  remove-older-gradle-caches:
+    needs: [ base-android-ci, detekt ]
+    if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+    permissions:
+      actions: write
+    uses: GetStream/stream-build-conventions-android/.github/workflows/gradle-cache-cleanup.yml@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
   rubocop:
     permissions:
       contents: read
       pull-requests: read
     name: Rubocop
+    if: github.event_name != 'push'
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
