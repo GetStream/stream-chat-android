@@ -847,6 +847,8 @@ internal class ChannelStateLogic(
             messageLimit = request.messagesLimit(),
             isWatchChannel = request.isWatchChannel,
         )
+        // Last, so whoever observes it already sees the reads and messages of this response.
+        mutableState.setLoadedFromServer(true)
     }
 
     private fun determinePaginationEnd(request: QueryChannelRequest, noMoreMessages: Boolean) {

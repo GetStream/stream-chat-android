@@ -168,6 +168,8 @@ internal class ChannelLogicImpl(
                     state.setRecoveryNeeded(false)
                 }
                 state.endFirstPageLoad()
+                // Last, so whoever observes it already sees the reads and messages of this response.
+                state.setLoadedFromServer(true)
             }
 
             is Result.Failure -> {

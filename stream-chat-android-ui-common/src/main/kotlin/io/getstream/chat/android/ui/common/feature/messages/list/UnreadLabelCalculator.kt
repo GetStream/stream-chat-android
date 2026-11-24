@@ -106,6 +106,12 @@ internal class UnreadLabelCalculator {
         currentUserId: String?,
         shouldShowButton: Boolean,
     ): MessageListController.UnreadLabel? {
+        // The server counts only other users' messages as unread, so with a count of zero there is
+        // nothing to point at, even when the read state lags behind the newest message.
+        if (channelUserRead.unreadMessages == 0) {
+            return null
+        }
+
         // Step 1: Calculate the list of unread messages by folding through all messages
         // and accumulating messages that appear after the lastReadMessageId
         val unreadMessages = messages
@@ -237,11 +243,6 @@ internal class UnreadLabelCalculator {
         currentUserId: String?,
         shouldShowButton: Boolean,
     ): MessageListController.UnreadLabel? {
-        // If there are no unread messages at all, return null
-        if (channelUserRead.unreadMessages == 0) {
-            return null
-        }
-
         // Find the index of the first message from another user (not the current user)
         val firstOtherMessageIndex = unreadMessages.indexOfFirst { it.user.id != currentUserId }
 

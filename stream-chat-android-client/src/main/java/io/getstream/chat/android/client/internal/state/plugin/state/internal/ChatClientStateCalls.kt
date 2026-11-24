@@ -154,9 +154,18 @@ internal class ChatClientStateCalls(
         val state = deferredState
             .await()
             .channel(channelType, channelId)
+        // Reset before returning the state, so its observers never take data from an earlier load as current. Only
+        // for watches that load messages: a header or info screen watching the open channel must not reset it.
+        val resetLoadedFromServer = request.messagesLimit() > 0
         when (state) {
-            is ChannelStateImpl -> state.setLoadingIfEmpty()
-            is ChannelStateLegacyImpl -> state.setLoadingIfEmpty()
+            is ChannelStateImpl -> {
+                state.setLoadingIfEmpty()
+                if (resetLoadedFromServer) state.setLoadedFromServer(false)
+            }
+            is ChannelStateLegacyImpl -> {
+                state.setLoadingIfEmpty()
+                if (resetLoadedFromServer) state.setLoadedFromServer(false)
+            }
         }
         scope.launch {
             // A plugin failing the precondition skips the result listeners, so end the first load here as well.

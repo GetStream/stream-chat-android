@@ -416,6 +416,7 @@ internal class MessageListViewModelTest {
                 whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, emptyList()))
                 whenever(it.reads) doReturn MutableStateFlow(listOf())
                 whenever(it.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))
+                whenever(it.loadedFromServer) doReturn MutableStateFlow(true)
                 whenever(it.insideSearch) doReturn MutableStateFlow(false)
                 whenever(it.endOfOlderMessages) doReturn MutableStateFlow(false)
                 whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
