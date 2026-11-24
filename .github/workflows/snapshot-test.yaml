@@ -24,9 +24,6 @@ jobs:
         uses: actions/checkout@v4.2.2
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
-        with:
-          cache-name: gradle-test
 
       - name: Snapshot tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -47,6 +44,36 @@ jobs:
           name: report
           path: ./**/build/reports/*
 
+      - name: Save the recorded snapshots
+        if: ${{ github.event.inputs.record == 'true' }}
+        run: |
+          git add --intent-to-add --all
+          git diff --binary > snapshots.patch
+      - uses: actions/upload-artifact@v4.4.3
+        if: ${{ github.event.inputs.record == 'true' }}
+        with:
+          name: snapshots-patch
+          path: snapshots.patch
+          retention-days: 1
+
+  # Calls the GitHub API, and the org IP allow list only admits static-IP runners.
+  # A job of its own so the emulator run stays off that runner.
+  open_pull_request:
+    name: Open the snapshots pull request
+    needs: run_snapshot_tests
+    if: ${{ github.event.inputs.record == 'true' }}
+    runs-on:
+      group: github-public-ubuntu-static
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4.2.2
+      - uses: actions/download-artifact@v4.1.8
+        with:
+          name: snapshots-patch
+          path: ${{ runner.temp }}
+      - name: Apply the recorded snapshots
+        run: |
+          if [ -s "$RUNNER_TEMP/snapshots.patch" ]; then git apply "$RUNNER_TEMP/snapshots.patch"; fi
       - name: Create Pull Request
         if: ${{ github.event.inputs.record == 'true' }}
         uses: peter-evans/create-pull-request@v6
