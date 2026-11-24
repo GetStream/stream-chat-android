@@ -8,7 +8,7 @@ concurrency:
 
 jobs:
   base-android-ci:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@1503abed19b697a6731804f2fd3ce43609922338 # v1.3.0 + #110, unreleased
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@75cf8105224a5fb02ad06fb4cc52b1a45a71d440 # v1.3.1
     # No SONAR_TOKEN: SonarCloud can't read pull requests from GitHub, so the shared workflow skips Sonar.
     secrets:
       BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
@@ -21,7 +21,7 @@ jobs:
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@1503abed19b697a6731804f2fd3ce43609922338 # v1.3.0 + #110, unreleased
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@75cf8105224a5fb02ad06fb4cc52b1a45a71d440 # v1.3.1
       - name: Detekt
         run: ./gradlew detekt
 
