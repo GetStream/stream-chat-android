@@ -1348,8 +1348,9 @@ public data class MessageComposerSendButtonParams(
 /**
  * Parameters for [ChatComponentFactory.ScheduleMessageSheet].
  *
- * @param dates The quick dates to schedule the message at, in the user's time zone. A date further than
- * [ScheduleMessageState.maxLeadTimeSeconds] from now is not one of them, so there can be fewer than usual, or none.
+ * @param dates The quick dates to schedule the message at, in the user's time zone. A date nearer than
+ * [ScheduleMessageState.minLeadTimeSeconds] or further than [ScheduleMessageState.maxLeadTimeSeconds] from now is not
+ * one of them, so there can be fewer than usual, or none.
  * @param state What the composer knows to schedule the message. When [ScheduleMessageState.isChannelLimitReached],
  * the options are disabled and the title says why.
  * @param onDateClick Called with the quick date the user picked.

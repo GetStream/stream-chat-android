@@ -244,22 +244,22 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
-    fun `without the capability to schedule, a message can't be edited, rescheduled or sent now`() = runTest {
+    fun `without the capability to schedule, a message can only have its text copied or be deleted`() = runTest {
         val pending = scheduled()
         val rejected = failed(ServerRejectedScheduling(ServerRejectedScheduling.Reason.ScheduledLimitChannel, ""))
         val failed = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.ChannelFrozen))
         val channelDeleted = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.ChannelDeleted))
         val sending = scheduled(status = ScheduledMessageStatus.Sending)
 
-        pending.actionsWithoutScheduling() shouldBeEqualTo listOf(Delete)
-        rejected.actionsWithoutScheduling() shouldBeEqualTo listOf(Delete)
-        failed.actionsWithoutScheduling() shouldBeEqualTo listOf(Delete)
+        pending.actionsWithoutScheduling() shouldBeEqualTo listOf(CopyText, Delete)
+        rejected.actionsWithoutScheduling() shouldBeEqualTo listOf(CopyText, Delete)
+        failed.actionsWithoutScheduling() shouldBeEqualTo listOf(CopyText, Delete)
         channelDeleted.actionsWithoutScheduling() shouldBeEqualTo listOf(CopyText, Delete)
         sending.actionsWithoutScheduling().shouldBeEmpty()
     }
 
     @Test
-    fun `a message in a saved channel where the user can no longer schedule can only be deleted`() = runTest {
+    fun `a message in a saved channel where the user can no longer schedule can only be copied or deleted`() = runTest {
         val frozen = randomChannel(ownCapabilities = capabilities(canSchedule = false))
         val open = randomChannel(ownCapabilities = capabilities(canSchedule = true))
         givenSavedChannels(frozen, open)
@@ -270,7 +270,10 @@ internal class ScheduledMessageListControllerTest {
 
         val items = controller().state.value.items
 
-        items.map { it.actions } shouldBeEqualTo listOf(listOf(Delete), listOf(Edit, Reschedule, SendNow, Delete))
+        items.map { it.actions } shouldBeEqualTo listOf(
+            listOf(CopyText, Delete),
+            listOf(Edit, Reschedule, SendNow, Delete),
+        )
     }
 
     @Test
@@ -296,7 +299,7 @@ internal class ScheduledMessageListControllerTest {
         givenSavedChannels(channel.copy(ownCapabilities = channel.ownCapabilities - SCHEDULE_MESSAGE))
         scheduledMessages.value = listOf(message.copy(scheduledAt = randomDate()))
 
-        controller.state.value.items.single().actions shouldBeEqualTo listOf(Delete)
+        controller.state.value.items.single().actions shouldBeEqualTo listOf(CopyText, Delete)
     }
 
     @Test

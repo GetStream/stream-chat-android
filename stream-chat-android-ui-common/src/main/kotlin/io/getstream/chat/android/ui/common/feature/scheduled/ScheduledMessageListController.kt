@@ -473,7 +473,7 @@ internal fun ScheduledMessage.isInScope(cid: String?, parentMessageId: String?):
  *
  * @param isQuoteDeleted Whether the message quotes a deleted message, so it can only be edited or deleted.
  * @param canSchedule Whether the current user can schedule messages in the channel. Without it, the message can't be
- * edited, rescheduled or sent now.
+ * edited, rescheduled or sent now, and its text can be copied before it is deleted.
  */
 internal fun ScheduledMessage.scheduledMessageActions(
     isQuoteDeleted: Boolean,
@@ -488,7 +488,11 @@ internal fun ScheduledMessage.scheduledMessageActions(
         else -> listOf(ScheduledMessageAction.Delete)
     }
     return when {
-        !canSchedule -> actions - SchedulingActions
+        !canSchedule -> if (actions.isEmpty()) {
+            actions
+        } else {
+            listOf(ScheduledMessageAction.CopyText) + (actions - SchedulingActions - ScheduledMessageAction.CopyText)
+        }
         // The device refuses to reschedule or send now a quote of a deleted message, until an edit removes the quote.
         isQuoteDeleted -> actions - QuoteDeletedRefusedActions
         else -> actions

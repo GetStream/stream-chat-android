@@ -46,7 +46,7 @@ public data class ScheduledMessageListState(
  * @param actions The actions the status of the message allows, in the order to show them. Empty while the message
  * is sending or its attachments are uploading. When the channel saved on this device tells that the current user can
  * no longer schedule messages in it, for example once it is frozen, the message can't be edited, rescheduled or sent
- * now.
+ * now, and its text can be copied before it is deleted.
  */
 public data class ScheduledMessageItemState(
     val scheduledMessage: ScheduledMessage,

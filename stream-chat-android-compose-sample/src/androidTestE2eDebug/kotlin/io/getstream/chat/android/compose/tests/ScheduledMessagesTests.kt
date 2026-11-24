@@ -569,7 +569,7 @@ class ScheduledMessagesTests : StreamTestCase() {
     }
 
     @Test
-    fun test_scheduledMessageCanOnlyBeDeletedOnceTheUserCantScheduleInTheChannel() {
+    fun test_scheduledMessageCanOnlyBeCopiedOrDeletedOnceTheUserCantScheduleInTheChannel() {
         step("GIVEN user schedules a message") {
             userRobot.login().openChannel().scheduleMessage(sampleText)
             backendRobot.waitForScheduledMessage(sampleText)
@@ -582,13 +582,13 @@ class ScheduledMessagesTests : StreamTestCase() {
                 .moveToChannelListFromMessageList()
                 .openChannel()
         }
-        step("THEN the message can only be deleted") {
+        step("THEN the message can only have its text copied or be deleted") {
             userRobot
                 .moveToChannelListFromMessageList()
                 .openScheduledMessages()
                 .openScheduledMessageActions(sampleText)
                 .assertScheduledMessageActions(
-                    shown = listOf(Actions.delete),
+                    shown = listOf(Actions.copyText, Actions.delete),
                     hidden = listOf(Actions.edit, Actions.reschedule, Actions.sendNow),
                 )
         }
@@ -614,12 +614,12 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("THEN the banner still shows the failed message") {
             userRobot.assertScheduledMessagesBanner(Banner.failed(1))
         }
-        step("AND the message can only be deleted") {
+        step("AND the message can only have its text copied or be deleted") {
             userRobot
                 .openScheduledMessagesFromBanner()
                 .openScheduledMessageActions(sampleText)
                 .assertScheduledMessageActions(
-                    shown = listOf(Actions.delete),
+                    shown = listOf(Actions.copyText, Actions.delete),
                     hidden = listOf(Actions.editAndReschedule),
                 )
         }
