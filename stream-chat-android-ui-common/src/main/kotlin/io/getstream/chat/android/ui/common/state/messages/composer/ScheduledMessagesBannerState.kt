@@ -78,8 +78,9 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
 }
 
 /**
- * The banner for the [scheduledMessages] of a channel or a thread, or null when the user can't schedule messages in
- * the channel or there is nothing to show.
+ * The banner for the [scheduledMessages] of a channel or a thread, or null when there is nothing to show. Failed
+ * messages show also when the user can no longer schedule messages in the channel, for example once it is frozen. The
+ * other states need the capability.
  *
  * @param scheduledMessages The scheduled messages of the channel or the thread.
  * @param scheduleMessageState The scheduling state of the channel, for the capability and the channel limit.
@@ -93,12 +94,12 @@ internal fun scheduledMessagesBannerState(
     parentMessageId: String?,
     now: Date,
 ): ScheduledMessagesBannerState? {
-    if (!scheduleMessageState.canSchedule) return null
     val failed = scheduledMessages.filter { it.status == ScheduledMessageStatus.Failed }
     val scheduled = scheduledMessages.filter { it.isPending(now) }
     val maxPerChannel = scheduleMessageState.maxPerChannel
     return when {
         failed.isNotEmpty() -> ScheduledMessagesBannerState.Failed(failed.size, parentMessageId)
+        !scheduleMessageState.canSchedule -> null
         maxPerChannel != null && scheduleMessageState.isChannelLimitReached ->
             ScheduledMessagesBannerState.LimitReached(scheduleMessageState.pendingInChannel, maxPerChannel)
         scheduled.isNotEmpty() -> ScheduledMessagesBannerState.Scheduled(

@@ -186,7 +186,9 @@ private fun ScheduleMessageSheetHost(
     when (val sheet = host.shown.takeIf { hasContent }) {
         ScheduleSheet.Quick -> ChatTheme.componentFactory.ScheduleMessageSheet(
             params = ScheduleMessageSheetParams(
-                dates = remember { scheduleMessageQuickDates(Date()) },
+                dates = remember(state.minLeadTimeSeconds, state.maxLeadTimeSeconds) {
+                    quickDatesWithinLeadTime(state)
+                },
                 state = state,
                 onDateClick = ::schedule,
                 onCustomTimeClick = {
@@ -210,6 +212,15 @@ private fun ScheduleMessageSheetHost(
 
         null -> Unit
     }
+}
+
+/**
+ * The quick dates the channel allows: a date nearer than its min lead time or further than its max lead time from now
+ * is left out.
+ */
+private fun quickDatesWithinLeadTime(state: ScheduleMessageState): List<Date> {
+    val now = Date()
+    return scheduleMessageQuickDates(now).filter { state.dateError(it, now) == null }
 }
 
 @Composable

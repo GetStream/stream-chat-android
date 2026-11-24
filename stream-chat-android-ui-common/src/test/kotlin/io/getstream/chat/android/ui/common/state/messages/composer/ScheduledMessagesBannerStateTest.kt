@@ -106,15 +106,26 @@ internal class ScheduledMessagesBannerStateTest {
     }
 
     @Test
-    fun `nothing shows without scheduled messages, or without the capability`() {
+    fun `nothing shows without scheduled messages`() {
         assertNull(scheduledMessagesBannerState(emptyList(), canSchedule, parentMessageId = null, now = now))
-        assertNull(
+    }
+
+    @Test
+    fun `without the capability, only failed messages show`() {
+        val cannotSchedule = limitReached.copy(canSchedule = false)
+        val failed = randomScheduledMessage(status = ScheduledMessageStatus.Failed)
+        val scheduled = randomScheduledMessage(scheduledAt = later)
+
+        assertEquals(
+            ScheduledMessagesBannerState.Failed(1, parentMessageId = threadId),
             scheduledMessagesBannerState(
-                listOf(randomScheduledMessage(status = ScheduledMessageStatus.Failed)),
-                limitReached.copy(canSchedule = false),
-                parentMessageId = null,
+                listOf(scheduled, failed),
+                cannotSchedule,
+                parentMessageId = threadId,
                 now = now,
             ),
         )
+        assertNull(scheduledMessagesBannerState(listOf(scheduled), cannotSchedule, parentMessageId = null, now = now))
+        assertNull(scheduledMessagesBannerState(emptyList(), cannotSchedule, parentMessageId = null, now = now))
     }
 }

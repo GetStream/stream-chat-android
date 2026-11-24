@@ -24,6 +24,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Filters
@@ -113,19 +114,26 @@ public class ScheduledMessageListController(
      * The state of the list.
      */
     public val state: StateFlow<ScheduledMessageListState> = combine(
-        scheduledMessages,
+        // Capabilities are not observed: a channel saved while the list is open is read at the next change of the
+        // messages.
+        scheduledMessages.map { scheduledMessages -> scheduledMessages to cidsWithoutScheduling(scheduledMessages) },
         combine(hasLoadedAll, hasLoaded) { hasLoadedAll, hasLoaded -> hasLoadedAll || hasLoaded },
         combine(isLoadFailed, chatClient.clientState.connectionState) { isLoadFailed, connectionState ->
             // Nothing loads while offline.
             isLoadFailed || connectionState is ConnectionState.Offline
         },
         deletedQuotes,
-    ) { scheduledMessages, isKnown, cannotLoad, deletedQuotes ->
+    ) { (scheduledMessages, cidsWithoutScheduling), isKnown, cannotLoad, deletedQuotes ->
         val isUnknown = scheduledMessages.isEmpty() && !isKnown
         ScheduledMessageListState(
             items = scheduledMessages
                 .sortedWith(compareBy(ScheduledMessage::scheduledAt).thenBy { it.message.text })
-                .map { scheduledMessage -> scheduledMessage.toItemState(deletedQuotes) },
+                .map { scheduledMessage ->
+                    scheduledMessage.toItemState(
+                        deletedQuotes = deletedQuotes,
+                        canSchedule = scheduledMessage.cid !in cidsWithoutScheduling,
+                    )
+                },
             isLoading = isUnknown && !cannotLoad,
             isLoadFailed = isUnknown && cannotLoad,
         )
@@ -406,13 +414,33 @@ public class ScheduledMessageListController(
         return true
     }
 
-    private fun ScheduledMessage.toItemState(deletedQuotes: Map<String, Message>): ScheduledMessageItemState {
+    /**
+     * The channels of the [scheduledMessages], saved on this device, where the current user can no longer schedule
+     * messages, for example once a channel is frozen. A channel that is not saved, or whose capabilities are not
+     * known, is not one of them, and the server refuses what is not allowed.
+     */
+    private suspend fun cidsWithoutScheduling(scheduledMessages: List<ScheduledMessage>): Set<String> =
+        scheduledMessages.map(ScheduledMessage::cid).distinct()
+            .mapNotNull { cid -> chatClient.repositoryFacade.selectChannel(cid) }
+            .filter { channel ->
+                channel.ownCapabilities.isNotEmpty() &&
+                    ChannelCapabilities.SCHEDULE_MESSAGE !in channel.ownCapabilities
+            }
+            .mapTo(mutableSetOf(), Channel::cid)
+
+    private fun ScheduledMessage.toItemState(
+        deletedQuotes: Map<String, Message>,
+        canSchedule: Boolean,
+    ): ScheduledMessageItemState {
         val quotedMessage = message.replyMessageId?.let(deletedQuotes::get) ?: message.replyTo
         return ScheduledMessageItemState(
             scheduledMessage = this,
             channel = channelFromSummary(),
             quotedMessage = quotedMessage,
-            actions = scheduledMessageActions(isQuoteDeleted = quotedMessage?.deletedAt != null),
+            actions = scheduledMessageActions(
+                isQuoteDeleted = quotedMessage?.deletedAt != null,
+                canSchedule = canSchedule,
+            ),
         )
     }
 
@@ -444,8 +472,13 @@ internal fun ScheduledMessage.isInScope(cid: String?, parentMessageId: String?):
  * The actions the status of the scheduled message allows.
  *
  * @param isQuoteDeleted Whether the message quotes a deleted message, so it can only be edited or deleted.
+ * @param canSchedule Whether the current user can schedule messages in the channel. Without it, the message can't be
+ * edited, rescheduled or sent now, and its text can be copied before it is deleted.
  */
-internal fun ScheduledMessage.scheduledMessageActions(isQuoteDeleted: Boolean): List<ScheduledMessageAction> {
+internal fun ScheduledMessage.scheduledMessageActions(
+    isQuoteDeleted: Boolean,
+    canSchedule: Boolean,
+): List<ScheduledMessageAction> {
     val actions = when (status) {
         ScheduledMessageStatus.Sending -> emptyList()
         ScheduledMessageStatus.Failed -> failure.failedActions()
@@ -454,8 +487,16 @@ internal fun ScheduledMessage.scheduledMessageActions(isQuoteDeleted: Boolean): 
         -> if (isUploading) emptyList() else PendingActions
         else -> listOf(ScheduledMessageAction.Delete)
     }
-    // The device refuses to reschedule or send now a quote of a deleted message, until an edit removes the quote.
-    return if (isQuoteDeleted) actions - QuoteDeletedRefusedActions else actions
+    return when {
+        !canSchedule -> if (actions.isEmpty()) {
+            actions
+        } else {
+            listOf(ScheduledMessageAction.CopyText) + (actions - SchedulingActions - ScheduledMessageAction.CopyText)
+        }
+        // The device refuses to reschedule or send now a quote of a deleted message, until an edit removes the quote.
+        isQuoteDeleted -> actions - QuoteDeletedRefusedActions
+        else -> actions
+    }
 }
 
 /**
@@ -519,6 +560,13 @@ private val PendingActions = listOf(
 )
 
 private val QuoteDeletedRefusedActions = setOf(ScheduledMessageAction.Reschedule, ScheduledMessageAction.SendNow)
+
+private val SchedulingActions = setOf(
+    ScheduledMessageAction.Edit,
+    ScheduledMessageAction.EditAndReschedule,
+    ScheduledMessageAction.Reschedule,
+    ScheduledMessageAction.SendNow,
+)
 
 private val FailedChangeActions = listOf(
     ScheduledMessageAction.Edit,

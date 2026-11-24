@@ -568,6 +568,63 @@ class ScheduledMessagesTests : StreamTestCase() {
         }
     }
 
+    @Test
+    fun test_scheduledMessageCanOnlyBeCopiedOrDeletedOnceTheUserCantScheduleInTheChannel() {
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("AND user can no longer schedule messages in the channel") {
+            backendRobot.disableScheduledMessages()
+        }
+        step("WHEN user opens the channel again, so its capabilities load") {
+            userRobot
+                .moveToChannelListFromMessageList()
+                .openChannel()
+        }
+        step("THEN the message can only have its text copied or be deleted") {
+            userRobot
+                .moveToChannelListFromMessageList()
+                .openScheduledMessages()
+                .openScheduledMessageActions(sampleText)
+                .assertScheduledMessageActions(
+                    shown = listOf(Actions.copyText, Actions.delete),
+                    hidden = listOf(Actions.edit, Actions.reschedule, Actions.sendNow),
+                )
+        }
+    }
+
+    @Test
+    fun test_failedScheduledMessageStaysInTheBannerOnceTheUserCantScheduleInTheChannel() {
+        step("GIVEN user schedules a message") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+        }
+        step("AND the server fails to send it") {
+            backendRobot.failScheduledMessage(failureReason = "banned")
+        }
+        step("AND user can no longer schedule messages in the channel") {
+            backendRobot.disableScheduledMessages()
+        }
+        step("WHEN user opens the channel again") {
+            userRobot
+                .moveToChannelListFromMessageList()
+                .openChannel()
+        }
+        step("THEN the banner still shows the failed message") {
+            userRobot.assertScheduledMessagesBanner(Banner.failed(1))
+        }
+        step("AND the message can only have its text copied or be deleted") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .openScheduledMessageActions(sampleText)
+                .assertScheduledMessageActions(
+                    shown = listOf(Actions.copyText, Actions.delete),
+                    hidden = listOf(Actions.editAndReschedule),
+                )
+        }
+    }
+
     @AllureId("12934")
     @Test
     fun test_messageScheduledOnAnotherDeviceIsListed() {

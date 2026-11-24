@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities.SCHEDULE_MESSAGE
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Config
@@ -36,6 +37,8 @@ import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedSc
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelCapabilities
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
@@ -237,7 +240,66 @@ internal class ScheduledMessageListControllerTest {
     fun `a failed message that quotes a deleted message can't be rescheduled`() = runTest {
         val rejected = failed(ServerRejectedScheduling(ServerRejectedScheduling.Reason.ScheduledLimitChannel, ""))
 
-        rejected.scheduledMessageActions(isQuoteDeleted = true) shouldBeEqualTo listOf(Edit, Delete)
+        rejected.scheduledMessageActions(isQuoteDeleted = true, canSchedule = true) shouldBeEqualTo listOf(Edit, Delete)
+    }
+
+    @Test
+    fun `without the capability to schedule, a message can only have its text copied or be deleted`() = runTest {
+        val pending = scheduled()
+        val rejected = failed(ServerRejectedScheduling(ServerRejectedScheduling.Reason.ScheduledLimitChannel, ""))
+        val failed = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.ChannelFrozen))
+        val channelDeleted = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.ChannelDeleted))
+        val sending = scheduled(status = ScheduledMessageStatus.Sending)
+
+        pending.actionsWithoutScheduling() shouldBeEqualTo listOf(CopyText, Delete)
+        rejected.actionsWithoutScheduling() shouldBeEqualTo listOf(CopyText, Delete)
+        failed.actionsWithoutScheduling() shouldBeEqualTo listOf(CopyText, Delete)
+        channelDeleted.actionsWithoutScheduling() shouldBeEqualTo listOf(CopyText, Delete)
+        sending.actionsWithoutScheduling().shouldBeEmpty()
+    }
+
+    @Test
+    fun `a message in a saved channel where the user can no longer schedule can only be copied or deleted`() = runTest {
+        val frozen = randomChannel(ownCapabilities = capabilities(canSchedule = false))
+        val open = randomChannel(ownCapabilities = capabilities(canSchedule = true))
+        givenSavedChannels(frozen, open)
+        scheduledMessages.value = listOf(
+            scheduled(cid = frozen.cid, scheduledAt = Date(1_000)),
+            scheduled(cid = open.cid, scheduledAt = Date(2_000)),
+        )
+
+        val items = controller().state.value.items
+
+        items.map { it.actions } shouldBeEqualTo listOf(
+            listOf(CopyText, Delete),
+            listOf(Edit, Reschedule, SendNow, Delete),
+        )
+    }
+
+    @Test
+    fun `a message whose channel or capabilities are not known keeps its actions`() = runTest {
+        val withoutCapabilities = randomChannel(ownCapabilities = emptySet())
+        givenSavedChannels(withoutCapabilities)
+        scheduledMessages.value = listOf(scheduled(cid = withoutCapabilities.cid), scheduled())
+
+        val items = controller().state.value.items
+
+        items.map { it.actions } shouldBeEqualTo List(2) { listOf(Edit, Reschedule, SendNow, Delete) }
+    }
+
+    @Test
+    fun `the capability is read again when the messages change`() = runTest {
+        val channel = randomChannel(ownCapabilities = capabilities(canSchedule = true))
+        givenSavedChannels(channel)
+        val message = scheduled(cid = channel.cid)
+        scheduledMessages.value = listOf(message)
+        val controller = controller()
+        controller.state.value.items.single().actions shouldBeEqualTo listOf(Edit, Reschedule, SendNow, Delete)
+
+        givenSavedChannels(channel.copy(ownCapabilities = channel.ownCapabilities - SCHEDULE_MESSAGE))
+        scheduledMessages.value = listOf(message.copy(scheduledAt = randomDate()))
+
+        controller.state.value.items.single().actions shouldBeEqualTo listOf(CopyText, Delete)
     }
 
     @Test
@@ -896,7 +958,19 @@ internal class ScheduledMessageListControllerTest {
         },
     )
 
-    private fun ScheduledMessage.actions() = scheduledMessageActions(isQuoteDeleted = false)
+    private fun ScheduledMessage.actions() = scheduledMessageActions(isQuoteDeleted = false, canSchedule = true)
+
+    private fun ScheduledMessage.actionsWithoutScheduling() =
+        scheduledMessageActions(isQuoteDeleted = false, canSchedule = false)
+
+    private fun capabilities(canSchedule: Boolean): Set<String> {
+        val others = randomChannelCapabilities(exclude = setOf(SCHEDULE_MESSAGE))
+        return if (canSchedule) others + SCHEDULE_MESSAGE else others
+    }
+
+    private suspend fun givenSavedChannels(vararg channels: Channel) {
+        channels.forEach { channel -> whenever(repository.selectChannel(channel.cid)) doReturn channel }
+    }
 
     private fun failed(failure: ScheduledMessageFailure) =
         scheduled(status = ScheduledMessageStatus.Failed).copy(failure = failure)
