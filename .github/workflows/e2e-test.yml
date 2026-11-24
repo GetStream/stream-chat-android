@@ -30,8 +30,7 @@ jobs:
   e2e-scope:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     name: Scope
-    runs-on:
-      group: github-public-ubuntu-static
+    runs-on: { group: github-public-amd64 }
     outputs:
       required: ${{ steps.scope.outputs.required }}
     steps:
@@ -50,7 +49,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs:
       - e2e-scope
       - build-compose-apks
@@ -69,7 +68,7 @@ jobs:
 
   run-compose-tests:
     name: Test compose
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs:
       - e2e-scope
       - build-compose-apks

@@ -9,7 +9,7 @@ on:
 jobs:
   build_ui_components_sample_app:
     name: Build and Distribute UI Components Sample App
-    runs-on: ubuntu-22.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
@@ -37,7 +37,7 @@ jobs:
 
   build_compose_sample_app:
     name: Build and Distribute Compose Sample App
-    runs-on: ubuntu-22.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main

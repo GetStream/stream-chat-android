@@ -33,7 +33,7 @@ jobs:
 
   run-compose-tests-nightly:
     name: Test compose
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs: build-compose-apks
     strategy:
       matrix:
@@ -92,7 +92,7 @@ jobs:
 
   slack:
     name: Slack Report
-    runs-on: ubuntu-latest
+    runs-on: { group: github-public-amd64 }
     needs: [build-compose-apks, run-compose-tests-nightly]
     if: failure() && github.event_name == 'schedule'
     steps:

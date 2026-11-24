@@ -18,7 +18,7 @@ jobs:
 
   detekt:
     name: Detekt
-    runs-on: ubuntu-22.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v4.2.2
       - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@19665cfdb1c4290d133028844708e71c15104e87 # v1.3.0
@@ -27,7 +27,7 @@ jobs:
 
   rubocop:
     name: Rubocop
-    runs-on: ubuntu-22.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v4.2.2
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
