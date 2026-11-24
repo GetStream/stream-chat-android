@@ -148,8 +148,9 @@ internal data class ScheduledMessageEditSession(
 /**
  * The composer that edits the scheduled message of [edit]: the check button saves it and keeps its date, or, for a
  * message the server failed to send, picks a date and schedules it again as a new message. Saving is disabled while
- * the message is no longer scheduled, quotes a deleted message, or starts with a command. The composer shows once it
- * is filled with the message.
+ * the message is no longer scheduled, can no longer be edited (for example once the user can no longer schedule
+ * messages in its channel), quotes a deleted message, or starts with a command. The composer shows once it is filled
+ * with the message.
  *
  * @param edit The scheduled message edited.
  * @param item The scheduled message in the list, or null when it left the list or is not loaded yet.

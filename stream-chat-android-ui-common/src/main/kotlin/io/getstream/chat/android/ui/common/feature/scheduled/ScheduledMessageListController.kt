@@ -114,7 +114,8 @@ public class ScheduledMessageListController(
      * The state of the list.
      */
     public val state: StateFlow<ScheduledMessageListState> = combine(
-        // Read again on each change of the messages, as capabilities change only when a channel is loaded again.
+        // Capabilities are not observed: a channel saved while the list is open is read at the next change of the
+        // messages.
         scheduledMessages.map { scheduledMessages -> scheduledMessages to cidsWithoutScheduling(scheduledMessages) },
         combine(hasLoadedAll, hasLoaded) { hasLoadedAll, hasLoaded -> hasLoadedAll || hasLoaded },
         combine(isLoadFailed, chatClient.clientState.connectionState) { isLoadFailed, connectionState ->

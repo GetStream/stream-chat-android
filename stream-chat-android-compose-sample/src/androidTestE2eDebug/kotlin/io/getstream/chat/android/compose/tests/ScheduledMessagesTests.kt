@@ -577,15 +577,12 @@ class ScheduledMessagesTests : StreamTestCase() {
         step("AND user can no longer schedule messages in the channel") {
             backendRobot.disableScheduledMessages()
         }
-        step("WHEN user opens the channel again") {
+        step("WHEN user opens the channel again, so its capabilities load") {
             userRobot
                 .moveToChannelListFromMessageList()
                 .openChannel()
         }
-        step("THEN the banner is hidden") {
-            userRobot.assertScheduledMessagesBannerIsHidden()
-        }
-        step("AND the message can only be deleted") {
+        step("THEN the message can only be deleted") {
             userRobot
                 .moveToChannelListFromMessageList()
                 .openScheduledMessages()

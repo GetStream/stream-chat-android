@@ -79,8 +79,8 @@ public abstract class ScheduledMessagesBannerState internal constructor() {
 
 /**
  * The banner for the [scheduledMessages] of a channel or a thread, or null when there is nothing to show. Failed
- * messages show also when the user can no longer schedule messages in the channel, for example once it is frozen, so
- * they can still be found and deleted. The other states need the capability.
+ * messages show also when the user can no longer schedule messages in the channel, for example once it is frozen. The
+ * other states need the capability.
  *
  * @param scheduledMessages The scheduled messages of the channel or the thread.
  * @param scheduleMessageState The scheduling state of the channel, for the capability and the channel limit.

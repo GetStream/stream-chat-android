@@ -44,8 +44,9 @@ public data class ScheduledMessageListState(
  * @param quotedMessage The message it quotes, or null when it quotes none, or when the server did not send the quoted
  * message (for example, it is gone or hidden from the user) and this device does not know it.
  * @param actions The actions the status of the message allows, in the order to show them. Empty while the message
- * is sending or its attachments are uploading. Once the current user can no longer schedule messages in the channel,
- * for example once it is frozen, the message can't be edited, rescheduled or sent now.
+ * is sending or its attachments are uploading. When the channel saved on this device tells that the current user can
+ * no longer schedule messages in it, for example once it is frozen, the message can't be edited, rescheduled or sent
+ * now.
  */
 public data class ScheduledMessageItemState(
     val scheduledMessage: ScheduledMessage,

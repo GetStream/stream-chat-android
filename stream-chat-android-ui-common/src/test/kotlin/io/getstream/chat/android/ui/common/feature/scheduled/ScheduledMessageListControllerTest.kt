@@ -260,8 +260,8 @@ internal class ScheduledMessageListControllerTest {
 
     @Test
     fun `a message in a saved channel where the user can no longer schedule can only be deleted`() = runTest {
-        val frozen = randomChannel(ownCapabilities = randomChannelCapabilities(exclude = setOf(SCHEDULE_MESSAGE)))
-        val open = randomChannel(ownCapabilities = randomChannelCapabilities(include = setOf(SCHEDULE_MESSAGE)))
+        val frozen = randomChannel(ownCapabilities = capabilities(canSchedule = false))
+        val open = randomChannel(ownCapabilities = capabilities(canSchedule = true))
         givenSavedChannels(frozen, open)
         scheduledMessages.value = listOf(
             scheduled(cid = frozen.cid, scheduledAt = Date(1_000)),
@@ -286,7 +286,7 @@ internal class ScheduledMessageListControllerTest {
 
     @Test
     fun `the capability is read again when the messages change`() = runTest {
-        val channel = randomChannel(ownCapabilities = randomChannelCapabilities(include = setOf(SCHEDULE_MESSAGE)))
+        val channel = randomChannel(ownCapabilities = capabilities(canSchedule = true))
         givenSavedChannels(channel)
         val message = scheduled(cid = channel.cid)
         scheduledMessages.value = listOf(message)
@@ -959,6 +959,11 @@ internal class ScheduledMessageListControllerTest {
 
     private fun ScheduledMessage.actionsWithoutScheduling() =
         scheduledMessageActions(isQuoteDeleted = false, canSchedule = false)
+
+    private fun capabilities(canSchedule: Boolean): Set<String> {
+        val others = randomChannelCapabilities(exclude = setOf(SCHEDULE_MESSAGE))
+        return if (canSchedule) others + SCHEDULE_MESSAGE else others
+    }
 
     private suspend fun givenSavedChannels(vararg channels: Channel) {
         channels.forEach { channel -> whenever(repository.selectChannel(channel.cid)) doReturn channel }

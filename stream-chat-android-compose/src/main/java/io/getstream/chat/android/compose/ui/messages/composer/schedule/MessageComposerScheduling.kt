@@ -213,7 +213,7 @@ private fun ScheduleMessageSheetHost(
 }
 
 /**
- * The quick dates the channel allows: a date further than its max lead time is left out, as it can't be picked.
+ * The quick dates the channel allows: a date further than its max lead time from now is left out.
  */
 private fun quickDatesWithinLeadTime(state: ScheduleMessageState): List<Date> {
     val now = Date()
