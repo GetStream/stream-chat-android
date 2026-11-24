@@ -67,22 +67,6 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
-      # Keeps one snapshot, so the saves don't pile up in the repo's Actions cache.
-      # A failed save only warns, so the older snapshots stay unless the new one is listed.
-      - name: Remove older Gradle caches
-        if: ${{ !inputs.coverage && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PREFIX: ${{ runner.os }}-gradle-e2e-
-          NEW_KEY: ${{ steps.gradle_cache.outputs.cache-primary-key }}
-        # Deletes only snapshots from earlier runs (the key ends in the run id), so a run that finishes
-        # late never removes a newer snapshot saved by a concurrent run.
-        run: |
-          gh cache list -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF" --key "$PREFIX" --limit 100 --json id,key \
-            --jq 'if any(.[]; .key == env.NEW_KEY)
-              then .[] | select((.key | ltrimstr(env.PREFIX) | tonumber) < (env.NEW_KEY | ltrimstr(env.PREFIX) | tonumber)) | .id
-              else empty end' \
-            | xargs -r -n1 gh cache delete -R "$GITHUB_REPOSITORY"
       - name: Select E2E Tests
         id: select_e2e_tests
         if: ${{ !inputs.coverage && !inputs.cache_only }}
@@ -114,3 +98,29 @@ jobs:
             stream-chat-android-*/build/intermediates/javac/e2eDebug/*/classes
             stream-chat-android-*/build/classes/java/main
             stream-chat-android-*/build/classes/kotlin/main
+
+  # Keeps one snapshot, so the saves don't pile up in the repo's Actions cache.
+  # Calls the GitHub API, and the org IP allow list only admits static-IP runners.
+  remove-older-gradle-caches:
+    needs: build
+    if: ${{ !inputs.coverage && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+    permissions:
+      actions: write
+    name: Remove older Gradle caches
+    runs-on:
+      group: github-public-ubuntu-static
+    steps:
+      # A failed save only warns, so the older snapshots stay unless the new one is listed.
+      # Deletes only snapshots from earlier runs (the key ends in the run id), so a run that finishes
+      # late never removes a newer snapshot saved by a concurrent run.
+      - name: Remove older Gradle caches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREFIX: ${{ runner.os }}-gradle-e2e-
+          NEW_KEY: ${{ runner.os }}-gradle-e2e-${{ github.run_id }}
+        run: |
+          gh cache list -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF" --key "$PREFIX" --limit 100 --json id,key \
+            --jq 'if any(.[]; .key == env.NEW_KEY)
+              then .[] | select((.key | ltrimstr(env.PREFIX) | tonumber) < (env.NEW_KEY | ltrimstr(env.PREFIX) | tonumber)) | .id
+              else empty end' \
+            | xargs -r -n1 gh cache delete -R "$GITHUB_REPOSITORY"
