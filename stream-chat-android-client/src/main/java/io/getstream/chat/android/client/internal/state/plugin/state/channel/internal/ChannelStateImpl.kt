@@ -151,6 +151,7 @@ internal class ChannelStateImpl(
 
     // Non-channel states
     private val _loadingFirstPage = MutableStateFlow(false)
+    private val _loadedFromServer = MutableStateFlow(false)
     private val _loading = combineStates(_loadingFirstPage, paginationManager.state) { firstPage, pagination ->
         firstPage || pagination.isLoadingMessages
     }
@@ -280,6 +281,8 @@ internal class ChannelStateImpl(
 
     override val recoveryNeeded: Boolean
         get() = _recoveryNeeded
+
+    override val loadedFromServer: StateFlow<Boolean> = _loadedFromServer.asStateFlow()
 
     override val channelConfig: StateFlow<Config> = _channelConfig.asStateFlow()
 
@@ -1420,6 +1423,13 @@ internal class ChannelStateImpl(
      */
     fun endFirstPageLoad() {
         _loadingFirstPage.value = false
+    }
+
+    /**
+     * Sets whether a server response was applied since the channel was last watched.
+     */
+    fun setLoadedFromServer(loaded: Boolean) {
+        _loadedFromServer.value = loaded
     }
 
     /**

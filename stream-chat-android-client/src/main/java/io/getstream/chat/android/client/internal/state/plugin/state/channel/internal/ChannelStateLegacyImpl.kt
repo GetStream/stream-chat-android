@@ -47,6 +47,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
@@ -107,6 +108,7 @@ internal class ChannelStateLegacyImpl(
     private var _endOfNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(true)
     private var _endOfOlderMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _loading: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private val _loadedFromServer = MutableStateFlow(false)
     private var _hidden: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _muted: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _channelData: MutableStateFlow<ChannelData?>? = MutableStateFlow(null)
@@ -265,6 +267,8 @@ internal class ChannelStateLegacyImpl(
     /** If we need to recover state when connection established again. */
     override var recoveryNeeded: Boolean = false
 
+    override val loadedFromServer: StateFlow<Boolean> = _loadedFromServer.asStateFlow()
+
     override val insideSearch: StateFlow<Boolean> = _insideSearch!!
 
     private val lastSentChannelMessageDate: StateFlow<Date?> = combineStates(
@@ -362,6 +366,13 @@ internal class ChannelStateLegacyImpl(
      */
     fun setLoadingIfEmpty() {
         if (_channelData?.value == null) setLoading(true)
+    }
+
+    /**
+     * Sets whether a server response was applied since the channel was last watched.
+     */
+    fun setLoadedFromServer(loaded: Boolean) {
+        _loadedFromServer.value = loaded
     }
 
     /**

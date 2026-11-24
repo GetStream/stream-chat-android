@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.channel.state
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -26,6 +27,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
@@ -114,6 +116,14 @@ public interface ChannelState {
 
     /** If we need to recover state when connection established again. */
     public val recoveryNeeded: Boolean
+
+    /**
+     * Whether a server response was applied since the channel was last watched. Until then, the state can still hold
+     * stale data from the local database. Defaults to never loaded, for implementations that don't track it.
+     */
+    @InternalStreamChatApi
+    public val loadedFromServer: StateFlow<Boolean>
+        get() = MutableStateFlow(false)
 
     /** Channel config data */
     public val channelConfig: StateFlow<Config>

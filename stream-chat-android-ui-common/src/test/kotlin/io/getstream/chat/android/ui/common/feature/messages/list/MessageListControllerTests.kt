@@ -1324,6 +1324,83 @@ internal class MessageListControllerTests {
             verify(chatClient, times(2)).markRead(any(), any())
         }
 
+    @Test
+    fun `Show unread label, when a cached read with nothing unread is followed by the server read`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val lastReadMessage = completedMessage(id = "last_read_message_id", user = user2, createdAt = Date(1_000))
+            val messagesState = MutableStateFlow(listOf(lastReadMessage))
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = lastReadMessage.id,
+                    lastRead = Date(1_500),
+                    unreadMessages = 0,
+                ),
+            )
+            val loadedFromServer = MutableStateFlow(false)
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser(user1)
+                .givenChannelQuery()
+                .givenMarkRead()
+                .givenChannelState(
+                    messagesState = messagesState,
+                    read = channelRead,
+                    loadedFromServer = loadedFromServer,
+                )
+                .get()
+            delay(1000)
+
+            // The server response brings two messages at the same read position.
+            channelRead.value = channelRead.value.copy(unreadMessages = 2)
+            messagesState.value = listOf(
+                lastReadMessage,
+                completedMessage(id = "unread_1", user = user2, createdAt = Date(2_000)),
+                completedMessage(id = "unread_2", user = user2, createdAt = Date(3_000)),
+            )
+            loadedFromServer.value = true
+            controller.markLastMessageRead()
+            delay(1000)
+
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 2
+        }
+
+    @Test
+    fun `Show no unread label, when a message arrives after the server confirms the cached read`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val lastReadMessage = completedMessage(id = "last_read_message_id", user = user2, createdAt = Date(1_000))
+            val messagesState = MutableStateFlow(listOf(lastReadMessage))
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = lastReadMessage.id,
+                    lastRead = Date(1_500),
+                    unreadMessages = 0,
+                ),
+            )
+            val loadedFromServer = MutableStateFlow(false)
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser(user1)
+                .givenChannelQuery()
+                .givenChannelState(
+                    messagesState = messagesState,
+                    read = channelRead,
+                    loadedFromServer = loadedFromServer,
+                )
+                .get()
+            delay(1000)
+
+            // The server response leaves the read state as it was.
+            loadedFromServer.value = true
+            delay(1000)
+            messagesState.value += completedMessage(id = "new_message_id", user = user2, createdAt = Date(2_000))
+            channelRead.value = channelRead.value.copy(unreadMessages = 1)
+            delay(1000)
+
+            controller.unreadLabelState.value.shouldBeNull()
+        }
+
     private fun completedMessage(id: String, user: User, createdAt: Date) = randomMessage(
         id = id,
         user = user,
@@ -2500,6 +2577,7 @@ internal class MessageListControllerTests {
             read: StateFlow<ChannelUserRead?> = MutableStateFlow(randomChannelUserRead(lastReadMessageId = null)),
             config: Config = Config(),
             loadingOlderMessages: StateFlow<Boolean> = MutableStateFlow(false),
+            loadedFromServer: StateFlow<Boolean> = MutableStateFlow(true),
         ) = apply {
             whenever(channelState.cid) doReturn CID
             whenever(channelState.channelData) doReturn channelDataState
@@ -2516,6 +2594,7 @@ internal class MessageListControllerTests {
             whenever(channelState.typing) doReturn typingState
             whenever(channelState.reads) doReturn MutableStateFlow(listOf())
             whenever(channelState.read) doReturn read
+            whenever(channelState.loadedFromServer) doReturn loadedFromServer
             whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
             whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
             whenever(channelState.unreadCount) doReturn MutableStateFlow(0)
