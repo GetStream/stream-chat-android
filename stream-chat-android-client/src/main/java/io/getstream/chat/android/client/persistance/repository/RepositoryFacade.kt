@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -267,6 +268,18 @@ public class RepositoryFacade private constructor(
 
     @InternalStreamChatApi
     public companion object {
+
+        @Deprecated(
+            message = "The scope is not used.",
+            replaceWith = ReplaceWith("create(factory, defaultConfig)"),
+        )
+        @InternalStreamChatApi
+        @Suppress("UNUSED_PARAMETER")
+        public fun create(
+            factory: RepositoryFactory,
+            scope: CoroutineScope,
+            defaultConfig: Config = Config(),
+        ): RepositoryFacade = create(factory, defaultConfig)
 
         /**
          * Creates a new instance of [RepositoryFacade] and populate the Singleton instance. This method should be
