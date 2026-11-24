@@ -8,8 +8,6 @@ on:
     paths-ignore:
       - '**/*.md'
 
-  workflow_dispatch:
-
 # Not shared with the nightly run's group, so the two don't cancel each other.
 # A running build finishes and saves; only the newest pending push waits behind it.
 concurrency:
@@ -33,7 +31,7 @@ jobs:
     permissions:
       contents: read
     name: Emulator snapshot
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1

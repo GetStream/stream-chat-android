@@ -34,15 +34,46 @@ env:
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
 jobs:
+  # Calls the GitHub API, and the org IP allow list only admits static-IP runners.
+  # A job of its own so the Gradle build stays off that runner. Skipped for forks, whose code
+  # must not run from an address the allow list trusts; their pull requests run every test.
+  e2e-scope:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+    name: Scope
+    runs-on:
+      group: github-public-amd64
+    outputs:
+      required: ${{ steps.scope.outputs.required }}
+      coverage_map: ${{ steps.scope.outputs.coverage_map }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
+      - name: Decide whether the e2e tests run
+        id: scope
+        run: bundle exec fastlane e2e_scope
+      - name: Upload the coverage map
+        if: ${{ steps.scope.outputs.coverage_map == 'true' }}
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: e2e-coverage-map-input
+          path: fastlane/test_output/e2e_coverage_map.json
   build-compose-apks:
     permissions:
       actions: write
       contents: read
       pull-requests: read
     name: Build
+    needs: e2e-scope
+    if: ${{ !cancelled() && needs.e2e-scope.result != 'failure' }}
     uses: ./.github/workflows/e2e-build.yml
     with:
       app: compose
+      e2e_required: ${{ needs.e2e-scope.outputs.required || 'true' }}
+      coverage_map: ${{ needs.e2e-scope.outputs.coverage_map == 'true' }}
     secrets: inherit
   allure_testops_launch:
     permissions:
@@ -50,9 +81,13 @@ jobs:
       contents: read
       pull-requests: read
     name: Launch Allure TestOps
-    runs-on: ubuntu-24.04
-    needs: build-compose-apks
-    if: ${{ needs.build-compose-apks.outputs.e2e_batches != '[]' }}
+    runs-on: { group: github-public-amd64 }
+    needs:
+      - e2e-scope
+      - build-compose-apks
+    if: ${{ !cancelled() && needs.build-compose-apks.result == 'success' && needs.build-compose-apks.outputs.e2e_batches != '[]' }}
+    env:
+      E2E_REQUIRED: ${{ needs.e2e-scope.outputs.required || 'true' }}
     outputs:
       launch_id: ${{ env.LAUNCH_ID }}
     steps:
@@ -68,11 +103,12 @@ jobs:
       contents: read
       pull-requests: read
     name: Test compose
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs:
+      - e2e-scope
       - build-compose-apks
       - allure_testops_launch
-    if: ${{ needs.build-compose-apks.outputs.e2e_batches != '[]' }}
+    if: ${{ !cancelled() && needs.build-compose-apks.result == 'success' && needs.allure_testops_launch.result == 'success' && needs.build-compose-apks.outputs.e2e_batches != '[]' }}
     strategy:
       matrix:
         # Only the batches the tests this pull request can affect need, see the select_e2e_tests lane.
@@ -80,6 +116,7 @@ jobs:
       fail-fast: false
     env:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
+      E2E_REQUIRED: ${{ needs.e2e-scope.outputs.required || 'true' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/download-artifact@v8.0.2
@@ -147,9 +184,10 @@ jobs:
   # protection.
   e2e-result:
     name: E2E result
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     if: ${{ always() }}
     needs:
+      - e2e-scope
       - build-compose-apks
       - allure_testops_launch
       - run-compose-tests

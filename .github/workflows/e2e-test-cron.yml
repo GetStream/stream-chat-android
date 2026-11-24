@@ -51,7 +51,7 @@ jobs:
     permissions:
       contents: read
     name: Launch Allure TestOps
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     outputs:
       launch_ids: ${{ steps.launch.outputs.launch_ids }}
     steps:
@@ -68,7 +68,7 @@ jobs:
       actions: read
       contents: read
     name: Test compose
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs:
       - build-compose-apks
       - build-compose-apks-coverage
@@ -141,7 +141,9 @@ jobs:
       actions: write # reads the previous e2e coverage map
       contents: read
     name: Build E2E coverage map
-    runs-on: ubuntu-24.04
+    # Downloads the previous map through the GitHub API, and the org IP allow list only admits static-IP runners.
+    runs-on:
+      group: github-public-amd64
     needs: run-compose-tests-nightly
     # Failed tests still collect coverage, and keep their previous one in the map.
     if: ${{ !cancelled() && (inputs.mock_server_branch || 'main') == 'main' && needs.run-compose-tests-nightly.result != 'skipped' }}
@@ -171,7 +173,9 @@ jobs:
       actions: write
       contents: read
     name: Slack Report
-    runs-on: ubuntu-latest
+    # The author and workflow fields come from the GitHub API, and the org IP allow list only admits static-IP runners.
+    runs-on:
+      group: github-public-amd64
     needs: [build-compose-apks, build-compose-apks-coverage, allure_testops_launch, run-compose-tests-nightly, build-e2e-coverage-map]
     if: failure() && github.event_name == 'schedule'
     steps:
