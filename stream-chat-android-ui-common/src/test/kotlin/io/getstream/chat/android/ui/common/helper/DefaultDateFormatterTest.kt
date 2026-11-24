@@ -26,12 +26,11 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.threeten.bp.DateTimeUtils
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
-import org.threeten.bp.ZoneId
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
@@ -189,7 +188,7 @@ internal class DefaultDateFormatterTest {
             val instant: Instant = atTime(LocalTime.of(0, 0))
                 .atZone(ZoneId.systemDefault())
                 .toInstant()
-            return DateTimeUtils.toDate(instant)
+            return Date.from(instant)
         }
     }
 }
