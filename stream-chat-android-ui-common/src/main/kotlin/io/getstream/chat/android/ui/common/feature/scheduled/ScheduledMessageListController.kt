@@ -188,7 +188,8 @@ public class ScheduledMessageListController(
 
     /**
      * Searches the scheduled messages for [query]: [ScheduledMessageListState.searchResults] keeps the ones whose text,
-     * attachment names, channel name or channel member names contain it. A blank query shows all of them.
+     * attachment names, channel name (or ID when its summary is missing) or names of the members other than the current
+     * user contain it, ignoring the case and the spaces around it. A blank query keeps all of them.
      *
      * @param query The text to search for.
      */

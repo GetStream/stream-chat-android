@@ -360,6 +360,7 @@ internal class ScheduledMessageListControllerTest {
         val state = controller().state.value
 
         state.searchQuery shouldBeEqualTo ""
+        state.items.size shouldBeEqualTo 2
         state.searchResults shouldBeEqualTo state.items
     }
 
@@ -368,7 +369,7 @@ internal class ScheduledMessageListControllerTest {
         val byText = scheduled(scheduledAt = Date(1_000), text = "Review the Venue shortlist")
         val byTitle = scheduled(scheduledAt = Date(2_000), attachments = listOf(randomAttachment(title = "venue.pdf")))
         val byName = scheduled(scheduledAt = Date(3_000), attachments = listOf(randomAttachment(name = "VENUE.png")))
-        val other = scheduled(scheduledAt = Date(4_000))
+        val other = scheduled(scheduledAt = Date(4_000), text = "Heads up")
         scheduledMessages.value = listOf(other, byName, byTitle, byText)
         val controller = controller()
 
@@ -384,10 +385,11 @@ internal class ScheduledMessageListControllerTest {
     fun `the search matches the channel name and the members other than the current user`() = runTest {
         val me = randomUser(name = "Maya Ross")
         currentUser.value = me
-        val named = scheduled(scheduledAt = Date(1_000)).withSummary(name = "Amsterdam Office")
-        val withMember = scheduled(scheduledAt = Date(2_000))
+        val named = scheduled(scheduledAt = Date(1_000), text = "Heads up").withSummary(name = "Amsterdam Office")
+        val withMember = scheduled(scheduledAt = Date(2_000), text = "Heads up")
             .withSummary(name = "", members = listOf(randomMember(user = me), randomMember(randomUser(name = "Ana"))))
-        val onlyMe = scheduled(scheduledAt = Date(3_000)).withSummary(name = "", members = listOf(randomMember(me)))
+        val onlyMe = scheduled(scheduledAt = Date(3_000), text = "Heads up")
+            .withSummary(name = "", members = listOf(randomMember(me)))
         scheduledMessages.value = listOf(named, withMember, onlyMe)
         val controller = controller()
 

@@ -45,6 +45,7 @@ internal class DefaultDateFormatterTest {
         private val dateTimePattern: String = "yyyy-MM-dd",
         private val relativeTime: String = RELATIVE_TIME_STRING,
         private val relativeDate: String = RELATIVE_DATE_STRING,
+        private val hourMinutePattern: String = "h:mm a",
     ) : DefaultDateFormatter.DateContext {
         private val oneMinuteDuration = TimeDuration.minutes(1)
 
@@ -61,7 +62,12 @@ internal class DefaultDateFormatterTest {
         override fun dateTimePattern(): String = dateTimePattern
         override fun relativeTime(date: Date): String = relativeTime
         override fun relativeDate(date: Date): String = relativeDate
-        override fun scheduledDayPattern(): String = "EEE, MMM d"
+        override fun bestDateTimePattern(skeleton: String): String = when (skeleton) {
+            "EEEMMMd" -> "EEE, MMM d"
+            "Hm" -> "HH:mm"
+            "hm" -> hourMinutePattern
+            else -> error("Unexpected skeleton $skeleton")
+        }
         override fun dayAtTime(day: String, time: String): String = "$day at $time"
     }
 
@@ -127,6 +133,18 @@ internal class DefaultDateFormatterTest {
         val formattedDate = formatter.formatScheduledDate(LocalDateTime.of(2020, 12, 11, 21, 5).toDate())
 
         formattedDate shouldBeEqualTo "Fri, Dec 11 at 9:05 PM"
+    }
+
+    @Test
+    fun `Scheduled date formatting uses the time pattern of the locale`() {
+        val formatter: DateFormatter = DefaultDateFormatter(
+            TestDateContext(is24Hour = false, hourMinutePattern = "a h:mm"),
+            Locale.KOREA,
+        )
+
+        val formattedDate = formatter.formatScheduledDate(LocalDateTime.of(2020, 12, 11, 9, 5).toDate())
+
+        formattedDate shouldBeEqualTo "금, 12월 11 at 오전 9:05"
     }
 
     @Test

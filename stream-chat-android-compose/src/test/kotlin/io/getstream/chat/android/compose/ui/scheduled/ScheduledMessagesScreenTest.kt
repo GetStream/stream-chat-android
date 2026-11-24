@@ -141,18 +141,22 @@ internal class ScheduledMessagesScreenTest {
     @Test
     fun `a custom action shows in the sheet that closes before the action is called`() {
         scheduledMessagesFlow.value = listOf(scheduled())
-        val clicked = mutableListOf<String>()
+        val events = mutableListOf<String>()
         setContent(
             componentFactory = object : ChatComponentFactory {
                 @Composable
                 override fun ScheduledMessageActionsSheet(params: ScheduledMessageActionsSheetParams) {
                     super.ScheduledMessageActionsSheet(
                         params.copy(
+                            onDismiss = {
+                                events += "dismiss"
+                                params.onDismiss()
+                            },
                             customActions = listOf(
                                 ScheduledMessageCustomAction(
                                     title = "Share",
                                     icon = painterResource(R.drawable.stream_design_ic_share),
-                                    onClick = { clicked += params.item.scheduledMessage.id },
+                                    onClick = { events += "share ${params.item.scheduledMessage.id}" },
                                 ),
                             ),
                         ),
@@ -165,7 +169,7 @@ internal class ScheduledMessagesScreenTest {
         composeTestRule.onNodeWithText("Share").performSemanticsAction(SemanticsActions.OnClick)
         composeTestRule.waitForIdle()
 
-        assertEquals(listOf("scheduled-1"), clicked)
+        assertEquals(listOf("dismiss", "share scheduled-1"), events)
         composeTestRule.onNodeWithTag("Stream_ScheduledMessageActions").assertDoesNotExist()
     }
 

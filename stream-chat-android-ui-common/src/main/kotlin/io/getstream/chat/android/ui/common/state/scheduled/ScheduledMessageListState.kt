@@ -30,8 +30,9 @@ import io.getstream.result.Error
  * @param isLoadFailed Whether the scheduled messages could not be loaded, or can't be while offline, and none is
  * known yet.
  * @param searchQuery The text the scheduled messages are searched for, or an empty string when there is no search.
- * @param searchResults The [items] whose text, attachment names, channel name or channel member names contain the
- * [searchQuery], ignoring the case and the spaces around it. All the [items] when the query is blank.
+ * @param searchResults The [items] whose text, attachment names, channel name (or ID when its summary is missing) or
+ * names of the members other than the current user contain the [searchQuery], ignoring the case and the spaces around
+ * it. Defaults to [items], as when the query is blank.
  */
 public data class ScheduledMessageListState(
     val items: List<ScheduledMessageItemState> = emptyList(),

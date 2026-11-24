@@ -236,8 +236,12 @@ internal class DefaultDateFormatter(
      * @return The formatted date-time string.
      */
     override fun formatScheduledDate(date: Date): String {
-        val day = SimpleDateFormat(dateContext.scheduledDayPattern(), locale).format(date)
-        return dateContext.dayAtTime(day = day, time = formatTime(date))
+        val day = SimpleDateFormat(dateContext.bestDateTimePattern("EEEMMMd"), locale).format(date)
+        val time = SimpleDateFormat(
+            dateContext.bestDateTimePattern(if (dateContext.is24Hour()) "Hm" else "hm"),
+            locale,
+        ).format(date)
+        return dateContext.dayAtTime(day = day, time = time)
     }
 
     /**
@@ -345,9 +349,9 @@ internal class DefaultDateFormatter(
         fun relativeDate(date: Date): String
 
         /**
-         * Returns the pattern of the day of a scheduled message for the current locale, like "EEE, MMM d".
+         * Returns the pattern for the current locale with the fields of [skeleton], like "EEE, MMM d" for "EEEMMMd".
          */
-        fun scheduledDayPattern(): String
+        fun bestDateTimePattern(skeleton: String): String
 
         /**
          * Returns the [day] and the [time] of a scheduled message joined, like "Fri, Oct 23 at 9:00 AM".
@@ -364,10 +368,6 @@ internal class DefaultDateFormatter(
 
         private val dateTimePatternLazy by lazy {
             DateFormat.getBestDateTimePattern(locale, "yy MM dd")
-        }
-
-        private val scheduledDayPatternLazy by lazy {
-            DateFormat.getBestDateTimePattern(locale, "EEEMMMd")
         }
 
         override fun now(): Date = Date()
@@ -413,7 +413,7 @@ internal class DefaultDateFormatter(
             ).toString()
         }
 
-        override fun scheduledDayPattern(): String = scheduledDayPatternLazy
+        override fun bestDateTimePattern(skeleton: String): String = DateFormat.getBestDateTimePattern(locale, skeleton)
 
         override fun dayAtTime(day: String, time: String): String =
             context.getString(R.string.stream_ui_scheduled_message_date, day, time)

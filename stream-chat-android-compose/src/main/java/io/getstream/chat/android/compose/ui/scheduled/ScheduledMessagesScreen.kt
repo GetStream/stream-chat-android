@@ -24,7 +24,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -46,8 +50,8 @@ import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageLis
 
 /**
  * The screen of the current user's scheduled messages: a header with a back button, a search input and the
- * [ScheduledMessageList]. The search keeps the messages whose text, attachment names, channel name or channel member
- * names contain the query.
+ * [ScheduledMessageList]. The search keeps the messages whose text, attachment names, channel name (or ID when its
+ * summary is missing) or names of the members other than the current user contain the query.
  * Apps decide how users reach it, for example from the scheduled messages banner of the channel screen.
  *
  * @param viewModelFactory The factory of the [ScheduledMessageListViewModel]. Pass the `cid` of a channel to it to
@@ -64,7 +68,10 @@ public fun ScheduledMessagesScreen(
 ) {
     val viewModel: ScheduledMessageListViewModel = viewModel(factory = viewModelFactory)
     val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    // The input keeps its own query, as the state of the view model reaches it a frame later and would drop keys.
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    // A new view model, for example after the process was restored, searches for the restored query.
+    LaunchedEffect(viewModel) { viewModel.setSearchQuery(searchQuery) }
 
     Column(
         modifier = Modifier
@@ -84,8 +91,11 @@ public fun ScheduledMessagesScreen(
         )
         ChatTheme.componentFactory.ScheduledMessageListSearchInput(
             params = ScheduledMessageListSearchInputParams(
-                query = state.searchQuery,
-                onValueChange = viewModel::setSearchQuery,
+                query = searchQuery,
+                onValueChange = { query ->
+                    searchQuery = query
+                    viewModel.setSearchQuery(query)
+                },
                 modifier = Modifier
                     .testTag("Stream_ScheduledMessageSearchInput")
                     .padding(
