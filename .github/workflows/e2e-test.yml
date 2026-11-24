@@ -45,7 +45,7 @@ jobs:
       pull-requests: read
     name: Scope
     runs-on:
-      group: github-public-ubuntu-static
+      group: github-public-amd64
     outputs:
       required: ${{ steps.scope.outputs.required }}
       coverage_map: ${{ steps.scope.outputs.coverage_map }}
@@ -81,7 +81,7 @@ jobs:
       contents: read
       pull-requests: read
     name: Launch Allure TestOps
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs:
       - e2e-scope
       - build-compose-apks
@@ -103,7 +103,7 @@ jobs:
       contents: read
       pull-requests: read
     name: Test compose
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs:
       - e2e-scope
       - build-compose-apks
@@ -184,7 +184,7 @@ jobs:
   # protection.
   e2e-result:
     name: E2E result
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     if: ${{ always() }}
     needs:
       - e2e-scope

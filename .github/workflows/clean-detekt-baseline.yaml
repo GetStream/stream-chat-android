@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: read
     name: Clean Detekt Baseline Files
-    runs-on: ubuntu-22.04
+    runs-on: { group: github-public-amd64 }
     outputs:
       changed: ${{ steps.changes.outputs.changed }}
       sha: ${{ steps.changes.outputs.sha }}
@@ -48,7 +48,7 @@ jobs:
     needs: clean_detekt_baseline_files
     if: ${{ needs.clean_detekt_baseline_files.outputs.changed == 'true' }}
     runs-on:
-      group: github-public-ubuntu-static
+      group: github-public-amd64
     steps:
       # The commit the patch was made on, so a merge to develop in between can't break it.
       - name: Check out code

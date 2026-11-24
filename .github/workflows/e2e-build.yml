@@ -45,7 +45,7 @@ jobs:
       contents: read
       pull-requests: read
     name: ${{ inputs.app }} apks${{ inputs.coverage && ' (coverage)' || '' }}
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     outputs:
       e2e_batches: ${{ steps.select_e2e_tests.outputs.e2e_batches }}
     steps:
@@ -125,7 +125,7 @@ jobs:
       actions: write
     name: Remove older Gradle caches
     runs-on:
-      group: github-public-ubuntu-static
+      group: github-public-amd64
     steps:
       # A failed save only warns, so the older snapshots stay unless the new one is listed.
       # Deletes only snapshots from earlier runs (the key ends in the run id), so a run that finishes

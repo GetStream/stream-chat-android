@@ -14,7 +14,7 @@ concurrency:
 jobs:
   attach-compose-sample-apk:
     name: Build Compose sample APK
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -59,7 +59,7 @@ jobs:
     name: Attach Compose sample APK
     needs: attach-compose-sample-apk
     runs-on:
-      group: github-public-ubuntu-static
+      group: github-public-amd64
     steps:
       - uses: actions/download-artifact@v8.0.2
         with:
