@@ -335,9 +335,10 @@ public class MessageComposerController(
         .distinctUntilChanged()
 
     /**
-     * What the scheduled messages banner shows, or null when the user can't schedule messages in the channel or there
-     * is nothing to show. In the channel, it is about the scheduled messages of the channel, thread replies included.
-     * In a thread, it is about the scheduled replies of that thread. Computed while it is collected.
+     * What the scheduled messages banner shows, or null when there is nothing to show. Without the capability to
+     * schedule messages in the channel, it shows only failed messages. In the channel, it is about the scheduled
+     * messages of the channel, thread replies included. In a thread, it is about the scheduled replies of that thread.
+     * Computed while it is collected.
      */
     @InternalStreamChatApi
     public val scheduledMessagesBannerState: StateFlow<ScheduledMessagesBannerState?> = threadParentId

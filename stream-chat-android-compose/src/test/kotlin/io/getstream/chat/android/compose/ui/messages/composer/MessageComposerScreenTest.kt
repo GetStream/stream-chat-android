@@ -75,6 +75,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
@@ -383,6 +384,29 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
     @Test
     @UiThread
+    fun `the schedule sheet hides the quick dates past the max lead time of the channel`() {
+        val now = Date()
+        val firstQuickDate = scheduleMessageQuickDates(now).first()
+        // An hour past the first quick date, so the next one, 4 hours later, is too far.
+        val maxLeadTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(firstQuickDate.time - now.time).toInt() + 3600
+        givenComposerWithText(canSchedule = true, maxLeadTimeSeconds = maxLeadTimeSeconds)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerSendButton").performTouchInput { longClick() }
+        waitForKeyboardToHide()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageQuickDate0").assertExists()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageQuickDate1").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageQuickDate2").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageCustomTime").assertExists()
+    }
+
+    @Test
+    @UiThread
     fun `an app schedules through onScheduleMessage, and the sheet closes on success`() {
         val message = givenComposerWithText(canSchedule = true)
         var scheduled: Message? = null
@@ -527,13 +551,16 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
             }
         }
 
-    private fun givenComposerWithText(canSchedule: Boolean): Message {
+    private fun givenComposerWithText(
+        canSchedule: Boolean,
+        maxLeadTimeSeconds: Int = ScheduleMessageState().maxLeadTimeSeconds,
+    ): Message {
         val message = Message(text = "Heads up")
         whenever(mockViewModel.messageComposerState) doReturn MutableStateFlow(
             MessageComposerState(inputValue = "Heads up", ownCapabilities = setOf(ChannelCapabilities.SEND_MESSAGE)),
         )
         whenever(mockViewModel.scheduleMessageState) doReturn
-            MutableStateFlow(ScheduleMessageState(canSchedule = canSchedule))
+            MutableStateFlow(ScheduleMessageState(canSchedule = canSchedule, maxLeadTimeSeconds = maxLeadTimeSeconds))
         whenever(mockViewModel.buildNewMessage(any(), any())) doReturn message
         whenever(mockViewModel.channelState) doReturn MutableStateFlow(null)
         return message
