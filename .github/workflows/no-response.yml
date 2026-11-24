@@ -15,7 +15,7 @@ jobs:
       pull-requests: read
     # Calls the GitHub API, and the org IP allow list only admits static-IP runners.
     runs-on:
-      group: github-public-ubuntu-static
+      group: github-public-amd64
     steps:
       - uses: lee-dohm/no-response@v0.5.0
         with:

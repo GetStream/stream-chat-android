@@ -39,7 +39,7 @@ jobs:
     permissions:
       contents: read
     name: Pre release check
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     environment: 'publish'
     steps:
       - name: Check

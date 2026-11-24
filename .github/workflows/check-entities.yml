@@ -13,7 +13,7 @@ concurrency:
 jobs:
   check-db-entities:
     name: Check DB Entities
-    runs-on: ubuntu-22.04
+    runs-on: { group: github-public-amd64 }
     outputs:
       touched: ${{ steps.touchedEntities.outcome == 'failure' }}
       entities: ${{ steps.touchedEntities.outputs.touchedEntities }}
@@ -44,7 +44,7 @@ jobs:
     # A fork's token can't comment.
     if: ${{ needs.check-db-entities.outputs.touched == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on:
-      group: github-public-ubuntu-static
+      group: github-public-amd64
     steps:
       - name: Find Comment
         uses: peter-evans/find-comment@v4
