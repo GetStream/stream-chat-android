@@ -130,7 +130,7 @@ internal class QueryChannelsLogicGroupedTest {
 
         // Then
         verify(queryChannelsStateLogic).resetToPage(emptySet())
-        verify(queryChannelsStateLogic).addChannelsState(channels)
+        verify(queryChannelsStateLogic).addChannelsState(channels, fromServer = true)
     }
 
     @Test
@@ -155,7 +155,7 @@ internal class QueryChannelsLogicGroupedTest {
 
         // Then
         verify(queryChannelsStateLogic).resetToPage(setOf("messaging:old1"))
-        verify(queryChannelsStateLogic).addChannelsState(newChannels)
+        verify(queryChannelsStateLogic).addChannelsState(newChannels, fromServer = true)
     }
 
     @Test
@@ -220,7 +220,7 @@ internal class QueryChannelsLogicGroupedTest {
         logic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(serverMessage, bounce)), other))
+        verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(serverMessage, bounce)), other), fromServer = true)
         verify(queryChannelsDatabaseLogic).storeStateForChannels(setOf(channel, other))
     }
 
@@ -252,7 +252,7 @@ internal class QueryChannelsLogicGroupedTest {
         logic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        verify(queryChannelsStateLogic).addChannelsState(listOf(channel))
+        verify(queryChannelsStateLogic).addChannelsState(listOf(channel), fromServer = true)
     }
 
     @Test
@@ -269,7 +269,7 @@ internal class QueryChannelsLogicGroupedTest {
             logic.applyGroupedResult(group, isFirstPage = true)
 
             // Then
-            verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(bounce))))
+            verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(bounce))), fromServer = true)
         }
 
     @Test
@@ -295,7 +295,7 @@ internal class QueryChannelsLogicGroupedTest {
             logic.applyGroupedResult(group, isFirstPage = true)
 
             // Then
-            verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(older, newer))))
+            verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(older, newer))), fromServer = true)
         }
 
     @Test
@@ -310,7 +310,7 @@ internal class QueryChannelsLogicGroupedTest {
 
         // Then
         verify(queryChannelsDatabaseLogic, never()).selectLocalOnlyMessages(any())
-        verify(queryChannelsStateLogic).addChannelsState(listOf(kept))
+        verify(queryChannelsStateLogic).addChannelsState(listOf(kept), fromServer = true)
     }
 
     @Test
@@ -330,7 +330,7 @@ internal class QueryChannelsLogicGroupedTest {
 
         // Then
         verify(queryChannelsStateLogic).resetToPage(emptySet())
-        verify(queryChannelsStateLogic).addChannelsState(group.channels)
+        verify(queryChannelsStateLogic).addChannelsState(group.channels, fromServer = true)
     }
 
     @Test
@@ -352,7 +352,7 @@ internal class QueryChannelsLogicGroupedTest {
         // Then - a paginated page resets nothing.
         verify(queryChannelsStateLogic, never()).resetToPage(any())
         verify(queryChannelsStateLogic, never()).setChannelsOffset(any())
-        verify(queryChannelsStateLogic).addChannelsState(newChannels)
+        verify(queryChannelsStateLogic).addChannelsState(newChannels, fromServer = true)
     }
 
     @Test
@@ -484,7 +484,7 @@ internal class QueryChannelsLogicGroupedTest {
         standardLogic.applyGroupedResult(group, isFirstPage = true)
 
         // Then — no state mutations on a non-Grouped logic.
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
         verify(queryChannelsStateLogic, never()).setNextCursor(any())
         verify(queryChannelsStateLogic, never()).setEndOfChannels(any())
         verify(queryChannelsDatabaseLogic, never()).insertQueryChannels(any())
@@ -555,7 +555,7 @@ internal class QueryChannelsLogicGroupedTest {
         logic.loadOfflineGroupedChannels()
 
         // Then — stale cache must NOT overwrite fresh data, but housekeeping setters still fire.
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
         verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic).setLoadingFirstPage(false)
     }
@@ -576,7 +576,7 @@ internal class QueryChannelsLogicGroupedTest {
 
         // Then — no channels to add, state is initialized, and the loading flag is left alone so an
         // in-flight first page keeps its loader instead of falling through to the empty state.
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
         verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
     }
@@ -596,7 +596,7 @@ internal class QueryChannelsLogicGroupedTest {
         logic.loadOfflineGroupedChannels()
 
         // Then
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
         verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
     }
 
@@ -696,7 +696,7 @@ internal class QueryChannelsLogicGroupedTest {
 
         // Then — Standard path's offline read goes through loadOfflineChannels(request), not this.
         verify(queryChannelsDatabaseLogic, never()).fetchChannelsFromCache(any(), any())
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
         verify(queryChannelsStateLogic, never()).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
     }

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.internal.toCid
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.query.QueryChannelsSpec
@@ -47,6 +48,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
@@ -276,6 +279,25 @@ internal class QueryChannelsStateLogicTest {
         assertFalse(queryChannelsStateLogic.isActiveChannel(testCid))
         assertFalse(queryChannelsStateLogic.isActiveChannel("not-a-cid"))
     }
+
+    @ParameterizedTest
+    @ValueSource(booleans = [true, false])
+    fun `addChannelsState tells the channel logic whether the channels come from the server`(fromServer: Boolean) =
+        runTest {
+            val channel = randomChannel(type = "messaging", id = "listed-${randomString()}")
+            val channelLogic: ChannelLogic = mock()
+            whenever(logicRegistry.channel(ChannelId.fromCid(channel.cid)!!)) doReturn channelLogic
+            whenever(mutableState.queryChannelsSpec) doReturn queryChannelsSpec
+
+            queryChannelsStateLogic.addChannelsState(listOf(channel), fromServer)
+
+            verify(channelLogic).updateDataForChannel(
+                channel = channel,
+                messageLimit = channel.messages.size,
+                isChannelsStateUpdate = true,
+                fromServer = fromServer,
+            )
+        }
 
     @Test
     fun `addChannelsState drops channels with malformed cid`() = runTest {

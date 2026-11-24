@@ -317,8 +317,8 @@ internal class QueryChannelsLogic(
         }
     }
 
-    private suspend fun addChannels(channels: List<Channel>) {
-        queryChannelsStateLogic.addChannelsState(channels)
+    private suspend fun addChannels(channels: List<Channel>, fromServer: Boolean = false) {
+        queryChannelsStateLogic.addChannelsState(channels, fromServer)
         queryChannelsStateLogic.getQuerySpecs().let { specs ->
             queryChannelsDatabaseLogic.insertQueryChannels(specs)
         }
@@ -371,7 +371,7 @@ internal class QueryChannelsLogic(
 
             queryChannelsStateLogic.setNextCursor(group.next)
             queryChannelsStateLogic.setEndOfChannels(group.next == null)
-            queryChannelsStateLogic.addChannelsState(channels)
+            queryChannelsStateLogic.addChannelsState(channels, fromServer = true)
             updateGroupedUnreadBase(group)
             queryChannelsStateLogic.setLoadingFirstPage(false)
             queryChannelsStateLogic.setLoadingMore(false)
@@ -567,14 +567,14 @@ internal class QueryChannelsLogic(
         }
         if (!request.isFirstPage || existingChannels.isNullOrEmpty()) {
             queryChannelsStateLogic.incrementChannelsOffset(channels.size)
-            addChannels(channels)
+            addChannels(channels, fromServer = true)
             return channels
         }
         val pageCids: Set<String> = channels.mapTo(mutableSetOf()) { it.cid }
         val notUpdatedCids = existingChannels.keys - pageCids
         logger.v { "[updateOnlineChannels] notUpdatedCids.size: ${notUpdatedCids.size}" }
         if (notUpdatedCids.isEmpty()) {
-            addChannels(channels)
+            addChannels(channels, fromServer = true)
             queryChannelsStateLogic.setChannelsOffset(queryChannelsStateLogic.getQuerySpecs().cids.size)
             return channels
         }
@@ -600,7 +600,7 @@ internal class QueryChannelsLogic(
     ): List<Channel> {
         val laterChannels = fetchLaterPages(request, loadedCids.size)
         if (laterChannels == null) {
-            addChannels(firstPage)
+            addChannels(firstPage, fromServer = true)
             return firstPage
         }
         storeChannels(laterChannels)
@@ -613,7 +613,7 @@ internal class QueryChannelsLogic(
         }
         removeChannels(cidsToRemove.toList())
         val listedChannels = (firstPage + laterChannels.filterNot { it.cid in removedMeanwhile }).distinctBy { it.cid }
-        addChannels(listedChannels)
+        addChannels(listedChannels, fromServer = true)
         queryChannelsStateLogic.setChannelsOffset(queryChannelsStateLogic.getQuerySpecs().cids.size)
         return listedChannels
     }

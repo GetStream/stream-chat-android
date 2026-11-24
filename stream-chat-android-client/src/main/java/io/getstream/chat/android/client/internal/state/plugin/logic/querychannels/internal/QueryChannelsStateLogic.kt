@@ -198,8 +198,9 @@ internal class QueryChannelsStateLogic(
      * Add channels to state
      *
      * @param channels List<Channel>.
+     * @param fromServer Whether [channels] come from a server response rather than the local database.
      */
-    internal suspend fun addChannelsState(channels: List<Channel>) {
+    internal suspend fun addChannelsState(channels: List<Channel>, fromServer: Boolean = false) {
         val validated = channels.mapNotNull { channel ->
             ChannelId.fromCid(channel.cid)?.let { it to channel }
         }
@@ -213,6 +214,7 @@ internal class QueryChannelsStateLogic(
                     channel = channel,
                     messageLimit = channel.messages.size,
                     isChannelsStateUpdate = true,
+                    fromServer = fromServer,
                 )
             }
         }.forEach { it.await() }

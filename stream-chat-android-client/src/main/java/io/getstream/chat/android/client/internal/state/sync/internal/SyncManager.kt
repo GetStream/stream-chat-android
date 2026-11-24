@@ -994,7 +994,7 @@ internal class SyncManager(
         foundChannels.forEach { channel ->
             ChannelId.fromTypeAndId(channel.type, channel.id)
                 ?.let(logicRegistry::channel)
-                ?.updateDataForChannel(channel, channel.messages.size)
+                ?.updateDataForChannel(channel, channel.messages.size, fromServer = true)
         }
         mutableGlobalState.updateChannelDrafts(foundChannels)
         repos.storeStateForChannels(foundChannels)
@@ -1078,7 +1078,7 @@ internal class SyncManager(
                     foundChannels.forEach { channel ->
                         ChannelId.fromTypeAndId(channel.type, channel.id)
                             ?.let(logicRegistry::channel)
-                            ?.updateDataForChannel(channel, channel.messages.size)
+                            ?.updateDataForChannel(channel, channel.messages.size, fromServer = true)
                     }
                     mutableGlobalState.updateChannelDrafts(foundChannels)
                     repos.storeStateForChannels(foundChannels)

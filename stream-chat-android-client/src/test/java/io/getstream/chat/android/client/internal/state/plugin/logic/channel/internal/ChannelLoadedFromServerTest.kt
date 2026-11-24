@@ -90,6 +90,21 @@ internal class ChannelLoadedFromServerTest {
         assertEquals(2, unreadWhenLoaded)
     }
 
+    @Test
+    fun `given a server refresh fills the state, it should be loaded once its read state is applied`() = runTest {
+        var unreadWhenLoaded: Int? = null
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            state.loadedFromServer.collect { loaded ->
+                if (loaded) unreadWhenLoaded = state.read.value?.unreadMessages
+            }
+        }
+
+        sut.updateDataForChannel(channel = channelWithUnreadMessages(2), messageLimit = 30, fromServer = true)
+
+        assertTrue(state.loadedFromServer.value)
+        assertEquals(2, unreadWhenLoaded)
+    }
+
     private fun channelWithUnreadMessages(unreadMessages: Int) = randomChannel(
         type = CHANNEL_TYPE,
         id = CHANNEL_ID,
