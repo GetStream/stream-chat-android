@@ -49,7 +49,7 @@ jobs:
     permissions:
       contents: read
     needs: pre_release_check
-    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@22d4bdef34d33fed0183d5c4b88c6c18e52ef145 # v1.2.1
+    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@19665cfdb1c4290d133028844708e71c15104e87 # v1.3.0
     with:
       release-bot-client-id: ${{ vars.ANDROID_RELEASE_BOT_CLIENT_ID }}
       bump: ${{ inputs.bump }}
