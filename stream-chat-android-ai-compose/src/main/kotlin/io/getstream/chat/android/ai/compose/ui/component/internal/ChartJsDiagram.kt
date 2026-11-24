@@ -16,12 +16,13 @@
 
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 
@@ -61,54 +62,101 @@ internal fun ChartJsDiagram(
     chartJsJson: String,
     modifier: Modifier = Modifier,
 ) {
-    val htmlContent = remember(chartJsJson) {
-        buildHtmlContent(chartJsJson.escapeJson())
-    }
     AndroidView(
         modifier = modifier,
-        factory = { context ->
-            val chartJsCode = loadChartJsFromAssets(context)
-            createWebView(context, htmlContent, chartJsCode)
-        },
-        update = { webView ->
-            webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
-        },
+        factory = { context -> ChartWebView(context, loadChartJsFromAssets(context)) },
+        update = { webView -> webView.show(chartJsJson) },
+        onRelease = { webView -> webView.destroy() },
     )
 }
 
-private fun buildHtmlContent(escapedJson: String) = """
+/**
+ * A WebView showing one chart. The page runs no scripts of its own: Chart.js and each chart's
+ * configuration go in through [evaluateJavascript], so nothing in a configuration can add markup
+ * that runs. Without the Chart.js asset it stays empty.
+ */
+// JavaScript runs only the scripts the app evaluates, and the view is only built in code.
+@SuppressLint("SetJavaScriptEnabled", "ViewConstructor")
+private class ChartWebView(context: Context, private val chartJsCode: String?) : WebView(context) {
+
+    private var config: String? = null
+    private var ready = false
+
+    init {
+        setBackgroundColor(Color.TRANSPARENT)
+        settings.javaScriptEnabled = true
+        settings.setSupportZoom(false)
+        isVerticalScrollBarEnabled = false
+        isHorizontalScrollBarEnabled = false
+        webViewClient = object : WebViewClient() {
+            // The chart page never navigates anywhere.
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean = true
+
+            override fun onPageFinished(view: WebView, url: String?) {
+                chartJsCode?.let { view.evaluateJavascript(it) { onChartJsLoaded() } }
+            }
+        }
+        loadDataWithBaseURL(null, ChartPage, "text/html", "UTF-8", null)
+    }
+
+    fun show(chartJsJson: String) {
+        if (chartJsJson == config) return
+        config = chartJsJson
+        if (ready) render(chartJsJson)
+    }
+
+    private fun onChartJsLoaded() {
+        ready = true
+        config?.let(::render)
+    }
+
+    private fun render(chartJsJson: String) {
+        evaluateJavascript(renderChartScript(chartJsJson), null)
+    }
+}
+
+/** The page a chart draws on. Its policy lets no script run but those the app evaluates. */
+private val ChartPage = """
     <!DOCTYPE html>
     <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' 'unsafe-eval';
-            style-src 'unsafe-inline'; img-src data:; connect-src 'none';">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:;">
         <style>
             body { margin: 0; padding: 8px; background: transparent; }
             #chartContainer { width: 100%; height: 100%; min-height: 200px; }
+            .chartError { color: red; padding: 20px; }
         </style>
     </head>
-    <body>
-        <div id="chartContainer"><canvas id="chartCanvas"></canvas></div>
-        <script>
-            window.initChart = function() {
-                try {
-                    if (window.chartInstance) {
-                        window.chartInstance.destroy();
-                        window.chartInstance = null;
-                    }
-                    const config = JSON.parse("$escapedJson");
-                    const ctx = document.getElementById('chartCanvas').getContext('2d');
-                    window.chartInstance = new Chart(ctx, config);
-                } catch (error) {
-                    console.error('Chart.js error:', error);
-                    document.getElementById('chartContainer').innerHTML =
-                        '<p style="color: red; padding: 20px;">Error rendering chart: ' + error.message + '</p>';
-                }
-            };
-        </script>
-    </body>
+    <body><div id="chartContainer"></div></body>
     </html>
+""".trimIndent()
+
+/**
+ * The script that draws the chart [chartJsJson] configures, replacing the one shown before, or
+ * shows why it can't as text.
+ */
+internal fun renderChartScript(chartJsJson: String): String = """
+    (function(json) {
+        const container = document.getElementById('chartContainer');
+        try {
+            if (window.chartInstance) {
+                window.chartInstance.destroy();
+                window.chartInstance = null;
+            }
+            const canvas = document.createElement('canvas');
+            container.textContent = '';
+            container.appendChild(canvas);
+            window.chartInstance = new Chart(canvas.getContext('2d'), JSON.parse(json));
+        } catch (error) {
+            console.error('Chart.js error:', error);
+            const message = document.createElement('p');
+            message.className = 'chartError';
+            message.textContent = 'Error rendering chart: ' + error.message;
+            container.textContent = '';
+            container.appendChild(message);
+        }
+    })(${chartJsJson.toJsStringLiteral()});
 """.trimIndent()
 
 private fun loadChartJsFromAssets(context: Context): String? =
@@ -118,51 +166,29 @@ private fun loadChartJsFromAssets(context: Context): String? =
         null
     }
 
-private fun createWebView(
-    context: Context,
-    htmlContent: String,
-    chartJsCode: String?,
-): WebView = WebView(context).apply {
-    setBackgroundColor(Color.TRANSPARENT)
-    settings.apply {
-        javaScriptEnabled = true
-        setSupportZoom(false)
-    }
-    isVerticalScrollBarEnabled = false
-    isHorizontalScrollBarEnabled = false
-
-    webViewClient = object : WebViewClient() {
-        override fun onPageFinished(view: WebView?, url: String?) {
-            super.onPageFinished(view, url)
-            view?.let { initializeChart(it, chartJsCode) }
+/** This text as a double-quoted JavaScript string literal. */
+internal fun String.toJsStringLiteral(): String = buildString(length + 2) {
+    append('"')
+    for (char in this@toJsStringLiteral) {
+        when (char) {
+            '"' -> append("\\\"")
+            '\\' -> append("\\\\")
+            '\n' -> append("\\n")
+            '\r' -> append("\\r")
+            '\t' -> append("\\t")
+            else -> if (char < ' ' || char.code == LineSeparator || char.code == ParagraphSeparator) {
+                append("\\u").append(char.code.toString(HexRadix).padStart(UnicodeEscapeDigits, '0'))
+            } else {
+                append(char)
+            }
         }
     }
-    loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
+    append('"')
 }
 
-private fun initializeChart(webView: WebView, chartJsCode: String?) {
-    val initScript = "if (typeof Chart !== 'undefined' && typeof window.initChart === 'function') " +
-        "{ window.initChart(); }"
+private const val HexRadix = 16
 
-    if (chartJsCode != null) {
-        webView.evaluateJavascript(chartJsCode) {
-            webView.evaluateJavascript(initScript) { }
-        }
-    } else {
-        webView.evaluateJavascript(
-            """
-                var script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
-                script.onload = function() { $initScript };
-                document.head.appendChild(script);
-            """.trimIndent(),
-        ) { }
-    }
-}
-
-private fun String.escapeJson() =
-    replace("\\", "\\\\")
-        .replace("\"", "\\\"")
-        .replace("</script>", "<\\/script>")
-        .replace("\n", "\\n")
-        .replace("\r", "\\r")
+// JavaScript engines before ES2019 end a string literal at these.
+private const val LineSeparator = 0x2028
+private const val ParagraphSeparator = 0x2029
+private const val UnicodeEscapeDigits = 4
