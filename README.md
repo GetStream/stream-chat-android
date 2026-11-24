@@ -50,7 +50,6 @@ The Android SDK supports both Kotlin and Java, but *we strongly recommend using 
 * [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/)
 * [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
 * [API docs](https://getstream.github.io/stream-chat-android/): Full generated docs from Dokka
-* [Jetpack Compose Planning](https://github.com/orgs/GetStream/projects/6): Jetpack Compose public project management board and milestone overview
 
 ## 👩‍💻 Free for Makers 👨‍💻
 
@@ -172,12 +171,6 @@ When utilizing **R8**, the rules for shrinking and obfuscation are applied autom
 If you are using **ProGuard**, you will need to add the following rules from [client](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/consumer-proguard-rules.pro) and [ui-common](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/consumer-proguard-rules.pro) modules to your application.
 
 You might also need apply rules for [Coroutines](https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/resources/META-INF/proguard/coroutines.pro), [Retrofit](https://github.com/square/retrofit/blob/master/retrofit/src/main/resources/META-INF/proguard/retrofit2.pro), [kotlin-reflect](https://github.com/JetBrains/kotlin/blob/master/core/reflection.jvm/resources/META-INF/proguard/kotlin-reflect.pro) and [OkHttp](https://github.com/square/okhttp/blob/master/okhttp/src/jvmMain/resources/META-INF/proguard/okhttp3.pro) which are dependencies of the SDK.
-
-## 💼 We are hiring!
-
-We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
-Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.
-Check out our current openings and apply via [Stream's website](https://getstream.io/team/#jobs).
 
 ## License
 
