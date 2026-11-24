@@ -34,6 +34,7 @@ import org.threeten.bp.LocalTime
 import org.threeten.bp.ZoneId
 import java.util.Date
 import java.util.Locale
+import java.text.DateFormat as JavaDateFormat
 
 @RunWith(TestParameterInjector::class)
 internal class DefaultDateFormatterTest {
@@ -60,6 +61,8 @@ internal class DefaultDateFormatterTest {
         override fun dateTimePattern(): String = dateTimePattern
         override fun relativeTime(date: Date): String = relativeTime
         override fun relativeDate(date: Date): String = relativeDate
+        override fun scheduledDayPattern(): String = "EEE, MMM d"
+        override fun dayAtTime(day: String, time: String): String = "$day at $time"
     }
 
     @Test
@@ -106,6 +109,40 @@ internal class DefaultDateFormatterTest {
         )
 
         formatter.formatRelativeDate(randomDate()) `should be equal to` RELATIVE_DATE_STRING
+    }
+
+    @Test
+    fun `Scheduled date formatting uses the day pattern and the 24-hour time`() {
+        val formatter: DateFormatter = DefaultDateFormatter(TestDateContext(is24Hour = true), Locale.US)
+
+        val formattedDate = formatter.formatScheduledDate(LocalDateTime.of(2020, 12, 11, 9, 5).toDate())
+
+        formattedDate shouldBeEqualTo "Fri, Dec 11 at 09:05"
+    }
+
+    @Test
+    fun `Scheduled date formatting uses the day pattern and the 12-hour time`() {
+        val formatter: DateFormatter = DefaultDateFormatter(TestDateContext(is24Hour = false), Locale.US)
+
+        val formattedDate = formatter.formatScheduledDate(LocalDateTime.of(2020, 12, 11, 21, 5).toDate())
+
+        formattedDate shouldBeEqualTo "Fri, Dec 11 at 9:05 PM"
+    }
+
+    @Test
+    fun `Scheduled date formatting of a formatter that does not override it uses the medium date and short time`() {
+        val formatter = object : DateFormatter {
+            override fun formatDate(date: Date?): String = ""
+            override fun formatTime(date: Date?): String = ""
+            override fun formatRelativeTime(date: Date?): String = ""
+            override fun formatRelativeDate(date: Date): String = ""
+        }
+        val date = LocalDateTime.of(2020, 12, 11, 9, 5).toDate()
+
+        val formattedDate = formatter.formatScheduledDate(date)
+
+        formattedDate shouldBeEqualTo JavaDateFormat.getDateTimeInstance(JavaDateFormat.MEDIUM, JavaDateFormat.SHORT)
+            .format(date)
     }
 
     @Suppress("unused")

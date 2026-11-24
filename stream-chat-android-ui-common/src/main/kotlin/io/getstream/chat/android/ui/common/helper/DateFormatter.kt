@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.text.DateFormat as JavaDateFormat
 
 /**
  * An interface that allows to format date-time objects as strings.
@@ -76,6 +77,20 @@ public interface DateFormatter {
      * @return The formatted relative date string.
      */
     public fun formatRelativeDate(date: Date): String
+
+    /**
+     * Formats the date and time a scheduled message is sent at.
+     * The default implementation of [from] returns a string like "Fri, Oct 23 at 9:00 AM"/"Fri, Oct 23 at 09:00".
+     * It is used in the scheduled messages list, the scheduled messages banner and the reschedule sheet.
+     *
+     * When not overridden, it returns the medium date and the short time of the default locale, like
+     * "Oct 23, 2026, 9:00 AM".
+     *
+     * @param date The [Date] the scheduled message is sent at.
+     * @return The formatted date-time string.
+     */
+    public fun formatScheduledDate(date: Date): String =
+        JavaDateFormat.getDateTimeInstance(JavaDateFormat.MEDIUM, JavaDateFormat.SHORT).format(date)
 
     public companion object {
         /**
@@ -215,6 +230,17 @@ internal class DefaultDateFormatter(
     }
 
     /**
+     * Formats the date and time a scheduled message is sent at, like "Fri, Oct 23 at 9:00 AM".
+     *
+     * @param date The [Date] the scheduled message is sent at.
+     * @return The formatted date-time string.
+     */
+    override fun formatScheduledDate(date: Date): String {
+        val day = SimpleDateFormat(dateContext.scheduledDayPattern(), locale).format(date)
+        return dateContext.dayAtTime(day = day, time = formatTime(date))
+    }
+
+    /**
      * Checks if the supplied day is today.
      *
      * @return true if the date is today.
@@ -317,6 +343,16 @@ internal class DefaultDateFormatter(
          * Returns the relative date string for the given date.
          */
         fun relativeDate(date: Date): String
+
+        /**
+         * Returns the pattern of the day of a scheduled message for the current locale, like "EEE, MMM d".
+         */
+        fun scheduledDayPattern(): String
+
+        /**
+         * Returns the [day] and the [time] of a scheduled message joined, like "Fri, Oct 23 at 9:00 AM".
+         */
+        fun dayAtTime(day: String, time: String): String
     }
 
     private class DefaultDateContext(
@@ -328,6 +364,10 @@ internal class DefaultDateFormatter(
 
         private val dateTimePatternLazy by lazy {
             DateFormat.getBestDateTimePattern(locale, "yy MM dd")
+        }
+
+        private val scheduledDayPatternLazy by lazy {
+            DateFormat.getBestDateTimePattern(locale, "EEEMMMd")
         }
 
         override fun now(): Date = Date()
@@ -372,6 +412,11 @@ internal class DefaultDateFormatter(
                 DateUtils.FORMAT_ABBREV_RELATIVE,
             ).toString()
         }
+
+        override fun scheduledDayPattern(): String = scheduledDayPatternLazy
+
+        override fun dayAtTime(day: String, time: String): String =
+            context.getString(R.string.stream_ui_scheduled_message_date, day, time)
     }
 }
 

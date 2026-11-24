@@ -129,6 +129,8 @@ class ScheduledMessagesPage {
         companion object {
             val title get() = By.text(appContext.getString(ComposeR.string.stream_compose_scheduled_message_list_title))
             val empty get() = By.res("Stream_ScheduledMessageListEmpty")
+            val searchField get() = By.res("Stream_ScheduledMessageSearchInput")
+            val emptySearch get() = By.res("Stream_ScheduledMessageListEmptySearch")
             val loadFailed get() = By.res("Stream_ScheduledMessageListError")
             val retryButton get() = By.res("Stream_ScheduledMessageListRetry")
             val items get() = By.res("Stream_ScheduledMessageItem")

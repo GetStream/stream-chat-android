@@ -177,6 +177,11 @@ fun UserRobot.assertScheduledMessagesAreEmpty(): UserRobot {
     return this
 }
 
+fun UserRobot.assertScheduledMessagesSearchHasNoResults(): UserRobot {
+    assertTrue(Screen.emptySearch.waitDisplayed())
+    return this
+}
+
 /** Asserts which actions the open actions sheet offers, then closes it. */
 fun UserRobot.assertScheduledMessageActions(shown: List<BySelector>, hidden: List<BySelector>): UserRobot {
     assertTrue(Actions.view.waitDisplayed())

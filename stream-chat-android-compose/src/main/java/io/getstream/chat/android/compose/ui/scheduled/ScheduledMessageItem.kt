@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,7 +41,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.messages.composer.schedule.formatFullDate
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -55,7 +53,6 @@ import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.scheduled.isUploading
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageItemState
-import java.util.TimeZone
 
 /**
  * The default item of the scheduled message list: the date the message is sent at, the avatar and the name of its
@@ -64,14 +61,12 @@ import java.util.TimeZone
  * @param item The scheduled message to show.
  * @param currentUser The currently logged in user.
  * @param onClick Called when the item is clicked.
- * @param timeZone The time zone of the date the message is sent at.
  */
 @Composable
 internal fun ScheduledMessageItem(
     item: ScheduledMessageItemState,
     currentUser: User?,
     onClick: (ScheduledMessageItemState) -> Unit,
-    timeZone: TimeZone = TimeZone.getDefault(),
 ) {
     val scheduledMessage = item.scheduledMessage
     val status = item.status()
@@ -90,7 +85,7 @@ internal fun ScheduledMessageItem(
                 modifier = Modifier.testTag("Stream_ScheduledMessageDate"),
                 text = stringResource(
                     R.string.stream_compose_scheduled_message_list_send_at,
-                    LocalContext.current.formatFullDate(scheduledMessage.scheduledAt, timeZone),
+                    ChatTheme.dateFormatter.formatScheduledDate(scheduledMessage.scheduledAt),
                 ),
                 style = ChatTheme.typography.captionDefault,
                 color = if (status is ItemStatus.Failed) {

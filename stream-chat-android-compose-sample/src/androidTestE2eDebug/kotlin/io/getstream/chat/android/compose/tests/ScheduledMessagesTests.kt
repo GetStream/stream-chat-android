@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.robots.assertScheduledMessagesBanner
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesBannerIsHidden
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesLoadFailed
 import io.getstream.chat.android.compose.robots.assertScheduledMessagesScreen
+import io.getstream.chat.android.compose.robots.assertScheduledMessagesSearchHasNoResults
 import io.getstream.chat.android.compose.robots.assertThreadMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
@@ -917,6 +918,43 @@ class ScheduledMessagesTests : StreamTestCase() {
                 .openScheduledMessagesFromBanner()
                 .assertScheduledMessage("First", time = tomorrowAt(9))
                 .assertScheduledMessage("Second", time = tomorrowAt(9))
+        }
+    }
+
+    @Test
+    fun test_scheduledMessagesAreSearchedByText() {
+        step("GIVEN user schedules two messages") {
+            userRobot
+                .login()
+                .openChannel()
+                .scheduleMessage("Venue shortlist")
+                .scheduleMessage("Launch notes")
+        }
+        step("WHEN user searches the scheduled messages for a word of one of them") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .searchScheduledMessages("launch")
+        }
+        step("THEN only that message is listed") {
+            userRobot
+                .assertScheduledMessage("Launch notes", time = tomorrowAt(9))
+                .assertScheduledMessageIsNotShown("Venue shortlist")
+        }
+        step("WHEN user searches for a word none of them has") {
+            userRobot.searchScheduledMessages("party")
+        }
+        step("THEN the list tells there are no results") {
+            userRobot
+                .assertScheduledMessagesSearchHasNoResults()
+                .assertScheduledMessageIsNotShown("Launch notes")
+        }
+        step("WHEN user clears the search") {
+            userRobot.searchScheduledMessages("")
+        }
+        step("THEN both messages are listed again") {
+            userRobot
+                .assertScheduledMessage("Venue shortlist")
+                .assertScheduledMessage("Launch notes")
         }
     }
 

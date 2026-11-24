@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.R
@@ -61,6 +62,7 @@ import io.getstream.chat.android.compose.ui.theme.ScheduleMessageTimeSheetParams
 import io.getstream.chat.android.compose.ui.theme.ScheduledMessageActionsSheetParams
 import io.getstream.chat.android.compose.ui.theme.ScheduledMessageDeleteDialogParams
 import io.getstream.chat.android.compose.ui.theme.ScheduledMessageListEmptyContentParams
+import io.getstream.chat.android.compose.ui.theme.ScheduledMessageListEmptySearchContentParams
 import io.getstream.chat.android.compose.ui.theme.ScheduledMessageListErrorContentParams
 import io.getstream.chat.android.compose.ui.theme.ScheduledMessageListItemParams
 import io.getstream.chat.android.compose.ui.theme.ScheduledMessageListLoadingContentParams
@@ -86,7 +88,10 @@ import kotlinx.coroutines.launch
  * message that failed, or copy the text of a message whose channel was deleted. A message that is sending, or whose
  * attachments are uploading, has no actions: a click tells the user to wait. Deleting asks for confirmation. A message
  * that is already sent or deleted on another device leaves the list with a short notice. Send now while offline tells
- * the user that the message is sent once the device is back online.
+ * the user that the message is sent once the device is back online. Apps add their own actions with
+ * [io.getstream.chat.android.compose.ui.theme.ScheduledMessageActionsSheetParams.customActions].
+ *
+ * The list shows the messages that match the search query set with [ScheduledMessageListViewModel.setSearchQuery].
  *
  * Edit opens a composer below the list, with the content of the message. Its check button saves the message and keeps
  * its date. For a message the server failed to send, it picks a date and schedules the message again as a new
@@ -350,7 +355,8 @@ private class ScheduledMessageSheets(
 }
 
 /**
- * The content of the list for [state]: the loading, error or empty content, or the scheduled messages.
+ * The content of the list for [state]: the loading, error or empty content, the content for a search without
+ * results, or the scheduled messages that match the search.
  */
 @Composable
 internal fun ScheduledMessageListContent(
@@ -373,8 +379,14 @@ internal fun ScheduledMessageListContent(
         state.items.isEmpty() -> ChatTheme.componentFactory.ScheduledMessageListEmptyContent(
             params = ScheduledMessageListEmptyContentParams(modifier = contentModifier),
         )
+        state.searchResults.isEmpty() -> ChatTheme.componentFactory.ScheduledMessageListEmptySearchContent(
+            params = ScheduledMessageListEmptySearchContentParams(
+                searchQuery = state.searchQuery,
+                modifier = contentModifier,
+            ),
+        )
         else -> LazyColumn(modifier = contentModifier.testTag("Stream_ScheduledMessageList")) {
-            items(state.items, key = { it.scheduledMessage.id }) { item ->
+            items(state.searchResults, key = { it.scheduledMessage.id }) { item ->
                 ChatTheme.componentFactory.ScheduledMessageListItem(
                     params = ScheduledMessageListItemParams(
                         item = item,
@@ -401,6 +413,47 @@ internal fun DefaultScheduledMessageListEmptyContent(modifier: Modifier = Modifi
         painter = painterResource(R.drawable.stream_design_ic_clock),
         title = stringResource(R.string.stream_compose_scheduled_message_list_empty_title),
         text = stringResource(R.string.stream_compose_scheduled_message_list_empty_description),
+    )
+}
+
+/**
+ * The default content of the list when no scheduled message matches the search query.
+ *
+ * @param searchQuery The search query no scheduled message matches.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultScheduledMessageListEmptySearchContent(searchQuery: String, modifier: Modifier = Modifier) {
+    EmptyContent(
+        modifier = modifier
+            .testTag("Stream_ScheduledMessageListEmptySearch")
+            .padding(horizontal = StreamTokens.spacing2xl),
+        painter = painterResource(R.drawable.stream_design_ic_search),
+        text = stringResource(R.string.stream_compose_scheduled_message_list_empty_search_results, searchQuery.trim()),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduledMessageListEmptySearchPreview() {
+    ChatTheme {
+        ScheduledMessageListEmptySearch()
+    }
+}
+
+/** A search that no scheduled message matches. */
+@Composable
+internal fun ScheduledMessageListEmptySearch() {
+    ScheduledMessageListContent(
+        state = ScheduledMessageListState(
+            items = PreviewScheduledMessageItems[0],
+            isLoading = false,
+            searchQuery = "launch party",
+            searchResults = emptyList(),
+        ),
+        currentUser = null,
+        onItemClick = {},
+        onRetryClick = {},
     )
 }
 

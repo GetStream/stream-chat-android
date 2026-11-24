@@ -428,6 +428,7 @@
   <string name="stream_compose_scheduled_message_list_send_at">"Invio %1$s"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"Nessun messaggio programmato"</string>
   <string name="stream_compose_scheduled_message_list_empty_description">"Tieni premuto il pulsante di invio in un canale per programmare un messaggio."</string>
+  <string name="stream_compose_scheduled_message_list_empty_search_results">"Nessun risultato per \"%1$s\""</string>
   <string name="stream_compose_scheduled_message_list_load_failed">"Impossibile caricare i messaggi programmati"</string>
   <string name="stream_compose_scheduled_message_list_try_again">"Riprova"</string>
   <string name="stream_compose_scheduled_message_list_sending">"Invio in corso…"</string>

@@ -20,10 +20,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.paneTitle
@@ -36,11 +39,15 @@ import io.getstream.chat.android.compose.ui.components.DefaultListHeaderCenterCo
 import io.getstream.chat.android.compose.ui.components.HeaderScaffold
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ScheduledMessageListSearchInputParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModelFactory
 
 /**
- * The screen of the current user's scheduled messages: a header with a back button and the [ScheduledMessageList].
+ * The screen of the current user's scheduled messages: a header with a back button, a search input and the
+ * [ScheduledMessageList]. The search keeps the messages whose text, attachment names, channel name or channel member
+ * names contain the query.
  * Apps decide how users reach it, for example from the scheduled messages banner of the channel screen.
  *
  * @param viewModelFactory The factory of the [ScheduledMessageListViewModel]. Pass the `cid` of a channel to it to
@@ -57,6 +64,7 @@ public fun ScheduledMessagesScreen(
 ) {
     val viewModel: ScheduledMessageListViewModel = viewModel(factory = viewModelFactory)
     val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -73,6 +81,21 @@ public fun ScheduledMessagesScreen(
             },
             centerContent = { DefaultListHeaderCenterContent(connectionState = connectionState, title = title) },
             trailingContent = { Spacer(modifier = Modifier.size(AvatarSize.ExtraLarge)) },
+        )
+        ChatTheme.componentFactory.ScheduledMessageListSearchInput(
+            params = ScheduledMessageListSearchInputParams(
+                query = state.searchQuery,
+                onValueChange = viewModel::setSearchQuery,
+                modifier = Modifier
+                    .testTag("Stream_ScheduledMessageSearchInput")
+                    .padding(
+                        top = StreamTokens.spacingMd,
+                        bottom = StreamTokens.spacingXs,
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
+                    )
+                    .fillMaxWidth(),
+            ),
         )
         ScheduledMessageList(
             viewModel = viewModel,

@@ -495,6 +495,7 @@
     <string name="stream_compose_scheduled_message_list_send_at">Send %1$s</string>
     <string name="stream_compose_scheduled_message_list_empty_title">No scheduled messages</string>
     <string name="stream_compose_scheduled_message_list_empty_description">Long press the send button in a channel to schedule a message.</string>
+    <string name="stream_compose_scheduled_message_list_empty_search_results">No results for \"%1$s\"</string>
     <string name="stream_compose_scheduled_message_list_load_failed">Couldn\'t load scheduled messages</string>
     <string name="stream_compose_scheduled_message_list_try_again">Try again</string>
     <string name="stream_compose_scheduled_message_list_sending">Sending…</string>

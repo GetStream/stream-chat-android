@@ -262,7 +262,7 @@ internal fun ScheduleMessageTimeSheetContent(
                 title = params.scheduledAt?.let { scheduledAt ->
                     stringResource(
                         R.string.stream_compose_schedule_message_scheduled_for,
-                        context.formatFullDate(scheduledAt, timeZone),
+                        ChatTheme.dateFormatter.formatScheduledDate(scheduledAt),
                     )
                 } ?: params.message.replyTo?.user?.name?.takeIf(String::isNotBlank)?.let { name ->
                     stringResource(R.string.stream_compose_schedule_message_reply_to, name)
@@ -523,16 +523,6 @@ internal fun Context.formatQuickDate(date: Date, now: Date, timeZone: TimeZone =
         getString(R.string.stream_compose_schedule_message_day_at, day, time)
     }
 }
-
-/**
- * Formats a date with its day and its time, like "Fri, Oct 23 at 09:00".
- */
-internal fun Context.formatFullDate(date: Date, timeZone: TimeZone = TimeZone.getDefault()): String =
-    getString(
-        R.string.stream_compose_schedule_message_day_at,
-        formatPickerDate(date, timeZone),
-        formatTime(date, timeZone),
-    )
 
 private fun Context.formatTime(date: Date, timeZone: TimeZone): String =
     DateFormat.getTimeFormat(this).apply { this.timeZone = timeZone }.format(date)

@@ -67,6 +67,16 @@ public class ScheduledMessageListViewModel internal constructor(
     }
 
     /**
+     * Searches the scheduled messages for [query]: [ScheduledMessageListState.searchResults] keeps the ones whose text,
+     * attachment names, channel name or channel member names contain it. A blank query shows all of them.
+     *
+     * @param query The text to search for.
+     */
+    public fun setSearchQuery(query: String) {
+        controller.setSearchQuery(query)
+    }
+
+    /**
      * Changes the date the scheduled message with [id] is sent at.
      *
      * @param id The ID of the scheduled message.

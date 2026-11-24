@@ -24,6 +24,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -122,6 +123,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
     }
 
     @Test
+    @Config(sdk = [33], qualifiers = "w411dp-h1600dp")
     fun `editing another message replaces the content of the composer`() {
         scheduledMessagesFlow.value = listOf(
             scheduled(id = "a", text = "First message"),
@@ -138,6 +140,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
     }
 
     @Test
+    @Config(sdk = [33], qualifiers = "w411dp-h1600dp")
     fun `saving after editing another message saves that message only`() {
         val second = scheduled(id = "b", text = "Second message")
         scheduledMessagesFlow.value = listOf(scheduled(id = "a", text = "First message"), second)
@@ -313,6 +316,24 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
 
         composeTestRule.onNodeWithText("Already sent or deleted on another device").assertExists()
         composeTestRule.onNodeWithTag("Stream_ComposerInputField").assertTextEquals("Heads up")
+    }
+
+    @Test
+    fun `a message the search hides while it is edited is not gone, and can be saved`() {
+        val message = scheduled(id = "a", text = "Heads up")
+        scheduledMessagesFlow.value = listOf(message, scheduled(id = "b", text = "Launch day"))
+        whenever(mockChatClient.updateScheduledMessage(any(), any(), anyOrNull())) doReturn message.asCall()
+        setContent()
+        startEditing("Heads up")
+
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageSearchInput").performTextInput("launch")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNode(hasTestTag("Stream_ScheduledMessageItem") and hasText("Heads up", substring = true))
+            .assertDoesNotExist()
+        composeTestRule.onNodeWithText("Already sent or deleted on another device").assertDoesNotExist()
+        save()
+        verify(mockChatClient).updateScheduledMessage(eq("a"), argThat { text == "Heads up" }, isNull())
     }
 
     @Test

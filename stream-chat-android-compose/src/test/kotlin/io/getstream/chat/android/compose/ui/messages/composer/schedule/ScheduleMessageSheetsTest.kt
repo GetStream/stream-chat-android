@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.composer.schedule
 
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.DefaultTimeZoneRule
 import io.getstream.chat.android.compose.ui.PIXEL_4A_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSendButtonWithSchedule
@@ -31,6 +32,9 @@ internal class ScheduleMessageSheetsTest : PaparazziComposeTest {
         deviceConfig = PIXEL_4A_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
+
+    @get:Rule
+    val timeZoneRule = DefaultTimeZoneRule()
 
     @Test
     fun `schedule sheet`() {

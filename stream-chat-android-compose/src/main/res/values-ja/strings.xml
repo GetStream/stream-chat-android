@@ -409,6 +409,7 @@
   <string name="stream_compose_scheduled_message_list_send_at">"%1$sに送信"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"予約メッセージはありません"</string>
   <string name="stream_compose_scheduled_message_list_empty_description">"チャンネルで送信ボタンを長押しすると、メッセージを予約できます。"</string>
+  <string name="stream_compose_scheduled_message_list_empty_search_results">"\"%1$s\"の検索結果はありません"</string>
   <string name="stream_compose_scheduled_message_list_load_failed">"予約メッセージを読み込めませんでした"</string>
   <string name="stream_compose_scheduled_message_list_try_again">"再試行"</string>
   <string name="stream_compose_scheduled_message_list_sending">"送信中…"</string>

@@ -21,6 +21,7 @@
 
     <!--Message Date-->
     <string name="stream_ui_yesterday">Yesterday</string>
+    <string name="stream_ui_scheduled_message_date">%1$s at %2$s</string>
 
     <!-- Media capture -->
     <string name="stream_ui_message_composer_capture_media">Capture Image or Video</string>

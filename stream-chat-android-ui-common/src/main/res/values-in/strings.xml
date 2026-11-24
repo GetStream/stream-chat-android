@@ -172,4 +172,5 @@
   <string name="stream_ui_poll_description_unlimited_answers">"Pilih satu atau lebih"</string>
   <string name="stream_ui_poll_multiple_answers_error">"Ketik angka dari %1$s sampai %2$s"</string>
   <string name="stream_ui_yesterday">"Kemarin"</string>
+  <string name="stream_ui_scheduled_message_date">"%1$s pukul %2$s"</string>
 </resources>

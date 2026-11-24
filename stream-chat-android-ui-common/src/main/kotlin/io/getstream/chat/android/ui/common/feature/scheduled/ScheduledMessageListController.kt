@@ -28,6 +28,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure
@@ -97,6 +98,7 @@ public class ScheduledMessageListController(
     // The quoted messages found deleted after an action was refused because of them. The scheduled messages may not
     // say so yet.
     private val deletedQuotes = MutableStateFlow<Map<String, Message>>(emptyMap())
+    private val searchQuery = MutableStateFlow("")
 
     // The messages deleted from this list, which leave it as asked, not as gone.
     private val deletedIds = mutableSetOf<String>()
@@ -123,19 +125,24 @@ public class ScheduledMessageListController(
             isLoadFailed || connectionState is ConnectionState.Offline
         },
         deletedQuotes,
-    ) { (scheduledMessages, cidsWithoutScheduling), isKnown, cannotLoad, deletedQuotes ->
+        searchQuery,
+    ) { (scheduledMessages, cidsWithoutScheduling), isKnown, cannotLoad, deletedQuotes, searchQuery ->
         val isUnknown = scheduledMessages.isEmpty() && !isKnown
+        val items = scheduledMessages
+            .sortedWith(compareBy(ScheduledMessage::scheduledAt).thenBy { it.message.text })
+            .map { scheduledMessage ->
+                scheduledMessage.toItemState(
+                    deletedQuotes = deletedQuotes,
+                    canSchedule = scheduledMessage.cid !in cidsWithoutScheduling,
+                )
+            }
+        val currentUserId = chatClient.clientState.user.value?.id
         ScheduledMessageListState(
-            items = scheduledMessages
-                .sortedWith(compareBy(ScheduledMessage::scheduledAt).thenBy { it.message.text })
-                .map { scheduledMessage ->
-                    scheduledMessage.toItemState(
-                        deletedQuotes = deletedQuotes,
-                        canSchedule = scheduledMessage.cid !in cidsWithoutScheduling,
-                    )
-                },
+            items = items,
             isLoading = isUnknown && !cannotLoad,
             isLoadFailed = isUnknown && cannotLoad,
+            searchQuery = searchQuery,
+            searchResults = items.filter { item -> item.matches(searchQuery, currentUserId) },
         )
     }.stateIn(scope = ownScope, started = SharingStarted.Eagerly, initialValue = ScheduledMessageListState())
 
@@ -177,6 +184,16 @@ public class ScheduledMessageListController(
             } while (next != null)
             hasLoaded.value = true
         }
+    }
+
+    /**
+     * Searches the scheduled messages for [query]: [ScheduledMessageListState.searchResults] keeps the ones whose text,
+     * attachment names, channel name or channel member names contain it. A blank query shows all of them.
+     *
+     * @param query The text to search for.
+     */
+    public fun setSearchQuery(query: String) {
+        searchQuery.value = query
     }
 
     /**
@@ -467,6 +484,22 @@ public class ScheduledMessageListController(
  */
 internal fun ScheduledMessage.isInScope(cid: String?, parentMessageId: String?): Boolean =
     (cid == null || this.cid == cid) && (parentMessageId == null || message.parentId == parentMessageId)
+
+/**
+ * Whether the message text, the attachment titles or names, the channel name, or the names of the channel members
+ * other than the current user contain [query], ignoring the case and the spaces around it. Without a channel summary,
+ * the list names the channel by its ID, which is searched instead. Every item matches a blank query.
+ */
+internal fun ScheduledMessageItemState.matches(query: String, currentUserId: String?): Boolean {
+    val trimmed = query.trim()
+    if (trimmed.isEmpty()) return true
+    val message = scheduledMessage.message
+    val channelTexts = channel?.let { channel ->
+        listOf(channel.name) + channel.members.map(Member::user).filter { it.id != currentUserId }.map(User::name)
+    } ?: listOf(scheduledMessage.cid.substringAfter(':'))
+    return (listOf(message.text) + message.attachments.flatMap { listOfNotNull(it.title, it.name) } + channelTexts)
+        .any { text -> text.contains(trimmed, ignoreCase = true) }
+}
 
 /**
  * The actions the status of the scheduled message allows.

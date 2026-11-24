@@ -1819,7 +1819,35 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default sheet with the actions on a scheduled message, opened by a click on its item.
+     * The default search input of the scheduled messages screen, above the list.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageListSearchInput(params: ScheduledMessageListSearchInputParams) {
+        SearchInput(
+            modifier = params.modifier,
+            query = params.query,
+            onValueChange = params.onValueChange,
+        )
+    }
+
+    /**
+     * The default content of the scheduled message list when no scheduled message matches the search query.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageListEmptySearchContent(params: ScheduledMessageListEmptySearchContentParams) {
+        io.getstream.chat.android.compose.ui.scheduled.DefaultScheduledMessageListEmptySearchContent(
+            searchQuery = params.searchQuery,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * The default sheet with the actions on a scheduled message, opened by a click on its item. To add actions of the
+     * app, override this function and call the default one with [ScheduledMessageActionsSheetParams.customActions].
      *
      * @param params Parameters for this component.
      */
@@ -1827,6 +1855,7 @@ public interface ChatComponentFactory {
     public fun ScheduledMessageActionsSheet(params: ScheduledMessageActionsSheetParams) {
         io.getstream.chat.android.compose.ui.scheduled.ScheduledMessageActionsSheet(
             actions = params.actions,
+            customActions = params.customActions,
             onActionClick = params.onActionClick,
             onDismiss = params.onDismiss,
         )
