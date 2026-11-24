@@ -9,7 +9,12 @@ concurrency:
 jobs:
   base-android-ci:
     uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@19665cfdb1c4290d133028844708e71c15104e87 # v1.3.0
-    secrets: inherit
+    # No SONAR_TOKEN: SonarCloud can't read pull requests from GitHub, so the shared workflow skips Sonar.
+    secrets:
+      BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
+      BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
+      BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
+      BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
 
   detekt:
     name: Detekt
