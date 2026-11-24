@@ -71,8 +71,21 @@ lane :build_and_run_e2e_test do |options|
   )
 end
 
+desc 'Decides whether the e2e tests run, on a runner the org IP allow list admits'
+lane :e2e_scope do
+  required = is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  File.write(ENV['GITHUB_OUTPUT'], "required=#{required}\n", mode: 'a') if ENV['GITHUB_OUTPUT']
+end
+
+# The e2e_scope job's decision, so the jobs on runners that can't reach the GitHub API don't ask it again.
+private_lane :e2e_required do
+  next ENV['E2E_REQUIRED'] == 'true' unless ENV['E2E_REQUIRED'].to_s.empty?
+
+  is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+end
+
 lane :build_e2e_test do
-  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  next unless e2e_required
 
   gradle(
     tasks: [":#{test_flavor}:assembleE2eDebugAndroidTest", ":#{test_flavor}:assembleE2eDebug"],
@@ -81,7 +94,7 @@ lane :build_e2e_test do
 end
 
 lane :run_e2e_test do |options|
-  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  next unless e2e_required
 
   allure_results_path = 'allure-results'
   adb_test_results_path = '/sdcard/googletest/test_outputfiles'

@@ -12,13 +12,16 @@ lane :allure_upload do |options|
   options[:launch_id] ||= ENV.fetch('LAUNCH_ID', nil)
   allure_args = "-e #{allure_url} --project-id #{allure_project_id} --launch-id #{options[:launch_id]}"
   sh("./allurectl launch reopen #{options[:launch_id]} -e #{allure_url} || true") # to prevent allure from uploading results to a closed launch
-  sh("env BRANCH_NAME='#{current_branch}' ./allurectl upload #{allure_args} #{allure_results_path} || true")
+  # GITHUB_HEAD_REF names a pull request's branch without asking the GitHub API, which the org IP allow list blocks here.
+  # Through the environment, so a quote in the branch name can't break out of the command.
+  ENV['BRANCH_NAME'] = ENV['GITHUB_HEAD_REF'].to_s.empty? ? current_branch : ENV.fetch('GITHUB_HEAD_REF')
+  sh("./allurectl upload #{allure_args} #{allure_results_path} || true")
   UI.success("Check out test results in Allure TestOps: #{allure_url}/launch/#{options[:launch_id]} 🎉")
 end
 
 desc 'Create launch on Allure TestOps'
 lane :allure_launch do |options|
-  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  next unless e2e_required
 
   launch_id = allure_create_launch(
     url: allure_api_url,
@@ -51,12 +54,16 @@ lane :allure_start_regression do |options|
   )
 end
 
+# The launch name from the run's event payload instead of the GitHub API, which the org IP allow list blocks here.
 def github_run_details
   return nil unless is_ci
 
-  github_path = "#{ENV.fetch('GITHUB_API_URL', nil)}/repos/#{ENV.fetch('GITHUB_REPOSITORY', nil)}/actions/runs/#{ENV.fetch('GITHUB_RUN_ID', nil)}"
-  output = sh(command: "curl -s -H 'authorization: Bearer #{ENV.fetch('GITHUB_TOKEN', nil)}' -X GET -G #{github_path}")
-  JSON.parse(output)
+  event = JSON.parse(File.read(ENV.fetch('GITHUB_EVENT_PATH')))
+  message = event.dig('pull_request', 'title') ||
+            event.dig('merge_group', 'head_commit', 'message') ||
+            event.dig('head_commit', 'message') ||
+            sh(command: 'git log -1 --format=%B', log: false).strip
+  { 'name' => ENV.fetch('GITHUB_WORKFLOW', nil), 'head_commit' => { 'message' => message } }
 end
 
 desc 'https://github.com/allure-framework/allure-kotlin/issues/73'

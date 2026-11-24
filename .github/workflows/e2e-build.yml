@@ -22,9 +22,16 @@ jobs:
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
+      # Restores the cache develop saves for its E2E build. Only pushes to develop save caches.
+      - name: Restore Gradle cache
+        uses: actions/cache/restore@v4
         with:
-          cache-name: gradle-test
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-e2e-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-e2e-
       - name: Build apks
         run: bundle exec fastlane build_e2e_test
         timeout-minutes: 30

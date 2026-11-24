@@ -12,25 +12,60 @@ jobs:
     name: Download strings from Localazy
     runs-on: ubuntu-22.04
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+      sha: ${{ steps.changes.outputs.sha }}
     steps:
       - uses: actions/checkout@v4.2.2
       - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: localazy/download@v1.1.0
+        with:
+          read_key: ${{ secrets.LOCALAZY_READ_KEY }}
+          write_key: ${{ secrets.LOCALAZY_WRITE_KEY }}
+      - name: Add license headers
+        run: ./gradlew spotlessApply
+      - name: Save the translation changes
+        id: changes
+        run: |
+          git add --intent-to-add --all
+          git diff --binary > translations.patch
+          if [ -s translations.patch ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4.4.3
+        if: ${{ steps.changes.outputs.changed == 'true' }}
+        with:
+          name: translations-patch
+          path: translations.patch
+          retention-days: 1
+
+  # Calls the GitHub API, and the org IP allow list only admits static-IP runners.
+  # A job of its own so the Gradle build stays off that runner.
+  open_pull_request:
+    name: Open the translations pull request
+    needs: localazy-download
+    if: ${{ needs.localazy-download.outputs.changed == 'true' }}
+    runs-on:
+      group: github-public-ubuntu-static
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # The commit the patch was made on, so a merge in between can't break it.
+      - uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ needs.localazy-download.outputs.sha }}
+      - uses: actions/download-artifact@v4.1.8
+        with:
+          name: translations-patch
+          path: ${{ runner.temp }}
+      - name: Apply the translation changes
+        run: git apply "$RUNNER_TEMP/translations.patch"
       - uses: tibdex/github-app-token@v1.7.0
         id: generate-token
         with:
           app_id: ${{ secrets.APP_ID_OBTAIN_TOKEN }}
           private_key: ${{ secrets.APP_PRIVATE_KEY_OBTAIN_TOKEN }}
-      - uses: localazy/download@v1.1.0
-        with:
-          read_key: ${{ secrets.LOCALAZY_READ_KEY }}
-          write_key: ${{ secrets.LOCALAZY_WRITE_KEY }}
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
-        with:
-          cache-name: gradle-lint
-      - name: Add license headers
-        run: ./gradlew spotlessApply
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
@@ -45,4 +80,5 @@ jobs:
 
               [1]: https://github.com/peter-evans/create-pull-request
             branch: update-translations
+            base: ${{ github.ref_name }}
             token: ${{ steps.generate-token.outputs.token }}

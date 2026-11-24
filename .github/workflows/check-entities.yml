@@ -2,6 +2,10 @@ name: Check DB Entities
 
 on: [pull_request]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -10,6 +14,9 @@ jobs:
   check-db-entities:
     name: Check DB Entities
     runs-on: ubuntu-22.04
+    outputs:
+      touched: ${{ steps.touchedEntities.outcome == 'failure' }}
+      entities: ${{ steps.touchedEntities.outputs.touchedEntities }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
@@ -20,7 +27,7 @@ jobs:
         id: touchedEntities
         continue-on-error: true
         run: |
-          status=$(grep '@Entity' -rinl . | xargs -r git diff-index --name-only --exit-code --output=touchedEntities origin/${{ github.base_ref }} $(); echo $?)
+          status=$(grep '@Entity' -rinl --exclude-dir=.github . | xargs -r git diff-index --name-only --exit-code --output=touchedEntities origin/${{ github.base_ref }} $(); echo $?)
           output=$(cat touchedEntities)
           output="${output//'%'/'%25'}"
           output="${output//$'\n'/'%0A'}"
@@ -28,10 +35,20 @@ jobs:
           echo "$output"
           echo "touchedEntities=$output" >> "$GITHUB_OUTPUT"
           exit "$status"
+
+  # Calls the GitHub API, and the org IP allow list only admits static-IP runners.
+  # A job of its own so the pull request's code never runs on that runner.
+  comment:
+    name: Comment on touched DB Entities
+    needs: check-db-entities
+    # A fork's token can't comment.
+    if: ${{ needs.check-db-entities.outputs.touched == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on:
+      group: github-public-ubuntu-static
+    steps:
       - name: Find Comment
         uses: peter-evans/find-comment@v2
         id: fc
-        if: steps.touchedEntities.outcome == 'failure'
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
@@ -39,7 +56,6 @@ jobs:
 
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v2
-        if: steps.touchedEntities.outcome == 'failure'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -47,6 +63,6 @@ jobs:
             DB Entities have been updated. Do we need to upgrade DB Version?
             Modified Entities :
             ```
-            ${{ steps.touchedEntities.outputs.touchedEntities }}
+            ${{ needs.check-db-entities.outputs.entities }}
             ```
           edit-mode: replace
