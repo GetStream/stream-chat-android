@@ -45,7 +45,7 @@ jobs:
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      # Pull requests and the merge queue restore the latest cache; pushes to develop, scheduled and manual runs save a new one.
+      # Only pushes to develop save a new cache; every other run restores the latest one.
       - name: Restore Gradle cache
         id: gradle_cache
         uses: actions/cache/restore@v4
@@ -60,17 +60,17 @@ jobs:
         run: bundle exec fastlane build_e2e_test coverage:${{ inputs.coverage }}
         timeout-minutes: 30
       - name: Save Gradle cache
-        if: ${{ !inputs.coverage && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
+        if: ${{ !inputs.coverage && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
         uses: actions/cache/save@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
-      # Keeps one snapshot per branch, so the saves don't pile up in the repo's Actions cache.
+      # Keeps one snapshot, so the saves don't pile up in the repo's Actions cache.
       # A failed save only warns, so the older snapshots stay unless the new one is listed.
       - name: Remove older Gradle caches
-        if: ${{ !inputs.coverage && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
+        if: ${{ !inputs.coverage && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
         env:
           GH_TOKEN: ${{ github.token }}
           PREFIX: ${{ runner.os }}-gradle-e2e-
