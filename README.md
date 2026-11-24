@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/GetStream/stream-chat-android/actions/workflows/build-and-test.yml"><img src="https://github.com/GetStream/stream-chat-android/workflows/Build%20and%20test/badge.svg" /></a>
-  <a href="https://android-arsenal.com/api?level=21"><img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat"/></a>
+  <img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat"/>
   <a href="https://github.com/GetStream/stream-chat-android/releases"><img src="https://img.shields.io/github/v/release/GetStream/stream-chat-android" /></a>
 </p>
 
@@ -74,7 +74,7 @@ This SDK has one low-level artifact you can build on:
   - [Sample app](/stream-chat-android-ui-components-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
 
-**For AI assistants** there are three separate artifacts. No other Chat SDK artifact depends on them:
+**For AI assistants** there are four separate artifacts. No other Chat SDK artifact depends on them:
 
 - [**AI Compose Components**](/stream-chat-android-ai-compose): Composables for AI replies: streaming text, reasoning and tool-call steps, tool approvals and a composer.
   - [Sample app](/stream-chat-android-ai-compose-sample)
@@ -123,7 +123,7 @@ git clone git@github.com:GetStream/stream-chat-android.git
 
 Next, open [Android Studio](https://developer.android.com/studio) and open the newly created project folder. You'll want to run the [`stream-chat-android-compose-sample`](/stream-chat-android-compose-sample) module.
 
-Since Compose is a highly customizable SDK, we're eager to hear your feedback on how it helps you build complex Chat UI. Join us in [this repo's discussions](https://github.com/GetStream/stream-chat-android/discussions) or tweet at us [@getstream_io](https://twitter.com/getstream_io)!
+Since Compose is a highly customizable SDK, we're eager to hear your feedback on how it helps you build complex Chat UI. [Open an issue](https://github.com/GetStream/stream-chat-android/issues) or reach us on X at [@getstream_io](https://x.com/getstream_io)!
 
 ### Sample App
 
@@ -170,7 +170,7 @@ When utilizing **R8**, the rules for shrinking and obfuscation are applied autom
 
 If you are using **ProGuard**, you will need to add the following rules from [client](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/consumer-proguard-rules.pro) and [ui-common](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/consumer-proguard-rules.pro) modules to your application.
 
-You might also need apply rules for [Coroutines](https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/resources/META-INF/proguard/coroutines.pro), [Retrofit](https://github.com/square/retrofit/blob/master/retrofit/src/main/resources/META-INF/proguard/retrofit2.pro), [kotlin-reflect](https://github.com/JetBrains/kotlin/blob/master/core/reflection.jvm/resources/META-INF/proguard/kotlin-reflect.pro) and [OkHttp](https://github.com/square/okhttp/blob/master/okhttp/src/jvmMain/resources/META-INF/proguard/okhttp3.pro) which are dependencies of the SDK.
+You might also need apply rules for [Coroutines](https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/resources/META-INF/proguard/coroutines.pro), [Retrofit](https://github.com/square/retrofit/blob/master/retrofit/src/main/resources/META-INF/proguard/retrofit2.pro), [kotlin-reflect](https://github.com/JetBrains/kotlin/blob/master/core/reflection.jvm/resources/META-INF/proguard/kotlin-reflect.pro) and [OkHttp](https://github.com/square/okhttp) which are dependencies of the SDK.
 
 ## License
 
