@@ -10,7 +10,7 @@ on:
 jobs:
   localazy-download:
     name: Download strings from Localazy
-    runs-on: ubuntu-22.04
+    runs-on: { group: github-public-amd64 }
     permissions:
       contents: read
     outputs:
@@ -45,8 +45,7 @@ jobs:
     name: Open the translations pull request
     needs: localazy-download
     if: ${{ needs.localazy-download.outputs.changed == 'true' }}
-    runs-on:
-      group: github-public-ubuntu-static
+    runs-on: { group: github-public-amd64 }
     permissions:
       contents: write
       pull-requests: write

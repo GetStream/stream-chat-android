@@ -18,7 +18,7 @@ env:
 jobs:
   run_snapshot_tests:
     name: Run
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - name: Check out code
         uses: actions/checkout@v4.2.2
@@ -62,8 +62,7 @@ jobs:
     name: Open the snapshots pull request
     needs: run_snapshot_tests
     if: ${{ github.event.inputs.record == 'true' }}
-    runs-on:
-      group: github-public-ubuntu-static
+    runs-on: { group: github-public-amd64 }
     steps:
       - name: Check out code
         uses: actions/checkout@v4.2.2

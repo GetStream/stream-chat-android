@@ -13,7 +13,7 @@ on:
 jobs:
   localazy-upload:
     name: Upload strings to Localazy
-    runs-on: ubuntu-22.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v4.2.2
       - uses: localazy/upload@v1
