@@ -3,10 +3,11 @@ name: Pull request CI checks
 on:
   pull_request:
   merge_group:
-  # Pushes to develop save the Gradle caches that pull requests and the merge queue restore.
+  # Pushes to develop also save the Gradle caches that pull requests and the merge queue restore.
   push:
     branches:
       - develop
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,6 +22,9 @@ jobs:
     uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
     with:
       save-gradle-cache: true
+    secrets:
+      # Sonar runs only on pushes, as SonarCloud can't analyze pull requests.
+      SONAR_TOKEN: ${{ github.event_name == 'push' && secrets.SONAR_TOKEN || '' }}
   detekt:
     permissions:
       contents: read
@@ -34,6 +38,17 @@ jobs:
           cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/develop' }}
       - name: Detekt
         run: ./gradlew detekt
+  release-build:
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+    name: Release build
+    runs-on: { group: github-public-amd64 }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
+      - name: Build
+        run: ./gradlew assembleRelease
   remove-older-gradle-caches:
     needs: [ base-android-ci, detekt ]
     if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
