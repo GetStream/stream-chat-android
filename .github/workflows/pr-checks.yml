@@ -23,7 +23,7 @@ jobs:
     with:
       save-gradle-cache: true
     secrets:
-      # Sonar runs only on pushes, as SonarCloud can't analyze pull requests.
+      # Only pushes get the token: Sonar analysis of pull requests fails in our SonarCloud setup.
       SONAR_TOKEN: ${{ github.event_name == 'push' && secrets.SONAR_TOKEN || '' }}
   detekt:
     permissions:
