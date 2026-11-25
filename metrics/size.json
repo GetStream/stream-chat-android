@@ -2,7 +2,7 @@
   "debug": {
     "stream-chat-android-client": 8700,
     "stream-chat-android-ui-components": 15212,
-    "stream-chat-android-compose": 17584,
+    "stream-chat-android-compose": 17588,
     "stream-chat-android-ai-compose": 3080,
     "stream-chat-android-ai-ondevice": 2116,
     "stream-chat-android-ai-a2ui": 368,
