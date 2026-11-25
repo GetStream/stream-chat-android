@@ -22,6 +22,7 @@ import android.graphics.Color
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -92,6 +93,10 @@ private class ChartWebView(context: Context, private val chartJsCode: String?) :
             // The chart page never navigates anywhere.
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean = true
 
+            // Android 6 calls only this overload.
+            @Suppress("OVERRIDE_DEPRECATION")
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean = true
+
             override fun onPageFinished(view: WebView, url: String?) {
                 chartJsCode?.let { view.evaluateJavascript(it) { onChartJsLoaded() } }
             }
@@ -136,6 +141,7 @@ private val ChartPage = """
  * The script that draws the chart [chartJsJson] configures, replacing the one shown before, or
  * shows why it can't as text.
  */
+@VisibleForTesting
 internal fun renderChartScript(chartJsJson: String): String = """
     (function(json) {
         const container = document.getElementById('chartContainer');
@@ -167,6 +173,7 @@ private fun loadChartJsFromAssets(context: Context): String? =
     }
 
 /** This text as a double-quoted JavaScript string literal. */
+@VisibleForTesting
 internal fun String.toJsStringLiteral(): String = buildString(length + 2) {
     append('"')
     for (char in this@toJsStringLiteral) {

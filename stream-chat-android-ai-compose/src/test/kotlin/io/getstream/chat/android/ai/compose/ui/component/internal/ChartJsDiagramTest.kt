@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -54,6 +55,6 @@ internal class ChartJsDiagramTest {
         val script = renderChartScript("{}")
 
         assertTrue(script.contains("message.textContent = 'Error rendering chart: ' + error.message;"))
-        assertTrue(!script.contains("innerHTML"))
+        assertFalse(script.contains("innerHTML"))
     }
 }
