@@ -1085,7 +1085,7 @@ internal class DomainMapping(
 
     internal fun ChannelMemberResponse.toDomain(): Member =
         Member(
-            user = user?.toDomain() ?: User(id = userId),
+            user = user?.toDomain() ?: userTransformer.transform(User(id = userId)),
             createdAt = createdAt,
             updatedAt = updatedAt,
             isInvited = invited,
@@ -1708,7 +1708,7 @@ internal class DomainMapping(
      * Transforms [ThreadParticipantDto] into [ThreadParticipant]
      */
     internal fun ThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
-        user = user?.toDomain() ?: User(id = userId.orEmpty()),
+        user = user?.toDomain() ?: userTransformer.transform(User(id = userId.orEmpty())),
         lastThreadMessageAt = lastThreadMessageAt,
     )
 
