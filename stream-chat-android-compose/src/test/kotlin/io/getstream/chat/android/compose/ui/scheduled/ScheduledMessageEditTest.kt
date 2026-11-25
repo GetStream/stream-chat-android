@@ -150,7 +150,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         startEditing("Second message")
 
         save()
-        composeTestRule.waitUntil { mockingDetails(mockChatClient).invocations.any { it.method.name == "updateScheduledMessage" } }
+        awaitClientCalls("updateScheduledMessage")
 
         verify(mockChatClient).updateScheduledMessage(eq("b"), argThat { text == "Second message" }, isNull())
         verify(mockChatClient, never()).updateScheduledMessage(eq("a"), any(), anyOrNull())
@@ -174,7 +174,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         startEditing("Second message")
 
         save()
-        composeTestRule.waitUntil { mockingDetails(mockChatClient).invocations.any { it.method.name == "updateScheduledMessage" } }
+        awaitClientCalls("updateScheduledMessage")
 
         verify(mockChatClient).updateScheduledMessage(eq("b"), argThat { attachments.isEmpty() }, isNull())
     }
@@ -190,6 +190,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         clickTag("Stream_ScheduledMessageRemoveQuote")
 
         save()
+        awaitClientCalls("updateScheduledMessage")
 
         verify(mockChatClient).updateScheduledMessage(eq("a"), argThat { replyTo == null && replyMessageId == null }, isNull())
     }
@@ -229,11 +230,13 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         startEditing("Heads up")
 
         save()
+        awaitClientCalls("updateScheduledMessage")
         verify(mockChatClient, times(1)).updateScheduledMessage(any(), any(), anyOrNull())
 
         first.complete(Result.Failure(Error.GenericError("Refused")))
         composeTestRule.waitForIdle()
         save()
+        awaitClientCalls("updateScheduledMessage", count = 2)
         verify(mockChatClient, times(2)).updateScheduledMessage(any(), any(), anyOrNull())
     }
 
@@ -258,12 +261,14 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
 
         save()
         composeTestRule.onNodeWithTag("Stream_ScheduleMessageTimeSheet").assertDoesNotExist()
+        awaitClientCalls("scheduleMessage")
         verify(mockChatClient, times(1)).scheduleMessage(any(), any(), any(), any())
 
         first.complete(Result.Failure(Error.GenericError("Refused")))
         composeTestRule.waitForIdle()
         save()
         clickTag("Stream_ScheduleMessageConfirm")
+        awaitClientCalls("scheduleMessage", count = 2)
         verify(mockChatClient, times(2)).scheduleMessage(any(), any(), any(), any())
     }
 
@@ -281,6 +286,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
 
         clickTag("Stream_ScheduledMessageRemoveQuote")
         save()
+        awaitClientCalls("updateScheduledMessage")
         verify(mockChatClient).updateScheduledMessage(eq("a"), any(), isNull())
     }
 
@@ -334,6 +340,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
             .assertDoesNotExist()
         composeTestRule.onNodeWithText("Already sent or deleted on another device").assertDoesNotExist()
         save()
+        awaitClientCalls("updateScheduledMessage")
         verify(mockChatClient).updateScheduledMessage(eq("a"), argThat { text == "Heads up" }, isNull())
     }
 
@@ -377,6 +384,16 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
     /** Taps the check button by its semantics action, as the channel of the mocked client grants no capability. */
     private fun save() {
         clickTag("Stream_ComposerSaveButton")
+    }
+
+    /**
+     * Waits until the client got [count] calls of [method]. A save copies the attachment files on the IO dispatcher
+     * before it calls the client, and `waitForIdle` does not wait for that.
+     */
+    private fun awaitClientCalls(method: String, count: Int = 1) {
+        composeTestRule.waitUntil {
+            mockingDetails(mockChatClient).invocations.count { it.method.name == method } >= count
+        }
     }
 
     private fun clickTag(tag: String) {
