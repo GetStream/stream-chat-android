@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.models.Message
 import io.getstream.log.StreamLog
@@ -52,9 +53,7 @@ internal class GetMessageListenerDatabase(
     ) {
         when (result) {
             is Result.Success -> {
-                repositoryFacade.insertMessage(
-                    message = result.value,
-                )
+                repositoryFacade.write { repositoryFacade.insertMessage(message = result.value) }
             }
             is Result.Failure -> {
                 val error = result.value

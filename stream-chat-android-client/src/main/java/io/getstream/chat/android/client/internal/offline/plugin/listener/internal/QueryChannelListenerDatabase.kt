@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.plugin.listener.intern
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
@@ -58,8 +59,10 @@ internal class QueryChannelListenerDatabase(private val repos: RepositoryFacade)
     ) {
         result.onSuccessSuspend { channel ->
             // first thing here needs to be updating configs otherwise we have a race with receiving events
-            repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
-            repos.storeStateForChannel(channel)
+            repos.write {
+                repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
+                repos.storeStateForChannel(channel)
+            }
         }
     }
 }

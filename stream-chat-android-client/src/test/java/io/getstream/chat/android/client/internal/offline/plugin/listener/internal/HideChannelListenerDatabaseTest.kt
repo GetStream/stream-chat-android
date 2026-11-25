@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.plugin.listener.intern
 
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.randomBoolean
@@ -38,7 +39,11 @@ internal class HideChannelListenerDatabaseTest {
     private val channelRepository: ChannelRepository = mock()
     private val messageRepository: MessageRepository = mock()
 
-    private val hideChannelListenerDatabase = HideChannelListenerDatabase(channelRepository, messageRepository)
+    private val hideChannelListenerDatabase = HideChannelListenerDatabase(
+        testChatStore(),
+        channelRepository,
+        messageRepository,
+    )
 
     @Test
     fun `when result of call is successful, the repository should be updated correctly`() = runTest {

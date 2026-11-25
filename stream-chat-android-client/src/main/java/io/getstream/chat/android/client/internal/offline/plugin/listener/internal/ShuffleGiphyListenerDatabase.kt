@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
@@ -28,10 +30,12 @@ import io.getstream.result.Result
 * [ShuffleGiphyListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
 * Handles updating the database.
 *
+* @param store Runs what a hook stores as one write.
 * @param userRepository [UserRepository]
 * @param messageRepository [MessageRepository]
 */
 internal class ShuffleGiphyListenerDatabase(
+    private val store: ChatStore?,
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
 ) : ShuffleGiphyListener {
@@ -45,8 +49,10 @@ internal class ShuffleGiphyListenerDatabase(
     override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) {
         if (result is Result.Success) {
             val processedMessage = result.value.copy(syncStatus = SyncStatus.COMPLETED)
-            userRepository.insertUsers(processedMessage.users())
-            messageRepository.insertMessage(processedMessage)
+            store.writeOrRun {
+                userRepository.insertUsers(processedMessage.users())
+                messageRepository.insertMessage(processedMessage)
+            }
         }
     }
 }

@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.ThreadsRepository
 import io.getstream.chat.android.client.plugin.listeners.QueryThreadsListener
 import io.getstream.chat.android.models.QueryThreadsResult
@@ -26,9 +28,11 @@ import io.getstream.result.Result
  * [QueryThreadsListener] implementation for the [OfflinePlugin].
  * Ensures that the newly fetched threads are persisted in the database.
  *
+ * @param store Runs what a hook stores as one write.
  * @param threadsRepository The [ThreadsRepository] for accessing the database.
  */
 internal class QueryThreadsListenerDatabase(
+    private val store: ChatStore?,
     private val threadsRepository: ThreadsRepository,
 ) : QueryThreadsListener {
 
@@ -40,8 +44,7 @@ internal class QueryThreadsListenerDatabase(
 
     override suspend fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
         if (result is Result.Success) {
-            // Store all threads
-            threadsRepository.insertThreads(result.value.threads)
+            store.writeOrRun { threadsRepository.insertThreads(result.value.threads) }
         }
     }
 }

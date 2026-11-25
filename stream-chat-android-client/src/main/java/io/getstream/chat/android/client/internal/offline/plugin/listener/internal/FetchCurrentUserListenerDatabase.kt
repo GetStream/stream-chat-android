@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.models.User
@@ -24,6 +26,7 @@ import io.getstream.result.Result
 import io.getstream.result.onSuccessSuspend
 
 internal class FetchCurrentUserListenerDatabase(
+    private val store: ChatStore?,
     private val userRepository: UserRepository,
 ) : FetchCurrentUserListener {
 
@@ -32,7 +35,7 @@ internal class FetchCurrentUserListenerDatabase(
     override suspend fun onFetchCurrentUserResult(result: Result<User>) {
         result.onSuccessSuspend {
             logger.d { "[onFetchCurrentUserResult] result: $result" }
-            userRepository.insertCurrentUser(it)
+            store.writeOrRun { userRepository.insertCurrentUser(it) }
         }
     }
 }

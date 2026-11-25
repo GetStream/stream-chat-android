@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.models.DraftMessage
@@ -28,6 +30,7 @@ import io.getstream.result.Result
 import io.getstream.result.onSuccessSuspend
 
 internal class DraftMessageListenerDatabase(
+    private val store: ChatStore?,
     private val messageRepository: MessageRepository,
 ) : DraftMessageListener {
 
@@ -45,7 +48,7 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        messageRepository.insertPendingDraftMessage(message)
+        store.writeOrRun { messageRepository.insertPendingDraftMessage(message) }
     }
 
     /**
@@ -64,9 +67,11 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        when (result) {
-            is Result.Success -> messageRepository.insertDraftMessage(result.value)
-            is Result.Failure -> if (result.value.isPermanent()) messageRepository.insertDraftMessage(message)
+        store.writeOrRun {
+            when (result) {
+                is Result.Success -> messageRepository.insertDraftMessage(result.value)
+                is Result.Failure -> if (result.value.isPermanent()) messageRepository.insertDraftMessage(message)
+            }
         }
     }
 
@@ -84,7 +89,7 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        messageRepository.markDraftMessageDeleted(message)
+        store.writeOrRun { messageRepository.markDraftMessageDeleted(message) }
     }
 
     /**
@@ -103,10 +108,12 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        when (result) {
-            is Result.Success -> messageRepository.deleteDraftMessage(message)
-            // A missing draft is a permanent failure too, so a deletion that already landed is not sent forever.
-            is Result.Failure -> if (result.value.isPermanent()) messageRepository.deleteDraftMessage(message)
+        store.writeOrRun {
+            when (result) {
+                is Result.Success -> messageRepository.deleteDraftMessage(message)
+                // A missing draft is a permanent failure too, so a deletion that already landed is not sent forever.
+                is Result.Failure -> if (result.value.isPermanent()) messageRepository.deleteDraftMessage(message)
+            }
         }
     }
 
@@ -127,8 +134,10 @@ internal class DraftMessageListenerDatabase(
         sort: QuerySorter<DraftsSort>,
     ) {
         result.onSuccessSuspend {
-            it.drafts.forEach { draftMessage ->
-                messageRepository.insertDraftMessage(draftMessage)
+            store.writeOrRun {
+                it.drafts.forEach { draftMessage ->
+                    messageRepository.insertDraftMessage(draftMessage)
+                }
             }
         }
     }
