@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.internal.offline.repository.domain.user.internal
 
 import androidx.collection.LruCache
-import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
 import io.getstream.chat.android.client.internal.offline.repository.domain.push.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.push.internal.toModel
 import io.getstream.chat.android.client.persistance.repository.UserRepository
@@ -28,11 +28,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 internal class DatabaseUserRepository(
     private val scope: CoroutineScope,
+    private val store: ChatStore,
     private val userDao: UserDao,
     cacheSize: Int = 1000,
 ) : UserRepository {
@@ -41,12 +40,16 @@ internal class DatabaseUserRepository(
     // the user cache is simple, just keeps the last x users in memory, defined by cacheSize
     private val userCache = LruCache<String, User>(cacheSize)
     private val latestUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
-    private val dbMutex = Mutex()
+
+    init {
+        // A cached user that was never stored would make the next write of the same user be skipped.
+        store.onRollback { userCache.evictAll() }
+    }
 
     override fun observeLatestUsers(): StateFlow<Map<String, User>> = latestUsersFlow
 
     override suspend fun clear() {
-        dbMutex.withLock {
+        store.write {
             userDao.deleteAll()
         }
     }
@@ -64,14 +67,11 @@ internal class DatabaseUserRepository(
             .filter { it != userCache[it.id] }
             .map { it.toEntity() }
         cacheUsers(uniqueUsers)
-        scope.launchWithMutex(dbMutex) {
-            logger.v {
-                "[insertUsers] inserting ${usersToInsert.size} entities in DB, updated ${uniqueUsers.size} in cache"
-            }
-            usersToInsert
-                .takeUnless { it.isEmpty() }
-                ?.let { userDao.insertMany(it) }
+        logger.v {
+            "[insertUsers] inserting ${usersToInsert.size} entities in DB, updated ${uniqueUsers.size} in cache"
         }
+        if (usersToInsert.isEmpty()) return
+        store.write { userDao.insertMany(usersToInsert) }
     }
 
     /**
@@ -90,7 +90,7 @@ internal class DatabaseUserRepository(
      */
     override suspend fun insertCurrentUser(user: User) {
         insertUser(user)
-        scope.launchWithMutex(dbMutex) {
+        store.write {
             val userEntity = user.toEntity().copy(id = ME_ID)
             userDao.insert(userEntity)
         }

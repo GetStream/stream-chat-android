@@ -20,7 +20,7 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
 import io.getstream.chat.android.client.extensions.internal.withRefreshedMemberInfo
-import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.message.LocalOnlyMessageTypes
@@ -33,14 +33,11 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
 @Suppress("LongParameterList", "TooManyFunctions")
 internal class DatabaseMessageRepository(
-    private val scope: CoroutineScope,
+    private val store: ChatStore,
     private val messageDao: MessageDao,
     private val replyMessageDao: ReplyMessageDao,
     private val pollDao: PollDao,
@@ -55,7 +52,14 @@ internal class DatabaseMessageRepository(
     private val messageCache: LruCache<String, Message> = LruCache(cacheSize)
     private val replyMessageCache: LruCache<String, Message> = LruCache(cacheSize)
     private val deletedMessageIds: MutableSet<String> = mutableSetOf()
-    private val dbMutex = Mutex()
+
+    init {
+        // A cached message that was never stored would make the next write of the same message be skipped.
+        store.onRollback {
+            messageCache.evictAll()
+            replyMessageCache.evictAll()
+        }
+    }
 
     /**
      * Select messages for a channel in a desired page.
@@ -93,8 +97,8 @@ internal class DatabaseMessageRepository(
         // The caches are read before the database, so they follow the edit straight away.
         patchCachedMember(messageCache, cid, userId, member)
         patchCachedMember(replyMessageCache, cid, userId, member)
-        // Held under the same mutex as the inserts so it cannot interleave with another write.
-        scope.launchWithMutex(dbMutex) {
+        // One write, so no other write runs between the two updates.
+        store.write {
             messageDao.updateMemberByCidAndUserId(cid, userId, entity)
             replyMessageDao.updateMemberByCidAndUserId(cid, userId, entity)
         }
@@ -172,7 +176,8 @@ internal class DatabaseMessageRepository(
 
         replyMessages.forEach { replyMessageCache.put(it.id, it) }
         validMessages.forEach { messageCache.put(it.id, it) }
-        scope.launchWithMutex(dbMutex) {
+        if (replyMessagesToInsert.isEmpty() && messagesToInsert.isEmpty()) return
+        store.write {
             replyMessagesToInsert.takeUnless { it.isEmpty() }
                 ?.let { replyMessageDao.insert(it) }
             messagesToInsert.takeUnless { it.isEmpty() }
@@ -197,7 +202,7 @@ internal class DatabaseMessageRepository(
             .let { it.copy(messageInnerEntity = it.messageInnerEntity.copy(hardDelete = hard)) }
         deletedMessageIds.add(message.id)
         messageCache.put(message.id, message)
-        dbMutex.withLock { messageDao.insert(listOf(entity)) }
+        store.write { messageDao.insert(listOf(entity)) }
     }
 
     private fun Message.isStorable(): Boolean =
@@ -265,13 +270,13 @@ internal class DatabaseMessageRepository(
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
         messageCache.evictAll()
         replyMessageCache.evictAll()
-        scope.launchWithMutex(dbMutex) { messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore) }
+        store.write { messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore) }
     }
 
     override suspend fun deleteChannelMessages(cid: String) {
         messageCache.evictAll()
         replyMessageCache.evictAll()
-        scope.launchWithMutex(dbMutex) { messageDao.deleteMessages(cid) }
+        store.write { messageDao.deleteMessages(cid) }
     }
 
     /**
@@ -282,7 +287,7 @@ internal class DatabaseMessageRepository(
     override suspend fun deleteChannelMessage(message: Message) {
         deletedMessageIds.add(message.id)
         messageCache.remove(message.id)
-        scope.launchWithMutex(dbMutex) { messageDao.deleteMessage(message.cid, message.id) }
+        store.write { messageDao.deleteMessage(message.cid, message.id) }
     }
 
     override suspend fun deleteMessages(messages: List<Message>) {
@@ -292,7 +297,7 @@ internal class DatabaseMessageRepository(
             messageCache.remove(it)
             replyMessageCache.remove(it)
         }
-        scope.launchWithMutex(dbMutex) { messageDao.deleteMessages(ids) }
+        store.write { messageDao.deleteMessages(ids) }
     }
 
     /**
@@ -306,12 +311,12 @@ internal class DatabaseMessageRepository(
 
     // Bypasses deletedMessageIds, which drops every insert of a deleted message, the outcome of its own deletion too.
     override suspend fun updateMessageSyncStatus(messageId: String, syncStatus: SyncStatus) {
-        dbMutex.withLock { messageDao.updateSyncStatus(messageId, syncStatus) }
+        store.write { messageDao.updateSyncStatus(messageId, syncStatus) }
         messageCache[messageId]?.let { messageCache.put(messageId, it.copy(syncStatus = syncStatus)) }
     }
 
     override suspend fun markDeletesInProgressAsCompleted(deletedBefore: Date) {
-        dbMutex.withLock {
+        store.write {
             messageDao.replaceSyncStatusOfDeletes(SyncStatus.IN_PROGRESS, SyncStatus.COMPLETED, deletedBefore)
         }
         messageCache.snapshot().values
@@ -349,7 +354,7 @@ internal class DatabaseMessageRepository(
     override suspend fun clear() {
         messageCache.evictAll()
         replyMessageCache.evictAll()
-        dbMutex.withLock {
+        store.write {
             messageDao.deleteAll()
             messageDao.deleteAllDrafts()
             replyMessageDao.deleteAll()

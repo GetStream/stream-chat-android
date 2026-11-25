@@ -121,6 +121,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.client.internal.state.utils.internal.mergePartialUpdate
 import io.getstream.chat.android.client.internal.state.utils.internal.unhidesChannel
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
 import io.getstream.chat.android.client.utils.internal.ChannelId
@@ -145,6 +146,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -378,7 +381,10 @@ internal class EventHandlerSequential(
             }
             updateGlobalState(event)
             updateChannelsState(event)
-            updateOfflineStorage(event)
+            // The write is not cancelled once it starts, so a stopped handler must not start it.
+            currentCoroutineContext().ensureActive()
+            // One write, so a failure or a crash in the middle leaves the database as it was before the batch.
+            repos.write { updateOfflineStorage(event) }
             updateQueryThreadsState(event)
             updateThreadState(event)
             logger.v { "[handleBatchEvent] <<< id: ${event.id}" }

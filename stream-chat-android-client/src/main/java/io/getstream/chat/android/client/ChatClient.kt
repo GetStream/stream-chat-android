@@ -386,17 +386,18 @@ internal constructor(
         return userScope + block(userScope.coroutineContext.job)
     }
 
+    /**
+     * The repositories of the user the client is initialized for. Without one they are empty and store nothing,
+     * so reading them never opens a database.
+     */
     @InternalStreamChatApi
     public val repositoryFacade: RepositoryFacade
-        get() = _repositoryFacade
-            ?: (getCurrentUser() ?: getStoredUser())
-                ?.let { user ->
-                    createRepositoryFacade(userScope, createRepositoryFactory(user))
-                        .also { _repositoryFacade = it }
-                }
-            ?: createRepositoryFacade(userScope)
+        get() = userRepositoryFacade.get() ?: emptyRepositoryFacade
 
-    private var _repositoryFacade: RepositoryFacade? = null
+    /** Set only by [initializeClientWithUser], so a user's repositories are created once. */
+    private val userRepositoryFacade = AtomicReference<RepositoryFacade?>(null)
+
+    private val emptyRepositoryFacade: RepositoryFacade by lazy { createRepositoryFacade() }
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -790,7 +791,7 @@ internal constructor(
         if (initializedUserId.get() != user.id) {
             // Plugins set for another user without a connection, as a push notification does, are still listening.
             plugins.forEach { it.onUserDisconnected() }
-            _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
+            userRepositoryFacade.set(createRepositoryFacade(createRepositoryFactory(user)))
             plugins = pluginFactories.map { it.get(user) }
             initializedUserId.set(user.id)
         } else {
@@ -821,11 +822,8 @@ internal constructor(
     private fun createRepositoryFactory(user: User): RepositoryFactory =
         repositoryFactoryProvider.createRepositoryFactory(user)
 
-    private fun createRepositoryFacade(
-        scope: CoroutineScope,
-        repositoryFactory: RepositoryFactory = NoOpRepositoryFactory,
-    ): RepositoryFacade =
-        RepositoryFacade.create(repositoryFactory, scope)
+    private fun createRepositoryFacade(repositoryFactory: RepositoryFactory = NoOpRepositoryFactory): RepositoryFacade =
+        RepositoryFacade.create(repositoryFactory)
 
     /**
      * Get the current settings of the app. Check [AppSettings].
@@ -1790,6 +1788,7 @@ internal constructor(
 
     private suspend fun disconnectUserSuspend(flushPersistence: Boolean) {
         val userId = getCurrentUser()?.id
+        val disconnectedRepositoryFacade = userRepositoryFacade.get()
         initializedUserId.set(null)
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
@@ -1807,13 +1806,17 @@ internal constructor(
         scheduledMessageManager.stop()
 
         if (flushPersistence) {
-            repositoryFacade.clear()
+            // With no user set, the data left on the device is the stored user's.
+            val flushedRepositoryFacade = disconnectedRepositoryFacade
+                ?: getStoredUser()?.let { createRepositoryFacade(createRepositoryFactory(it)) }
+            flushedRepositoryFacade?.clear()
             userCredentialStorage.clear()
         }
 
         repository.clear()
 
-        _repositoryFacade = null
+        // A user set while this was running has repositories of its own, which stay.
+        userRepositoryFacade.compareAndSet(disconnectedRepositoryFacade, null)
         attachmentsSender.cancelJobs()
         appSettingsManager.clear()
         mutableClientState.clearState()
@@ -3897,7 +3900,11 @@ internal constructor(
     @CheckResult
     public fun markMessageAsDelivered(messageId: String): Call<Boolean> =
         CoroutineCall(userScope) {
-            runCatching { messageReceiptManager.markMessageAsDelivered(messageId) }
+            runCatching {
+                // A push service can call this in a process where no user is set yet.
+                setUserWithoutConnectingIfNeeded()
+                messageReceiptManager.markMessageAsDelivered(messageId)
+            }
                 .fold(
                     onSuccess = { Result.Success(it) },
                     onFailure = { Result.Failure(Error.GenericError(it.message.orEmpty())) },

@@ -44,6 +44,8 @@ internal class UploadAttachmentsAndroidWorker(
 
         val logger by taggedLogger(TAG)
         val chatClient = ChatClient.instance()
+        // The work can start in a process where no user is set yet, and the stored message is read before the upload.
+        chatClient.setUserWithoutConnectingIfNeeded()
         val repositoryFacade = chatClient.repositoryFacade
 
         return UploadAttachmentsWorker(

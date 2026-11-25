@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.keepingActiveMemberCountOf
 import io.getstream.chat.android.client.extensions.internal.withoutTruncatedMessages
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
-import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toModel
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.message.isPinned
@@ -36,7 +36,6 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.latestTruncatedBy
 import io.getstream.log.taggedLogger
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
@@ -46,7 +45,7 @@ import java.util.Date
  */
 @SuppressWarnings("TooManyFunctions")
 internal class DatabaseChannelRepository(
-    private val scope: CoroutineScope,
+    private val store: ChatStore,
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
@@ -59,8 +58,12 @@ internal class DatabaseChannelRepository(
 
     private val logger by taggedLogger("Chat:ChannelRepository")
     private val channelCache = LruCache<String, Channel>(cacheSize)
-    private val dbMutex = Mutex()
     private val cacheMutex = Mutex()
+
+    init {
+        // A cached channel that was never stored would make the next write of the same channel be skipped.
+        store.onRollback { channelCache.evictAll() }
+    }
 
     override suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
@@ -94,14 +97,12 @@ internal class DatabaseChannelRepository(
                 .filter { channelCache[it.cid] != it }
                 .also { cacheChannel(updatedChannels) }
         }
-        scope.launchWithMutex(dbMutex) {
+        if (channelsToInsert.isEmpty()) return
+        store.write {
             logger.v { "[insertChannels] inserting ${channelsToInsert.size} entities on DB" }
-            channelsToInsert
-                .takeUnless { it.isEmpty() }
-                // Re-read the cache at write time: DAO writes are not guaranteed to run in launch
-                // order, so the last write must persist the latest merged state, not its snapshot
-                ?.map { channel -> (channelCache[channel.cid] ?: channel).toEntity() }
-                ?.let { channelDao.insertMany(it) }
+            // Re-read the cache at write time: a later merge into the cache can reach the database first,
+            // so each write must persist the latest merged state, not its snapshot
+            channelDao.insertMany(channelsToInsert.map { channel -> (channelCache[channel.cid] ?: channel).toEntity() })
         }
     }
 
@@ -154,7 +155,7 @@ internal class DatabaseChannelRepository(
                 .syncUnreadCountWithReads()
                 .also { cacheChannel(it) }
         }
-        scope.launchWithMutex(dbMutex) {
+        store.write {
             logger.v { "[upsertChannelReads] cid: $cid, reads.size: ${reads.size}" }
             channelDao.insert((channelCache[cid] ?: updatedChannel).toEntity())
         }
@@ -177,7 +178,7 @@ internal class DatabaseChannelRepository(
     override suspend fun deleteChannel(cid: String) {
         logger.v { "[deleteChannel] cid: $cid" }
         removeFromCache(cid)
-        scope.launchWithMutex(dbMutex) { channelDao.delete(cid) }
+        store.write { channelDao.delete(cid) }
     }
 
     override suspend fun deleteChannelMessage(message: Message) {
@@ -295,7 +296,7 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) {
         removeFromCache(cid)
-        scope.launchWithMutex(dbMutex) { channelDao.setDeletedAt(cid, deletedAt) }
+        store.write { channelDao.setDeletedAt(cid, deletedAt) }
     }
 
     /**
@@ -307,7 +308,7 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
         removeFromCache(cid)
-        scope.launchWithMutex(dbMutex) { channelDao.setHidden(cid, hidden, hideMessagesBefore) }
+        store.write { channelDao.setHidden(cid, hidden, hideMessagesBefore) }
     }
 
     /**
@@ -318,7 +319,7 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
         removeFromCache(cid)
-        scope.launchWithMutex(dbMutex) { channelDao.setHidden(cid, hidden) }
+        store.write { channelDao.setHidden(cid, hidden) }
     }
 
     /**
@@ -391,6 +392,6 @@ internal class DatabaseChannelRepository(
     }
 
     override suspend fun clear() {
-        dbMutex.withLock { channelDao.deleteAll() }
+        store.write { channelDao.deleteAll() }
     }
 }

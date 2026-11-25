@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -80,9 +81,11 @@ import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -98,6 +101,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.atLeast
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.stub
@@ -520,6 +524,60 @@ internal class EventHandlerSequentialTest {
             // then
             verify(repos).deleteDraftMessage(storedDraft.cid, parentId)
         }
+
+    @Test
+    fun `When handling a batch, Its data should be stored inside one write of the store`() = runTest {
+        // given
+        val draftMessage = randomDraftMessage(parentId = null)
+        val event = randomDraftMessageUpdatedEvent(draftMessage = draftMessage)
+        var openWrites = 0
+        var writes = 0
+        val store = ChatStore { block ->
+            writes++
+            openWrites++
+            block()
+            openWrites--
+        }
+        val storedInsideWrite = mutableListOf<Boolean>()
+        val repos: RepositoryFacade = mock()
+        whenever(repos.store) doReturn store
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn emptyList()
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        whenever(repos.insertUsers(any())) doSuspendableAnswer { storedInsideWrite += openWrites == 1 }
+        whenever(repos.insertDraftMessage(draftMessage)) doSuspendableAnswer { storedInsideWrite += openWrites == 1 }
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .get(this)
+        // when
+        handler.handleEvents(event)
+        // then
+        writes `should be equal to` 1
+        storedInsideWrite.size `should be equal to` 3
+        storedInsideWrite.all { it } `should be equal to` true
+    }
+
+    @Test
+    fun `When handling a batch in a cancelled coroutine, Its data should not be stored`() = runTest {
+        // given
+        val event = randomDraftMessageUpdatedEvent(draftMessage = randomDraftMessage(parentId = null))
+        var writes = 0
+        val repos: RepositoryFacade = mock()
+        whenever(repos.store) doReturn ChatStore { block ->
+            writes++
+            block()
+        }
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .get(this)
+        // when
+        launch {
+            cancel()
+            handler.handleEvents(event)
+        }.join()
+        // then
+        writes `should be equal to` 0
+    }
 
     @Test
     fun `When handling DraftMessageUpdatedEvent, The draft should be stored in local storage`() = runTest {

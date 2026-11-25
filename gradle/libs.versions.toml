@@ -88,7 +88,6 @@ streamLog = "1.3.2"
 streamPush = "1.3.1"
 streamResult = "1.4.1"
 testParameterInjector = "1.12"
-threetenbp = "1.7.0"
 timber = "5.0.1"
 turbine = "1.2.0"
 work = "2.9.1"
@@ -231,7 +230,6 @@ stream-photoview-dialog = { module = "io.getstream:photoview-dialog", version.re
 stream-result = { module = "io.getstream:stream-result", version.ref = "streamResult"}
 stream-result-call = { module = "io.getstream:stream-result-call", version.ref = "streamResult"}
 test-parameter-injector = { module = "com.google.testparameterinjector:test-parameter-injector", version.ref = "testParameterInjector"}
-threetenbp = { module = "org.threeten:threetenbp", version.ref = "threetenbp"}
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber"}
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }

@@ -36,7 +36,7 @@ internal open class BaseRepositoryFacadeIntegrationTest {
     @get:Rule
     val testCoroutines = TestCoroutineRule()
 
-    private lateinit var chatDatabase: ChatDatabase
+    protected lateinit var chatDatabase: ChatDatabase
 
     protected val currentUser = randomUser()
     protected lateinit var repositoryFacade: RepositoryFacade
@@ -47,7 +47,6 @@ internal open class BaseRepositoryFacadeIntegrationTest {
         chatDatabase = createRoomDB()
         repositoryFacade = RepositoryFacade.create(
             DatabaseRepositoryFactory(chatDatabase, currentUser, testCoroutines.scope, emptySet()),
-            testCoroutines.scope,
         )
     }
 

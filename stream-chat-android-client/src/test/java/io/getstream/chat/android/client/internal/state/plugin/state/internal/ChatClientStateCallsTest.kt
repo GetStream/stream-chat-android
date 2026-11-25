@@ -211,6 +211,57 @@ internal class ChatClientStateCallsTest {
     }
 
     @Test
+    fun `watchChannel resets loadedFromServer before querying the channel`() = runTest {
+        // Given - a channel state kept in memory from an earlier watch
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn randomChannel().asCall()
+
+        // When
+        chatClientStateCalls.watchChannel("messaging:123", messageLimit = 30, userPresence = true)
+
+        // Then
+        inOrder(channelState, chatClient) {
+            verify(channelState).setLoadedFromServer(false)
+            verify(chatClient).queryChannel(eq("messaging"), eq("123"), any(), any())
+        }
+    }
+
+    @Test
+    fun `watchChannel resets the legacy loadedFromServer before querying the channel`() = runTest {
+        // Given - a channel state kept in memory from an earlier watch
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateLegacyImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn randomChannel().asCall()
+
+        // When
+        chatClientStateCalls.watchChannel("messaging:123", messageLimit = 30, userPresence = true)
+
+        // Then
+        inOrder(channelState, chatClient) {
+            verify(channelState).setLoadedFromServer(false)
+            verify(chatClient).queryChannel(eq("messaging"), eq("123"), any(), any())
+        }
+    }
+
+    @Test
+    fun `watchChannel without messages keeps loadedFromServer`() = runTest {
+        // Given - e.g. a channel header watching the channel the message list has open
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn randomChannel().asCall()
+
+        // When
+        chatClientStateCalls.watchChannel("messaging:123", messageLimit = 0, userPresence = true)
+
+        // Then
+        verify(channelState, never()).setLoadedFromServer(any())
+    }
+
+    @Test
     fun `watchChannel ends the first load when the query fails`() = runTest {
         // Given - e.g. a plugin failing the precondition, which skips the result listeners
         userFlow.value = User(id = "test-user")

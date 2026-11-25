@@ -643,11 +643,13 @@ public class MessageListController(
             showUnreadButtonState,
             channelState.filterNotNull(),
             channelState.filterNotNull().flatMapLatest { it.read },
-        ) { shouldShowButton, channel, read ->
+            channelState.filterNotNull().flatMapLatest { it.loadedFromServer },
+        ) { shouldShowButton, channel, read, loadedFromServer ->
             computeUnreadLabel(
                 channelUserRead = read,
                 channel = channel,
                 shouldShowButton = shouldShowButton,
+                loadedFromServer = loadedFromServer,
             )
         }.launchIn(scope)
     }
@@ -664,6 +666,7 @@ public class MessageListController(
         channelUserRead: ChannelUserRead?,
         channel: ChannelState,
         shouldShowButton: Boolean,
+        loadedFromServer: Boolean,
     ) {
         channelUserRead
             ?.takeIf { !isStartedForThread }
@@ -678,19 +681,24 @@ public class MessageListController(
                     shouldShowButton = shouldShowButton,
                 )
 
-                if (unreadLabel != null) {
-                    // Marking the read state as processed only on a produced label keeps the
-                    // recalculation open while the reason for a null result is transient, for
-                    // example a message list that has not loaded yet.
+                // A read state with unread messages but no label stays unprocessed, because the
+                // reason can be transient, for example a message list that has not loaded yet.
+                // One with nothing unread is processed, so messages that arrive while the channel
+                // is open only raise the count on this boundary and never produce a label. Only
+                // once loaded from the server, though: a stale cached read can say nothing is
+                // unread at the same boundary where the server then reports unread messages.
+                if (unreadLabel != null || (read.unreadMessages == 0 && loadedFromServer)) {
                     lastProcessedReadMessageId = read.lastReadMessageId
                     lastProcessedReadAt = read.lastRead
+                }
+                if (unreadLabel != null) {
                     unreadLabelState.value = unreadLabel
                 }
             }
     }
 
     /**
-     * Whether this read state moves the unread boundary since the last produced label.
+     * Whether this read state moves the unread boundary since the last processed read state.
      *
      * Marking a message unread moves [ChannelUserRead.lastRead] back to the previous message, and
      * can keep [ChannelUserRead.lastReadMessageId] when that message was already the last read one,
@@ -1900,6 +1908,7 @@ public class MessageListController(
                     channelUserRead = channel.read.value,
                     channel = channel,
                     shouldShowButton = showUnreadButtonState.value,
+                    loadedFromServer = channel.loadedFromServer.value,
                 )
             }
             markChannelAsRead()

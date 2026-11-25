@@ -184,7 +184,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
 
         repos = RepositoryFacade.create(
             DatabaseRepositoryFactory(db, data.user1, this, emptySet()),
-            getTestScope(),
             Config(connectEventsEnabled = true, muteEnabled = true),
         )
 

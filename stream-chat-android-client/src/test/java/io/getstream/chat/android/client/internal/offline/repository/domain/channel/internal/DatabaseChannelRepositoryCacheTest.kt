@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.chan
 import io.getstream.chat.android.client.MockChatClientBuilder
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.offline.randomChannelEntity
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomLocation
@@ -56,7 +57,7 @@ internal class DatabaseChannelRepositoryCacheTest {
         onBlocking { select(any<List<String>>()) } doReturn emptyList()
     }
     private val sut = DatabaseChannelRepository(
-        testScope,
+        testChatStore(),
         channelDao,
         { randomUser(id = it) },
         { randomMessage(id = it) },

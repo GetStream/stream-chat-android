@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.client.utils.verifyThrowableError
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.User
@@ -1964,10 +1965,16 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         }
 
         fun givenMarkDeliveredResult(messageId: String, result: Boolean) = apply {
+            givenInitializedClient()
             wheneverBlocking { mockMessageReceiptManager.markMessageAsDelivered(messageId) }.thenReturn(result)
         }
 
+        private fun givenInitializedClient() {
+            whenever(mutableClientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
+        }
+
         fun givenMarkDeliveredResult(messageId: String, exception: RuntimeException) = apply {
+            givenInitializedClient()
             wheneverBlocking { mockMessageReceiptManager.markMessageAsDelivered(messageId) }.thenThrow(exception)
         }
 
