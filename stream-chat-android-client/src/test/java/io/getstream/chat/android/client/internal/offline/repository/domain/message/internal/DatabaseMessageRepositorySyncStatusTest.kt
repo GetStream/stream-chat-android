@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.mess
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.internal.offline.createRoomDB
 import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
@@ -45,7 +46,7 @@ internal class DatabaseMessageRepositorySyncStatusTest {
         database = createRoomDB()
         messageDao = database.messageDao()
         sut = DatabaseMessageRepository(
-            scope = testScope,
+            store = testChatStore(),
             messageDao = messageDao,
             replyMessageDao = database.replyMessageDao(),
             pollDao = database.pollDao(),

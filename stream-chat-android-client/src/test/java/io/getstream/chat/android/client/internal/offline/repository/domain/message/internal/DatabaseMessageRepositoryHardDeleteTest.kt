@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.domain.message.internal
 
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -105,8 +105,8 @@ internal class DatabaseMessageRepositoryHardDeleteTest {
         sut.selectIsHardDelete("missing") shouldBeEqualTo false
     }
 
-    private fun TestScope.repository(dao: MessageDao = messageDao) = DatabaseMessageRepository(
-        scope = this,
+    private fun repository(dao: MessageDao = messageDao) = DatabaseMessageRepository(
+        store = testChatStore(),
         messageDao = dao,
         replyMessageDao = mock(),
         pollDao = mock<PollDao>(),

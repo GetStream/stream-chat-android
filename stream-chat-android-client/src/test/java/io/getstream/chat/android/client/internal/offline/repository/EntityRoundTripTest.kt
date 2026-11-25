@@ -21,6 +21,7 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.MockChatClientBuilder
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal.toModel
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.toEntity
@@ -389,7 +390,8 @@ internal class EntityRoundTripTest {
         @OptIn(ExperimentalCoroutinesApi::class)
         private suspend fun TestScope.restoredUser(user: User, current: Boolean): User {
             val written = mock<UserDao>()
-            DatabaseUserRepository(this, written).run { if (current) insertCurrentUser(user) else insertUser(user) }
+            DatabaseUserRepository(this, testChatStore(), written)
+                .run { if (current) insertCurrentUser(user) else insertUser(user) }
             advanceUntilIdle()
             val entity = if (current) {
                 argumentCaptor<UserEntity>().apply { verify(written).insert(capture()) }.firstValue
@@ -397,7 +399,7 @@ internal class EntityRoundTripTest {
                 argumentCaptor<List<UserEntity>>().apply { verify(written).insertMany(capture()) }.firstValue.single()
             }
             val stored = mock<UserDao> { onBlocking { select(entity.id) } doReturn entity }
-            return checkNotNull(DatabaseUserRepository(this, stored).selectUser(entity.id))
+            return checkNotNull(DatabaseUserRepository(this, testChatStore(), stored).selectUser(entity.id))
         }
 
         /** The [spec] as the repository reads it back, from the entity the repository wrote for it. */

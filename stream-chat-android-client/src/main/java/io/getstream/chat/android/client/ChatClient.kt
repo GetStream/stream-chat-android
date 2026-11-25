@@ -397,7 +397,7 @@ internal constructor(
     /** Set only by [initializeClientWithUser], so a user's repositories are created once. */
     private val userRepositoryFacade = AtomicReference<RepositoryFacade?>(null)
 
-    private val emptyRepositoryFacade: RepositoryFacade by lazy { createRepositoryFacade(userScope) }
+    private val emptyRepositoryFacade: RepositoryFacade by lazy { createRepositoryFacade() }
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -791,7 +791,7 @@ internal constructor(
         if (initializedUserId.get() != user.id) {
             // Plugins set for another user without a connection, as a push notification does, are still listening.
             plugins.forEach { it.onUserDisconnected() }
-            userRepositoryFacade.set(createRepositoryFacade(userScope, createRepositoryFactory(user)))
+            userRepositoryFacade.set(createRepositoryFacade(createRepositoryFactory(user)))
             plugins = pluginFactories.map { it.get(user) }
             initializedUserId.set(user.id)
         } else {
@@ -822,11 +822,8 @@ internal constructor(
     private fun createRepositoryFactory(user: User): RepositoryFactory =
         repositoryFactoryProvider.createRepositoryFactory(user)
 
-    private fun createRepositoryFacade(
-        scope: CoroutineScope,
-        repositoryFactory: RepositoryFactory = NoOpRepositoryFactory,
-    ): RepositoryFacade =
-        RepositoryFacade.create(repositoryFactory, scope)
+    private fun createRepositoryFacade(repositoryFactory: RepositoryFactory = NoOpRepositoryFactory): RepositoryFacade =
+        RepositoryFacade.create(repositoryFactory)
 
     /**
      * Get the current settings of the app. Check [AppSettings].
@@ -1811,7 +1808,7 @@ internal constructor(
         if (flushPersistence) {
             // With no user set, the data left on the device is the stored user's.
             val flushedRepositoryFacade = disconnectedRepositoryFacade
-                ?: getStoredUser()?.let { createRepositoryFacade(userScope, createRepositoryFactory(it)) }
+                ?: getStoredUser()?.let { createRepositoryFacade(createRepositoryFactory(it)) }
             flushedRepositoryFacade?.clear()
             userCredentialStorage.clear()
         }

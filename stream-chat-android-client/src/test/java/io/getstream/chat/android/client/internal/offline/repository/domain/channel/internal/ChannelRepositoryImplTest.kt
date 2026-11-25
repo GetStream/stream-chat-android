@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.chan
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.MockChatClientBuilder
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
@@ -63,7 +64,7 @@ internal class ChannelRepositoryImplTest {
         // Room never returns null for a list query
         channelDao.stub { onBlocking { select(any<List<String>>()) } doReturn emptyList() }
         channelRepository = DatabaseChannelRepository(
-            testCoroutines.scope,
+            testChatStore(),
             channelDao,
             { randomUser() },
             { randomMessage() },
@@ -239,7 +240,7 @@ internal class ChannelRepositoryImplTest {
 
     private fun repositoryWithUserEchoingIds(isLocalUnreadCountEnabled: Boolean = true): DatabaseChannelRepository =
         DatabaseChannelRepository(
-            testCoroutines.scope,
+            testChatStore(),
             channelDao,
             { userId -> randomUser(id = userId) },
             { randomMessage() },

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.internal.offline.randomMessageEntity
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.DatabaseMessageRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MessageDao
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.PollDao
@@ -53,7 +54,7 @@ internal class MessageRepositoryTests {
     @Test
     fun `when selecting messages for channel, correct messages should be requested to DAO`() = runTest {
         val sut = DatabaseMessageRepository(
-            this,
+            testChatStore(),
             messageDao,
             replyMessageDao,
             pollDao,
@@ -109,7 +110,7 @@ internal class MessageRepositoryTests {
     fun `when calling deletePoll, then deletePoll from PollDao is called`() = runTest {
         // given
         val repository = DatabaseMessageRepository(
-            this,
+            testChatStore(),
             messageDao,
             replyMessageDao,
             pollDao,
@@ -138,7 +139,7 @@ internal class MessageRepositoryTests {
             whenever(messageDao.selectByUserId(userId)) doReturn messageEntities
 
             val repository = DatabaseMessageRepository(
-                this,
+                testChatStore(),
                 messageDao,
                 replyMessageDao,
                 pollDao,
@@ -173,7 +174,7 @@ internal class MessageRepositoryTests {
             whenever(messageDao.selectByCidAndUserId(cid, userId)) doReturn messageEntities
 
             val repository = DatabaseMessageRepository(
-                this,
+                testChatStore(),
                 messageDao,
                 replyMessageDao,
                 pollDao,
@@ -206,7 +207,7 @@ internal class MessageRepositoryTests {
         val messageIds = messages.map { it.id }
 
         val repository = DatabaseMessageRepository(
-            this,
+            testChatStore(),
             messageDao,
             replyMessageDao,
             pollDao,
@@ -226,7 +227,7 @@ internal class MessageRepositoryTests {
     fun `when calling clear, then all related tables are cleared`() = runTest(testDispatcher) {
         // given
         val repository = DatabaseMessageRepository(
-            this,
+            testChatStore(),
             messageDao,
             replyMessageDao,
             pollDao,
@@ -270,7 +271,7 @@ internal class MessageRepositoryTests {
     }
 
     private fun TestScope.localOnlyRepository() = DatabaseMessageRepository(
-        this,
+        testChatStore(),
         messageDao,
         replyMessageDao,
         pollDao,
