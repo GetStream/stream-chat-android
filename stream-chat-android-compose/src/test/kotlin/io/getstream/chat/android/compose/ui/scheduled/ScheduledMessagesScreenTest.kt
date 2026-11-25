@@ -18,17 +18,24 @@ package io.getstream.chat.android.compose.ui.scheduled
 
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ScheduledMessageActionsSheetParams
 import io.getstream.chat.android.compose.viewmodel.scheduled.ScheduledMessageListViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
@@ -40,10 +47,12 @@ import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction
 import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -109,6 +118,88 @@ internal class ScheduledMessagesScreenTest {
         setContent()
 
         composeTestRule.onNodeWithText("No scheduled messages").assertExists()
+    }
+
+    @Test
+    fun `the search keeps the matching messages, and tells when none matches`() {
+        scheduledMessagesFlow.value = listOf(
+            scheduled(id = "a", text = "Heads up"),
+            scheduled(id = "b", text = "Launch day"),
+        )
+        setContent()
+
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageSearchInput").performTextInput("launch")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Launch day", substring = true, useUnmergedTree = true).assertExists()
+        composeTestRule.onNodeWithText("Heads up", substring = true, useUnmergedTree = true).assertDoesNotExist()
+
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageSearchInput").performTextInput(" party")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("No results for \"launch party\"").assertExists()
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageList").assertDoesNotExist()
+    }
+
+    @Test
+    fun `a custom action shows in the sheet that closes before the action is called`() {
+        scheduledMessagesFlow.value = listOf(scheduled())
+        val events = mutableListOf<String>()
+        setContent(
+            componentFactory = object : ChatComponentFactory {
+                @Composable
+                override fun ScheduledMessageActionsSheet(params: ScheduledMessageActionsSheetParams) {
+                    super.ScheduledMessageActionsSheet(
+                        params.copy(
+                            onDismiss = {
+                                events += "dismiss"
+                                params.onDismiss()
+                            },
+                            customActions = listOf(
+                                ScheduledMessageCustomAction(
+                                    title = "Share",
+                                    icon = painterResource(R.drawable.stream_design_ic_share),
+                                    onClick = { events += "share ${params.item.scheduledMessage.id}" },
+                                ),
+                            ),
+                        ),
+                    )
+                }
+            },
+        )
+
+        openActions()
+        composeTestRule.onNodeWithText("Share").performSemanticsAction(SemanticsActions.OnClick)
+        composeTestRule.waitForIdle()
+
+        assertEquals(listOf("dismiss", "share scheduled-1"), events)
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageActions").assertDoesNotExist()
+    }
+
+    @Test
+    fun `custom actions go right before Delete and the default actions keep their order`() {
+        composeTestRule.setContent {
+            ChatTheme {
+                ScheduledMessageActionsContent(
+                    actions = listOf(ScheduledMessageAction.Delete, ScheduledMessageAction.Edit),
+                    customActions = listOf(
+                        ScheduledMessageCustomAction(
+                            title = "Share",
+                            icon = painterResource(R.drawable.stream_design_ic_share),
+                            onClick = {},
+                        ),
+                    ),
+                    onActionClick = {},
+                    onCustomActionClick = {},
+                )
+            }
+        }
+
+        val share = composeTestRule.onNodeWithText("Share").getBoundsInRoot().top
+        val delete = composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Delete").getBoundsInRoot().top
+        val edit = composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Edit").getBoundsInRoot().top
+        assertTrue(share < delete)
+        assertTrue(delete < edit)
     }
 
     @Test
@@ -272,9 +363,12 @@ internal class ScheduledMessagesScreenTest {
         composeTestRule.onNodeWithTag("Stream_ScheduledMessageActions").assertExists()
     }
 
-    private fun setContent(onBackPressed: () -> Unit = {}) {
+    private fun setContent(
+        onBackPressed: () -> Unit = {},
+        componentFactory: ChatComponentFactory = object : ChatComponentFactory {},
+    ) {
         composeTestRule.setContent {
-            ChatTheme {
+            ChatTheme(componentFactory = componentFactory) {
                 ScheduledMessagesScreen(
                     viewModelFactory = ScheduledMessageListViewModelFactory(chatClient = client),
                     onBackPressed = onBackPressed,
@@ -285,6 +379,7 @@ internal class ScheduledMessagesScreenTest {
     }
 
     private fun scheduled(
+        id: String = "scheduled-1",
         text: String = "Heads up",
         status: ScheduledMessageStatus = ScheduledMessageStatus.Scheduled,
         failure: ScheduledMessageFailure? = null,
@@ -292,10 +387,10 @@ internal class ScheduledMessagesScreenTest {
         val now = System.currentTimeMillis()
         val scheduledAt = Date(now + TimeUnit.DAYS.toMillis(1))
         return ScheduledMessage(
-            id = "scheduled-1",
+            id = id,
             cid = channel.cid,
             channel = ChannelInfo(cid = channel.cid, id = channel.id, type = channel.type, name = channel.name),
-            message = Message(id = "scheduled-1", cid = channel.cid, text = text),
+            message = Message(id = id, cid = channel.cid, text = text),
             scheduledAt = scheduledAt,
             status = status,
             failure = failure,

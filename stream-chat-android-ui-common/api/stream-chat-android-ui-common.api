@@ -1304,6 +1304,7 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/DateF
 	public abstract fun formatDate (Ljava/util/Date;)Ljava/lang/String;
 	public abstract fun formatRelativeDate (Ljava/util/Date;)Ljava/lang/String;
 	public abstract fun formatRelativeTime (Ljava/util/Date;)Ljava/lang/String;
+	public fun formatScheduledDate (Ljava/util/Date;)Ljava/lang/String;
 	public abstract fun formatTime (Ljava/util/Date;)Ljava/lang/String;
 	public static fun from (Landroid/content/Context;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public static fun from (Landroid/content/Context;Ljava/util/Locale;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
@@ -1313,6 +1314,10 @@ public final class io/getstream/chat/android/ui/common/helper/DateFormatter$Comp
 	public final fun from (Landroid/content/Context;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public final fun from (Landroid/content/Context;Ljava/util/Locale;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public static synthetic fun from$default (Lio/getstream/chat/android/ui/common/helper/DateFormatter$Companion;Landroid/content/Context;Ljava/util/Locale;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
+}
+
+public final class io/getstream/chat/android/ui/common/helper/DateFormatter$DefaultImpls {
+	public static fun formatScheduledDate (Lio/getstream/chat/android/ui/common/helper/DateFormatter;Ljava/util/Date;)Ljava/lang/String;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/helper/DurationFormatter {
@@ -3501,15 +3506,19 @@ public final class io/getstream/chat/android/ui/common/state/scheduled/Scheduled
 public final class io/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListState {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Ljava/util/List;ZZ)V
-	public synthetic fun <init> (Ljava/util/List;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;ZZLjava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ZZLjava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Z
 	public final fun component3 ()Z
-	public final fun copy (Ljava/util/List;ZZ)Lio/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListState;Ljava/util/List;ZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListState;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;ZZLjava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListState;Ljava/util/List;ZZLjava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/scheduled/ScheduledMessageListState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getItems ()Ljava/util/List;
+	public final fun getSearchQuery ()Ljava/lang/String;
+	public final fun getSearchResults ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun isLoadFailed ()Z
 	public final fun isLoading ()Z

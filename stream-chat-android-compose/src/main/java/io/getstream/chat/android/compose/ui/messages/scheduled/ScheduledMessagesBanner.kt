@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -43,12 +42,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.messages.composer.schedule.formatFullDate
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import java.util.Date
-import java.util.TimeZone
 
 /**
  * The banner about the scheduled messages of a channel or a thread, which floats above the composer. Its changes are
@@ -58,14 +55,12 @@ import java.util.TimeZone
  * @param onClick Called when the banner is clicked, to show the scheduled messages. The banner can't be clicked and
  * has no View link when it is null.
  * @param modifier Modifier for styling.
- * @param timeZone The time zone of the date of the next scheduled message.
  */
 @Composable
 internal fun ScheduledMessagesBanner(
     state: ScheduledMessagesBannerState,
     onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
-    timeZone: TimeZone = TimeZone.getDefault(),
 ) {
     val isFailed = state is ScheduledMessagesBannerState.Failed
     Row(
@@ -91,7 +86,7 @@ internal fun ScheduledMessagesBanner(
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = state.text(timeZone),
+            text = state.text(),
             style = ChatTheme.typography.metadataEmphasis,
             color = ChatTheme.colors.textPrimary,
         )
@@ -112,7 +107,7 @@ internal fun ScheduledMessagesBanner(
 }
 
 @Composable
-private fun ScheduledMessagesBannerState.text(timeZone: TimeZone): String = when (this) {
+private fun ScheduledMessagesBannerState.text(): String = when (this) {
     is ScheduledMessagesBannerState.Failed ->
         pluralStringResource(R.plurals.stream_compose_scheduled_messages_failed_count, count, count)
 
@@ -122,7 +117,7 @@ private fun ScheduledMessagesBannerState.text(timeZone: TimeZone): String = when
     is ScheduledMessagesBannerState.Scheduled -> when (count) {
         1 -> stringResource(
             R.string.stream_compose_schedule_message_scheduled_for,
-            LocalContext.current.formatFullDate(nextScheduledAt, timeZone),
+            ChatTheme.dateFormatter.formatScheduledDate(nextScheduledAt),
         )
         else -> if (isInThread) {
             pluralStringResource(R.plurals.stream_compose_scheduled_messages_replies_count, count, count)
@@ -186,7 +181,7 @@ internal fun ScheduledMessagesBannerWithoutLinkContent() {
 
 @Composable
 private fun PreviewBanner(state: ScheduledMessagesBannerState, onClick: (() -> Unit)? = {}) {
-    ScheduledMessagesBanner(state = state, onClick = onClick, timeZone = TimeZone.getTimeZone("UTC"))
+    ScheduledMessagesBanner(state = state, onClick = onClick)
 }
 
 /** Friday, October 23, 2026 at 09:00 UTC. */

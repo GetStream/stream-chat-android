@@ -175,4 +175,5 @@
   <string name="stream_ui_poll_description_unlimited_answers">"Selecciona una o más"</string>
   <string name="stream_ui_poll_multiple_answers_error">"Escribe un número del %1$s al %2$s"</string>
   <string name="stream_ui_yesterday">"Ayer"</string>
+  <string name="stream_ui_scheduled_message_date">"%1$s a las %2$s"</string>
 </resources>

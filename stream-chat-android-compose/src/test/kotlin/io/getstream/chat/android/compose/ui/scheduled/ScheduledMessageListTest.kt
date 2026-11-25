@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.scheduled
 
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.DefaultTimeZoneRule
 import io.getstream.chat.android.compose.ui.PIXEL_4A_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
@@ -30,6 +31,9 @@ internal class ScheduledMessageListTest : PaparazziComposeTest {
         deviceConfig = PIXEL_4A_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
+
+    @get:Rule
+    val timeZoneRule = DefaultTimeZoneRule()
 
     @Test
     fun `scheduled message items`() {
@@ -57,6 +61,11 @@ internal class ScheduledMessageListTest : PaparazziComposeTest {
     }
 
     @Test
+    fun `scheduled message list without search results`() {
+        snapshotWithDarkMode { ScheduledMessageListEmptySearch() }
+    }
+
+    @Test
     fun `scheduled message list load failed`() {
         snapshotWithDarkMode { ScheduledMessageListLoadFailed() }
     }
@@ -64,6 +73,11 @@ internal class ScheduledMessageListTest : PaparazziComposeTest {
     @Test
     fun `scheduled message actions`() {
         snapshotWithDarkMode { ScheduledMessageActions() }
+    }
+
+    @Test
+    fun `scheduled message actions with custom actions`() {
+        snapshotWithDarkMode { ScheduledMessageActionsWithCustomActions() }
     }
 
     @Test

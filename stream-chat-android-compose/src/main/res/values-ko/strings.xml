@@ -409,6 +409,7 @@
   <string name="stream_compose_scheduled_message_list_send_at">"%1$s 전송"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"예약 메시지가 없습니다"</string>
   <string name="stream_compose_scheduled_message_list_empty_description">"채널에서 전송 버튼을 길게 눌러 메시지를 예약하세요."</string>
+  <string name="stream_compose_scheduled_message_list_empty_search_results">"\"%1$s\"에 대한 검색결과가 없습니다"</string>
   <string name="stream_compose_scheduled_message_list_load_failed">"예약 메시지를 불러올 수 없습니다"</string>
   <string name="stream_compose_scheduled_message_list_try_again">"다시 시도"</string>
   <string name="stream_compose_scheduled_message_list_sending">"전송 중…"</string>

@@ -41,7 +41,6 @@ import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageItemS
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListState
 import java.io.File
 import java.util.Date
-import java.util.TimeZone
 
 @Preview(showBackground = true)
 @Composable
@@ -87,10 +86,9 @@ internal fun ScheduledMessageItemFailures() {
 
 @Composable
 private fun PreviewItems(items: List<ScheduledMessageItemState>) {
-    val utc = TimeZone.getTimeZone("UTC")
     Column(modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
         items.forEach { item ->
-            ScheduledMessageItem(item = item, currentUser = PreviewUserData.user1, onClick = {}, timeZone = utc)
+            ScheduledMessageItem(item = item, currentUser = PreviewUserData.user1, onClick = {})
         }
     }
 }
@@ -150,7 +148,7 @@ internal fun ScheduledMessageListLoadFailed() {
 }
 
 /** The preview rows, in groups that fit one snapshot each. */
-private val PreviewScheduledMessageItems: List<List<ScheduledMessageItemState>>
+internal val PreviewScheduledMessageItems: List<List<ScheduledMessageItemState>>
     get() {
         val channel = PreviewChannelData.channelWithImage.copy(name = "Amsterdam Office")
         val directChannel = PreviewChannelData.channelWithOnlineUser

@@ -223,6 +223,12 @@ class UserRobot {
         return this
     }
 
+    /** Searches the scheduled messages for [query]. */
+    fun searchScheduledMessages(query: String): UserRobot {
+        ScheduledMessagesPage.Screen.searchField.waitToAppear().typeText(query)
+        return this
+    }
+
     /** Taps the row of the scheduled message [text], whatever it shows. */
     fun tapScheduledMessage(text: String): UserRobot {
         ScheduledMessagesPage.Screen.item(text).waitToAppearAndClick()

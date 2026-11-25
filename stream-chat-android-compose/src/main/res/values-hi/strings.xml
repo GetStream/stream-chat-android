@@ -428,6 +428,7 @@
   <string name="stream_compose_scheduled_message_list_send_at">"%1$s भेजें"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"कोई शेड्यूल किया गया मैसेज नहीं"</string>
   <string name="stream_compose_scheduled_message_list_empty_description">"मैसेज शेड्यूल करने के लिए किसी चैनल में भेजें बटन को देर तक दबाएं।"</string>
+  <string name="stream_compose_scheduled_message_list_empty_search_results">"\"%1$s\" के लिए कोई परिणाम नहीं"</string>
   <string name="stream_compose_scheduled_message_list_load_failed">"शेड्यूल किए गए मैसेज लोड नहीं हो सके"</string>
   <string name="stream_compose_scheduled_message_list_try_again">"फिर से कोशिश करें"</string>
   <string name="stream_compose_scheduled_message_list_sending">"भेजा जा रहा है…"</string>

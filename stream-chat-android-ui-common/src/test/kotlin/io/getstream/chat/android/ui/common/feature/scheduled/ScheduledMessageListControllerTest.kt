@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
@@ -36,6 +37,7 @@ import io.getstream.chat.android.models.ScheduledMessageFailure.ServerFailedPubl
 import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedScheduling
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelCapabilities
@@ -91,6 +93,7 @@ internal class ScheduledMessageListControllerTest {
     private lateinit var hasLoadedAll: MutableStateFlow<Boolean>
     private lateinit var deletedAlreadySent: MutableSharedFlow<ScheduledMessage>
     private lateinit var connectionState: MutableStateFlow<ConnectionState>
+    private lateinit var currentUser: MutableStateFlow<User?>
     private lateinit var client: ChatClient
     private lateinit var quotedMessages: MutableMap<String, Message>
     private lateinit var loadedMessageIds: MutableList<String>
@@ -108,10 +111,12 @@ internal class ScheduledMessageListControllerTest {
         hasLoadedAll = MutableStateFlow(false)
         deletedAlreadySent = MutableSharedFlow()
         connectionState = MutableStateFlow(ConnectionState.Connected)
+        currentUser = MutableStateFlow(null)
         quotedMessages = mutableMapOf()
         loadedMessageIds = mutableListOf()
         val state: ClientState = mock {
             on { connectionState } doReturn connectionState
+            on { user } doReturn currentUser
         }
         client = mock {
             on { scheduledMessages } doReturn scheduledMessages
@@ -346,6 +351,97 @@ internal class ScheduledMessageListControllerTest {
 
         controller().state.value.items.single().channel shouldBeEqualTo null
         verify(client, never()).queryChannels(any())
+    }
+
+    @Test
+    fun `without a search, the search results are all the messages`() = runTest {
+        scheduledMessages.value = listOf(scheduled(), scheduled())
+
+        val state = controller().state.value
+
+        state.searchQuery shouldBeEqualTo ""
+        state.items.size shouldBeEqualTo 2
+        state.searchResults shouldBeEqualTo state.items
+    }
+
+    @Test
+    fun `the search keeps the messages whose text or attachment title or name contains it`() = runTest {
+        val byText = scheduled(scheduledAt = Date(1_000), text = "Review the Venue shortlist")
+        val byTitle = scheduled(scheduledAt = Date(2_000), attachments = listOf(randomAttachment(title = "venue.pdf")))
+        val byName = scheduled(scheduledAt = Date(3_000), attachments = listOf(randomAttachment(name = "VENUE.png")))
+        val other = scheduled(scheduledAt = Date(4_000), text = "Heads up")
+        scheduledMessages.value = listOf(other, byName, byTitle, byText)
+        val controller = controller()
+
+        controller.setSearchQuery("  venue ")
+
+        val state = controller.state.value
+        state.searchQuery shouldBeEqualTo "  venue "
+        state.searchResults.map { it.scheduledMessage } shouldBeEqualTo listOf(byText, byTitle, byName)
+        state.items.map { it.scheduledMessage } shouldBeEqualTo listOf(byText, byTitle, byName, other)
+    }
+
+    @Test
+    fun `the search matches the channel name and the members other than the current user`() = runTest {
+        val me = randomUser(name = "Maya Ross")
+        currentUser.value = me
+        val named = scheduled(scheduledAt = Date(1_000), text = "Heads up").withSummary(name = "Amsterdam Office")
+        val withMember = scheduled(scheduledAt = Date(2_000), text = "Heads up")
+            .withSummary(name = "", members = listOf(randomMember(user = me), randomMember(randomUser(name = "Ana"))))
+        val onlyMe = scheduled(scheduledAt = Date(3_000), text = "Heads up")
+            .withSummary(name = "", members = listOf(randomMember(me)))
+        scheduledMessages.value = listOf(named, withMember, onlyMe)
+        val controller = controller()
+
+        controller.setSearchQuery("amsterdam")
+        controller.state.value.searchResults.map { it.scheduledMessage } shouldBeEqualTo listOf(named)
+
+        controller.setSearchQuery("ana")
+        controller.state.value.searchResults.map { it.scheduledMessage } shouldBeEqualTo listOf(withMember)
+
+        controller.setSearchQuery("maya")
+        controller.state.value.searchResults shouldBeEqualTo emptyList()
+    }
+
+    @Test
+    fun `the search stops matching the current user once the user is known`() = runTest {
+        val me = randomUser(name = "Maya Ross")
+        val direct = scheduled(text = "Heads up")
+            .withSummary(name = "", members = listOf(randomMember(user = me), randomMember(randomUser(name = "Ana"))))
+        scheduledMessages.value = listOf(direct)
+        val controller = controller()
+        controller.setSearchQuery("maya")
+        controller.state.value.searchResults.map { it.scheduledMessage } shouldBeEqualTo listOf(direct)
+
+        currentUser.value = me
+
+        controller.state.value.searchResults shouldBeEqualTo emptyList()
+    }
+
+    @Test
+    fun `the search matches the channel ID of a message with no summary`() = runTest {
+        val message = scheduled(cid = "messaging:launch-team")
+        scheduledMessages.value = listOf(message, scheduled())
+        val controller = controller()
+
+        controller.setSearchQuery("LAUNCH")
+
+        controller.state.value.searchResults.map { it.scheduledMessage } shouldBeEqualTo listOf(message)
+    }
+
+    @Test
+    fun `the search follows the changes of the messages, and a blank search shows them all again`() = runTest {
+        val first = scheduled(scheduledAt = Date(1_000), text = "launch notes")
+        scheduledMessages.value = listOf(first)
+        val controller = controller()
+        controller.setSearchQuery("launch")
+
+        val second = scheduled(scheduledAt = Date(2_000), text = "Launch day")
+        scheduledMessages.value = listOf(first, second, scheduled(scheduledAt = Date(3_000)))
+        controller.state.value.searchResults.map { it.scheduledMessage } shouldBeEqualTo listOf(first, second)
+
+        controller.setSearchQuery("   ")
+        controller.state.value.searchResults shouldBeEqualTo controller.state.value.items
     }
 
     @Test
@@ -971,6 +1067,16 @@ internal class ScheduledMessageListControllerTest {
     private suspend fun givenSavedChannels(vararg channels: Channel) {
         channels.forEach { channel -> whenever(repository.selectChannel(channel.cid)) doReturn channel }
     }
+
+    private fun ScheduledMessage.withSummary(name: String, members: List<Member> = emptyList()) = copy(
+        channel = ChannelInfo(
+            cid = cid,
+            id = cid.substringAfter(':'),
+            type = "messaging",
+            name = name,
+            members = members,
+        ),
+    )
 
     private fun failed(failure: ScheduledMessageFailure) =
         scheduled(status = ScheduledMessageStatus.Failed).copy(failure = failure)

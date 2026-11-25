@@ -175,4 +175,5 @@
   <string name="stream_ui_poll_description_unlimited_answers">"एक या अधिक चुनें"</string>
   <string name="stream_ui_poll_multiple_answers_error">"%1$s से %2$s तक एक संख्या टाइप करें"</string>
   <string name="stream_ui_yesterday">"कल"</string>
+  <string name="stream_ui_scheduled_message_date">"%1$s को %2$s"</string>
 </resources>

@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleS
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
+import io.getstream.chat.android.compose.ui.scheduled.ScheduledMessageCustomAction
 import io.getstream.chat.android.compose.ui.threads.ThreadListBannerState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -1448,18 +1449,45 @@ public data class ScheduledMessageListErrorContentParams(
 )
 
 /**
+ * Parameters for [ChatComponentFactory.ScheduledMessageListSearchInput].
+ *
+ * @param query The current search query.
+ * @param onValueChange Called with the new query when the user changes it.
+ * @param modifier Modifier for styling.
+ */
+public data class ScheduledMessageListSearchInputParams(
+    val query: String,
+    val onValueChange: (String) -> Unit,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.ScheduledMessageListEmptySearchContent].
+ *
+ * @param searchQuery The search query no scheduled message matches.
+ * @param modifier Modifier for styling.
+ */
+public data class ScheduledMessageListEmptySearchContentParams(
+    val searchQuery: String,
+    val modifier: Modifier = Modifier,
+)
+
+/**
  * Parameters for [ChatComponentFactory.ScheduledMessageActionsSheet].
  *
  * @param item The scheduled message the actions apply to.
- * @param actions The actions to show, in order.
- * @param onActionClick Called with the action the user picked.
+ * @param actions The default actions to show, in order.
+ * @param onActionClick Called with the default action the user picked.
  * @param onDismiss Called when the sheet is dismissed.
+ * @param customActions The actions of the app, shown right before Delete, or after the default actions when there is
+ * no Delete. The sheet closes before their click is called.
  */
 public data class ScheduledMessageActionsSheetParams(
     val item: ScheduledMessageItemState,
     val actions: List<ScheduledMessageAction>,
     val onActionClick: (ScheduledMessageAction) -> Unit,
     val onDismiss: () -> Unit,
+    val customActions: List<ScheduledMessageCustomAction> = emptyList(),
 )
 
 /**

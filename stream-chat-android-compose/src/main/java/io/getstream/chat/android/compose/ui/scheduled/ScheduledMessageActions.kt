@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,14 +56,17 @@ import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageActio
 /**
  * The sheet with the actions on a scheduled message. The sheet closes when an action is picked.
  *
- * @param actions The actions to show, in order.
- * @param onActionClick Called with the action the user picked.
- * @param onDismiss Called when the sheet is dismissed.
+ * @param actions The default actions to show, in order.
+ * @param customActions The actions of the app, shown right before Delete, or after the default actions when there is
+ * no Delete.
+ * @param onActionClick Called with the default action the user picked.
+ * @param onDismiss Called when the sheet is dismissed, also before the click of a custom action.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ScheduledMessageActionsSheet(
     actions: List<ScheduledMessageAction>,
+    customActions: List<ScheduledMessageCustomAction>,
     onActionClick: (ScheduledMessageAction) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -73,7 +77,12 @@ internal fun ScheduledMessageActionsSheet(
         ScheduledMessageActionsContent(
             modifier = Modifier.navigationBarsPadding().padding(bottom = StreamTokens.spacingXl),
             actions = actions,
+            customActions = customActions,
             onActionClick = onActionClick,
+            onCustomActionClick = { customAction ->
+                onDismiss()
+                customAction.onClick()
+            },
         )
     }
 }
@@ -81,38 +90,57 @@ internal fun ScheduledMessageActionsSheet(
 @Composable
 internal fun ScheduledMessageActionsContent(
     actions: List<ScheduledMessageAction>,
+    customActions: List<ScheduledMessageCustomAction>,
     onActionClick: (ScheduledMessageAction) -> Unit,
+    onCustomActionClick: (ScheduledMessageCustomAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // The custom actions go right before Delete, and the default actions keep their order.
+    val deleteIndex = actions.indexOf(ScheduledMessageAction.Delete).takeIf { it >= 0 } ?: actions.size
     Column(modifier = modifier) {
-        actions.forEach { action ->
-            action.content()?.let { content ->
-                ScheduledMessageActionItem(
-                    action = action,
-                    content = content,
-                    onClick = { onActionClick(action) },
-                )
-            }
+        actions.subList(0, deleteIndex).forEach { action ->
+            DefaultActionItem(action = action, onClick = { onActionClick(action) })
+        }
+        customActions.forEach { customAction ->
+            ScheduledMessageActionItem(
+                title = customAction.title,
+                icon = customAction.icon,
+                isDestructive = customAction.isDestructive,
+                onClick = { onCustomActionClick(customAction) },
+            )
+        }
+        actions.subList(deleteIndex, actions.size).forEach { action ->
+            DefaultActionItem(action = action, onClick = { onActionClick(action) })
         }
     }
 }
 
 @Composable
-private fun ScheduledMessageActionItem(
-    action: ScheduledMessageAction,
-    content: ActionContent,
-    onClick: () -> Unit,
-) {
-    val color = if (action == ScheduledMessageAction.Delete) {
-        ChatTheme.colors.accentError
-    } else {
-        ChatTheme.colors.textPrimary
+private fun DefaultActionItem(action: ScheduledMessageAction, onClick: () -> Unit) {
+    action.content()?.let { content ->
+        ScheduledMessageActionItem(
+            modifier = Modifier.testTag(content.testTag),
+            title = stringResource(content.label),
+            icon = painterResource(content.icon),
+            isDestructive = action == ScheduledMessageAction.Delete,
+            onClick = onClick,
+        )
     }
+}
+
+@Composable
+private fun ScheduledMessageActionItem(
+    title: String,
+    icon: Painter,
+    isDestructive: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val color = if (isDestructive) ChatTheme.colors.accentError else ChatTheme.colors.textPrimary
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(ActionItemHeight)
-            .testTag(content.testTag)
             .clickable(onClick = onClick)
             .padding(horizontal = StreamTokens.spacing2xs + StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
@@ -120,11 +148,11 @@ private fun ScheduledMessageActionItem(
     ) {
         Icon(
             modifier = Modifier.size(ActionIconSize),
-            painter = painterResource(content.icon),
+            painter = icon,
             contentDescription = null,
             tint = color,
         )
-        Text(text = stringResource(content.label), style = ChatTheme.typography.bodyDefault, color = color)
+        Text(text = title, style = ChatTheme.typography.bodyDefault, color = color)
     }
 }
 
@@ -262,17 +290,58 @@ private fun ScheduledMessageActionsPreview() {
 internal fun ScheduledMessageActions() {
     ScheduledMessageActionsContent(
         modifier = Modifier.background(ChatTheme.colors.backgroundCoreElevation1),
-        actions = listOf(
-            ScheduledMessageAction.Edit,
-            ScheduledMessageAction.EditAndReschedule,
-            ScheduledMessageAction.Reschedule,
-            ScheduledMessageAction.SendNow,
-            ScheduledMessageAction.CopyText,
-            ScheduledMessageAction.Delete,
-        ),
+        actions = PreviewActions,
+        customActions = emptyList(),
         onActionClick = {},
+        onCustomActionClick = {},
     )
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduledMessageActionsWithCustomActionsPreview() {
+    ChatTheme {
+        ScheduledMessageActionsWithCustomActions()
+    }
+}
+
+/** The default actions of a scheduled message, with two actions of the app before Delete. */
+@Composable
+internal fun ScheduledMessageActionsWithCustomActions() {
+    ScheduledMessageActionsContent(
+        modifier = Modifier.background(ChatTheme.colors.backgroundCoreElevation1),
+        actions = listOf(
+            ScheduledMessageAction.Edit,
+            ScheduledMessageAction.Reschedule,
+            ScheduledMessageAction.SendNow,
+            ScheduledMessageAction.Delete,
+        ),
+        customActions = listOf(
+            ScheduledMessageCustomAction(
+                title = "Share",
+                icon = painterResource(R.drawable.stream_design_ic_share),
+                onClick = {},
+            ),
+            ScheduledMessageCustomAction(
+                title = "Report",
+                icon = painterResource(R.drawable.stream_design_ic_flag),
+                onClick = {},
+                isDestructive = true,
+            ),
+        ),
+        onActionClick = {},
+        onCustomActionClick = {},
+    )
+}
+
+private val PreviewActions = listOf(
+    ScheduledMessageAction.Edit,
+    ScheduledMessageAction.EditAndReschedule,
+    ScheduledMessageAction.Reschedule,
+    ScheduledMessageAction.SendNow,
+    ScheduledMessageAction.CopyText,
+    ScheduledMessageAction.Delete,
+)
 
 @Preview(showBackground = true)
 @Composable

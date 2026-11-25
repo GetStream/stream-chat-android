@@ -410,6 +410,7 @@
   <string name="stream_compose_scheduled_message_list_send_at">"Kirim %1$s"</string>
   <string name="stream_compose_scheduled_message_list_empty_title">"Tidak ada pesan terjadwal"</string>
   <string name="stream_compose_scheduled_message_list_empty_description">"Tekan lama tombol kirim di saluran untuk menjadwalkan pesan."</string>
+  <string name="stream_compose_scheduled_message_list_empty_search_results">"Tidak ada hasil untuk \"%1$s\""</string>
   <string name="stream_compose_scheduled_message_list_load_failed">"Tidak dapat memuat pesan terjadwal"</string>
   <string name="stream_compose_scheduled_message_list_try_again">"Coba lagi"</string>
   <string name="stream_compose_scheduled_message_list_sending">"Mengirim…"</string>

@@ -24,15 +24,23 @@ import io.getstream.result.Error
 /**
  * The state of a list of the current user's scheduled messages.
  *
- * @param items The scheduled messages, sorted by the date they are sent at, then by their text.
+ * @param items All the scheduled messages, whatever the [searchQuery], sorted by the date they are sent at, then by
+ * their text.
  * @param isLoading Whether the scheduled messages are loading, and none is known yet.
  * @param isLoadFailed Whether the scheduled messages could not be loaded, or can't be while offline, and none is
  * known yet.
+ * @param searchQuery The text the scheduled messages are searched for, or an empty string when there is no search.
+ * @param searchResults The [items] whose text, attachment names, channel name (or ID when its summary is missing) or
+ * names of the members other than the current user contain the [searchQuery], ignoring the case and the spaces around
+ * it. The names are the ones of the channel summary, not the ones a ChannelNameFormatter shows. Defaults to [items],
+ * as when the query is blank. A [copy] that changes [items] does not change it.
  */
 public data class ScheduledMessageListState(
     val items: List<ScheduledMessageItemState> = emptyList(),
     val isLoading: Boolean = true,
     val isLoadFailed: Boolean = false,
+    val searchQuery: String = "",
+    val searchResults: List<ScheduledMessageItemState> = items,
 )
 
 /**

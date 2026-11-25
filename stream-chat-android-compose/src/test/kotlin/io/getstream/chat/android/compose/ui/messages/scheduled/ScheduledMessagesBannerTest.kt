@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.scheduled
 
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.DefaultTimeZoneRule
 import io.getstream.chat.android.compose.ui.PIXEL_4A_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
@@ -30,6 +31,9 @@ internal class ScheduledMessagesBannerTest : PaparazziComposeTest {
         deviceConfig = PIXEL_4A_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
+
+    @get:Rule
+    val timeZoneRule = DefaultTimeZoneRule()
 
     @Test
     fun `scheduled messages banner states`() {
