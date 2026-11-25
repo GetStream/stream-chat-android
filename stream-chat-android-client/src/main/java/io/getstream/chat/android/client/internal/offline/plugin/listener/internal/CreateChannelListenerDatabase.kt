@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
@@ -90,14 +91,13 @@ internal class CreateChannelListenerDatabase(
         val membersMap = params.members.associateBy { it.userId }
         val cachedUsers = userRepository.selectUsers(membersMap.keys.toList())
         val missingUserIds = membersMap.keys.minus(cachedUsers.map(User::id).toSet())
-        val cachedMembers = cachedUsers.map { user ->
-            Member(user, extraData = membersMap[user.id]?.extraData ?: emptyMap())
-        }
-        val missingMembers = missingUserIds.map { userId ->
-            Member(User(userId), extraData = membersMap[userId]?.extraData ?: emptyMap())
-        }
+        val cachedMembers = cachedUsers.map { user -> membersMap.getValue(user.id).toMember(user) }
+        val missingMembers = missingUserIds.map { userId -> membersMap.getValue(userId).toMember(User(userId)) }
         return cachedMembers + missingMembers
     }
+
+    private fun MemberData.toMember(user: User): Member =
+        Member(user, channelRole = channelRole, extraData = extraData)
 
     /**
      * A method called after receiving the response from the create channel call.
