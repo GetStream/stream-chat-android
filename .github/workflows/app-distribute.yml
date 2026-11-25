@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - main
+  workflow_dispatch:
 
 jobs:
   build_ui_components_sample_app:
@@ -31,6 +32,7 @@ jobs:
           {
             git log -1 --pretty=%s
             echo
+            echo "Branch: $GITHUB_REF_NAME"
             echo "Commit: ${{ github.sha }}"
             echo "Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           } > release-notes.txt
@@ -88,6 +90,7 @@ jobs:
           {
             git log -1 --pretty=%s
             echo
+            echo "Branch: $GITHUB_REF_NAME"
             echo "Commit: ${{ github.sha }}"
             echo "Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           } > release-notes.txt
