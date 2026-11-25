@@ -22,7 +22,8 @@ import io.getstream.chat.android.client.attachment.AttachmentsUploadStates
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.extensions.needsUpload
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
@@ -50,7 +51,7 @@ public class UploadAttachmentsWorker(
     private val channelType: String,
     private val channelId: String,
     private val channelStateLogic: ChannelMessagesUpdateLogic?,
-    private val messageRepository: MessageRepository,
+    private val repositoryFacade: RepositoryFacade,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
 ) {
@@ -61,7 +62,7 @@ public class UploadAttachmentsWorker(
     @InternalStreamChatApi
     public suspend fun uploadAttachmentsForMessage(messageId: String): Result<Unit> {
         val message = channelStateLogic?.channelState()?.getMessageById(messageId)
-            ?: messageRepository.selectMessage(messageId)
+            ?: repositoryFacade.selectMessage(messageId)
 
         return try {
             message?.let { sendAttachments(it) } ?: Result.Failure(
@@ -209,17 +210,17 @@ public class UploadAttachmentsWorker(
     /**
      * Stores [message] unless it was removed meanwhile, and returns what was stored.
      */
-    private suspend fun insertMessageIfStored(message: Message): Message? {
+    private suspend fun insertMessageIfStored(message: Message): Message? = repositoryFacade.write {
         // A logout that flushed the database also removed the message: don't bring it back.
-        val stored = messageRepository.selectMessage(message.id) ?: return null
+        val stored = repositoryFacade.selectMessage(message.id) ?: return@write null
         // The sync marks a message failed when it is too old to send, possibly while its upload is running
         val updated = if (stored.syncStatus == SyncStatus.FAILED_PERMANENTLY) {
             message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = stored.updatedLocallyAt)
         } else {
             message
         }
-        messageRepository.insertMessage(updated)
-        return updated
+        repositoryFacade.insertMessage(updated)
+        updated
     }
 
     private class ProgressCallbackImpl(

@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.internal.offline.plugin.listener.intern
 
 import io.getstream.chat.android.client.errors.deleteFailureSyncStatus
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
@@ -33,6 +35,7 @@ import java.util.Date
  * change database.
  */
 internal class DeleteMessageListenerDatabase(
+    private val store: ChatStore?,
     private val clientState: ClientState,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
@@ -43,12 +46,12 @@ internal class DeleteMessageListenerDatabase(
      *
      * @param messageId The message id to be deleted.
      */
-    override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
+    override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> = store.writeOrRun {
         val localMessage = messageRepository.selectMessage(messageId)
         val currentUserId = clientState.user.value?.id
         // We don't have the message locally, we must attempt to delete the message remotely
         if (localMessage == null) {
-            return Result.Success(Unit)
+            return@writeOrRun Result.Success(Unit)
         }
         // Check if the message is local-only (if attempting remote delete should be skipped
         val shouldDeleteRemote = localMessage.shouldDeleteRemote(currentUserId)
@@ -56,7 +59,7 @@ internal class DeleteMessageListenerDatabase(
             // Delete the message ONLY locally
             messageRepository.deleteChannelMessage(localMessage)
         }
-        return shouldDeleteRemote
+        shouldDeleteRemote
     }
 
     /**
@@ -66,15 +69,17 @@ internal class DeleteMessageListenerDatabase(
      * @param hard True if the message is hard deleted.
      */
     override suspend fun onMessageDeleteRequest(messageId: String, hard: Boolean) {
-        messageRepository.selectMessage(messageId)?.let { message ->
-            val networkAvailable = clientState.isNetworkAvailable
-            val messageToBeDeleted = message.copy(
-                deletedAt = Date(),
-                syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS,
-            )
+        store.writeOrRun {
+            messageRepository.selectMessage(messageId)?.let { message ->
+                val networkAvailable = clientState.isNetworkAvailable
+                val messageToBeDeleted = message.copy(
+                    deletedAt = Date(),
+                    syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS,
+                )
 
-            userRepository.insertUsers(messageToBeDeleted.users())
-            messageRepository.insertDeletedMessage(messageToBeDeleted, hard)
+                userRepository.insertUsers(messageToBeDeleted.users())
+                messageRepository.insertDeletedMessage(messageToBeDeleted, hard)
+            }
         }
     }
 
@@ -85,16 +90,22 @@ internal class DeleteMessageListenerDatabase(
      * @param result the result of the API call.
      */
     override suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>) {
-        when (result) {
-            is Result.Success -> {
-                messageRepository.insertMessage(
-                    result.value.copy(syncStatus = SyncStatus.COMPLETED),
-                )
-                // The deleted copy stored on request blocks later inserts of this message, so the status goes alone.
-                messageRepository.updateMessageSyncStatus(originalMessageId, SyncStatus.COMPLETED)
-            }
-            is Result.Failure -> {
-                messageRepository.updateMessageSyncStatus(originalMessageId, result.value.deleteFailureSyncStatus())
+        store.writeOrRun {
+            when (result) {
+                is Result.Success -> {
+                    messageRepository.insertMessage(
+                        result.value.copy(syncStatus = SyncStatus.COMPLETED),
+                    )
+                    // The deleted copy stored on request blocks later inserts of this message, so the status goes
+                    // alone.
+                    messageRepository.updateMessageSyncStatus(originalMessageId, SyncStatus.COMPLETED)
+                }
+                is Result.Failure -> {
+                    messageRepository.updateMessageSyncStatus(
+                        originalMessageId,
+                        result.value.deleteFailureSyncStatus(),
+                    )
+                }
             }
         }
     }

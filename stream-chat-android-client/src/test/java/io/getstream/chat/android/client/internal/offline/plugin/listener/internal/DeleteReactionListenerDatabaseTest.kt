@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -43,6 +44,7 @@ internal class DeleteReactionListenerDatabaseTest {
     private val messageRepository = mock<MessageRepository>()
 
     private val deleteReactionListenerDatabase = DeleteReactionListenerDatabase(
+        testChatStore(),
         clientState,
         reactionRepository,
         messageRepository,

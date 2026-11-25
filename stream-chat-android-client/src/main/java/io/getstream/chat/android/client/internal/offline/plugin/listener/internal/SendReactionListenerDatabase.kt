@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
@@ -35,6 +37,7 @@ import java.util.Date
  * [SendReactionListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * Handles adding reaction offline, updates the database.
  *
+ * @param store Runs what a hook stores as one write.
  * @param clientState [ClientState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * @param reactionsRepository [ReactionRepository] to cache intermediate data and final result related to reactions.
  * @param messageRepository [MessageRepository] to cache intermediate data and final result related to messages.
@@ -42,6 +45,7 @@ import java.util.Date
  * @param ignoredChannelTypes Set of channel types for which the messages are not stored in the DB.
  */
 internal class SendReactionListenerDatabase(
+    private val store: ChatStore?,
     private val clientState: ClientState,
     private val reactionsRepository: ReactionRepository,
     private val messageRepository: MessageRepository,
@@ -56,7 +60,9 @@ internal class SendReactionListenerDatabase(
         skipPush: Boolean,
         currentUser: User,
     ) {
-        saveReactionInDatabase(reaction, enforceUnique, skipPush, currentUser)
+        store.writeOrRun {
+            saveReactionInDatabase(reaction, enforceUnique, skipPush, currentUser)
+        }
     }
 
     /**
@@ -76,12 +82,14 @@ internal class SendReactionListenerDatabase(
         currentUser: User,
         result: Result<Reaction>,
     ) {
-        reactionsRepository.selectUserReactionToMessage(
-            reactionType = reaction.type,
-            messageId = reaction.messageId,
-            userId = currentUser.id,
-        )?.let { cachedReaction ->
-            reactionsRepository.insertReaction(cachedReaction.updateSyncStatus(result))
+        store.writeOrRun {
+            reactionsRepository.selectUserReactionToMessage(
+                reactionType = reaction.type,
+                messageId = reaction.messageId,
+                userId = currentUser.id,
+            )?.let { cachedReaction ->
+                reactionsRepository.insertReaction(cachedReaction.updateSyncStatus(result))
+            }
         }
     }
 

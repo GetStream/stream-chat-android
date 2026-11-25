@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.toCid
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
@@ -27,10 +29,12 @@ import java.util.Date
 /**
  * Implementation of [HideChannelListener] that deals with database read and write.
  *
+ * @param store Runs what a hook stores as one write.
  * @param channelRepository [ChannelRepository]
  * @param messageRepository [MessageRepository]
  */
 internal class HideChannelListenerDatabase(
+    private val store: ChatStore?,
     private val channelRepository: ChannelRepository,
     private val messageRepository: MessageRepository,
 ) : HideChannelListener {
@@ -79,12 +83,14 @@ internal class HideChannelListenerDatabase(
         if (result is Result.Success) {
             val cid = Pair(channelType, channelId).toCid()
 
-            if (clearHistory) {
-                val now = Date()
-                channelRepository.setHiddenForChannel(cid, true, now)
-                messageRepository.deleteChannelMessagesBefore(cid, now)
-            } else {
-                channelRepository.setHiddenForChannel(cid, true)
+            store.writeOrRun {
+                if (clearHistory) {
+                    val now = Date()
+                    channelRepository.setHiddenForChannel(cid, true, now)
+                    messageRepository.deleteChannelMessagesBefore(cid, now)
+                } else {
+                    channelRepository.setHiddenForChannel(cid, true)
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.plugin.listener.intern
 
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -50,7 +51,7 @@ internal class SendMessageListenerDatabaseTest {
     private val transportError = Error.NetworkError("timeout", -1, -1, SocketTimeoutException())
 
     private val sendMessageListenerDatabase =
-        SendMessageListenerDatabase(userRepository, messageRepository, clientState)
+        SendMessageListenerDatabase(testChatStore(), userRepository, messageRepository, clientState)
 
     @Test
     fun `when request to send messages is successful, the message should be upserted with correct status`() = runTest {

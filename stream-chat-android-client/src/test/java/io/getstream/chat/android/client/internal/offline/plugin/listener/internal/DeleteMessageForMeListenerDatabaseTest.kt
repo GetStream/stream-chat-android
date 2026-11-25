@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
@@ -136,6 +137,7 @@ internal class DeleteMessageForMeListenerDatabaseTest {
         }
 
         fun get() = DeleteMessageForMeListenerDatabase(
+            store = testChatStore(),
             clientState = clientState,
             messageRepository = messageRepository,
         )

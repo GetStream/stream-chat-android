@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.toCid
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
@@ -29,10 +31,12 @@ import io.getstream.result.Result
  * [QueryMembersListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * Handles updating members in the database.
  *
+ * @param store Runs what a hook stores as one write.
  * @param userRepository [UserRepository] to cache intermediate data and final result related to users.
  * @param channelRepository [ChannelRepository] to cache intermediate data and final result related to channels.
  */
 internal class QueryMembersListenerDatabase(
+    private val store: ChatStore?,
     private val userRepository: UserRepository,
     private val channelRepository: ChannelRepository,
 ) : QueryMembersListener {
@@ -50,8 +54,10 @@ internal class QueryMembersListenerDatabase(
         if (result is Result.Success) {
             val resultMembers = result.value
 
-            userRepository.insertUsers(resultMembers.map(Member::user))
-            channelRepository.updateMembersForChannel(Pair(channelType, channelId).toCid(), resultMembers)
+            store.writeOrRun {
+                userRepository.insertUsers(resultMembers.map(Member::user))
+                channelRepository.updateMembersForChannel(Pair(channelType, channelId).toCid(), resultMembers)
+            }
         }
     }
 }

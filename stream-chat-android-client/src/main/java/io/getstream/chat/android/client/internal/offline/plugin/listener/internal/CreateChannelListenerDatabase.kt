@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.offline.plugin.listener.intern
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -65,19 +66,21 @@ internal class CreateChannelListenerDatabase(
         currentUser: User,
     ) {
         val generatedChannelId = generateChannelIdIfNeeded(channelId, params.memberIds)
-        val channel = Channel(
-            id = generatedChannelId,
-            type = channelType,
-            members = getMembers(params),
-            extraData = params.extraData.toMutableMap(),
-            createdAt = Date(),
-            createdBy = currentUser,
-            syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
-            name = params.extraData["name"] as? String ?: "",
-            image = params.extraData["image"] as? String ?: "",
-        )
+        repos.write {
+            val channel = Channel(
+                id = generatedChannelId,
+                type = channelType,
+                members = getMembers(params),
+                extraData = params.extraData.toMutableMap(),
+                createdAt = Date(),
+                createdBy = currentUser,
+                syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+                name = params.extraData["name"] as? String ?: "",
+                image = params.extraData["image"] as? String ?: "",
+            )
 
-        repos.insertChannel(channel)
+            repos.insertChannel(channel)
+        }
     }
 
     /**
@@ -115,28 +118,31 @@ internal class CreateChannelListenerDatabase(
         result: Result<Channel>,
     ) {
         val generatedCid = "$channelType:${generateChannelIdIfNeeded(channelId, memberIds)}"
-        when (result) {
-            is Result.Success -> {
-                val channel = result.value.copy(syncStatus = SyncStatus.COMPLETED)
+        repos.write {
+            when (result) {
+                is Result.Success -> {
+                    val channel = result.value.copy(syncStatus = SyncStatus.COMPLETED)
 
-                repos.insertChannel(channel)
-                // Generated if might differ from the actual one. This might happen when the channel already exists.
-                // Replaced after the insert, so the placeholder's draft replaces the one the server channel carries.
-                if (channel.cid != generatedCid) {
-                    repos.replacePlaceholderChannel(generatedCid, channel.cid)
+                    repos.insertChannel(channel)
+                    // Generated if might differ from the actual one. This might happen when the channel already
+                    // exists. Replaced after the insert, so the placeholder's draft replaces the one the server
+                    // channel carries.
+                    if (channel.cid != generatedCid) {
+                        repos.replacePlaceholderChannel(generatedCid, channel.cid)
+                    }
                 }
-            }
-            is Result.Failure -> {
-                repos.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
-                    repos.insertChannel(
-                        cachedChannel.copy(
-                            syncStatus = if (result.value.isPermanent()) {
-                                SyncStatus.FAILED_PERMANENTLY
-                            } else {
-                                SyncStatus.SYNC_NEEDED
-                            },
-                        ),
-                    )
+                is Result.Failure -> {
+                    repos.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
+                        repos.insertChannel(
+                            cachedChannel.copy(
+                                syncStatus = if (result.value.isPermanent()) {
+                                    SyncStatus.FAILED_PERMANENTLY
+                                } else {
+                                    SyncStatus.SYNC_NEEDED
+                                },
+                            ),
+                        )
+                    }
                 }
             }
         }

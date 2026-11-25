@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.models.MessageType
@@ -40,6 +41,7 @@ internal class SendGiphyListenerDatabaseTest {
     private val messageRepository: MessageRepository = mock()
 
     private val sendGiphyListenerDatabase = SendGiphyListenerDatabase(
+        store = testChatStore(),
         userRepository = userRepository,
         messageRepository = messageRepository,
     )
