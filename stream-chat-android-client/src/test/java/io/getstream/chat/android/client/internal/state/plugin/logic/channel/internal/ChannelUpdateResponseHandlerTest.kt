@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.channel.int
 
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.WriteRecorder
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
@@ -39,6 +40,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -105,6 +107,24 @@ internal class ChannelUpdateResponseHandlerTest {
 
         verify(channelLogic).applyChannelUpdate(response)
         verify(queryChannelsLogic).refreshChannelState(CID)
+    }
+
+    @Test
+    fun `onChannelUpdated reads and stores the channel in one write`() = runTest {
+        val recorder = WriteRecorder()
+        whenever(repos.store) doReturn recorder.store
+        val writes = mutableListOf<Int?>()
+        whenever(repos.selectChannel(CID)) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+            channel()
+        }
+        whenever(repos.insertChannel(any<Channel>())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+
+        handler.onChannelUpdated(channel(name = "new", updatedAt = Date(2_000)))
+
+        writes shouldBeEqualTo listOf(1, 1)
     }
 
     @Test

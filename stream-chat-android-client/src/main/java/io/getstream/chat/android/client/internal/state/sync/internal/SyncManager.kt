@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.querychannel
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
@@ -619,16 +620,18 @@ internal class SyncManager(
             return
         }
         logger.d { "[updateAllReadStateForDate] userId: $userId, currentDate: $currentDate" }
-        val syncState = repos.selectSyncState(userId)?.let { selectedState ->
-            logger.v {
-                "[updateAllReadStateForDate] selectedState.activeCids.zie: ${selectedState.activeChannelIds.size}"
-            }
-            when (selectedState.markedAllReadAt?.before(currentDate)) {
-                true -> selectedState.copy(markedAllReadAt = currentDate).also { newState ->
-                    repos.insertSyncState(newState)
+        val syncState = repos.write {
+            repos.selectSyncState(userId)?.let { selectedState ->
+                logger.v {
+                    "[updateAllReadStateForDate] selectedState.activeCids.zie: ${selectedState.activeChannelIds.size}"
                 }
+                when (selectedState.markedAllReadAt?.before(currentDate)) {
+                    true -> selectedState.copy(markedAllReadAt = currentDate).also { newState ->
+                        repos.insertSyncState(newState)
+                    }
 
-                else -> selectedState
+                    else -> selectedState
+                }
             }
         } ?: SyncState(userId)
         setSyncState(syncState)
@@ -660,26 +663,32 @@ internal class SyncManager(
         rescueStuckInProgress("channels") {
             val cids = repos.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS)
             logger.d { "[rescueEntitiesStuckInProgress] cids.size: ${cids.size}" }
+            // A write for each, so one that fails keeps the ones before it handed back.
             cids.forEach { cid ->
-                val channel = repos.selectChannel(cid) ?: return@forEach
-                repos.insertChannel(channel.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+                repos.write {
+                    repos.selectChannel(cid)?.let { repos.insertChannel(it.copy(syncStatus = SyncStatus.SYNC_NEEDED)) }
+                }
             }
         }
         rescueStuckInProgress("messages") {
-            // An old delete left in progress almost always reached the backend and lost only its result, and the
-            // retry would just remove it locally. A delete for the current user has no local date to tell its age.
-            repos.markDeletesInProgressAsCompleted(deletedBefore = Date(now() - syncMaxThreshold.millis))
-            val messageIds = repos.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)
-            logger.d { "[rescueEntitiesStuckInProgress] messageIds.size: ${messageIds.size}" }
-            // Status only, since every insert of a deleted message is dropped
-            messageIds.forEach { id -> repos.updateMessageSyncStatus(id, SyncStatus.SYNC_NEEDED) }
+            repos.write {
+                // An old delete left in progress almost always reached the backend and lost only its result, and the
+                // retry would just remove it locally. A delete for the current user has no local date to tell its age.
+                repos.markDeletesInProgressAsCompleted(deletedBefore = Date(now() - syncMaxThreshold.millis))
+                val messageIds = repos.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)
+                logger.d { "[rescueEntitiesStuckInProgress] messageIds.size: ${messageIds.size}" }
+                // Status only, since every insert of a deleted message is dropped
+                messageIds.forEach { id -> repos.updateMessageSyncStatus(id, SyncStatus.SYNC_NEEDED) }
+            }
         }
         rescueStuckInProgress("reactions") {
             val reactionIds = repos.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)
             logger.d { "[rescueEntitiesStuckInProgress] reactionIds.size: ${reactionIds.size}" }
             reactionIds.forEach { id ->
-                val reaction = repos.selectReactionById(id) ?: return@forEach
-                repos.insertReaction(reaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))
+                repos.write {
+                    repos.selectReactionById(id)
+                        ?.let { repos.insertReaction(it.copy(syncStatus = SyncStatus.SYNC_NEEDED)) }
+                }
             }
         }
     }
@@ -997,7 +1006,7 @@ internal class SyncManager(
                 ?.updateDataForChannel(channel, channel.messages.size, fromServer = true)
         }
         mutableGlobalState.updateChannelDrafts(foundChannels)
-        repos.storeStateForChannels(foundChannels)
+        repos.write { repos.storeStateForChannels(foundChannels) }
         val foundCids = foundChannels.mapTo(mutableSetOf(), Channel::cid)
         val stillMissingChannelIds = requestedIds.filterNot { it.cid in foundCids }
         logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingChannelIds.size}" }
@@ -1081,7 +1090,7 @@ internal class SyncManager(
                             ?.updateDataForChannel(channel, channel.messages.size, fromServer = true)
                     }
                     mutableGlobalState.updateChannelDrafts(foundChannels)
-                    repos.storeStateForChannels(foundChannels)
+                    repos.write { repos.storeStateForChannels(foundChannels) }
                     foundChannels.mapTo(refreshedCids, Channel::cid)
                 }
             // Stop at the first failure: the remaining requests would be spent on a refresh the
@@ -1118,7 +1127,7 @@ internal class SyncManager(
             val channel = repos.selectChannel(cid) ?: return@forEach
             val result = if (channel.createdAt.exceedsSyncThreshold()) {
                 logger.w { "[retryChannels] outdated channel($cid)" }
-                repos.deleteChannel(cid)
+                repos.write { repos.deleteChannel(cid) }
                 uncreatedCids += cid
                 discardedCids += cid
                 Result.Success(Unit)
@@ -1139,8 +1148,10 @@ internal class SyncManager(
                 if (retriedCid != cid) {
                     // The create stores and replaces the placeholder regenerated from the members, so one stored with
                     // another member order is renamed first, or it would be left behind next to the regenerated one
-                    repos.insertChannel(channel.copy(id = retriedCid.substringAfter(':')))
-                    repos.replacePlaceholderChannel(cid, retriedCid)
+                    repos.write {
+                        repos.insertChannel(channel.copy(id = retriedCid.substringAfter(':')))
+                        repos.replacePlaceholderChannel(cid, retriedCid)
+                    }
                 }
                 // The server rejects the placeholder id, so it resolves the distinct channel from the members
                 val channelId = if (isPlaceholder) "" else channel.id
@@ -1308,7 +1319,7 @@ internal class SyncManager(
 
     private suspend fun markMessageAsFailed(message: Message): Result<Unit> = try {
         val failed = message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date(now()))
-        repos.insertMessage(failed)
+        repos.write { repos.insertMessage(failed) }
         logicRegistry.channelFromMessage(failed)?.upsertMessage(failed)
         logicRegistry.getActiveQueryThreadsLogic().forEach { it.upsertMessage(failed) }
         logicRegistry.threadFromMessage(failed)?.upsertMessage(failed)
@@ -1398,12 +1409,16 @@ internal class SyncManager(
             try {
                 logger.d { "[removeReaction] reaction.id: ${reaction.id}" }
                 // A dropped deletion leaves its message alone: the reaction is still on the server.
-                if (reaction.deletedAt == null) {
-                    removeReactionFromState(reaction)
-                    repos.selectMessage(reaction.messageId)?.let { repos.insertMessage(it.removeMyReaction(reaction)) }
+                val onMessage = reaction.deletedAt == null
+                if (onMessage) removeReactionFromState(reaction)
+                // One write, so a failure leaves the row for the next sync to drop again.
+                repos.write {
+                    if (onMessage) {
+                        repos.selectMessage(reaction.messageId)
+                            ?.let { repos.insertMessage(it.removeMyReaction(reaction)) }
+                    }
+                    repos.deleteReaction(reaction)
                 }
-                // Deleted last, so a failure above leaves the row for the next sync to drop again.
-                repos.deleteReaction(reaction)
                 logger.v { "[removeReaction] completed: ${reaction.id}" }
                 Result.Success(Unit)
             } catch (e: Throwable) {
@@ -1430,7 +1445,7 @@ internal class SyncManager(
         return CoroutineCall(syncScope) {
             try {
                 logger.d { "[removeMessage] message.id: ${message.id}" }
-                repos.deleteChannelMessage(message)
+                repos.write { repos.deleteChannelMessage(message) }
                 logicRegistry.channelFromMessage(message)?.deleteMessage(message)
                 logicRegistry.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
                 logicRegistry.threadFromMessage(message)?.deleteMessage(message)
