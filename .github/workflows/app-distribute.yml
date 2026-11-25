@@ -1,4 +1,4 @@
-name: App Distribute CI
+name: Firebase App Distribution
 
 on:
   push:
