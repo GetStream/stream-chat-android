@@ -1479,8 +1479,8 @@ public data class ScheduledMessageListEmptySearchContentParams(
  * @param actions The default actions to show, in order.
  * @param onActionClick Called with the default action the user picked.
  * @param onDismiss Called when the sheet is dismissed.
- * @param customActions The actions of the app, shown after the default actions and before Delete. The sheet closes
- * before their click is called.
+ * @param customActions The actions of the app, shown right before Delete, or after the default actions when there is
+ * no Delete. The sheet closes before their click is called.
  */
 public data class ScheduledMessageActionsSheetParams(
     val item: ScheduledMessageItemState,

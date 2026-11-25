@@ -69,7 +69,8 @@ public class ScheduledMessageListViewModel internal constructor(
     /**
      * Searches the scheduled messages for [query]: [ScheduledMessageListState.searchResults] keeps the ones whose text,
      * attachment names, channel name (or ID when its summary is missing) or names of the members other than the current
-     * user contain it, ignoring the case and the spaces around it. A blank query keeps all of them.
+     * user contain it, ignoring the case and the spaces around it. The names are the ones of the channel summary, not
+     * the ones a ChannelNameFormatter shows. A blank query keeps all of them.
      *
      * @param query The text to search for.
      */

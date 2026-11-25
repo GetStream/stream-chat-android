@@ -125,8 +125,9 @@ public class ScheduledMessageListController(
             isLoadFailed || connectionState is ConnectionState.Offline
         },
         deletedQuotes,
-        searchQuery,
-    ) { (scheduledMessages, cidsWithoutScheduling), isKnown, cannotLoad, deletedQuotes, searchQuery ->
+        // The current user is not a match, so the search follows it once it is known.
+        combine(searchQuery, chatClient.clientState.user.map { it?.id }.distinctUntilChanged(), ::Pair),
+    ) { (scheduledMessages, cidsWithoutScheduling), isKnown, cannotLoad, deletedQuotes, (searchQuery, currentUserId) ->
         val isUnknown = scheduledMessages.isEmpty() && !isKnown
         val items = scheduledMessages
             .sortedWith(compareBy(ScheduledMessage::scheduledAt).thenBy { it.message.text })
@@ -136,7 +137,6 @@ public class ScheduledMessageListController(
                     canSchedule = scheduledMessage.cid !in cidsWithoutScheduling,
                 )
             }
-        val currentUserId = chatClient.clientState.user.value?.id
         ScheduledMessageListState(
             items = items,
             isLoading = isUnknown && !cannotLoad,
@@ -189,7 +189,8 @@ public class ScheduledMessageListController(
     /**
      * Searches the scheduled messages for [query]: [ScheduledMessageListState.searchResults] keeps the ones whose text,
      * attachment names, channel name (or ID when its summary is missing) or names of the members other than the current
-     * user contain it, ignoring the case and the spaces around it. A blank query keeps all of them.
+     * user contain it, ignoring the case and the spaces around it. The names are the ones of the channel summary, not
+     * the ones a ChannelNameFormatter shows. A blank query keeps all of them.
      *
      * @param query The text to search for.
      */

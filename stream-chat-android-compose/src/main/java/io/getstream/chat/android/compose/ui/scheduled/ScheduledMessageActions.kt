@@ -57,7 +57,8 @@ import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageActio
  * The sheet with the actions on a scheduled message. The sheet closes when an action is picked.
  *
  * @param actions The default actions to show, in order.
- * @param customActions The actions of the app, shown after the default actions and before Delete.
+ * @param customActions The actions of the app, shown right before Delete, or after the default actions when there is
+ * no Delete.
  * @param onActionClick Called with the default action the user picked.
  * @param onDismiss Called when the sheet is dismissed, also before the click of a custom action.
  */
@@ -94,10 +95,12 @@ internal fun ScheduledMessageActionsContent(
     onCustomActionClick: (ScheduledMessageCustomAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Delete stays the last action.
-    val (deleteActions, otherActions) = actions.partition { it == ScheduledMessageAction.Delete }
+    // The custom actions go right before Delete, and the default actions keep their order.
+    val deleteIndex = actions.indexOf(ScheduledMessageAction.Delete).takeIf { it >= 0 } ?: actions.size
     Column(modifier = modifier) {
-        otherActions.forEach { action -> DefaultActionItem(action = action, onClick = { onActionClick(action) }) }
+        actions.subList(0, deleteIndex).forEach { action ->
+            DefaultActionItem(action = action, onClick = { onActionClick(action) })
+        }
         customActions.forEach { customAction ->
             ScheduledMessageActionItem(
                 title = customAction.title,
@@ -106,7 +109,9 @@ internal fun ScheduledMessageActionsContent(
                 onClick = { onCustomActionClick(customAction) },
             )
         }
-        deleteActions.forEach { action -> DefaultActionItem(action = action, onClick = { onActionClick(action) }) }
+        actions.subList(deleteIndex, actions.size).forEach { action ->
+            DefaultActionItem(action = action, onClick = { onActionClick(action) })
+        }
     }
 }
 

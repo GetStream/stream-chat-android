@@ -21,6 +21,7 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -46,10 +47,12 @@ import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction
 import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -171,6 +174,32 @@ internal class ScheduledMessagesScreenTest {
 
         assertEquals(listOf("dismiss", "share scheduled-1"), events)
         composeTestRule.onNodeWithTag("Stream_ScheduledMessageActions").assertDoesNotExist()
+    }
+
+    @Test
+    fun `custom actions go right before Delete and the default actions keep their order`() {
+        composeTestRule.setContent {
+            ChatTheme {
+                ScheduledMessageActionsContent(
+                    actions = listOf(ScheduledMessageAction.Delete, ScheduledMessageAction.Edit),
+                    customActions = listOf(
+                        ScheduledMessageCustomAction(
+                            title = "Share",
+                            icon = painterResource(R.drawable.stream_design_ic_share),
+                            onClick = {},
+                        ),
+                    ),
+                    onActionClick = {},
+                    onCustomActionClick = {},
+                )
+            }
+        }
+
+        val share = composeTestRule.onNodeWithText("Share").getBoundsInRoot().top
+        val delete = composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Delete").getBoundsInRoot().top
+        val edit = composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Edit").getBoundsInRoot().top
+        assertTrue(share < delete)
+        assertTrue(delete < edit)
     }
 
     @Test

@@ -404,6 +404,21 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
+    fun `the search stops matching the current user once the user is known`() = runTest {
+        val me = randomUser(name = "Maya Ross")
+        val direct = scheduled(text = "Heads up")
+            .withSummary(name = "", members = listOf(randomMember(user = me), randomMember(randomUser(name = "Ana"))))
+        scheduledMessages.value = listOf(direct)
+        val controller = controller()
+        controller.setSearchQuery("maya")
+        controller.state.value.searchResults.map { it.scheduledMessage } shouldBeEqualTo listOf(direct)
+
+        currentUser.value = me
+
+        controller.state.value.searchResults shouldBeEqualTo emptyList()
+    }
+
+    @Test
     fun `the search matches the channel ID of a message with no summary`() = runTest {
         val message = scheduled(cid = "messaging:launch-team")
         scheduledMessages.value = listOf(message, scheduled())

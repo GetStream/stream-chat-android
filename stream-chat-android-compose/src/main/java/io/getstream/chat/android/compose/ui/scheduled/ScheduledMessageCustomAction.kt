@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.painter.Painter
 
 /**
  * An action an app adds to the actions sheet of a scheduled message, next to the default actions. The sheet shows it
- * after the default actions and before Delete, and closes before [onClick] is called.
+ * right before Delete, or after the default actions when there is no Delete, and closes before [onClick] is called.
  *
  * @param title The text of the action.
  * @param icon The icon of the action.

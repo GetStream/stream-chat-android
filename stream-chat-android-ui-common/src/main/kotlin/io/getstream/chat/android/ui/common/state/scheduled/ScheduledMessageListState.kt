@@ -32,7 +32,8 @@ import io.getstream.result.Error
  * @param searchQuery The text the scheduled messages are searched for, or an empty string when there is no search.
  * @param searchResults The [items] whose text, attachment names, channel name (or ID when its summary is missing) or
  * names of the members other than the current user contain the [searchQuery], ignoring the case and the spaces around
- * it. Defaults to [items], as when the query is blank.
+ * it. The names are the ones of the channel summary, not the ones a ChannelNameFormatter shows. Defaults to [items],
+ * as when the query is blank. A [copy] that changes [items] does not change it.
  */
 public data class ScheduledMessageListState(
     val items: List<ScheduledMessageItemState> = emptyList(),
