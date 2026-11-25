@@ -91,13 +91,13 @@ internal class CreateChannelListenerDatabase(
         val membersMap = params.members.associateBy { it.userId }
         val cachedUsers = userRepository.selectUsers(membersMap.keys.toList())
         val missingUserIds = membersMap.keys.minus(cachedUsers.map(User::id).toSet())
-        val cachedMembers = cachedUsers.map { user -> membersMap[user.id].toMember(user) }
-        val missingMembers = missingUserIds.map { userId -> membersMap[userId].toMember(User(userId)) }
+        val cachedMembers = cachedUsers.map { user -> membersMap.getValue(user.id).toMember(user) }
+        val missingMembers = missingUserIds.map { userId -> membersMap.getValue(userId).toMember(User(userId)) }
         return cachedMembers + missingMembers
     }
 
-    private fun MemberData?.toMember(user: User): Member =
-        Member(user, channelRole = this?.channelRole, extraData = this?.extraData.orEmpty())
+    private fun MemberData.toMember(user: User): Member =
+        Member(user, channelRole = channelRole, extraData = extraData)
 
     /**
      * A method called after receiving the response from the create channel call.
