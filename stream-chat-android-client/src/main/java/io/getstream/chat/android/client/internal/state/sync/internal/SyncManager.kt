@@ -997,7 +997,7 @@ internal class SyncManager(
         foundChannels.forEach { channel ->
             ChannelId.fromTypeAndId(channel.type, channel.id)
                 ?.let(logicRegistry::channel)
-                ?.updateDataForChannel(channel, channel.messages.size)
+                ?.updateDataForChannel(channel, channel.messages.size, fromServer = true)
         }
         mutableGlobalState.updateChannelDrafts(foundChannels)
         repos.storeStateForChannels(foundChannels)
@@ -1084,7 +1084,7 @@ internal class SyncManager(
                     foundChannels.forEach { channel ->
                         ChannelId.fromTypeAndId(channel.type, channel.id)
                             ?.let(logicRegistry::channel)
-                            ?.updateDataForChannel(channel, channel.messages.size)
+                            ?.updateDataForChannel(channel, channel.messages.size, fromServer = true)
                     }
                     mutableGlobalState.updateChannelDrafts(foundChannels)
                     repos.storeStateForChannels(foundChannels)
@@ -1132,7 +1132,7 @@ internal class SyncManager(
                 logger.v { "[retryChannels] sending channel($cid)" }
                 val params = CreateChannelParams(
                     members = channel.members.map { member ->
-                        MemberData(member.getUserId(), extraData = member.extraData)
+                        MemberData(member.getUserId(), extraData = member.extraData, channelRole = member.channelRole)
                     },
                     extraData = channel.extraData,
                 )

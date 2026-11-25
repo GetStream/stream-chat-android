@@ -20,6 +20,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.internal.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpScheduledMessageRepository
@@ -327,7 +328,4 @@ public class RepositoryFacade private constructor(
 /**
  * Runs [block] as one write of the store, or directly when the repositories have no database.
  */
-internal suspend fun <T> RepositoryFacade.write(block: suspend () -> T): T {
-    val store = store
-    return if (store != null) store.write(block) else block()
-}
+internal suspend fun <T> RepositoryFacade.write(block: suspend () -> T): T = store.writeOrRun(block)

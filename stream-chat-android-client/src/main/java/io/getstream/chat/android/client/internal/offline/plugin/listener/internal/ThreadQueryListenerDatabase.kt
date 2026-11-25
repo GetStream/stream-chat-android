@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
@@ -27,10 +29,12 @@ import io.getstream.result.Result
  * ThreadQueryListenerFull handles database read and updates. It updates the database once the requests for backend
  * is complete.
  *
+ * @param store Runs what a hook stores as one write.
  * @param messageRepository [MessageRepository] Optional to handle database updates related to messages
  * @param userRepository [UserRepository]  Optional to handle database updates related to user
  */
 internal class ThreadQueryListenerDatabase(
+    private val store: ChatStore?,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
 ) : ThreadQueryListener {
@@ -82,8 +86,10 @@ internal class ThreadQueryListenerDatabase(
         if (result is Result.Success) {
             val messages = result.value
 
-            userRepository.insertUsers(messages.flatMap(Message::users))
-            messageRepository.insertMessages(messages)
+            store.writeOrRun {
+                userRepository.insertUsers(messages.flatMap(Message::users))
+                messageRepository.insertMessages(messages)
+            }
         }
     }
 }

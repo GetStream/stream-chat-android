@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.QueryDraftsResult
@@ -37,7 +38,7 @@ import java.util.Date
 internal class DraftMessageListenerDatabaseTest {
 
     private val messageRepository: MessageRepository = mock()
-    private val listener = DraftMessageListenerDatabase(messageRepository)
+    private val listener = DraftMessageListenerDatabase(testChatStore(), messageRepository)
 
     @BeforeEach
     fun setup() {

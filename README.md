@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/GetStream/stream-chat-android/actions/workflows/build-and-test.yml"><img src="https://github.com/GetStream/stream-chat-android/workflows/Build%20and%20test/badge.svg" /></a>
+  <a href="https://github.com/GetStream/stream-chat-android/actions/workflows/pr-checks.yml?query=branch%3Adevelop+event%3Apush"><img src="https://github.com/GetStream/stream-chat-android/actions/workflows/pr-checks.yml/badge.svg?branch=develop&event=push" /></a>
   <img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat"/>
   <a href="https://github.com/GetStream/stream-chat-android/releases"><img src="https://img.shields.io/github/v/release/GetStream/stream-chat-android" /></a>
 </p>
@@ -19,8 +19,8 @@
 <div align="center">
 
 ![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-6.44%20MB-lightgreen)
-![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-11.80%20MB-lightgreen)
-![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-13.48%20MB-lightgreen)
+![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-11.79%20MB-lightgreen)
+![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-13.47%20MB-lightgreen)
 ![stream-chat-android-ai-compose](https://img.shields.io/badge/stream--chat--android--ai--compose-2.26%20MB-lightgreen)
 ![stream-chat-android-ai-ondevice](https://img.shields.io/badge/stream--chat--android--ai--ondevice-1.66%20MB-lightgreen)
 ![stream-chat-android-ai-a2ui](https://img.shields.io/badge/stream--chat--android--ai--a2ui-.27%20MB-lightgreen)

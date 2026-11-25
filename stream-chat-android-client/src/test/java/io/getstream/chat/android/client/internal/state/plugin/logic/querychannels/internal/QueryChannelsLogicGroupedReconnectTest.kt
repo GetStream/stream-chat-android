@@ -78,7 +78,7 @@ internal class QueryChannelsLogicGroupedReconnectTest {
         verify(queryChannelsStateLogic).setChannelsOffset(0)
         verify(queryChannelsStateLogic).setNextCursor("cursor-2")
         verify(queryChannelsStateLogic).setEndOfChannels(false)
-        verify(queryChannelsStateLogic).addChannelsState(newChannels)
+        verify(queryChannelsStateLogic).addChannelsState(newChannels, fromServer = true)
     }
 
     @Test

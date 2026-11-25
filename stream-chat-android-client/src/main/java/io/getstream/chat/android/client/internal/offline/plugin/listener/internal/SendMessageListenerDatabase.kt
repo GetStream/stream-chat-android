@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.errors.isDuplicateMessageError
 import io.getstream.chat.android.client.errors.sendFailureSyncStatus
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
@@ -37,6 +39,7 @@ private const val TAG = "Chat:SendMessageHandlerDB"
  * Implementation of [SendMessageListener] that deals with updates of the database of the SDK.
  */
 internal class SendMessageListenerDatabase(
+    private val store: ChatStore?,
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
     private val clientState: ClientState,
@@ -58,16 +61,21 @@ internal class SendMessageListenerDatabase(
         message: Message,
     ) {
         val cid = "$channelType:$channelId"
-        if (messageRepository.selectMessage(message.id)?.syncStatus == SyncStatus.COMPLETED) return
+        store.writeOrRun {
+            if (messageRepository.selectMessage(message.id)?.syncStatus == SyncStatus.COMPLETED) return@writeOrRun
 
-        when (result) {
-            is Result.Success -> handleSendMessageSuccess(cid, result.value)
-            is Result.Failure -> if (result.value.isDuplicateMessageError()) {
-                // The message was delivered by an earlier attempt whose response was lost. Its reply never
-                // arrived, so the local date stands in until the next channel query brings the server copy.
-                handleSendMessageSuccess(cid, message.copy(createdAt = message.createdAt ?: message.createdLocallyAt))
-            } else {
-                handleSendMessageFailure(message, result.value)
+            when (result) {
+                is Result.Success -> handleSendMessageSuccess(cid, result.value)
+                is Result.Failure -> if (result.value.isDuplicateMessageError()) {
+                    // The message was delivered by an earlier attempt whose response was lost. Its reply never
+                    // arrived, so the local date stands in until the next channel query brings the server copy.
+                    handleSendMessageSuccess(
+                        cid,
+                        message.copy(createdAt = message.createdAt ?: message.createdLocallyAt),
+                    )
+                } else {
+                    handleSendMessageFailure(message, result.value)
+                }
             }
         }
     }

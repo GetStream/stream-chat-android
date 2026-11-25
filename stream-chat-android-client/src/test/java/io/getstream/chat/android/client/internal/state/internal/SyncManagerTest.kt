@@ -63,6 +63,7 @@ import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.InFilterObject
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
@@ -2049,7 +2050,7 @@ internal class SyncManagerTest {
                 ),
             )
 
-            verify(foundLogic).updateDataForChannel(foundChannel, foundChannel.messages.size)
+            verify(foundLogic).updateDataForChannel(foundChannel, foundChannel.messages.size, fromServer = true)
             verify(repositoryFacade).storeStateForChannels(listOf(foundChannel))
             verify(missingLogic).watch(userPresence = true)
         }
@@ -2158,8 +2159,8 @@ internal class SyncManagerTest {
         buildSyncManager(isAutomaticSyncOnReconnectEnabled = true).onEvent(randomConnectedEvent(me = user))
 
         verify(failedLogic).watch(userPresence = true)
-        verify(failedLogic, never()).updateDataForChannel(any(), any(), any(), any(), any(), any())
-        verify(loadedLogic).updateDataForChannel(loadedChannel, loadedChannel.messages.size)
+        verify(failedLogic, never()).updateDataForChannel(any(), any(), any(), any(), any(), any(), any())
+        verify(loadedLogic).updateDataForChannel(loadedChannel, loadedChannel.messages.size, fromServer = true)
         verify(loadedLogic, never()).watch(any(), any())
         verify(chatClient).queryChannelsInternal(
             argThat { (filter as InFilterObject).values == setOf(loadedChannelId.cid) },
@@ -2259,7 +2260,7 @@ internal class SyncManagerTest {
             whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(failedChannelId to failedChannelState)
             val failedLogic: ChannelLogic = mock {
                 // The fallback refresh fills the channel data
-                onBlocking { it.updateDataForChannel(any(), any(), any(), any(), any(), any()) } doAnswer {
+                onBlocking { it.updateDataForChannel(any(), any(), any(), any(), any(), any(), any()) } doAnswer {
                     failedChannelData.value = failedChannelData.value.copy(createdAt = createdAt)
                 }
                 onBlocking { it.watch(any(), any()) } doReturn Result.Success(failedChannel)
@@ -2269,7 +2270,7 @@ internal class SyncManagerTest {
             buildSyncManager(isAutomaticSyncOnReconnectEnabled = true, eventReplayMaxCount = 2)
                 .onEvent(randomConnectedEvent(me = user))
 
-            verify(failedLogic).updateDataForChannel(failedChannel, failedChannel.messages.size)
+            verify(failedLogic).updateDataForChannel(failedChannel, failedChannel.messages.size, fromServer = true)
             verify(failedLogic).watch(userPresence = true)
         }
 
@@ -2437,7 +2438,7 @@ internal class SyncManagerTest {
             syncManager.onEvent(randomConnectedEvent(me = user))
             delay(100)
 
-            verify(channelLogic).updateDataForChannel(channel, channel.messages.size)
+            verify(channelLogic).updateDataForChannel(channel, channel.messages.size, fromServer = true)
             verify(channelLogic, never()).watch(any(), any())
         }
 
@@ -3749,6 +3750,31 @@ internal class SyncManagerTest {
         order.verify(chatClient).createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())
         // The renamed placeholder stays listed until the server creates the channel
         verify(stateRegistry, never()).removeChannel(any(), any())
+    }
+
+    @Test
+    fun `a retried channel keeps its members' roles`() = runTest(testDispatcher) {
+        val member = randomMember(channelRole = "channel_moderator")
+        val channel = randomChannel(
+            type = "messaging",
+            createdAt = localDate(),
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            members = listOf(member),
+        )
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(channel.cid)
+        whenever(repositoryFacade.selectChannel(channel.cid)) doReturn channel
+        whenever(chatClient.createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())) doReturn
+            TestCall(Result.Success(channel))
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        verify(chatClient).createChannel(
+            eq("messaging"),
+            eq(channel.id),
+            argThat<CreateChannelParams> {
+                members == listOf(MemberData(member.getUserId(), member.extraData, channelRole = "channel_moderator"))
+            },
+        )
     }
 
     @Test

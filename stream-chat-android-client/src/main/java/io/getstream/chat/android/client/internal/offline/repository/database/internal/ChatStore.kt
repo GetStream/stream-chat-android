@@ -97,3 +97,9 @@ internal class ChatStore(
         companion object Key : CoroutineContext.Key<OpenWrite>
     }
 }
+
+/**
+ * Runs [block] as one write of the store, or directly when the repositories have no database and so no store.
+ */
+internal suspend fun <T> ChatStore?.writeOrRun(block: suspend () -> T): T =
+    if (this != null) write(block) else block()

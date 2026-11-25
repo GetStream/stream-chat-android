@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.deleteFailureSyncStatus
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageForMeListener
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -25,6 +27,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Result
 
 internal class DeleteMessageForMeListenerDatabase(
+    private val store: ChatStore?,
     private val clientState: ClientState,
     private val messageRepository: MessageRepository,
 ) : DeleteMessageForMeListener {
@@ -34,14 +37,16 @@ internal class DeleteMessageForMeListenerDatabase(
      * setting the appropriate sync status according to network availability.
      */
     override suspend fun onDeleteMessageForMeRequest(messageId: String) {
-        messageRepository.selectMessage(messageId)?.let { message ->
-            val isNetworkAvailable = clientState.isNetworkAvailable
-            val messageToBeUpdated = message.copy(
-                deletedForMe = true,
-                syncStatus = if (isNetworkAvailable) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
-            )
+        store.writeOrRun {
+            messageRepository.selectMessage(messageId)?.let { message ->
+                val isNetworkAvailable = clientState.isNetworkAvailable
+                val messageToBeUpdated = message.copy(
+                    deletedForMe = true,
+                    syncStatus = if (isNetworkAvailable) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+                )
 
-            messageRepository.insertMessage(messageToBeUpdated)
+                messageRepository.insertMessage(messageToBeUpdated)
+            }
         }
     }
 
@@ -50,17 +55,19 @@ internal class DeleteMessageForMeListenerDatabase(
      * handling both success and failure cases.
      */
     override suspend fun onDeleteMessageForMeResult(messageId: String, result: Result<Message>) {
-        when (result) {
-            is Result.Success -> {
-                messageRepository.insertMessage(
-                    result.value.copy(syncStatus = SyncStatus.COMPLETED),
-                )
-                // The copy stored on request blocks later inserts of this message, so the status goes alone.
-                messageRepository.updateMessageSyncStatus(messageId, SyncStatus.COMPLETED)
-            }
+        store.writeOrRun {
+            when (result) {
+                is Result.Success -> {
+                    messageRepository.insertMessage(
+                        result.value.copy(syncStatus = SyncStatus.COMPLETED),
+                    )
+                    // The copy stored on request blocks later inserts of this message, so the status goes alone.
+                    messageRepository.updateMessageSyncStatus(messageId, SyncStatus.COMPLETED)
+                }
 
-            is Result.Failure -> {
-                messageRepository.updateMessageSyncStatus(messageId, result.value.deleteFailureSyncStatus())
+                is Result.Failure -> {
+                    messageRepository.updateMessageSyncStatus(messageId, result.value.deleteFailureSyncStatus())
+                }
             }
         }
     }

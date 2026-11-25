@@ -19,8 +19,6 @@ package io.getstream.chat.android.client.di
 import android.content.Context
 import android.net.ConnectivityManager
 import androidx.lifecycle.Lifecycle
-import com.moczul.ok2curl.CurlInterceptor
-import com.moczul.ok2curl.logger.Logger
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
@@ -78,7 +76,6 @@ import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.network.apis.ChatEndpoints
 import io.getstream.chat.android.network.infrastructure.Serializer
-import io.getstream.log.StreamLog
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -285,15 +282,6 @@ constructor(
                 // logging
                 if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
                     addInterceptor(HttpLoggingInterceptor())
-                    addInterceptor(
-                        CurlInterceptor(
-                            logger = object : Logger {
-                                override fun log(message: String) {
-                                    StreamLog.i("Chat:CURL") { message }
-                                }
-                            },
-                        ),
-                    )
                 }
             }
 

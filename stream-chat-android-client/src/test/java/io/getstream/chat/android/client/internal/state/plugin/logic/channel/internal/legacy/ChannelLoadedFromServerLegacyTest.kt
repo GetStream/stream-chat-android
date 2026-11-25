@@ -45,6 +45,7 @@ internal class ChannelLoadedFromServerLegacyTest {
 
     private lateinit var state: ChannelStateLegacyImpl
     private lateinit var sut: ChannelStateLogic
+    private lateinit var channelLogic: ChannelLogicLegacyImpl
 
     @BeforeEach
     fun setUp() {
@@ -67,6 +68,13 @@ internal class ChannelLoadedFromServerLegacyTest {
             globalMutableState = MutableGlobalState(CURRENT_USER_ID),
             searchLogic = SearchLogic(state),
             coroutineScope = testCoroutines.scope,
+        )
+        channelLogic = ChannelLogicLegacyImpl(
+            repos = mock(),
+            userPresence = false,
+            stateLogic = sut,
+            coroutineScope = testCoroutines.scope,
+            getCurrentUserId = { CURRENT_USER_ID },
         )
     }
 
@@ -102,6 +110,28 @@ internal class ChannelLoadedFromServerLegacyTest {
 
         assertTrue(state.loadedFromServer.value)
         assertEquals(2, unreadWhenLoaded)
+    }
+
+    @Test
+    fun `given a server refresh fills the state, it should be loaded once its read state is applied`() = runTest {
+        var unreadWhenLoaded: Int? = null
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            state.loadedFromServer.collect { loaded ->
+                if (loaded) unreadWhenLoaded = state.read.value?.unreadMessages
+            }
+        }
+
+        channelLogic.updateDataForChannel(channel = channelWithUnreadMessages(2), messageLimit = 30, fromServer = true)
+
+        assertTrue(state.loadedFromServer.value)
+        assertEquals(2, unreadWhenLoaded)
+    }
+
+    @Test
+    fun `given a local refresh fills the state, it should not be loaded from the server`() = runTest {
+        channelLogic.updateDataForChannel(channel = channelWithUnreadMessages(0), messageLimit = 30)
+
+        assertFalse(state.loadedFromServer.value)
     }
 
     private fun channelWithUnreadMessages(unreadMessages: Int) = randomChannel(

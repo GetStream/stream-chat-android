@@ -21,9 +21,10 @@ import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.WriteRecorder
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy.ChannelStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
@@ -79,7 +80,7 @@ internal class WhenUploadAttachmentsTests {
     @Test
     fun `when there's no attachment with pending status, there's no need to try to send attachments`() =
         runTest {
-            val repositoryFacade = mock<MessageRepository> {
+            val repositoryFacade = mock<RepositoryFacade> {
                 on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
                 on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
             }
@@ -94,7 +95,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `when there's a pending attachment, it should be uploaded`() = runTest {
-        val repositoryFacade = mock<MessageRepository> {
+        val repositoryFacade = mock<RepositoryFacade> {
             on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
             on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
         }
@@ -109,7 +110,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `when not all attachments have state as success, it should return error`() = runTest {
-        val repositoryFacade = mock<MessageRepository> {
+        val repositoryFacade = mock<RepositoryFacade> {
             on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
             on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
         }
@@ -140,7 +141,7 @@ internal class WhenUploadAttachmentsTests {
             mock<AttachmentUploader> {
                 on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doThrow IllegalStateException("Error")
             }
-        val repository = mock<MessageRepository>()
+        val repository = mock<RepositoryFacade>()
         val message = randomMessage(
             id = "messageId123",
             attachments = mutableListOf(
@@ -166,13 +167,44 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
+    fun `Given a stored message When its upload ends Should read and store it in one write`() = runTest {
+        val attachmentUploader =
+            mock<AttachmentUploader> {
+                on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doThrow IllegalStateException("Error")
+            }
+        val message = randomMessage(
+            attachments = mutableListOf(randomAttachment().copy(uploadState = Attachment.UploadState.Idle)),
+        )
+        val recorder = WriteRecorder()
+        val callsInWrite = mutableListOf<Boolean>()
+        val repository = mock<RepositoryFacade> {
+            on { it.store } doReturn recorder.store
+            onBlocking { it.selectMessage(any()) } doAnswer {
+                callsInWrite += recorder.isWriting
+                message
+            }
+            onBlocking { it.insertMessage(any()) } doAnswer {
+                callsInWrite += recorder.isWriting
+            }
+        }
+        val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessageRepository(repository)
+            .get()
+
+        sut.uploadAttachmentsForMessage(message.id)
+
+        recorder.writes shouldBeEqualTo 1
+        callsInWrite.takeLast(2) shouldBeEqualTo listOf(true, true)
+    }
+
+    @Test
     fun `Given uploaded and not uploaded attachments And exception when upload Should insert message with 2 attachments`() =
         runTest {
             val attachmentUploader =
                 mock<AttachmentUploader> {
                     on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doThrow IllegalStateException("Error")
                 }
-            val repository = mock<MessageRepository>()
+            val repository = mock<RepositoryFacade>()
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
@@ -225,7 +257,7 @@ internal class WhenUploadAttachmentsTests {
                         ),
                     )
                 }
-            val repository = mock<MessageRepository>()
+            val repository = mock<RepositoryFacade>()
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
@@ -268,7 +300,7 @@ internal class WhenUploadAttachmentsTests {
                         Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
                     }
                 }
-            val repository = mock<MessageRepository>()
+            val repository = mock<RepositoryFacade>()
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
@@ -311,7 +343,7 @@ internal class WhenUploadAttachmentsTests {
             on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId2" }, anyOrNull(), anyOrNull())) doThrow
                 IllegalStateException("Error")
         }
-        val repository = mock<MessageRepository>()
+        val repository = mock<RepositoryFacade>()
         val message = randomMessage(id = "messageId123", attachments = mutableListOf(first, second))
         val sut = Fixture().givenAttachmentUploader(attachmentUploader)
             .givenMessageRepository(repository)
@@ -345,7 +377,7 @@ internal class WhenUploadAttachmentsTests {
                     }
                 }
             }
-            val repository = mock<MessageRepository>()
+            val repository = mock<RepositoryFacade>()
             val message = randomMessage(id = "messageId123", attachments = mutableListOf(first, second))
             val sut = Fixture().givenAttachmentUploader(attachmentUploader)
                 .givenMessageRepository(repository)
@@ -380,7 +412,7 @@ internal class WhenUploadAttachmentsTests {
         val message = randomMessage(id = "messageId123", attachments = mutableListOf(attachment))
         var flushed = false
         lateinit var workerJob: Job
-        val repository = mock<MessageRepository> {
+        val repository = mock<RepositoryFacade> {
             onBlocking { selectMessage(message.id) } doAnswer { message.takeUnless { flushed } }
         }
         val attachmentUploader = mock<AttachmentUploader> {
@@ -441,7 +473,7 @@ internal class WhenUploadAttachmentsTests {
             syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
         )
         val failed = message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = failedAt)
-        val repository = mock<MessageRepository> {
+        val repository = mock<RepositoryFacade> {
             // The sync marks the message failed after the upload stored its first attachment
             onBlocking { it.selectMessage(message.id) }.doReturnConsecutively(listOf(message, failed))
         }
@@ -470,7 +502,7 @@ internal class WhenUploadAttachmentsTests {
             on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doReturn Result.Success(uploaded)
         }
         val message = randomMessage(id = "messageId123", attachments = mutableListOf(pending))
-        val repository = mock<MessageRepository> {
+        val repository = mock<RepositoryFacade> {
             onBlocking { it.selectMessage(message.id) } doReturn message
         }
         val sut = Fixture().givenAttachmentUploader(attachmentUploader)
@@ -510,7 +542,7 @@ internal class WhenUploadAttachmentsTests {
             on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId2" }, anyOrNull(), anyOrNull())) doReturn
                 Result.Success(second.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url2"))
         }
-        val repository = mock<MessageRepository>()
+        val repository = mock<RepositoryFacade>()
         val message = randomMessage(
             id = "messageId123",
             attachments = mutableListOf(first, second),
@@ -558,7 +590,7 @@ internal class WhenUploadAttachmentsTests {
         private val channelType = "channelType"
         private val channelId = "channelId"
         private var uploader: AttachmentUploader = mock()
-        private var messageRepository: MessageRepository = mock()
+        private var messageRepository: RepositoryFacade = mock()
         private val channelStateLegacyImpl: ChannelStateLegacyImpl = mock()
         private var hasChannelState = true
 
@@ -584,7 +616,7 @@ internal class WhenUploadAttachmentsTests {
 
         fun channelStateLogic(): ChannelStateLogic = channelStateLogic
 
-        fun givenMessageRepository(repository: MessageRepository) = apply {
+        fun givenMessageRepository(repository: RepositoryFacade) = apply {
             messageRepository = repository
         }
 
@@ -605,7 +637,7 @@ internal class WhenUploadAttachmentsTests {
                 channelType,
                 channelId,
                 channelStateLogic = channelStateLogic.takeIf { hasChannelState },
-                messageRepository = messageRepository,
+                repositoryFacade = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader,
             )

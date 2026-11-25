@@ -52,7 +52,7 @@ internal class UploadAttachmentsAndroidWorker(
             channelType = channelType,
             channelId = channelId,
             channelStateLogic = chatClient.logicRegistry?.channelStateLogic(channelType, channelId),
-            messageRepository = repositoryFacade,
+            repositoryFacade = repositoryFacade,
             chatClient = chatClient,
         ).uploadAttachmentsForMessage(
             messageId,

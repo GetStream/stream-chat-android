@@ -352,6 +352,28 @@ internal class DtoMappingTest {
     }
 
     @Test
+    fun `MemberData sends its channel role`() {
+        val memberData = MemberData("amit", mapOf("color" to "teal"), channelRole = "channel_moderator")
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { memberData.toChannelMemberRequest() }
+
+        request.channelRole shouldBeEqualTo "channel_moderator"
+        request.custom shouldBeEqualTo mapOf("color" to "teal")
+    }
+
+    @Test
+    fun `MemberData channel role wins over a channel_role in its extra data`() {
+        val memberData = MemberData("amit", mapOf("channel_role" to "channel_member"), channelRole = "channel_moderator")
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { memberData.toChannelMemberRequest() }
+
+        request.channelRole shouldBeEqualTo "channel_moderator"
+        request.custom shouldBeEqualTo emptyMap()
+    }
+
+    @Test
     fun `MemberData keeps a channel_role that is not a string as custom data`() {
         val memberData = MemberData("amit", mapOf("channel_role" to 1))
         val mapping = Fixture().get()

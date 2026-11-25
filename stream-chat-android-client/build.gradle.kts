@@ -89,8 +89,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.retrofit.converter.moshi)
     ksp(libs.moshi.codegen)
-    implementation(libs.okhttp.logging.interceptor)
-    implementation(libs.ok2curl)
+    implementation(libs.okhttp)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

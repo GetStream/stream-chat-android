@@ -120,29 +120,34 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
         val chatClient = ChatClient.instance()
         val clientState = chatClient.clientState
         val repositoryFacade = chatClient.repositoryFacade
+        val store = repositoryFacade.store
 
         val queryChannelListener = QueryChannelListenerDatabase(repositoryFacade)
 
-        val threadQueryListener = ThreadQueryListenerDatabase(repositoryFacade, repositoryFacade)
+        val threadQueryListener = ThreadQueryListenerDatabase(store, repositoryFacade, repositoryFacade)
 
         val editMessageListener = EditMessageListenerDatabase(
+            store = store,
             userRepository = repositoryFacade,
             messageRepository = repositoryFacade,
             clientState = clientState,
         )
 
         val hideChannelListener: HideChannelListener = HideChannelListenerDatabase(
+            store = store,
             channelRepository = repositoryFacade,
             messageRepository = repositoryFacade,
         )
 
         val deleteReactionListener: DeleteReactionListener = DeleteReactionListenerDatabase(
+            store = store,
             clientState = clientState,
             reactionsRepository = repositoryFacade,
             messageRepository = repositoryFacade,
         )
 
         val sendReactionListener = SendReactionListenerDatabase(
+            store = store,
             clientState = clientState,
             messageRepository = repositoryFacade,
             reactionsRepository = repositoryFacade,
@@ -151,38 +156,45 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
         )
 
         val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerDatabase(
+            store = store,
             clientState = clientState,
             messageRepository = repositoryFacade,
             userRepository = repositoryFacade,
         )
 
         val deleteMessageForMeListener = DeleteMessageForMeListenerDatabase(
+            store = store,
             clientState = clientState,
             messageRepository = repositoryFacade,
         )
 
         val sendMessageListener: SendMessageListener = SendMessageListenerDatabase(
+            store = store,
             userRepository = repositoryFacade,
             messageRepository = repositoryFacade,
             clientState = clientState,
         )
 
         val sendAttachmentListener: SendAttachmentListener = SendAttachmentsListenerDatabase(
+            store,
             repositoryFacade,
             repositoryFacade,
         )
 
         val shuffleGiphyListener: ShuffleGiphyListener = ShuffleGiphyListenerDatabase(
+            store = store,
             userRepository = repositoryFacade,
             messageRepository = repositoryFacade,
         )
 
         val sendGiphyListener: SendGiphyListener = SendGiphyListenerDatabase(
+            store = store,
             userRepository = repositoryFacade,
             messageRepository = repositoryFacade,
         )
 
         val queryMembersListener: QueryMembersListener = QueryMembersListenerDatabase(
+            store,
             repositoryFacade,
             repositoryFacade,
         )
@@ -204,14 +216,17 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
         )
 
         val fetchCurrentUserListener = FetchCurrentUserListenerDatabase(
+            store = store,
             userRepository = repositoryFacade,
         )
 
         val queryThreadsListener = QueryThreadsListenerDatabase(
+            store = store,
             threadsRepository = repositoryFacade,
         )
 
         val draftMessageListener = DraftMessageListenerDatabase(
+            store = store,
             messageRepository = repositoryFacade,
         )
 

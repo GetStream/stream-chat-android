@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
@@ -25,6 +27,7 @@ import io.getstream.chat.android.models.Message
  * Updates the database of the SDK accordingly with the request to send the attachments to the backend.
  */
 internal class SendAttachmentsListenerDatabase(
+    private val store: ChatStore?,
     private val messageRepository: MessageRepository,
     private val channelRepository: ChannelRepository,
 ) : SendAttachmentListener {
@@ -38,7 +41,9 @@ internal class SendAttachmentsListenerDatabase(
      */
     override suspend fun onAttachmentSendRequest(channelType: String, channelId: String, message: Message) {
         // we insert early to ensure we don't lose messages
-        messageRepository.insertMessage(message)
-        channelRepository.updateLastMessageForChannel(message.cid, message)
+        store.writeOrRun {
+            messageRepository.insertMessage(message)
+            channelRepository.updateLastMessageForChannel(message.cid, message)
+        }
     }
 }

@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.internal.offline.plugin.listener.intern
 
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
@@ -31,6 +33,7 @@ import io.getstream.result.Result
 import java.util.Date
 
 internal class DeleteReactionListenerDatabase(
+    private val store: ChatStore?,
     private val clientState: ClientState,
     private val reactionsRepository: ReactionRepository,
     private val messageRepository: MessageRepository,
@@ -61,10 +64,12 @@ internal class DeleteReactionListenerDatabase(
             deletedAt = Date(),
         )
 
-        reactionsRepository.insertReaction(reaction)
+        store.writeOrRun {
+            reactionsRepository.insertReaction(reaction)
 
-        messageRepository.selectMessage(messageId = messageId)?.copy()?.let { cachedMessage ->
-            messageRepository.insertMessage(cachedMessage.removeMyReaction(reaction))
+            messageRepository.selectMessage(messageId = messageId)?.copy()?.let { cachedMessage ->
+                messageRepository.insertMessage(cachedMessage.removeMyReaction(reaction))
+            }
         }
     }
 
@@ -85,12 +90,14 @@ internal class DeleteReactionListenerDatabase(
         currentUser: User,
         result: Result<Message>,
     ) {
-        reactionsRepository.selectUserReactionToMessage(
-            reactionType = reactionType,
-            messageId = messageId,
-            userId = currentUser.id,
-        )?.let { cachedReaction ->
-            reactionsRepository.insertReaction(cachedReaction.updateSyncStatus(result))
+        store.writeOrRun {
+            reactionsRepository.selectUserReactionToMessage(
+                reactionType = reactionType,
+                messageId = messageId,
+                userId = currentUser.id,
+            )?.let { cachedReaction ->
+                reactionsRepository.insertReaction(cachedReaction.updateSyncStatus(result))
+            }
         }
     }
 

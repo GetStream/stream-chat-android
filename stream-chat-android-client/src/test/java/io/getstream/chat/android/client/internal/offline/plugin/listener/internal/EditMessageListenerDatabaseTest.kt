@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -39,7 +40,7 @@ internal class EditMessageListenerDatabaseTest {
     private val clientState: ClientState = mock()
 
     private val editMessageListenerDatabase: EditMessageListenerDatabase =
-        EditMessageListenerDatabase(userRepository, messageRepository, clientState)
+        EditMessageListenerDatabase(testChatStore(), userRepository, messageRepository, clientState)
 
     @Test
     fun `when messages edit is requested, sync status is updated correctly when online`() = runTest {

@@ -3,22 +3,28 @@ name: Pull request CI checks
 on:
   pull_request:
   merge_group:
+  # Pushes to develop also save the Gradle caches that pull requests and the merge queue restore.
+  push:
+    branches:
+      - develop
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Develop runs finish so they save the Gradle caches; a newer push only replaces a queued one.
+  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 jobs:
   base-android-ci:
     permissions:
       contents: read
       pull-requests: read
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@75cf8105224a5fb02ad06fb4cc52b1a45a71d440 # v1.3.1
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+    with:
+      save-gradle-cache: true
     secrets:
-      BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
-      BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
-      BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
-      BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
+      # Only pushes get the token: Sonar analysis of pull requests fails in our SonarCloud setup.
+      SONAR_TOKEN: ${{ github.event_name == 'push' && secrets.SONAR_TOKEN || '' }}
   detekt:
     permissions:
       contents: read
@@ -27,14 +33,34 @@ jobs:
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@75cf8105224a5fb02ad06fb4cc52b1a45a71d440 # v1.3.1
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+        with:
+          cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/develop' }}
       - name: Detekt
         run: ./gradlew detekt
+  release-build:
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+    name: Release build
+    runs-on: { group: github-public-amd64 }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+      - name: Build
+        run: ./gradlew assembleRelease
+  remove-older-gradle-caches:
+    needs: [ base-android-ci, detekt ]
+    if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+    permissions:
+      actions: write
+    uses: GetStream/stream-build-conventions-android/.github/workflows/gradle-cache-cleanup.yml@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
   rubocop:
     permissions:
       contents: read
       pull-requests: read
     name: Rubocop
+    if: github.event_name != 'push'
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
