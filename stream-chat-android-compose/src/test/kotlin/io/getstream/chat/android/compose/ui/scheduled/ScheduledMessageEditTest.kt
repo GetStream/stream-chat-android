@@ -150,6 +150,7 @@ internal class ScheduledMessageEditTest : MockedChatClientTest {
         startEditing("Second message")
 
         save()
+        composeTestRule.waitUntil { mockingDetails(mockChatClient).invocations.any { it.method.name == "updateScheduledMessage" } }
 
         verify(mockChatClient).updateScheduledMessage(eq("b"), argThat { text == "Second message" }, isNull())
         verify(mockChatClient, never()).updateScheduledMessage(eq("a"), any(), anyOrNull())
