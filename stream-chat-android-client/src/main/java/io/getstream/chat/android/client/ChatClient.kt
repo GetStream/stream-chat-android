@@ -5431,7 +5431,9 @@ internal constructor(
      * The current user's scheduled messages known on this device: the pending ones first, then the failed ones, each
      * sorted by [ScheduledMessage.scheduledAt]. A change made with this client shows right away, and the events of
      * the user's other devices keep it up to date. [queryScheduledMessages] loads the ones this device does not know
-     * yet.
+     * yet. With the state plugin, the channel queries the plugin makes also load the ones of their channels, when the
+     * server sends them in [Channel.scheduledMessages], for example when a channel is watched with
+     * `watchChannelAsState` or its messages are paged.
      */
     public val scheduledMessages: StateFlow<List<ScheduledMessage>>
         get() = scheduledMessageManager.scheduledMessages

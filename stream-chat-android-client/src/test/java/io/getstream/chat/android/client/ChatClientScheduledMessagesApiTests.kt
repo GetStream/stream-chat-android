@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
@@ -130,6 +131,26 @@ internal class ChatClientScheduledMessagesApiTests : BaseChatClientTest() {
         val notIncluded = chatClient.scheduledMessages.value
         chatClient.queryChannelsInternal(
             QueryChannelsRequest(Filters.neutral(), limit = 1).apply { includeScheduledMessages = true },
+        ).await()
+        // then
+        notIncluded.shouldBeEmpty()
+        chatClient.scheduledMessages.value shouldBeEqualTo listOf(scheduledMessage)
+    }
+
+    @Test
+    fun aChannelQuerySavesTheScheduledMessagesOnlyWhenIncluded() = runTest {
+        // given
+        val channel = randomChannel()
+        val scheduledMessage = randomScheduledMessage(cid = channel.cid)
+        whenever(api.queryChannel(any(), any(), any()))
+            .thenReturn(RetroSuccess(channel.copy(scheduledMessages = listOf(scheduledMessage))).toRetrofitCall())
+        // when
+        chatClient.queryChannel(channel.type, channel.id, QueryChannelRequest()).await()
+        val notIncluded = chatClient.scheduledMessages.value
+        chatClient.queryChannel(
+            channel.type,
+            channel.id,
+            QueryChannelRequest().apply { includeScheduledMessages = true },
         ).await()
         // then
         notIncluded.shouldBeEmpty()

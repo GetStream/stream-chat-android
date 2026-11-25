@@ -69,5 +69,7 @@ internal class QueryChannelPaginationRequest(var messageLimit: Int = 30) : Query
         }
         withMembers(memberLimit, memberOffset)
         withWatchers(watcherLimit, watcherOffset)
+        // So ChatClient.scheduledMessages also holds the ones this device did not schedule, as after a reinstall.
+        includeScheduledMessages = true
     }
 }
