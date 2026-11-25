@@ -7,7 +7,7 @@ on:
 
 jobs:
   docs:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/publish-api-docs.yml@75cf8105224a5fb02ad06fb4cc52b1a45a71d440 # v1.3.1
+    uses: GetStream/stream-build-conventions-android/.github/workflows/publish-api-docs.yml@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
     permissions:
       contents: write
     secrets:

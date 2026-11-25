@@ -1,5 +1,3 @@
-import java.util.Properties
-
 pluginManagement {
 	repositories {
 		mavenLocal()
@@ -39,7 +37,6 @@ pluginManagement {
 }
 
 plugins {
-	id("com.github.burrunan.s3-build-cache") version "1.8.4"
 	id("com.gradle.enterprise") version "3.7"
 }
 include (
@@ -105,38 +102,6 @@ dependencyResolutionManagement {
 
 		// Fallback for the rest of the dependencies
 		mavenCentral()
-	}
-}
-
-buildCache {
-	local {
-		isEnabled = !System.getenv().containsKey("CI") || System.getenv("GRADLE_LOCAL_BUILD_CACHE") == "true"
-	}
-	val localProperties = Properties()
-	val file = File("local.properties")
-	if (file.exists()) {
-		file.inputStream().use { localProperties.load(it) }
-	}
-	val streamAWSRegion: String = localProperties.get("buildCache.AWSRegion") as? String ?: System.getenv("BUILD_CACHE_AWS_REGION") ?: ""
-	val streamAWSBucket: String = localProperties.get("buildCache.AWSBucket") as? String ?: System.getenv("BUILD_CACHE_AWS_BUCKET") ?: ""
-	val streamAWSAccessKeyId: String = localProperties.get("buildCache.AWSAccessKeyId") as? String ?: System.getenv("BUILD_CACHE_AWS_ACCESS_KEY_ID") ?: ""
-	val streamAWSSecretKey: String = localProperties.get("buildCache.AWSSecretKey") as? String ?: System.getenv("BUILD_CACHE_AWS_SECRET_KEY") ?: ""
-	val streamBuildCacheDisabled: Boolean = localProperties.get("buildCache.disabled") == true
-	if (!streamBuildCacheDisabled &&
-			!streamAWSRegion.isBlank() &&
-			!streamAWSBucket.isBlank() &&
-			!streamAWSAccessKeyId.isBlank() &&
-			!streamAWSSecretKey.isBlank()
-	) {
-		remote<com.github.burrunan.s3cache.AwsS3BuildCache> {
-			region = streamAWSRegion
-			bucket = streamAWSBucket
-			prefix = "cache/"
-			awsAccessKeyId = streamAWSAccessKeyId
-			awsSecretKey = streamAWSSecretKey
-			isPush = System.getenv().containsKey("CI")
-
-		}
 	}
 }
 

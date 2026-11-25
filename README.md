@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/GetStream/stream-chat-android/actions/workflows/build-and-test.yml"><img src="https://github.com/GetStream/stream-chat-android/workflows/Build%20and%20test/badge.svg" /></a>
+  <a href="https://github.com/GetStream/stream-chat-android/actions/workflows/pr-checks.yml?query=branch%3Adevelop+event%3Apush"><img src="https://github.com/GetStream/stream-chat-android/actions/workflows/pr-checks.yml/badge.svg?branch=develop&event=push" /></a>
   <img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat"/>
   <a href="https://github.com/GetStream/stream-chat-android/releases"><img src="https://img.shields.io/github/v/release/GetStream/stream-chat-android" /></a>
 </p>
