@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@d4a00831451bf0a66ecbf56d1f2bba684a3d0c8d # TODO pin to the release
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@68ae4af6c070946186d502ce5967077bd2f77cf2 # TODO pin to the release
     with:
       save-gradle-cache: true
     secrets:
@@ -33,7 +33,7 @@ jobs:
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@d4a00831451bf0a66ecbf56d1f2bba684a3d0c8d # TODO pin to the release
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@68ae4af6c070946186d502ce5967077bd2f77cf2 # TODO pin to the release
         with:
           cache-read-only: 'false' # TEMP test
       - name: Detekt
@@ -46,7 +46,7 @@ jobs:
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@d4a00831451bf0a66ecbf56d1f2bba684a3d0c8d # TODO pin to the release
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@68ae4af6c070946186d502ce5967077bd2f77cf2 # TODO pin to the release
       - name: Build
         run: ./gradlew assembleRelease
   remove-older-gradle-caches:
@@ -54,7 +54,7 @@ jobs:
     if: ${{ !cancelled() }} # TEMP test
     permissions:
       actions: write
-    uses: GetStream/stream-build-conventions-android/.github/workflows/gradle-cache-cleanup.yml@d4a00831451bf0a66ecbf56d1f2bba684a3d0c8d # TODO pin to the release
+    uses: GetStream/stream-build-conventions-android/.github/workflows/gradle-cache-cleanup.yml@68ae4af6c070946186d502ce5967077bd2f77cf2 # TODO pin to the release
   rubocop:
     permissions:
       contents: read
