@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.scheduled
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -75,6 +72,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageItemState
@@ -270,6 +268,7 @@ private fun ScheduledMessageListSheets(
     onEditClick: (ScheduledMessage) -> Unit,
 ) {
     val context = LocalContext.current
+    val clipboard = remember(context) { CopyToClipboardHandler(context) }
     state.itemOf(sheets.selectedId)?.let { item ->
         ChatTheme.componentFactory.ScheduledMessageActionsSheet(
             params = ScheduledMessageActionsSheetParams(
@@ -284,7 +283,7 @@ private fun ScheduledMessageListSheets(
                         -> onEditClick(scheduledMessage)
                         ScheduledMessageAction.Reschedule -> sheets.rescheduledId = scheduledMessage.id
                         ScheduledMessageAction.SendNow -> viewModel.sendNow(scheduledMessage.id)
-                        ScheduledMessageAction.CopyText -> context.copyText(scheduledMessage.message.text)
+                        ScheduledMessageAction.CopyText -> clipboard.copy(scheduledMessage.message.text)
                         ScheduledMessageAction.Delete -> sheets.deletedId = scheduledMessage.id
                         else -> Unit
                     }
@@ -530,11 +529,6 @@ private fun scheduleMessageState(config: Config?): ScheduleMessageState {
 
 private fun ScheduledMessageListState.itemOf(id: String?): ScheduledMessageItemState? =
     id?.let { items.find { item -> item.scheduledMessage.id == it } }
-
-private fun Context.copyText(text: String) {
-    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    clipboard.setPrimaryClip(ClipData.newPlainText(text, text))
-}
 
 private val ErrorIconSize = 32.dp
 

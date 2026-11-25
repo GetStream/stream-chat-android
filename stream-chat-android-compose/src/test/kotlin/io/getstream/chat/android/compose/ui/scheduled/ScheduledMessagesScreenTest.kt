@@ -52,6 +52,7 @@ import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -300,6 +301,8 @@ internal class ScheduledMessagesScreenTest {
         val clipboard = ApplicationProvider.getApplicationContext<Context>()
             .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         assertEquals("Booking confirmed", clipboard.primaryClip?.getItemAt(0)?.text)
+        // The label describes the clip, so it is not the copied message.
+        assertNotEquals("Booking confirmed", clipboard.primaryClipDescription?.label)
     }
 
     @Test

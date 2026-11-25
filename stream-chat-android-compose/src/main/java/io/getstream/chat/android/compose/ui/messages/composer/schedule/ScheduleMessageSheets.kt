@@ -243,7 +243,10 @@ internal fun ScheduleMessageTimeSheetContent(
 ) {
     val context = LocalContext.current
     val isReschedule = params.scheduledAt != null
-    val error = params.error ?: params.state.dateError(date, now)
+    // A failed request shows only while the picked date is valid, so a new date is checked first.
+    val error = params.error?.takeUnless { it is ScheduleMessageError.Failed }
+        ?: params.state.dateError(date, now)
+        ?: params.error
     Column(modifier = Modifier.fillMaxWidth()) {
         SheetTitle(
             text = if (isReschedule) {

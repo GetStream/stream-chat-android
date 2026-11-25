@@ -1374,7 +1374,8 @@ public data class ScheduleMessageSheetParams(
  * @param initialDate The date the date and time pickers start at.
  * @param state What the composer knows to schedule the message, for the lead times and the count of the channel.
  * @param error Why the message can't be scheduled whatever the picked date, or why the last request failed, or null.
- * The errors of the picked date come from [ScheduleMessageState.dateError].
+ * The errors of the picked date come from [ScheduleMessageState.dateError]. A failed request
+ * ([ScheduleMessageError.Failed]) shows only while the picked date has no error.
  * @param onConfirm Called with the picked date.
  * @param onDismiss Called when the sheet is dismissed.
  * @param scheduledAt The current date of the scheduled message to reschedule, or null to schedule a new message. When
