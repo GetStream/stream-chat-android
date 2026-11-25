@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@4533f0911267960c12fa3b0a8d6c53955e523764 # TODO pin to the release
     with:
       save-gradle-cache: true
     secrets:
@@ -33,7 +33,7 @@ jobs:
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@4533f0911267960c12fa3b0a8d6c53955e523764 # TODO pin to the release
         with:
           cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/develop' }}
       - name: Detekt
@@ -46,7 +46,7 @@ jobs:
     runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@4533f0911267960c12fa3b0a8d6c53955e523764 # TODO pin to the release
       - name: Build
         run: ./gradlew assembleRelease
   remove-older-gradle-caches:
@@ -54,7 +54,7 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
     permissions:
       actions: write
-    uses: GetStream/stream-build-conventions-android/.github/workflows/gradle-cache-cleanup.yml@472863870020a11ae935e5d6b3b33f28b9396f99 # TODO pin to the release
+    uses: GetStream/stream-build-conventions-android/.github/workflows/gradle-cache-cleanup.yml@4533f0911267960c12fa3b0a8d6c53955e523764 # TODO pin to the release
   rubocop:
     permissions:
       contents: read
