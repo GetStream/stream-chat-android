@@ -25,7 +25,6 @@ import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.CorePlugin
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
-import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 
 /**
@@ -39,7 +38,6 @@ public class MarkdownTextTransformer @JvmOverloads constructor(
     private val markwon: Markwon = Markwon.builder(context)
         .usePlugin(CorePlugin.create())
         .usePlugin(LinkifyPlugin.create())
-        .usePlugin(ImagesPlugin.create())
         .usePlugin(StrikethroughPlugin.create())
         .usePlugin(SoftBreakAddsNewLinePlugin.create())
         .build()

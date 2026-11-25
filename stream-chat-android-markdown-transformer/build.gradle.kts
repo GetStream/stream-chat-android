@@ -33,7 +33,6 @@ dependencies {
     implementation(libs.markwon.core)
     implementation(libs.markwon.linkify)
     implementation(libs.markwon.ext.strikethrough)
-    implementation(libs.markwon.image)
 
     // Tests
     testImplementation(libs.junit.jupiter.api)
