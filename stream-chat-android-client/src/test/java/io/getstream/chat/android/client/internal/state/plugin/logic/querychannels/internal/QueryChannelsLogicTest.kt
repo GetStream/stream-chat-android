@@ -454,6 +454,29 @@ internal class QueryChannelsLogicTest {
 
         verify(queryChannelsStateLogic, never()).removeChannels(any())
         verify(queryChannelsStateLogic, never()).setChannelsOffset(any())
+        verify(queryChannelsStateLogic).addChannelsState(loadedChannels.take(PAGE_SIZE), fromServer = true)
+    }
+
+    @Test
+    fun `queryFirstPage adds the first page as server data when no channel is loaded`() = runTest {
+        val firstPage = List(PAGE_SIZE) { randomChannel() }
+        givenLoadedChannels(emptyList())
+        givenPages(firstPage = firstPage, laterPage = null)
+
+        logic.queryFirstPage()
+
+        verify(queryChannelsStateLogic).addChannelsState(firstPage, fromServer = true)
+    }
+
+    @Test
+    fun `queryFirstPage adds the first page as server data when it has every loaded channel`() = runTest {
+        val loadedChannels = List(PAGE_SIZE) { randomChannel() }
+        givenLoadedChannels(loadedChannels)
+        givenPages(firstPage = loadedChannels, laterPage = null)
+
+        logic.queryFirstPage()
+
+        verify(queryChannelsStateLogic).addChannelsState(loadedChannels, fromServer = true)
     }
 
     @Test
@@ -469,7 +492,7 @@ internal class QueryChannelsLogicTest {
         logic.queryFirstPage()
 
         verify(queryChannelsStateLogic).removeChannels(setOf(leftChannel.cid))
-        verify(queryChannelsStateLogic).addChannelsState(loadedChannels - leftChannel)
+        verify(queryChannelsStateLogic).addChannelsState(loadedChannels - leftChannel, fromServer = true)
     }
 
     @Test
@@ -631,7 +654,7 @@ internal class QueryChannelsLogicTest {
 
         // Then
         verify(queryChannelsStateLogic).setCurrentRequest(request)
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
         verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic).setLoadingFirstPage(false)
     }
@@ -650,7 +673,7 @@ internal class QueryChannelsLogicTest {
 
         // Then - only setCurrentRequest should be called, nothing else
         verify(queryChannelsStateLogic).setCurrentRequest(request)
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
         verify(queryChannelsStateLogic, never()).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
     }
@@ -715,7 +738,7 @@ internal class QueryChannelsLogicTest {
         logic.addChannelFromEvent(channel)
 
         verify(queryChannelsStateLogic).trackChannel(channel)
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
     }
 
     @Test

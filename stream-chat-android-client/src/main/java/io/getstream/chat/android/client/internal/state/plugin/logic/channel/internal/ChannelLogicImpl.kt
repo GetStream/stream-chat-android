@@ -330,6 +330,7 @@ internal class ChannelLogicImpl(
         scrollUpdate: Boolean,
         isNotificationUpdate: Boolean,
         isChannelsStateUpdate: Boolean,
+        fromServer: Boolean,
     ) {
         // This is called when:
         // 1. After QueryChannels completes (offline/online)
@@ -397,6 +398,8 @@ internal class ChannelLogicImpl(
         // Add pinned messages
         state.addPinnedMessages(channel.pinnedMessages)
         state.endFirstPageLoad()
+        // Last, so whoever observes it already sees the reads and messages of this response.
+        if (fromServer) state.setLoadedFromServer(true)
     }
 
     override fun handleEvents(events: List<ChatEvent>) {

@@ -262,6 +262,8 @@ internal interface ChannelLogic {
      * @param scrollUpdate Whether the update is triggered by a scroll action.
      * @param isNotificationUpdate Whether the update is triggered by a notification.
      * @param isChannelsStateUpdate Whether the update is part of a broader channels state update.
+     * @param fromServer Whether [channel] comes from a server response, which marks the state as loaded from the
+     * server.
      */
     suspend fun updateDataForChannel(
         channel: Channel,
@@ -270,6 +272,7 @@ internal interface ChannelLogic {
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
         isChannelsStateUpdate: Boolean = false,
+        fromServer: Boolean = false,
     )
 
     /**

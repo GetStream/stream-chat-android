@@ -154,7 +154,7 @@ internal class QueryChannelsLogicGroupedUnreadBaseTest {
         whenever(queryChannelsStateLogic.getLoadedChannelsShownNow()) doAnswer { loaded }
         val pageAdded = CompletableDeferred<Unit>()
         queryChannelsStateLogic.stub {
-            onBlocking { addChannelsState(any()) } doSuspendableAnswer {
+            onBlocking { addChannelsState(any(), any()) } doSuspendableAnswer {
                 loaded = loaded + it.getArgument<List<Channel>>(0)
                 pageAdded.await()
             }
