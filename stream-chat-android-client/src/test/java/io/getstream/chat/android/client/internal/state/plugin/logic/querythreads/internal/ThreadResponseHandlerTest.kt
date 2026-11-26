@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal
 
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.WriteRecorder
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.Thread
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -111,6 +113,24 @@ internal class ThreadResponseHandlerTest {
     }
 
     @Test
+    fun `onThreadFetched reads and stores the thread in one write`() = runTest {
+        val writes = givenRecordedWrites(stored = randomThread(parentMessageId = THREAD_ID, updatedAt = Date(1_000)))
+
+        handler.onThreadFetched(randomThread(parentMessageId = THREAD_ID, updatedAt = Date(2_000)))
+
+        writes shouldBeEqualTo listOf(1, 1)
+    }
+
+    @Test
+    fun `onThreadPartiallyUpdated reads and stores the thread in one write`() = runTest {
+        val writes = givenRecordedWrites(stored = randomThread(parentMessageId = THREAD_ID, updatedAt = Date(1_000)))
+
+        handler.onThreadPartiallyUpdated(randomThreadInfo(parentMessageId = THREAD_ID, updatedAt = Date(2_000)))
+
+        writes shouldBeEqualTo listOf(1, 1)
+    }
+
+    @Test
     fun `a storage failure is logged and the loaded lists are still updated`() = runTest {
         whenever(repos.selectThread(THREAD_ID)) doThrow IllegalStateException("db closed")
         val thread = randomThread(parentMessageId = THREAD_ID)
@@ -131,6 +151,21 @@ internal class ThreadResponseHandlerTest {
         handler.onThreadFetched(thread)
 
         verify(repos).insertThreads(listOf(thread))
+    }
+
+    /** The write the read of the [stored] thread and each stored thread run in, or null when it runs in none. */
+    private suspend fun givenRecordedWrites(stored: Thread): List<Int?> {
+        val recorder = WriteRecorder()
+        val writes = mutableListOf<Int?>()
+        whenever(repos.store) doReturn recorder.store
+        whenever(repos.selectThread(THREAD_ID)) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+            stored
+        }
+        whenever(repos.insertThreads(any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+        return writes
     }
 
     private companion object {

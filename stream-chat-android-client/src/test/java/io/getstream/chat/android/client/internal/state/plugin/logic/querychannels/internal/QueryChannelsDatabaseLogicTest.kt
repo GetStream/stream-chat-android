@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal
 
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.WriteRecorder
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
-import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -29,46 +29,60 @@ import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.randomChannelConfig
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.randomString
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 internal class QueryChannelsDatabaseLogicTest {
 
     private val queryChannelsRepository: QueryChannelsRepository = mock()
-    private val channelConfigRepository: ChannelConfigRepository = mock()
     private val channelRepository: ChannelRepository = mock()
     private val repositoryFacade: RepositoryFacade = mock()
 
     private val logic = QueryChannelsDatabaseLogic(
         queryChannelsRepository = queryChannelsRepository,
-        channelConfigRepository = channelConfigRepository,
         channelRepository = channelRepository,
         repositoryFacade = repositoryFacade,
     )
 
     @Test
-    fun `storeStateForChannels should delegate to repository facade`() = runTest {
+    fun `storeStateForChannels stores the channels in one write`() = runTest {
         // Given
-        val channels = listOf(
-            randomChannel(),
-            randomChannel(),
-            randomChannel(),
-        )
+        val channels = listOf(randomChannel(), randomChannel(), randomChannel())
+        val writes = givenRecordedWrites()
 
         // When
         logic.storeStateForChannels(channels)
 
         // Then
         verify(repositoryFacade).storeStateForChannels(channels)
+        verify(queryChannelsRepository, never()).insertQueryChannels(any())
+        assertEquals(listOf<Int?>(1), writes)
+    }
+
+    @Test
+    fun `storeStateForChannels stores the query spec and the channels in one write`() = runTest {
+        // Given
+        val channels = listOf(randomChannel(), randomChannel())
+        val spec = randomQueryChannelsSpec()
+        val writes = givenRecordedWrites()
+
+        // When
+        logic.storeStateForChannels(channels, spec)
+
+        // Then
+        verify(queryChannelsRepository).insertQueryChannels(spec)
+        verify(repositoryFacade).storeStateForChannels(channels)
+        assertEquals(listOf<Int?>(1, 1), writes)
     }
 
     @Test
@@ -223,19 +237,17 @@ internal class QueryChannelsDatabaseLogicTest {
         verify(queryChannelsRepository).insertQueryChannels(queryChannelsSpec)
     }
 
-    @Test
-    fun `insertChannelConfigs should delegate to repository`() = runTest {
-        // Given
-        val configs = listOf(
-            randomChannelConfig(type = randomString()),
-            randomChannelConfig(type = randomString()),
-            randomChannelConfig(type = randomString()),
-        )
-
-        // When
-        logic.insertChannelConfigs(configs)
-
-        // Then
-        verify(channelConfigRepository).insertChannelConfigs(configs)
+    /** The write each stored spec and each stored set of channels runs in, or null when it runs in none. */
+    private suspend fun givenRecordedWrites(): List<Int?> {
+        val recorder = WriteRecorder()
+        val writes = mutableListOf<Int?>()
+        whenever(repositoryFacade.store) doReturn recorder.store
+        whenever(queryChannelsRepository.insertQueryChannels(any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+        whenever(repositoryFacade.storeStateForChannels(any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+        return writes
     }
 }

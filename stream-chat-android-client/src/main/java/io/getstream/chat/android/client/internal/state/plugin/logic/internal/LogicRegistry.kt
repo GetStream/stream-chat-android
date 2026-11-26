@@ -147,7 +147,6 @@ internal class LogicRegistry internal constructor(
 
         val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
             queryChannelsRepository = repos,
-            channelConfigRepository = repos,
             channelRepository = repos,
             repositoryFacade = repos,
         )

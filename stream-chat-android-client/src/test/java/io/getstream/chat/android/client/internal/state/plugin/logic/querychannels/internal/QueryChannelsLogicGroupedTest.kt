@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.internal.state.plugin.state.querychannel
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.MessageType
@@ -45,6 +44,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Answers
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.mock
@@ -95,7 +95,9 @@ internal class QueryChannelsLogicGroupedTest {
     fun `setGroupedQueryConfig waits until a result being applied is saved`() = runTest {
         // Given - applying a result is paused while it saves the group
         val saving = CompletableDeferred<Unit>()
-        whenever(queryChannelsDatabaseLogic.insertQueryChannels(any())) doSuspendableAnswer { saving.await() }
+        whenever(queryChannelsDatabaseLogic.storeStateForChannels(any(), anyOrNull())) doSuspendableAnswer {
+            saving.await()
+        }
         whenever(queryChannelsStateLogic.getChannels()) doReturn null
         val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = emptyList(), next = null, prev = null)
         val config = GroupedQueryConfig(limit = null, pageSize = null, watch = true, presence = false)
@@ -221,7 +223,7 @@ internal class QueryChannelsLogicGroupedTest {
 
         // Then
         verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(serverMessage, bounce)), other), fromServer = true)
-        verify(queryChannelsDatabaseLogic).storeStateForChannels(setOf(channel, other))
+        verify(queryChannelsDatabaseLogic).storeStateForChannels(setOf(channel, other), queryChannelsSpec)
     }
 
     @Test
@@ -443,7 +445,7 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     @Test
-    fun `applyGroupedResult persists spec, configs, and channels to database`() = runTest {
+    fun `applyGroupedResult stores the spec and the channels together`() = runTest {
         // Given
         val channels = listOf(randomChannel(id = "ch1"), randomChannel(id = "ch2"))
         val group = GroupedChannelsGroup(
@@ -457,10 +459,8 @@ internal class QueryChannelsLogicGroupedTest {
         logic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        verify(queryChannelsDatabaseLogic).insertQueryChannels(queryChannelsSpec)
-        val expectedConfigs = channels.map { ChannelConfig(it.type, it.config) }
-        verify(queryChannelsDatabaseLogic).insertChannelConfigs(expectedConfigs)
-        verify(queryChannelsDatabaseLogic).storeStateForChannels(channels.toSet())
+        verify(queryChannelsDatabaseLogic).storeStateForChannels(channels.toSet(), queryChannelsSpec)
+        verify(queryChannelsDatabaseLogic, never()).insertQueryChannels(any())
     }
 
     @Test
@@ -487,7 +487,7 @@ internal class QueryChannelsLogicGroupedTest {
         verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
         verify(queryChannelsStateLogic, never()).setNextCursor(any())
         verify(queryChannelsStateLogic, never()).setEndOfChannels(any())
-        verify(queryChannelsDatabaseLogic, never()).insertQueryChannels(any())
+        verify(queryChannelsDatabaseLogic, never()).storeStateForChannels(any(), anyOrNull())
     }
 
     // endregion

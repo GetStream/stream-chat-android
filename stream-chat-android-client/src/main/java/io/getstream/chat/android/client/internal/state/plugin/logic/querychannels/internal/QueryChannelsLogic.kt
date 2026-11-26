@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.internal.state.model.querychannels.pagin
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroup
@@ -378,11 +377,10 @@ internal class QueryChannelsLogic(
             queryChannelsStateLogic.setRecoveryNeeded(false)
             hasCompletedAQuery = true
 
-            // Persist
-            queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
-            val channelConfigs = group.channels.map { ChannelConfig(it.type, it.config) }
-            queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
-            queryChannelsDatabaseLogic.storeStateForChannels(group.channels.toSet())
+            queryChannelsDatabaseLogic.storeStateForChannels(
+                channels = group.channels.toSet(),
+                spec = queryChannelsStateLogic.getQuerySpecs(),
+            )
         }
     }
 
@@ -531,20 +529,13 @@ internal class QueryChannelsLogic(
                 val channelsCount = result.value.toSet().size
                 queryChannelsStateLogic.setEndOfChannels(channelsCount < request.limit)
                 logger.i { "[onOnlineQueryResult] api call returned $channelsCount channels" }
-                storeChannels(result.value)
+                queryChannelsDatabaseLogic.storeStateForChannels(result.value.toSet())
             }
 
             is Result.Failure -> {
                 logger.i { "[onOnlineQueryResult] query with filter ${request.filter} failed; recovery needed" }
             }
         }
-    }
-
-    /** Stores the configs and the state of [channels] from a query response in the database. */
-    private suspend fun storeChannels(channels: List<Channel>) {
-        val channelSet = channels.toSet()
-        queryChannelsDatabaseLogic.insertChannelConfigs(channelSet.map { ChannelConfig(it.type, it.config) })
-        queryChannelsDatabaseLogic.storeStateForChannels(channelSet)
     }
 
     /**
@@ -603,7 +594,7 @@ internal class QueryChannelsLogic(
             addChannels(firstPage, fromServer = true)
             return firstPage
         }
-        storeChannels(laterChannels)
+        queryChannelsDatabaseLogic.storeStateForChannels(laterChannels.toSet())
         val removedMeanwhile = loadedCids - queryChannelsStateLogic.getQuerySpecs().cids
         val remoteCids: Set<String> = laterChannels.mapTo(mutableSetOf()) { it.cid }
         val cidsToRemove = notUpdatedCids - remoteCids
