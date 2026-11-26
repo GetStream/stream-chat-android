@@ -255,6 +255,20 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given no stored channel When ChannelVisibleEvent carries a placeholder with v1 dates Should skip`() {
+        val channel = randomChannel(disabled = false, blocked = false)
+        val handler = handlerFor(groupKey = "all", cachedChannels = emptyMap())
+        val event = randomChannelVisibleEvent(
+            cid = channel.cid,
+            channel = placeholderOf(channel, zeroTime = Date(V1_ZERO_TIME)),
+        )
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
     fun `Given a stored copy still listing the user When ChannelVisibleEvent carries a placeholder Should skip`() {
         val currentUser = randomUser()
         val channel = randomChannel(disabled = false, blocked = false, extraData = mapOf("group" to "vip"))
@@ -1009,8 +1023,8 @@ internal class GroupAwareChatEventHandlerTest {
         )
 
     /** The channel a replayed event carries when the user can't read it: its ids and the zero time as its dates. */
-    private fun placeholderOf(channel: Channel) =
-        Channel(id = channel.id, type = channel.type, createdAt = Date(ZERO_TIME), updatedAt = Date(ZERO_TIME))
+    private fun placeholderOf(channel: Channel, zeroTime: Date = Date(0)) =
+        Channel(id = channel.id, type = channel.type, createdAt = zeroTime, updatedAt = zeroTime)
 
     private fun channelMessage(createdAt: Date) = randomMessage(
         type = "regular",
@@ -1044,7 +1058,7 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     private companion object {
-        /** 0001-01-01T00:00:00Z, the backend's zero time. */
-        const val ZERO_TIME = -62_135_596_800_000L
+        /** 0001-01-01T00:00:00Z, the backend's zero time as v1 sends it. */
+        const val V1_ZERO_TIME = -62_135_596_800_000L
     }
 }

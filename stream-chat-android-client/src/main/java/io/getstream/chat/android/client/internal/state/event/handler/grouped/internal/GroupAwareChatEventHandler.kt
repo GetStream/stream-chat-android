@@ -104,8 +104,8 @@ internal class GroupAwareChatEventHandler(
         return filterResultByGroup(defaultResult, cachedChannel, filter, newMessage)
     }
 
-    /** Whether this is the backend's placeholder channel, whose creation date is the zero time (year 1). */
-    private fun Channel.isPlaceholder(): Boolean = createdAt?.before(Date(0)) == true
+    /** Whether this is the backend's placeholder channel, created at the zero time: 0 on v2, year 1 on v1. */
+    private fun Channel.isPlaceholder(): Boolean = createdAt?.let { it.time <= 0 } == true
 
     /** Whether this channel is hidden and the new [message] keeps it hidden on the server. */
     private fun Channel.staysHiddenAfter(message: Message): Boolean =
