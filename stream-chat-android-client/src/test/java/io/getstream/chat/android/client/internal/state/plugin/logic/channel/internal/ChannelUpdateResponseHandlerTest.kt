@@ -257,6 +257,53 @@ internal class ChannelUpdateResponseHandlerTest {
     }
 
     @Test
+    fun `onChannelTruncated removes the messages and stores the channel in one write`() = runTest {
+        val recorder = WriteRecorder()
+        whenever(repos.store) doReturn recorder.store
+        val writes = mutableListOf<Int?>()
+        whenever(repos.deleteChannelMessagesBefore(any(), any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+        whenever(repos.selectChannel(CID)) doReturn channel()
+        whenever(repos.insertChannel(any<Channel>())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+
+        handler.onChannelTruncated(channel(updatedAt = Date(2_000)).copy(truncatedAt = Date(5_000)))
+
+        writes shouldBeEqualTo listOf(1, 1)
+    }
+
+    @Test
+    fun `onChannelTruncated leaves the state alone when the write fails`() = runTest {
+        givenActiveChannel()
+        whenever(repos.selectChannel(CID)) doReturn channel()
+        whenever(repos.insertChannel(any<Channel>())) doThrow IllegalStateException("failed")
+
+        handler.onChannelTruncated(channel(updatedAt = Date(2_000)).copy(truncatedAt = Date(5_000)))
+
+        verify(channelLogic, never()).truncate(any())
+        verify(channelLogic, never()).applyChannelUpdate(any())
+    }
+
+    @Test
+    fun `onChannelDeleted removes the messages and marks the channel in one write`() = runTest {
+        val recorder = WriteRecorder()
+        whenever(repos.store) doReturn recorder.store
+        val writes = mutableListOf<Int?>()
+        whenever(repos.deleteChannelMessagesBefore(any(), any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+        whenever(repos.setChannelDeletedAt(any(), any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+
+        handler.onChannelDeleted(channel(deletedAt = Date(6_000)))
+
+        writes shouldBeEqualTo listOf(1, 1)
+    }
+
+    @Test
     fun `onChannelTruncated without a truncation date removes no messages`() = runTest {
         givenActiveChannel()
 

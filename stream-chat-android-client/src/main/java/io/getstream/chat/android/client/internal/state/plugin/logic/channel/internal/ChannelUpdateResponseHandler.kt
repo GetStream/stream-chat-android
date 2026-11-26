@@ -45,6 +45,7 @@ import java.util.Date
  *   processed before the response is kept and the later event changes nothing.
  *
  * The stored channel is read, merged and written in one write of the store, so no event batch is stored in between.
+ * A truncation or a deletion removes the messages in the same write that stores the channel.
  *
  * A failure here is logged and never changes the result of the request.
  */
@@ -92,11 +93,13 @@ internal class ChannelUpdateResponseHandler(
      * Applies the channel returned by a truncation and removes the messages it removed.
      */
     suspend fun onChannelTruncated(channel: Channel) = safely("onChannelTruncated") {
-        channel.truncatedAt?.let { truncatedAt ->
-            repos.deleteChannelMessagesBefore(channel.cid, truncatedAt)
-            activeChannel(channel)?.truncate(truncatedAt)
+        val truncatedAt = channel.truncatedAt
+        repos.write {
+            truncatedAt?.let { repos.deleteChannelMessagesBefore(channel.cid, it) }
+            saveChannel(channel) { it }
         }
-        applyChannel(channel)
+        truncatedAt?.let { activeChannel(channel)?.truncate(it) }
+        applyChannelToState(channel)
     }
 
     /**
@@ -105,8 +108,10 @@ internal class ChannelUpdateResponseHandler(
      */
     suspend fun onChannelDeleted(channel: Channel) = safely("onChannelDeleted") {
         val deletedAt = channel.deletedAt ?: return@safely
-        repos.deleteChannelMessagesBefore(channel.cid, deletedAt)
-        repos.setChannelDeletedAt(channel.cid, deletedAt)
+        repos.write {
+            repos.deleteChannelMessagesBefore(channel.cid, deletedAt)
+            repos.setChannelDeletedAt(channel.cid, deletedAt)
+        }
         activeChannel(channel)?.deleteChannel(deletedAt)
         refreshChannelLists(channel.cid)
     }
@@ -143,6 +148,10 @@ internal class ChannelUpdateResponseHandler(
 
     private suspend fun applyChannel(channel: Channel, addedMembers: List<Member> = emptyList()) {
         saveChannel(channel) { stored -> addedMembers.fold(stored) { acc, member -> acc.addMember(member) } }
+        applyChannelToState(channel, addedMembers)
+    }
+
+    private fun applyChannelToState(channel: Channel, addedMembers: List<Member> = emptyList()) {
         val channelLogic = activeChannel(channel) ?: return
         val stateUpdatedAt = channelLogic.messagesUpdateLogic.channelState().channelData.value.updatedAt
         if (stateUpdatedAt.isAfter(channel.updatedAt)) {
