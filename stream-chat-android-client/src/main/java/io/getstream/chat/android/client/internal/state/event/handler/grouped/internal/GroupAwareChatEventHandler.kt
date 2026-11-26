@@ -80,16 +80,13 @@ internal class GroupAwareChatEventHandler(
 
             is NotificationAddedToChannelEvent -> watchAndAddIfBelongsHere(event.cid, event.channel, filter)
 
-            // channel.visible replayed by /sync can carry a channel with only its type and id.
-            is ChannelVisibleEvent -> {
-                val hasOnlyTypeAndId = event.channel == Channel(id = event.channel.id, type = event.channel.type)
-                when {
-                    !hasOnlyTypeAndId -> watchAndAddIfBelongsHere(event.cid, event.channel, filter)
-                    cachedChannel != null -> watchAndAddIfBelongsHere(event.cid, cachedChannel, filter)
-                    // Nothing to resolve the group against: a later channel.updated removes it if it belongs elsewhere.
-                    else -> EventHandlingResult.WatchAndAdd(event.cid)
+            // A replayed event carries a placeholder when the user can no longer read the channel.
+            is ChannelVisibleEvent ->
+                if (event.channel.isPlaceholder()) {
+                    EventHandlingResult.Skip
+                } else {
+                    watchAndAddIfBelongsHere(event.cid, event.channel, filter)
                 }
-            }
 
             else -> super.handleChatEvent(event, filter, cachedChannel)
         }
@@ -106,6 +103,9 @@ internal class GroupAwareChatEventHandler(
         val defaultResult = super.handleCidEvent(event, filter, cachedChannel)
         return filterResultByGroup(defaultResult, cachedChannel, filter, newMessage)
     }
+
+    /** Whether this is the backend's placeholder channel, whose creation date is the zero time (year 1). */
+    private fun Channel.isPlaceholder(): Boolean = createdAt?.before(Date(0)) == true
 
     /** Whether this channel is hidden and the new [message] keeps it hidden on the server. */
     private fun Channel.staysHiddenAfter(message: Message): Boolean =
