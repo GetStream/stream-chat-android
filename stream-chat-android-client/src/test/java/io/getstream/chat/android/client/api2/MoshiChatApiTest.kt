@@ -78,6 +78,10 @@ import io.getstream.chat.android.models.QuietHoursRule
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
+import io.getstream.chat.android.models.SearchAllEntity
+import io.getstream.chat.android.models.SearchAllResult
+import io.getstream.chat.android.models.SearchAllSection
+import io.getstream.chat.android.models.SearchAllSectionError
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.Vote
@@ -210,6 +214,8 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -217,6 +223,7 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -230,6 +237,7 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
@@ -244,6 +252,14 @@ import org.mockito.stubbing.OngoingStubbing
 import java.util.Date
 import kotlin.reflect.KClass
 import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
+import io.getstream.chat.android.network.models.SearchAllChannelsSection as SearchAllChannelsSectionDto
+import io.getstream.chat.android.network.models.SearchAllMessagesSection as SearchAllMessagesSectionDto
+import io.getstream.chat.android.network.models.SearchAllRequest as SearchAllRequestDto
+import io.getstream.chat.android.network.models.SearchAllResponse as SearchAllResponseDto
+import io.getstream.chat.android.network.models.SearchAllSectionError as SearchAllSectionErrorDto
+import io.getstream.chat.android.network.models.SearchAllUsersSection as SearchAllUsersSectionDto
+import io.getstream.chat.android.network.models.SearchAllWarning as SearchAllWarningDto
+import io.getstream.chat.android.network.models.SearchResult as SearchResultDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
 import io.getstream.chat.android.network.models.VotingVisibility as VotingVisibilityDto
 
@@ -2200,6 +2216,143 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verifyBlocking(api, times(1)) { search(JsonQuery(expectedPayload)) }
+    }
+
+    @Test
+    fun `searchAll sends the request and maps every section`() = runTest {
+        val api = mock<ChatEndpoints>()
+        val message = Mother.randomSearchResultMessage(cid = "messaging:general")
+        val user = Mother.randomFullUserResponse()
+        val channel = Mother.randomChannelResponse(type = "messaging", id = "team")
+        wheneverBlocking { api.searchAll(anyOrNull(), any()) } doReturn SearchAllResponseDto(
+            duration = randomString(),
+            messages = SearchAllMessagesSectionDto(
+                results = listOf(SearchResultDto(message)),
+                next = "messages-next",
+                resultsWarning = Mother.randomSearchWarningResponse(),
+            ),
+            users = SearchAllUsersSectionDto(users = listOf(user), next = "users-next"),
+            channels = SearchAllChannelsSectionDto(
+                channels = listOf(Mother.randomChannelStateResponseFields(channel = channel)),
+                warning = SearchAllWarningDto(SearchAllWarningDto.Code.CursorRejected),
+            ),
+        )
+        val sut = Fixture().withChatEndpoints(api).get()
+
+        val result = sut.searchAll(
+            query = "team",
+            entities = setOf(SearchAllEntity.MESSAGES, SearchAllEntity.USERS, SearchAllEntity.CHANNELS),
+            limit = 5,
+            next = mapOf(SearchAllEntity.USERS to "users-cursor", SearchAllEntity.CHANNELS to "channels-cursor"),
+        ).await()
+
+        verifyBlocking(api) {
+            searchAll(
+                searchAllRequest = SearchAllRequestDto(
+                    query = "team",
+                    entities = listOf(SearchAllEntity.MESSAGES, SearchAllEntity.USERS, SearchAllEntity.CHANNELS),
+                    limit = 5,
+                    next = mapOf(SearchAllEntity.USERS to "users-cursor", SearchAllEntity.CHANNELS to "channels-cursor"),
+                ),
+            )
+        }
+        val value = (result as Result.Success).value
+        val messages = value.messages!!
+        messages.items.map { it.id to it.cid } shouldBeEqualTo listOf(message.id to "messaging:general")
+        messages.next shouldBeEqualTo "messages-next"
+        messages.resultsWarning.shouldNotBeNull()
+        messages.isCursorRejected shouldBeEqualTo false
+        val users = value.users!!
+        users.items.map { it.id } shouldBeEqualTo listOf(user.id)
+        users.next shouldBeEqualTo "users-next"
+        users.resultsWarning.shouldBeNull()
+        val channels = value.channels!!
+        channels.items.map { it.cid } shouldBeEqualTo listOf("messaging:team")
+        channels.next.shouldBeNull()
+        channels.isCursorRejected shouldBeEqualTo true
+    }
+
+    @Test
+    fun `searchAll maps a failed section to its error and keeps the other sections`() = runTest {
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.searchAll(anyOrNull(), any()) } doReturn SearchAllResponseDto(
+            duration = randomString(),
+            messages = SearchAllMessagesSectionDto(
+                error = SearchAllSectionErrorDto(SearchAllSectionErrorDto.Code.BackendTimeout, "timed out"),
+            ),
+            users = SearchAllUsersSectionDto(),
+            channels = SearchAllChannelsSectionDto(
+                error = SearchAllSectionErrorDto(SearchAllSectionErrorDto.Code.Unknown("new_code"), "new failure"),
+            ),
+        )
+        val sut = Fixture().withChatEndpoints(api).get()
+
+        val result = sut.searchAll(query = "team", entities = null, limit = null, next = null).await()
+
+        result shouldBeEqualTo Result.Success(
+            SearchAllResult(
+                messages = SearchAllSection(
+                    error = SearchAllSectionError(code = SearchAllSectionError.BACKEND_TIMEOUT, message = "timed out"),
+                ),
+                users = SearchAllSection(),
+                channels = SearchAllSection(
+                    error = SearchAllSectionError(code = "new_code", message = "new failure"),
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `searchAll leaves the sections that were not requested null`() = runTest {
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.searchAll(anyOrNull(), any()) } doReturn SearchAllResponseDto(
+            duration = randomString(),
+            users = SearchAllUsersSectionDto(users = listOf(Mother.randomFullUserResponse())),
+        )
+        val sut = Fixture().withChatEndpoints(api).get()
+
+        val result = sut.searchAll(query = "team", entities = setOf(SearchAllEntity.USERS), limit = null, next = null)
+            .await()
+
+        val value = (result as Result.Success).value
+        value.users!!.items.size shouldBeEqualTo 1
+        value.messages.shouldBeNull()
+        value.channels.shouldBeNull()
+    }
+
+    @Test
+    fun `searchAll fails when the request fails`() = runTest {
+        val api = mock<ChatEndpoints>()
+        wheneverBlocking { api.searchAll(anyOrNull(), any()) }
+            .thenRespond(RetroError<SearchAllResponseDto>(statusCode = 400).toHttpException())
+        val sut = Fixture().withChatEndpoints(api).get()
+
+        val result = sut.searchAll(query = "team", entities = null, limit = null, next = null).await()
+
+        result `should be instance of` Result.Failure::class
+    }
+
+    @Test
+    fun `Cancelling a searchAll call cancels its request`() = runTest {
+        var isRequestCancelled = false
+        val api = mock<ChatEndpoints> {
+            onBlocking { searchAll(anyOrNull(), any()) } doSuspendableAnswer {
+                try {
+                    awaitCancellation()
+                } finally {
+                    isRequestCancelled = true
+                }
+            }
+        }
+        val sut = Fixture().withChatEndpoints(api).get()
+        val call = sut.searchAll(query = "team", entities = null, limit = null, next = null)
+        var result: Result<SearchAllResult>? = null
+        testCoroutineExtension.scope.launch { result = call.await() }
+
+        call.cancel()
+
+        isRequestCancelled shouldBeEqualTo true
+        result `should be instance of` Result.Failure::class
     }
 
     @ParameterizedTest

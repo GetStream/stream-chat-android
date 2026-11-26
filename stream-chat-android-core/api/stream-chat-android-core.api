@@ -2794,6 +2794,72 @@ public final class io/getstream/chat/android/models/ScheduledMessageStatus$Unkno
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/SearchAllEntity {
+	public static final field CHANNELS Ljava/lang/String;
+	public static final field INSTANCE Lio/getstream/chat/android/models/SearchAllEntity;
+	public static final field MESSAGES Ljava/lang/String;
+	public static final field USERS Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/SearchAllResult {
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/models/SearchAllSection;Lio/getstream/chat/android/models/SearchAllSection;Lio/getstream/chat/android/models/SearchAllSection;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/SearchAllSection;Lio/getstream/chat/android/models/SearchAllSection;Lio/getstream/chat/android/models/SearchAllSection;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/SearchAllSection;
+	public final fun component2 ()Lio/getstream/chat/android/models/SearchAllSection;
+	public final fun component3 ()Lio/getstream/chat/android/models/SearchAllSection;
+	public final fun copy (Lio/getstream/chat/android/models/SearchAllSection;Lio/getstream/chat/android/models/SearchAllSection;Lio/getstream/chat/android/models/SearchAllSection;)Lio/getstream/chat/android/models/SearchAllResult;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/SearchAllResult;Lio/getstream/chat/android/models/SearchAllSection;Lio/getstream/chat/android/models/SearchAllSection;Lio/getstream/chat/android/models/SearchAllSection;ILjava/lang/Object;)Lio/getstream/chat/android/models/SearchAllResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannels ()Lio/getstream/chat/android/models/SearchAllSection;
+	public final fun getMessages ()Lio/getstream/chat/android/models/SearchAllSection;
+	public final fun getUsers ()Lio/getstream/chat/android/models/SearchAllSection;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/SearchAllSection {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/SearchAllSectionError;ZLio/getstream/chat/android/models/SearchWarning;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/SearchAllSectionError;ZLio/getstream/chat/android/models/SearchWarning;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lio/getstream/chat/android/models/SearchAllSectionError;
+	public final fun component4 ()Z
+	public final fun component5 ()Lio/getstream/chat/android/models/SearchWarning;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/SearchAllSectionError;ZLio/getstream/chat/android/models/SearchWarning;)Lio/getstream/chat/android/models/SearchAllSection;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/SearchAllSection;Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/models/SearchAllSectionError;ZLio/getstream/chat/android/models/SearchWarning;ILjava/lang/Object;)Lio/getstream/chat/android/models/SearchAllSection;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Lio/getstream/chat/android/models/SearchAllSectionError;
+	public final fun getItems ()Ljava/util/List;
+	public final fun getNext ()Ljava/lang/String;
+	public final fun getResultsWarning ()Lio/getstream/chat/android/models/SearchWarning;
+	public fun hashCode ()I
+	public final fun isCursorRejected ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/SearchAllSectionError {
+	public static final field BACKEND_TIMEOUT Ljava/lang/String;
+	public static final field BACKEND_UNAVAILABLE Ljava/lang/String;
+	public static final field Companion Lio/getstream/chat/android/models/SearchAllSectionError$Companion;
+	public static final field INTERNAL_ERROR Ljava/lang/String;
+	public static final field UNSUPPORTED Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/models/SearchAllSectionError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/SearchAllSectionError;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/SearchAllSectionError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/SearchAllSectionError$Companion {
+}
+
 public final class io/getstream/chat/android/models/SearchMessagesResult {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/SearchWarning;)V

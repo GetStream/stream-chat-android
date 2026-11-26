@@ -106,7 +106,10 @@ import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
+import io.getstream.chat.android.models.SearchAllResult
+import io.getstream.chat.android.models.SearchAllSection
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.UnreadCounts
@@ -215,6 +218,8 @@ import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 import io.getstream.chat.android.network.models.ScheduledMessageQueryStatus as ScheduledMessageQueryStatusDto
+import io.getstream.chat.android.network.models.SearchAllSectionError as SearchAllSectionErrorDto
+import io.getstream.chat.android.network.models.SearchAllWarning as SearchAllWarningDto
 import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
 import io.getstream.chat.android.network.models.VotingVisibility as VotingVisibilityDto
 
@@ -1548,19 +1553,82 @@ constructor(
         )
         return endpoint { search(payload = JsonQuery(newRequest)) }
             .mapDomain { response ->
-                val messages = response.results.mapNotNull { it.message?.toDomain() }.map { message ->
-                    (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
-                        ?.let(message::enrichWithCid)
-                        ?: message
-                }
                 SearchMessagesResult(
-                    messages = messages,
+                    messages = searchResultMessages(response.results),
                     next = response.next,
                     previous = response.previous,
                     resultsWarning = response.resultsWarning?.toDomain(),
                 )
             }
     }
+
+    override fun searchAll(
+        query: String,
+        entities: Set<String>?,
+        limit: Int?,
+        next: Map<String, String>?,
+    ): Call<SearchAllResult> {
+        val request = io.getstream.chat.android.network.models.SearchAllRequest(
+            query = query,
+            entities = entities?.toList(),
+            limit = limit,
+            next = next,
+        )
+        return endpoint { searchAll(searchAllRequest = request) }
+            .flatMapDomain { response ->
+                channelsCall(response.channels?.channels.orEmpty()) { mappedChannels ->
+                    SearchAllResult(
+                        messages = response.messages?.let { section ->
+                            searchAllSection(
+                                items = searchResultMessages(section.results.orEmpty()),
+                                next = section.next,
+                                error = section.error,
+                                warning = section.warning,
+                                resultsWarning = section.resultsWarning?.toDomain(),
+                            )
+                        },
+                        users = response.users?.let { section ->
+                            searchAllSection(
+                                items = section.users.orEmpty().map { it.toDomain() },
+                                next = section.next,
+                                error = section.error,
+                                warning = section.warning,
+                            )
+                        },
+                        channels = response.channels?.let { section ->
+                            searchAllSection(
+                                items = mappedChannels,
+                                next = section.next,
+                                error = section.error,
+                                warning = section.warning,
+                            )
+                        },
+                    )
+                }
+            }
+    }
+
+    private fun DomainMapping.searchResultMessages(
+        results: List<io.getstream.chat.android.network.models.SearchResult>,
+    ): List<Message> = results.mapNotNull { it.message?.toDomain() }.map { message ->
+        (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
+            ?.let(message::enrichWithCid)
+            ?: message
+    }
+
+    private fun <T> DomainMapping.searchAllSection(
+        items: List<T>,
+        next: String?,
+        error: SearchAllSectionErrorDto?,
+        warning: SearchAllWarningDto?,
+        resultsWarning: SearchWarning? = null,
+    ): SearchAllSection<T> = SearchAllSection(
+        items = items,
+        next = next,
+        error = error?.toDomain(),
+        isCursorRejected = warning?.code == SearchAllWarningDto.Code.CursorRejected,
+        resultsWarning = resultsWarning,
+    )
 
     override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
         val request = io.getstream.chat.android.network.models.QueryChannelsRequest(

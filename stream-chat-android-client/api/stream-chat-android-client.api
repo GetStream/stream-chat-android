@@ -215,6 +215,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun scheduledMessages (Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
 	public final fun scheduledMessages (Ljava/lang/String;Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
 	public static synthetic fun scheduledMessages$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	public final fun searchAll (Ljava/lang/String;Ljava/util/Set;Ljava/lang/Integer;Ljava/util/Map;)Lio/getstream/result/call/Call;
+	public static synthetic fun searchAll$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Set;Ljava/lang/Integer;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun searchMessages (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/result/call/Call;
 	public static synthetic fun searchMessages$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun searchRoles (Ljava/lang/String;Ljava/lang/Integer;Lio/getstream/chat/android/models/RoleType;Ljava/lang/Boolean;Ljava/lang/String;)Lio/getstream/result/call/Call;

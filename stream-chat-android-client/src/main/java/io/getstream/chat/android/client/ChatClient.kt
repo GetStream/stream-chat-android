@@ -233,6 +233,7 @@ import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.SearchAllResult
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.Thread
@@ -2253,6 +2254,46 @@ internal constructor(
             sort = sort,
         )
     }
+
+    /**
+     * Searches messages, users and channels with one query and returns one section per requested entity.
+     *
+     * The server picks how each section matches and sorts: messages match the query as full text, newest first.
+     * Users match it as a prefix of their name or username. Channels match it as a prefix of their name, and only
+     * channels the current user is a member of are searched. A section can fail on its own while the others return
+     * results, see [io.getstream.chat.android.models.SearchAllSection.error]. When every requested section fails, the
+     * call fails.
+     *
+     * To load the next page of a section, call this again with the same [query], that section in [entities] and its
+     * [io.getstream.chat.android.models.SearchAllSection.next] in [next]. Each requested section counts as one request
+     * against the rate limit. When every cursor passed fails to decode, for example because the query changed, the call
+     * fails. When only some of them fail, those sections start again from the first page, see
+     * [io.getstream.chat.android.models.SearchAllSection.isCursorRejected].
+     *
+     * When a newer search replaces this one, for example as the user types, cancel this call with [Call.cancel].
+     * That stops the request. Cancelling the coroutine that waits on [Call.await] does not stop it.
+     *
+     * @param query The search text, 1 to 80 characters after removing leading and trailing whitespace.
+     * @param entities The sections to search, from [io.getstream.chat.android.models.SearchAllEntity]. Searches
+     * every section when null. Must not be empty.
+     * @param limit The number of results per section, 1 to 30. The server uses 10 when null.
+     * @param next The cursors of the next pages, keyed by entity from
+     * [io.getstream.chat.android.models.SearchAllEntity]. Cursors of sections not in [entities] are ignored.
+     *
+     * @return Executable async [Call] responsible for the search.
+     */
+    @CheckResult
+    public fun searchAll(
+        query: String,
+        entities: Set<String>? = null,
+        limit: Int? = null,
+        next: Map<String, String>? = null,
+    ): Call<SearchAllResult> = api.searchAll(
+        query = query,
+        entities = entities,
+        limit = limit,
+        next = next,
+    )
 
     /**
      * Returns a list of messages pinned in the channel.
