@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.querychannels
 import io.getstream.chat.android.client.api.event.DefaultChatEventHandler
 import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.test.randomChannelVisibleEvent
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.client.test.randomMemberUpdatedEvent
@@ -26,6 +27,7 @@ import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
@@ -38,6 +40,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class DefaultChatEventHandlerTest {
 
@@ -139,6 +142,29 @@ internal class DefaultChatEventHandlerTest {
         val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
 
         result `should be equal to` EventHandlingResult.WatchAndAdd(cid)
+    }
+
+    @Test
+    fun `When received ChannelVisibleEvent Should watch and add the channel`() {
+        val channel = randomChannel()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomChannelVisibleEvent(cid = channel.cid, channel = channel)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.WatchAndAdd(channel.cid)
+    }
+
+    @Test
+    fun `When received ChannelVisibleEvent with the stub of a channel the user can't read Should skip it`() {
+        val channel = randomChannel()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val stub = Channel(id = channel.id, type = channel.type, createdAt = Date(0), updatedAt = Date(0))
+        val event = randomChannelVisibleEvent(cid = channel.cid, channel = stub)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Skip
     }
 
     @Test

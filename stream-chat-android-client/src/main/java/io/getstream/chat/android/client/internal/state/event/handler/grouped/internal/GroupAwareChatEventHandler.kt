@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.internal.state.utils.internal.mergeParti
 import io.getstream.chat.android.client.internal.state.utils.internal.unhidesChannel
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
+import io.getstream.chat.android.client.utils.channel.isUnreadableChannelStub
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
@@ -80,9 +81,8 @@ internal class GroupAwareChatEventHandler(
 
             is NotificationAddedToChannelEvent -> watchAndAddIfBelongsHere(event.cid, event.channel, filter)
 
-            // A replayed event carries a placeholder when the user can no longer read the channel.
             is ChannelVisibleEvent ->
-                if (event.channel.isPlaceholder()) {
+                if (event.channel.isUnreadableChannelStub()) {
                     EventHandlingResult.Skip
                 } else {
                     watchAndAddIfBelongsHere(event.cid, event.channel, filter)
@@ -103,9 +103,6 @@ internal class GroupAwareChatEventHandler(
         val defaultResult = super.handleCidEvent(event, filter, cachedChannel)
         return filterResultByGroup(defaultResult, cachedChannel, filter, newMessage)
     }
-
-    /** Whether this is the backend's placeholder channel, created at the zero time: 0 on v2, year 1 on v1. */
-    private fun Channel.isPlaceholder(): Boolean = createdAt?.let { it.time <= 0 } == true
 
     /** Whether this channel is hidden and the new [message] keeps it hidden on the server. */
     private fun Channel.staysHiddenAfter(message: Message): Boolean =

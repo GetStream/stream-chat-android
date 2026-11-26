@@ -54,6 +54,12 @@ internal fun Channel.isLocalPlaceholder(): Boolean =
         members.map { it.getUserId() }.toSet()
 
 /**
+ * Whether this is the stub the server sends in place of a channel the user can no longer read, as in a
+ * `channel.visible` replayed after a reconnection. The stub is created at the zero time: 0 on v2, year 1 on v1.
+ */
+internal fun Channel.isUnreadableChannelStub(): Boolean = createdAt?.let { it.time <= 0 } == true
+
+/**
  * Whether [cid] is a local placeholder with more than one member, which no server id looks like.
  */
 internal fun isMultiMemberPlaceholderCid(cid: String): Boolean =
