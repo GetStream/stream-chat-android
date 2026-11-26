@@ -34,6 +34,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import io.getstream.chat.android.ai.compose.R
+import io.getstream.chat.android.ai.compose.util.internal.DefaultLinkSchemes
+import io.getstream.chat.android.ai.compose.util.internal.isOpenableLink
 import java.util.Locale
 import kotlin.math.floor
 import kotlin.math.max
@@ -120,6 +122,11 @@ private class InlineMarkdown(private val text: String, private val out: Annotate
         val close = text.indexOf(')', urlStart).takeIf { it > urlStart && it < end } ?: return null
         val url = text.substring(urlStart, close)
         if (url.any { it.isWhitespace() }) return null
+        // The model writes every link, so one that may not open keeps only its label.
+        if (!isOpenableLink(url, DefaultLinkSchemes)) {
+            append(index + 1, middle)
+            return close + 1
+        }
         out.withLink(LinkAnnotation.Url(url, TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline)))) {
             append(index + 1, middle)
         }
