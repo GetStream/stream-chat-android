@@ -56,25 +56,38 @@ public data class SearchAllSection<T>(
 /**
  * The reason a section of a [SearchAllResult] failed.
  *
- * @param code The error code, for example [BACKEND_TIMEOUT].
+ * @param code The error code, for example [Code.BACKEND_TIMEOUT].
  * @param message A description of the failure.
  */
 @Immutable
 public data class SearchAllSectionError(
-    val code: String,
+    val code: Code,
     val message: String,
 ) {
-    public companion object {
-        /** The search did not finish in time. Retrying can succeed. */
-        public const val BACKEND_TIMEOUT: String = "backend_timeout"
 
-        /** The search could not run because of load. Retrying later can succeed. */
-        public const val BACKEND_UNAVAILABLE: String = "backend_unavailable"
+    /**
+     * The reason code of a [SearchAllSectionError].
+     *
+     * @param value The code the server sends.
+     */
+    @Immutable
+    public data class Code(val value: String) {
+        public companion object {
+            /** The search did not finish in time. Retrying can succeed. */
+            @JvmField
+            public val BACKEND_TIMEOUT: Code = Code("backend_timeout")
 
-        /** The app's configuration cannot serve this section. Retrying does not help. */
-        public const val UNSUPPORTED: String = "unsupported"
+            /** The search could not run because of load. Retrying later can succeed. */
+            @JvmField
+            public val BACKEND_UNAVAILABLE: Code = Code("backend_unavailable")
 
-        /** An unexpected server error. Retrying does not help. */
-        public const val INTERNAL_ERROR: String = "internal_error"
+            /** The app's configuration cannot serve this section. Retrying does not help. */
+            @JvmField
+            public val UNSUPPORTED: Code = Code("unsupported")
+
+            /** An unexpected server error. Retrying does not help. */
+            @JvmField
+            public val INTERNAL_ERROR: Code = Code("internal_error")
+        }
     }
 }

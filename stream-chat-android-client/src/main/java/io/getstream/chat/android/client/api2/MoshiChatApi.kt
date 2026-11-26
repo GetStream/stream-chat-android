@@ -106,6 +106,7 @@ import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
+import io.getstream.chat.android.models.SearchAllEntity
 import io.getstream.chat.android.models.SearchAllResult
 import io.getstream.chat.android.models.SearchAllSection
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -1564,15 +1565,15 @@ constructor(
 
     override fun searchAll(
         query: String,
-        entities: Set<String>?,
+        entities: Set<SearchAllEntity>?,
         limit: Int?,
-        next: Map<String, String>?,
+        next: Map<SearchAllEntity, String>?,
     ): Call<SearchAllResult> {
         val request = io.getstream.chat.android.network.models.SearchAllRequest(
             query = query,
-            entities = entities?.toList(),
+            entities = entities?.map(SearchAllEntity::value),
             limit = limit,
-            next = next,
+            next = next?.mapKeys { (entity, _) -> entity.value },
         )
         return endpoint { searchAll(searchAllRequest = request) }
             .flatMapDomain { response ->

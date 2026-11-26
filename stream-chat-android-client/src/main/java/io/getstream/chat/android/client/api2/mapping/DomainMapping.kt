@@ -1657,7 +1657,7 @@ internal class DomainMapping(
      * Transforms [SearchAllSectionErrorResponse] to [SearchAllSectionError].
      */
     internal fun SearchAllSectionErrorResponse.toDomain(): SearchAllSectionError = SearchAllSectionError(
-        code = code.value,
+        code = SearchAllSectionError.Code(code.value),
         message = message,
     )
 

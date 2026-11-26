@@ -16,16 +16,26 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
 /**
- * The sections a unified search can return.
+ * A section a unified search can return, for example [MESSAGES].
+ *
+ * @param value The name the server uses for the section.
  */
-public object SearchAllEntity {
-    /** Messages whose text matches the query, newest first. */
-    public const val MESSAGES: String = "messages"
+@Immutable
+public data class SearchAllEntity(val value: String) {
+    public companion object {
+        /** Messages whose text matches the query, newest first. */
+        @JvmField
+        public val MESSAGES: SearchAllEntity = SearchAllEntity("messages")
 
-    /** Users whose name or username starts with the query. */
-    public const val USERS: String = "users"
+        /** Users whose name or username starts with the query. */
+        @JvmField
+        public val USERS: SearchAllEntity = SearchAllEntity("users")
 
-    /** Channels the current user is a member of whose name starts with the query. */
-    public const val CHANNELS: String = "channels"
+        /** Channels the current user is a member of whose name starts with the query. */
+        @JvmField
+        public val CHANNELS: SearchAllEntity = SearchAllEntity("channels")
+    }
 }

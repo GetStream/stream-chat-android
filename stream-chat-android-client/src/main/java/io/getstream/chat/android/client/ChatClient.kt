@@ -233,6 +233,7 @@ import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
 import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.SearchAllEntity
 import io.getstream.chat.android.models.SearchAllResult
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.SyncStatus
@@ -2274,20 +2275,20 @@ internal constructor(
      * That stops the request. Cancelling the coroutine that waits on [Call.await] does not stop it.
      *
      * @param query The search text, 1 to 80 characters after removing leading and trailing whitespace.
-     * @param entities The sections to search, from [io.getstream.chat.android.models.SearchAllEntity]. Searches
-     * every section when null. Must not be empty.
+     * @param entities The sections to search, for example [SearchAllEntity.MESSAGES]. Searches every section when
+     * null. Must not be empty, and every entity must be one the server knows, or the call fails.
      * @param limit The number of results per section, 1 to 30. The server uses 10 when null.
-     * @param next The cursors of the next pages, keyed by entity from
-     * [io.getstream.chat.android.models.SearchAllEntity]. Cursors of sections not in [entities] are ignored.
+     * @param next The cursors of the next pages, keyed by entity. Every key must be an entity the server knows, or
+     * the call fails. Cursors of sections not in [entities] are ignored.
      *
      * @return Executable async [Call] responsible for the search.
      */
     @CheckResult
     public fun searchAll(
         query: String,
-        entities: Set<String>? = null,
+        entities: Set<SearchAllEntity>? = null,
         limit: Int? = null,
-        next: Map<String, String>? = null,
+        next: Map<SearchAllEntity, String>? = null,
     ): Call<SearchAllResult> = api.searchAll(
         query = query,
         entities = entities,

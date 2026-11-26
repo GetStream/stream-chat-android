@@ -2250,9 +2250,9 @@ internal class MoshiChatApiTest {
             searchAll(
                 searchAllRequest = SearchAllRequestDto(
                     query = "team",
-                    entities = listOf(SearchAllEntity.MESSAGES, SearchAllEntity.USERS, SearchAllEntity.CHANNELS),
+                    entities = listOf("messages", "users", "channels"),
                     limit = 5,
-                    next = mapOf(SearchAllEntity.USERS to "users-cursor", SearchAllEntity.CHANNELS to "channels-cursor"),
+                    next = mapOf("users" to "users-cursor", "channels" to "channels-cursor"),
                 ),
             )
         }
@@ -2292,11 +2292,11 @@ internal class MoshiChatApiTest {
         result shouldBeEqualTo Result.Success(
             SearchAllResult(
                 messages = SearchAllSection(
-                    error = SearchAllSectionError(code = SearchAllSectionError.BACKEND_TIMEOUT, message = "timed out"),
+                    error = SearchAllSectionError(code = SearchAllSectionError.Code.BACKEND_TIMEOUT, message = "timed out"),
                 ),
                 users = SearchAllSection(),
                 channels = SearchAllSection(
-                    error = SearchAllSectionError(code = "new_code", message = "new failure"),
+                    error = SearchAllSectionError(code = SearchAllSectionError.Code("new_code"), message = "new failure"),
                 ),
             ),
         )

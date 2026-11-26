@@ -72,6 +72,7 @@ import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageQueryStatus
+import io.getstream.chat.android.models.SearchAllEntity
 import io.getstream.chat.android.models.SearchAllResult
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
@@ -267,9 +268,9 @@ internal interface ChatApi {
     @CheckResult
     fun searchAll(
         query: String,
-        entities: Set<String>?,
+        entities: Set<SearchAllEntity>?,
         limit: Int?,
-        next: Map<String, String>?,
+        next: Map<SearchAllEntity, String>?,
     ): Call<SearchAllResult>
 
     @CheckResult
