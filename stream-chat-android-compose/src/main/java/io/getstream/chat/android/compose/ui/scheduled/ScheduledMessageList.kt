@@ -72,6 +72,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction
@@ -79,14 +80,16 @@ import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageItemS
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListEvent
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListState
 import kotlinx.coroutines.launch
+import java.util.Date
 
 /**
  * The list of the current user's scheduled messages, for apps that build their own screen around it. A click on a
- * message opens the actions its status allows: edit, reschedule, send now and delete, edit and schedule again a
- * message that failed, or copy the text of a message whose channel was deleted. A message that is sending, or whose
- * attachments are uploading, has no actions: a click tells the user to wait. Deleting asks for confirmation. A message
- * that is already sent or deleted on another device leaves the list with a short notice. Send now while offline tells
- * the user that the message is sent once the device is back online. Apps add their own actions with
+ * message opens the actions its status allows: edit, reschedule, send now and delete, edit or reschedule a message the
+ * server failed to send (it is scheduled again as a new message), or copy the text of a message whose channel was
+ * deleted. A message that is sending, or whose attachments are uploading, has no actions: a click tells the user to
+ * wait. Deleting asks for confirmation. A message that is already sent or deleted on another device leaves the list
+ * with a short notice. Send now tells the user that the message was sent, or, while the client is not connected, that
+ * it is sent once the device is back online. Apps add their own actions with
  * [io.getstream.chat.android.compose.ui.theme.ScheduledMessageActionsSheetParams.customActions].
  *
  * The list shows the messages that match the search query set with [ScheduledMessageListViewModel.setSearchQuery].
@@ -246,6 +249,10 @@ private fun ScheduledMessageListEvents(
                     context.getString(R.string.stream_compose_scheduled_message_list_send_now_queued),
                     StreamSnackbarVariant.Default,
                 )
+                is ScheduledMessageListEvent.SentNow -> showSnackbar(
+                    context.getString(R.string.stream_compose_scheduled_messages_sent),
+                    StreamSnackbarVariant.Default,
+                )
                 is ScheduledMessageListEvent.ActionFailed -> showSnackbar(
                     context.getString(R.string.stream_compose_scheduled_message_list_action_failed),
                     StreamSnackbarVariant.Error,
@@ -294,12 +301,13 @@ private fun ScheduledMessageListSheets(
     }
     state.itemOf(sheets.rescheduledId)?.let { item ->
         val scheduledMessage = item.scheduledMessage
+        val scheduleState = scheduleMessageState(viewModel.channelConfig(scheduledMessage.cid))
         ChatTheme.componentFactory.ScheduleMessageTimeSheet(
             params = ScheduleMessageTimeSheetParams(
                 message = scheduledMessage.message,
                 channelName = item.channelName(currentUser),
-                initialDate = scheduledMessage.scheduledAt,
-                state = scheduleMessageState(viewModel.channelConfig(scheduledMessage.cid)),
+                initialDate = remember(scheduledMessage.id) { rescheduleInitialDate(scheduledMessage, scheduleState) },
+                state = scheduleState,
                 error = null,
                 onConfirm = { date ->
                     sheets.rescheduledId = null
@@ -322,6 +330,16 @@ private fun ScheduledMessageListSheets(
             ),
         )
     }
+}
+
+/**
+ * The date the reschedule sheet starts at: the date of the [scheduledMessage], or the first quick date when the lead
+ * times of [state] no longer allow that date, for example once it has passed (as for a failed message) or is too soon.
+ */
+private fun rescheduleInitialDate(scheduledMessage: ScheduledMessage, state: ScheduleMessageState): Date {
+    val now = Date()
+    return scheduledMessage.scheduledAt.takeIf { state.dateError(it, now) == null }
+        ?: scheduleMessageQuickDates(now).first()
 }
 
 /**

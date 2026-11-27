@@ -248,7 +248,8 @@ private fun ScheduledMessageAction.content(): ActionContent? = when (this) {
     )
     ScheduledMessageAction.EditAndReschedule -> ActionContent(
         icon = R.drawable.stream_design_ic_edit,
-        label = R.string.stream_compose_scheduled_message_action_edit_and_reschedule,
+        // The edit of a message the server failed to send, which asks for a new date after the edit.
+        label = R.string.stream_compose_scheduled_message_action_edit,
         testTag = "Stream_ScheduledMessageAction_EditAndReschedule",
     )
     ScheduledMessageAction.Reschedule -> ActionContent(
@@ -334,9 +335,9 @@ internal fun ScheduledMessageActionsWithCustomActions() {
     )
 }
 
+// EditAndReschedule looks the same as Edit.
 private val PreviewActions = listOf(
     ScheduledMessageAction.Edit,
-    ScheduledMessageAction.EditAndReschedule,
     ScheduledMessageAction.Reschedule,
     ScheduledMessageAction.SendNow,
     ScheduledMessageAction.CopyText,

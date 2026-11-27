@@ -423,7 +423,6 @@
   <string name="stream_compose_scheduled_message_action_edit">"メッセージを編集"</string>
   <string name="stream_compose_scheduled_message_action_reschedule">"予約を変更"</string>
   <string name="stream_compose_scheduled_message_action_send_now">"今すぐ送信"</string>
-  <string name="stream_compose_scheduled_message_action_edit_and_reschedule">"編集して予約を変更"</string>
   <string name="stream_compose_scheduled_message_action_copy_text">"テキストをコピー"</string>
   <string name="stream_compose_scheduled_message_action_delete">"削除"</string>
   <string name="stream_compose_scheduled_message_delete_title">"予約メッセージを削除しますか？"</string>
@@ -440,6 +439,7 @@
   <string name="stream_compose_scheduled_message_failure_hook_rejected">"アプリにより拒否されました。"</string>
   <string name="stream_compose_scheduled_message_failure_expired">"未送信: サービスが遅延しました。"</string>
   <string name="stream_compose_scheduled_message_failure_invalid_message">"メッセージがアプリの制限を満たさなくなりました。編集してください。"</string>
+  <string name="stream_compose_scheduled_message_failure_quote_deleted_edit">"引用したメッセージは削除されました。編集して引用を削除してください。"</string>
   <string name="stream_compose_scheduled_message_failure_pending_not_supported">"このチャンネルでは承認が必要になりました。もう一度予約してください。"</string>
   <string name="stream_compose_scheduled_message_failure_internal_error">"問題が発生しました。もう一度お試しください。"</string>
   <string name="stream_compose_scheduled_message_failure_limit_channel">"このチャンネルの予約メッセージの上限に達しました。"</string>

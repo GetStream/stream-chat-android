@@ -76,6 +76,7 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -184,11 +185,11 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
-    fun `a message the server failed to send can be edited and scheduled again, or deleted`() = runTest {
+    fun `a message the server failed to send can be edited, rescheduled or deleted`() = runTest {
         val failed = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.Banned))
         val channelDeleted = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.ChannelDeleted))
 
-        failed.actions() shouldBeEqualTo listOf(EditAndReschedule, Delete)
+        failed.actions() shouldBeEqualTo listOf(EditAndReschedule, Reschedule, Delete)
         channelDeleted.actions() shouldBeEqualTo listOf(CopyText, Delete)
     }
 
@@ -246,6 +247,14 @@ internal class ScheduledMessageListControllerTest {
         val rejected = failed(ServerRejectedScheduling(ServerRejectedScheduling.Reason.ScheduledLimitChannel, ""))
 
         rejected.scheduledMessageActions(isQuoteDeleted = true, canSchedule = true) shouldBeEqualTo listOf(Edit, Delete)
+    }
+
+    @Test
+    fun `a message the server failed to send that quotes a deleted message can't be rescheduled`() = runTest {
+        val failed = failed(ServerFailedPublishing(ServerFailedPublishing.Reason.InvalidMessage))
+
+        failed.scheduledMessageActions(isQuoteDeleted = true, canSchedule = true) shouldBeEqualTo
+            listOf(EditAndReschedule, Delete)
     }
 
     @Test
@@ -629,6 +638,47 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
+    fun `a reschedule of a message the server failed to send schedules a new message, then deletes the failed one`() =
+        runTest {
+            hasLoadedAll.value = true
+            val failedMessage = failed(ServerFailedPublishing(reason = null))
+            scheduledMessages.value = listOf(failedMessage)
+            val (channelType, channelId) = failedMessage.cid.split(":")
+            val scheduledAt = randomDate()
+            whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn scheduled().asCall()
+            whenever(client.deleteScheduledMessage(failedMessage.id)) doReturn Unit.asCall()
+            val controller = controller()
+
+            controller.events.test {
+                controller.reschedule(failedMessage.id, scheduledAt)
+
+                expectNoEvents()
+            }
+            val content = failedMessage.editedContent(failedMessage.message, isQuoteRemoved = false)
+            val inOrder = inOrder(client)
+            inOrder.verify(client).scheduleMessage(channelType, channelId, content.copy(id = ""), scheduledAt)
+            inOrder.verify(client).deleteScheduledMessage(failedMessage.id)
+            verify(client, never()).rescheduleMessage(any(), any())
+        }
+
+    @Test
+    fun `a refused reschedule of a message the server failed to send keeps it and tells it failed`() = runTest {
+        hasLoadedAll.value = true
+        val failedMessage = failed(ServerFailedPublishing(reason = null))
+        scheduledMessages.value = listOf(failedMessage)
+        val error = Error.GenericError(randomString())
+        whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn error.asCall()
+        val controller = controller()
+
+        controller.events.test {
+            controller.reschedule(failedMessage.id, randomDate())
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.ActionFailed(error)
+        }
+        verify(client, never()).deleteScheduledMessage(any())
+    }
+
+    @Test
     fun `send now while offline tells it is queued until online`() = runTest {
         hasLoadedAll.value = true
         val scheduledMessage = scheduled()
@@ -645,7 +695,23 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
-    fun `send now while online tells nothing`() = runTest {
+    fun `send now while reconnecting tells it is queued until connected`() = runTest {
+        hasLoadedAll.value = true
+        val scheduledMessage = scheduled()
+        scheduledMessages.value = listOf(scheduledMessage)
+        whenever(client.sendScheduledMessageNow(scheduledMessage.id)) doReturn scheduledMessage.asCall()
+        val controller = controller()
+        connectionState.value = ConnectionState.Connecting
+
+        controller.events.test {
+            controller.sendNow(scheduledMessage.id)
+
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.SendNowQueued
+        }
+    }
+
+    @Test
+    fun `send now while online tells it is sent`() = runTest {
         hasLoadedAll.value = true
         val scheduledMessage = scheduled()
         scheduledMessages.value = listOf(scheduledMessage)
@@ -655,7 +721,7 @@ internal class ScheduledMessageListControllerTest {
         controller.events.test {
             controller.sendNow(scheduledMessage.id)
 
-            expectNoEvents()
+            awaitItem() shouldBeEqualTo ScheduledMessageListEvent.SentNow
         }
     }
 
