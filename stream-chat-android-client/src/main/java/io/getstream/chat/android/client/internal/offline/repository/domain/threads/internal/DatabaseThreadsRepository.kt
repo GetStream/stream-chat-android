@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.thre
 
 import android.util.LruCache
 import io.getstream.chat.android.client.extensions.internal.upsertReply
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
 import io.getstream.chat.android.client.persistance.repository.ThreadsRepository
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
@@ -28,6 +29,7 @@ import io.getstream.chat.android.models.User
 /**
  * Implementation of the [ThreadsRepository] backed by a database.
  *
+ * @param store Runs the writes. A write that reads a thread first reads it inside the same write.
  * @param threadDao The [ThreadDao] implementation for accessing the threads data.
  * @param threadOrderDao The [ThreadOrderDao] implementation for accessing the thread order data.
  * @param getUser Logic for retrieving a [User] by its ID.
@@ -36,7 +38,9 @@ import io.getstream.chat.android.models.User
  * @param getDraftMessage Logic for retrieving a [DraftMessage] by the Message ID it belongs to.
  * @param cacheSize The number of threads to cache.
  */
+@Suppress("LongParameterList")
 internal class DatabaseThreadsRepository(
+    private val store: ChatStore,
     private val threadDao: ThreadDao,
     private val threadOrderDao: ThreadOrderDao,
     private val getUser: suspend (userId: String) -> User,
@@ -48,15 +52,20 @@ internal class DatabaseThreadsRepository(
 
     private val cache = LruCache<String, Thread>(cacheSize)
 
+    init {
+        // A cached thread that was never stored would be returned by the next read.
+        store.onRollback { cache.evictAll() }
+    }
+
     override suspend fun insertThreadOrder(id: String, order: List<String>) {
-        threadOrderDao.insertThreadOrder(ThreadOrderEntity(id, order))
+        store.write { threadOrderDao.insertThreadOrder(ThreadOrderEntity(id, order)) }
     }
 
     override suspend fun selectThreadOrder(id: String): List<String> {
         return threadOrderDao.selectThreadOrder(id)?.order.orEmpty()
     }
 
-    override suspend fun insertThreads(threads: List<Thread>) {
+    override suspend fun insertThreads(threads: List<Thread>) = store.write {
         // Update cache
         threads.forEach { thread ->
             cache.put(thread.parentMessageId, thread)
@@ -68,20 +77,16 @@ internal class DatabaseThreadsRepository(
 
     override suspend fun upsertMessageInThread(message: Message) {
         val threadId = message.parentId ?: return
-        // Check cache first, then read from DB
-        val thread = cache[threadId]
-            ?: threadDao.selectThread(threadId)?.toModel(getUser, getMessage, getChannel, getDraftMessage)
-            ?: return
-        val updatedThread = thread.upsertReply(message)
-        // Update cache
-        cache.put(threadId, updatedThread)
-        // Update DB
-        threadDao.insertThread(updatedThread.toEntity())
+        store.write { upsertReplies(setOf(threadId), listOf(message)) }
     }
 
     override suspend fun upsertMessagesInThread(messages: List<Message>) {
         val threadIds = messages.mapNotNull(Message::parentId).toSet()
         if (threadIds.isEmpty()) return
+        store.write { upsertReplies(threadIds, messages) }
+    }
+
+    private suspend fun upsertReplies(threadIds: Set<String>, messages: List<Message>) {
         // Check cache first, then read from DB
         val cachedThreads = threadIds.mapNotNull { id -> cache[id] }
         val cachedThreadIds = cachedThreads.map(Thread::parentMessageId).toSet()
@@ -113,37 +118,24 @@ internal class DatabaseThreadsRepository(
             }
             .map(Thread::toEntity)
         // Update DB
-        threadDao.insertThreads(updatedThreads)
+        if (updatedThreads.isNotEmpty()) threadDao.insertThreads(updatedThreads)
     }
 
-    override suspend fun selectThread(id: String): Thread? {
-        // Check cache first, then read from DB
-        val thread = cache[id]
+    // A thread read from the cache is not put back: a rollback may have evicted it in the meantime.
+    override suspend fun selectThread(id: String): Thread? =
+        cache[id]
             ?: threadDao.selectThread(id)?.toModel(getUser, getMessage, getChannel, getDraftMessage)
-            ?: return null
-        // Update cache
-        cache.put(id, thread)
-        return thread
-    }
+                ?.also { cache.put(id, it) }
 
-    override suspend fun selectThreads(ids: List<String>): List<Thread> {
-        // Important: Fetch threads sequentially so that their order is preserved (as the [ids] are ordered).
-        val threads = ids.mapNotNull { id ->
-            // Check cache first, then read from DB
-            cache[id] ?: threadDao.selectThread(id)?.toModel(getUser, getMessage, getChannel, getDraftMessage)
-        }.onEach { thread ->
-            // Update cache
-            cache.put(thread.parentMessageId, thread)
-        }
-        return threads
-    }
+    // Fetched one by one, so the threads keep the order of the [ids].
+    override suspend fun selectThreads(ids: List<String>): List<Thread> = ids.mapNotNull { selectThread(it) }
 
-    override suspend fun deleteChannelThreads(cid: String) {
+    override suspend fun deleteChannelThreads(cid: String) = store.write {
         cache.evictAll()
         threadDao.deleteThreads(cid)
     }
 
-    override suspend fun clear() {
+    override suspend fun clear() = store.write {
         cache.evictAll()
         threadDao.deleteAll()
         threadOrderDao.deleteAll()
