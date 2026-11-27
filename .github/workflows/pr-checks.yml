@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@7909ff7419c9ba4dc1f9c1e81b1d16fc2eef36b6 # conventions PR 114, test only
     with:
       save-gradle-cache: true
     secrets:
