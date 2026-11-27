@@ -64,7 +64,7 @@ jobs:
       actions: read
       contents: read
     name: Test compose
-    runs-on: { group: github-public-amd64 }
+    runs-on: ubuntu-24.04
     needs:
       - build-compose-apks
       - build-compose-apks-coverage

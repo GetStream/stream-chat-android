@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@178f8ddfa4c28ba19ba66c1c54f9091b00ef6c40 # v1.5.0
     with:
       save-gradle-cache: true
     secrets:
@@ -30,10 +30,10 @@ jobs:
       contents: read
       pull-requests: read
     name: Detekt
-    runs-on: { group: github-public-amd64 }
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@178f8ddfa4c28ba19ba66c1c54f9091b00ef6c40 # v1.5.0
         with:
           cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/develop' }}
       - name: Detekt
@@ -43,10 +43,10 @@ jobs:
     permissions:
       contents: read
     name: Release build
-    runs-on: { group: github-public-amd64 }
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@178f8ddfa4c28ba19ba66c1c54f9091b00ef6c40 # v1.5.0
       - name: Build
         run: ./gradlew assembleRelease
   remove-older-gradle-caches:
@@ -54,7 +54,7 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
     permissions:
       actions: write
-    uses: GetStream/stream-build-conventions-android/.github/workflows/gradle-cache-cleanup.yml@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+    uses: GetStream/stream-build-conventions-android/.github/workflows/gradle-cache-cleanup.yml@178f8ddfa4c28ba19ba66c1c54f9091b00ef6c40 # v1.5.0
   rubocop:
     permissions:
       contents: read
