@@ -301,12 +301,13 @@ private fun ScheduledMessageListSheets(
     }
     state.itemOf(sheets.rescheduledId)?.let { item ->
         val scheduledMessage = item.scheduledMessage
+        val scheduleState = scheduleMessageState(viewModel.channelConfig(scheduledMessage.cid))
         ChatTheme.componentFactory.ScheduleMessageTimeSheet(
             params = ScheduleMessageTimeSheetParams(
                 message = scheduledMessage.message,
                 channelName = item.channelName(currentUser),
-                initialDate = remember(scheduledMessage.id) { rescheduleInitialDate(scheduledMessage.scheduledAt) },
-                state = scheduleMessageState(viewModel.channelConfig(scheduledMessage.cid)),
+                initialDate = remember(scheduledMessage.id) { rescheduleInitialDate(scheduledMessage, scheduleState) },
+                state = scheduleState,
                 error = null,
                 onConfirm = { date ->
                     sheets.rescheduledId = null
@@ -332,12 +333,13 @@ private fun ScheduledMessageListSheets(
 }
 
 /**
- * The date the reschedule sheet starts at: the date of the message, or the first quick date once that date has passed,
- * as for a failed message, since a date that passed can't be picked again.
+ * The date the reschedule sheet starts at: the date of the [scheduledMessage], or the first quick date when the lead
+ * times of [state] no longer allow that date, for example once it has passed (as for a failed message) or is too soon.
  */
-private fun rescheduleInitialDate(scheduledAt: Date): Date {
+private fun rescheduleInitialDate(scheduledMessage: ScheduledMessage, state: ScheduleMessageState): Date {
     val now = Date()
-    return scheduledAt.takeIf { it.after(now) } ?: scheduleMessageQuickDates(now).first()
+    return scheduledMessage.scheduledAt.takeIf { state.dateError(it, now) == null }
+        ?: scheduleMessageQuickDates(now).first()
 }
 
 /**

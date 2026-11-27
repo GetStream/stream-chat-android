@@ -334,6 +334,24 @@ internal class ScheduledMessagesScreenTest {
     }
 
     @Test
+    fun `reschedule of a message due within the min lead time starts at a date that can be confirmed`() {
+        // Due in 30 seconds, sooner than the default min lead time of 60 seconds.
+        val message = scheduled().copy(scheduledAt = Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30)))
+        scheduledMessagesFlow.value = listOf(message)
+        whenever(client.rescheduleMessage(eq(message.id), any())) doReturn message.asCall()
+        setContent()
+
+        openActions()
+        clickTag("Stream_ScheduledMessageAction_Reschedule")
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageError").assertDoesNotExist()
+        clickTag("Stream_ScheduleMessageConfirm")
+        composeTestRule.waitForIdle()
+
+        val minDate = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(60)
+        verify(client).rescheduleMessage(eq(message.id), argThat { time >= minDate })
+    }
+
+    @Test
     fun `copy text copies the text of a message whose channel was deleted`() {
         scheduledMessagesFlow.value = listOf(
             scheduled(
