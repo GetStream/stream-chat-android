@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    // Raises the parser version the renderer depends on, which parses some text slowly.
+    implementation(libs.markdown)
     implementation(libs.markdown.renderer)
     implementation(libs.markdown.renderer.m3)
     implementation(libs.markdown.renderer.code)

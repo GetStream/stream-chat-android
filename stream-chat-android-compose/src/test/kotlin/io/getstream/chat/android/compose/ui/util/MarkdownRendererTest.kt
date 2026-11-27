@@ -29,9 +29,11 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.util.internal.MarkdownRenderer
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.concurrent.TimeUnit
 
 internal class MarkdownRendererTest {
 
@@ -268,6 +270,15 @@ internal class MarkdownRendererTest {
         val source = "**~*~~~*~*~**~*~* h e a r d ***~*~*~**~*~~~*"
 
         renderer.render(source).text.isNotEmpty() shouldBeEqualTo true
+    }
+
+    @Test
+    @Timeout(value = 2, unit = TimeUnit.SECONDS)
+    fun `renders a long run of brackets quickly`() {
+        // Older parsers took seconds on this, growing with the square of its length.
+        val source = "[".repeat(20_000)
+
+        renderer.render(source).text shouldBeEqualTo source
     }
 
     // JUnit resolves these by name for @MethodSource, so nothing references them in code.

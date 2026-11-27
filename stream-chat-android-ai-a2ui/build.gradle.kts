@@ -62,6 +62,8 @@ dependencies {
     // the icons package.
     implementation(libs.androidx.compose.material.icons.core)
     // The Markdown renderer stream-chat-android-ai-compose uses, for Text.
+    // Raises the parser version the renderer depends on, which parses some text slowly.
+    implementation(libs.markdown)
     implementation(libs.markdown.renderer)
     implementation(libs.markdown.renderer.m3)
     // Agent-written patterns match in linear time, which java.util.regex can't promise.
