@@ -24,7 +24,8 @@ public fun interface UserTransformer {
 
     /**
      * Transforms the [user] before returning it to the caller.
-     * This can be used to add extra data to the message object and/or encrypt/decrypt it.
+     * This can be used to add extra data to the user object and/or encrypt/decrypt it.
+     * The [user] may hold only its id, such as a channel member or thread participant received without its user.
      *
      * @return The transformed user.
      */

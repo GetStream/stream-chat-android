@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.internal.state.plugin.state.internal.TrackedQueryChannelsStateFlow
 import io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.message.isEphemeral
@@ -505,7 +506,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
                     logic.channelFromMessage(message)?.deleteMessage(message)
                     logic.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
                     logic.threadFromMessage(message)?.removeLocalMessage(message)
-                    repositoryFacade.deleteChannelMessage(message)
+                    repositoryFacade.write { repositoryFacade.deleteChannelMessage(message) }
 
                     Result.Success(true)
                 } catch (exception: Exception) {

@@ -38,6 +38,26 @@ import org.junit.runner.RunWith
 /** A [ChatStore] with no database behind it: its writes run one at a time, but in no transaction. */
 internal fun testChatStore(): ChatStore = ChatStore { block -> block() }
 
+/** A [store] with no database behind it that counts its writes and tells whether one is running. */
+internal class WriteRecorder {
+
+    var writes = 0
+        private set
+
+    var isWriting = false
+        private set
+
+    val store = ChatStore { block ->
+        writes++
+        isWriting = true
+        try {
+            block()
+        } finally {
+            isWriting = false
+        }
+    }
+}
+
 @RunWith(AndroidJUnit4::class)
 internal class ChatStoreTest {
 

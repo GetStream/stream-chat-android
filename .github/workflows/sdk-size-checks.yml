@@ -13,12 +13,7 @@ concurrency:
 
 jobs:
   compare-sdk-sizes:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-checks.yml@75cf8105224a5fb02ad06fb4cc52b1a45a71d440 # v1.3.1
+    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-checks.yml@178f8ddfa4c28ba19ba66c1c54f9091b00ef6c40 # v1.5.0
     with:
       modules: "stream-chat-android-client stream-chat-android-ui-components stream-chat-android-compose stream-chat-android-ai-compose stream-chat-android-ai-ondevice stream-chat-android-ai-a2ui stream-chat-android-ai-openui"
       metrics-project: "stream-chat-android-metrics"
-    secrets:
-      BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
-      BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
-      BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
-      BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}

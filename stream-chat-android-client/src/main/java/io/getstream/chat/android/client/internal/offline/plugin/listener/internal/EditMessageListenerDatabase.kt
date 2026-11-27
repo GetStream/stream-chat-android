@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.internal.offline.plugin.listener.intern
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.updateFailedMessage
 import io.getstream.chat.android.client.extensions.updateMessageOnlineState
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatStore
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.writeOrRun
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
@@ -30,11 +32,13 @@ import io.getstream.result.Result
 /**
  * Implementation of [EditMessageListener] that deals with database read and write.
  *
+ * @param store Runs what a hook stores as one write.
  * @param userRepository [UserRepository]
  * @param messageRepository [MessageRepository]
  * @param clientState [ClientState]
  */
 internal class EditMessageListenerDatabase(
+    private val store: ChatStore?,
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
     private val clientState: ClientState,
@@ -68,7 +72,9 @@ internal class EditMessageListenerDatabase(
     }
 
     private suspend fun saveMessage(message: Message) {
-        userRepository.insertUsers(message.users())
-        messageRepository.insertMessage(message)
+        store.writeOrRun {
+            userRepository.insertUsers(message.users())
+            messageRepository.insertMessage(message)
+        }
     }
 }

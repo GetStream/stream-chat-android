@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.DraftMessage
@@ -53,6 +54,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -74,6 +76,14 @@ internal class UploadAttachmentsIntegrationTests {
     val testCoroutines = TestCoroutineRule()
 
     private val messageRepository = MockMessageRepository()
+    private val repositoryFacade: RepositoryFacade = mock {
+        onBlocking { it.selectMessage(any()) } doSuspendableAnswer {
+            messageRepository.selectMessage(it.getArgument(0))
+        }
+        onBlocking { it.insertMessage(any()) } doSuspendableAnswer {
+            messageRepository.insertMessage(it.getArgument(0))
+        }
+    }
 
     private val chatClient: ChatClient = mock {
         on(it.containsStoredCredentials()) doReturn true
@@ -110,7 +120,7 @@ internal class UploadAttachmentsIntegrationTests {
                 channelType,
                 channelId,
                 channelLogic,
-                messageRepository,
+                repositoryFacade,
                 chatClient,
                 uploader!!,
             )

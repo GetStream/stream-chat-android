@@ -226,7 +226,7 @@ internal class QueryChannelsLogicGroupedWatchTest {
 
         logic.watchAndAddChannel(channel.cid)
 
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).addChannelsState(any(), any())
     }
 
     private fun givenWatchReturns(channel: Channel) {

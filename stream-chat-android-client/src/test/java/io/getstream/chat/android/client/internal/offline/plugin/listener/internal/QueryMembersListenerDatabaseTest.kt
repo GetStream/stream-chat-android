@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.testChatStore
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.models.Filters
@@ -38,7 +39,11 @@ internal class QueryMembersListenerDatabaseTest {
 
     private val userRepository: UserRepository = mock()
     private val channelRepository: ChannelRepository = mock()
-    private val queryMembersListenerDatabase = QueryMembersListenerDatabase(userRepository, channelRepository)
+    private val queryMembersListenerDatabase = QueryMembersListenerDatabase(
+        testChatStore(),
+        userRepository,
+        channelRepository,
+    )
 
     @Test
     fun `when query members is successful database should be updated`() = runTest {

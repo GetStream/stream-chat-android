@@ -159,6 +159,7 @@ internal class ChannelLogicLegacyImpl(
         scrollUpdate: Boolean,
         isNotificationUpdate: Boolean,
         isChannelsStateUpdate: Boolean,
+        fromServer: Boolean,
     ) {
         stateLogic.updateDataForChannel(
             channel,
@@ -168,6 +169,8 @@ internal class ChannelLogicLegacyImpl(
             isNotificationUpdate,
             isChannelsStateUpdate = isChannelsStateUpdate,
         )
+        // Last, so whoever observes it already sees the reads and messages of this response.
+        if (fromServer) stateLogic.writeChannelState().setLoadedFromServer(true)
     }
 
     override fun upsertMembers(members: List<Member>) {

@@ -32,8 +32,6 @@ on:
         value: ${{ jobs.build.outputs.e2e_batches }}
 
 env:
-  # The Gradle build cache comes from the Actions cache below instead of S3.
-  GRADLE_LOCAL_BUILD_CACHE: 'true'
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
   E2E_REQUIRED: ${{ inputs.e2e_required }}
@@ -45,7 +43,9 @@ jobs:
       contents: read
       pull-requests: read
     name: ${{ inputs.app }} apks${{ inputs.coverage && ' (coverage)' || '' }}
-    runs-on: { group: github-public-amd64 }
+    # No GitHub API calls here: e2e-scope decides E2E_REQUIRED on the static-IP runner, so a
+    # standard GitHub-hosted runner works. Without E2E_REQUIRED, fastlane would ask the API itself.
+    runs-on: ubuntu-24.04
     outputs:
       e2e_batches: ${{ steps.select_e2e_tests.outputs.e2e_batches }}
     steps:

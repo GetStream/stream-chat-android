@@ -4,10 +4,6 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
-  BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
-  BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
-  BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -16,7 +12,7 @@ jobs:
       actions: write
       contents: read
     name: Test Backend Integration
-    runs-on: { group: github-public-amd64 }
+    runs-on: ubuntu-24.04
     env:
       ANDROID_API_LEVEL: 34
     steps:

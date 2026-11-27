@@ -1705,13 +1705,28 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `ChannelMemberResponse without a user is mapped to a Member holding only the user id`() {
+    fun `ChannelMemberResponse without a user is mapped to a Member holding the transformed user id`() {
         val memberResponse = randomChannelMemberResponse().copy(user = null)
-        val sut = Fixture().get()
+        val sut = Fixture()
+            .withUserTransformer { it.copy(name = "transformed ${it.id}") }
+            .get()
 
         val member = with(sut) { memberResponse.toDomain() }
 
-        assertEquals(User(id = memberResponse.userId.orEmpty()), member.user)
+        val userId = memberResponse.userId.orEmpty()
+        assertEquals(User(id = userId, name = "transformed $userId"), member.user)
+    }
+
+    @Test
+    fun `ThreadParticipant without a user is mapped to the transformed user id`() {
+        val participantDto = randomThreadParticipantDto(userId = "user1", user = null)
+        val sut = Fixture()
+            .withUserTransformer { it.copy(name = "transformed ${it.id}") }
+            .get()
+
+        val participant = with(sut) { participantDto.toDomain() }
+
+        assertEquals(User(id = "user1", name = "transformed user1"), participant.user)
     }
 
     @Test
