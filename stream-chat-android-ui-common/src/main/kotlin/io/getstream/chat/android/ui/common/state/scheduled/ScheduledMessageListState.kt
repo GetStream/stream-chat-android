@@ -25,7 +25,7 @@ import io.getstream.result.Error
  * The state of a list of the current user's scheduled messages.
  *
  * @param items All the scheduled messages, whatever the [searchQuery], sorted by the date they are sent at, then by
- * their text.
+ * the date they were scheduled (oldest first), then by their ID.
  * @param isLoading Whether the scheduled messages are loading, and none is known yet.
  * @param isLoadFailed Whether the scheduled messages could not be loaded, or can't be while offline, and none is
  * known yet.
