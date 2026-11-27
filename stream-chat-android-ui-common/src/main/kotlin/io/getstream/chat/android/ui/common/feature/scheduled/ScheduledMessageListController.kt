@@ -130,7 +130,11 @@ public class ScheduledMessageListController(
     ) { (scheduledMessages, cidsWithoutScheduling), isKnown, cannotLoad, deletedQuotes, (searchQuery, currentUserId) ->
         val isUnknown = scheduledMessages.isEmpty() && !isKnown
         val items = scheduledMessages
-            .sortedWith(compareBy(ScheduledMessage::scheduledAt).thenBy { it.message.text })
+            .sortedWith(
+                compareBy(ScheduledMessage::scheduledAt)
+                    .thenBy(ScheduledMessage::createdAt)
+                    .thenBy(ScheduledMessage::id),
+            )
             .map { scheduledMessage ->
                 scheduledMessage.toItemState(
                     deletedQuotes = deletedQuotes,

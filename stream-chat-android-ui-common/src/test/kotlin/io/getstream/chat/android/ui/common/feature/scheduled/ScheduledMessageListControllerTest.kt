@@ -131,17 +131,20 @@ internal class ScheduledMessageListControllerTest {
     }
 
     @Test
-    fun `sorts the messages by their date, then by their text, whatever their status`() = runTest {
-        val late = scheduled(scheduledAt = Date(3_000))
-        val failed = scheduled(scheduledAt = Date(2_000), status = ScheduledMessageStatus.Failed)
-        val sameTimeB = scheduled(scheduledAt = Date(1_000), text = "b")
-        val sameTimeA = scheduled(scheduledAt = Date(1_000), text = "a")
-        scheduledMessages.value = listOf(late, sameTimeB, sameTimeA, failed)
+    fun `sorts the messages by their date, then by when they were scheduled, then by their ID, whatever their status`() =
+        runTest {
+            val late = scheduled(scheduledAt = Date(3_000))
+            val failed = scheduled(scheduledAt = Date(2_000), status = ScheduledMessageStatus.Failed)
+            val sameTimeNew = scheduled(scheduledAt = Date(1_000), createdAt = Date(200), id = "0", text = "a")
+            val sameTimeOldB = scheduled(scheduledAt = Date(1_000), createdAt = Date(100), id = "b", text = "a")
+            val sameTimeOldA = scheduled(scheduledAt = Date(1_000), createdAt = Date(100), id = "a", text = "b")
+            scheduledMessages.value = listOf(late, sameTimeNew, sameTimeOldB, failed, sameTimeOldA)
 
-        val items = controller().state.value.items
+            val items = controller().state.value.items
 
-        items.map { it.scheduledMessage } shouldBeEqualTo listOf(sameTimeA, sameTimeB, failed, late)
-    }
+            items.map { it.scheduledMessage } shouldBeEqualTo
+                listOf(sameTimeOldA, sameTimeOldB, sameTimeNew, failed, late)
+        }
 
     @Test
     fun `the scope of a channel lists its messages only, thread replies included`() = runTest {
@@ -1149,8 +1152,10 @@ internal class ScheduledMessageListControllerTest {
 
     @Suppress("LongParameterList")
     private fun scheduled(
+        id: String = randomString(),
         cid: String = randomCID(),
         scheduledAt: Date = randomDate(),
+        createdAt: Date = randomDate(),
         status: ScheduledMessageStatus = ScheduledMessageStatus.Scheduled,
         text: String = randomString(),
         parentId: String? = null,
@@ -1159,7 +1164,6 @@ internal class ScheduledMessageListControllerTest {
         attachments: List<Attachment> = emptyList(),
         mentionedUsersIds: List<String> = emptyList(),
     ): ScheduledMessage {
-        val id = randomString()
         return randomScheduledMessage(
             id = id,
             cid = cid,
@@ -1176,6 +1180,7 @@ internal class ScheduledMessageListControllerTest {
             ).copy(mentionedUsersIds = mentionedUsersIds),
             scheduledAt = scheduledAt,
             status = status,
+            createdAt = createdAt,
         )
     }
 }
