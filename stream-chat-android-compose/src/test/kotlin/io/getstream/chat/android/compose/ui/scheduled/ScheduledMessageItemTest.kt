@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.scheduled
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -97,6 +98,30 @@ internal class ScheduledMessageItemTest {
         )
     }
 
+    @Test
+    fun `a failed row of an invalid message with a deleted quote tells to edit the quote out`() {
+        val deletedQuote = Message(id = "quoted", text = "Quoted", deletedAt = Date())
+        val invalid = ServerFailedPublishing(ServerFailedPublishing.Reason.InvalidMessage)
+        val banned = ServerFailedPublishing(ServerFailedPublishing.Reason.Banned)
+        composeTestRule.setContent {
+            ChatTheme {
+                Column {
+                    ScheduledMessageItem(item = failedItem(0, invalid, deletedQuote), currentUser = null, onClick = {})
+                    ScheduledMessageItem(item = failedItem(1, banned, deletedQuote), currentUser = null, onClick = {})
+                }
+            }
+        }
+
+        listOf(
+            "The quoted message was deleted. Edit it to remove the quote.",
+            "You can't send messages in this channel.",
+        ).forEach { text ->
+            composeTestRule.onAllNodes(hasText(text), useUnmergedTree = true).assertCountEquals(1)
+        }
+        composeTestRule.onAllNodes(hasText("The message no longer meets the app's limits. Edit it."), useUnmergedTree = true)
+            .assertCountEquals(0)
+    }
+
     private fun rejected(reason: ServerRejectedScheduling.Reason?) =
         ServerRejectedScheduling(reason = reason, message = "raw server message")
 
@@ -116,7 +141,11 @@ internal class ScheduledMessageItemTest {
         }
     }
 
-    private fun failedItem(index: Int, failure: ScheduledMessageFailure): ScheduledMessageItemState {
+    private fun failedItem(
+        index: Int,
+        failure: ScheduledMessageFailure,
+        quotedMessage: Message? = null,
+    ): ScheduledMessageItemState {
         val channel = Channel(type = "messaging", id = "general", name = "General")
         val date = Date()
         val message = Message(id = "id-$index", cid = channel.cid, text = "Message $index")
@@ -133,7 +162,7 @@ internal class ScheduledMessageItemTest {
                 updatedAt = date,
             ),
             channel = channel,
-            quotedMessage = null,
+            quotedMessage = quotedMessage,
             actions = emptyList(),
         )
     }

@@ -21,7 +21,9 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -60,9 +62,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
@@ -218,6 +222,20 @@ internal class ScheduledMessagesScreenTest {
     }
 
     @Test
+    fun `send now while online tells it is sent`() {
+        val message = scheduled()
+        scheduledMessagesFlow.value = listOf(message)
+        whenever(client.sendScheduledMessageNow(message.id)) doReturn message.asCall()
+        setContent()
+
+        openActions()
+        clickTag("Stream_ScheduledMessageAction_SendNow")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Scheduled message sent").assertExists()
+    }
+
+    @Test
     fun `send now while offline tells it is queued until online`() {
         val message = scheduled()
         scheduledMessagesFlow.value = listOf(message)
@@ -279,6 +297,40 @@ internal class ScheduledMessagesScreenTest {
         composeTestRule.waitForIdle()
 
         verify(client).rescheduleMessage(eq(message.id), any())
+    }
+
+    @Test
+    fun `a message the server failed to send can be edited, rescheduled or deleted`() {
+        scheduledMessagesFlow.value = listOf(serverFailed())
+        setContent()
+
+        openActions()
+
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_EditAndReschedule").assert(hasText("Edit message"))
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Reschedule").assertExists()
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Delete").assertExists()
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_Edit").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Stream_ScheduledMessageAction_SendNow").assertDoesNotExist()
+    }
+
+    @Test
+    fun `reschedule of a message the server failed to send schedules it again at a future date`() {
+        val message = serverFailed()
+        scheduledMessagesFlow.value = listOf(message)
+        whenever(client.scheduleMessage(any(), any(), any(), any())) doReturn scheduled(id = "new").asCall()
+        whenever(client.deleteScheduledMessage(message.id)) doReturn Unit.asCall()
+        setContent()
+
+        openActions()
+        clickTag("Stream_ScheduledMessageAction_Reschedule")
+        // The date that passed is not offered again, so the sheet starts at a date that can be confirmed.
+        composeTestRule.onNodeWithTag("Stream_ScheduleMessageError").assertDoesNotExist()
+        clickTag("Stream_ScheduleMessageConfirm")
+        composeTestRule.waitForIdle()
+
+        verify(client).scheduleMessage(eq(channel.type), eq(channel.id), any(), argThat { after(Date()) })
+        verify(client).deleteScheduledMessage(message.id)
+        verify(client, never()).rescheduleMessage(any(), any())
     }
 
     @Test
@@ -380,6 +432,13 @@ internal class ScheduledMessagesScreenTest {
         }
         composeTestRule.waitForIdle()
     }
+
+    private fun serverFailed(): ScheduledMessage = scheduled(
+        status = ScheduledMessageStatus.Failed,
+        failure = ScheduledMessageFailure.ServerFailedPublishing(
+            ScheduledMessageFailure.ServerFailedPublishing.Reason.InternalError,
+        ),
+    ).let { it.copy(scheduledAt = Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1))) }
 
     private fun scheduled(
         id: String = "scheduled-1",

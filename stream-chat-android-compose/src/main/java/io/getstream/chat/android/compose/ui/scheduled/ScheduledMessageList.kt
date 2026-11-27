@@ -72,6 +72,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.scheduleMessageQuickDates
 import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageAction
@@ -79,6 +80,7 @@ import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageItemS
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListEvent
 import io.getstream.chat.android.ui.common.state.scheduled.ScheduledMessageListState
 import kotlinx.coroutines.launch
+import java.util.Date
 
 /**
  * The list of the current user's scheduled messages, for apps that build their own screen around it. A click on a
@@ -246,6 +248,10 @@ private fun ScheduledMessageListEvents(
                     context.getString(R.string.stream_compose_scheduled_message_list_send_now_queued),
                     StreamSnackbarVariant.Default,
                 )
+                is ScheduledMessageListEvent.SentNow -> showSnackbar(
+                    context.getString(R.string.stream_compose_scheduled_messages_sent),
+                    StreamSnackbarVariant.Default,
+                )
                 is ScheduledMessageListEvent.ActionFailed -> showSnackbar(
                     context.getString(R.string.stream_compose_scheduled_message_list_action_failed),
                     StreamSnackbarVariant.Error,
@@ -298,7 +304,7 @@ private fun ScheduledMessageListSheets(
             params = ScheduleMessageTimeSheetParams(
                 message = scheduledMessage.message,
                 channelName = item.channelName(currentUser),
-                initialDate = scheduledMessage.scheduledAt,
+                initialDate = remember(scheduledMessage.id) { rescheduleInitialDate(scheduledMessage.scheduledAt) },
                 state = scheduleMessageState(viewModel.channelConfig(scheduledMessage.cid)),
                 error = null,
                 onConfirm = { date ->
@@ -322,6 +328,15 @@ private fun ScheduledMessageListSheets(
             ),
         )
     }
+}
+
+/**
+ * The date the reschedule sheet starts at: the date of the message, or the first quick date once that date has passed,
+ * as for a failed message, since a date that passed can't be picked again.
+ */
+private fun rescheduleInitialDate(scheduledAt: Date): Date {
+    val now = Date()
+    return scheduledAt.takeIf { it.after(now) } ?: scheduleMessageQuickDates(now).first()
 }
 
 /**

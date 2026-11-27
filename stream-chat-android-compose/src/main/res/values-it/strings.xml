@@ -442,7 +442,6 @@
   <string name="stream_compose_scheduled_message_action_edit">"Modifica messaggio"</string>
   <string name="stream_compose_scheduled_message_action_reschedule">"Riprogramma"</string>
   <string name="stream_compose_scheduled_message_action_send_now">"Invia ora"</string>
-  <string name="stream_compose_scheduled_message_action_edit_and_reschedule">"Modifica e riprogramma"</string>
   <string name="stream_compose_scheduled_message_action_copy_text">"Copia testo"</string>
   <string name="stream_compose_scheduled_message_action_delete">"Elimina"</string>
   <string name="stream_compose_scheduled_message_delete_title">"Eliminare il messaggio programmato?"</string>
@@ -459,6 +458,7 @@
   <string name="stream_compose_scheduled_message_failure_hook_rejected">"Rifiutato dall\'app."</string>
   <string name="stream_compose_scheduled_message_failure_expired">"Non inviato: il servizio ha subito un ritardo."</string>
   <string name="stream_compose_scheduled_message_failure_invalid_message">"Il messaggio non rispetta più i limiti dell\'app. Modificalo."</string>
+  <string name="stream_compose_scheduled_message_failure_quote_deleted_edit">"Il messaggio citato è stato eliminato. Modificalo per rimuovere la citazione."</string>
   <string name="stream_compose_scheduled_message_failure_pending_not_supported">"Questo canale ora richiede l\'approvazione. Programmalo di nuovo."</string>
   <string name="stream_compose_scheduled_message_failure_internal_error">"Si è verificato un errore. Riprova."</string>
   <string name="stream_compose_scheduled_message_failure_limit_channel">"Hai raggiunto il limite di messaggi programmati in questo canale."</string>

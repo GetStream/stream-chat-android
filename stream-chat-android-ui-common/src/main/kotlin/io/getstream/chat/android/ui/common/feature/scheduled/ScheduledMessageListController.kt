@@ -202,11 +202,21 @@ public class ScheduledMessageListController(
      * Changes the date the scheduled message with [id] is sent at. When the server answers that the message was
      * already sent or deleted, it leaves the list and [ScheduledMessageListEvent.MessageGone] is sent.
      *
+     * A message the server failed to send ([ServerFailedPublishing]) can't be changed: it is scheduled again at
+     * [scheduledAt] as a new message, and deleted once the new message is saved locally, as [editAndReschedule] does
+     * without an edit.
+     *
      * @param id The ID of the scheduled message.
      * @param scheduledAt The new date.
      */
     public fun reschedule(id: String, scheduledAt: Date) {
         ownScope.launch {
+            val scheduledMessage = chatClient.scheduledMessages.value.find { it.id == id }
+            if (scheduledMessage?.failure is ServerFailedPublishing) {
+                val content = scheduledMessage.editedContent(scheduledMessage.message, isQuoteRemoved = false)
+                scheduleAgain(id, content, scheduledAt)
+                return@launch
+            }
             when (val result = chatClient.rescheduleMessage(id, scheduledAt).await()) {
                 is Result.Success -> if (isGoneOnServer(id)) _events.send(ScheduledMessageListEvent.MessageGone)
                 is Result.Failure -> onRefused(id, result.value)
@@ -215,17 +225,21 @@ public class ScheduledMessageListController(
     }
 
     /**
-     * Sends the scheduled message with [id] right away. While offline, it is sent once the device is back online, and
-     * [ScheduledMessageListEvent.SendNowQueued] is sent.
+     * Sends the scheduled message with [id] right away, and sends [ScheduledMessageListEvent.SentNow]. While offline,
+     * it is sent once the device is back online, and [ScheduledMessageListEvent.SendNowQueued] is sent instead.
      *
      * @param id The ID of the scheduled message.
      */
     public fun sendNow(id: String) {
         ownScope.launch {
             when (val result = chatClient.sendScheduledMessageNow(id).await()) {
-                is Result.Success -> if (chatClient.clientState.connectionState.value is ConnectionState.Offline) {
-                    _events.send(ScheduledMessageListEvent.SendNowQueued)
-                }
+                is Result.Success -> _events.send(
+                    if (chatClient.clientState.connectionState.value is ConnectionState.Offline) {
+                        ScheduledMessageListEvent.SendNowQueued
+                    } else {
+                        ScheduledMessageListEvent.SentNow
+                    },
+                )
                 is Result.Failure -> onRefused(id, result.value)
             }
         }
@@ -330,29 +344,7 @@ public class ScheduledMessageListController(
         onResult: (Result<ScheduledMessage>) -> Unit = {},
     ) {
         ownScope.launch {
-            val content = editedContent(id, message, isQuoteRemoved, resolveAttachments)
-            // Scheduling and deleting finish together, also when the controller is closed meanwhile, so the failed
-            // message is never left next to the new one. The failed message leaves the list before the caller learns
-            // the result, so it can't be scheduled again meanwhile. A delete is local first.
-            val (result, deleted) = withContext(NonCancellable) {
-                val result = content?.let {
-                    val (channelType, channelId) = it.cid.cidToTypeAndId()
-                    // A new message, with a new ID.
-                    chatClient.scheduleMessage(channelType, channelId, it.copy(id = ""), scheduledAt).await()
-                } ?: goneResult(id)
-                val deleted = if (result is Result.Success) {
-                    deletedIds += id
-                    chatClient.deleteScheduledMessage(id).await()
-                } else {
-                    null
-                }
-                result to deleted
-            }
-            onResult(result)
-            when {
-                result is Result.Failure -> onRefused(id, result.value, content?.replyMessageId)
-                deleted is Result.Failure -> onRefused(id, deleted.value)
-            }
+            scheduleAgain(id, editedContent(id, message, isQuoteRemoved, resolveAttachments), scheduledAt, onResult)
         }
     }
 
@@ -417,6 +409,41 @@ public class ScheduledMessageListController(
         val scheduledMessage = chatClient.scheduledMessages.value.find { it.id == id } ?: return null
         val content = scheduledMessage.editedContent(composed, isQuoteRemoved)
         return resolveAttachments?.let { content.copy(attachments = it(content.attachments)) } ?: content
+    }
+
+    /**
+     * Schedules [content] at [scheduledAt] as a new message that replaces the scheduled message with [id], which the
+     * server failed to send, then deletes the failed one and calls [onResult]. A null [content] means the message is
+     * no longer there.
+     */
+    private suspend fun scheduleAgain(
+        id: String,
+        content: Message?,
+        scheduledAt: Date,
+        onResult: (Result<ScheduledMessage>) -> Unit = {},
+    ) {
+        // Scheduling and deleting finish together, also when the controller is closed meanwhile, so the failed
+        // message is never left next to the new one. The failed message leaves the list before the caller learns
+        // the result, so it can't be scheduled again meanwhile. A delete is local first.
+        val (result, deleted) = withContext(NonCancellable) {
+            val result = content?.let {
+                val (channelType, channelId) = it.cid.cidToTypeAndId()
+                // A new message, with a new ID.
+                chatClient.scheduleMessage(channelType, channelId, it.copy(id = ""), scheduledAt).await()
+            } ?: goneResult(id)
+            val deleted = if (result is Result.Success) {
+                deletedIds += id
+                chatClient.deleteScheduledMessage(id).await()
+            } else {
+                null
+            }
+            result to deleted
+        }
+        onResult(result)
+        when {
+            result is Result.Failure -> onRefused(id, result.value, content?.replyMessageId)
+            deleted is Result.Failure -> onRefused(id, deleted.value)
+        }
     }
 
     private fun <T : Any> goneResult(id: String): Result<T> =
@@ -571,11 +598,11 @@ private val Attachment.isUploaded: Boolean
     get() = uploadState == Attachment.UploadState.Success && assetUrl != null
 
 private fun ScheduledMessageFailure?.failedActions(): List<ScheduledMessageAction> = when (this) {
-    // The server can't change a message it failed to send: it is edited and scheduled again as a new message.
+    // The server can't change a message it failed to send: an edit or a reschedule schedules it again as a new message.
     is ServerFailedPublishing -> if (reason == ServerFailedPublishing.Reason.ChannelDeleted) {
         listOf(ScheduledMessageAction.CopyText, ScheduledMessageAction.Delete)
     } else {
-        listOf(ScheduledMessageAction.EditAndReschedule, ScheduledMessageAction.Delete)
+        ServerFailedActions
     }
     // The server is sending the message, or it failed to send: it ends sent or failed, never editable again.
     is ServerRejectedScheduling -> if (reason in NotEditableReasons) {
@@ -605,6 +632,12 @@ private val SchedulingActions = setOf(
 
 private val FailedChangeActions = listOf(
     ScheduledMessageAction.Edit,
+    ScheduledMessageAction.Reschedule,
+    ScheduledMessageAction.Delete,
+)
+
+private val ServerFailedActions = listOf(
+    ScheduledMessageAction.EditAndReschedule,
     ScheduledMessageAction.Reschedule,
     ScheduledMessageAction.Delete,
 )

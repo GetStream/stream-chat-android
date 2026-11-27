@@ -80,15 +80,18 @@ public abstract class ScheduledMessageAction internal constructor() {
     /** Edits the content of the message, and keeps its date. */
     public data object Edit : ScheduledMessageAction()
 
-    /** Changes the date the message is sent at. */
+    /**
+     * Changes the date the message is sent at. A message the server failed to send is scheduled again at the new date
+     * as a new message, as the server can't change it.
+     */
     public data object Reschedule : ScheduledMessageAction()
 
     /** Sends the message right away. */
     public data object SendNow : ScheduledMessageAction()
 
     /**
-     * Edits a message the server failed to send, and schedules it again as a new message, as the server can't change
-     * it.
+     * Edits a message the server failed to send, then asks for a new date and schedules it again as a new message, as
+     * the server can't change it. It is the edit action of such a message, in place of [Edit].
      */
     public data object EditAndReschedule : ScheduledMessageAction()
 
@@ -119,6 +122,11 @@ public abstract class ScheduledMessageListEvent internal constructor() {
      * Send now was asked while offline: the message is sent once the device is back online.
      */
     public data object SendNowQueued : ScheduledMessageListEvent()
+
+    /**
+     * Send now was asked while online: the message is sent right away.
+     */
+    public data object SentNow : ScheduledMessageListEvent()
 
     /**
      * An action on a scheduled message failed.

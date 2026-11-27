@@ -230,9 +230,23 @@ private sealed interface ItemStatus {
 private fun ScheduledMessageItemState.status(): ItemStatus? = when {
     scheduledMessage.status == ScheduledMessageStatus.Sending -> ItemStatus.Sending
     scheduledMessage.isUploading -> ItemStatus.Uploading
-    scheduledMessage.status == ScheduledMessageStatus.Failed -> ItemStatus.Failed(scheduledMessage.failure.description)
+    scheduledMessage.status == ScheduledMessageStatus.Failed -> ItemStatus.Failed(failureDescription())
     isQuoteDeleted -> ItemStatus.Failed(R.string.stream_compose_scheduled_message_failure_quote_deleted)
     else -> null
+}
+
+/**
+ * The text that says why the failed message was not sent. The server refuses to send a quote of a deleted message as
+ * an invalid message, so the text tells to edit the quote out.
+ */
+private fun ScheduledMessageItemState.failureDescription(): Int {
+    val failure = scheduledMessage.failure
+    val isInvalid = failure is ServerFailedPublishing && failure.reason == ServerFailedPublishing.Reason.InvalidMessage
+    return if (isInvalid && isQuoteDeleted) {
+        R.string.stream_compose_scheduled_message_failure_quote_deleted_edit
+    } else {
+        failure.description
+    }
 }
 
 /**

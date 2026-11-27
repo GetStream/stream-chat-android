@@ -423,7 +423,6 @@
   <string name="stream_compose_scheduled_message_action_edit">"메시지 수정"</string>
   <string name="stream_compose_scheduled_message_action_reschedule">"예약 변경"</string>
   <string name="stream_compose_scheduled_message_action_send_now">"지금 보내기"</string>
-  <string name="stream_compose_scheduled_message_action_edit_and_reschedule">"수정 후 예약 변경"</string>
   <string name="stream_compose_scheduled_message_action_copy_text">"텍스트 복사"</string>
   <string name="stream_compose_scheduled_message_action_delete">"삭제"</string>
   <string name="stream_compose_scheduled_message_delete_title">"예약 메시지를 삭제할까요?"</string>
@@ -440,6 +439,7 @@
   <string name="stream_compose_scheduled_message_failure_hook_rejected">"앱에서 거부되었습니다."</string>
   <string name="stream_compose_scheduled_message_failure_expired">"전송되지 않음: 서비스가 지연되었습니다."</string>
   <string name="stream_compose_scheduled_message_failure_invalid_message">"메시지가 더 이상 앱의 제한을 충족하지 않습니다. 수정하세요."</string>
+  <string name="stream_compose_scheduled_message_failure_quote_deleted_edit">"인용한 메시지가 삭제되었습니다. 수정해서 인용을 삭제하세요."</string>
   <string name="stream_compose_scheduled_message_failure_pending_not_supported">"이제 이 채널은 승인이 필요합니다. 다시 예약하세요."</string>
   <string name="stream_compose_scheduled_message_failure_internal_error">"문제가 발생했습니다. 다시 시도하세요."</string>
   <string name="stream_compose_scheduled_message_failure_limit_channel">"이 채널의 예약 메시지 한도에 도달했습니다."</string>

@@ -114,8 +114,10 @@ class ScheduledMessagesTests : StreamTestCase() {
                 .openScheduledMessagesFromBanner()
                 .sendScheduledMessageNow(sampleText)
         }
-        step("THEN the message leaves the list") {
-            userRobot.assertScheduledMessagesAreEmpty()
+        step("THEN a notice says it was sent, and the message leaves the list") {
+            userRobot
+                .assertScheduledMessageSentSnackbar()
+                .assertScheduledMessagesAreEmpty()
         }
         step("AND the message is in the channel, and the banner is gone") {
             userRobot
@@ -280,6 +282,30 @@ class ScheduledMessagesTests : StreamTestCase() {
             userRobot
                 .assertScheduledMessage(editedText, time = tomorrowAt(10))
                 .assertScheduledMessageIsNotShown(sampleText)
+        }
+    }
+
+    @Test
+    fun test_scheduledMessageFailedByTheServerIsRescheduled() {
+        val internalError = appContext.getString(ComposeR.string.stream_compose_scheduled_message_failure_internal_error)
+        step("GIVEN user schedules a message that the server fails to send") {
+            userRobot.login().openChannel().scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+            backendRobot.failScheduledMessage(failureReason = "internal_error")
+        }
+        step("WHEN user reschedules it to 10:00") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessageFailed(sampleText, internalError)
+                .rescheduleScheduledMessage(sampleText, hour = 10)
+        }
+        step("THEN the list shows it at the new time") {
+            userRobot.assertScheduledMessage(sampleText, time = tomorrowAt(10))
+        }
+        step("AND the banner shows it scheduled, no longer failed") {
+            userRobot
+                .pressBack()
+                .assertScheduledMessagesBanner(Banner.scheduledFor(tomorrowAt(10)))
         }
     }
 
@@ -508,12 +534,12 @@ class ScheduledMessagesTests : StreamTestCase() {
                 .openScheduledMessagesFromBanner()
                 .assertScheduledMessageFailed(sampleText, banned)
         }
-        step("AND the message can only be edited and scheduled again, or deleted") {
+        step("AND the message can only be edited and scheduled again, rescheduled, or deleted") {
             userRobot
                 .openScheduledMessageActions(sampleText)
                 .assertScheduledMessageActions(
-                    shown = listOf(Actions.editAndReschedule, Actions.delete),
-                    hidden = listOf(Actions.edit, Actions.reschedule, Actions.sendNow),
+                    shown = listOf(Actions.editAndReschedule, Actions.reschedule, Actions.delete),
+                    hidden = listOf(Actions.edit, Actions.sendNow),
                 )
         }
         step("WHEN user deletes it") {
@@ -860,6 +886,31 @@ class ScheduledMessagesTests : StreamTestCase() {
                     shown = listOf(Actions.edit, Actions.delete),
                     hidden = listOf(Actions.reschedule, Actions.sendNow),
                 )
+        }
+    }
+
+    @Test
+    fun test_scheduledReplyFailedByTheServerForADeletedQuoteSaysToEditItOut() {
+        val parentText = "Parent"
+        val quoteDeleted =
+            appContext.getString(ComposeR.string.stream_compose_scheduled_message_failure_quote_deleted_edit)
+        step("GIVEN user schedules a reply to a message that is deleted afterwards") {
+            userRobot
+                .login()
+                .openChannel()
+                .sendMessage(parentText)
+                .selectReplyFromContextMenu()
+                .scheduleMessage(sampleText)
+            backendRobot.waitForScheduledMessage(sampleText)
+            userRobot.deleteMessage(parentText)
+        }
+        step("WHEN the server fails to send it as an invalid message") {
+            backendRobot.failScheduledMessage(failureReason = "invalid_message")
+        }
+        step("THEN the list says to edit the reply to remove the quote") {
+            userRobot
+                .openScheduledMessagesFromBanner()
+                .assertScheduledMessageFailed(sampleText, quoteDeleted)
         }
     }
 
