@@ -518,6 +518,7 @@ internal class QueryChannelsLogicTest {
                     includeScheduledMessages
             },
         )
+        verify(queryChannelsDatabaseLogic).storeStateForChannels(loadedChannels.take(PAGE_SIZE).toSet())
         verify(queryChannelsDatabaseLogic).storeStateForChannels(loadedChannels.drop(PAGE_SIZE).toSet())
     }
 

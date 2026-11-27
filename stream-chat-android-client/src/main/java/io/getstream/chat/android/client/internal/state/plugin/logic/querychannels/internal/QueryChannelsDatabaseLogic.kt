@@ -18,14 +18,13 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.querychanne
 
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
-import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.Message
 
 /**
@@ -39,16 +38,20 @@ internal data class CachedQueryChannels(
     val channels: List<Channel>,
 )
 
-@Suppress("LongParameterList")
 internal class QueryChannelsDatabaseLogic(
     private val queryChannelsRepository: QueryChannelsRepository,
-    private val channelConfigRepository: ChannelConfigRepository,
     private val channelRepository: ChannelRepository,
     private val repositoryFacade: RepositoryFacade,
 ) {
 
-    internal suspend fun storeStateForChannels(channels: Collection<Channel>) {
-        repositoryFacade.storeStateForChannels(channels)
+    /**
+     * Stores the configs, the state and the messages of [channels] in one write, with the query [spec] when given.
+     */
+    internal suspend fun storeStateForChannels(channels: Collection<Channel>, spec: QueryChannelsSpec? = null) {
+        repositoryFacade.write {
+            spec?.let { queryChannelsRepository.insertQueryChannels(it) }
+            repositoryFacade.storeStateForChannels(channels)
+        }
     }
 
     /**
@@ -102,14 +105,5 @@ internal class QueryChannelsDatabaseLogic(
      */
     internal suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
         return queryChannelsRepository.insertQueryChannels(queryChannelsSpec)
-    }
-
-    /**
-     * Insert the configs of the channels
-     *
-     * @param configs Collection<ChannelConfig>
-     */
-    internal suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
-        return channelConfigRepository.insertChannelConfigs(configs)
     }
 }

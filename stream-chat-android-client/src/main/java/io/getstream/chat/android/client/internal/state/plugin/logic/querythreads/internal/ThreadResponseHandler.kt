@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.extensions.internal.applyThreadUpdatedEv
 import io.getstream.chat.android.client.extensions.internal.upsertReply
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.log.taggedLogger
@@ -33,8 +34,7 @@ import kotlinx.coroutines.CancellationException
  * newer event. This holds for replies too: the server and [upsertReply] both move `updatedAt` to the newest reply.
  * A thread is never added to a loaded list, as it may not match the list's query.
  *
- * The stored thread is read, compared and written outside the lock of the event handler, as the event and query paths
- * also do: an event batch written in between is replaced until the next event or query.
+ * The stored thread is read, compared and written in one write of the store, so no event batch is stored in between.
  *
  * A failure here is logged and never changes the result of the request. The loaded lists are updated even when the
  * database write fails.
@@ -52,11 +52,13 @@ internal class ThreadResponseHandler(
     suspend fun onThreadFetched(thread: Thread) {
         safely("onThreadFetched:state") { logic.getActiveQueryThreadsLogic().forEach { it.replaceThread(thread) } }
         safely("onThreadFetched:db") {
-            val stored = repos.selectThread(thread.parentMessageId)
-            if (stored?.updatedAt?.after(thread.updatedAt) == true) {
-                logger.d { "[onThreadFetched] stored ${thread.parentMessageId} is newer than the response" }
-            } else {
-                repos.insertThreads(listOf(thread))
+            repos.write {
+                val stored = repos.selectThread(thread.parentMessageId)
+                if (stored?.updatedAt?.after(thread.updatedAt) == true) {
+                    logger.d { "[onThreadFetched] stored ${thread.parentMessageId} is newer than the response" }
+                } else {
+                    repos.insertThreads(listOf(thread))
+                }
             }
         }
     }
@@ -69,10 +71,12 @@ internal class ThreadResponseHandler(
             logic.getActiveQueryThreadsLogic().forEach { it.applyThreadInfo(threadInfo) }
         }
         safely("onThreadPartiallyUpdated:db") {
-            // A thread not stored yet is left to the next query: the response has no replies or reads.
-            val stored = repos.selectThread(threadInfo.parentMessageId)
-            if (stored != null && !stored.updatedAt.after(threadInfo.updatedAt)) {
-                repos.insertThreads(listOf(stored.applyThreadUpdatedEventChanges(threadInfo)))
+            repos.write {
+                // A thread not stored yet is left to the next query: the response has no replies or reads.
+                val stored = repos.selectThread(threadInfo.parentMessageId)
+                if (stored != null && !stored.updatedAt.after(threadInfo.updatedAt)) {
+                    repos.insertThreads(listOf(stored.applyThreadUpdatedEventChanges(threadInfo)))
+                }
             }
         }
     }
