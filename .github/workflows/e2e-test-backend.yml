@@ -12,7 +12,7 @@ jobs:
       actions: write
       contents: read
     name: Test Backend Integration
-    runs-on: { group: github-public-amd64 }
+    runs-on: ubuntu-24.04
     env:
       ANDROID_API_LEVEL: 34
     steps:

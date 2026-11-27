@@ -159,6 +159,16 @@ internal class ReasoningTextTest {
     }
 
     @Test
+    fun `a link of another scheme keeps only its label`() {
+        val text = ReasoningParagraph.annotated("Open [**Settings**](myapp://settings/delete-account) now")
+
+        assertEquals("Open Settings now", text.text)
+        assertEquals(emptyList<Any>(), text.getLinkAnnotations(0, text.length))
+        val bold = text.spanStyles.filter { it.item.fontWeight == FontWeight.SemiBold }.map { text.text.substring(it.start, it.end) }
+        assertEquals(listOf("Settings"), bold)
+    }
+
+    @Test
     fun `unclosed markdown is shown as written`() {
         assertEquals("a **half", ReasoningParagraph.annotated("a **half").text)
         assertEquals("snake_case_name stays", ReasoningParagraph.annotated("snake_case_name stays").text)
