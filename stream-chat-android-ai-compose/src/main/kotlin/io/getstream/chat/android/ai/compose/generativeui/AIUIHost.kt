@@ -27,6 +27,8 @@ import io.getstream.chat.android.ai.compose.parts.AIClientTool
 import io.getstream.chat.android.ai.compose.parts.AIClientToolResult
 import io.getstream.chat.android.ai.compose.parts.AIToolCallPart
 import io.getstream.chat.android.ai.compose.parts.Json
+import io.getstream.chat.android.ai.compose.util.internal.DefaultLinkSchemes
+import io.getstream.chat.android.ai.compose.util.internal.isOpenableLink
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import org.json.JSONException
@@ -71,7 +73,7 @@ public class AIUIHost(
     renderers: List<AIUIRenderer>,
     components: List<AIUIComponent> = emptyList(),
     tools: List<AIClientTool> = emptyList(),
-    linkSchemes: Set<String> = setOf(HTTP, HTTPS, MAILTO),
+    linkSchemes: Set<String> = DefaultLinkSchemes,
     private val send: (AIUIAction) -> Unit,
 ) {
     /** The renderer of each format the agent writes, the first one listed asked first. */
@@ -186,22 +188,7 @@ public class AIUIHost(
      *
      * @param url The link the agent wrote.
      */
-    public fun canOpen(url: String): Boolean {
-        val scheme = url.substringBefore(':', missingDelimiterValue = "").lowercase(Locale.ROOT)
-        val allowed = scheme.isNotEmpty() && scheme in linkSchemes
-        if (!allowed || url.any { it.isWhitespace() || it.isISOControl() }) return false
-        return scheme != HTTPS && scheme != HTTP || hasHost(url.substring(scheme.length + 1))
-    }
-
-    // Whether the rest of a web link, after its scheme, names a host.
-    private fun hasHost(rest: String): Boolean {
-        if (!rest.startsWith("//")) return false
-        val authority = rest.drop(2).substringBefore('/').substringBefore('?').substringBefore('#')
-        val host = authority.substringAfterLast('@')
-        // An IPv6 host keeps its colons in brackets; otherwise a colon starts the port.
-        val name = if (host.startsWith("[")) host.substringBefore(']') else host.substringBefore(':')
-        return name.isNotEmpty()
-    }
+    public fun canOpen(url: String): Boolean = isOpenableLink(url, linkSchemes)
 
     /**
      * Opens a link from a reply's UI with [uriHandler], when [canOpen] lets it.
@@ -298,10 +285,6 @@ public class AIUIHost(
     // The engine of the renderer at this position, made the first time it is needed.
     private fun engine(position: Int): AIUIEngine = engines.getOrPut(position) { renderers[position].makeEngine(this) }
 }
-
-private const val HTTPS = "https"
-private const val HTTP = "http"
-private const val MAILTO = "mailto"
 
 /**
  * A tool a reply's UI ran that the host has none of, or that failed.
