@@ -83,7 +83,7 @@ dependencies {
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.constraintlayout.compose)
@@ -110,6 +110,8 @@ dependencies {
     // UI
     implementation(libs.reorderable)
     implementation(libs.shimmer.compose)
+
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Tests
     testImplementation(project(":stream-chat-android-test"))
