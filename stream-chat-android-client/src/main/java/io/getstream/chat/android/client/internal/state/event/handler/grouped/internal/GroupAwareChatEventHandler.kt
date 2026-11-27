@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.internal.state.utils.internal.mergeParti
 import io.getstream.chat.android.client.internal.state.utils.internal.unhidesChannel
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
+import io.getstream.chat.android.client.utils.channel.isUnreadableChannelStub
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
@@ -80,16 +81,12 @@ internal class GroupAwareChatEventHandler(
 
             is NotificationAddedToChannelEvent -> watchAndAddIfBelongsHere(event.cid, event.channel, filter)
 
-            // channel.visible replayed by /sync can carry a channel with only its type and id.
-            is ChannelVisibleEvent -> {
-                val hasOnlyTypeAndId = event.channel == Channel(id = event.channel.id, type = event.channel.type)
-                when {
-                    !hasOnlyTypeAndId -> watchAndAddIfBelongsHere(event.cid, event.channel, filter)
-                    cachedChannel != null -> watchAndAddIfBelongsHere(event.cid, cachedChannel, filter)
-                    // Nothing to resolve the group against: a later channel.updated removes it if it belongs elsewhere.
-                    else -> EventHandlingResult.WatchAndAdd(event.cid)
+            is ChannelVisibleEvent ->
+                if (event.channel.isUnreadableChannelStub()) {
+                    EventHandlingResult.Skip
+                } else {
+                    watchAndAddIfBelongsHere(event.cid, event.channel, filter)
                 }
-            }
 
             else -> super.handleChatEvent(event, filter, cachedChannel)
         }

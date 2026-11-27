@@ -210,7 +210,7 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
-    fun `Given no cached channel When ChannelVisibleEvent arrives Should route by the event channel`() {
+    fun `Given no stored channel When ChannelVisibleEvent carries a channel of this group Should watch and add`() {
         val channel = randomChannel(disabled = false, blocked = false, extraData = mapOf("group" to "vip"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
         val event = randomChannelVisibleEvent(cid = channel.cid, channel = channel)
@@ -221,35 +221,18 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
-    fun `Given a cached channel When ChannelVisibleEvent carries only type and id Should route by the cached channel`() {
-        val cachedChannel = randomChannel(disabled = false, blocked = false, extraData = mapOf("group" to "vip"))
+    fun `Given a channel of another group When ChannelVisibleEvent arrives Should skip`() {
+        val channel = randomChannel(disabled = false, blocked = false, extraData = mapOf("group" to "other"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomChannelVisibleEvent(
-            cid = cachedChannel.cid,
-            channel = Channel(id = cachedChannel.id, type = cachedChannel.type),
-        )
-
-        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
-
-        assertEquals(EventHandlingResult.WatchAndAdd(cachedChannel.cid), result)
-    }
-
-    @Test
-    fun `Given no cached channel When ChannelVisibleEvent carries only type and id Should watch and add`() {
-        val channel = randomChannel(disabled = false, blocked = false)
-        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
-        val event = randomChannelVisibleEvent(
-            cid = channel.cid,
-            channel = Channel(id = channel.id, type = channel.type),
-        )
+        val event = randomChannelVisibleEvent(cid = channel.cid, channel = channel)
 
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
-        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+        assertEquals(EventHandlingResult.Skip, result)
     }
 
     @Test
-    fun `Given a stale cached channel When ChannelVisibleEvent carries the full channel Should route by the event channel`() {
+    fun `Given a stale stored channel When ChannelVisibleEvent carries the full channel Should route by the event channel`() {
         val channel = randomChannel(disabled = false, blocked = false, extraData = mapOf("group" to "vip"))
         val cachedChannel = channel.copy(extraData = mapOf("group" to "other"))
         val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
@@ -258,6 +241,44 @@ internal class GroupAwareChatEventHandlerTest {
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
 
         assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
+    fun `Given no stored channel When ChannelVisibleEvent carries a placeholder Should skip`() {
+        val channel = randomChannel(disabled = false, blocked = false)
+        val handler = handlerFor(groupKey = "all", cachedChannels = emptyMap())
+        val event = randomChannelVisibleEvent(cid = channel.cid, channel = placeholderOf(channel))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given no stored channel When ChannelVisibleEvent carries a placeholder with v1 dates Should skip`() {
+        val channel = randomChannel(disabled = false, blocked = false)
+        val handler = handlerFor(groupKey = "all", cachedChannels = emptyMap())
+        val event = randomChannelVisibleEvent(
+            cid = channel.cid,
+            channel = placeholderOf(channel, zeroTime = Date(V1_ZERO_TIME)),
+        )
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given a stored copy still listing the user When ChannelVisibleEvent carries a placeholder Should skip`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(disabled = false, blocked = false, extraData = mapOf("group" to "vip"))
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = true)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = currentUser)
+        val event = randomChannelVisibleEvent(cid = channel.cid, channel = placeholderOf(channel))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
     }
 
     @Test
@@ -1001,6 +1022,10 @@ internal class GroupAwareChatEventHandlerTest {
             ),
         )
 
+    /** The channel a replayed event carries when the user can't read it: its ids and the zero time as its dates. */
+    private fun placeholderOf(channel: Channel, zeroTime: Date = Date(0)) =
+        Channel(id = channel.id, type = channel.type, createdAt = zeroTime, updatedAt = zeroTime)
+
     private fun channelMessage(createdAt: Date) = randomMessage(
         type = "regular",
         createdAt = createdAt,
@@ -1030,5 +1055,10 @@ internal class GroupAwareChatEventHandlerTest {
             blockedUserIds = { blockedUserIds },
             now = { now },
         )
+    }
+
+    private companion object {
+        /** 0001-01-01T00:00:00Z, the backend's zero time as v1 sends it. */
+        const val V1_ZERO_TIME = -62_135_596_800_000L
     }
 }

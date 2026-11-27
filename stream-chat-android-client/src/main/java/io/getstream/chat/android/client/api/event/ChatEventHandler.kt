@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.utils.channel.isUnreadableChannelStub
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 
@@ -85,7 +86,8 @@ public sealed class EventHandlingResult {
  * The channel will be removed from the set after receiving
  * [ChannelDeletedEvent], [NotificationChannelDeletedEvent], [ChannelHiddenEvent] events.
  *
- * The channel will be watched and added to the set after receiving [ChannelVisibleEvent] event.
+ * The channel will be watched and added to the set after receiving [ChannelVisibleEvent] event, unless the event
+ * was replayed after a reconnection for a channel the user can no longer read.
  *
  * Other events will be skipped.
  */
@@ -104,7 +106,12 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
             is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
             is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
             is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
-            is ChannelVisibleEvent -> EventHandlingResult.WatchAndAdd(event.cid)
+            is ChannelVisibleEvent ->
+                if (event.channel.isUnreadableChannelStub()) {
+                    EventHandlingResult.Skip
+                } else {
+                    EventHandlingResult.WatchAndAdd(event.cid)
+                }
             else -> EventHandlingResult.Skip
         }
     }

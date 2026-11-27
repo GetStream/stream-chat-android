@@ -398,4 +398,16 @@ internal class ChannelUtilsTests {
         // then
         assertEquals(null, result)
     }
+
+    @Test
+    fun `A channel created at the epoch or year 1 is the stub of a channel the user can't read`() {
+        randomChannel(createdAt = Date(0)).isUnreadableChannelStub() shouldBeEqualTo true
+        randomChannel(createdAt = Date(-62_135_596_800_000L)).isUnreadableChannelStub() shouldBeEqualTo true
+    }
+
+    @Test
+    fun `A channel with a real or unknown creation date is not a stub`() {
+        randomChannel(createdAt = Date(1)).isUnreadableChannelStub() shouldBeEqualTo false
+        randomChannel(createdAt = null).isUnreadableChannelStub() shouldBeEqualTo false
+    }
 }
