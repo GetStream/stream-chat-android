@@ -50,9 +50,13 @@ internal class NodeContext(val surface: Surface, val node: Node) {
     fun string(name: String): String? = A2UIJson.string(value(name))
 
     /** Property [name] as text, resolved without the secrets a person typed, for a value that leaves the device. */
-    fun sharedString(name: String): String? = A2UIJson.string(
-        evaluator.evaluate(component.dynamic(name), evaluator.withoutSecrets(node.context)),
-    )
+    fun sharedString(name: String): String? {
+        val value = component.dynamic(name)
+        // Only a binding or a call reads data, so only they need the copy of the data model.
+        val readsData = value is DynamicValue.Binding || value is DynamicValue.Call
+        val context = if (readsData) evaluator.withoutSecrets(node.context) else node.context
+        return A2UIJson.string(evaluator.evaluate(value, context))
+    }
 
     fun double(name: String): Double? = A2UIJson.double(value(name))
 

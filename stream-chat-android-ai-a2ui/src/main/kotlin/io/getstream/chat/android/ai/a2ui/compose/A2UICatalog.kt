@@ -34,6 +34,8 @@ public typealias A2UIComponentRenderer = @Composable (scope: A2UIComponentScope)
  * }
  * ```
  *
+ * A renderer that loads media reads its URL with [A2UIComponentScope.mediaUrl].
+ *
  * To keep the agent from using a type, remove it with [removing]. The agent is told about the basic
  * catalog's types the catalog draws, and a type the catalog has no renderer for shows nothing.
  *

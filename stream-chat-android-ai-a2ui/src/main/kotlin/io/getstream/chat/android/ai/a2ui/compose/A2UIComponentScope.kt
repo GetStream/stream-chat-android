@@ -81,9 +81,11 @@ public class A2UIComponentScope internal constructor(
     /**
      * Property [name] as the URL an image, video or audio clip loads from: the one the agent wrote
      * when it is a web link, or what the app's media URL resolver makes of it. `null` doesn't load.
+     *
+     * It never carries what a person typed into an `obscured` text field, which [string] and
+     * [value] read, so a renderer that loads media reads its URL here.
      */
-    internal fun mediaUrl(name: String): String? {
-        // Loading the URL sends it to its host, so it never carries what a person typed into an obscured field.
+    public fun mediaUrl(name: String): String? {
         val url = context.sharedString(name)?.takeIf { it.isNotEmpty() } ?: return null
         val resolve = environment.mediaUrl ?: return url.takeIf(AIImageLoader::isLoadable)
         return resolve(url)

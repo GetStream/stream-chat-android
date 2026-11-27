@@ -646,6 +646,24 @@ internal class A2UIRendererTest {
     }
 
     @Test
+    fun `the app's own media renderer reads a URL without what a person typed into an obscured field`() {
+        val loaded = mutableListOf<String?>()
+        val renderer = A2UIRenderer(
+            catalog = A2UICatalog.Basic.with("Image") { scope -> loaded.add(scope.mediaUrl("url")) },
+        )
+        val url = mapOf("@call" to "formatString", "args" to mapOf("value" to "https://example.com/i.png?p=\${/password}"))
+        show(
+            document(passwordForm(mapOf("event" to mapOf("name" to "none")), mapOf("id" to "image", "component" to "Image", "url" to url))),
+            host = AIUIHost(renderers = listOf(renderer)) {},
+        )
+
+        rule.onNodeWithText("Password").performTextInput("hunter2")
+        rule.waitForIdle()
+
+        assertEquals(setOf("https://example.com/i.png?p="), loaded.toSet())
+    }
+
+    @Test
     fun `the agent places the app's component, which reports its events`() {
         show(
             document(
