@@ -119,12 +119,13 @@ public abstract class ScheduledMessageListEvent internal constructor() {
     public data object DeletedMessageAlreadySent : ScheduledMessageListEvent()
 
     /**
-     * Send now was asked while offline: the message is sent once the device is back online.
+     * Send now was asked while the client was not connected (offline or reconnecting): the message is sent once the
+     * client is connected again.
      */
     public data object SendNowQueued : ScheduledMessageListEvent()
 
     /**
-     * Send now was asked while online: the message is sent right away.
+     * Send now was asked while the client was connected: the message is sent right away.
      */
     public data object SentNow : ScheduledMessageListEvent()
 

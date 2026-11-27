@@ -84,11 +84,12 @@ import java.util.Date
 
 /**
  * The list of the current user's scheduled messages, for apps that build their own screen around it. A click on a
- * message opens the actions its status allows: edit, reschedule, send now and delete, edit and schedule again a
- * message that failed, or copy the text of a message whose channel was deleted. A message that is sending, or whose
- * attachments are uploading, has no actions: a click tells the user to wait. Deleting asks for confirmation. A message
- * that is already sent or deleted on another device leaves the list with a short notice. Send now while offline tells
- * the user that the message is sent once the device is back online. Apps add their own actions with
+ * message opens the actions its status allows: edit, reschedule, send now and delete, edit or reschedule a message the
+ * server failed to send (it is scheduled again as a new message), or copy the text of a message whose channel was
+ * deleted. A message that is sending, or whose attachments are uploading, has no actions: a click tells the user to
+ * wait. Deleting asks for confirmation. A message that is already sent or deleted on another device leaves the list
+ * with a short notice. Send now tells the user that the message was sent, or, while the client is not connected, that
+ * it is sent once the device is back online. Apps add their own actions with
  * [io.getstream.chat.android.compose.ui.theme.ScheduledMessageActionsSheetParams.customActions].
  *
  * The list shows the messages that match the search query set with [ScheduledMessageListViewModel.setSearchQuery].

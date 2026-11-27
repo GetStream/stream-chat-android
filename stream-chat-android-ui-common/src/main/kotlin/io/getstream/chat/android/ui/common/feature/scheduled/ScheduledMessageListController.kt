@@ -225,8 +225,9 @@ public class ScheduledMessageListController(
     }
 
     /**
-     * Sends the scheduled message with [id] right away, and sends [ScheduledMessageListEvent.SentNow]. While offline,
-     * it is sent once the device is back online, and [ScheduledMessageListEvent.SendNowQueued] is sent instead.
+     * Sends the scheduled message with [id] right away, and sends [ScheduledMessageListEvent.SentNow]. While the
+     * client is not connected (offline or reconnecting), it is sent once the client is connected again, and
+     * [ScheduledMessageListEvent.SendNowQueued] is sent instead.
      *
      * @param id The ID of the scheduled message.
      */
@@ -234,10 +235,10 @@ public class ScheduledMessageListController(
         ownScope.launch {
             when (val result = chatClient.sendScheduledMessageNow(id).await()) {
                 is Result.Success -> _events.send(
-                    if (chatClient.clientState.connectionState.value is ConnectionState.Offline) {
-                        ScheduledMessageListEvent.SendNowQueued
-                    } else {
+                    if (chatClient.clientState.connectionState.value is ConnectionState.Connected) {
                         ScheduledMessageListEvent.SentNow
+                    } else {
+                        ScheduledMessageListEvent.SendNowQueued
                     },
                 )
                 is Result.Failure -> onRefused(id, result.value)

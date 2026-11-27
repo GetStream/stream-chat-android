@@ -91,7 +91,7 @@ fun UserRobot.assertScheduledMessageListedFromBanner(preview: String): UserRobot
     return this
 }
 
-/** Asserts the snackbar that tells a message scheduled offline was sent right away. */
+/** Asserts the snackbar that tells a scheduled message was sent: after Send now, or after scheduling it offline. */
 fun UserRobot.assertScheduledMessageSentSnackbar(): UserRobot {
     assertTrue(Snackbar.sent.waitDisplayed())
     return this
