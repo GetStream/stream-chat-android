@@ -46,6 +46,8 @@ internal object Serializer {
         .add(io.getstream.chat.android.network.models.ScheduledMessageFailureReason.ScheduledMessageFailureReasonAdapter())
         .add(io.getstream.chat.android.network.models.ScheduledMessageQueryStatus.ScheduledMessageQueryStatusAdapter())
         .add(io.getstream.chat.android.network.models.ScheduledMessageStatus.ScheduledMessageStatusAdapter())
+        .add(io.getstream.chat.android.network.models.SearchAllSectionError.Code.CodeAdapter())
+        .add(io.getstream.chat.android.network.models.SearchAllWarning.Code.CodeAdapter())
         .add(io.getstream.chat.android.network.models.SortParamType.SortParamTypeAdapter())
         .add(io.getstream.chat.android.network.models.TranslateMessageRequest.Language.LanguageAdapter())
         .add(io.getstream.chat.android.network.models.VotingVisibility.VotingVisibilityAdapter())

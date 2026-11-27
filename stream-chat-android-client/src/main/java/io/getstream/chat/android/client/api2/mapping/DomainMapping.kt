@@ -76,6 +76,7 @@ import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure
 import io.getstream.chat.android.models.ScheduledMessageStatus
+import io.getstream.chat.android.models.SearchAllSectionError
 import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -168,6 +169,7 @@ import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.ScheduledMessageStatus as ScheduledMessageStatusDto
+import io.getstream.chat.android.network.models.SearchAllSectionError as SearchAllSectionErrorResponse
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningResponse
 import io.getstream.chat.android.network.models.ThreadParticipant as ThreadParticipantDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
@@ -1649,6 +1651,14 @@ internal class DomainMapping(
         channelSearchCount = channelSearchCount ?: 0,
         warningCode = warningCode,
         warningDescription = warningDescription,
+    )
+
+    /**
+     * Transforms [SearchAllSectionErrorResponse] to [SearchAllSectionError].
+     */
+    internal fun SearchAllSectionErrorResponse.toDomain(): SearchAllSectionError = SearchAllSectionError(
+        code = SearchAllSectionError.Code(code.value),
+        message = message,
     )
 
     /**

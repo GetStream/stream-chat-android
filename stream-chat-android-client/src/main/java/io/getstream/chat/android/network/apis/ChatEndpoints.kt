@@ -540,6 +540,16 @@ internal interface ChatEndpoints {
     ): io.getstream.chat.android.network.models.SearchResponse
 
     /**
+     * Search messages, users, and channels
+     * Runs one free-text query across messages, users and channels and returns one envelope with a section per requested entity. The server picks the match operator, sort and scope for every section: messages are matched as full text in the channels the caller can read, users by name or username prefix, and channels by name prefix among the channels the caller is a member of. Each section carries its own opaque `next` cursor when more results exist; a section that fails is reported in its `error` field while the other sections return normally.
+     */
+    @POST("/api/v2/chat/search/all")
+    suspend fun searchAll(
+        @Query("connection_id") connectionId: String? = null,
+        @Body searchAllRequest: io.getstream.chat.android.network.models.SearchAllRequest,
+    ): io.getstream.chat.android.network.models.SearchAllResponse
+
+    /**
      * Query Threads
      * Returns the list of threads for specific user
      */

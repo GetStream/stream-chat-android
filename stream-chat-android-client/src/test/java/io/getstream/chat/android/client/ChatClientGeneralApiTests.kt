@@ -32,6 +32,9 @@ import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SearchAllEntity
+import io.getstream.chat.android.models.SearchAllResult
+import io.getstream.chat.android.models.SearchAllSection
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -263,6 +266,21 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
         val result = sut.searchMessages(channelFilter, messageFilter, offset, limit, next, sort).await()
         // then
         verifySuccess(result, response)
+    }
+
+    @Test
+    fun `searchAll passes the arguments to the api and returns its result`() = runTest {
+        val response = SearchAllResult(users = SearchAllSection(next = randomString()))
+        val entities = setOf(SearchAllEntity.USERS)
+        val next = mapOf(SearchAllEntity.USERS to randomString())
+        val sut = Fixture()
+            .givenSearchAllResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+
+        val result = sut.searchAll(query = "team", entities = entities, limit = 5, next = next).await()
+
+        verifySuccess(result, response)
+        verify(api).searchAll(query = "team", entities = entities, limit = 5, next = next)
     }
 
     @Test
@@ -553,6 +571,10 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
 
         fun givenGetSyncHistoryResult(result: Call<List<ChatEvent>>) = apply {
             whenever(api.getSyncHistory(any(), any(), any())).thenReturn(result.map { SyncedEvents(it) })
+        }
+
+        fun givenSearchAllResult(result: Call<SearchAllResult>) = apply {
+            whenever(api.searchAll(any(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(result)
         }
 
         fun givenSearchMessagesResult(result: Call<SearchMessagesResult>) = apply {
