@@ -18,9 +18,11 @@ package io.getstream.chat.android.client.internal.offline.repository.facade
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.internal.offline.integration.BaseRepositoryFacadeIntegrationTest
+import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.toEntity
 import io.getstream.chat.android.client.persistance.repository.write
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomThread
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -36,6 +38,15 @@ internal class RepositoryFacadeWriteIntegrationTests : BaseRepositoryFacadeInteg
     private val user = randomUser()
     private val channel = randomChannel(createdBy = user)
     private val message = randomMessage(cid = channel.cid, user = user, deletedAt = null, deletedForMe = false)
+    private val thread = randomThread(
+        cid = channel.cid,
+        channel = channel,
+        parentMessageId = message.id,
+        parentMessage = message,
+        createdBy = user,
+        latestReplies = emptyList(),
+        draftMessage = null,
+    )
 
     @Test
     fun `Given a write of users, channels and messages When it ends Should store all of them`() = runWriteTest {
@@ -101,6 +112,42 @@ internal class RepositoryFacadeWriteIntegrationTests : BaseRepositoryFacadeInteg
 
         cids shouldBeEqualTo listOf(channel.cid)
     }
+
+    @Test
+    fun `Given a stored thread When a reply is stored Should add the reply to the stored thread`() =
+        runWriteTest {
+            // Stored without the repository, so the write reads the thread from the database
+            chatDatabase.threadDao().insertThread(thread.toEntity())
+            val reply = randomMessage(
+                cid = channel.cid,
+                user = user,
+                parentId = thread.parentMessageId,
+                deletedAt = null,
+                deletedForMe = false,
+            )
+
+            repositoryFacade.insertMessage(reply)
+
+            chatDatabase.threadDao().selectThread(thread.parentMessageId)?.latestReplyIds shouldBeEqualTo
+                listOf(reply.id)
+            repositoryFacade.selectThread(thread.parentMessageId)?.latestReplies?.map { it.id } shouldBeEqualTo
+                listOf(reply.id)
+        }
+
+    @Test
+    fun `Given a write of a thread When it fails at its end Should neither store nor cache the thread`() =
+        runWriteTest {
+            val result = runCatching {
+                repositoryFacade.write {
+                    repositoryFacade.insertThreads(listOf(thread))
+                    error("failed")
+                }
+            }
+
+            result.exceptionOrNull()?.message shouldBeEqualTo "failed"
+            chatDatabase.threadDao().selectThread(thread.parentMessageId) shouldBeEqualTo null
+            repositoryFacade.selectThread(thread.parentMessageId) shouldBeEqualTo null
+        }
 
     private fun runWriteTest(testBody: suspend () -> Unit) {
         // A deadlock fails the test instead of hanging it.

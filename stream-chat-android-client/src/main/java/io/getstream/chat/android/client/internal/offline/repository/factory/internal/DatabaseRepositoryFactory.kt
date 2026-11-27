@@ -125,6 +125,7 @@ internal class DatabaseRepositoryFactory(
 
         return repository ?: run {
             DatabaseThreadsRepository(
+                store = store,
                 threadDao = database.threadDao(),
                 threadOrderDao = database.threadOrderDao(),
                 getUser = getUser,
