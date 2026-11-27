@@ -83,7 +83,8 @@ public class A2UIComponentScope internal constructor(
      * when it is a web link, or what the app's media URL resolver makes of it. `null` doesn't load.
      */
     internal fun mediaUrl(name: String): String? {
-        val url = string(name)?.takeIf { it.isNotEmpty() } ?: return null
+        // Loading the URL sends it to its host, so it never carries what a person typed into an obscured field.
+        val url = context.sharedString(name)?.takeIf { it.isNotEmpty() } ?: return null
         val resolve = environment.mediaUrl ?: return url.takeIf(AIImageLoader::isLoadable)
         return resolve(url)
     }

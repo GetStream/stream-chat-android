@@ -49,6 +49,11 @@ internal class NodeContext(val surface: Surface, val node: Node) {
 
     fun string(name: String): String? = A2UIJson.string(value(name))
 
+    /** Property [name] as text, resolved without the secrets a person typed, for a value that leaves the device. */
+    fun sharedString(name: String): String? = A2UIJson.string(
+        evaluator.evaluate(component.dynamic(name), evaluator.withoutSecrets(node.context)),
+    )
+
     fun double(name: String): Double? = A2UIJson.double(value(name))
 
     fun bool(name: String): Boolean? = value(name)?.let { value ->

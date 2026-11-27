@@ -616,6 +616,36 @@ internal class A2UIRendererTest {
     }
 
     @Test
+    fun `media never load from a URL that carries what a person typed into an obscured field`() {
+        val asked = mutableListOf<String>()
+        val renderer = A2UIRenderer(mediaUrl = { url -> url.also(asked::add) })
+        fun url(name: String) = mapOf(
+            "@call" to "formatString",
+            "args" to mapOf("value" to "https://example.com/$name?p=\${/password}"),
+        )
+        val noAction = mapOf("event" to mapOf("name" to "none"))
+        show(
+            document(
+                passwordForm(
+                    noAction,
+                    mapOf("id" to "image", "component" to "Image", "url" to url("image")),
+                    mapOf("id" to "video", "component" to "Video", "url" to url("video"), "posterUrl" to url("poster")),
+                    mapOf("id" to "audio", "component" to "AudioPlayer", "url" to url("audio")),
+                ),
+            ),
+            host = AIUIHost(renderers = listOf(renderer)) {},
+        )
+
+        rule.onNodeWithText("Password").performTextInput("hunter2")
+        rule.waitForIdle()
+
+        assertEquals(
+            setOf("image", "video", "poster", "audio").map { "https://example.com/$it?p=" }.toSet(),
+            asked.toSet(),
+        )
+    }
+
+    @Test
     fun `the agent places the app's component, which reports its events`() {
         show(
             document(
