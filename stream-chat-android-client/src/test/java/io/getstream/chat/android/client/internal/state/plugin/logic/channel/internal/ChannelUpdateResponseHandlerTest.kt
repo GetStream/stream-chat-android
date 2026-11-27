@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.channel.int
 
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.WriteRecorder
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
@@ -39,6 +40,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -105,6 +107,24 @@ internal class ChannelUpdateResponseHandlerTest {
 
         verify(channelLogic).applyChannelUpdate(response)
         verify(queryChannelsLogic).refreshChannelState(CID)
+    }
+
+    @Test
+    fun `onChannelUpdated reads and stores the channel in one write`() = runTest {
+        val recorder = WriteRecorder()
+        whenever(repos.store) doReturn recorder.store
+        val writes = mutableListOf<Int?>()
+        whenever(repos.selectChannel(CID)) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+            channel()
+        }
+        whenever(repos.insertChannel(any<Channel>())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+
+        handler.onChannelUpdated(channel(name = "new", updatedAt = Date(2_000)))
+
+        writes shouldBeEqualTo listOf(1, 1)
     }
 
     @Test
@@ -234,6 +254,53 @@ internal class ChannelUpdateResponseHandlerTest {
         verify(repos).deleteChannelMessagesBefore(CID, truncatedAt)
         verify(channelLogic).truncate(truncatedAt)
         verify(channelLogic).applyChannelUpdate(response)
+    }
+
+    @Test
+    fun `onChannelTruncated removes the messages and stores the channel in one write`() = runTest {
+        val recorder = WriteRecorder()
+        whenever(repos.store) doReturn recorder.store
+        val writes = mutableListOf<Int?>()
+        whenever(repos.deleteChannelMessagesBefore(any(), any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+        whenever(repos.selectChannel(CID)) doReturn channel()
+        whenever(repos.insertChannel(any<Channel>())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+
+        handler.onChannelTruncated(channel(updatedAt = Date(2_000)).copy(truncatedAt = Date(5_000)))
+
+        writes shouldBeEqualTo listOf(1, 1)
+    }
+
+    @Test
+    fun `onChannelTruncated leaves the state alone when the write fails`() = runTest {
+        givenActiveChannel()
+        whenever(repos.selectChannel(CID)) doReturn channel()
+        whenever(repos.insertChannel(any<Channel>())) doThrow IllegalStateException("failed")
+
+        handler.onChannelTruncated(channel(updatedAt = Date(2_000)).copy(truncatedAt = Date(5_000)))
+
+        verify(channelLogic, never()).truncate(any())
+        verify(channelLogic, never()).applyChannelUpdate(any())
+    }
+
+    @Test
+    fun `onChannelDeleted removes the messages and marks the channel in one write`() = runTest {
+        val recorder = WriteRecorder()
+        whenever(repos.store) doReturn recorder.store
+        val writes = mutableListOf<Int?>()
+        whenever(repos.deleteChannelMessagesBefore(any(), any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+        whenever(repos.setChannelDeletedAt(any(), any())) doSuspendableAnswer {
+            writes += recorder.writes.takeIf { recorder.isWriting }
+        }
+
+        handler.onChannelDeleted(channel(deletedAt = Date(6_000)))
+
+        writes shouldBeEqualTo listOf(1, 1)
     }
 
     @Test

@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.WriteRecorder
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.ReconnectGroupQueries
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
@@ -2017,6 +2018,8 @@ internal class SyncManagerTest {
             val missingLogic: ChannelLogic = mock {
                 onBlocking { it.watch(any(), any()) } doReturn Result.Success(foundChannel)
             }
+            val writes = RecordedWrites()
+            whenever(repositoryFacade.storeStateForChannels(any())) doSuspendableAnswer { writes.record("store") }
             whenever(logicRegistry.channel(foundChannelId)) doReturn foundLogic
             whenever(logicRegistry.channel(missingChannelId)) doReturn missingLogic
 
@@ -2034,6 +2037,7 @@ internal class SyncManagerTest {
 
             verify(foundLogic).updateDataForChannel(foundChannel, foundChannel.messages.size, fromServer = true)
             verify(repositoryFacade).storeStateForChannels(listOf(foundChannel))
+            writes.shouldBeOneWrite("store")
             verify(missingLogic).watch(userPresence = true)
         }
 
@@ -3965,6 +3969,205 @@ internal class SyncManagerTest {
 
         verify(chatClient).createChannel(eq("messaging"), eq(channel.id), any<CreateChannelParams>())
         verify(repositoryFacade, never()).deleteChannel(channel.cid)
+    }
+
+    @Test
+    fun `an outdated unsent reaction is removed from its message and deleted in one write`() =
+        runTest(testDispatcher) {
+            val reaction = randomReaction(deletedAt = null, syncStatus = SyncStatus.SYNC_NEEDED)
+            val message = randomMessage(id = reaction.messageId, ownReactions = listOf(reaction))
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(1)
+            whenever(repositoryFacade.selectReactionById(1)) doReturn reaction
+            val writes = RecordedWrites()
+            whenever(repositoryFacade.selectMessage(message.id)) doSuspendableAnswer {
+                writes.record("select")
+                message
+            }
+            whenever(repositoryFacade.insertMessage(any())) doSuspendableAnswer { writes.record("insert") }
+            whenever(repositoryFacade.deleteReaction(reaction)) doSuspendableAnswer { writes.record("delete") }
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            writes.shouldBeOneWrite("select", "insert", "delete")
+        }
+
+    @Test
+    fun `an unsorted placeholder is renamed in one write that ends before the create request`() =
+        runTest(testDispatcher) {
+            val placeholder = placeholderChannel(id = "!members-b, a")
+            whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+            whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+            val writes = RecordedWrites()
+            whenever(repositoryFacade.insertChannel(any<Channel>())) doSuspendableAnswer { writes.record("insert") }
+            whenever(repositoryFacade.replacePlaceholderChannel(any(), any())) doSuspendableAnswer {
+                writes.record("replace")
+            }
+            whenever(chatClient.createChannel(eq("messaging"), eq(""), any<CreateChannelParams>())) doAnswer {
+                writes.record("create")
+                TestCall(Result.Success(randomChannel(id = "!members-${randomString()}", type = "messaging")))
+            }
+
+            buildSyncManager().onEvent(randomConnectedEvent())
+
+            val (insert, replace, create) = writes.calls
+            insert.second.shouldNotBeNull()
+            replace shouldBeEqualTo ("replace" to insert.second)
+            create shouldBeEqualTo ("create" to null)
+        }
+
+    @Test
+    fun `a channel too old to create and its message are each deleted in a write`() = runTest(testDispatcher) {
+        val placeholder = placeholderChannel(id = "!members-a, b")
+        val message = failedUploadMessage().copy(cid = placeholder.cid)
+        delay(7_000)
+        whenever(repositoryFacade.selectChannelCidsBySyncNeeded()) doReturn listOf(placeholder.cid)
+        whenever(repositoryFacade.selectChannel(placeholder.cid)) doReturn placeholder
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
+            listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val writes = RecordedWrites()
+        whenever(repositoryFacade.deleteChannel(placeholder.cid)) doSuspendableAnswer { writes.record("channel") }
+        whenever(repositoryFacade.deleteChannelMessage(message)) doSuspendableAnswer { writes.record("message") }
+
+        buildSyncManager().onEvent(randomConnectedEvent())
+
+        writes.calls.map { it.first } shouldBeEqualTo listOf("channel", "message")
+        writes.calls.forEach { it.second.shouldNotBeNull() }
+    }
+
+    @Test
+    fun `a message whose attachment upload failed is stored as failed in a write`() = runTest(testDispatcher) {
+        val message = failedUploadMessage()
+        whenever(repositoryFacade.selectMessageIdsBySyncState(message.syncStatus)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val writes = RecordedWrites()
+        whenever(repositoryFacade.insertMessage(any())) doSuspendableAnswer { writes.record("insert") }
+
+        buildSyncManager().retryMessages()
+
+        writes.shouldBeOneWrite("insert")
+    }
+
+    @Test
+    fun `start reads and hands back each channel stuck in progress in a write of its own`() =
+        runTest(testDispatcher) {
+            val channels = listOf(randomChannel(), randomChannel())
+            whenever(chatClient.subscribe(any())).thenReturn(mock())
+            whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS)) doReturn
+                channels.map(Channel::cid)
+            val writes = RecordedWrites()
+            channels.forEach { channel ->
+                whenever(repositoryFacade.selectChannel(channel.cid)) doSuspendableAnswer {
+                    writes.record("select")
+                    channel
+                }
+            }
+            whenever(repositoryFacade.insertChannel(any<Channel>())) doSuspendableAnswer { writes.record("insert") }
+
+            buildSyncManager().start()
+
+            writes.shouldBeOneWriteForEachPair("select", "insert")
+        }
+
+    @Test
+    fun `start completes the old deletes and hands the messages stuck in progress back in one write`() =
+        runTest(testDispatcher) {
+            whenever(chatClient.subscribe(any())).thenReturn(mock())
+            val writes = RecordedWrites()
+            whenever(repositoryFacade.markDeletesInProgressAsCompleted(any())) doSuspendableAnswer {
+                writes.record("deletes")
+            }
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doSuspendableAnswer {
+                writes.record("ids")
+                listOf(randomString())
+            }
+            whenever(repositoryFacade.updateMessageSyncStatus(any(), any())) doSuspendableAnswer {
+                writes.record("status")
+            }
+
+            buildSyncManager().start()
+
+            writes.shouldBeOneWrite("deletes", "ids", "status")
+        }
+
+    @Test
+    fun `start reads and hands back each reaction stuck in progress in a write of its own`() =
+        runTest(testDispatcher) {
+            whenever(chatClient.subscribe(any())).thenReturn(mock())
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)) doReturn listOf(1, 2)
+            val writes = RecordedWrites()
+            whenever(repositoryFacade.selectReactionById(any())) doSuspendableAnswer {
+                writes.record("select")
+                randomReaction()
+            }
+            whenever(repositoryFacade.insertReaction(any())) doSuspendableAnswer { writes.record("insert") }
+
+            buildSyncManager().start()
+
+            writes.shouldBeOneWriteForEachPair("select", "insert")
+        }
+
+    @Test
+    fun `a mark all read event reads and stores the sync state in one write`() = runTest(testDispatcher) {
+        val syncState = SyncState(userId = user.id, markedAllReadAt = Date(1_000))
+        val writes = RecordedWrites()
+        whenever(repositoryFacade.selectSyncState(user.id)) doSuspendableAnswer {
+            writes.record("select")
+            syncState
+        }
+        whenever(repositoryFacade.insertSyncState(any())) doSuspendableAnswer { writes.record("insert") }
+
+        buildSyncManager().onEvent(MarkAllReadEvent(createdAt = Date(2_000), rawCreatedAt = "", user = user))
+
+        writes.shouldBeOneWrite("select", "insert")
+        _syncState.value?.markedAllReadAt shouldBeEqualTo Date(2_000)
+    }
+
+    @Test
+    fun `the watched channels refreshed when the sync has too many events are stored in one write`() =
+        runTest(testDispatcher) {
+            val watchedChannel = randomChannel(type = "messaging", id = "watched")
+            val error = Error.NetworkError(
+                serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+                message = "Too many events to sync, please use a more recent last_sync_at parameter",
+                statusCode = 400,
+            )
+            whenever(repositoryFacade.selectSyncState(any())) doReturn null
+            whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn
+                TestCall(Result.Failure(error).synced())
+            whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn
+                TestCall(Result.Failure(error).synced())
+            givenWatchedChannels(cids = setOf(watchedChannel.cid), foundChannels = listOf(watchedChannel))
+            val writes = RecordedWrites()
+            whenever(repositoryFacade.storeStateForChannels(any())) doSuspendableAnswer { writes.record("store") }
+
+            buildSyncManager().performSync(cids = listOf("1", "2"))
+
+            writes.shouldBeOneWrite("store")
+        }
+
+    /** The repository calls a test asks it to record, each with the write it ran in, or null outside of one. */
+    private inner class RecordedWrites {
+        private val recorder = WriteRecorder().also { whenever(repositoryFacade.store) doReturn it.store }
+        val calls = mutableListOf<Pair<String, Int?>>()
+
+        fun record(call: String) {
+            calls += call to recorder.writes.takeIf { recorder.isWriting }
+        }
+
+        fun shouldBeOneWrite(vararg expectedCalls: String) {
+            calls.map { it.first } shouldBeEqualTo expectedCalls.toList()
+            calls.map { it.second }.distinct().single().shouldNotBeNull()
+        }
+
+        /** Two pairs of calls, the calls of a pair in one write and each pair in a write of its own. */
+        fun shouldBeOneWriteForEachPair(first: String, second: String) {
+            calls.map { it.first } shouldBeEqualTo listOf(first, second, first, second)
+            val (firstWrite, secondWrite) = calls.chunked(2).map { pair -> pair.map { it.second }.distinct().single() }
+            firstWrite.shouldNotBeNull()
+            secondWrite.shouldNotBeNull()
+            (firstWrite == secondWrite) shouldBeEqualTo false
+        }
     }
 
     private fun TestScope.localDate() = Date(currentTime)
