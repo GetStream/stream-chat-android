@@ -19,8 +19,11 @@ package io.getstream.chat.android.ai.compose.ui.component.internal
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import com.mikepenz.markdown.compose.LocalMarkdownColors
 import com.mikepenz.markdown.compose.LocalMarkdownDimens
 import com.mikepenz.markdown.compose.components.MarkdownComponent
@@ -31,6 +34,7 @@ import com.mikepenz.markdown.compose.elements.MarkdownHighlightedCode
 import com.mikepenz.markdown.compose.elements.MarkdownHighlightedCodeBlock
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.model.rememberMarkdownState
+import io.getstream.chat.android.ai.compose.util.internal.OpenableLinkUriHandler
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.getTextInNode
@@ -68,11 +72,16 @@ private val DefaultRichTextComponent: RichTextComponent = { text, modifier ->
     // parse lands, and an older, shorter parse could land last and leave the reply cut short.
     val markdownState = key(text) { rememberMarkdownState(content = text, immediate = true) }
 
-    Markdown(
-        modifier = modifier,
-        markdownState = markdownState,
-        components = MarkdownComponents,
-    )
+    // The model writes every link, so a tap opens only web and email links.
+    val uriHandler = LocalUriHandler.current
+    val linkHandler = remember(uriHandler) { OpenableLinkUriHandler(uriHandler) }
+    CompositionLocalProvider(LocalUriHandler provides linkHandler) {
+        Markdown(
+            modifier = modifier,
+            markdownState = markdownState,
+            components = MarkdownComponents,
+        )
+    }
 }
 
 private val CodeFence: MarkdownComponent = {

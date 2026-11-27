@@ -16,13 +16,18 @@
 
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performFirstLinkClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -77,5 +82,42 @@ internal class RichTextTest {
 
         rule.onNodeWithText("Sales by month:", substring = true, useUnmergedTree = true).assertExists()
         rule.onNodeWithText("\"type\": \"bar\"", substring = true, useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun `a tapped web link opens`() {
+        val opened = tapLink("[Docs](https://example.com/docs)", "Docs")
+
+        assertEquals(listOf("https://example.com/docs"), opened)
+    }
+
+    @Test
+    fun `a tapped link of another scheme does not open`() {
+        val opened = tapLink("[Settings](myapp://settings/delete-account)", "Settings")
+
+        assertEquals(emptyList<String>(), opened)
+    }
+
+    @Test
+    fun `a tapped reference link of another scheme does not open`() {
+        val opened = tapLink("[Settings][s]\n\n[s]: myapp://settings/delete-account", "Settings")
+
+        assertEquals(emptyList<String>(), opened)
+    }
+
+    private fun tapLink(text: String, label: String): List<String> {
+        val opened = mutableListOf<String>()
+        val uriHandler = object : UriHandler {
+            override fun openUri(uri: String) {
+                opened += uri
+            }
+        }
+        rule.setContent {
+            CompositionLocalProvider(LocalUriHandler provides uriHandler) { RichText(text = text) }
+        }
+
+        rule.onNodeWithText(label, substring = true, useUnmergedTree = true).performFirstLinkClick()
+        rule.waitForIdle()
+        return opened
     }
 }
