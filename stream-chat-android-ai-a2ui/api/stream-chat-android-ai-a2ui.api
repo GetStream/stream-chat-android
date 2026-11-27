@@ -38,6 +38,7 @@ public final class io/getstream/chat/android/ai/a2ui/compose/A2UIComponentScope 
 	public final fun hint (Ljava/lang/String;)Ljava/lang/String;
 	public final fun isBound (Ljava/lang/String;)Z
 	public final fun isValid ()Z
+	public final fun mediaUrl (Ljava/lang/String;)Ljava/lang/String;
 	public final fun number (Ljava/lang/String;)Ljava/lang/Double;
 	public final fun performAction ()V
 	public final fun string (Ljava/lang/String;)Ljava/lang/String;
