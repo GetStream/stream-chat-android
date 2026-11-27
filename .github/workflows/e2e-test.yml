@@ -99,7 +99,9 @@ jobs:
       contents: read
       pull-requests: read
     name: Test compose
-    runs-on: { group: github-public-amd64 }
+    # No GitHub API calls here: e2e-scope decides E2E_REQUIRED on the static-IP runner, so a
+    # standard GitHub-hosted runner works. Without E2E_REQUIRED, fastlane would ask the API itself.
+    runs-on: ubuntu-24.04
     needs:
       - e2e-scope
       - build-compose-apks

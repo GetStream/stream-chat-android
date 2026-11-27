@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   compare-sdk-sizes:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-checks.yml@f1669c081bca009a0aa0978561096d32bfd156df # v1.4.0
+    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-checks.yml@178f8ddfa4c28ba19ba66c1c54f9091b00ef6c40 # v1.5.0
     with:
       modules: "stream-chat-android-client stream-chat-android-ui-components stream-chat-android-compose stream-chat-android-ai-compose stream-chat-android-ai-ondevice stream-chat-android-ai-a2ui stream-chat-android-ai-openui"
       metrics-project: "stream-chat-android-metrics"
