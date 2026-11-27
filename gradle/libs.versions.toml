@@ -195,7 +195,6 @@ markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon"}
 markwon-ext-strikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon"}
 markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon"}
-markwon-image = { module = "io.noties.markwon:image", version.ref = "markwon"}
 mlkit-genai-prompt = { module = "com.google.mlkit:genai-prompt", version.ref = "mlkitGenaiPrompt"}
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito"}
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin"}
