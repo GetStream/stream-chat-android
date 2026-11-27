@@ -16,9 +16,11 @@
 
 package io.getstream.chat.android.client.scheduled
 
+import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage.PendingChange
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.ScheduledMessageFailure.LocalDeviceFailedScheduling
@@ -26,6 +28,7 @@ import io.getstream.chat.android.models.ScheduledMessageFailure.ServerRejectedSc
 import io.getstream.chat.android.models.ScheduledMessageStatus
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomScheduledMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCall
@@ -200,6 +203,27 @@ internal class ScheduledMessageSenderTest {
 
         verify(api).updateScheduledMessage(eq(scheduled.id), argThat { text == edited.text }, eq(null))
         status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+    }
+
+    @Test
+    fun `a change of the quote while the create is in flight sends no update, and is kept`() = runTest {
+        val create = PendingCall<ScheduleMessageResult>()
+        whenever(api.scheduleMessage(any(), any(), any(), any())).thenReturn(create)
+        api.givenUpdateAnswers()
+        start()
+        val quoted = randomMessage(cid = cid, deletedAt = null)
+        val scheduled = schedule(Message(text = randomString(), replyMessageId = quoted.id, replyTo = quoted))
+        runCurrent()
+
+        val deleted = quoted.copy(deletedAt = Date())
+        manager.onEvent(quoteDeletedEvent(deleted))
+        // The answer was built before the delete, with the quote not deleted.
+        create.result.complete(Result.Success(scheduleAnswer(scheduled)))
+        runCurrent()
+
+        verify(api, never()).updateScheduledMessage(any(), anyOrNull(), anyOrNull())
+        status(scheduled.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+        scheduledMessage(scheduled.id).message.replyTo shouldBeEqualTo deleted
     }
 
     @Test
@@ -483,6 +507,41 @@ internal class ScheduledMessageSenderTest {
         runCurrent()
 
         fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+    }
+
+    @Test
+    fun `a delete answered as already sent removes the message and tells it was sent`() = runTest {
+        val onServer = givenScheduledOnServer()
+        whenever(api.deleteScheduledMessage(any())).thenReturn(TestCall(Result.Failure(serverError(code = 123))))
+        val deletedAlreadySent = collectDeletedAlreadySent()
+        start()
+
+        manager.delete(onServer.id)
+        runCurrent()
+
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+        deletedAlreadySent.map(ScheduledMessage::id) shouldBeEqualTo listOf(onServer.id)
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [124, 16])
+    fun `a delete answered as deleted on another device or not found removes the message and tells nothing`(
+        code: Int,
+    ) = runTest {
+        val onServer = givenScheduledOnServer()
+        val statusCode = if (code == 16) 404 else 400
+        whenever(api.deleteScheduledMessage(any()))
+            .thenReturn(TestCall(Result.Failure(serverError(code = code, statusCode = statusCode))))
+        val deletedAlreadySent = collectDeletedAlreadySent()
+        start()
+
+        manager.delete(onServer.id)
+        runCurrent()
+
+        fixture.manager.scheduledMessages.value.shouldBeEmpty()
+        fixture.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().shouldBeEmpty()
+        deletedAlreadySent.shouldBeEmpty()
     }
 
     @Test
@@ -840,8 +899,134 @@ internal class ScheduledMessageSenderTest {
         status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Sending
     }
 
+    @Test
+    fun `a reschedule cancels a pending send now, so only the new date is sent`() = runTest {
+        val onServer = givenScheduledOnServer()
+        api.givenUpdateAnswers()
+        fixture.connectionState.value = ConnectionState.Offline
+        start()
+        val scheduledAt = randomDate()
+
+        manager.sendNow(onServer.id)
+        manager.reschedule(onServer.id, scheduledAt)
+        fixture.connectionState.value = ConnectionState.Connected
+        runCurrent()
+
+        verify(api).updateScheduledMessage(onServer.id, onServer.message.copy(createdAt = scheduledAt), scheduledAt)
+        verify(api, never()).sendScheduledMessageNow(any())
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+    }
+
+    @Test
+    fun `an edit with a new date cancels a pending send now`() = runTest {
+        val onServer = givenScheduledOnServer()
+        api.givenUpdateAnswers()
+        fixture.connectionState.value = ConnectionState.Offline
+        start()
+        val scheduledAt = randomDate()
+        val edited = onServer.message.copy(text = randomString())
+
+        manager.sendNow(onServer.id)
+        manager.update(onServer.id, edited, scheduledAt)
+        fixture.connectionState.value = ConnectionState.Connected
+        runCurrent()
+
+        verify(api).updateScheduledMessage(eq(onServer.id), argThat { text == edited.text }, eq(scheduledAt))
+        verify(api, never()).sendScheduledMessageNow(any())
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+    }
+
+    @Test
+    fun `an edit of the content keeps a pending send now, which is sent after the edit`() = runTest {
+        val onServer = givenScheduledOnServer()
+        api.givenUpdateAnswers()
+        api.givenSendNowAnswers(onServer.id)
+        fixture.connectionState.value = ConnectionState.Offline
+        start()
+        val edited = onServer.message.copy(text = randomString())
+
+        manager.sendNow(onServer.id)
+        manager.update(onServer.id, edited, scheduledAt = null)
+        fixture.connectionState.value = ConnectionState.Connected
+        runCurrent()
+
+        inOrder(api) {
+            verify(api).updateScheduledMessage(eq(onServer.id), argThat { text == edited.text }, eq(null))
+            verify(api).sendScheduledMessageNow(onServer.id)
+        }
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Sending
+    }
+
+    @Test
+    fun `an edit that passes the current date keeps a pending send now`() = runTest {
+        val onServer = givenScheduledOnServer()
+        api.givenUpdateAnswers()
+        api.givenSendNowAnswers(onServer.id)
+        fixture.connectionState.value = ConnectionState.Offline
+        start()
+        val edited = onServer.message.copy(text = randomString())
+
+        manager.sendNow(onServer.id)
+        manager.update(onServer.id, edited, onServer.scheduledAt)
+        fixture.connectionState.value = ConnectionState.Connected
+        runCurrent()
+
+        inOrder(api) {
+            verify(api).updateScheduledMessage(eq(onServer.id), argThat { text == edited.text }, eq(null))
+            verify(api).sendScheduledMessageNow(onServer.id)
+        }
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Sending
+    }
+
+    @Test
+    fun `a send now failing after a reschedule cancelled it does not hold back the new date`() = runTest {
+        val onServer = givenScheduledOnServer()
+        val sendNow = PendingCall<ScheduledMessage>()
+        whenever(api.sendScheduledMessageNow(any())).thenReturn(sendNow)
+        api.givenUpdateAnswers()
+        start()
+        val scheduledAt = randomDate()
+
+        manager.sendNow(onServer.id)
+        runCurrent()
+        manager.reschedule(onServer.id, scheduledAt)
+        sendNow.result.complete(Result.Failure(serverError(code = -1, statusCode = 500)))
+        runCurrent()
+
+        verify(api).updateScheduledMessage(onServer.id, onServer.message.copy(createdAt = scheduledAt), scheduledAt)
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+        scheduledMessage(onServer.id).failure.shouldBeNull()
+    }
+
+    @Test
+    fun `a reschedule after a failed send now sends the new date and not the send now`() = runTest {
+        val onServer = givenScheduledOnServer()
+        whenever(api.sendScheduledMessageNow(any())).thenReturn(TestCall(Result.Failure(serverError(code = 4))))
+        api.givenUpdateAnswers()
+        start()
+        manager.sendNow(onServer.id)
+        runCurrent()
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Failed
+        val scheduledAt = randomDate()
+
+        manager.reschedule(onServer.id, scheduledAt)
+        runCurrent()
+
+        verify(api).updateScheduledMessage(onServer.id, onServer.message.copy(createdAt = scheduledAt), scheduledAt)
+        verify(api, times(1)).sendScheduledMessageNow(onServer.id)
+        status(onServer.id) shouldBeEqualTo ScheduledMessageStatus.Scheduled
+        scheduledMessage(onServer.id).failure.shouldBeNull()
+    }
+
     private suspend fun TestScope.start() {
         manager.start(backgroundScope)
+    }
+
+    private fun TestScope.collectDeletedAlreadySent(): List<ScheduledMessage> {
+        val emitted = mutableListOf<ScheduledMessage>()
+        backgroundScope.launch { manager.deletedAlreadySent.collect(emitted::add) }
+        runCurrent()
+        return emitted
     }
 
     private suspend fun schedule(
@@ -862,6 +1047,20 @@ internal class ScheduledMessageSenderTest {
         fixture.manager.scheduledMessages.value.single { it.id == id }
 
     private fun status(id: String): ScheduledMessageStatus = scheduledMessage(id).status
+
+    private fun quoteDeletedEvent(message: Message) = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = Date(),
+        rawCreatedAt = "",
+        cid = message.cid,
+        channelType = "",
+        channelId = "",
+        message = message,
+        user = null,
+        hardDelete = false,
+        channelMessageCount = null,
+        deletedForMe = false,
+    )
 
     private fun scheduleAnswer(scheduled: ScheduledMessage) = ScheduleMessageResult(
         message = scheduled.message,

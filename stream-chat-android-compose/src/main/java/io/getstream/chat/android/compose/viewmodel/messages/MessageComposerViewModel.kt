@@ -17,10 +17,12 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
@@ -32,11 +34,15 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.result.Result
 import io.getstream.result.call.Call
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.Date
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -180,6 +186,68 @@ public class MessageComposerViewModel(
             resolveAttachments = storageHelper::resolveAttachmentFiles,
         )
     }
+
+    /**
+     * What the composer knows to schedule its message in the channel: the capability, the limits and the lead times.
+     * Kept up to date while it is collected.
+     */
+    public val scheduleMessageState: StateFlow<ScheduleMessageState> = messageComposerController.scheduleMessageState
+
+    /**
+     * What the scheduled messages banner shows, or null when there is nothing to show. Without the capability to
+     * schedule messages in the channel, it shows only failed messages. In the channel, it is about the scheduled
+     * messages of the channel, thread replies included. In a thread, it is about the scheduled replies of that thread.
+     * Kept up to date while it is collected.
+     *
+     * To show the banner on a screen other than the channel screen, collect it and pass its value to
+     * `ChatComponentFactory.ScheduledMessagesBanner`. It does not read `ComposerConfig.scheduledMessagesEnabled`, so
+     * check that flag before showing the banner.
+     */
+    public val scheduledMessagesBannerState: StateFlow<ScheduledMessagesBannerState?> =
+        messageComposerController.scheduledMessagesBannerState
+
+    /**
+     * Emits the messages of the channel, or of the thread the composer writes in, that were scheduled while offline
+     * and that the server sent right away once the device was back online, because their date had passed. Only the
+     * messages sent while it is collected are emitted.
+     */
+    internal val scheduledMessagesSentNow: Flow<Message> = messageComposerController.scheduledMessagesSentNow
+
+    /**
+     * Schedules [message] to be sent at [scheduledAt], with the thread state of the composer. The message is saved
+     * locally first and sent to the server once its attachments are uploaded and the device is online, so it can be
+     * scheduled offline. Once it is saved, the composer is emptied.
+     *
+     * Deferred attachments (those without a local file) are resolved on a background thread first.
+     *
+     * @param message The message to schedule, built with [buildNewMessage].
+     * @param scheduledAt The date when the message is sent.
+     * @param onResult Called with the scheduled message as saved locally, or with the reason it was refused before it
+     * was saved, in which case the composer keeps its content.
+     */
+    public fun scheduleMessage(
+        message: Message,
+        scheduledAt: Date,
+        onResult: (Result<ScheduledMessage>) -> Unit = {},
+    ) {
+        messageComposerController.scheduleMessage(
+            message = message,
+            scheduledAt = scheduledAt,
+            resolveAttachments = storageHelper::resolveAttachmentFiles,
+            onResult = onResult,
+        )
+    }
+
+    /**
+     * Copies the attachments picked in the composer to local files, so they can be uploaded.
+     */
+    internal suspend fun resolveAttachments(attachments: List<Attachment>): List<Attachment> =
+        storageHelper.resolveAttachmentFiles(attachments)
+
+    /**
+     * The state of the channel of the composer, to show its name.
+     */
+    internal val channelState: StateFlow<ChannelState?> = messageComposerController.channelState
 
     /**
      * Builds a new [Message] to send to our API. Based on the internal state, we use the current action's message and

@@ -61,6 +61,9 @@ class StartupActivity : AppCompatActivity() {
             if (intent.hasExtra("SCHEDULED_MESSAGES")) {
                 customSettings().isScheduledMessagesEnabled = intent.getBooleanExtra("SCHEDULED_MESSAGES", false)
             }
+            if (intent.hasExtra("ADAPTIVE_LAYOUT")) {
+                customSettings().isAdaptiveLayoutEnabled = intent.getBooleanExtra("ADAPTIVE_LAYOUT", false)
+            }
 
             val initTestActivity = intent.getSerializableExtra("InitTestActivity") as? InitTestActivity
             if (initTestActivity != null) {

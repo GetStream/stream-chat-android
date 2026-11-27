@@ -195,10 +195,12 @@ public class BackendRobot(
      * rejected with `scheduled_limit_channel`.
      *
      * @param limit The limit per channel.
+     * @param inConfig Whether the channel config tells the new limit, so the app knows it from the
+     * channels it queries afterwards. When false, the config keeps the default limit.
      */
-    public fun setScheduledMessagesLimit(limit: Int): BackendRobot {
+    public fun setScheduledMessagesLimit(limit: Int, inConfig: Boolean = false): BackendRobot {
         waitForMockServerToStart()
-        mockServer.postRequest("scheduled_messages_limit?limit=$limit")
+        mockServer.postRequest("scheduled_messages_limit?limit=$limit&in_config=$inConfig")
         return this
     }
 
@@ -217,9 +219,12 @@ public class BackendRobot(
      * on another device. The app under test receives `scheduled_message.created`.
      *
      * @param text The text of the message.
+     * @param inDirectMessageChannel Whether to schedule it in the direct message channel of
+     * [generateChannels] with `withDirectMessageChannel`, instead of the current channel.
      */
-    public fun createScheduledMessage(text: String): BackendRobot {
-        mockServer.postRequest("create_scheduled_message?text=${URLEncoder.encode(text, "UTF-8")}")
+    public fun createScheduledMessage(text: String, inDirectMessageChannel: Boolean = false): BackendRobot {
+        val dm = if (inDirectMessageChannel) "&dm=true" else ""
+        mockServer.postRequest("create_scheduled_message?text=${URLEncoder.encode(text, "UTF-8")}$dm")
         return this
     }
 
@@ -265,6 +270,28 @@ public class BackendRobot(
             Thread.sleep(500)
         }
         fail("WebSocket was not disconnected within $timeoutMillis ms")
+    }
+
+    /**
+     * Waits until the server has a pending scheduled message whose text is [text]. An app saves a
+     * scheduled message locally first, and sends it to the server afterwards.
+     *
+     * @param text The text of the scheduled message.
+     * @param timeoutMillis How long to wait before failing the test.
+     */
+    public fun waitForScheduledMessage(text: String, timeoutMillis: Long = 10_000): BackendRobot {
+        val startTime = System.currentTimeMillis()
+        while (System.currentTimeMillis() - startTime < timeoutMillis) {
+            val body = mockServer.postRequest("scheduled_messages/query")?.string()
+            val scheduledMessages = body?.let { JSONObject(it).getJSONArray("scheduled_messages") }
+            val isScheduled = scheduledMessages != null && (0 until scheduledMessages.length())
+                .map(scheduledMessages::getJSONObject)
+                .any { it.optString("status") == "scheduled" && it.optJSONObject("message")?.optString("text") == text }
+            if (isScheduled) return this
+            Thread.sleep(500)
+        }
+        fail("The server had no scheduled message \"$text\" within $timeoutMillis ms")
+        return this
     }
 
     private fun waitForMockServerToStart() {

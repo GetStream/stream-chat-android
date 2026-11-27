@@ -175,4 +175,5 @@
   <string name="stream_ui_poll_description_unlimited_answers">"Seleziona uno o più"</string>
   <string name="stream_ui_poll_multiple_answers_error">"Inserisci un numero da %1$s a %2$s"</string>
   <string name="stream_ui_yesterday">"Ieri"</string>
+  <string name="stream_ui_scheduled_message_date">"%1$s alle %2$s"</string>
 </resources>

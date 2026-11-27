@@ -33,7 +33,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -52,12 +54,14 @@ import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecor
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.SuggestionsMenu
+import io.getstream.chat.android.compose.ui.messages.composer.schedule.MessageComposerScheduling
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingHintParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingPermissionRationaleParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerInputTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerSnackbarParams
@@ -73,6 +77,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -83,6 +88,8 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import io.getstream.result.Result
+import java.util.Date
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -117,6 +124,9 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param recordingActions The actions that can be performed on an audio recording.
  * @param onMentionSelected Handler when the user taps any mention suggestion item. This is the
  * canonical callback for all mention selections.
+ * @param onScheduleMessage Handler when the user schedules the message from the schedule sheets, with the date to send
+ * it at. By default it delegates this to the ViewModel. Call `onResult` with the result: the sheet closes on success
+ * and shows the error on failure.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -143,6 +153,11 @@ public fun MessageComposer(
         sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
     ),
     onMentionSelected: (Mention) -> Unit = viewModel::selectMention,
+    onScheduleMessage: (
+        message: Message,
+        scheduledAt: Date,
+        onResult: (Result<ScheduledMessage>) -> Unit,
+    ) -> Unit = { message, scheduledAt, onResult -> viewModel.scheduleMessage(message, scheduledAt, onResult) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         val inputFocusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) {
@@ -176,10 +191,16 @@ public fun MessageComposer(
     val messageComposerState by viewModel.messageComposerState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val isEditingScheduledMessage = LocalScheduledMessageEditMode.current != null
 
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(viewModel, isEditingScheduledMessage) {
         viewModel.events.collect { event ->
-            val message = event.messageResOrNull()?.let(context::getString) ?: return@collect
+            val messageRes = if (isEditingScheduledMessage && event is MessageComposerViewEvent.CommandUnavailable) {
+                R.string.stream_compose_schedule_message_error_command
+            } else {
+                event.messageResOrNull()
+            }
+            val message = messageRes?.let(context::getString) ?: return@collect
             snackbarHostState.showSnackbar(
                 visuals = StreamSnackbarVisuals(
                     message = message,
@@ -191,35 +212,60 @@ public fun MessageComposer(
     }
 
     CompositionLocalProvider(LocalMessageComposerSnackbarHostState provides snackbarHostState) {
-        ChatTheme.componentFactory.MessageComposer(
-            params = MessageComposerParams(
-                modifier = modifier,
-                isAttachmentPickerVisible = isAttachmentPickerVisible,
-                onSendMessage = { text, attachments ->
-                    val messageWithData = viewModel.buildNewMessage(text, attachments)
-                    onSendMessage(messageWithData)
-                },
-                onUserSelected = onUserSelected,
-                onMentionSelected = onMentionSelected,
-                onCommandSelected = onCommandSelected,
-                onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
-                onActiveCommandDismiss = onActiveCommandDismiss,
-                recordingActions = recordingActions,
-                input = input,
-                messageComposerState = messageComposerState,
-                onCancelAction = onCancelAction,
-                onAttachmentsClick = onAttachmentsClick,
-                onValueChange = onValueChange,
-                onAttachmentRemoved = onAttachmentRemoved,
-                onLinkPreviewClick = onLinkPreviewClick,
-                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-                sendActionLabel = sendActionLabel,
-                saveActionLabel = saveActionLabel,
-                attachmentsActionLabel = attachmentsActionLabel,
-            ),
-        )
+        MessageComposerScheduling(viewModel = viewModel, onScheduleMessage = onScheduleMessage) {
+            ChatTheme.componentFactory.MessageComposer(
+                params = MessageComposerParams(
+                    modifier = modifier,
+                    isAttachmentPickerVisible = isAttachmentPickerVisible,
+                    onSendMessage = { text, attachments ->
+                        val messageWithData = viewModel.buildNewMessage(text, attachments)
+                        onSendMessage(messageWithData)
+                    },
+                    onUserSelected = onUserSelected,
+                    onMentionSelected = onMentionSelected,
+                    onCommandSelected = onCommandSelected,
+                    onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
+                    onActiveCommandDismiss = onActiveCommandDismiss,
+                    recordingActions = recordingActions,
+                    input = input,
+                    messageComposerState = messageComposerState,
+                    onCancelAction = onCancelAction,
+                    onAttachmentsClick = onAttachmentsClick,
+                    onValueChange = onValueChange,
+                    onAttachmentRemoved = onAttachmentRemoved,
+                    onLinkPreviewClick = onLinkPreviewClick,
+                    onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+                    sendActionLabel = sendActionLabel,
+                    saveActionLabel = saveActionLabel,
+                    attachmentsActionLabel = attachmentsActionLabel,
+                ),
+            )
+        }
     }
 }
+
+/**
+ * Hands the action that opens the schedule sheet from the VM-bound [MessageComposer] down to the composer input, which
+ * passes it to the trailing content as [MessageComposerInputTrailingContentParams.onSendLongClick]. The default
+ * trailing content also reads it when the params carry none. Null when the user can't schedule messages in the
+ * channel, while a message is edited, and while a command is active.
+ */
+internal val LocalMessageComposerScheduleAction = compositionLocalOf<(() -> Unit)?> { null }
+
+/**
+ * Set while the composer edits a scheduled message, so the default components show it: the edit indicator names it,
+ * the save button is enabled only when [ScheduledMessageEditMode.canSave], and a command typed in the composer is
+ * refused as it can't be scheduled. Null for any other composer.
+ */
+internal val LocalScheduledMessageEditMode = compositionLocalOf<ScheduledMessageEditMode?> { null }
+
+/**
+ * How the composer edits a scheduled message.
+ *
+ * @param canSave Whether the content of the composer can be saved: the message is still scheduled, and its content can
+ * be scheduled.
+ */
+internal data class ScheduledMessageEditMode(val canSave: Boolean)
 
 /**
  * Hands the [SnackbarHostState] from the VM-bound [MessageComposer] down to the factory's default
@@ -229,6 +275,13 @@ public fun MessageComposer(
  */
 internal val LocalMessageComposerSnackbarHostState =
     staticCompositionLocalOf<SnackbarHostState?> { null }
+
+/**
+ * The highest bottom edge, in window pixels, of the snackbars shown above the composer, so they open above what the
+ * screen places right above the composer, like the scheduled messages banner. A null state or value opens them right
+ * above the composer. Read only while a snackbar shows, so moving the banner does not recompose the composer.
+ */
+internal val LocalMessageComposerSnackbarMaxBottom = staticCompositionLocalOf<State<Int?>?> { null }
 
 /**
  * Hands the audio recording hint's [SnackbarHostState] from the composer to the mic button, so the
@@ -448,7 +501,11 @@ private fun ComposerSnackbar(
     snackbar: @Composable (SnackbarData) -> Unit,
 ) {
     if (hostState.currentSnackbarData != null) {
-        SnackbarPopup(hostState = hostState, snackbar = snackbar)
+        SnackbarPopup(
+            hostState = hostState,
+            snackbar = snackbar,
+            maxBottom = LocalMessageComposerSnackbarMaxBottom.current?.value,
+        )
     }
 }
 

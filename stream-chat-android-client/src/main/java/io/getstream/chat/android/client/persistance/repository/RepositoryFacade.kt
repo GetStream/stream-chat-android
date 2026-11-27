@@ -316,7 +316,7 @@ public class RepositoryFacade private constructor(
                 reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),
                 scheduledMessageRepository = (factory as? DatabaseRepositoryFactory)
-                    ?.createScheduledMessageRepository(getUser)
+                    ?.createScheduledMessageRepository(getUser, getMessage)
                     ?: NoOpScheduledMessageRepository,
                 defaultConfig = defaultConfig,
                 store = (factory as? DatabaseRepositoryFactory)?.store,

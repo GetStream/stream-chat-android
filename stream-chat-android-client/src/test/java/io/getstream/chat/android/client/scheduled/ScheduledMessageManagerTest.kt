@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.scheduled
 
+import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.ScheduledMessageDeletedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageFailedEvent
@@ -356,6 +358,54 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `an edit or a delete of a quoted message changes the quote of the messages that quote it`() = runTest {
+        startOffline()
+        val quoted = randomMessage(deletedAt = null)
+        val quoting = givenScheduledOnServer(quoting(quoted))
+        val other = givenScheduledOnServer(quoting(randomMessage(deletedAt = null)))
+        val edited = quoted.copy(text = randomString())
+        val deleted = edited.copy(deletedAt = Date())
+
+        manager.onEvent(messageUpdatedEvent(edited))
+        manager.scheduledMessages.value.quoteOf(quoting.id) shouldBeEqualTo edited
+        manager.onEvent(messageDeletedEvent(deleted, hardDelete = false))
+
+        manager.scheduledMessages.value.quoteOf(quoting.id) shouldBeEqualTo deleted
+        manager.scheduledMessages.value.quoteOf(other.id) shouldBeEqualTo other.message.replyTo
+        repositoryFacade.scheduledMessageRepository.selectScheduledMessages()
+            .single { it.id == quoting.id }.message.replyTo shouldBeEqualTo deleted
+    }
+
+    @Test
+    fun `a hard delete of a quoted message removes the quote and keeps its id`() = runTest {
+        val quoted = randomMessage(deletedAt = null)
+        val quoting = givenScheduledOnServer(quoting(quoted))
+
+        manager.onEvent(messageDeletedEvent(quoted.copy(deletedAt = Date()), hardDelete = true))
+
+        val message = manager.scheduledMessages.value.single { it.id == quoting.id }.message
+        message.replyTo shouldBeEqualTo null
+        message.replyMessageId shouldBeEqualTo quoted.id
+    }
+
+    @Test
+    fun `a change of a quoted message keeps the local changes the server does not have`() = runTest {
+        fixture.connectionState.value = ConnectionState.Offline
+        val quoted = randomMessage(deletedAt = null)
+        val onServer = givenScheduledOnServer(quoting(quoted))
+        val edited = onServer.message.copy(text = randomString())
+        manager.update(onServer.id, edited, scheduledAt = null)
+        val deleted = quoted.copy(deletedAt = Date())
+
+        manager.onEvent(messageDeletedEvent(deleted, hardDelete = false))
+
+        val scheduled = manager.scheduledMessages.value.single()
+        scheduled.message.text shouldBeEqualTo edited.text
+        scheduled.message.replyTo shouldBeEqualTo deleted
+        scheduled.status shouldBeEqualTo ScheduledMessageStatus.PreparingToSchedule
+    }
+
+    @Test
     fun `a full query removes the messages the server no longer has, except the ones not on the server yet`() = runTest {
         startOffline()
         val sentWhileOffline = givenScheduledOnServer()
@@ -567,6 +617,26 @@ internal class ScheduledMessageManagerTest {
     }
 
     @Test
+    fun `an event before the load keeps its quote when the saved message has none`() = runTest {
+        val quoted = randomMessage(cid = cid, deletedAt = null)
+        val saved = randomLocalScheduledMessage(cid = cid, pendingChange = LocalScheduledMessage.PendingChange.Update)
+        // The saved quote is read from the messages saved on the device, which may not have it.
+        val pendingEdit = saved.copy(message = saved.message.copy(replyMessageId = quoted.id, replyTo = null))
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(pendingEdit))
+        restarted.connectionState.value = ConnectionState.Offline
+        val fromEvent = randomScheduledMessage(id = pendingEdit.id, cid = cid).let {
+            it.copy(message = it.message.copy(replyMessageId = quoted.id, replyTo = quoted))
+        }
+
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(fromEvent))
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.manager.scheduledMessages.value.single().message
+        loaded.text shouldBeEqualTo pendingEdit.message.text
+        loaded.replyTo shouldBeEqualTo quoted
+    }
+
+    @Test
     fun `a message removed before the load stays removed`() = runTest {
         val saved = randomLocalScheduledMessage(cid = cid)
         val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(saved))
@@ -592,6 +662,39 @@ internal class ScheduledMessageManagerTest {
         val loaded = restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
         loaded.message shouldBeEqualTo pendingEdit.message
         loaded.pendingChange shouldBeEqualTo LocalScheduledMessage.PendingChange.Update
+        loaded.isPendingSendNow shouldBeEqualTo true
+    }
+
+    @Test
+    fun `a reschedule made before the load cancels the saved send now`() = runTest {
+        val sentNow = randomLocalScheduledMessage(cid = cid, isPendingSendNow = true)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(sentNow))
+        restarted.connectionState.value = ConnectionState.Offline
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(randomScheduledMessage(id = sentNow.id, cid = cid)))
+        val scheduledAt = randomDate()
+
+        restarted.manager.reschedule(sentNow.id, scheduledAt)
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
+        loaded.scheduledAt shouldBeEqualTo scheduledAt
+        loaded.isPendingSendNow shouldBeEqualTo false
+    }
+
+    @Test
+    fun `an edit of the content made before the load keeps the saved send now`() = runTest {
+        val sentNow = randomLocalScheduledMessage(cid = cid, isPendingSendNow = true)
+        val restarted = ScheduledMessageManagerFixture(InMemoryScheduledMessageRepository(sentNow))
+        restarted.connectionState.value = ConnectionState.Offline
+        val onServer = randomScheduledMessage(id = sentNow.id, cid = cid)
+        restarted.manager.onEvent(scheduledMessageCreatedEvent(onServer))
+        val edited = onServer.message.copy(text = randomString())
+
+        restarted.manager.update(sentNow.id, edited, scheduledAt = null)
+        restarted.manager.start(backgroundScope)
+
+        val loaded = restarted.repositoryFacade.scheduledMessageRepository.selectScheduledMessages().single()
+        loaded.message.text shouldBeEqualTo edited.text
         loaded.isPendingSendNow shouldBeEqualTo true
     }
 
@@ -647,6 +750,38 @@ internal class ScheduledMessageManagerTest {
         channelId = "",
         scheduledMessage = scheduledMessage.copy(status = ScheduledMessageStatus.Sent),
         messageId = randomString(),
+    )
+
+    private fun quoting(quoted: Message): ScheduledMessage {
+        val scheduled = randomScheduledMessage(cid = cid)
+        return scheduled.copy(message = scheduled.message.copy(replyMessageId = quoted.id, replyTo = quoted))
+    }
+
+    private fun List<ScheduledMessage>.quoteOf(id: String): Message? = single { it.id == id }.message.replyTo
+
+    private fun messageUpdatedEvent(message: Message) = MessageUpdatedEvent(
+        type = EventType.MESSAGE_UPDATED,
+        createdAt = Date(),
+        rawCreatedAt = "",
+        user = randomUser(),
+        cid = message.cid,
+        channelType = "",
+        channelId = "",
+        message = message,
+    )
+
+    private fun messageDeletedEvent(message: Message, hardDelete: Boolean) = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = Date(),
+        rawCreatedAt = "",
+        cid = message.cid,
+        channelType = "",
+        channelId = "",
+        message = message,
+        user = null,
+        hardDelete = hardDelete,
+        channelMessageCount = null,
+        deletedForMe = false,
     )
 
     private fun newMessageEvent(message: Message) = NewMessageEvent(

@@ -52,6 +52,7 @@ import kotlinx.coroutines.flow.onEach
  * connection, the changes stay pending until the next one.
  *
  * @param onSentAsMessage Called with the message the server sent right away, because its date had passed.
+ * @param onDeletedAlreadySent Called with a deleted message, once the server answers that it had already sent it.
  */
 internal class ScheduledMessageSender(
     private val store: ScheduledMessageStore,
@@ -59,6 +60,7 @@ internal class ScheduledMessageSender(
     private val attachmentUploader: AttachmentUploader,
     private val clientState: ClientState,
     private val onSentAsMessage: suspend (Message) -> Unit,
+    private val onDeletedAlreadySent: suspend (ScheduledMessage) -> Unit,
 ) {
 
     private val logger by taggedLogger("Chat:ScheduledMessageSender")
@@ -105,7 +107,8 @@ internal class ScheduledMessageSender(
     /**
      * Deletes [message] on the server, unless it is not there yet, then removes it. When the server can't delete it,
      * the message shows again with the failure, and a resend deletes it again. When the server answers that it had
-     * already sent the message, or that it was deleted, it is only removed.
+     * already sent the message, or that it was deleted, it is only removed, and [onDeletedAlreadySent] is called for an
+     * already sent message.
      */
     private suspend fun delete(message: LocalScheduledMessage): Boolean {
         val error = if (message.mayBeOnServer) {
@@ -123,6 +126,9 @@ internal class ScheduledMessageSender(
             return true
         }
         store.update(message.id) { null }
+        if (reason == ServerRejectedScheduling.Reason.ScheduledMessageAlreadySent) {
+            onDeletedAlreadySent(message.toScheduledMessage())
+        }
         return true
     }
 
@@ -201,7 +207,12 @@ internal class ScheduledMessageSender(
                 store.update(message.id) { it?.mergeServer(result.value)?.copy(isPendingSendNow = false) }
                 true
             }
-            is Result.Failure -> onFailure(message, result.value)
+            is Result.Failure -> {
+                val error = result.value
+                val isCancelled = store.messages.value[message.id]?.isPendingSendNow == false
+                // A reschedule cancelled the send now meanwhile: its failure must not hold back the new date.
+                (isCancelled && !error.isGone(message)) || onFailure(message, error)
+            }
         }
 
     /**
@@ -216,14 +227,22 @@ internal class ScheduledMessageSender(
 
     /**
      * Saves the answer of the server to the changes in [sent]. When the message changed while they were sent, the
-     * changes stay pending, now as an update.
+     * changes stay pending, now as an update. A change of its quote only is not a change of the message, and is kept:
+     * it came from an event, which is newer than the answer.
      */
     private suspend fun saveSent(sent: LocalScheduledMessage, server: ScheduledMessage) {
         store.update(sent.id) { current ->
             when {
                 current == null -> null
-                current.message == sent.message && current.scheduledAt == sent.scheduledAt ->
-                    current.copy(pendingChange = null, hasPendingScheduledAt = false).mergeServer(server)
+                current.message.copy(replyTo = null) == sent.message.copy(replyTo = null) &&
+                    current.scheduledAt == sent.scheduledAt -> {
+                    val saved = current.copy(pendingChange = null, hasPendingScheduledAt = false).mergeServer(server)
+                    if (current.message.replyTo == sent.message.replyTo) {
+                        saved
+                    } else {
+                        saved.copy(message = saved.message.copy(replyTo = current.message.replyTo))
+                    }
+                }
                 else -> current.copy(
                     pendingChange = PendingChange.Update,
                     hasPendingScheduledAt = current.hasPendingScheduledAt || current.scheduledAt != sent.scheduledAt,

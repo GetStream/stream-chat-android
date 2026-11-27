@@ -74,6 +74,46 @@ internal class ScheduledMessagesNetworkModelsTest {
         response.message.custom shouldBeEqualTo mapOf("mood" to "happy")
         response.channel?.name shouldBeEqualTo "General"
         response.channel?.image shouldBeEqualTo "https://example.com/general.png"
+        response.channel?.memberCount shouldBeEqualTo 6
+        response.channel?.members?.single()?.user?.id shouldBeEqualTo "alice"
+    }
+
+    @Test
+    fun `A scheduled message maps the message it quotes`() {
+        val response = fromJson<ScheduledMessageResponse>(
+            scheduledMessageJson(status = "scheduled", failureReason = null, withChannel = false, withQuote = true),
+        )
+
+        val message = with(domainMapping) { response.toDomain() }.message
+
+        message.replyMessageId shouldBeEqualTo "quoted-1"
+        val quoted = message.replyTo.shouldNotBeNull()
+        quoted.id shouldBeEqualTo "quoted-1"
+        quoted.type shouldBeEqualTo "deleted"
+        quoted.deletedAt shouldBeEqualTo Date(QUOTE_DELETED_AT)
+        quoted.user.id shouldBeEqualTo "alice"
+    }
+
+    @Test
+    fun `A scheduled message without the message it quotes has only the quote id`() {
+        val response = fromJson<ScheduledMessageResponse>(
+            scheduledMessageJson(status = "scheduled", failureReason = null, withChannel = false),
+        )
+
+        val message = with(domainMapping) { response.toDomain() }.message
+
+        message.replyMessageId shouldBeEqualTo "quoted-1"
+        message.replyTo.shouldBeNull()
+    }
+
+    @Test
+    fun `A channel summary without member count and members, as older backends send it, is parsed`() {
+        val response = fromJson<ScheduledMessageResponse>(
+            scheduledMessageJson(status = "scheduled", failureReason = null, withChannel = true, withMembers = false),
+        )
+
+        response.channel?.memberCount.shouldBeNull()
+        response.channel?.members shouldBeEqualTo emptyList()
     }
 
     @Test
@@ -223,11 +263,24 @@ internal class ScheduledMessagesNetworkModelsTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    private fun scheduledMessageJson(status: String, failureReason: String?, withChannel: Boolean): String {
+    private fun scheduledMessageJson(
+        status: String,
+        failureReason: String?,
+        withChannel: Boolean,
+        withQuote: Boolean = false,
+        withMembers: Boolean = true,
+    ): String {
+        val quote = if (withQuote) """"quoted_message": $QUOTED_MESSAGE_JSON,""" else ""
         val failure = failureReason?.let { """"failure_reason": $it,""" }.orEmpty()
-        val channel = if (withChannel) {
+        val channel = if (withChannel && !withMembers) {
+            """"channel": { "cid": "messaging:general", "id": "general", "type": "messaging" },"""
+        } else if (withChannel) {
             """"channel": { "cid": "messaging:general", "id": "general", "type": "messaging", "name": "General",
-              "image": "https://example.com/general.png" },"""
+              "image": "https://example.com/general.png", "member_count": 6, "members": [
+                { "user_id": "alice", "user": $USER_JSON, "channel_role": "channel_member", "banned": false,
+                  "shadow_banned": false, "notifications_muted": false, "created_at": "2026-01-01T00:00:00.000Z",
+                  "updated_at": "2026-01-01T00:00:00.000Z" }
+              ] },"""
         } else {
             ""
         }
@@ -241,6 +294,7 @@ internal class ScheduledMessagesNetworkModelsTest {
                 "text": "Good morning team",
                 "parent_id": "parent-1",
                 "quoted_message_id": "quoted-1",
+                $quote
                 "mentioned_users": ["bob"],
                 "attachments": [{ "type": "image", "image_url": "https://example.com/image.png", "custom": {} }],
                 "custom": { "mood": "happy" }
@@ -256,6 +310,7 @@ internal class ScheduledMessagesNetworkModelsTest {
 
     private companion object {
         const val SCHEDULED_AT = 1_791_529_200_000L // 2026-10-09T07:00:00Z
+        const val QUOTE_DELETED_AT = 1_791_457_200_000L // 2026-10-08T11:00:00Z
 
         const val USER_JSON = """
             { "id": "alice", "banned": false, "online": false, "role": "user", "language": "en",
@@ -268,6 +323,15 @@ internal class ScheduledMessagesNetworkModelsTest {
               "user": $USER_JSON, "created_at": "2026-10-09T07:00:00.000Z", "updated_at": "2026-10-09T07:00:00.000Z",
               "deleted_reply_count": 0, "reply_count": 0, "mentioned_channel": false, "mentioned_here": false,
               "pinned": false, "shadowed": false, "silent": false }
+        """
+
+        // A soft deleted quote, as the server sends it.
+        const val QUOTED_MESSAGE_JSON = """
+            { "id": "quoted-1", "cid": "messaging:general", "text": "", "html": "", "type": "deleted",
+              "user": $USER_JSON, "created_at": "2026-10-08T09:00:00.000Z", "updated_at": "2026-10-08T11:00:00.000Z",
+              "deleted_at": "2026-10-08T11:00:00.000Z", "deleted_reply_count": 0, "reply_count": 0,
+              "mentioned_channel": false, "mentioned_here": false, "pinned": false, "shadowed": false,
+              "silent": false }
         """
     }
 }

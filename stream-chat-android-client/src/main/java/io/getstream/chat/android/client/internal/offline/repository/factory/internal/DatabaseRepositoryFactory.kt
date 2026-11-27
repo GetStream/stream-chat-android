@@ -184,12 +184,16 @@ internal class DatabaseRepositoryFactory(
      * Creates the [ScheduledMessageRepository].
      *
      * @param getUser Function returning a [User] for a given ID.
+     * @param getMessage Function returning the saved [Message] with a given ID, if any.
      */
-    fun createScheduledMessageRepository(getUser: suspend (userId: String) -> User): ScheduledMessageRepository {
+    fun createScheduledMessageRepository(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+    ): ScheduledMessageRepository {
         val repository = repositoriesCache[ScheduledMessageRepository::class.java] as? ScheduledMessageRepository?
 
         return repository ?: run {
-            DatabaseScheduledMessageRepository(database.scheduledMessageDao(), getUser).also {
+            DatabaseScheduledMessageRepository(database.scheduledMessageDao(), getUser, getMessage).also {
                 repositoriesCache[ScheduledMessageRepository::class.java] = it
             }
         }

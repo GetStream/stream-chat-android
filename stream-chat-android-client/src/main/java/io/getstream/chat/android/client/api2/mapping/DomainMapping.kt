@@ -1771,13 +1771,22 @@ internal class DomainMapping(
      * Transforms the generated [ScheduledMessageResponse] into a domain [ScheduledMessage]. Its content becomes a
      * [Message] with the ID, channel, author and update date of the scheduled message, created at its scheduled date,
      * and the declared fields a message request sends back from [Message.extraData] kept there, so the message can be
-     * passed back to an edit as it is.
+     * passed back to an edit as it is. [Message.replyTo] is the quoted message, when the server sends it: it does not
+     * when the quoted message is gone, the user can't see it, or the server could not read it.
      */
     internal fun ScheduledMessageResponse.toDomain(): ScheduledMessage = ScheduledMessage(
         id = id,
         cid = cid,
         channel = channel?.let {
-            ChannelInfo(cid = it.cid, id = it.id, type = it.type, name = it.name, image = it.image)
+            ChannelInfo(
+                cid = it.cid,
+                id = it.id,
+                type = it.type,
+                memberCount = it.memberCount ?: 0,
+                name = it.name,
+                image = it.image,
+                members = it.members.map { member -> member.toDomain() },
+            )
         },
         message = message.toDomain(
             id = id,
@@ -1812,6 +1821,7 @@ internal class DomainMapping(
         parentId = parentId,
         showInChannel = showInChannel ?: false,
         replyMessageId = quotedMessageId,
+        replyTo = quotedMessage?.toDomain(),
         attachments = attachments.orEmpty().map { it.toDomain() },
         mentionedUsersIds = mentionedUsers.orEmpty(),
         mentionedHere = mentionedHere ?: false,

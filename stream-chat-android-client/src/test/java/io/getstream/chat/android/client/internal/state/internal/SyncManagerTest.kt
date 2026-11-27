@@ -405,6 +405,24 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `performSync refreshes the watched channels with their scheduled messages`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = localDate()
+        val watchedChannel = randomChannel(type = "messaging", id = "watched")
+        givenOversizedSyncPayload(eventCount = 3, createdAt = createdAt, rawCreatedAt = streamDateFormatter.format(createdAt))
+        givenWatchedChannels(cids = setOf(watchedChannel.cid), foundChannels = listOf(watchedChannel))
+
+        /* When */
+        buildSyncManager(eventReplayMaxCount = 2).performSync(cids = listOf("1", "2"))
+
+        /* Then */
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient).queryChannelsInternal(capture())
+            assertEquals(true, firstValue.includeScheduledMessages)
+        }
+    }
+
+    @Test
     fun `performSync adds the drafts of the refreshed watched channels to the global state`() =
         runTest(testDispatcher) {
             /* Given */
@@ -2054,6 +2072,20 @@ internal class SyncManagerTest {
             assertEquals(channelIds.take(30).map(ChannelId::cid).toSet(), (firstValue.filter as InFilterObject).values)
             assertEquals(30, firstValue.limit)
             assertEquals(true, firstValue.presence)
+        }
+    }
+
+    @Test
+    fun `on reconnect, the active channels are queried with their scheduled messages`() = runTest(testDispatcher) {
+        val channelIds = (1..3).map { ChannelId.fromTypeAndId("messaging", "c$it")!! }
+        answerQueryWith { requestedIds -> Result.Success(channelsFor(requestedIds)) }
+        stubChannelLogics(channelIds)
+
+        reconnectWithActiveChannels(channelIds)
+
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient, times(1)).queryChannelsInternal(capture())
+            assertEquals(true, firstValue.includeScheduledMessages)
         }
     }
 

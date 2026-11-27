@@ -707,9 +707,11 @@ internal class ChatClientConnectionTests {
 
     private fun repositoryFactoryWith(repository: ScheduledMessageRepository): RepositoryFactory =
         mock<DatabaseRepositoryFactory>(defaultAnswer = RETURNS_MOCKS) {
-            on { createScheduledMessageRepository(any()) } doReturn repository
+            on { createScheduledMessageRepository(any(), any()) } doReturn repository
             // No channel config, so none of its limits applies to scheduling.
             on { createChannelConfigRepository() } doReturn mock()
+            // No stored channel, so the channel summary of a scheduled message comes from the server.
+            on { createChannelRepository(any(), any()) } doReturn mock()
         }
 
     /** An [InMemoryScheduledMessageRepository] that returns its scheduled messages once [load] completes. */

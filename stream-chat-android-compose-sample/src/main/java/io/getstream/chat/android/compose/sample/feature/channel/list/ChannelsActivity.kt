@@ -150,7 +150,7 @@ class ChannelsActivity : ComponentActivity() {
                 ),
             ) {
                 val user by channelsViewModel.user.collectAsStateWithLifecycle()
-                val scheduledMessagesCount = if (settings.isScheduledMessagesShown) {
+                val scheduledMessagesCount = if (settings.isScheduledMessagesEnabled) {
                     pendingScheduledMessagesCount.collectAsStateWithLifecycle(0).value
                 } else {
                     null

@@ -1677,6 +1677,7 @@ public interface ChatComponentFactory {
             onSendClick = params.onSendClick,
             sendActionLabel = params.sendActionLabel,
             saveActionLabel = params.saveActionLabel,
+            onSendLongClick = params.onSendLongClick,
         )
     }
 
@@ -1717,6 +1718,160 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSendButton(
             onClick = params.onClick,
             onClickLabel = params.onClickLabel,
+            onLongClick = params.onLongClick,
+            onLongClickLabel = params.onLongClickLabel,
+        )
+    }
+
+    /**
+     * The default sheet to schedule the message of the composer, opened by a long press on the send button. It lists
+     * quick dates and a row that opens [ScheduleMessageTimeSheet] to pick a custom time.
+     *
+     * Shown only when the user has the `schedule-message` capability in the channel and
+     * [ComposerConfig.scheduledMessagesEnabled] is true.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduleMessageSheet(params: ScheduleMessageSheetParams) {
+        io.getstream.chat.android.compose.ui.messages.composer.schedule.ScheduleMessageSheet(params)
+    }
+
+    /**
+     * The default sheet to pick the date and the time a message is sent at. It shows a preview of the message, Date
+     * and Time rows that open the Material date and time pickers, a time zone note, and the errors that prevent
+     * scheduling. It schedules a new message, or reschedules one when [ScheduleMessageTimeSheetParams.scheduledAt] is
+     * set.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduleMessageTimeSheet(params: ScheduleMessageTimeSheetParams) {
+        io.getstream.chat.android.compose.ui.messages.composer.schedule.ScheduleMessageTimeSheet(params)
+    }
+
+    /**
+     * The default banner about the scheduled messages of the channel or the thread, placed by the channel screen above
+     * the composer: the failed messages, the channel limit reached, the date of the only scheduled message, or the
+     * number of scheduled messages. Its changes are announced to screen readers.
+     *
+     * Shown only when the user has the `schedule-message` capability in the channel,
+     * [ComposerConfig.scheduledMessagesEnabled] is true and no suggestions are open in the composer.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessagesBanner(params: ScheduledMessagesBannerParams) {
+        io.getstream.chat.android.compose.ui.messages.scheduled.ScheduledMessagesBanner(
+            state = params.state,
+            onClick = params.onClick,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * The default item of the scheduled message list. Shows the date the message is sent at, the avatar and the name
+     * of its channel, a preview of the message, and its status while it is sending, uploading or failed.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageListItem(params: ScheduledMessageListItemParams) {
+        io.getstream.chat.android.compose.ui.scheduled.ScheduledMessageItem(
+            item = params.item,
+            currentUser = params.currentUser,
+            onClick = params.onClick,
+        )
+    }
+
+    /**
+     * The default content of the scheduled message list when there are no scheduled messages.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageListEmptyContent(params: ScheduledMessageListEmptyContentParams) {
+        io.getstream.chat.android.compose.ui.scheduled.DefaultScheduledMessageListEmptyContent(params.modifier)
+    }
+
+    /**
+     * The default content of the scheduled message list while the scheduled messages load.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageListLoadingContent(params: ScheduledMessageListLoadingContentParams) {
+        io.getstream.chat.android.compose.ui.scheduled.DefaultScheduledMessageListLoadingContent(params.modifier)
+    }
+
+    /**
+     * The default content of the scheduled message list when the scheduled messages could not be loaded, with a
+     * button to load them again.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageListErrorContent(params: ScheduledMessageListErrorContentParams) {
+        io.getstream.chat.android.compose.ui.scheduled.DefaultScheduledMessageListErrorContent(
+            onRetryClick = params.onRetryClick,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * The default search input of the scheduled messages screen, above the list.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageListSearchInput(params: ScheduledMessageListSearchInputParams) {
+        SearchInput(
+            modifier = params.modifier,
+            query = params.query,
+            onValueChange = params.onValueChange,
+        )
+    }
+
+    /**
+     * The default content of the scheduled message list when no scheduled message matches the search query.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageListEmptySearchContent(params: ScheduledMessageListEmptySearchContentParams) {
+        io.getstream.chat.android.compose.ui.scheduled.DefaultScheduledMessageListEmptySearchContent(
+            searchQuery = params.searchQuery,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * The default sheet with the actions on a scheduled message, opened by a click on its item. To add actions of the
+     * app, override this function and call the default one with [ScheduledMessageActionsSheetParams.customActions].
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageActionsSheet(params: ScheduledMessageActionsSheetParams) {
+        io.getstream.chat.android.compose.ui.scheduled.ScheduledMessageActionsSheet(
+            actions = params.actions,
+            customActions = params.customActions,
+            onActionClick = params.onActionClick,
+            onDismiss = params.onDismiss,
+        )
+    }
+
+    /**
+     * The default dialog that asks to confirm the deletion of a scheduled message.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ScheduledMessageDeleteDialog(params: ScheduledMessageDeleteDialogParams) {
+        io.getstream.chat.android.compose.ui.scheduled.ScheduledMessageDeleteDialog(
+            channelName = params.channelName,
+            onConfirm = params.onConfirm,
+            onDismiss = params.onDismiss,
         )
     }
 

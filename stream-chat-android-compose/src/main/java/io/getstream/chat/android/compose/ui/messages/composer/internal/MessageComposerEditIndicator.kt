@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessageBody
 import io.getstream.chat.android.compose.ui.components.messages.rememberBodyBuilder
+import io.getstream.chat.android.compose.ui.messages.composer.LocalScheduledMessageEditMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
@@ -105,8 +106,13 @@ private fun EditIndicatorCard(body: QuotedMessageBody) {
                 .padding(end = StreamTokens.spacingMd),
             verticalArrangement = Arrangement.Center,
         ) {
+            val title = if (LocalScheduledMessageEditMode.current != null) {
+                R.string.stream_compose_scheduled_message_edit_title
+            } else {
+                R.string.stream_compose_edit_message
+            }
             Text(
-                text = stringResource(R.string.stream_compose_edit_message),
+                text = stringResource(title),
                 style = ChatTheme.typography.metadataEmphasis,
                 color = ChatTheme.colors.chatTextIncoming,
                 maxLines = 1,

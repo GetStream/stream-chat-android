@@ -16,10 +16,18 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PIXEL_4A_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewChannelData
 import org.junit.Rule
 import org.junit.Test
 
@@ -43,6 +51,31 @@ internal class ChannelAvatarTest : PaparazziComposeTest {
     fun `channel avatar in dark mode`() {
         snapshot(isInDarkMode = true) {
             ChannelAvatarContent()
+        }
+    }
+
+    @Test
+    fun `channel avatar with more members than the ones loaded`() {
+        snapshot {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                // Loaded members, then the member count of the channel.
+                listOf(1 to 6, 2 to 6, 4 to 6, 4 to 200).forEach { (loaded, total) ->
+                    ChannelAvatar(
+                        channel = PreviewChannelData.makeChannelWithMembers(loaded).copy(memberCount = total),
+                        currentUser = null,
+                        modifier = Modifier.size(AvatarSize.ExtraLarge),
+                    )
+                }
+                // The current user is one of the 2 loaded members, so it stays in the avatar.
+                ChannelAvatar(
+                    channel = PreviewChannelData.makeChannelWithMembers(2).copy(memberCount = 6),
+                    currentUser = User(id = "user0"),
+                    modifier = Modifier.size(AvatarSize.ExtraLarge),
+                )
+            }
         }
     }
 }

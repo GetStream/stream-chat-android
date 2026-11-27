@@ -40,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
@@ -118,6 +119,10 @@ import kotlin.math.abs
  * @param onDetailTopBarTitleClick Callback invoked when the user clicks on the title in the detail pane top bar.
  * @param onDetailTopBarAvatarClick Callback invoked when the user clicks on the avatar in the detail pane top bar.
  * @param onViewChannelInfoClick Callback invoked when the user long presses a channel and clicks "View Info".
+ * @param onScheduledMessagesBannerClick Called when the user taps the scheduled messages banner above the composer of
+ * the detail pane, to show the scheduled messages. It gets the channel's `cid`, and the ID of the thread whose
+ * scheduled replies the banner opens, or null for the whole channel, as described for [ChannelScreen]. When this
+ * callback is null, the banner can't be tapped.
  * @param listTopBarContent The content to display at the top of the list pane.
  * @param listBottomBarContent The content to display at the bottom of the list pane.
  * @param detailTopBarContent The content to display at the top of the detail pane.
@@ -143,6 +148,7 @@ public fun ChatsScreen(
     onDetailTopBarTitleClick: ((channel: Channel) -> Unit)? = null,
     onDetailTopBarAvatarClick: ((channel: Channel) -> Unit)? = null,
     onViewChannelInfoClick: (channel: Channel) -> Unit = {},
+    onScheduledMessagesBannerClick: ((cid: String, parentMessageId: String?) -> Unit)? = null,
     listTopBarContent: @Composable () -> Unit = {
         DefaultListTopBarContent(
             viewModelFactory = channelListViewModelFactory,
@@ -280,6 +286,8 @@ public fun ChatsScreen(
         }
     }
 
+    // The detail pane is remembered once, so it reads the latest callback through this state.
+    val currentOnScheduledMessagesBannerClick by rememberUpdatedState(onScheduledMessagesBannerClick)
     val detailPane = remember {
         movableContentOf { selection: ChatMessageSelection ->
             channelViewModelFactoryProvider(context, selection)?.let { viewModelFactory ->
@@ -288,6 +296,7 @@ public fun ChatsScreen(
                     topBarContent = detailTopBarContent,
                     bottomBarContent = detailBottomBarContent,
                     onBackPress = backPressHandler,
+                    onScheduledMessagesBannerClick = currentOnScheduledMessagesBannerClick,
                 )
             }
         }
@@ -726,12 +735,16 @@ private fun DetailPane(
     topBarContent: @Composable (viewModelFactory: ChannelViewModelFactory, onBackPressed: BackAction) -> Unit,
     bottomBarContent: @Composable (viewModelFactory: ChannelViewModelFactory) -> Unit,
     onBackPress: () -> Unit,
+    onScheduledMessagesBannerClick: ((cid: String, parentMessageId: String?) -> Unit)?,
 ) {
     // Ensure the view models are recreated when the user navigates between channels
     ViewModelStore(viewModelFactory.channelId, viewModelFactory.messageId, viewModelFactory.parentMessageId) {
         ChannelScreen(
             viewModelFactory = viewModelFactory,
             onBackPressed = onBackPress,
+            onScheduledMessagesBannerClick = onScheduledMessagesBannerClick?.let { onClick ->
+                fun(parentMessageId: String?): Unit = onClick(viewModelFactory.channelId, parentMessageId)
+            },
             topBarContent = { backAction -> topBarContent(viewModelFactory, backAction) },
             bottomBarContent = { bottomBarContent(viewModelFactory) },
         )

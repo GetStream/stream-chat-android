@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.scheduled
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageCreatedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageDeletedEvent
 import io.getstream.chat.android.client.events.ScheduledMessageFailedEvent
@@ -27,7 +29,10 @@ import io.getstream.chat.android.client.events.ScheduledMessageUpdatedEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.scheduled.LocalScheduledMessage.PendingChange
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryScheduledMessagesResult
 import io.getstream.chat.android.models.ScheduledMessage
@@ -37,7 +42,10 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -66,7 +74,20 @@ internal class ScheduledMessageManager(
 
     private val store = ScheduledMessageStore()
     private val validator = ScheduledMessageValidator(getRepositoryFacade, now)
-    private val sender = ScheduledMessageSender(store, api, attachmentUploader, clientState, onSentAsMessage)
+
+    // Never suspends the sender, whatever the collectors do.
+    private val _deletedAlreadySent = MutableSharedFlow<ScheduledMessage>(
+        extraBufferCapacity = DELETED_ALREADY_SENT_BUFFER,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+    private val sender = ScheduledMessageSender(
+        store = store,
+        api = api,
+        attachmentUploader = attachmentUploader,
+        clientState = clientState,
+        onSentAsMessage = onSentAsMessage,
+        onDeletedAlreadySent = _deletedAlreadySent::emit,
+    )
     private val lifecycleMutex = Mutex()
     private var senderJob: Job? = null
     private var connectionJob: Job? = null
@@ -83,6 +104,9 @@ internal class ScheduledMessageManager(
      * lost or [stop], as events can be missed while not connected.
      */
     val hasLoadedAll: StateFlow<Boolean> = _hasLoadedAll
+
+    /** The deleted scheduled messages the server had already sent, once it answers their delete. */
+    val deletedAlreadySent: SharedFlow<ScheduledMessage> = _deletedAlreadySent
 
     /**
      * Loads the scheduled messages saved for the connected user, and starts sending their pending changes in [scope].
@@ -120,6 +144,8 @@ internal class ScheduledMessageManager(
             ?: validator.validateScheduledAt(cid, scheduledAt)
             ?: validator.validateLimits(cid, others)
         error?.let { return Result.Failure(it) }
+        // The server sends the summary of the channel once it has the message.
+        val channel = getRepositoryFacade().selectChannel(cid)?.toChannelInfo()
         val now = now()
         val content = message.copy(
             cid = cid,
@@ -133,7 +159,7 @@ internal class ScheduledMessageManager(
             current ?: LocalScheduledMessage(
                 id = message.id,
                 cid = cid,
-                channel = null,
+                channel = channel,
                 message = content,
                 scheduledAt = scheduledAt,
                 serverStatus = ScheduledMessageStatus.Scheduled,
@@ -168,7 +194,7 @@ internal class ScheduledMessageManager(
                     createdAt = scheduled.message.createdAt,
                     updatedAt = now,
                 ),
-            ).reschedule(scheduledAt)
+            ).reschedule(scheduledAt?.takeIf { it != scheduled.scheduledAt })
         }
     }
 
@@ -288,6 +314,9 @@ internal class ScheduledMessageManager(
             is ScheduledMessageFailedEvent -> save(event.scheduledMessage)
             is ScheduledMessageDeletedEvent -> store.remove(event.scheduledMessage.id)
             is ScheduledMessageSentEvent -> store.remove(event.scheduledMessage.id)
+            is MessageUpdatedEvent -> store.saveQuote(event.message.id, event.message)
+            // The server no longer sends a hard deleted message as a quote.
+            is MessageDeletedEvent -> store.saveQuote(event.message.id, event.message.takeUnless { event.hardDelete })
             else -> Unit
         }
     }
@@ -310,6 +339,7 @@ internal class ScheduledMessageManager(
         }
     }
 
+    /** Moves the message to [scheduledAt], when set. A new date cancels a pending send now. */
     private fun LocalScheduledMessage.reschedule(scheduledAt: Date?): LocalScheduledMessage =
         if (scheduledAt == null) {
             this
@@ -318,6 +348,7 @@ internal class ScheduledMessageManager(
                 message = message.copy(createdAt = scheduledAt),
                 scheduledAt = scheduledAt,
                 hasPendingScheduledAt = hasPendingScheduledAt || mayBeOnServer,
+                isPendingSendNow = false,
             )
         }
 
@@ -347,6 +378,44 @@ internal class KnownScheduledMessages(val ids: Set<String>, val onServerIds: Set
 
 /** The largest page the server returns. */
 private const val MAX_QUERY_LIMIT = 100
+
+/** How many deleted messages already sent wait for slow collectors before the oldest is dropped. */
+private const val DELETED_ALREADY_SENT_BUFFER = 16
+
+/**
+ * The summary of the channel as the server sends it with a scheduled message: its oldest members first, as many as
+ * the server sends.
+ */
+private fun Channel.toChannelInfo(): ChannelInfo = ChannelInfo(
+    cid = cid,
+    id = id,
+    type = type,
+    memberCount = memberCount,
+    name = name.takeIf(String::isNotEmpty),
+    image = image.takeIf(String::isNotEmpty),
+    members = members.sortedBy(Member::createdAt).take(SUMMARY_MEMBER_LIMIT),
+)
+
+/** How many members the server sends in the summary of the channel of a scheduled message. */
+private const val SUMMARY_MEMBER_LIMIT = 4
+
+/**
+ * Saves [quoted] as the quote of the scheduled messages that quote the message with [quotedId]. The server sends no
+ * scheduled message event when a quoted message changes.
+ */
+private suspend fun ScheduledMessageStore.saveQuote(quotedId: String, quoted: Message?) {
+    messages.value.values
+        .filter { it.message.replyMessageId == quotedId }
+        .forEach { scheduled ->
+            update(scheduled.id) { current ->
+                if (current?.message?.replyMessageId == quotedId) {
+                    current.copy(message = current.message.copy(replyTo = quoted))
+                } else {
+                    current
+                }
+            }
+        }
+}
 
 /**
  * Merges [server] into the local message, unless it is older than the local message with no pending changes, for

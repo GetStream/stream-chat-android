@@ -16,47 +16,41 @@
 
 package io.getstream.chat.android.compose.sample.feature.scheduled
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
-import io.getstream.chat.android.models.ScheduledMessage
+import io.getstream.chat.android.compose.ui.scheduled.ScheduledMessagesScreen
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
+import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 
-/**
- * Lists the current user's scheduled messages.
- */
 class ScheduledMessagesActivity : ComponentActivity() {
-
-    private val viewModel: ScheduledMessagesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val settings = customSettings()
         setContent {
-            SampleChatTheme {
-                ScheduledMessagesScreen(
-                    modifier = Modifier.statusBarsPadding(),
-                    viewModel = viewModel,
-                    onEditClick = ::openEditor,
-                    onBack = ::finish,
-                )
+            // The composer that edits a scheduled message looks like the one of the channel.
+            SampleChatTheme(
+                config = ChatUiConfig(
+                    composer = ComposerConfig(
+                        linkPreviewEnabled = settings.isComposerLinkPreviewEnabled,
+                        floatingStyleEnabled = settings.isComposerFloatingStyleEnabled,
+                    ),
+                    attachmentPicker = AttachmentPickerConfig(
+                        useSystemPicker = settings.isSystemAttachmentPickerEnabled,
+                    ),
+                ),
+            ) {
+                Box(modifier = Modifier.systemBarsPadding()) {
+                    ScheduledMessagesScreen(onBackPressed = ::finish)
+                }
             }
         }
-    }
-
-    private fun openEditor(scheduledMessage: ScheduledMessage, isScheduledAgain: Boolean) {
-        startActivity(
-            ChannelActivity.createIntent(
-                context = this,
-                channelId = scheduledMessage.cid,
-                parentMessageId = scheduledMessage.message.parentId,
-                scheduledMessageId = scheduledMessage.id,
-                isScheduledAgain = isScheduledAgain,
-            ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), // Replaces the channel screen this one was opened from, if any.
-        )
     }
 }

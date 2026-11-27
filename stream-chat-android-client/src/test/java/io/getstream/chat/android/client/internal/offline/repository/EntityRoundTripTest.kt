@@ -277,9 +277,9 @@ internal class EntityRoundTripTest {
             RoundTrip(name = "reaction group", model = reactionGroup) { it.toEntity().toModel() },
             RoundTrip(
                 name = "channel info",
-                model = channelInfo.copy(image = "image"),
+                model = channelInfo.copy(image = "image", members = listOf(summaryMember)),
                 // No column.
-                changed = setOf("image"),
+                changed = setOf("image", "members"),
             ) { it.toEntity().toModel() },
             RoundTrip(name = "channel info with defaults", model = ChannelInfo()) { it.toEntity().toModel() },
             RoundTrip(name = "moderation", model = moderation) { it.toEntity().toDomain() },
@@ -304,7 +304,9 @@ internal class EntityRoundTripTest {
                     getDraftMessage = { messageId -> draft.takeIf { messageId == message.id } },
                 )
             },
-            RoundTrip(name = "scheduled message", model = scheduledMessage) { it.toEntity().toModel(getUser) },
+            RoundTrip(name = "scheduled message", model = scheduledMessage) {
+                it.toEntity().toModel(getUser, getMessage)
+            },
             RoundTrip(
                 name = "message of a scheduled message",
                 // Its attachments do not keep the id of their row.
@@ -315,7 +317,7 @@ internal class EntityRoundTripTest {
                     .copy(id = content.id, cid = content.cid, message = content)
                     .copy(createdAt = date(1), updatedAt = date(2))
                     .toEntity()
-                    .toModel(getUser)
+                    .toModel(getUser, getMessage)
                     .message
             },
             RoundTrip(
@@ -344,7 +346,7 @@ internal class EntityRoundTripTest {
             Fixture(message, Message()),
             Fixture(attachment, Attachment()),
             Fixture(reaction, Reaction()),
-            Fixture(channelInfo.copy(image = "image"), ChannelInfo()),
+            Fixture(channelInfo.copy(image = "image", members = listOf(summaryMember)), ChannelInfo()),
             Fixture(memberInfo, MemberInfo()),
             Fixture(location, Location()),
             Fixture(draft, DraftMessage()),
@@ -381,7 +383,7 @@ internal class EntityRoundTripTest {
         private val SCHEDULED_MESSAGE_FIELDS_NOT_STORED = setOf(
             "command", "mentionedUsers", "replyCount", "deletedReplyCount", "reactionCounts", "reactionScores",
             "reactionGroups", "syncStatus", "latestReactions", "ownReactions", "deletedAt", "updatedLocallyAt",
-            "createdLocallyAt", "shadowed", "i18n", "channelInfo", "replyTo", "pinnedBy", "threadParticipants",
+            "createdLocallyAt", "shadowed", "i18n", "channelInfo", "pinnedBy", "threadParticipants",
             "moderationDetails", "moderation", "messageTextUpdatedAt", "poll", "reminder", "channelRole", "member",
             "mentionedChannelMembers", "deletedForMe",
         )
@@ -593,9 +595,12 @@ private val reaction = Reaction(
 
 private val reactionGroup = ReactionGroup("like", count = 1, sumScore = 2, date(3), date(4))
 
-// Without the image, which has no column.
+// Without the image and the members, which have no column.
 private val channelInfo =
     ChannelInfo("messaging:general", id = "general", type = "messaging", memberCount = 2, name = "General")
+
+// A member as the channel summary of a scheduled message stores it.
+private val summaryMember = Member(user = User(id = "bob", name = "Bob", image = "bob.png"))
 
 private val moderation = Moderation(
     action = ModerationAction.bounce,
@@ -876,7 +881,7 @@ private val queryChannels = QueryChannelsSpec(
 private val scheduledMessage = LocalScheduledMessage(
     id = "scheduled",
     cid = "messaging:general",
-    channel = channelInfo.copy(memberCount = 0, image = "general.png"),
+    channel = channelInfo.copy(memberCount = 0, image = "general.png", members = listOf(summaryMember)),
     message = Message(
         id = "scheduled",
         cid = "messaging:general",
@@ -886,7 +891,8 @@ private val scheduledMessage = LocalScheduledMessage(
         type = "regular",
         parentId = "parent",
         showInChannel = true,
-        replyMessageId = "quoted",
+        replyMessageId = quoted.id,
+        replyTo = quoted,
         attachments = listOf(attachment),
         mentionedUsersIds = listOf("bob"),
         mentionedHere = true,

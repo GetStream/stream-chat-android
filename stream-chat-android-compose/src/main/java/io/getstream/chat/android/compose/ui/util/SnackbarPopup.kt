@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
@@ -32,13 +33,17 @@ import androidx.compose.ui.window.PopupPositionProvider
  * @param hostState The state of this component to read and show Snackbars accordingly
  * @param snackbar The Snackbar to be shown at the appropriate time
  * with appearance based on the SnackbarData provided as a param
+ * @param maxBottom The highest bottom edge of the popup in the window, in pixels, so it opens above what floats over
+ * the anchor, or null to open right above the anchor.
  */
 @Composable
 internal fun SnackbarPopup(
     hostState: SnackbarHostState,
     snackbar: @Composable (SnackbarData) -> Unit = { StreamSnackbar(it) },
+    maxBottom: Int? = null,
 ) {
-    Popup(popupPositionProvider = CenteredAboveAnchorPositionProvider) {
+    val positionProvider = remember(maxBottom) { CenteredAboveAnchorPositionProvider(maxBottom) }
+    Popup(popupPositionProvider = positionProvider) {
         StreamSnackbarHost(
             hostState = hostState,
             snackbar = snackbar,
@@ -46,7 +51,7 @@ internal fun SnackbarPopup(
     }
 }
 
-private object CenteredAboveAnchorPositionProvider : PopupPositionProvider {
+private class CenteredAboveAnchorPositionProvider(private val maxBottom: Int?) : PopupPositionProvider {
     override fun calculatePosition(
         anchorBounds: IntRect,
         windowSize: IntSize,
@@ -54,6 +59,6 @@ private object CenteredAboveAnchorPositionProvider : PopupPositionProvider {
         popupContentSize: IntSize,
     ) = IntOffset(
         x = (windowSize.width - popupContentSize.width) / 2,
-        y = anchorBounds.top - popupContentSize.height,
+        y = minOf(anchorBounds.top, maxBottom ?: anchorBounds.top) - popupContentSize.height,
     )
 }

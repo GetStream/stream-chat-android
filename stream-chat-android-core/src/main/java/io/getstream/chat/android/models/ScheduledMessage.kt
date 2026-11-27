@@ -26,14 +26,16 @@ import java.util.Date
  * @property id The ID of the scheduled message. It is also the ID of [message], and not the ID of the message the
  * server creates when it sends it.
  * @property cid The ID of the channel the message is sent to, in the format `type:id`.
- * @property channel A summary of the channel the message is sent to. The server sends it only with the results of a
- * scheduled messages query, and the scheduled messages kept on the device keep the last one received, so it can be
- * null.
+ * @property channel A summary of the channel the message is sent to, with its member count and some of its members.
+ * The server sends it with the scheduled message, and the device keeps the last one received. Until the server has a
+ * message scheduled on this device, it comes from the channel saved on this device. It is null when none is known.
  * @property message The content that will be sent. It is not in the messages of the channel until it is sent, and has
  * no reactions, replies or read state. Its [Message.createdAt] is [scheduledAt], so it can be shown like any other
- * message, and its [Message.updatedAt] is the one of the scheduled message. The mentioned users and groups, the
- * quoted message and the poll come as IDs only: in [Message.mentionedUsersIds], [Message.mentionedGroups] (without
- * names), [Message.replyMessageId] and the `poll_id` of [Message.extraData].
+ * message, and its [Message.updatedAt] is the one of the scheduled message. The mentioned users and groups and the
+ * poll come as IDs only: in [Message.mentionedUsersIds], [Message.mentionedGroups] (without names) and the `poll_id`
+ * of [Message.extraData]. The quoted message has its ID in [Message.replyMessageId], and is in [Message.replyTo] as
+ * last known on this device. It is null when the server did not send it (for example, it is gone or the user can't
+ * see it) and this device does not know it.
  * @property scheduledAt The date when the server sends the message.
  * @property status Where the scheduled message is, from scheduling until it is sent.
  * @property failure Why the message could not be scheduled or sent, or null when nothing failed.

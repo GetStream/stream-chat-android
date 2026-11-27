@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 import androidx.lifecycle.SavedStateHandle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.getMessageUsingCache
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.loadNewestMessages
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -34,14 +35,18 @@ import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ScheduledMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.mentionRegex
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.isPending
+import io.getstream.chat.android.ui.common.feature.messages.composer.scheduled.sentNow
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
+import io.getstream.chat.android.ui.common.feature.scheduled.isInScope
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -53,7 +58,10 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerViewEvent
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduleMessageState
+import io.getstream.chat.android.ui.common.state.messages.composer.ScheduledMessagesBannerState
 import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
+import io.getstream.chat.android.ui.common.state.messages.composer.scheduledMessagesBannerState
 import io.getstream.chat.android.ui.common.state.messages.composer.sortedByAvailability
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
@@ -85,9 +93,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -288,6 +299,82 @@ public class MessageComposerController(
 
     /** Full message composer state holding all the required information. */
     public val state: StateFlow<MessageComposerState> = _state.asStateFlow()
+
+    /**
+     * What the composer knows to schedule its message in the channel: the capability, the limits and the lead times
+     * of the channel config, and the pending scheduled messages of the current user. Computed while it is collected.
+     */
+    public val scheduleMessageState: StateFlow<ScheduleMessageState> = combine(
+        ownCapabilities,
+        channelState.filterNotNull().flatMapLatest { it.channelConfig },
+        // Deferred, so the scheduled messages are read only while this state is collected.
+        flow { emitAll(chatClient.scheduledMessages) },
+    ) { ownCapabilities, channelConfig, scheduledMessages ->
+        val now = Date()
+        val pending = scheduledMessages.filter { it.isPending(now) }
+        val defaults = ScheduleMessageState()
+        ScheduleMessageState(
+            canSchedule = ChannelCapabilities.SCHEDULE_MESSAGE in ownCapabilities,
+            pendingInChannel = pending.count { it.cid == channelCid },
+            maxPerChannel = channelConfig.scheduledMessagesMaxPerChannel,
+            pendingForUser = pending.size,
+            maxPerUser = channelConfig.scheduledMessagesMaxPerUser,
+            minLeadTimeSeconds = channelConfig.scheduledMessagesMinLeadTimeSeconds ?: defaults.minLeadTimeSeconds,
+            maxLeadTimeSeconds = channelConfig.scheduledMessagesMaxLeadTimeSeconds ?: defaults.maxLeadTimeSeconds,
+            hasCommands = channelConfig.commands.isNotEmpty(),
+        )
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = ScheduleMessageState(),
+    )
+
+    /** The ID of the thread the composer writes in, or null in the channel. */
+    private val threadParentId: Flow<String?> = _state
+        .map { (it.messageMode as? MessageMode.MessageThread)?.parentMessage?.id }
+        .distinctUntilChanged()
+
+    /**
+     * What the scheduled messages banner shows, or null when there is nothing to show. Without the capability to
+     * schedule messages in the channel, it shows only failed messages. In the channel, it is about the scheduled
+     * messages of the channel, thread replies included. In a thread, it is about the scheduled replies of that thread.
+     * Computed while it is collected.
+     */
+    @InternalStreamChatApi
+    public val scheduledMessagesBannerState: StateFlow<ScheduledMessagesBannerState?> = threadParentId
+        .flatMapLatest { parentId ->
+            combine(
+                scheduleMessageState,
+                chatClient.scheduledMessages.map { scheduledMessages ->
+                    scheduledMessages.filter { it.isInScope(channelCid, parentId) }
+                },
+            ) { scheduleState, scheduledMessages ->
+                scheduledMessagesBannerState(
+                    scheduledMessages = scheduledMessages,
+                    scheduleMessageState = scheduleState,
+                    parentMessageId = parentId,
+                    now = Date(),
+                )
+            }
+        }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = null,
+        )
+
+    /**
+     * Emits the messages of the channel, or of the thread the composer writes in, that were scheduled while offline
+     * and that the server sent right away once the device was back online, because their date had passed. Only the
+     * messages sent while it is collected are emitted.
+     */
+    @InternalStreamChatApi
+    public val scheduledMessagesSentNow: Flow<Message> = threadParentId.flatMapLatest { parentId ->
+        chatClient.scheduledMessages(channelCid, parentId)
+            .sentNow { id -> chatClient.getMessageUsingCache(id).await().getOrNull() }
+    }
+
+    private var isScheduling = false
 
     private val _messageInput = MutableStateFlow(MessageInput())
 
@@ -827,7 +914,8 @@ public class MessageComposerController(
     }
 
     /**
-     * Clears all the data from the input — text, attachments, validation errors, actions, and active command.
+     * Clears all the data from the input: text, attachments, selected mentions, validation errors, actions, and active
+     * command.
      * In thread mode, [MessageComposerState.alsoSendToChannel] is preserved until the user toggles it;
      * otherwise it is reset.
      */
@@ -842,7 +930,8 @@ public class MessageComposerController(
         clearActiveCommand()
         linkPreviewJob?.cancel()
         dismissedLinkPreviewUrl = null
-        _state.update { it.copy(validationErrors = emptyList()) }
+        selectedMentions.clear()
+        _state.update { it.copy(validationErrors = emptyList(), selectedMentions = emptySet()) }
         if (!isInThread) {
             _state.update { it.copy(alsoSendToChannel = false) }
         }
@@ -916,6 +1005,47 @@ public class MessageComposerController(
         }
     }
 
+    /**
+     * Schedules [message] to be sent at [scheduledAt], with the thread and "also send to channel" state of the
+     * composer, like [sendMessage] sends it. The message is saved locally first, and sent to the server once its
+     * attachments are uploaded and the device is online, so it can be scheduled offline.
+     *
+     * Once it is saved, the composer is emptied. When it is refused before it is saved, for example because of a
+     * limit, the composer keeps its content. Does nothing while another message is being scheduled.
+     *
+     * @param message The message to schedule, built with [buildNewMessage].
+     * @param scheduledAt The date when the message is sent.
+     * @param resolveAttachments Copies the attachments picked in the composer to local files, so they can be
+     * uploaded, or null when they already are.
+     * @param onResult Called with the scheduled message as saved locally, or with the reason it was refused.
+     */
+    public fun scheduleMessage(
+        message: Message,
+        scheduledAt: Date,
+        resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)? = null,
+        onResult: (Result<ScheduledMessage>) -> Unit = {},
+    ) {
+        logger.i { "[scheduleMessage] scheduledAt: $scheduledAt, attachments.size: ${message.attachments.size}" }
+        if (isScheduling) return
+        isScheduling = true
+        val preparedMessage = message.copy(
+            showInChannel = isInThread && _state.value.alsoSendToChannel,
+            skipEnrichUrl = shouldSkipEnrichUrl(message),
+        )
+        scope.launch {
+            val result = try {
+                val resolvedMessage = resolveAttachments?.let { resolve ->
+                    preparedMessage.copy(attachments = resolve(preparedMessage.attachments))
+                } ?: preparedMessage
+                chatClient.scheduleMessage(channelType, channelId, resolvedMessage, scheduledAt).await()
+            } finally {
+                isScheduling = false
+            }
+            if (result is Result.Success) clearData()
+            onResult(result)
+        }
+    }
+
     private fun enqueueEditMessage(
         message: Message,
         callback: Call.Callback<Message>,
@@ -979,7 +1109,7 @@ public class MessageComposerController(
         val trimmedMessage = fullText.trim()
         val activeMessage = activeAction?.message ?: Message()
         val replyMessage = (activeAction as? Reply)?.message
-        val mentions = filterMentions(selectedMentions, trimmedMessage)
+        val mentions = collectMentions(selectedMentions, trimmedMessage)
 
         return if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
             activeMessage.copy(
@@ -1007,16 +1137,6 @@ public class MessageComposerController(
             )
         }
     }
-
-    /**
-     * Drops any selected mention whose `@<token>` is no longer present in [message] and returns
-     * the metadata to attach to the outgoing message.
-     */
-    private fun filterMentions(selectedMentions: Set<Mention>, message: String): FilteredMentions =
-        collectMentions(selectedMentions, message).also {
-            this.selectedMentions.clear()
-            _state.update { it.copy(selectedMentions = emptySet()) }
-        }
 
     /** Returns the metadata of the [selectedMentions] whose `@<token>` is still present in [message]. */
     private fun collectMentions(selectedMentions: Set<Mention>, message: String): FilteredMentions {

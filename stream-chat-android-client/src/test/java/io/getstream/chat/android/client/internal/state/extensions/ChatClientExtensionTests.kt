@@ -61,6 +61,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.doAnswer
@@ -232,6 +233,17 @@ internal class ChatClientExtensionTests {
         }
         userFlow.value = randomUser(id = "jc")
         verify(chatClient, times(1)).queryChannel(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `watchChannelAsState queries the channel with the scheduled messages of the current user`() = runTest {
+        userFlow.value = randomUser()
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val localScope = testCoroutines.scope + Job()
+        localScope.launch {
+            chatClient.watchChannelAsState(channel.cid, MESSAGE_LIMIT).collect { }
+        }
+        verify(chatClient).queryChannel(any(), any(), argThat { includeScheduledMessages }, any())
     }
 
     @Test

@@ -5473,7 +5473,9 @@ internal constructor(
      * The current user's scheduled messages known on this device: the pending ones first, then the failed ones, each
      * sorted by [ScheduledMessage.scheduledAt]. A change made with this client shows right away, and the events of
      * the user's other devices keep it up to date. [queryScheduledMessages] loads the ones this device does not know
-     * yet.
+     * yet. With the state plugin, the channel queries the plugin makes also load the ones of their channels, when the
+     * server sends them in [Channel.scheduledMessages], for example when a channel is watched with
+     * `watchChannelAsState` or its messages are paged.
      */
     public val scheduledMessages: StateFlow<List<ScheduledMessage>>
         get() = scheduledMessageManager.scheduledMessages
@@ -5489,6 +5491,17 @@ internal constructor(
      */
     public val hasLoadedAllScheduledMessages: StateFlow<Boolean>
         get() = scheduledMessageManager.hasLoadedAll
+
+    /**
+     * Emits a scheduled message deleted with [deleteScheduledMessage] that the server had already sent, so it is in
+     * its channel. It is emitted once the server answers the delete, after the message is removed from
+     * [scheduledMessages], and only to the collectors at that time. A server that does not tell an already sent
+     * message apart from one deleted on another device emits nothing. A delete of a message this device does not know
+     * emits nothing either: its call fails with the answer of the server.
+     */
+    @InternalStreamChatApi
+    public val deletedScheduledMessagesAlreadySent: Flow<ScheduledMessage>
+        get() = scheduledMessageManager.deletedAlreadySent
 
     /**
      * The current user's scheduled messages in a channel or a thread, from [scheduledMessages].
@@ -5580,6 +5593,10 @@ internal constructor(
      * locally first, and sent to the server like a new scheduled message (see [scheduleMessage]). An edit made
      * before the message reached the server goes out with it.
      *
+     * A pending [sendScheduledMessageNow] is kept when only the content changes: the edit is sent first, then the
+     * message is sent now. A [scheduledAt] other than the current date cancels it, unless its request was already
+     * sent, so the message is sent at that date.
+     *
      * The edit is refused before it is saved when the message starts with `/` in a channel that has commands, when it
      * quotes a message that was deleted, or when [scheduledAt] is further ahead than
      * [Config.scheduledMessagesMaxLeadTimeSeconds], as known from the channel config and messages saved on this
@@ -5608,7 +5625,8 @@ internal constructor(
 
     /**
      * Changes the date when a scheduled message is sent. The change is saved locally first, and sent to the server
-     * like a new scheduled message (see [scheduleMessage]).
+     * like a new scheduled message (see [scheduleMessage]). It cancels a pending [sendScheduledMessageNow] whose
+     * request was not sent yet, so the message is sent at the new date.
      *
      * It is refused before it is saved when the message quotes a message that was deleted, or when [scheduledAt] is
      * further ahead than [Config.scheduledMessagesMaxLeadTimeSeconds], as known from the channel config and messages
@@ -5649,6 +5667,9 @@ internal constructor(
      * once its pending changes and attachments are on the server, so it never goes out with older content.
      *
      * When the latest changes of the message failed to reach the server, they are sent again first.
+     *
+     * A [rescheduleMessage], or an [updateScheduledMessage] that changes the date, cancels it. An edit of the content
+     * alone keeps it. A send now already sent to the server is not cancelled.
      *
      * It is refused when the message quotes a message that was deleted, as known from the messages saved on this
      * device. A message the server failed to send ([ScheduledMessageFailure.ServerFailedPublishing]) can't be sent

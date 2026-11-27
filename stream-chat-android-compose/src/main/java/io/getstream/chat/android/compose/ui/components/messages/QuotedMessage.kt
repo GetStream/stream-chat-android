@@ -229,7 +229,7 @@ private val mediaPreviewModifier = Modifier
     .clip(RoundedCornerShape(StreamTokens.radiusMd))
 
 @Composable
-private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
+internal fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
     when {
         body.imagePreviewData != null -> {
             StreamAsyncImage(

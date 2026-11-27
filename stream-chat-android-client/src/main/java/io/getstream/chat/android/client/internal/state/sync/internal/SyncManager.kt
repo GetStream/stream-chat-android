@@ -987,7 +987,10 @@ internal class SyncManager(
             filter = Filters.`in`("cid", missingChannelIds.map(ChannelId::cid)),
             offset = 0,
             limit = missingChannelIds.size,
-        ).apply { presence = userPresence }
+        ).apply {
+            presence = userPresence
+            includeScheduledMessages = true
+        }
         logger.v { "[updateActiveChannels] request: $request" }
         when (val result = chatClient.queryChannelsInternal(request).await()) {
             is Result.Success -> updateFoundActiveChannels(missingChannelIds, result.value.channels)
@@ -1074,7 +1077,10 @@ internal class SyncManager(
                 filter = Filters.`in`("cid", batch),
                 offset = 0,
                 limit = batch.size,
-            ).apply { presence = userPresence }
+            ).apply {
+                presence = userPresence
+                includeScheduledMessages = true
+            }
             logger.v { "[refreshActiveWatchedChannels] request: $request" }
             chatClient.queryChannelsInternal(request)
                 .await()
